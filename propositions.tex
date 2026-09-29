@@ -45,18 +45,45 @@ $w_j A_j / \sum_k w_k A_k = w_j$ for all $j$, which holds iff all
 $A_j$ equal the same constant.
 \end{proof}
 
-\begin{remark}[scope]
+\begin{remark}[scope and empirical confirmation]
 \label{rem:scope}
-Lemma~\ref{lem:amplitude} is exact for additive aggregations
-(SAW, rank-based SAW, and PROMETHEE~II via
-Proposition~\ref{prop:p2}).
-For TOPSIS and VIKOR, which aggregate through distances to ideal
-and anti-ideal points, $A_j$ enters squared or in absolute value,
-so~\eqref{eq:weff} is a first-order approximation only.
+Lemma~\ref{lem:amplitude} is exact for additive aggregation.
+Within that scope the prediction is borne out: across SAW cells,
+mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.3\%$, $76.5\%$ and
+$55.5\%$ for min--max, ranks and vector normalisation respectively,
+against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.324$ ---
+a strictly monotone ordering ($R^2=0.995$ on three means; we report the
+ordering and note approximate proportionality, given $n=3$, $\mathrm{df}=1$).
+
+TOPSIS and VIKOR aggregate distances to ideal points rather than
+weighted sums, so amplitudes enter quadratically or in ratio form and
+the closed form does not transfer.
+Two consequences are observable.
+First, VIKOR is invariant to vector normalisation because the common
+scale factor cancels in its ratio form; the VIKOR$\times$vector cell is
+therefore redundant and excluded from the design.
+Second, pooling all aggregation families destroys the monotone ordering
+precisely as the scope restriction predicts.
+We read this as corroboration of the mechanism rather than as a
+limitation of it: the distortion acts through the weighted sum, and
+it is visible exactly where a weighted sum is taken.
 \end{remark}
 
 \begin{corollary}[the three standard normalisations]
 \label{cor:three}
+
+A natural measure of aggregate distortion is the total variation
+\begin{equation}
+  \label{eq:TV}
+  \mathrm{TV} = \tfrac{1}{2}\sum_j |w_j^{\mathrm{eff}} - w_j|,
+\end{equation}
+which is invariant to multiplication of all $A_j$ by a common constant
+(since that constant cancels in the renormalisation of~\eqref{eq:weff}
+and leaves $w^{\mathrm{eff}}$ unchanged).
+Any faithful measure of re-weighting must inherit this invariance;
+$D = \sum_j w_j |A_j - 1|$ does not, and is therefore not an
+appropriate summary of the distortion.
+
 \begin{enumerate}[label=(\roman*)]
   \item \textbf{Min--max.}
     $A_j \equiv 1$ by construction; hence $w^{\mathrm{eff}} = w$.
