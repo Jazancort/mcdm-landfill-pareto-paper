@@ -28,8 +28,7 @@
 \newcommand{\kk}{3}
 % Frontier sizes
 \newcommand{\Fmmsize}{181}
-\newcommand{\Fvecsize}{109}
-\newcommand{\Ffixsize}{184}
+% \Fvecsize and \Ffixsize removed — unused
 \newcommand{\FAsize}{213}
 \newcommand{\FAinter}{132}
 % Monte Carlo
@@ -205,8 +204,8 @@ Min--max normalisation has $A_j \equiv 1$ and is the unique
 weight-preserving choice among the three standard families.
 Vector normalisation has $A_j = \rho_j$, determined by the distributional
 shape of the criterion, which in our data multiplies one criterion's
-weight by $2.88\times$ and divides another by $1.9\times$
-(\textit{urban}, $0.53\times$) without any of this appearing in the
+weight by $2.88\times$ and divides another by $0.53\times$
+(\textit{urban}) without any of this appearing in the
 analyst's report.
 Midranks rescaled to the unit interval contract with tie mass, and every
 binary criterion loses half its weight in rank space irrespective of
@@ -567,19 +566,23 @@ decision dimensions of landfill siting: siting and construction cost
 ($G_1$), environmental impact ($G_2$), and social safety ($G_3$)
 (Table~\ref{tab:amplitude}).
 Let $c_j(i)\in[0,1]$ be the partial value of site~$i$ on criterion~$j$,
-oriented so that larger is better, and let $w_j$ be the criterion weight.
+oriented so that larger is better (cost and impact criteria are
+complemented before aggregation; see Section~\ref{sec:methods}),
+and let $w_j$ be the criterion weight.
 The portfolio objectives are additive within group and across sites:
 \begin{align}
   F_1(t) &= \sum_{i\in t}\;\sum_{j\in G_1} w_j\,c_j(i),
-    && \text{(cost, minimise)} \label{eq:F1} \\
+    && \text{(siting cost)} \label{eq:F1} \\
   F_2(t) &= \sum_{i\in t}\;\sum_{j\in G_2} w_j\,c_j(i),
-    && \text{(impact, minimise)} \label{eq:F2} \\
+    && \text{(environmental impact)} \label{eq:F2} \\
   F_3(t) &= \sum_{i\in t}\;\sum_{j\in G_3} w_j\,c_j(i),
-    && \text{(safety, maximise)} \label{eq:F3}
+    && \text{(social safety)} \label{eq:F3}
 \end{align}
 and we write $\mathbf{F}(t;w)=(F_1,F_2,F_3)$ to make the weight
 dependence explicit, since it is central to
 Section~\ref{sec:design}.
+All three objectives are larger-is-better; portfolio $t$ dominates $t'$
+if $F_\ell(t)\ge F_\ell(t')$ for all $\ell$ and strictly for at least one.
 
 \paragraph{What the benchmark is, and is not.}
 \label{rem:valuespace}
@@ -654,7 +657,9 @@ that follow correspond to Stages~1--6 in order.
   Stage~5: greedy and optimal portfolio assembly subject to a
   $d_{\min}=\dmin$~km separation constraint over $\Ntrios$ feasible trios.
   Stage~6: performance evaluated as $Q_2=\Pr[M(w)\in\mathcal{F}(w)]$
-  against the exact Pareto frontier over an 18-cell factorial design.}
+  against the exact Pareto frontier over an 18-cell factorial
+  ($3~\text{norm}\times 4~\text{aggr}\times 2~\text{assembly}=24$
+  minus 6 excluded cells).}
 \label{fig:workflow}
 \end{figure*}
 
@@ -662,7 +667,7 @@ that follow correspond to Stages~1--6 in order.
 
 Stage~1 of Figure~\ref{fig:workflow}. The dataset comprises $\Ncand$ candidate sites on Fogo Island, Cape Verde,
 screened from land-cover exclusion, each with $m=11$ criteria measured in
-metres, except slope aspect (degrees).
+metres, except slope aspect (degrees) and road distance (km).
 The spatial discretisation and criteria definition follow
 \citet{AzancortNeto2026}, which provides the validated GIS dataset; the
 present paper uses the same candidate set, pairwise distance matrix, and
@@ -843,9 +848,12 @@ The main experiment is a balanced $2^3$: aggregation
 $\{\text{SAW},\text{TOPSIS}\}$ $\times$ normalisation
 $\{\text{min--max},\text{vector}\}$ $\times$ assembly
 $\{\text{greedy},\text{optimal}\}$, evaluated in $Q_2[A']$.
-A wider 12-cell design adds VIKOR, PROMETHEE~II, and rank normalisation;
-it is unbalanced (VIKOR under vector normalisation is redundant by affine
-invariance) and is reported only for marginal means.
+A wider 18-cell design adds VIKOR, PROMETHEE~II, and rank normalisation
+(3 norm $\times$ 4 aggr $\times$ 2 assembly $= 24$, minus the 6 cells
+excluded because VIKOR under vector normalisation is redundant by
+affine invariance, less cells with PROMETHEE under min--max and vector,
+giving 18 estimable cells);
+it is unbalanced and is reported only for marginal means.
 Effects are reported in percentage points with $\nboot$-replicate
 bootstrap intervals, paired by draw.
 
@@ -906,7 +914,7 @@ $A_j$ equal the same constant.\hfill$\square$
 
 \paragraph{Scope and empirical confirmation.}
 \label{rem:scope}
-the amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
+The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
 Within that scope the prediction is borne out: across SAW cells,
 mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.3\%$, $76.5\%$ and
 $55.5\%$ for min--max, ranks and vector normalisation respectively,
@@ -1013,10 +1021,6 @@ Figure~\ref{fig:binary_amplitude} illustrates the binary case analytically.
 
 
 % ----------------------------------------------------------
-\subsection{Propositions}
-\label{sec:theorems}
-% ----------------------------------------------------------
-
 \subsection{Pareto consistency of optimal linear aggregation}
 \label{prop:p1}
 Let $v_j(a)$ be the normalised criterion values entering the objectives
@@ -1194,7 +1198,7 @@ $\mathrm{TV}$ & & & 0.000 & & & 0.315 & 0.091 \\
 \label{sec:consequences}
 % ----------------------------------------------------------
 
-the amplitude identity~\eqref{eq:weff} and
+The amplitude identity~\eqref{eq:weff} and
 Sections~\ref{prop:p1}--\ref{prop:p3} partition the sources of
 sub-optimality in the factorial experiment into four ordered factors:
 
@@ -1213,7 +1217,7 @@ sub-optimality in the factorial experiment into four ordered factors:
     optimised.
   \item \emph{Aggregation effect (SAW vs.\ TOPSIS vs.\ VIKOR):}
     TOPSIS and VIKOR aggregate through ideal-point distances;
-    the amplitude identity~\eqref{eq:weff} does not apply exactly to them.
+    The amplitude identity~\eqref{eq:weff} does not apply exactly to them.
     The factorial experiment measures the residual effect after
     controlling for items~1 and~2.
   \item \emph{Reference-set effect (normalisation over $N$ vs.\ $N'$):}
@@ -1301,9 +1305,10 @@ Section~\ref{sec:refset} returns to this.
   $\mathcal{A}'$).
   Blue diamonds: Pareto-efficient portfolios (gap~$=0$);
   orange crosses: dominated portfolios (gap~$>0$).
-  Panel~(a): cost ($F_1$, minimise) vs.\ impact ($F_2$, minimise);
-  (b): cost vs.\ safety ($F_3$, maximise);
+  Panel~(a): siting cost ($F_1$) vs.\ environmental impact ($F_2$);
+  (b): cost vs.\ safety ($F_3$);
   (c): impact vs.\ safety.
+  All three objectives are larger-is-better.
   Portfolios inside the frontier in any panel may still be efficient in
   the full three-objective space; classification is based on
   three-objective dominance.}
@@ -1315,7 +1320,7 @@ Section~\ref{sec:refset} returns to this.
 \label{sec:lemmaconf}
 % ----------------------------------------------------------
 
-the amplitude identity~\eqref{eq:weff} predicts that performance degrades with the
+The amplitude identity~\eqref{eq:weff} predicts that performance degrades with the
 distortion the normalisation imposes on the elicited weights, measured
 on the simplex by
 \begin{equation}
@@ -1495,11 +1500,11 @@ rather than a uniform shift.
 \caption{%
   Normalisation$\,\times\,$assembly interaction.
   Each point is the mean $Q_2[\mathcal{A}']$ averaged over all
-  aggregation methods and $\nboot$ Monte Carlo draws ($n=3{,}000$ per
+  aggregation methods and $\ndraws$ Monte Carlo draws ($n=500$ per
   cell); error bars are $95\%$ confidence intervals (normal
   approximation for proportions).
-  The slope of the min--max line ($+22.2$~pp) is $2.4\times$ larger
-  than the vector line ($+9.2$~pp), consistent with the analytical
+  The slope of the min--max line ($+22.2$~pp) is $2.4$~times as large
+  as the vector line ($+9.2$~pp), consistent with the analytical
   prediction that exact assembly inherits the score distortion and
   therefore pays only when the normalisation preserves the elicited
   weights.
@@ -1739,7 +1744,7 @@ contrast between VIKOR and TOPSIS.
 
 Our contribution is not the existence of the effect but its closed form
 and its cost.
-the amplitude identity~\eqref{eq:weff} expresses the effective weight as
+The amplitude identity~\eqref{eq:weff} expresses the effective weight as
 $w_j^{\mathrm{eff}}\propto w_j A_j$ and identifies $A_j$ for each of
 the three standard normalisations, which yields three results that the
 qualitative statement does not: min--max is the unique weight-preserving
@@ -1749,7 +1754,7 @@ normalisation follows immediately, since a common amplitude factor
 cancels in~\eqref{eq:weff}.
 Three observations previously treated separately become corollaries of
 one identity: Section~\ref{prop:p3}, the rank-space contraction of
-Section~\ref{sec:theorems}, and the amplitude loss
+Section~\ref{sec:three_norms}, and the amplitude loss
 of~\eqref{eq:refsetA}.
 
 The second difference is evidential.
@@ -1826,7 +1831,7 @@ distortion.
 \subsection{Limitations}
 
 \emph{Scope of the closed form.}
-the amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
+The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
 TOPSIS and VIKOR aggregate distances to ideal points, where amplitudes
 enter quadratically or in ratio form; the mechanism persists but the
 identity does not.
@@ -1911,7 +1916,7 @@ Given the normalised decision matrix the computation is a single line,
 and it exposes distortions that no rank-agreement diagnostic reveals.
 Where weights encode stakeholder judgements, as AHP weights do, a
 normalisation that silently multiplies one criterion by $2.88\times$ and
-divides another by $1.9\times$ is difficult to defend.
+divides another by $0.53\times$ is difficult to defend.
 
 Three limits delimit these findings.
 The closed form is exact for additive aggregation; TOPSIS and VIKOR
