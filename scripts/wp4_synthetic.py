@@ -364,6 +364,10 @@ def main():
     parser.add_argument('--calibrate', action='store_true',
                         help='Extend p0 to 0.95 to check TV coverage')
     parser.add_argument('--draws', type=int, default=N_DRAWS)
+    parser.add_argument('--worker', type=int, default=0,
+                        help='Worker index (0-based). Use with --total-workers.')
+    parser.add_argument('--total-workers', type=int, default=1,
+                        help='Total number of parallel workers.')
     args = parser.parse_args()
 
     # --- Unit test first, always ---
@@ -413,11 +417,21 @@ def main():
         return
 
     # Full grid
-    total = len(p0_levels) * len(shapes) * n_reps
+    all_jobs = list(iproduct(p0_levels, shapes, range(n_reps)))
+    total = len(all_jobs)
+
+    # Slice for this worker
+    worker      = args.worker
+    n_workers   = args.total_workers
+    my_jobs     = [j for i, j in enumerate(all_jobs) if i % n_workers == worker]
+    out_suffix  = f'_w{worker}' if n_workers > 1 else ''
+
+    print(f"Worker {worker}/{n_workers}: {len(my_jobs)}/{total} instances")
+
     rows = []
     done = 0
 
-    for p0, shape, rep in iproduct(p0_levels, shapes, range(n_reps)):
+    for p0, shape, rep in my_jobs:
         done += 1
         seed = SEED_BASE + int(round(p0 * 1000)) * 10000 + shapes.index(shape) * 100 + rep
         rng_inst = np.random.default_rng(seed)
@@ -438,17 +452,20 @@ def main():
         sys.stdout.flush()
 
     df = pd.DataFrame(rows)
-    df.to_csv(out_dir / 'wp4_synthetic.csv', index=False)
-    print(f"\nSaved {len(df)} rows to {out_dir/'wp4_synthetic.csv'}")
+    csv_out = out_dir / f'wp4_synthetic{out_suffix}.csv'
+    df.to_csv(csv_out, index=False)
+    print(f"\nSaved {len(df)} rows to {csv_out}")
 
     summary = df.groupby(['p0', 'shape', 'norm'])[['Q2', 'Q3', 'tv1', 'tv2']].mean()
-    summary.to_csv(out_dir / 'wp4_summary.csv')
+    summary_out = out_dir / f'wp4_summary{out_suffix}.csv'
+    summary.to_csv(summary_out)
 
-    print("\n=== Summary by norm ===")
-    print(df.groupby('norm')[['Q2', 'Q3', 'tv1']].mean().round(4).to_string())
-    print("\n=== Q2 by (p0, norm) ===")
-    print(df.groupby(['p0', 'norm'])['Q2'].mean().unstack('norm').round(3).to_string())
-    print("\nCONCLUÍDO")
+    if n_workers == 1:
+        print("\n=== Summary by norm ===")
+        print(df.groupby('norm')[['Q2', 'Q3', 'tv1']].mean().round(4).to_string())
+        print("\n=== Q2 by (p0, norm) ===")
+        print(df.groupby(['p0', 'norm'])['Q2'].mean().unstack('norm').round(3).to_string())
+    print(f"\nCONCLUÍDO worker={worker}")
 
 
 if __name__ == '__main__':
