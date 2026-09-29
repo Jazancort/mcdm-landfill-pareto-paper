@@ -59,8 +59,9 @@ W_AHP /= W_AHP.sum()   # renormalise to exact 1
 
 M = len(W_AHP)         # 11 criteria
 K = 3                  # portfolio size
-N_SITES = 400
+N_SITES = 120       # C(120,3)~280k trios; fast numpy enumeration
 D_MIN_KM = 10.0        # separation constraint (km)
+BOX_KM   = 50.0        # spatial domain side (km)
 N_DRAWS = 500          # weight draws per cell
 KAPPA = 50             # Dirichlet concentration
 SEED_BASE = 20260929
@@ -140,7 +141,7 @@ def gap_score(f: np.ndarray, front: np.ndarray, R: np.ndarray) -> float:
 # Spatial placement with separation constraint
 # ---------------------------------------------------------------------------
 
-def make_coords(n: int, rng: np.random.Generator, box_km: float = 60.0):
+def make_coords(n: int, rng: np.random.Generator, box_km: float = BOX_KM):
     """Random (x,y) in km × km box."""
     return rng.uniform(0, box_km, size=(n, 2))
 
@@ -148,26 +149,22 @@ def make_coords(n: int, rng: np.random.Generator, box_km: float = 60.0):
 def admissible_trios(coords: np.ndarray, d_min: float):
     """
     Return array of shape (n_trios, 3) of site indices forming admissible trios.
-    Uses a fast vectorised approach.
+    Vectorised: builds pairwise distance matrix once, then filters combinations.
+    Fast for N up to ~500.
     """
     n = len(coords)
-    # pairwise distances
-    dx = coords[:, 0:1] - coords[:, 0]   # (n,n)
-    dy = coords[:, 1:2] - coords[:, 1]
-    dist = np.sqrt(dx**2 + dy**2)         # (n,n)
+    # pairwise distances (n x n)
+    diff = coords[:, None, :] - coords[None, :, :]   # (n,n,2)
+    dist = np.sqrt((diff**2).sum(axis=2))             # (n,n)
+    ok = dist >= d_min                                # (n,n) bool
 
-    # admissible pairs
-    ok_pair = dist >= d_min
-
-    trios = []
-    for i in range(n):
-        for j in range(i+1, n):
-            if not ok_pair[i, j]:
-                continue
-            for k in range(j+1, n):
-                if ok_pair[i, k] and ok_pair[j, k]:
-                    trios.append((i, j, k))
-    return np.array(trios, dtype=np.int32) if trios else np.empty((0, 3), dtype=np.int32)
+    # generate all C(n,3) index triples and filter
+    idx = np.array(list(itertools.combinations(range(n), 3)), dtype=np.int32)
+    if len(idx) == 0:
+        return np.empty((0, 3), dtype=np.int32)
+    i, j, k = idx[:, 0], idx[:, 1], idx[:, 2]
+    mask = ok[i, j] & ok[i, k] & ok[j, k]
+    return idx[mask]
 
 
 # ---------------------------------------------------------------------------
