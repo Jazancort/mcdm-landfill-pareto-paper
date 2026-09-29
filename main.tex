@@ -634,6 +634,29 @@ the ideal--nadir variant is reported in the Supplementary Material.
 The analysis is conducted on a GIS dataset for Fogo Island, Cape Verde.
 This section describes the candidate grid, the criteria, and the preprocessing
 decisions that affect the downstream amplitude calculations.
+Figure~\ref{fig:workflow} summarises the six-stage pipeline; the subsections
+that follow correspond to Stages~1--6 in order.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_workflow.png}
+\caption{Six-stage MCDM pipeline for landfill site selection on Fogo Island,
+  Cape Verde.
+  Stage~1: GIS dataset with 389 viable sites and 11 criteria across three
+  objective groups (cost, environmental impact, social safety).
+  Stage~2: AHP-derived nominal weights ($\mathrm{CR}=\CR$) with Dirichlet
+  perturbation ($\kappa\in\{50,200\}$, $\ndraws$ draws).
+  Stage~3 (primary analytical focus): three normalisation rules whose
+  amplitude $A_j$ determines the effective weight
+  $w_j^{\mathrm{eff}}=w_jA_j/\sum_k w_kA_k$ (Eq.~\eqref{eq:weff}).
+  Stage~4: four aggregation methods spanning additive, distance-based and
+  outranking families.
+  Stage~5: greedy and optimal portfolio assembly subject to a
+  $d_{\min}=\dmin$~km separation constraint over $\Ntrios$ feasible trios.
+  Stage~6: performance evaluated as $Q_2=\Pr[M(w)\in\mathcal{F}(w)]$
+  against the exact Pareto frontier over an 18-cell factorial design.}
+\label{fig:workflow}
+\end{figure*}
 
 \subsection{Data and preprocessing}
 
