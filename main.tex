@@ -302,9 +302,18 @@ programming for multi-facility selection, but without comparing methods.
 compute an exact Pareto frontier for a landfill siting problem; they use
 a bi-objective MIP without any MCDM ranking component, and the frontier
 is bivariate rather than trivariate.
+\citet{AzancortNeto2026} provide the spatial dataset used in the present
+paper: $\Ncand$ candidate centroids on Fogo Island validated against a
+complete exhaustive search of the feasible combinatorial space, with
+AHP-derived weights and an exact Pareto frontier serving as the
+multi-objective ground truth.
+Precursor analyses of this dataset appear in \citet{AzancortNeto2021}
+(decision-tree classification of site suitability) and \citet{Costa2020}
+(mathematical and computational modelling of the AHP criteria matrix).
 No study in this literature has compared ranking-based MCDM methods
 against an exhaustively enumerated Pareto frontier under a hard spatial
-separation constraint.
+separation constraint while systematically varying aggregation,
+normalisation, and assembly strategy.
 
 % ----------------------------------------------------------
 \subsection{The present contribution}
@@ -447,6 +456,10 @@ the ideal--nadir variant is reported in the Supplementary Material.
 The dataset comprises $\Ncand$ candidate sites on Fogo Island, Cape Verde,
 screened from land-cover exclusion, each with $m=11$ criteria measured in
 metres, except slope aspect (degrees).
+The spatial discretisation and criteria definition follow
+\citet{AzancortNeto2026}, which provides the validated GIS dataset; the
+present paper uses the same candidate set, pairwise distance matrix, and
+criterion evaluations.
 
 \paragraph{Missing values.}
 Three entries are missing: roads (site~41), urban distance (site~385), and
@@ -478,7 +491,7 @@ and is recorded explicitly in Table~\ref{tab:amplitude}.
 \subsection{Criterion weights}
 
 Weights are obtained by AHP \citep{Saaty1990,Saaty2008} from the pairwise
-comparison matrix of the source study \citep{Andrade2015}, by column
+comparison matrix of the source study \citep{Andrade2015,AzancortNeto2026}, by column
 normalisation.
 Consistency is acceptable: $\lambda_{\max}=\lmax$, $CI=0.08525$,
 $RI=1.51$, hence $CR=\CR<0.10$.
@@ -962,7 +975,8 @@ method--assembly pair under the nominal AHP weights $\wahp$, with
 normalisation constants computed over all $\Ncand$ candidates (space~$A$).
 
 The reproduction is exact: SAW under optimal assembly returns
-$\{184,430,460\}$, the best-compromise portfolio of the source study,
+$\{184,430,460\}$, the best-compromise portfolio of the source study
+\citep{AzancortNeto2026},
 with objective values agreeing to $10^{-16}$.
 The pipeline therefore recovers the published solution before any
 factor is varied.
