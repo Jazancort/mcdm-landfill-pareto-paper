@@ -565,7 +565,7 @@ and we write $\mathbf{F}(t;w)=(F_1,F_2,F_3)$ to make the weight
 dependence explicit, since it is central to
 Section~\ref{sec:design}.
 
-\begin{remark}[what the benchmark is, and is not]
+\paragraph{What the benchmark is, and is not.}
 \label{rem:valuespace}
 $\mathbf{F}$ is a three-dimensional partial value space, not a vector of
 physically independent objectives: each component is an additive weighted
@@ -578,7 +578,6 @@ landfill models whose objectives are physical quantities
 We keep the three group-level value functions unaggregated and ask how
 much of the resulting trade-off surface is lost when a ranking method
 collapses them into a single score before the portfolio is assembled.
-\end{remark}
 
 \subsection{Reference set and the optimality gap}
 
@@ -746,7 +745,7 @@ distinction is not cosmetic:
     $\Fset(\wfr)$ of~\eqref{eq:front}.
 \end{enumerate}
 
-\begin{remark}[coherence condition]
+\paragraph{Coherence condition.}
 \label{rem:coherence}
 A dominance test is well defined only if $\wob=\wfr$.
 If they differ, the portfolio and the members of the reference set are
@@ -754,8 +753,7 @@ points of different objective spaces and their componentwise comparison
 has no decision-theoretic content.
 We state this explicitly because it is easy to violate silently when the
 reference set is precomputed once and the Monte Carlo loop recomputes
-portfolio objectives per draw.
-\end{remark}
+portfolio objectives per draw; we state it explicitly to make the constraint auditable.
 
 Weights are perturbed as $w\sim\mathrm{Dir}(\kappa\,\wahp)$ with
 concentration $\kappa\in\{50,200\}$ and $\ndraws$ draws per cell; larger
@@ -853,7 +851,7 @@ $w_j A_j / \sum_k w_k A_k = w_j$ for all $j$, which holds iff all
 $A_j$ equal the same constant.
 \end{proof}
 
-\begin{remark}[scope and empirical confirmation]
+\paragraph{Scope and empirical confirmation.}
 \label{rem:scope}
 Lemma~\ref{lem:amplitude} is exact for additive aggregation.
 Within that scope the prediction is borne out: across SAW cells,
@@ -875,7 +873,6 @@ precisely as the scope restriction predicts.
 We read this as corroboration of the mechanism rather than as a
 limitation of it: the distortion acts through the weighted sum, and
 it is visible exactly where a weighted sum is taken.
-\end{remark}
 
 \begin{corollary}[the three standard normalisations]
 \label{cor:three}
@@ -986,12 +983,11 @@ $F_\ell$ implies $\sum_{a \in T'} s(a) > \sum_{a \in T^*} s(a)$,
 contradicting the optimality of $T^*$.
 \end{proof}
 
-\begin{remark}
-Proposition~\ref{prop:p1} holds for any normalisation, so long as the
+\paragraph{Normalisation coherence in Proposition~\ref{prop:p1}.}
+Proposition~\ref{prop:p1} holds for any normalisation, provided the
 normalisation used to compute $F_\ell$ matches the one in the score $s$.
-We use the $Q_2 = 1$ cell as a regression test: any implementation
+The $Q_2 = 1$ cell serves as a regression test: any implementation
 returning a value below~$1$ is faulty.
-\end{remark}
 
 \noindent\textbf{Empirical verification.}
 SAW with min--max normalisation over the $\Nvia$ viable sites:
@@ -1025,7 +1021,7 @@ $\phi_j(a) = [B_j(a) - (n - B_j(a) - T_j(a))]/(n-1)
 Summing with weights and simplifying gives~\eqref{eq:p2identity}.
 \end{proof}
 
-\begin{remark}[rank scaling is not innocuous]
+\paragraph{Rank scaling is not innocuous.}
 \label{rem:p2normalization}
 Dividing midranks by $N+1$ --- the conventional rescaling to $(0,1)$
 --- does not equalise criterion amplitudes when ties are massive.
@@ -1041,7 +1037,6 @@ difference that \texttt{perm} is \emph{deflated} ($\times 0.616$) in
 rank space but \emph{inflated} ($\times 2.88$) in vector space: the
 same heavy-zero distribution distorts in opposite directions under the
 two normalisations.
-\end{remark}
 
 \noindent\textbf{Empirical verification.}
 On the Fogo Island dataset ($n = \Nvia$, $m = 11$ criteria), the
@@ -1090,7 +1085,7 @@ factor $0.51\times$.
 
 
 % ----------------------------------------------------------
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{Effective-weight amplitudes $A_j$ and ratios
   $w_j^{\mathrm{eff}}/w_j$ for the $\Nvia$ admissible Fogo Island sites.
@@ -1122,7 +1117,7 @@ Criterion & Group & $w_j$ & $A_j^{\text{mm}}$ & $A_j^{\text{vec}}$ &
 $\mathrm{TV}$ & & & 0.000 & & & 0.315 & 0.091 \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \begin{figure*}[htbp]
 \centering
@@ -1215,8 +1210,8 @@ method--assembly pair under the nominal AHP weights $\wahp$, with
 normalisation constants computed over all $\Ncand$ candidates (space~$A$).
 
 The reproduction is exact: SAW under optimal assembly returns
-$\{184,430,460\}$, the best-compromise portfolio of the source study
-\citep{AzancortNeto2026},
+$\{184,430,460\}$, the best-compromise portfolio identified by \citet{AzancortNeto2026}
+(using the AHP weights of \citealt{Andrade2015}),
 with objective values agreeing to $10^{-16}$.
 The pipeline therefore recovers the published solution before any
 factor is varied.
@@ -1389,7 +1384,7 @@ The applied siting literature routinely compares aggregation methods
 while leaving the normalisation implicit; on this evidence that is a
 comparison of the least consequential design choice.
 
-\begin{remark}[why pooling aggregation families obscures the mechanism]
+\paragraph{Why pooling aggregation families obscures the mechanism.}
 \label{rem:pooling}
 Averaging $Q_2$ across all aggregation families destroys the monotone
 ordering of Table~\ref{tab:tvorder}, and does so for reasons internal to
@@ -1406,7 +1401,6 @@ Both effects are outside the scope of Lemma~\ref{lem:amplitude} and
 both are predicted by it as exclusions.
 We therefore report the additive cells as the test of the mechanism and
 the full factorial as a description of practice.
-\end{remark}
 
 % ----------------------------------------------------------
 \subsection{Normalisation \texorpdfstring{$\times$}{x} assembly:
