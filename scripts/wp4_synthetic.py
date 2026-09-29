@@ -207,25 +207,23 @@ def evaluate_instance(fogo_trios, X_raw, w_ahp, n_draws, kappa, seed):
         )
 
         # Monte Carlo — per-draw, using w of that draw (wob = wfr coherence)
+        # SAW optimal: Q2=1 by prop:p1 (regression test for correctness)
+        # Q3 measures how far suboptimal draws fall from the frontier
         q2_list, q3_list = [], []
-        # Generate all weight draws upfront
         W_draws = rng.dirichlet(kappa * w_f32.astype(float), size=n_draws).astype(np.float32)
         W_draws /= W_draws.sum(1, keepdims=True)
 
+        trios_i32 = fogo_trios.astype(np.int32)
+
         for b_start in range(0, n_draws, BATCH):
             b_end = min(b_start + BATCH, n_draws)
-            W_batch = W_draws[b_start:b_end]   # (b, M)
-
-            # Batch objectives: C (n,M) @ W_batch.T (M,b) → (n, b)
-            # then build (n, b, 3) via group sums — but that's (n,b,3) large.
-            # Instead: process each draw independently (batch only for the matmul)
-            # C @ W_batch.T gives SAW scores (n, b)
-            SAW_batch = (C @ W_batch.T)  # (n_trios, b) float32
+            W_batch = W_draws[b_start:b_end]
+            SAW_batch = (C @ W_batch.T)  # (n_trios, b)
 
             for k in range(b_end - b_start):
                 w_k = W_batch[k]
                 Wg_k = build_Wg(w_k)
-                F_k  = (C @ Wg_k).astype(np.float32)   # (n_trios, 3)
+                F_k  = (C @ Wg_k).astype(np.float32)
                 best_idx = int(SAW_batch[:, k].argmax())
 
                 R_k = (F_k.max(0) - F_k.min(0)).astype(np.float32)
