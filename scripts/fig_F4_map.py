@@ -56,8 +56,8 @@ except Exception as e:
 
 # ── Figure — double-column width, tall ────────────────────────────────────
 # Elsevier double column = 190 mm. COL1 ≈ 88 mm, so 2*COL1 ≈ 176 mm ≈ 6.9 in
-FIG_W = COL1 * 2.0   # full double-column width
-FIG_H = FIG_W * 1.05  # slightly taller than wide (island aspect ratio)
+FIG_W = COL1 * 2.2   # full double-column width (Elsevier ~190 mm)
+FIG_H = FIG_W * 1.00  # square-ish (island is roughly circular)
 
 fig, ax = plt.subplots(figsize=(FIG_W, FIG_H))
 
