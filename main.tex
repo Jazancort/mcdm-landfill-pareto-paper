@@ -47,7 +47,7 @@
 \newcommand{\Fset}{\mathcal{F}}
 % Theorems
 \newtheorem{proposition}{Proposition}
-\newtheorem{corollary}{Corollary}[proposition]
+\newtheorem{corollary}{Corollary}
 \newtheorem{lemma}{Lemma}
 \newtheorem{remark}{Remark}
 \newcommand{\argmax}{\operatorname{argmax}}
@@ -701,13 +701,14 @@ Three normalisations are compared, spanning the standard taxonomies of
 \citet{Jahan2015} and \citet{Aytekin2021}:
 \begin{align}
   \text{min--max:} \quad &
-    c_j(i) = \frac{x_{ij}-\min_j}{\max_j-\min_j}
-    \;\;\text{(complemented for cost criteria),} \label{eq:mm} \\
+    c_j(i) = \frac{x_{ij}-\min_j}{\max_j-\min_j}, \label{eq:mm} \\
   \text{vector:} \quad &
     c_j(i) = x_{ij} \big/ \lVert\mathbf{x}_j\rVert_2, \label{eq:vec} \\
   \text{ranks:} \quad &
-    c_j(i) = r_j(i) \;\;\text{(midranks, ties averaged).} \label{eq:ranks}
+    c_j(i) = r_j(i). \label{eq:ranks}
 \end{align}
+Cost criteria are complemented in~\eqref{eq:mm}; ranks are midranks with
+ties averaged.
 Two properties drive our results.
 First, none of the three is invariant to the inclusion or exclusion of
 alternatives: min--max depends on the sample extrema, vector normalisation
@@ -778,7 +779,7 @@ points of different objective spaces and their componentwise comparison
 has no decision-theoretic content.
 We state this explicitly because it is easy to violate silently when the
 reference set is precomputed once and the Monte Carlo loop recomputes
-portfolio objectives per draw; we state it explicitly to make the constraint auditable.
+portfolio objectives per draw.
 
 Weights are perturbed as $w\sim\mathrm{Dir}(\kappa\,\wahp)$ with
 concentration $\kappa\in\{50,200\}$ and $\ndraws$ draws per cell; larger
@@ -1613,7 +1614,7 @@ Because~\eqref{eq:rsep} is a hard constraint rather than an objective
 \citep{Erkut1996,MoonChaudhry1984}, the foreclosure cannot be undone by
 re-weighting: no choice of $w$ restores a site greedy has already
 excluded.
-This distinguishes the assembly effect from the normalisation effect
+This distinguishes the assembly effect from the normalisation effect:
 the former is a combinatorial loss, the latter a re-parameterisation
 of the value model.
 
@@ -1680,7 +1681,7 @@ multi-criteria scores.
 \citet{BransMareschal1992} introduced constrained selection over
 PROMETHEE flows; \citet{Mavrotas2006} combined multi-criteria scores
 with binary programming; \citet{VetscheraDeAlmeida2012} formulated
-$c$-optimal portfolios, of which the present problem with $\kk=3$ is an
+$c$-optimal portfolios, of which the present problem with $k=\kk$ is an
 instance; and \citet{DeAlmeidaVetschera2012} showed that PROMETHEE~V
 portfolios depend on the scale transformation applied to the flows.
 
@@ -1731,8 +1732,8 @@ space irrespective of class balance; and VIKOR's invariance to vector
 normalisation follows immediately, since a common amplitude factor
 cancels in~\eqref{eq:weff}.
 Three observations previously treated separately become corollaries of
-one identity: Proposition~\ref{prop:p3},
-Remark~\ref{rem:p2normalization}, and the amplitude loss
+one identity: Proposition~\ref{prop:p3}, the rank-space contraction of
+Section~\ref{sec:theorems}, and the amplitude loss
 of~\eqref{eq:refsetA}.
 
 The second difference is evidential.
@@ -1824,7 +1825,7 @@ additional normalisation families (sum, max, Weitendorf) would supply at
 modest computational cost.
 
 \emph{Single instance.}
-One candidate set, one weight vector source, $\kk=3$.
+One candidate set, one weight vector source, and $k=\kk$.
 The analytic results are instance-independent, but the magnitudes depend
 on the marginal distributions; \texttt{perm} with 350 tied zeros is an
 unusually adversarial case.
