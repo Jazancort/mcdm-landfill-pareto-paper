@@ -1280,14 +1280,14 @@ TOPSIS with vector normalisation and VIKOR are also dominated
 ($\mathrm{gap}=0.048$ and $0.052$), while TOPSIS with min--max
 normalisation and PROMETHEE~II attain the reference set.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering
 \caption{Portfolios under nominal weights $\wahp$, space~$A$
   (normalisation over all $\Ncand$ candidates). The gap is defined
   in~\eqref{eq:gap}; $\mathrm{gap}=0$ iff the portfolio lies in the
   reference set.}
 \label{tab:canonical}
-\begin{tabular}{llccccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llccccc}
 \toprule
 Method & Assembly & Sites & $F_1$ & $F_2$ & $F_3$ & gap \\
 \midrule
@@ -1300,8 +1300,8 @@ PROMETHEE~II      & greedy  & $\{51,233,345\}$  & 0.0447 & 0.5900 & 0.4852 & 0.0
 \midrule
 Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.000 \\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{tabular*}
+\end{table*}
 
 A first indication that the reference set is itself implicated: when
 normalisation constants are recomputed over the $\Nvia$ admissible sites
