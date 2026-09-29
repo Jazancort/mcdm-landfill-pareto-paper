@@ -148,23 +148,35 @@ def make_coords(n: int, rng: np.random.Generator, box_km: float = BOX_KM):
 
 def admissible_trios(coords: np.ndarray, d_min: float):
     """
-    Return array of shape (n_trios, 3) of site indices forming admissible trios.
-    Vectorised: builds pairwise distance matrix once, then filters combinations.
-    Fast for N up to ~500.
+    Vectorised trio enumeration. Builds upper-triangle pair index,
+    then filters valid triples using only admissible pairs.
+    Fast: O(n^2) memory for pairs, much less for trios.
     """
     n = len(coords)
-    # pairwise distances (n x n)
-    diff = coords[:, None, :] - coords[None, :, :]   # (n,n,2)
-    dist = np.sqrt((diff**2).sum(axis=2))             # (n,n)
-    ok = dist >= d_min                                # (n,n) bool
+    diff = coords[:, None, :] - coords[None, :, :]
+    dist = np.sqrt((diff**2).sum(axis=2))
+    ok = dist >= d_min  # (n,n) bool
 
-    # generate all C(n,3) index triples and filter
-    idx = np.array(list(itertools.combinations(range(n), 3)), dtype=np.int32)
-    if len(idx) == 0:
+    # admissible pairs (upper triangle)
+    pi, pj = np.where(np.triu(ok, k=1))  # shape (n_pairs,)
+
+    # for each pair (i,j), find all k > j where (i,k) and (j,k) are ok
+    trios = []
+    for idx in range(len(pi)):
+        i, j = int(pi[idx]), int(pj[idx])
+        # candidates: k > j, ok[i,k] and ok[j,k]
+        k_cands = np.where((np.arange(n) > j) & ok[i] & ok[j])[0]
+        if len(k_cands):
+            block = np.stack([
+                np.full(len(k_cands), i),
+                np.full(len(k_cands), j),
+                k_cands
+            ], axis=1)
+            trios.append(block)
+
+    if not trios:
         return np.empty((0, 3), dtype=np.int32)
-    i, j, k = idx[:, 0], idx[:, 1], idx[:, 2]
-    mask = ok[i, j] & ok[i, k] & ok[j, k]
-    return idx[mask]
+    return np.concatenate(trios, axis=0).astype(np.int32)
 
 
 # ---------------------------------------------------------------------------
