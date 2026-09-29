@@ -117,33 +117,1171 @@
 % =======================================================================
 % §3 Problem formulation
 % =======================================================================
-\input{problem_formulation}
+\section{Problem formulation}
+\label{sec:problem}
+
+\subsection{Candidate sites and the separation constraint}
+
+Let $S=\{1,\dots,N\}$ index candidate sites, each described by $m=11$
+geospatial criteria.
+A \emph{portfolio} is a subset $t\subseteq S$ with $|t|=\kk$.
+Portfolios must satisfy a hard pairwise separation constraint
+\begin{equation}
+  \label{eq:rsep}
+  d(u,v) \;\ge\; d_{\min}=\dmin\;\text{km}
+  \qquad \forall\, u,v\in t,\; u\neq v,
+\end{equation}
+where $d(\cdot,\cdot)$ is the great-circle distance.
+Constraint~\eqref{eq:rsep} is the $r$-separation condition of
+\citet{Erkut1996}, whose network antecedent is \citet{MoonChaudhry1984}.
+We emphasise that dispersion enters here as a \emph{constraint}, not an
+objective: the $p$-dispersion literature \citep{Kuby1987,Marti2022}
+maximises the minimum pairwise distance, whereas~\eqref{eq:rsep} merely
+renders non-compliant portfolios infeasible.
+The feasible set is
+\begin{equation}
+  \label{eq:T}
+  \Tset = \bigl\{\,t\subseteq S \;:\; |t|=\kk,\ t \text{ satisfies }
+    \eqref{eq:rsep}\,\bigr\},
+  \qquad |\Tset| = \Ntrios.
+\end{equation}
+
+\subsection{Three partial value functions}
+
+The $m$ criteria are partitioned into three groups reflecting the
+decision dimensions of landfill siting: siting and construction cost
+($G_1$), environmental impact ($G_2$), and social safety ($G_3$)
+(Table~\ref{tab:criteria}).
+Let $c_j(i)\in[0,1]$ be the partial value of site~$i$ on criterion~$j$,
+oriented so that larger is better, and let $w_j$ be the criterion weight.
+The portfolio objectives are additive within group and across sites:
+\begin{align}
+  F_1(t) &= \sum_{i\in t}\;\sum_{j\in G_1} w_j\,c_j(i),
+    && \text{(cost, minimise)} \label{eq:F1} \\
+  F_2(t) &= \sum_{i\in t}\;\sum_{j\in G_2} w_j\,c_j(i),
+    && \text{(impact, minimise)} \label{eq:F2} \\
+  F_3(t) &= \sum_{i\in t}\;\sum_{j\in G_3} w_j\,c_j(i),
+    && \text{(safety, maximise)} \label{eq:F3}
+\end{align}
+and we write $\mathbf{F}(t;w)=(F_1,F_2,F_3)$ to make the weight
+dependence explicit, since it is central to
+Section~\ref{sec:design}.
+
+\begin{remark}[what the benchmark is, and is not]
+\label{rem:valuespace}
+$\mathbf{F}$ is a three-dimensional partial value space, not a vector of
+physically independent objectives: each component is an additive weighted
+aggregate of normalised criteria.
+This distinguishes our reference set from portfolio decision analysis
+approaches that compute non-dominated portfolios in a scalar value space
+\citep{Liesio2007,Liesio2008,Yang2015}, and from bi-objective mixed-integer
+landfill models whose objectives are physical quantities
+\citep{EiseltMarianov2014}.
+We keep the three group-level value functions unaggregated and ask how
+much of the resulting trade-off surface is lost when a ranking method
+collapses them into a single score before the portfolio is assembled.
+\end{remark}
+
+\subsection{Reference set and the optimality gap}
+
+Portfolio $t$ \emph{dominates} $t'$ when $F_1(t)\le F_1(t')$,
+$F_2(t)\le F_2(t')$, $F_3(t)\ge F_3(t')$ with at least one strict
+inequality.
+Because $|\Tset|$ is finite and enumerable, the non-dominated set
+\begin{equation}
+  \label{eq:front}
+  \Fset(w) = \bigl\{\,t\in\Tset \;:\; \nexists\,t'\in\Tset
+    \text{ dominating } t\,\bigr\}
+\end{equation}
+is obtained \emph{exactly}, with no metaheuristic approximation.
+All dominance tests use a tolerance $\varepsilon=10^{-9}$.
+
+For dominated portfolios we report a scale-free shortfall.
+With $R_\ell = \max_{t\in\Tset}F_\ell - \min_{t\in\Tset}F_\ell$,
+\begin{equation}
+  \label{eq:gap}
+  \mathrm{gap}(t) = \max\Bigl(0,\;\max_{t'\in\Tset}\;\min\Bigl\{
+    \tfrac{F_1(t)-F_1(t')}{R_1},\;
+    \tfrac{F_2(t)-F_2(t')}{R_2},\;
+    \tfrac{F_3(t')-F_3(t)}{R_3}\Bigr\}\Bigr),
+\end{equation}
+so $\mathrm{gap}(t)=0$ iff $t\in\Fset$.
+Normalising by the attainable range rather than the ideal--nadir distance
+keeps the measure interpretable as a fraction of the achievable spread;
+the ideal--nadir variant is reported in the Supplementary Material.
+
 
 % =======================================================================
 % §4 Methods
 % =======================================================================
-\input{methods}
+\section{Methods}
+\label{sec:methods}
+
+\subsection{Data and preprocessing}
+
+The dataset comprises $\Ncand$ candidate sites on Fogo Island, Cape Verde,
+screened from land-cover exclusion, each with $m=11$ criteria measured in
+metres, except slope aspect (degrees).
+
+\paragraph{Missing values.}
+Three entries are missing: roads (site~41), urban distance (site~385), and
+aerodromes (site~429).
+Each is imputed by the midpoint of the observed range of its criterion over
+all $\Ncand$ candidates.
+Because the affected sites are three out of $\Ncand$ and none enters any
+reported portfolio, the choice of imputation rule is immaterial.
+
+\paragraph{Regulatory exclusion.}
+Sites overlapping a protected area (\texttt{dist\_protected}$=0$) cannot
+be licensed and are removed, leaving $\Nvia=\Ncand-\Nexcl$ admissible
+sites.
+\todo{D2: cite the Cape Verde instrument establishing the protected-area
+  prohibition (national waste or protected-areas framework; Directive
+  1999/31/EC as the EU-derived reference). Until this citation is in place,
+  the exclusion is described as an analytical screening decision, not a
+  legal constraint.}
+
+\paragraph{Criterion orientation.}
+Nine criteria are monotone distances; slope is a monotone cost.
+Slope aspect is circular and non-monotone; following the source study, it
+enters as an indicator: $c=1$ if aspect $\notin[90^\circ,180^\circ]$ and
+$c=0$ otherwise, yielding $n_1=94$ positives among the $\Nvia$ admissible
+sites.
+This binarisation matters for Proposition~\ref{prop:p3}
+and is recorded explicitly in Table~\ref{tab:criteria}.
+
+\subsection{Criterion weights}
+
+Weights are obtained by AHP \citep{Saaty1990,Saaty2008} from the pairwise
+comparison matrix of the source study \citep{Andrade2015}, by column
+normalisation.
+Consistency is acceptable: $\lambda_{\max}=\lmax$, $CI=0.08525$,
+$RI=1.51$, hence $CR=\CR<0.10$.
+The weight vector $\wahp$ is held fixed in the base experiment and
+perturbed in the Monte Carlo design of Section~\ref{sec:design}.
+
+\subsection{Normalisation}
+
+Three normalisations are compared, spanning the standard taxonomies of
+\citet{Jahan2015} and \citet{Aytekin2021}:
+\begin{align}
+  \text{min--max:} \quad &
+    c_j(i) = \frac{x_{ij}-\min_j}{\max_j-\min_j}
+    \;\;\text{(complemented for cost criteria),} \label{eq:mm} \\
+  \text{vector:} \quad &
+    c_j(i) = x_{ij} \big/ \lVert\mathbf{x}_j\rVert_2, \label{eq:vec} \\
+  \text{ranks:} \quad &
+    c_j(i) = r_j(i) \;\;\text{(midranks, ties averaged).} \label{eq:ranks}
+\end{align}
+Two properties drive our results.
+First, none of the three is invariant to the inclusion or exclusion of
+alternatives: min--max depends on the sample extrema, vector normalisation
+on the sample norm, and ranks on the sample composition.
+Second, the choice interacts with the aggregation: VIKOR is defined on a
+linear normalisation whereas TOPSIS is classically defined on the vector
+form, a contrast noted by \citet{OpricovicTzeng2004} and implicated in
+TOPSIS rank reversal \citep{GarciaCascales2012,Kuo2017}.
+The reference set over which the normalisation constants are computed is
+treated as an experimental factor in Section~\ref{sec:design}.
+
+\subsection{Aggregation}
+
+Four aggregations produce a complete ranking of the $\Nvia$ admissible
+sites: SAW and TOPSIS \citep{Hwang1981}, VIKOR \citep{OpricovicTzeng2004},
+and PROMETHEE~II with the usual (Type~I) preference function
+\citep{Brans1986,Mareschal2008}.
+In TOPSIS and VIKOR the ideal and anti-ideal points are computed on the
+already oriented criterion matrix; applying the orientation a second time
+inverts cost criteria and constitutes a documented implementation hazard.
+
+\subsection{Portfolio assembly}
+
+Given a site score $s(\cdot)$, two assembly rules are compared.
+\emph{Greedy}: add sites in decreasing score order, skipping any site
+that violates~\eqref{eq:rsep} against those already selected.
+\emph{Optimal}: maximise the additive score over the feasible set,
+$\argmax_{t\in\Tset}\sum_{i\in t}s(i)$, by complete enumeration
+of~$\Tset$.
+Both are exact given $s$; they differ only in whether the separation
+constraint is handled myopically or globally.
+Greedy assembly is the implicit rule whenever a ranking is read top-down,
+which is the dominant practice in the applied siting literature; optimal
+assembly corresponds to the ranking-plus-integer-programming paradigm
+\citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012}.
+
 
 % =======================================================================
 % §5 Experimental design
 % =======================================================================
-\input{experimental_design}
+\section{Experimental design}
+\label{sec:design}
+
+\subsection{Three entry points for the weight vector}
+
+A dominance test involves weights at three distinct places, and the
+distinction is not cosmetic:
+\begin{enumerate}[label=(\alph*)]
+  \item $\wsc$ --- the weights in the \emph{method score}, which order
+    the sites and hence determine the assembled portfolio $t=M(\wsc)$;
+  \item $\wob$ --- the weights used to map the assembled portfolio to
+    objective space, $\mathbf{F}(t;\wob)$;
+  \item $\wfr$ --- the weights used to build the reference set,
+    $\Fset(\wfr)$ of~\eqref{eq:front}.
+\end{enumerate}
+
+\begin{remark}[coherence condition]
+\label{rem:coherence}
+A dominance test is well defined only if $\wob=\wfr$.
+If they differ, the portfolio and the members of the reference set are
+points of different objective spaces and their componentwise comparison
+has no decision-theoretic content.
+We state this explicitly because it is easy to violate silently when the
+reference set is precomputed once and the Monte Carlo loop recomputes
+portfolio objectives per draw.
+\end{remark}
+
+Weights are perturbed as $w\sim\mathrm{Dir}(\kappa\,\wahp)$ with
+concentration $\kappa\in\{50,200\}$ and $\ndraws$ draws per cell; larger
+$\kappa$ concentrates the draws around $\wahp$.
+Throughout, $\kappa$ denotes only this concentration parameter; the
+separation threshold is always written $d_{\min}=\dmin$~km.
+
+\subsection{Two robustness measures}
+
+Both quantities below satisfy the coherence condition of
+Remark~\ref{rem:coherence}:
+\begin{align}
+  Q_1 &= \Pr_{w}\bigl[\,M(w)\in\Fset(\wahp)\,\bigr],
+    && \wsc=w,\quad \wob=\wfr=\wahp, \label{eq:Q1} \\
+  Q_2 &= \Pr_{w}\bigl[\,M(w)\in\Fset(w)\,\bigr],
+    && \wsc=\wob=\wfr=w. \label{eq:Q2}
+\end{align}
+They answer different questions.
+$Q_2$ is \emph{internal consistency}: given a weight vector, does the
+method recover a portfolio that is Pareto-efficient under that same weight
+vector?
+$Q_1$ is \emph{robustness to weight misspecification}: how often does a
+perturbed method still land on the reference set of the nominal decision
+maker?
+$Q_2$ is the primary measure reported in this work.
+$Q_1$ is reported as absolute levels with confidence intervals and is not
+differenced across methods; because $Q_1$ with min-max normalisation
+evaluates portfolios chosen under various normalisation methods using a
+reference set built with min-max, any contrast between methods in $Q_1$
+conflates normalisation effects with evaluator alignment.
+
+Proposition~\ref{prop:p1} (Section~\ref{sec:propositions}) establishes that
+optimal-assembly SAW fixes $Q_2=1$ whenever score and objectives share the
+same normalisation. We use this cell as a regression test: any implementation
+returning $Q_2<1$ is faulty. It also delimits the factorial contrast, since
+one of the eight cells is fixed at unity by construction.
+
+\subsection{Normalisation reference set}
+
+Min-max and vector constants may be computed over all $\Ncand$ candidates
+(space~$A$) or over the $\Nvia$ admissible ones (space~$A'$).
+Space~$A$ reproduces the source study ($|\Fset|=\FAsize$ portfolios);
+space~$A'$ is the factorial design ($|\Fset|=\Fmmsize$), and the two
+reference sets share only $\FAinter$ portfolios.
+Including inadmissible sites shifts the scale without those sites being
+selectable --- a set-dependence mechanism documented for TOPSIS by
+\citet{GarciaCascales2012}.
+
+\subsection{Factorial design}
+
+The main experiment is a balanced $2^3$: aggregation
+$\{\text{SAW},\text{TOPSIS}\}$ $\times$ normalisation
+$\{\text{min--max},\text{vector}\}$ $\times$ assembly
+$\{\text{greedy},\text{optimal}\}$, evaluated in $Q_2[A']$.
+A wider 12-cell design adds VIKOR, PROMETHEE~II, and rank normalisation;
+it is unbalanced (VIKOR under vector normalisation is redundant by affine
+invariance) and is reported only for marginal means.
+Effects are reported in percentage points with $\nboot$-replicate
+bootstrap intervals, paired by draw.
+
+\subsection{Evaluator robustness}
+\label{sec:evaluators}
+
+Because the reference set of the $2^3$ design uses min-max partial value
+functions, part of the normalisation effect may reflect alignment with the
+evaluator rather than an intrinsic property.
+We therefore rebuild the reference set under two alternative partial value
+functions, holding $\Tset$ fixed:
+\begin{itemize}
+  \item $\Fset_{\mathrm{vec}}$: vector-normalised partial values
+    ($|\Fset|=\Fvecsize$ portfolios);
+  \item $\Fset_{\mathrm{fix}}$: partial values on \emph{a priori} fixed
+    bounds, independent of the candidate sample
+    ($|\Fset|=\Ffixsize$ portfolios).
+\end{itemize}
+The second follows the recommendation of \citet{GarciaCascales2012} that
+the value scale should not depend on the alternative set.
+The bounds are conventional physical and planning ranges fixed before the
+analysis; we make no regulatory claim for them, since the applicable
+jurisdiction is Cape Verde and the fixed-bound evaluator serves only to
+break sample dependence, which requires independence from the sample, not
+legal authority.
+\todo{D2/slope: if any bound is to be presented as normative, convert and
+  cite correctly --- a 30\% gradient is $\arctan(0.30)\approx16.7^\circ$,
+  not $20^\circ$.}
+
+In this dataset, the two alternative evaluators produce nearly identical
+classifications: the reference sets $\Fset_{\mathrm{vec}}$ and
+$\Fset_{\mathrm{fix}}$ share only 29 portfolios in common
+($|\Fset_{\mathrm{vec}}\cap\Fset_{\mathrm{fix}}|=29$ out of a union of
+$264$; Jaccard $0.11$), yet they return the same verdict on
+$99.9\%$ of draws.
+This is not a base-rate artefact: at the observed hit rates the
+chance-agreement level is $93$--$96\%$, giving $\kappa\approx 0.98$,
+and on the informative subset --- draws where at least one evaluator
+reports non-dominance --- agreement is above $90\%$ against $1.1\%$
+expected under independence.
+The two evaluators therefore do not constitute independent evidence:
+the assembled portfolio is almost always the same across draws, and both
+exogenous scales classify that portfolio identically.
+We report $\Fset_{\mathrm{fix}}$ as a confirmatory check rather than as
+a second independent test.
+
 
 % =======================================================================
 % §6 Propositions
 % =======================================================================
-\input{propositions}
+\section{Normalisation as implicit re-weighting: a closed-form analysis}
+\label{sec:propositions}
+
+% ----------------------------------------------------------
+\subsection{The amplitude lemma}
+\label{sec:amplitude}
+% ----------------------------------------------------------
+
+\begin{lemma}[Normalisation as implicit re-weighting]
+\label{lem:amplitude}
+Let $n_j : \mathbb{R}^N \to \mathbb{R}^N$ be a normalisation applied
+column-wise to criterion $j$, and let
+\begin{equation}
+  A_j = \max_i n_j(x_{ij}) - \min_i n_j(x_{ij})
+\end{equation}
+be the \emph{amplitude} of the normalised column.
+In any additive aggregation $s(i) = \sum_j w_j n_j(x_{ij})$, the
+contribution of criterion $j$ to score differences between any two
+alternatives is proportional to $w_j A_j$.
+The effective weights are therefore
+\begin{equation}
+  \label{eq:weff}
+  w_j^{\mathrm{eff}} = \frac{w_j A_j}{\sum_k w_k A_k},
+\end{equation}
+and $w^{\mathrm{eff}} = w$ for all $w$ if and only if $A_j$ is constant
+across $j$.
+\end{lemma}
+
+\begin{proof}
+For any two alternatives $i$ and $i'$,
+$s(i) - s(i') = \sum_j w_j [n_j(x_{ij}) - n_j(x_{i'j})]$.
+The maximum absolute contribution of criterion $j$ to this difference,
+over all pairs $(i,i')$, is $w_j A_j$.
+The share of total score variation attributable to criterion $j$ is
+therefore $w_j A_j / \sum_k w_k A_k$, which is $w_j^{\mathrm{eff}}$
+in~\eqref{eq:weff}.
+The ``if and only if'' follows because $w^{\mathrm{eff}} = w$ iff
+$w_j A_j / \sum_k w_k A_k = w_j$ for all $j$, which holds iff all
+$A_j$ equal the same constant.
+\end{proof}
+
+\begin{remark}[scope and empirical confirmation]
+\label{rem:scope}
+Lemma~\ref{lem:amplitude} is exact for additive aggregation.
+Within that scope the prediction is borne out: across SAW cells,
+mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.3\%$, $76.5\%$ and
+$55.5\%$ for min--max, ranks and vector normalisation respectively,
+against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.324$ ---
+a strictly monotone ordering ($R^2=0.995$ on three means; we report the
+ordering and note approximate proportionality, given $n=3$, $\mathrm{df}=1$).
+
+TOPSIS and VIKOR aggregate distances to ideal points rather than
+weighted sums, so amplitudes enter quadratically or in ratio form and
+the closed form does not transfer.
+Two consequences are observable.
+First, VIKOR is invariant to vector normalisation because the common
+scale factor cancels in its ratio form; the VIKOR$\times$vector cell is
+therefore redundant and excluded from the design.
+Second, pooling all aggregation families destroys the monotone ordering
+precisely as the scope restriction predicts.
+We read this as corroboration of the mechanism rather than as a
+limitation of it: the distortion acts through the weighted sum, and
+it is visible exactly where a weighted sum is taken.
+\end{remark}
+
+\begin{corollary}[the three standard normalisations]
+\label{cor:three}
+
+A natural measure of aggregate distortion is the total variation
+\begin{equation}
+  \label{eq:TV}
+  \mathrm{TV} = \tfrac{1}{2}\sum_j |w_j^{\mathrm{eff}} - w_j|,
+\end{equation}
+which is invariant to multiplication of all $A_j$ by a common constant
+(since that constant cancels in the renormalisation of~\eqref{eq:weff}
+and leaves $w^{\mathrm{eff}}$ unchanged).
+Any faithful measure of re-weighting must inherit this invariance;
+$D = \sum_j w_j |A_j - 1|$ does not, and is therefore not an
+appropriate summary of the distortion.
+
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Min--max.}
+    $A_j \equiv 1$ by construction; hence $w^{\mathrm{eff}} = w$.
+    Min--max is the unique member of the three that preserves elicited
+    weights exactly (for additive aggregations).
+  \item \textbf{Vector.}
+    $A_j = \rho_j = (\max_j x_j - \min_j x_j) / \lVert\mathbf{x}_j\rVert_2$,
+    which depends on the shape of the marginal distribution.
+    Criteria with heavy tails obtain $\rho_j$ close to unity (large
+    norm dominated by outliers); criteria with most mass at the median
+    obtain small $\rho_j$.
+  \item \textbf{Midranks scaled by $N+1$.}
+    $A_j = (r_j^{\max} - r_j^{\min})/(N+1)$, which approaches~$1$
+    when ties are absent but contracts with tie mass.
+    For a binary criterion with $n_0$ zeros and $n_1 = N-n_0$ ones,
+    the midranks of the two groups are $(1+n_0)/2$ and $(n_0+1+N)/2$,
+    giving
+    \begin{equation}
+      A_j = \frac{(n_0+1+N)/2 - (1+n_0)/2}{N+1} = \frac{N}{2(N+1)} \approx \frac{1}{2}.
+    \end{equation}
+    The result is \emph{independent of $n_1$}: every binary criterion
+    loses approximately half its nominal weight in rank space, regardless
+    of the balance between the two classes.
+    A binary indicator contributes half the amplitude of a continuous
+    criterion with no ties.
+\end{enumerate}
+\end{corollary}
+
+\noindent\textbf{Empirical calibration.}
+Table~\ref{tab:amplitude} reports $A_j$ for the three normalisations on
+the $\Nvia$ Fogo Island sites, along with the total variation
+$\mathrm{TV} = \frac{1}{2}\sum_j |w_j^{\mathrm{eff}} - w_j|$ as a
+summary statistic of aggregate distortion.
+Min--max gives $\mathrm{TV} = 0$ by construction.
+The vector normalisation gives $\mathrm{TV} = 0.324$: criterion
+\textit{perm} dominates, with $\rho_j = 0.583$ (factor
+$\mathbf{2.87\times}$ relative to nominal weight) because its raw
+distribution has 350 exact zeros and a maximum of~532~m, giving a
+long-tailed norm.
+The rank normalisation gives $\mathrm{TV} = 0.091$: \textit{perm} is
+deflated ($A_j = 0.547$, factor $\mathbf{0.55\times}$) because 350
+tied zeros compress the maximum midrank to $\approx 214.5$ instead
+of~$388$, while \textit{aspect} (binary) gives $A_j = N/[2(N+1)]
+\approx 0.499$ (factor $\mathbf{0.50\times}$) as predicted by
+Corollary~\ref{cor:three}(iii) --- independent of $n_1$.
+The directions are reversed: the same heavy-zero distribution inflates
+\textit{perm} under vector normalisation and deflates it under rank
+scaling.
+
+
+% ----------------------------------------------------------
+\subsection{Propositions}
+\label{sec:theorems}
+% ----------------------------------------------------------
+
+\begin{proposition}[Pareto consistency of optimal linear aggregation]
+\label{prop:p1}
+Let $v_j(a)$ be the normalised criterion values entering the objectives
+\eqref{eq:F1}--\eqref{eq:F3}, and let $s(a) = \sum_j w_j v_j(a)$ be
+the SAW score with the same weights and normalisation.
+Then the optimal set
+$T^* = \argmax_{T \in \Tset} \sum_{a \in T} s(a)$
+satisfies $T^* \in \Fset$, i.e., $Q_2 = 1$ almost surely.
+\end{proposition}
+
+\begin{proof}
+Suppose $T^*$ is dominated by $T' \in \Tset$.
+Then $F_\ell(T') \succeq F_\ell(T^*)$ for all $\ell$ and strictly for
+some $\ell$.
+Since each $F_\ell$ is a positive linear combination of the same
+per-site scores summed over the portfolio, strict improvement in
+$F_\ell$ implies $\sum_{a \in T'} s(a) > \sum_{a \in T^*} s(a)$,
+contradicting the optimality of $T^*$.
+\end{proof}
+
+\begin{remark}
+Proposition~\ref{prop:p1} holds for any normalisation, so long as the
+normalisation used to compute $F_\ell$ matches the one in the score $s$.
+We use the $Q_2 = 1$ cell as a regression test: any implementation
+returning a value below~$1$ is faulty.
+\end{remark}
+
+\noindent\textbf{Empirical verification.}
+SAW with min--max normalisation over the $\Nvia$ viable sites:
+$Q_2[\mathcal{A}'] = 100.0\%$ for both $\kappa \in \{50, 200\}$
+($\ndraws$ draws each).
+
+
+% ---
+
+\begin{proposition}[PROMETHEE~II with usual criterion equals rank-weighted SAW]
+\label{prop:p2}
+Let $P_j(d) = \mathbf{1}[d > 0]$.
+Denoting by $r_j(a)$ the midrank of site $a$ on criterion $j$, the
+PROMETHEE~II net flow satisfies
+\begin{equation}
+  \label{eq:p2identity}
+  \phi(a) = \frac{n+1}{n-1} - \frac{2}{n-1}\sum_{j=1}^m w_j\, r_j(a),
+\end{equation}
+for any tied-value pattern.
+The ranking induced by $\phi$ is therefore identical to that of
+$\tilde{s}(a) = \sum_j w_j r_j(a)$.
+\end{proposition}
+
+\begin{proof}
+For site $a$ and criterion $j$, let $B_j(a)$ count strictly worse sites
+and $T_j(a)$ be the tied-block size.
+The midrank satisfies $2r_j(a) = 2B_j(a) + T_j(a) + 1$.
+The net PROMETHEE flow on criterion $j$ is
+$\phi_j(a) = [B_j(a) - (n - B_j(a) - T_j(a))]/(n-1)
+            = [2r_j(a) - 1 - n]/(n-1)$.
+Summing with weights and simplifying gives~\eqref{eq:p2identity}.
+\end{proof}
+
+\begin{remark}[rank scaling is not innocuous]
+\label{rem:p2normalization}
+Dividing midranks by $N+1$ --- the conventional rescaling to $(0,1)$
+--- does not equalise criterion amplitudes when ties are massive.
+With $350$ tied zeros in \texttt{perm} among $\Nvia$ sites, its maximum
+midrank is $\approx 214.5$, so the rescaled column spans
+$[0.003,\,0.550]$ while every other criterion spans $[0.003,\,0.997]$.
+By Corollary~\ref{cor:three}(iii), the effective weight of
+\texttt{perm} is scaled by $\approx 0.55$, and the exact identity
+\eqref{eq:p2identity} no longer holds for the implemented score.
+This is the rank-space counterpart of the vector-normalisation
+distortion of Corollary~\ref{cor:three}(ii), with the notable
+difference that \texttt{perm} is \emph{deflated} ($\times 0.55$) in
+rank space but \emph{inflated} ($\times 2.87$) in vector space: the
+same heavy-zero distribution distorts in opposite directions under the
+two normalisations.
+\end{remark}
+
+\noindent\textbf{Empirical verification.}
+On the Fogo Island dataset ($n = \Nvia$, $m = 11$ criteria), the
+maximum absolute difference between $\phi(a)$ and
+$-(2/(n-1))\tilde{s}(a)$ across all sites is $6.7 \times 10^{-16}$
+(machine precision), with Spearman $\rho = 1.000000$ and zero ranking
+inversions.
+
+
+% ---
+
+\begin{proposition}[Vector normalisation distorts effective weights]
+\label{prop:p3}
+Under vector normalisation, $v_j(a) = x_j(a) / \lVert\mathbf{x}_j\rVert_2$.
+The amplitude is $A_j = \rho_j$ as defined in
+Lemma~\ref{lem:amplitude}, and by~\eqref{eq:weff}
+\begin{equation}
+  \label{eq:weff_vec}
+  w_j^{\mathrm{eff}} = \frac{w_j\,\rho_j}{\sum_k w_k\,\rho_k},
+  \qquad
+  \rho_j = \frac{\max_a x_j(a) - \min_a x_j(a)}
+                {\lVert\mathbf{x}_j\rVert_2}.
+\end{equation}
+For binary criteria, $\rho_j = 1/\sqrt{n_1}$ exactly, where $n_1$ is
+the number of ones.
+\end{proposition}
+
+\begin{proof}
+The range of $v_j(a)$ over all sites is
+$(\max_a x_j(a) - \min_a x_j(a)) / \lVert\mathbf{x}_j\rVert_2 = \rho_j$,
+so $A_j = \rho_j$ and~\eqref{eq:weff_vec} follows from~\eqref{eq:weff}.
+For binary $x_j \in \{0,1\}$ with $n_1$ ones,
+$\lVert\mathbf{x}_j\rVert_2 = \sqrt{n_1}$ and
+$\max - \min = 1$, giving $\rho_j = 1/\sqrt{n_1}$.
+\end{proof}
+
+\noindent\textbf{Empirical calibration.}
+Table~\ref{tab:amplitude} lists $\rho_j$ and $w_j^{\mathrm{eff}}/w_j$
+for all eleven criteria.
+\textit{Perm} ($w_j = 0.152$): $\rho_j = 0.583$, effective-weight
+factor $\mathbf{2.87\times}$.
+\textit{Urban} ($w_j = 0.166$): factor $\mathbf{0.53\times}$.
+\textit{Aspect} (binary, $n_1 = 94$): $\rho_j = 1/\sqrt{94} = 0.103$,
+factor $0.51\times$.
+
+
+% ----------------------------------------------------------
+\subsection{Consequences for the factorial comparison}
+\label{sec:consequences}
+% ----------------------------------------------------------
+
+Lemma~\ref{lem:amplitude} and
+Propositions~\ref{prop:p1}--\ref{prop:p3} partition the sources of
+sub-optimality in the factorial experiment into four ordered factors:
+
+\begin{enumerate}
+  \item \emph{Normalisation effect (min--max vs.\ others):}
+    Min--max is the only normalisation that preserves elicited weights
+    in additive aggregations (Corollary~\ref{cor:three}).
+    Under SAW, where the Lemma applies exactly, both the greedy and
+    optimal assembly benefit from the preservation.
+  \item \emph{Assembly effect (optimal vs.\ greedy):}
+    The greedy procedure may be Pareto-dominated even when the score
+    is well-calibrated (Section~\ref{sec:results}).
+    The assembly effect is amplified under min--max because the score
+    is well-aligned with the Pareto front, and suppressed under vector
+    normalisation because the distorted score is what is being
+    optimised.
+  \item \emph{Aggregation effect (SAW vs.\ TOPSIS vs.\ VIKOR):}
+    TOPSIS and VIKOR aggregate through ideal-point distances;
+    Lemma~\ref{lem:amplitude} does not apply exactly to them.
+    The factorial experiment measures the residual effect after
+    controlling for items~1 and~2.
+  \item \emph{Reference-set effect (normalisation over $N$ vs.\ $N'$):}
+    Including inadmissible sites in the normalisation reference shifts
+    the scale without those sites being selectable
+    (Section~\ref{sec:fourthcell}).
+\end{enumerate}
+
 
 % =======================================================================
 % §7 Results
 % =======================================================================
-\input{results}
+\section{Results}
+\label{sec:results}
+
+% ----------------------------------------------------------
+\subsection{Base portfolios under nominal weights}
+\label{sec:base}
+% ----------------------------------------------------------
+
+Table~\ref{tab:canonical} reports the portfolio selected by each
+method--assembly pair under the nominal AHP weights $\wahp$, with
+normalisation constants computed over all $\Ncand$ candidates (space~$A$).
+
+The reproduction is exact: SAW under optimal assembly returns
+$\{184,430,460\}$, the best-compromise portfolio of the source study,
+with objective values agreeing to $10^{-16}$.
+The pipeline therefore recovers the published solution before any
+factor is varied.
+
+Two failures are visible at nominal weights.
+Greedy assembly of the \emph{same} SAW score returns $\{184,279,320\}$
+with $\mathrm{gap}=0.032$, a dominated portfolio sharing one site with
+the optimum.
+TOPSIS with vector normalisation and VIKOR are also dominated
+($\mathrm{gap}=0.048$ and $0.052$), while TOPSIS with min--max
+normalisation and PROMETHEE~II attain the reference set.
+
+\begin{table*}[t]
+\centering
+\caption{Portfolios under nominal weights $\wahp$, space~$A$
+  (normalisation over all $\Ncand$ candidates). The gap is defined
+  in~\eqref{eq:gap}; $\mathrm{gap}=0$ iff the portfolio lies in the
+  reference set.}
+\label{tab:canonical}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llccccc}
+\toprule
+Method & Assembly & Sites & $F_1$ & $F_2$ & $F_3$ & gap \\
+\midrule
+SAW, min--max     & greedy  & $\{184,279,320\}$ & 0.1273 & 0.5963 & 0.6207 & 0.032 \\
+SAW, min--max     & optimal & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.000 \\
+TOPSIS, vector    & greedy  & $\{233,320,355\}$ & 0.1113 & 0.5669 & 0.5358 & 0.048 \\
+TOPSIS, min--max  & greedy  & $\{184,227,460\}$ & 0.1104 & 0.6712 & 0.6883 & 0.000 \\
+VIKOR             & greedy  & $\{233,279,320\}$ & 0.1190 & 0.5819 & 0.5879 & 0.052 \\
+PROMETHEE~II      & greedy  & $\{51,233,345\}$  & 0.0447 & 0.5900 & 0.4852 & 0.000 \\
+\midrule
+Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.000 \\
+\bottomrule
+\end{tabular*}
+\end{table*}
+
+A first indication that the reference set is itself implicated: when
+normalisation constants are recomputed over the $\Nvia$ admissible sites
+(space~$A'$), \emph{all six} portfolios become non-dominated.
+The failures in space~$A$ are not solely attributable to the methods;
+they are partly induced by computing the value scale over sites that
+cannot be selected.
+Section~\ref{sec:refset} returns to this.
+
+% ----------------------------------------------------------
+\subsection{Confirmation of the amplitude lemma}
+\label{sec:lemmaconf}
+% ----------------------------------------------------------
+
+Lemma~\ref{lem:amplitude} predicts that performance degrades with the
+distortion the normalisation imposes on the elicited weights, measured
+on the simplex by
+\begin{equation}
+  \label{eq:TV_results}
+  \mathrm{TV} = \tfrac12\sum_{j=1}^{m}\bigl|w_j^{\mathrm{eff}}-w_j\bigr|,
+  \qquad
+  w_j^{\mathrm{eff}} = \frac{w_j A_j}{\sum_k w_k A_k}.
+\end{equation}
+Total variation is the appropriate measure because, as noted after
+Corollary~\ref{cor:three}, $w^{\mathrm{eff}}$ is invariant to a common
+rescaling of all amplitudes: a factor $c>0$ applied to every $A_j$
+cancels in~\eqref{eq:TV_results} and produces no re-weighting.
+
+Table~\ref{tab:tvorder} pairs the predicted distortion with observed
+performance, restricted to additive aggregation --- the scope in which
+the lemma is exact.
+
+\begin{table}[t]
+\centering
+\caption{Predicted distortion and observed performance under additive
+  aggregation (SAW), $\kappa=200$, space~$A'$.
+  Amplitudes $A_j$ are computed over the $\Nvia$ admissible sites.}
+\label{tab:tvorder}
+\begin{tabular}{lccc}
+\toprule
+Normalisation & $A_j$ & $\mathrm{TV}$ & $Q_2[A']$ \\
+\midrule
+min--max & $\equiv 1$                        & 0.000 & 82.3\% \\
+midranks & $(r_j^{\max}-r_j^{\min})/(N{+}1)$ & 0.091 & 76.5\% \\
+vector   & $\rho_j$                          & 0.324 & 55.5\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The ordering is strictly monotone in the predicted direction, and the
+magnitudes are approximately proportional: a distortion of $0.091$
+costs $5.8$~pp, while $0.324$ costs $26.8$~pp.
+A least-squares fit over the three levels gives a slope of
+$-84.1$~pp per unit of total variation with $R^2=0.995$.
+We report the \emph{ordering and approximate proportionality}, not a
+predictive coefficient: with three levels the residual degree of freedom
+is one, and any monotone triple admits a close linear fit.
+The claim we make is the analytic one of Corollary~\ref{cor:three} ---
+min--max is the unique weight-preserving choice among the three ---
+for which the empirical ordering is corroboration rather than
+evidential foundation.
+
+Two entries of Table~\ref{tab:tvorder} deserve comment because they
+isolate distinct mechanisms acting on the same criterion.
+Under vector normalisation, \texttt{perm} is \emph{inflated} to
+$2.865\times$ its nominal weight, because its long right tail
+concentrates the Euclidean norm in few sites.
+Under midranks scaled by $N+1$, the same criterion is \emph{deflated}
+to $\approx0.55\times$, because its 350 tied zeros compress the
+attainable rank range to $[0.003,\,0.550]$ while every other criterion
+spans $[0.003,\,0.997]$.
+The two normalisations distort the same criterion in opposite
+directions, for reasons the lemma makes explicit and neither
+normalisation makes visible to the analyst.
+
+% ----------------------------------------------------------
+\subsection{The factorial design: aggregation is downstream}
+\label{sec:factorial}
+% ----------------------------------------------------------
+
+Table~\ref{tab:factorial} reports the balanced $2^3$ design and
+Table~\ref{tab:effects} the contrasts, with $\nboot$-replicate bootstrap
+intervals paired by draw.
+
+\begin{table}[t]
+\centering
+\caption{$Q_2[A']$ for the balanced $2^3$ design ($\kappa=200$,
+  $\ndraws$ draws). The SAW/min--max/optimal cell is fixed at $100\%$ by
+  Proposition~\ref{prop:p1} and serves as a regression test.}
+\label{tab:factorial}
+\begin{tabular}{llc}
+\toprule
+Aggregation & Normalisation, assembly & $Q_2[A']$ \\
+\midrule
+\multirow{4}{*}{SAW}
+ & min--max, greedy  & 64.6\% \\
+ & min--max, optimal & \textbf{100.0\%} \\
+ & vector, greedy    & 54.2\% \\
+ & vector, optimal   & 56.8\% \\
+\midrule
+\multirow{4}{*}{TOPSIS}
+ & min--max, greedy  & 72.4\% \\
+ & min--max, optimal & 96.6\% \\
+ & vector, greedy    & 50.6\% \\
+ & vector, optimal   & 52.4\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Contrasts in percentage points of $Q_2[A']$ ($\kappa=200$;
+  $\nboot$ bootstrap replicates paired by draw).}
+\label{tab:effects}
+\begin{tabular}{lrc}
+\toprule
+Contrast & Effect & 95\% CI \\
+\midrule
+Normalisation (min--max $-$ vector) & $+29.9$ & $[+27.1,\,+32.9]$ \\
+Assembly (optimal $-$ greedy)       & $+16.0$ & $[+14.1,\,+17.9]$ \\
+Aggregation (SAW $-$ TOPSIS)        & $+0.9$  & $[-0.5,\,+2.3]$ \\
+\midrule
+Assembly within min--max            & $+29.8$ & $[+27.4,\,+32.2]$ \\
+Assembly within vector              & $+2.2$  & $[-0.5,\,+4.9]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The aggregation contrast of $+0.9$~pp, with an interval containing
+zero, is not an inconclusive comparison; it is what the lemma predicts.
+Both aggregations operate on a decision matrix whose effective weights
+have already been fixed by the normalisation.
+The distortion occurs upstream of the aggregation operator, so replacing
+one operator with another cannot recover it.
+The applied siting literature routinely compares aggregation methods
+while leaving the normalisation implicit; on this evidence that is a
+comparison of the least consequential design choice.
+
+\begin{remark}[why pooling aggregation families obscures the mechanism]
+\label{rem:pooling}
+Averaging $Q_2$ across all aggregation families destroys the monotone
+ordering of Table~\ref{tab:tvorder}, and does so for reasons internal to
+the mechanism.
+VIKOR normalises by ratios to the ideal and anti-ideal point, in which
+a common scale factor cancels; VIKOR is therefore invariant to vector
+normalisation, the VIKOR$\times$vector cell duplicates
+VIKOR$\times$min--max, and pooling it inflates the vector average
+by~$5.9$~pp.
+Rank normalisation under distance-based aggregation degrades performance
+far more than the additive re-weighting accounts for, because ranks
+distort the Euclidean geometry on which those methods depend.
+Both effects are outside the scope of Lemma~\ref{lem:amplitude} and
+both are predicted by it as exclusions.
+We therefore report the additive cells as the test of the mechanism and
+the full factorial as a description of practice.
+\end{remark}
+
+% ----------------------------------------------------------
+\subsection{Normalisation \texorpdfstring{$\times$}{x} assembly:
+  optimisation amplifies the distortion}
+\label{sec:interaction}
+% ----------------------------------------------------------
+
+The assembly main effect of $+16.0$~pp averages two very different
+regimes.
+Under min--max normalisation, replacing greedy with optimal assembly is
+worth $+29.8$~pp $[+27.4,+32.2]$; under vector normalisation it is
+worth $+2.2$~pp $[-0.5,+4.9]$, an interval containing zero.
+
+The lemma explains the asymmetry.
+Optimal assembly maximises $\sum_{i\in t}s(i)$ exactly, and by
+Proposition~\ref{prop:p1} exact maximisation of an additive score yields
+a Pareto-efficient portfolio \emph{under the weights that score
+encodes}.
+When the score encodes $w^{\mathrm{eff}}\neq w$, optimal assembly
+solves the wrong problem exactly: it pursues the criterion trade-offs of
+$w^{\mathrm{eff}}$, which in the vector case inflates \texttt{perm}
+by $2.865\times$ and deflates \texttt{urban} to $0.525\times$.
+Greedy assembly, being myopic, is partly insulated --- it fails for its
+own reasons, but it does not optimise the distortion.
+
+This has a direct implication for practice.
+Adding integer programming on top of a ranking is a standard upgrade
+\citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012},
+but on this evidence the upgrade pays only when the normalisation
+already preserves the elicited weights.
+Exact assembly on a vector-normalised score captures almost none of the
+available gain.
+\subsection{The reference set: a second, more severe mechanism}
+\label{sec:refset}
+% ----------------------------------------------------------
+
+The results of Section~\ref{sec:lemmaconf} show that Mechanism~1
+(implicit re-weighting, $\mathrm{TV}$) orders the three normalisations
+within additive aggregation.
+A second mechanism governs the fourth cell, and it is more severe.
+
+\paragraph{Mechanism 2: score--evaluator mismatch.}
+Proposition~\ref{prop:p1} guarantees Pareto efficiency for the optimal
+portfolio only when the \emph{score and the objectives use the same
+normalisation}.
+When they do not, the guarantee is not weakened but voided.
+The observed cost (Table~\ref{tab:fourthcell}: $100\%\to20\%$,
+a loss of $80$~pp under optimal assembly) far exceeds what
+Mechanism~1 predicts: $\mathrm{TV}=0.107$ implies $\approx9.0$~pp,
+accounting for only $14\%$ of the effect.
+The gap is the signature of Mechanism~2.
+
+This also explains the interaction of Section~\ref{sec:interaction}.
+Under vector normalisation, exact assembly optimises a score that is
+misaligned with the evaluator; the $+2.2$~pp gain is residual.
+Mechanism~1 (re-weighting) and Mechanism~2 (mismatch) are additive:
+mismatch removes the theoretical warrant for optimising, and re-weighting
+distorts what is being optimised.
+
+Min--max normalisation satisfies $A_j\equiv1$ over the set on which its
+constants are computed.
+If that set includes alternatives that cannot be selected, the guarantee
+no longer applies: over the $\Nvia$ admissible sites, the attainable
+amplitude becomes
+\begin{equation}
+  \label{eq:refsetA}
+  A_j = \frac{\max_{\Nvia}(j)-\min_{\Nvia}(j)}
+             {\max_{\Ncand}(j)-\min_{\Ncand}(j)} \;\le\; 1,
+\end{equation}
+which varies across criteria and re-weights (Mechanism~1 component).
+Computing~\eqref{eq:refsetA} for the eleven criteria yields
+$\mathrm{TV}=0.107$ (Table~\ref{tab:amprefset}).
+
+\begin{table}[t]
+\centering
+\caption{Amplitude ratio~\eqref{eq:refsetA} by criterion.}
+\label{tab:amprefset}
+\begin{tabular}{lcc}
+\toprule
+Criterion & $A_j$ & $w_j$ \\
+\midrule
+\texttt{perm}      & 0.482 & 0.152 \\
+\texttt{slope}     & 0.683 & 0.113 \\
+\texttt{rivers}    & 0.648 & 0.091 \\
+\texttt{urban}     & 0.755 & 0.166 \\
+\texttt{coast}     & 0.924 & 0.069 \\
+\texttt{protected} & 0.999 & 0.066 \\
+remaining 5        & 1.000 & ---   \\
+\midrule
+$\mathrm{TV}$      & \multicolumn{2}{c}{$0.107$} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:fourthcell} separates the set over which the
+\emph{method} computes its constants from the set over which the
+\emph{evaluator} builds the reference set.
+
+\begin{table}[t]
+\centering
+\caption{Score--evaluator alignment, $Q_2$, SAW min--max, $\kappa=200$.}
+\label{tab:fourthcell}
+\begin{tabular}{llcc}
+\toprule
+Method set & Evaluator & greedy & optimal \\
+\midrule
+$\Ncand$ & $A$  & 68.4\% & \textbf{100.0\%} \\
+$\Ncand$ & $A'$ & 15.0\% &  20.0\% \\
+$\Nvia$  & $A$  & 46.6\% &  95.0\% \\
+$\Nvia$  & $A'$ & 64.6\% & \textbf{100.0\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Both diagonal cells confirm Proposition~\ref{prop:p1} (optimal assembly
+must reach $100\%$ when score and evaluator are aligned).
+The off-diagonal costs confirm Mechanism~2: mismatch dominates.
+\todo{D2: cite the Cape Verde legal instrument to convert the analytical
+  claim into a normative one.}
+
+
+
+\subsection{The greedy shortfall}
+\label{sec:greedy}
+% ----------------------------------------------------------
+
+Proposition~\ref{prop:p1} guarantees that optimal assembly of an
+additive score attains the reference set under matching weights;
+Table~\ref{tab:factorial} shows greedy assembly of the same score
+reaching only $64.6\%$.
+The shortfall is attributable to the assembly rule alone, with
+aggregation, normalisation and reference set held fixed.
+
+Draw~$302$ ($\kappa=200$) exhibits it concretely.
+The greedy portfolio is $\{184,279,320\}$ with $\mathrm{gap}=0.028$:
+it is dominated by an attainable portfolio by $2.8\%$ of the achievable
+range on every objective simultaneously, while optimal assembly on the
+identical score and weights attains the reference set exactly.
+
+The mechanism is the separation constraint.
+Greedy commits to the highest-scoring site and then discards every site
+within $d_{\min}$ of it, foreclosing combinations a global search
+retains.
+Because~\eqref{eq:rsep} is a hard constraint rather than an objective
+\citep{Erkut1996,MoonChaudhry1984}, the foreclosure cannot be undone by
+re-weighting: no choice of $w$ restores a site greedy has already
+excluded.
+This distinguishes the assembly effect from the normalisation effect
+--- the former is a combinatorial loss, the latter a re-parameterisation
+of the value model.
+
 
 % =======================================================================
 % =======================================================================
 % \S8 Discussion
 % =======================================================================
-\input{discussion}
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Two mechanisms, ordered by severity}
+
+The results separate two distinct ways in which a normalisation choice
+degrades portfolio quality, and the distinction matters because the
+remedies differ.
+
+The first is \emph{implicit re-weighting}, characterised in closed form
+by Lemma~\ref{lem:amplitude}: an additive score built on normalised
+columns of unequal amplitude operates on effective weights
+$w^{\mathrm{eff}}\neq w$, whatever the analyst elicited.
+The effect is graded, is summarised by the total
+variation~\eqref{eq:TV_results}, and orders the three normalisations
+monotonically within additive aggregation (Table~\ref{tab:tvorder}).
+It is also invisible: nothing in a standard TOPSIS or SAW report reveals
+that \texttt{perm} entered at $2.87$ times its nominal weight.
+
+The second is \emph{score--evaluator mismatch}.
+Proposition~\ref{prop:p1} guarantees Pareto efficiency for exact
+maximisation of an additive score only when the score and the value
+functions defining the objectives use the same normalisation.
+When they do not, the guarantee is not weakened but voided, and the
+observed cost exceeds what re-weighting alone predicts by roughly a
+factor of seven (Section~\ref{sec:refset}).
+Two findings are attributable to this mechanism: the collapse under
+reference-set misalignment (Table~\ref{tab:fourthcell}), and the
+near-absence of any gain from exact assembly under vector normalisation
+($+2.2$~pp, interval containing zero).
+
+The practical ordering follows.
+Re-weighting is a modelling error that can be quantified and, if
+accepted, documented.
+Mismatch is a specification error that removes the theoretical warrant
+for optimising at all.
+
+\subsection{Relation to portfolio decision analysis}
+
+The closest antecedents study portfolio construction from
+multi-criteria scores.
+\citet{BransMareschal1992} introduced constrained selection over
+PROMETHEE flows; \citet{Mavrotas2006} combined multi-criteria scores
+with binary programming; \citet{VetscheraDeAlmeida2012} formulated
+$c$-optimal portfolios, of which the present problem with $\kk=3$ is an
+instance; and \citet{DeAlmeidaVetschera2012} showed that PROMETHEE~V
+portfolios depend on the scale transformation applied to the flows.
+
+The last of these is the nearest precedent, and the difference is
+instructive.
+\citet{DeAlmeidaVetschera2012} establish that scale matters for one
+method's portfolios, without an external reference against which to
+measure the consequence.
+We give a closed form for the induced re-weighting, applicable to any
+additive aggregation and any normalisation, and measure the consequence
+against an exhaustively enumerated Pareto set.
+The robust portfolio modelling line \citep{Liesio2007,Liesio2008} and
+SMAA-PO \citep{Yang2015} compute non-dominated portfolios exactly, but
+in a scalar value space under weight uncertainty; our reference set
+retains three unaggregated partial value functions, which permits the
+dominance test to detect trade-off losses that a scalar criterion cannot.
+
+Neither line imposes a hard pairwise separation constraint.
+That constraint is standard in the location literature
+\citep{MoonChaudhry1984,Erkut1996}, and it is what makes the assembly
+effect combinatorial rather than parametric: a site foreclosed by greedy
+selection cannot be recovered by any re-weighting
+(Section~\ref{sec:greedy}).
+
+\subsection{Relation to the normalisation and rank-reversal literature}
+
+Set dependence of normalisation is documented, principally for TOPSIS.
+\citet{GarciaCascales2012} demonstrate rank reversal under changes to
+the alternative set and recommend scales that do not depend on it;
+\citet{Kuo2017} identifies a failure of the closeness index;
+\citet{OpricovicTzeng2004} observe that VIKOR uses a linear and TOPSIS
+a vector normalisation, with consequences for unit invariance.
+Empirical comparisons proceed largely by rank-agreement statistics
+\citep{Jahan2015,Aytekin2021,Vafaei2018,Vafaei2022,Salabun2020Sym}.
+
+Our contribution is to give the mechanism a closed form and to measure
+its cost against an exact reference rather than against another ranking.
+Three previously separate observations become corollaries of one
+identity: the vector-normalisation distortion of
+Proposition~\ref{prop:p3}, the tie-induced contraction in rank space
+(Remark~\ref{rem:p2normalization}), and the amplitude loss from
+normalising over inadmissible alternatives~\eqref{eq:refsetA}.
+The account also explains a structural fact the rank-agreement literature
+records without explanation: VIKOR's invariance to vector normalisation
+follows immediately, since a common amplitude factor cancels
+in~\eqref{eq:weff}.
+\todo{Before submission: targeted search on ``effective weights'',
+  ``implicit weighting'', ``normalisation weight distortion'' in MCDM to
+  confirm the closed form is not already published. If it is, reposition
+  the contribution as the empirical cost measurement against an exact
+  frontier, which stands independently.}
+
+\subsection{The PROMETHEE--Borda identity}
+
+Proposition~\ref{prop:p2} is a corollary of results established three
+decades ago.
+\citet{Bouyssou1992} characterises the net flow method axiomatically and
+shows that it reduces to Copeland or Borda when the valued preference
+relations are crisp; \citet{Marchant1996} extends the Borda equivalence
+to valued relations.
+With the usual preference function the relations are crisp by
+construction, so the identity is implied.
+We restate it to fix the affine constants, to record that it holds
+exactly under arbitrary tie structure, and chiefly because it isolates
+normalisation as the sole source of empirical divergence: in our data
+the entire departure of the implemented rank score from the net flow is
+attributable to rescaling midranks by $N+1$ rather than to the
+aggregation.
+Without the identity, that divergence would plausibly be attributed to
+the method.
+
+\subsection{Implications for practice}
+
+Three recommendations follow, in decreasing order of cost to ignore.
+
+First, normalise over the set of alternatives that can actually be
+chosen, and report the set used.
+Screening criteria applied after normalisation leave the value scale
+calibrated on alternatives that are unavailable, which is the most
+damaging configuration we observe.
+
+Second, verify that the score and the value model share a normalisation
+before adding exact optimisation.
+Integer programming on a mismatched score optimises the mismatch; the
+$+29.8$~pp available under min--max falls to $+2.2$~pp under vector
+normalisation.
+
+Third, report effective weights alongside elicited weights.
+The computation is one line given the normalised matrix, and it exposes
+distortions that no rank-agreement diagnostic reveals.
+Where elicited weights carry normative content --- as with AHP judgements
+from stakeholders --- a normalisation that silently reweights them is
+difficult to defend.
+
+Comparing aggregation operators, by contrast, is the least consequential
+of the design choices we examine ($+0.9$~pp, interval containing zero),
+and the mechanism explains why: aggregation acts downstream of the
+distortion.
+
+\subsection{Limitations}
+
+\emph{Scope of the closed form.}
+Lemma~\ref{lem:amplitude} is exact for additive aggregation.
+TOPSIS and VIKOR aggregate distances to ideal points, where amplitudes
+enter quadratically or in ratio form; the mechanism persists but the
+identity does not.
+Extending the closed form to distance-based aggregations is the natural
+next step.
+
+\emph{Empirical support for the ordering.}
+The monotone relation between predicted distortion and observed
+performance rests on three normalisation levels within SAW.
+Establishing a predictive coefficient requires five or more levels, which
+additional normalisation families (sum, max, Weitendorf) would supply at
+modest computational cost.
+
+\emph{Single instance.}
+One candidate set, one weight vector source, $\kk=3$.
+The analytic results are instance-independent, but the magnitudes depend
+on the marginal distributions; \texttt{perm} with 350 tied zeros is an
+unusually adversarial case.
+Fogo Island quantifies the mechanism; it does not estimate its typical
+size.
+
+\emph{Weight perturbation model.}
+Dirichlet perturbation around $\wahp$ represents symmetric uncertainty in
+relative weights.
+For structured disagreement among stakeholders,
+SMAA-style weight-space analysis \citep{Lahdelma2001} would be
+appropriate.
+
+\emph{Regulatory grounding.}
+The exclusion of the $\Nexcl$ overlapping sites is treated as a
+screening decision.
+\todo{D2: with the Cape Verde instrument cited, this becomes a normative
+  constraint and the reference-set argument strengthens accordingly.}
+
 
 % =======================================================================
 \section{Conclusion}
