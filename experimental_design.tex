@@ -128,13 +128,16 @@ legal authority.
 In this dataset, the two alternative evaluators produce nearly identical
 classifications: the reference sets $\Fset_{\mathrm{vec}}$ and
 $\Fset_{\mathrm{fix}}$ share only 29 portfolios in common
-($|\Fset_{\mathrm{vec}}\cap\Fset_{\mathrm{fix}}|=29$ out of
-$\Fvecsize$ and $\Ffixsize$ respectively), yet the
-portfolio-level dominance verdict is the same under both evaluators in
-99.9\% of the \ndraws{} Monte Carlo draws (Section~\ref{sec:results}).
-This coincidence indicates that, for the Fogo Island instance, the
-distinction between a vector-normalised and a sample-independent evaluator
-is not empirically consequential: both yield essentially the same
-partition of the portfolio space into dominated and non-dominated sets.
-The result is reported for completeness and as a dataset-specific
-robustness check, not as a claim about external evaluators in general.
+($|\Fset_{\mathrm{vec}}\cap\Fset_{\mathrm{fix}}|=29$ out of a union of
+$264$; Jaccard $0.11$), yet they return the same verdict on
+$99.9\%$ of draws.
+This is not a base-rate artefact: at the observed hit rates the
+chance-agreement level is $93$--$96\%$, giving $\kappa\approx 0.98$,
+and on the informative subset --- draws where at least one evaluator
+reports non-dominance --- agreement is above $90\%$ against $1.1\%$
+expected under independence.
+The two evaluators therefore do not constitute independent evidence:
+the assembled portfolio is almost always the same across draws, and both
+exogenous scales classify that portfolio identically.
+We report $\Fset_{\mathrm{fix}}$ as a confirmatory check rather than as
+a second independent test.

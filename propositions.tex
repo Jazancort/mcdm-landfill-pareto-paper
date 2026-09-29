@@ -155,19 +155,24 @@ The identity holds for any tied-rank pattern because the terms $B_j$ and $T_j$
 cancel through $r_j$.
 \end{proof}
 
-\begin{remark}
+\begin{remark}[rank scaling is not innocuous]
 \label{rem:p2normalization}
-The identity \eqref{eq:p2identity} requires \emph{raw} midranks $r_j(a)$.
-If midranks are normalised --- e.g., divided by $n+1$ before weighting ---
-the identity fails whenever tied blocks have unequal sizes across criteria.
-In our dataset, criterion \textit{perm} has 350 exact ties at zero, giving a
-maximum midrank of approximately $214.5$ instead of $388$.
-Dividing by $n+1 = 390$ compresses the effective amplitude of \textit{perm} to
-$0.550$ against $0.997$ for criteria with few ties, inflating its effective weight
-by a factor of approximately $0.55 / 0.997 \approx 0.55\times$ of the nominal
-weight.
-This is the same distortion mechanism as Proposition~\ref{prop:p3}, acting on ranks
-rather than raw values.
+Dividing midranks by $N+1$ --- the conventional rescaling to $(0,1)$
+--- does not equalise criterion amplitudes when ties are massive.
+With $350$ tied zeros in \texttt{perm} among $\Nvia$ sites, its maximum
+midrank is $\approx 214.5$, so the rescaled column spans
+$[0.003,\,0.550]$ while every other criterion spans $[0.003,\,0.997]$.
+The effective weight of \texttt{perm} is thereby scaled by $\approx 0.55$,
+and the exact identity of Proposition~\ref{prop:p2} no longer holds for
+the implemented score.
+This is the rank-space counterpart of the vector-normalisation distortion
+quantified in Proposition~\ref{prop:p3}: the same criterion with a
+heavy-zero distribution is deflated by $\times 0.55$ in rank space but
+inflated by $\times 2.87$ in the vector space, because the two
+mechanisms are distinct ---
+the rank-space mechanism compresses the \emph{range} of the rescaled
+variable, while the vector-space mechanism inflates the \emph{effective
+amplitude relative to the norm}.
 \end{remark}
 
 \noindent\textbf{Empirical verification.}
