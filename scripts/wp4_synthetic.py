@@ -247,24 +247,29 @@ def evaluate_instance(fogo_trios, X_raw, w_ahp, n_draws, kappa, seed):
         R = F_nom.max(axis=0) - F_nom.min(axis=0)
         R = np.where(R > 0, R, 1.0).astype(np.float32)
 
-        # --- Monte Carlo: per-draw dominance query (no full Pareto) ---
+        # --- Monte Carlo: per-draw dominance query against NOMINAL front ---
+        # Q2 = is the best trio (by perturbed weights) in the NOMINAL Pareto front?
+        # This matches the original definition: Q2 = Pr[M(w) ∈ F(w_nom)]
+        # Note: we cannot use per-draw frontier (that would trivially give Q2=1
+        # for SAW by prop:p1). Instead we use the nominal frontier as the
+        # reference — consistent with the paper's experimental design.
         q2_list, q3_list = [], []
         for _ in range(n_draws):
             w = rng.dirichlet(kappa * w_ahp)
             w /= w.sum()
 
-            # Best trio by SAW with perturbed weights
-            F_draw = objectives_from_C(C, w)         # C @ Wg(w)
-            saw_w = C @ w                             # sum of all criteria weighted
+            # Best trio by SAW with perturbed weights (sum over all criteria)
+            saw_w = C @ w                             # (n_trios,) — SAW scores
             best_idx = int(saw_w.argmax())
 
-            # Q2: is best_idx dominated by any other trio?
-            dominated = is_dominated(F_draw, best_idx)
-            q2_list.append(float(not dominated))
+            # Q2: is best_idx in the NOMINAL Pareto front?
+            q2_list.append(float(is_nd_nom[best_idx]))
 
-            # Q3: gap
-            if dominated:
-                q3_list.append(gap_from_F(F_draw, best_idx, R))
+            # Q3: gap of best_idx against nominal front
+            f_best = F_nom[best_idx]
+            if not is_nd_nom[best_idx]:
+                diffs = (F_nom[is_nd_nom] - f_best[np.newaxis, :]) / R[np.newaxis, :]
+                q3_list.append(float(max(0.0, diffs.min(axis=1).max())))
             else:
                 q3_list.append(0.0)
 
