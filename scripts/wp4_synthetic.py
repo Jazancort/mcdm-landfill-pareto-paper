@@ -79,54 +79,100 @@ def pareto_front_correct(F: np.ndarray, eps: float = EPS) -> np.ndarray:
     """
     Return boolean mask of non-dominated rows of F (shape n×3), all maximised.
 
-    Algorithm: for each point i, check whether any other point j dominates it,
-    i.e. F[j] >= F[i] - eps for all objectives AND F[j] > F[i] + eps for at
-    least one objective.
+    Correct O(n^2) algorithm, safe for n up to ~50k.
+    For n > 50k (e.g. Fogo's 1.94M trios) use pareto_front_large() instead.
 
-    Vectorised with chunked broadcasting to avoid O(n^2 * 3) memory blowup.
-    For n=10k this takes ~0.05s; for n=100k use a sweep-tree instead.
-
-    UNIT TEST (run with --test):
-        P1 = (10, 10, 1), P2 = (9, 1, 10), P3 = (8, 5, 5)
-        Expected non-dominated: P1, P2, P3 (all three).
-        P3 is NOT dominated: P1 beats it on F1 and F2 but loses on F3;
-        P2 beats it on F3 but loses on F2.
+    UNIT TEST: P1=(10,10,1), P2=(9,1,10), P3=(8,5,5) — all three non-dominated.
     """
     n = len(F)
+    if n == 0:
+        return np.zeros(0, dtype=bool)
+
     dominated = np.zeros(n, dtype=bool)
-    chunk = 2000  # adjust for memory; ~200 MB peak at chunk=2000, n=10k
+    chunk = 500
 
     for start in range(0, n, chunk):
         end = min(start + chunk, n)
-        # Fi: (chunk, 1, 3)  Fj: (1, n, 3)
-        Fi = F[start:end, np.newaxis, :]
-        Fj = F[np.newaxis, :, :]
-        # j weakly dominates i: Fj >= Fi for all obj
-        weak = (Fj >= Fi - eps).all(axis=2)          # (chunk, n)
-        # j strictly beats i in at least one obj
-        strict = (Fj > Fi + eps).any(axis=2)         # (chunk, n)
-        dominates_i = weak & strict                   # (chunk, n)
-        # exclude self-dominance
-        diag_idx = np.arange(start, end) - start
-        dominates_i[diag_idx, start:end][
-            np.arange(len(diag_idx)), np.arange(len(diag_idx))] = False
-        dominated[start:end] = dominates_i.any(axis=1)
+        Fi = F[start:end, np.newaxis, :]  # (blk, 1, 3)
+        Fj = F[np.newaxis, :, :]          # (1, n, 3)
+        weak   = (Fj >= Fi - eps).all(axis=2)  # (blk, n)
+        strict = (Fj >  Fi + eps).any(axis=2)  # (blk, n)
+        dom    = weak & strict
+        # remove self-dominance
+        rows = np.arange(start, end)
+        dom[rows - start, rows] = False
+        dominated[start:end] = dom.any(axis=1)
 
     return ~dominated
 
 
+def pareto_front_large(F: np.ndarray, eps: float = EPS) -> np.ndarray:
+    """
+    Correct Pareto filter for large n (e.g. 1.94M trios).
+
+    Algorithm:
+    1. Sort by F0 descending.
+    2. For each point, check only against the current non-dominated
+       'skyline' (points seen so far that are themselves non-dominated).
+    3. The skyline grows slowly (O(n^{2/3}) expected for uniform 3D data),
+       so the average cost per point is O(skyline_size), not O(n).
+
+    Passes the same unit test as pareto_front_correct.
+    """
+    n = len(F)
+    if n == 0:
+        return np.zeros(0, dtype=bool)
+
+    order = np.lexsort((-F[:, 2], -F[:, 1], -F[:, 0]))
+    F_s = F[order]
+    nd_s = np.ones(n, dtype=bool)
+
+    # Skyline: list of indices (in sorted order) that are currently ND
+    # Convert to numpy array periodically for fast vectorised checks
+    sky_idx = []
+
+    for i in range(n):
+        fi = F_s[i]
+        if not sky_idx:
+            sky_idx.append(i)
+            continue
+
+        sky = F_s[sky_idx]            # (k, 3)
+        # Does any skyline point dominate fi?
+        weak   = (sky >= fi - eps).all(axis=1)
+        strict = (sky >  fi + eps).any(axis=1)
+        if (weak & strict).any():
+            nd_s[i] = False
+            continue
+
+        # Does fi dominate any skyline point? Remove them.
+        dom_by_fi = ((fi >= sky - eps).all(axis=1) &
+                     (fi >  sky + eps).any(axis=1))
+        if dom_by_fi.any():
+            sky_idx = [j for j, d in zip(sky_idx, dom_by_fi) if not d]
+
+        sky_idx.append(i)
+
+    result = np.zeros(n, dtype=bool)
+    result[order] = nd_s
+    return result
+
+
 def run_unit_test():
-    """Verify the Pareto filter on the documented counterexample."""
+    """Verify both Pareto filters on the documented counterexample."""
     F = np.array([[10, 10, 1],
                   [9,  1, 10],
                   [8,  5,  5]], dtype=float)
-    nd = pareto_front_correct(F)
-    assert nd.all(), (
-        f"UNIT TEST FAILED: expected all 3 non-dominated, got {nd}. "
-        "The sweep-based filter would mark P3 as dominated — "
-        "pareto_front_correct must return [True, True, True]."
-    )
-    print("UNIT TEST PASSED: P1, P2, P3 all non-dominated (counterexample to sweep).")
+    for fn, name in [(pareto_front_correct, 'pareto_front_correct'),
+                     (pareto_front_large,   'pareto_front_large')]:
+        nd = fn(F)
+        assert nd.all(), (
+            f"UNIT TEST FAILED ({name}): expected all 3 non-dominated, got {nd}. "
+            "The sweep-based filter marks P3 as dominated — "
+            "correct filter must return [True, True, True]."
+        )
+    print("UNIT TEST PASSED: P1, P2, P3 all non-dominated — "
+          "both pareto_front_correct and pareto_front_large.")
     return True
 
 
@@ -207,7 +253,12 @@ def evaluate_instance(fogo_trios: np.ndarray,
                       seed: int) -> dict:
     """
     Evaluate one instance for both min-max and vector normalisation.
-    fogo_trios: (n_trios, 3) integer index array from the Fogo distance matrix.
+
+    Strategy: pre-compute the Pareto front once using the nominal AHP weights,
+    then use it as a fixed reference for all Monte Carlo draws (same approach
+    as mcdm_experiment.py). This is O(n) per draw instead of O(n * skyline).
+
+    fogo_trios: (n_trios, 3) integer index array — Fogo spatial structure.
     X_raw: (N, M) raw criterion values (new draw, same sites as Fogo).
     """
     rng = np.random.default_rng(seed)
@@ -218,6 +269,17 @@ def evaluate_instance(fogo_trios: np.ndarray,
         tv1 = tv_from_norm(V, w_ahp, alpha=1.0)
         tv2 = tv_from_norm(V, w_ahp, alpha=2.0)
 
+        # --- Pre-compute Pareto front with nominal weights (once per cell) ---
+        site_obj_nom = np.stack([V[:, g] @ w_ahp[g] for g in GROUPS], axis=1)
+        trio_obj_nom = site_obj_nom[fogo_trios].sum(axis=1)   # (n_trios, 3)
+
+        # Use pareto_front_large for 1.94M trios (skyline-based, O(n*|front|))
+        is_nd_nom = pareto_front_large(trio_obj_nom)
+        front_nom = trio_obj_nom[is_nd_nom]                   # (~181, 3)
+        R_nom = trio_obj_nom.max(axis=0) - trio_obj_nom.min(axis=0)
+        R_nom = np.where(R_nom > 0, R_nom, 1.0)
+
+        # --- Monte Carlo loop (O(n) per draw — no Pareto computation) ---
         q2_list, q3_list = [], []
 
         for _ in range(n_draws):
@@ -226,34 +288,21 @@ def evaluate_instance(fogo_trios: np.ndarray,
 
             # SAW scores and optimal assembly
             scores = V @ w
-            trio_scores = scores[fogo_trios].sum(axis=1)  # (n_trios,)
+            trio_scores = scores[fogo_trios].sum(axis=1)
             best_idx = int(trio_scores.argmax())
-            best_trio = fogo_trios[best_idx]
 
-            # Objective values for all trios
-            site_obj = np.stack([V[:, g] @ w[g] for g in GROUPS], axis=1)  # (N,3)
-            trio_obj = site_obj[fogo_trios].sum(axis=1)                      # (n_trios,3)
+            # Q2: is the best trio on the nominal front?
+            q2_list.append(float(is_nd_nom[best_idx]))
 
-            # Pareto front — correct vectorised filter
-            is_nd = pareto_front_correct(trio_obj)
-            front = trio_obj[is_nd]
-            R = trio_obj.max(axis=0) - trio_obj.min(axis=0)
-            R = np.where(R > 0, R, 1.0)
-
-            # Q2: is the best portfolio on the front?
-            q2_list.append(float(is_nd[best_idx]))
-
-            # Q3: normalised gap
-            f_best = trio_obj[best_idx]
-            if front.shape[0] == 0:
-                q3_list.append(0.0)
-            else:
-                diffs = (front - f_best[np.newaxis, :]) / R[np.newaxis, :]
-                per_member = diffs.min(axis=1)
-                q3_list.append(float(max(0.0, per_member.max())))
+            # Q3: gap against nominal front
+            f_best = trio_obj_nom[best_idx]
+            diffs = (front_nom - f_best[np.newaxis, :]) / R_nom[np.newaxis, :]
+            per_member = diffs.min(axis=1)
+            q3_list.append(float(max(0.0, per_member.max())))
 
         results[norm_name] = {
             'tv1': tv1, 'tv2': tv2,
+            'front_size': int(is_nd_nom.sum()),
             'Q2': float(np.mean(q2_list)),
             'Q3': float(np.mean(q3_list)),
             'Q2_se': float(np.std(q2_list) / np.sqrt(n_draws)),
@@ -383,9 +432,9 @@ def main():
         pct = 100 * done / total
         print(f"[{done}/{total}] {pct:.1f}% | p0={p0:.2f} {shape} rep{rep} | "
               f"mm tv1={res['minmax']['tv1']:.3f} Q2={res['minmax']['Q2']:.3f} "
-              f"Q3={res['minmax']['Q3']:.4f} | "
+              f"Q3={res['minmax']['Q3']:.4f} |F|={res['minmax']['front_size']} | "
               f"vec tv1={res['vector']['tv1']:.3f} Q2={res['vector']['Q2']:.3f} "
-              f"Q3={res['vector']['Q3']:.4f}")
+              f"Q3={res['vector']['Q3']:.4f} |F|={res['vector']['front_size']}")
         sys.stdout.flush()
 
     df = pd.DataFrame(rows)
