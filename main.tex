@@ -86,17 +86,51 @@
 
 % -----------------------------------------------------------------------
 \begin{abstract}
-\todo{Write abstract after Results are complete.}
+Multi-site facility siting is a portfolio problem: several locations must
+be chosen jointly, subject to a minimum separation between them.
+Practice instead relies on multi-criteria rankings read top-down, and the
+methodological literature compares such rankings by measuring their
+agreement with one another --- which establishes that methods differ, but
+not that any is worse.
+We supply an external standard.
+For $\Ncand$ candidate sites on Fogo Island, Cape Verde, we enumerate the
+complete feasible set of $\Ntrios$ three-site portfolios under a
+$\dmin$~km separation constraint and compute the exact Pareto frontier
+over siting cost, environmental impact and social safety.
+Crossing four aggregation methods with three normalisations and two
+assembly rules, we find that the choice between SAW and TOPSIS is worth
+$+0.9$ percentage points ($95\%$ CI $[-0.5,\,+2.3]$), whereas
+normalisation is worth $+29.9$ and assembly $+16.0$.
+We explain this analytically: in additive aggregation the effective
+weight of a criterion is proportional to $w_j A_j$, where $A_j$ is the
+amplitude of the normalised column, so normalisation fixes the operative
+weights upstream of the aggregation operator.
+Min--max is the unique standard normalisation that preserves elicited
+weights; vector normalisation multiplies one criterion's weight by
+$2.88\times$ in our data; every binary criterion loses half its weight in
+rank space.
+Exact optimisation inherits the distortion, and normalising over
+inadmissible alternatives costs up to $80$ percentage points of Pareto
+efficiency.
 \end{abstract}
 
 \begin{highlights}
-\item \todo{Write highlights after Results.}
+\item Normalisation implicitly re-weights criteria: effective weight
+  scales with $w_jA_j$
+\item Min--max is the only standard normalisation that preserves
+  elicited weights
+\item Normalisation is worth $+29.9$~pp of Pareto efficiency; aggregation
+  choice $+0.9$~pp
+\item Exact assembly gains $+29.8$~pp under min--max but only $+2.2$~pp
+  under vector
+\item Normalising over inadmissible sites costs up to $80$~pp of Pareto
+  efficiency
 \end{highlights}
 
 \begin{keywords}
-  Multi-criteria decision making \sep Landfill site selection \sep
-  Normalisation \sep Portfolio assembly \sep Pareto frontier \sep
-  Monte Carlo robustness \sep Fogo Island
+  Multi-criteria decision making \sep Normalisation \sep
+  Effective weights \sep Portfolio decision analysis \sep
+  Pareto frontier \sep Landfill site selection
 \end{keywords}
 
 \maketitle
@@ -462,7 +496,7 @@ optimality benchmark.
 
 The present paper addresses this gap by: (i)~enumerating the exact Pareto
 frontier of $\Ntrios$ portfolios over three group-level partial value
-functions under $r$-separation; (ii)~evaluating five methods crossed with
+functions under $r$-separation; (ii)~evaluating four aggregation methods crossed with
 three normalisations and two assembly strategies against that frontier;
 and (iii)~providing a closed-form account of the mechanism by which
 normalisation implicitly re-weights criteria, expressed in terms
@@ -1326,6 +1360,34 @@ by $2.88\times$ and deflates \texttt{urban} to $0.53\times$.
 Greedy assembly, being myopic, is partly insulated --- it fails for its
 own reasons, but it does not optimise the distortion.
 
+Figure~\ref{fig:interaction} shows the pattern across all three
+normalisations: the gain from optimal assembly is $+22.2$~pp under
+min--max, $+15.0$~pp under ranks, and $+9.2$~pp under vector (means
+averaged over aggregation methods and Monte Carlo draws).
+The three lines have very different slopes, confirming that the
+main-effect contrast of $+16.0$~pp conceals a structural interaction
+rather than a uniform shift.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\columnwidth]{figures/fig_interaction.pdf}
+\caption{%
+  Normalisation$\,\times\,$assembly interaction.
+  Each point is the mean $Q_2[\mathcal{A}']$ averaged over all
+  aggregation methods and $\nboot$ Monte Carlo draws ($n=3{,}000$ per
+  cell); error bars are $95\%$ confidence intervals (normal
+  approximation for proportions).
+  The slope of the min--max line ($+22.2$~pp) is $2.4\times$ larger
+  than the vector line ($+9.2$~pp), consistent with the analytical
+  prediction that exact assembly inherits the score distortion and
+  therefore pays only when the normalisation preserves the elicited
+  weights.
+  Marginal contrasts from the factorial model
+  (Table~\ref{tab:effects}) differ from these slopes because the
+  model averages over both normalisations simultaneously.}
+\label{fig:interaction}
+\end{figure}
+
 This has a direct implication for practice.
 Adding integer programming on top of a ranking is a standard upgrade
 \citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012},
@@ -1350,7 +1412,7 @@ When they do not, the guarantee is not weakened but voided.
 The observed cost (Table~\ref{tab:fourthcell}: $100\%\to20\%$,
 a loss of $80$~pp under optimal assembly) far exceeds what
 Mechanism~1 predicts: $\mathrm{TV}=0.107$ implies $\approx9.0$~pp,
-accounting for only $14\%$ of the effect.
+accounting for only $11\%$ of the effect ($9.0/80$).
 The gap is the signature of Mechanism~2.
 
 This also explains the interaction of Section~\ref{sec:interaction}.
@@ -1481,8 +1543,15 @@ Proposition~\ref{prop:p1} guarantees Pareto efficiency for exact
 maximisation of an additive score only when the score and the value
 functions defining the objectives use the same normalisation.
 When they do not, the guarantee is not weakened but voided, and the
-observed cost exceeds what re-weighting alone predicts by roughly a
-factor of seven (Section~\ref{sec:refset}).
+observed cost exceeds what re-weighting alone predicts by a factor of
+$8.9\times$ in the direction where the score loses resolution (the
+$\Ncand$-score evaluated against $A'$: $80$~pp observed versus $9.0$~pp
+predicted), while in the opposite direction the observed loss is smaller
+than predicted ($0.56\times$: the $\Nvia$-score against $A$).
+Since the total variation is symmetric between the two directions by
+construction, no re-weighting measure can account for this $16\times$
+asymmetry in observed loss; the two mechanisms are distinct
+(Section~\ref{sec:refset}).
 Two findings are attributable to this mechanism: the collapse under
 reference-set misalignment (Table~\ref{tab:fourthcell}), and the
 near-absence of any gain from exact assembly under vector normalisation
