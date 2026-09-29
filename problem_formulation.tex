@@ -1,0 +1,97 @@
+% ============================================================
+%  problem_formulation.tex  —  §3
+%  Updated: 29/Sep/2026
+% ============================================================
+
+\section{Problem formulation}
+\label{sec:problem}
+
+\subsection{Candidate sites and the separation constraint}
+
+Let $S=\{1,\dots,N\}$ index candidate sites, each described by $m=11$
+geospatial criteria.
+A \emph{portfolio} is a subset $t\subseteq S$ with $|t|=\kk$.
+Portfolios must satisfy a hard pairwise separation constraint
+\begin{equation}
+  \label{eq:rsep}
+  d(u,v) \;\ge\; d_{\min}=\dmin\;\text{km}
+  \qquad \forall\, u,v\in t,\; u\neq v,
+\end{equation}
+where $d(\cdot,\cdot)$ is the great-circle distance.
+Constraint~\eqref{eq:rsep} is the $r$-separation condition of
+\citet{Erkut1996}, whose network antecedent is \citet{MoonChaudhry1984}.
+We emphasise that dispersion enters here as a \emph{constraint}, not an
+objective: the $p$-dispersion literature \citep{Kuby1987,Marti2022}
+maximises the minimum pairwise distance, whereas~\eqref{eq:rsep} merely
+renders non-compliant portfolios infeasible.
+The feasible set is
+\begin{equation}
+  \label{eq:T}
+  \Tset = \bigl\{\,t\subseteq S \;:\; |t|=\kk,\ t \text{ satisfies }
+    \eqref{eq:rsep}\,\bigr\},
+  \qquad |\Tset| = \Ntrios.
+\end{equation}
+
+\subsection{Three partial value functions}
+
+The $m$ criteria are partitioned into three groups reflecting the
+decision dimensions of landfill siting: siting and construction cost
+($G_1$), environmental impact ($G_2$), and social safety ($G_3$)
+(Table~\ref{tab:criteria}).
+Let $c_j(i)\in[0,1]$ be the partial value of site~$i$ on criterion~$j$,
+oriented so that larger is better, and let $w_j$ be the criterion weight.
+The portfolio objectives are additive within group and across sites:
+\begin{align}
+  F_1(t) &= \sum_{i\in t}\;\sum_{j\in G_1} w_j\,c_j(i),
+    && \text{(cost, minimise)} \label{eq:F1} \\
+  F_2(t) &= \sum_{i\in t}\;\sum_{j\in G_2} w_j\,c_j(i),
+    && \text{(impact, minimise)} \label{eq:F2} \\
+  F_3(t) &= \sum_{i\in t}\;\sum_{j\in G_3} w_j\,c_j(i),
+    && \text{(safety, maximise)} \label{eq:F3}
+\end{align}
+and we write $\mathbf{F}(t;w)=(F_1,F_2,F_3)$ to make the weight
+dependence explicit, since it is central to
+Section~\ref{sec:design}.
+
+\begin{remark}[what the benchmark is, and is not]
+\label{rem:valuespace}
+$\mathbf{F}$ is a three-dimensional partial value space, not a vector of
+physically independent objectives: each component is an additive weighted
+aggregate of normalised criteria.
+This distinguishes our reference set from portfolio decision analysis
+approaches that compute non-dominated portfolios in a scalar value space
+\citep{Liesio2007,Liesio2008,Yang2015}, and from bi-objective mixed-integer
+landfill models whose objectives are physical quantities
+\citep{EiseltMarianov2014}.
+We keep the three group-level value functions unaggregated and ask how
+much of the resulting trade-off surface is lost when a ranking method
+collapses them into a single score before the portfolio is assembled.
+\end{remark}
+
+\subsection{Reference set and the optimality gap}
+
+Portfolio $t$ \emph{dominates} $t'$ when $F_1(t)\le F_1(t')$,
+$F_2(t)\le F_2(t')$, $F_3(t)\ge F_3(t')$ with at least one strict
+inequality.
+Because $|\Tset|$ is finite and enumerable, the non-dominated set
+\begin{equation}
+  \label{eq:front}
+  \Fset(w) = \bigl\{\,t\in\Tset \;:\; \nexists\,t'\in\Tset
+    \text{ dominating } t\,\bigr\}
+\end{equation}
+is obtained \emph{exactly}, with no metaheuristic approximation.
+All dominance tests use a tolerance $\varepsilon=10^{-9}$.
+
+For dominated portfolios we report a scale-free shortfall.
+With $R_\ell = \max_{t\in\Tset}F_\ell - \min_{t\in\Tset}F_\ell$,
+\begin{equation}
+  \label{eq:gap}
+  \mathrm{gap}(t) = \max\Bigl(0,\;\max_{t'\in\Tset}\;\min\Bigl\{
+    \tfrac{F_1(t)-F_1(t')}{R_1},\;
+    \tfrac{F_2(t)-F_2(t')}{R_2},\;
+    \tfrac{F_3(t')-F_3(t)}{R_3}\Bigr\}\Bigr),
+\end{equation}
+so $\mathrm{gap}(t)=0$ iff $t\in\Fset$.
+Normalising by the attainable range rather than the ideal--nadir distance
+keeps the measure interpretable as a fraction of the achievable spread;
+the ideal--nadir variant is reported in the Supplementary Material.

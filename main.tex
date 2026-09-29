@@ -1,0 +1,171 @@
+%% Elsevier CAS Double-Column template
+%% Article: Normalisation and assembly in MCDM-based landfill site selection:
+%%          a factorial evaluation against an exact Pareto frontier
+%% Updated: 29/Sep/2026 (Round 19)
+
+\documentclass[a4paper,fleqn]{cas-dc}
+
+\usepackage[authoryear,longnamesfirst]{natbib}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage[colorinlistoftodos,prependcaption]{todonotes}
+
+% -----------------------------------------------------------------------
+% Macros — centralise every number that appears more than once
+% -----------------------------------------------------------------------
+% Counts
+\newcommand{\Ncand}{473}
+\newcommand{\Nexcl}{84}
+\newcommand{\Nvia}{389}
+\newcommand{\Ntrios}{1{,}944{,}653}
+\newcommand{\dmin}{10}
+\newcommand{\kk}{3}
+% Frontier sizes
+\newcommand{\Fmmsize}{181}
+\newcommand{\Fvecsize}{109}
+\newcommand{\Ffixsize}{184}
+\newcommand{\FAsize}{213}
+\newcommand{\FAinter}{132}
+% Monte Carlo
+\newcommand{\ndraws}{500}
+\newcommand{\nboot}{2{,}000}
+% AHP
+\newcommand{\CR}{0.056}
+\newcommand{\lmax}{11.8525}
+% Notation
+\newcommand{\wahp}{w^{\mathrm{AHP}}}
+\newcommand{\wsc}{w^{\mathrm{sc}}}
+\newcommand{\wob}{w^{\mathrm{ob}}}
+\newcommand{\wfr}{w^{\mathrm{fr}}}
+\newcommand{\Tset}{\mathcal{T}}
+\newcommand{\Fset}{\mathcal{F}}
+% Theorems
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newtheorem{lemma}{Lemma}
+\newcommand{\argmax}{\operatorname{argmax}}
+
+% -----------------------------------------------------------------------
+\begin{document}
+\let\WriteBookmarks\relax
+\def\floatpagepagefraction{1}
+\def\textpagefraction{.001}
+
+\shorttitle{Normalisation and Assembly in MCDM Landfill Site Selection}
+\shortauthors{Azancort Neto}
+
+% -----------------------------------------------------------------------
+\title[mode=title]{Normalisation and assembly in MCDM-based landfill
+  site selection: a factorial evaluation against an exact Pareto frontier}
+
+\tnotemark[1]
+\tnotetext[1]{\todo{D1: add venue-specific acknowledgement once venue is
+  decided.}}
+
+% -----------------------------------------------------------------------
+\author[1]{Julio L.~Azancort Neto}[orcid=0000-0000-0000-0000]
+\cormark[1]
+\fnmark[1]
+\ead{julio.azancort.neto@itec.ufpa.br}
+\credit{Conceptualization, Methodology, Software, Writing -- Original
+  Draft, Writing -- Review \& Editing}
+
+\affiliation[1]{organization={Instituto de Tecnologia, Universidade
+  Federal do Par\'a (UFPA)},
+  city={Bel\'em}, state={PA}, country={Brazil}}
+
+\cortext[1]{Corresponding author}
+\fntext[1]{}
+
+% -----------------------------------------------------------------------
+\begin{abstract}
+\todo{Write abstract after Results are complete.}
+\end{abstract}
+
+\begin{highlights}
+\item \todo{Write highlights after Results.}
+\end{highlights}
+
+\begin{keywords}
+  Multi-criteria decision making \sep Landfill site selection \sep
+  Normalisation \sep Portfolio assembly \sep Pareto frontier \sep
+  Monte Carlo robustness \sep Fogo Island
+\end{keywords}
+
+\maketitle
+
+% =======================================================================
+\section{Introduction}
+\label{sec:intro}
+% =======================================================================
+
+\todo{Write Introduction after Literature Review is drafted.}
+
+% =======================================================================
+\section{Literature review}
+\label{sec:litreview}
+% =======================================================================
+
+\todo{Write Literature Review (blocks A--G from CONSOLIDACAO\_FINAL.md).}
+
+% =======================================================================
+% §3 Problem formulation
+% =======================================================================
+\input{problem_formulation}
+
+% =======================================================================
+% §4 Methods
+% =======================================================================
+\input{methods}
+
+% =======================================================================
+% §5 Experimental design
+% =======================================================================
+\input{experimental_design}
+
+% =======================================================================
+% §6 Propositions
+% =======================================================================
+\input{propositions}
+
+% =======================================================================
+\section{Results}
+\label{sec:results}
+% =======================================================================
+
+\todo{Write Results after venue decision (D1). Sections to include:
+  (a) 2\^{}3 factorial in $Q_2[A']$;
+  (b) fourth cell (reference set effect);
+  (c) robustness to evaluator (Sec.~5.5) with caveat on coincidence
+      of $\Fset_{\mathrm{vec}}$ and $\Fset_{\mathrm{fix}}$;
+  (d) P4 counterexample;
+  (e) VIKOR$\times$ranks and P2 illustration.}
+
+% =======================================================================
+\section{Discussion}
+\label{sec:discussion}
+% =======================================================================
+
+\todo{Write Discussion after Results. Address: (i) positioning vs
+  Vetschera/Mavrotas portfolio MCDM without spatial constraints;
+  (ii) A vs A' via Garcia-Cascales~\&~Lamata (2012); (iii) P2 as
+  corollary, not contribution; (iv) limitations (space~B, empates perm,
+  F\_fixo bounds conventional); (v) Lassey 2025 here.}
+
+% =======================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% =======================================================================
+
+\todo{Write Conclusion after Discussion.}
+
+% -----------------------------------------------------------------------
+\bibliographystyle{cas-model2-names}
+\bibliography{refs}
+
+\end{document}

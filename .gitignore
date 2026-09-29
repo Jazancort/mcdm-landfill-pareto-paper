@@ -1,0 +1,45 @@
+# LaTeX build artefacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.pdf
+*.abs
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bcf
+*.run.xml
+
+# Data — never commit raw data or cached datasets
+scripts/results/*.csv
+scripts/results/*.json
+scripts/results/*.txt
+scripts/downloads/
+
+# Diagnostic/temp outputs
+scripts/*.txt
+scripts/diag_out.txt
+scripts/assert_out.txt
+scripts/p1_out.txt
+scripts/fronteiras_out.txt
+scripts/vikor_out.txt
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.uv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
