@@ -97,7 +97,7 @@ Multi-site facility siting is a portfolio problem: several locations must
 be chosen jointly, subject to a minimum separation between them.
 Practice instead relies on multi-criteria rankings read top-down, and the
 methodological literature compares such rankings by measuring their
-agreement with one another --- which establishes that methods differ, but
+agreement with one another, which establishes that methods differ, but
 not that any is worse.
 We supply an external standard.
 For $\Ncand$ candidate sites on Fogo Island, Cape Verde, we enumerate the
@@ -153,8 +153,8 @@ Regional plans allocate several landfills at once, and the sites must be
 spatially dispersed: co-locating them concentrates traffic, leachate risk
 and public opposition in one area, and defeats the purpose of a
 distributed network.
-The decision is therefore a \emph{portfolio} problem --- choose $\kk$
-sites out of $N$ subject to a minimum pairwise separation --- rather than
+The decision is therefore a \emph{portfolio} problem: choose $\kk$
+sites out of $N$ subject to a minimum pairwise separation, rather than
 a ranking problem.
 
 Practice, however, is organised around rankings.
@@ -176,7 +176,7 @@ choice in the workflow actually matters.
 For a real candidate set of $\Ncand$ sites on Fogo Island, Cape Verde,
 we enumerate the complete feasible set of $\Ntrios$ three-site portfolios
 satisfying a $d_{\min}=\dmin$~km separation constraint, and compute the
-exact Pareto frontier over three group-level objectives --- siting cost,
+exact Pareto frontier over three group-level objectives: siting cost,
 environmental impact and social safety.
 Because the frontier is obtained by exhaustive enumeration rather than by
 a metaheuristic, a portfolio produced by any method can be classified as
@@ -187,7 +187,7 @@ portfolio under Monte Carlo perturbation of the elicited weights.
 
 The answer is not about the aggregation methods.
 Choosing between SAW and TOPSIS is worth $+0.9$ percentage points (pp)
-with a $95\%$ interval of $[-0.5,\,+2.3]$ --- statistically
+with a $95\%$ interval of $[-0.5,\,+2.3]$, statistically
 indistinguishable from no effect.
 The choice of normalisation is worth $+29.9$~pp, and the choice between
 greedy and exact assembly $+16.0$~pp.
@@ -224,9 +224,9 @@ When the score encodes $w^{\mathrm{eff}} \neq w$, exact optimisation
 solves the wrong problem exactly: replacing greedy with optimal assembly
 is worth $+29.8$~pp under min--max normalisation and $+2.2$~pp under
 vector normalisation, with an interval containing zero.
-Adding integer programming on top of a ranking --- the established
+Adding integer programming on top of a ranking, the established
 upgrade path
-\citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012} --- pays
+\citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012}, pays
 only when the normalisation is already consistent with the value model.
 
 A third finding concerns the set over which normalisation constants are
@@ -236,7 +236,7 @@ and cannot be selected.
 Computing the value scale over all $\Ncand$ nonetheless calibrates it on
 alternatives that are unavailable, and the resulting mismatch between the
 scale used by the method and the scale defining the objectives costs up
-to $80$~pp of Pareto efficiency --- far more than the re-weighting alone
+to $80$~pp of Pareto efficiency, far more than the re-weighting alone
 predicts.
 The loss is also strongly asymmetric, which tells us the two mechanisms
 are distinct rather than two readings of one effect.
@@ -248,9 +248,9 @@ Our contributions are as follows.
     established qualitatively by \citet{Choo1999}, with the amplitude
     $A_j$ identified for min--max, vector and rank normalisation
     (Corollary~\ref{cor:three}).
-    Three effects previously reported separately --- vector-normalisation
+    Three effects previously reported separately, namely vector-normalisation
     distortion, tie-induced contraction in rank space, and amplitude loss
-    from normalising over inadmissible alternatives --- become corollaries
+    from normalising over inadmissible alternatives, become corollaries
     of one identity.
   \item A measurement of the cost of that distortion in units of Pareto
     efficiency rather than rank agreement, against an exhaustively
@@ -748,11 +748,11 @@ assembly corresponds to the ranking-plus-integer-programming paradigm
 A dominance test involves weights at three distinct places, and the
 distinction is not cosmetic:
 \begin{enumerate}[label=(\alph*)]
-  \item $\wsc$ --- the weights in the \emph{method score}, which order
+  \item $\wsc$: the weights in the \emph{method score}, which order
     the sites and hence determine the assembled portfolio $t=M(\wsc)$;
-  \item $\wob$ --- the weights used to map the assembled portfolio to
+  \item $\wob$: the weights used to map the assembled portfolio to
     objective space, $\mathbf{F}(t;\wob)$;
-  \item $\wfr$ --- the weights used to build the reference set,
+  \item $\wfr$: the weights used to build the reference set,
     $\Fset(\wfr)$ of~\eqref{eq:front}.
 \end{enumerate}
 
@@ -797,7 +797,7 @@ Space~$A$ reproduces the source study ($|\Fset|=\FAsize$ portfolios);
 space~$A'$ is the factorial design ($|\Fset|=\Fmmsize$), and the two
 reference sets share only $\FAinter$ portfolios.
 Including inadmissible sites shifts the scale without those sites being
-selectable --- a set-dependence mechanism documented for TOPSIS by
+selectable, a set-dependence mechanism documented for TOPSIS by
 \citet{GarciaCascales2012}.
 
 \subsection{Factorial design}
@@ -869,7 +869,7 @@ Lemma~\ref{lem:amplitude} is exact for additive aggregation.
 Within that scope the prediction is borne out: across SAW cells,
 mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.3\%$, $76.5\%$ and
 $55.5\%$ for min--max, ranks and vector normalisation respectively,
-against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.315$ ---
+against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.315$,
 a strictly monotone ordering ($R^2=0.995$ on three means; we report the
 ordering and note approximate proportionality, given $n=3$, $\mathrm{df}=1$).
 
@@ -945,7 +945,7 @@ deflated ($A_j = 0.547$, factor $\mathbf{0.616\times}$) because 350
 tied zeros compress the maximum midrank to $\approx 214.5$ instead
 of~$388$, while \textit{aspect} (binary) gives $A_j = N/[2(N+1)]
 \approx 0.499$ (factor $\mathbf{0.562\times}$) as predicted by
-Corollary~\ref{cor:three}(iii) --- independent of $n_1$.
+Corollary~\ref{cor:three}(iii), independent of $n_1$.
 The seven fully continuous criteria are conversely \emph{inflated}
 (factor $\approx 1.12\times$) because the mean amplitude $\bar{A}<1$
 
@@ -1035,8 +1035,8 @@ Summing with weights and simplifying gives~\eqref{eq:p2identity}.
 
 \paragraph{Rank scaling is not innocuous.}
 \label{rem:p2normalization}
-Dividing midranks by $N+1$ --- the conventional rescaling to $(0,1)$
---- does not equalise criterion amplitudes when ties are massive.
+Dividing midranks by $N+1$, the conventional rescaling to $(0,1)$,
+does not equalise criterion amplitudes when ties are massive.
 With $350$ tied zeros in \texttt{perm} among $\Nvia$ sites, its maximum
 midrank is $\approx 214.5$, so the rescaled column spans
 $[0.003,\,0.550]$ while every other criterion spans $[0.003,\,0.997]$.
@@ -1138,7 +1138,7 @@ $\mathrm{TV}$ & & & 0.000 & & & 0.315 & 0.091 \\
   Effective weights $w_j^{\rm eff}$ (\%) under three normalisations for all
   eleven criteria.
   Under min--max (left), effective weights equal elicited weights by
-  construction --- all lines are horizontal at their nominal level (dashed
+  construction: all lines are horizontal at their nominal level (dashed
   reference lines).
   Under vector normalisation (centre), \textit{perm} is inflated to
   $2.88\times$ its nominal weight because its heavy-zero distribution
@@ -1288,7 +1288,7 @@ rescaling of all amplitudes: a factor $c>0$ applied to every $A_j$
 cancels in~\eqref{eq:TV_results} and produces no re-weighting.
 
 Table~\ref{tab:tvorder} pairs the predicted distortion with observed
-performance, restricted to additive aggregation --- the scope in which
+performance, restricted to additive aggregation, the scope in which
 the lemma is exact.
 
 \begin{table*}[!t]
@@ -1316,8 +1316,8 @@ $-85.1$~pp per unit of total variation with $R^2=0.995$.
 We report the \emph{ordering and approximate proportionality}, not a
 predictive coefficient: with three levels the residual degree of freedom
 is one, and any monotone triple admits a close linear fit.
-The claim we make is the analytic one of Corollary~\ref{cor:three} ---
-min--max is the unique weight-preserving choice among the three ---
+The claim we make is the analytic one of Corollary~\ref{cor:three}:
+min--max is the unique weight-preserving choice among the three,
 for which the empirical ordering is corroboration rather than
 evidential foundation.
 
@@ -1436,7 +1436,7 @@ When the score encodes $w^{\mathrm{eff}}\neq w$, optimal assembly
 solves the wrong problem exactly: it pursues the criterion trade-offs of
 $w^{\mathrm{eff}}$, which in the vector case inflates \texttt{perm}
 by $2.88\times$ and deflates \texttt{urban} to $0.53\times$.
-Greedy assembly, being myopic, is partly insulated --- it fails for its
+Greedy assembly, being myopic, is partly insulated; it fails for its
 own reasons, but it does not optimise the distortion.
 
 Figure~\ref{fig:interaction} shows the pattern across all three
@@ -1590,7 +1590,7 @@ Because~\eqref{eq:rsep} is a hard constraint rather than an objective
 re-weighting: no choice of $w$ restores a site greedy has already
 excluded.
 This distinguishes the assembly effect from the normalisation effect
---- the former is a combinatorial loss, the latter a re-parameterisation
+the former is a combinatorial loss, the latter a re-parameterisation
 of the value model.
 
 
@@ -1767,8 +1767,8 @@ normalisation.
 Third, report effective weights alongside elicited weights.
 The computation is one line given the normalised matrix, and it exposes
 distortions that no rank-agreement diagnostic reveals.
-Where elicited weights carry normative content --- as with AHP judgements
-from stakeholders --- a normalisation that silently reweights them is
+Where elicited weights carry normative content, as with AHP judgements
+from stakeholders, a normalisation that silently reweights them is
 difficult to defend.
 
 Comparing aggregation operators, by contrast, is the least consequential
@@ -1828,8 +1828,8 @@ The design crossed aggregation, normalisation and assembly, and measured
 how often each combination recovers a Pareto-efficient portfolio under
 perturbation of the elicited weights.
 
-The choice of aggregation operator --- the variable the applied
-literature compares most --- proved the least consequential of the three,
+The choice of aggregation operator, the variable the applied
+literature compares most, proved the least consequential of the three,
 at $+0.9$~pp with a $95\%$ interval containing zero.
 Normalisation was worth $+29.9$~pp and assembly $+16.0$~pp.
 The explanation is analytical rather than empirical: in additive
@@ -1840,7 +1840,7 @@ operator is applied.
 Min--max normalisation is the unique member of the three standard
 families that leaves the elicited weights intact.
 Vector normalisation lets the distributional shape of each criterion set
-its weight, and rank rescaling penalises criteria with heavy tie mass ---
+its weight, and rank rescaling penalises criteria with heavy tie mass;
 by exactly one half for any binary indicator, irrespective of class
 balance.
 
@@ -1852,8 +1852,8 @@ interval containing zero.
 Integer programming on top of a ranking, the established upgrade path in
 portfolio MCDM, therefore pays only once the normalisation is consistent
 with the value model.
-Second, normalising over alternatives that cannot be selected --- in our
-data the $\Nexcl$ candidates overlapping protected areas --- calibrates
+Second, normalising over alternatives that cannot be selected, in our
+data the $\Nexcl$ candidates overlapping protected areas, calibrates
 the value scale on unavailable options and costs up to $80$~pp of Pareto
 efficiency, considerably more than the re-weighting alone accounts for.
 The loss is markedly asymmetric between the two directions of mismatch,
@@ -1889,8 +1889,8 @@ The broader implication is methodological.
 Benchmarking multi-criteria methods by agreement between their rankings
 can establish that they differ, but not that any is closer to the
 decision maker's objectives.
-Where the feasible set is enumerable --- as it is for
-cardinality-constrained siting problems of realistic size --- an exact
+Where the feasible set is enumerable, as it is for
+cardinality-constrained siting problems of realistic size, an exact
 frontier provides an external standard, and under that standard the
 ranking of design choices is not the one the literature's emphasis would
 suggest.
