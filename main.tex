@@ -14,6 +14,7 @@
 \usepackage{array}
 \usepackage{enumitem}
 \usepackage[colorinlistoftodos,prependcaption]{todonotes}
+\usepackage[section]{placeins}   % \FloatBarrier at section boundaries
 
 % -----------------------------------------------------------------------
 % Macros — centralise every number that appears more than once
@@ -624,6 +625,21 @@ The spatial discretisation and criteria definition follow
 present paper uses the same candidate set, pairwise distance matrix, and
 criterion evaluations.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\columnwidth]{figures/fig_F4_map.pdf}
+\caption{%
+  Spatial layout of the $\Nvia$ admissible candidate sites on Fogo Island
+  (grey dots).
+  Blue diamonds mark the best-compromise portfolio
+  $\{184,\,430,\,460\}$ returned by SAW under min--max normalisation with
+  optimal assembly; dashed circles show the $d_{\min}=\dmin$~km separation
+  radius around each selected site, confirming pairwise feasibility.
+  The $\Nexcl$ candidates overlapping protected areas are excluded before
+  analysis and are not shown.}
+\label{fig:map}
+\end{figure}
+
 \paragraph{Missing values.}
 Three entries are missing: roads (site~41), urban distance (site~385), and
 aerodromes (site~429).
@@ -923,6 +939,21 @@ of~$388$, while \textit{aspect} (binary) gives $A_j = N/[2(N+1)]
 Corollary~\ref{cor:three}(iii) --- independent of $n_1$.
 The seven fully continuous criteria are conversely \emph{inflated}
 (factor $\approx 1.12\times$) because the mean amplitude $\bar{A}<1$
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\columnwidth]{figures/fig_F5_binary_amplitude.pdf}
+\caption{%
+  $A_j^{\rm rank}$ for a binary criterion as a function of $n_1$ (number
+  of ones), with $N=\Nvia$.
+  The amplitude is $N/[2(N+1)]=0.499$ for any class balance, independent
+  of $n_1$ (solid line), compared with $(N-1)/(N+1)=0.995$ for a
+  continuous criterion without ties (dashed line); the shaded region marks
+  the gap of~$0.496$.
+  The marker shows \textit{aspect} at $n_1=94$.
+  This figure is purely analytical: no data from Fogo Island enter it.}
+\label{fig:binary_amplitude}
+\end{figure}
 makes each criterion's unit relative weight larger; \textit{perm} and
 \textit{aspect} lose weight, all others gain $12\%$.
 The directions are reversed: the same heavy-zero distribution inflates
@@ -1092,6 +1123,28 @@ $\mathrm{TV}$ & & & 0.000 & & & 0.315 & 0.091 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{figures/fig_F1_slope_weights.pdf}
+\caption{%
+  Effective weights $w_j^{\rm eff}$ (\%) under three normalisations for all
+  eleven criteria.
+  Under min--max (left), effective weights equal elicited weights by
+  construction --- all lines are horizontal at their nominal level (dashed
+  reference lines).
+  Under vector normalisation (centre), \textit{perm} is inflated to
+  $2.88\times$ its nominal weight because its heavy-zero distribution
+  concentrates the Euclidean norm; \textit{urban} and \textit{aspect}
+  are correspondingly deflated ($0.53\times$ and $0.51\times$).
+  Under midranks (right), the pattern reverses: \textit{perm} is
+  deflated ($0.62\times$) while the seven fully continuous criteria gain
+  $\approx 12\%$.
+  Grey lines show the eight remaining criteria; ratios in parentheses
+  are relative to vector normalisation.}
+\label{fig:slope_weights}
+\end{figure*}
+
 % ----------------------------------------------------------
 % ----------------------------------------------------------
 \subsection{Consequences for the factorial comparison}
@@ -1132,6 +1185,25 @@ sub-optimality in the factorial experiment into four ordered factors:
 % =======================================================================
 \section{Results}
 \label{sec:results}
+
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig_F3_pareto.pdf}
+\caption{%
+  Two-dimensional projections of the exact Pareto frontier ($n=\Fmmsize$
+  portfolios in $\mathcal{A}'$, grey dots) and the eight canonical
+  portfolios of Table~\ref{tab:canonical} (evaluated against
+  $\mathcal{A}'$).
+  Blue diamonds: Pareto-efficient portfolios (gap~$=0$);
+  orange crosses: dominated portfolios (gap~$>0$).
+  Panel~(a): cost ($F_1$, minimise) vs.\ impact ($F_2$, minimise);
+  (b): cost vs.\ safety ($F_3$, maximise);
+  (c): impact vs.\ safety.
+  Portfolios inside the frontier in any panel may still be efficient in
+  the full three-objective space; classification is based on
+  three-objective dominance.}
+\label{fig:pareto}
+\end{figure*}
 
 % ----------------------------------------------------------
 \subsection{Base portfolios under nominal weights}
@@ -1370,7 +1442,7 @@ rather than a uniform shift.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.85\columnwidth]{figures/fig_interaction.pdf}
+\includegraphics[width=0.85\columnwidth]{figures/fig_F2_interaction.pdf}
 \caption{%
   Normalisation$\,\times\,$assembly interaction.
   Each point is the mean $Q_2[\mathcal{A}']$ averaged over all
