@@ -1,79 +1,114 @@
 % ============================================================
-%  propositions.tex
-%  Problem formulation and Propositions P1--P4
-%  To include: \input{propositions}
-%  Updated: 29/Sep/2026 (Round 19)
+%  propositions.tex  —  §6
+%  Lema de amplitude + P1/P2/P3/P4
+%  Updated: 29/Sep/2026 (Round 19 reframing)
 % ============================================================
 
-\section{Formal Framework and Propositions}
+\section{Normalisation as implicit re-weighting: a closed-form analysis}
 \label{sec:propositions}
 
 % ----------------------------------------------------------
-\subsection{Problem formulation}
-\label{sec:formulation}
+\subsection{The amplitude lemma}
+\label{sec:amplitude}
 % ----------------------------------------------------------
 
-Let $\mathcal{A} = \{1, \ldots, N\}$ be a finite set of candidate sites, each
-characterised by $m$ criteria $x_1, \ldots, x_m \in \mathbb{R}^N$.
-A weight vector $\mathbf{w} = (w_1, \ldots, w_m)$ with $w_j > 0$ and
-$\sum_j w_j = 1$ is elicited by AHP.
-
-\paragraph{The set-selection problem with dispersion constraint.}
-We seek a set $T = \{a_1, \ldots, a_k\} \subseteq \mathcal{A}$ of exactly $k$
-sites satisfying the $r$-separation constraint of~\citet{Erkut1989}:
+\begin{lemma}[Normalisation as implicit re-weighting]
+\label{lem:amplitude}
+Let $n_j : \mathbb{R}^N \to \mathbb{R}^N$ be a normalisation applied
+column-wise to criterion $j$, and let
 \begin{equation}
-  \label{eq:dispersion}
-  d(a_i, a_j) \geq d_{\min} \quad \forall\, i \neq j \in T,
+  A_j = \max_i n_j(x_{ij}) - \min_i n_j(x_{ij})
 \end{equation}
-where $d(\cdot,\cdot)$ is the great-circle distance and $d_{\min} > 0$.
-The set $\mathcal{F}$ of all viable $k$-subsets of $\mathcal{A}$ satisfying
-\eqref{eq:dispersion} is enumerated exhaustively.
-
-\paragraph{Objectives.}
-Criteria are partitioned into three groups ($\ell = 1, 2, 3$) representing cost,
-environmental impact, and safety respectively.
-The set-level objective for group~$\ell$ is:
+be the \emph{amplitude} of the normalised column.
+In any additive aggregation $s(i) = \sum_j w_j n_j(x_{ij})$, the
+contribution of criterion $j$ to score differences between any two
+alternatives is proportional to $w_j A_j$.
+The effective weights are therefore
 \begin{equation}
-  \label{eq:objectives}
-  F_\ell(T) = \sum_{a \in T} g_\ell(a),
-  \qquad g_\ell(a) = \sum_{j \in \mathcal{J}_\ell} w_j \, v_j(a),
+  \label{eq:weff}
+  w_j^{\mathrm{eff}} = \frac{w_j A_j}{\sum_k w_k A_k},
 \end{equation}
-where $v_j(a) \in [0,1]$ is the normalised criterion value of site~$a$ on
-criterion~$j$, and $\mathcal{J}_\ell$ is the index set of criteria in group~$\ell$.
+and $w^{\mathrm{eff}} = w$ for all $w$ if and only if $A_j$ is constant
+across $j$.
+\end{lemma}
 
-\paragraph{Pareto front.}
-A set $T \in \mathcal{F}$ is \emph{non-dominated} if there is no $T' \in \mathcal{F}$
-with $F_1(T') \leq F_1(T)$, $F_2(T') \leq F_2(T)$, $F_3(T') \geq F_3(T)$, with at
-least one strict inequality.
-The \emph{exact Pareto front} $\mathcal{P}$ is computed by exhaustive enumeration of
-all $|\mathcal{F}|$ viable sets.
+\begin{proof}
+For any two alternatives $i$ and $i'$,
+$s(i) - s(i') = \sum_j w_j [n_j(x_{ij}) - n_j(x_{i'j})]$.
+The maximum absolute contribution of criterion $j$ to this difference,
+over all pairs $(i,i')$, is $w_j A_j$.
+The share of total score variation attributable to criterion $j$ is
+therefore $w_j A_j / \sum_k w_k A_k$, which is $w_j^{\mathrm{eff}}$
+in~\eqref{eq:weff}.
+The ``if and only if'' follows because $w^{\mathrm{eff}} = w$ iff
+$w_j A_j / \sum_k w_k A_k = w_j$ for all $j$, which holds iff all
+$A_j$ equal the same constant.
+\end{proof}
 
-\paragraph{Two evaluation spaces.}
-Space~$\mathcal{A}$ uses all $N$ candidates as the normalisation reference.
-Space~$\mathcal{A}'$ restricts normalisation to the $N'$ viable sites
-($N' \leq N$).
-In our application $N = 473$, $N' = 389$.
+\begin{remark}[scope]
+\label{rem:scope}
+Lemma~\ref{lem:amplitude} is exact for additive aggregations
+(SAW, rank-based SAW, and PROMETHEE~II via
+Proposition~\ref{prop:p2}).
+For TOPSIS and VIKOR, which aggregate through distances to ideal
+and anti-ideal points, $A_j$ enters squared or in absolute value,
+so~\eqref{eq:weff} is a first-order approximation only.
+\end{remark}
 
-\paragraph{Quality metrics Q1 and Q2.}
-Let $\mathbf{w}^{(d)}$ be a weight vector drawn from a Dirichlet distribution.
-Define the score $s(a; \mathbf{w}) = \sum_j w_j v_j(a)$ and the selected set
-$T(\mathbf{w}^{(d)}) = M\bigl(s(\cdot; \mathbf{w}^{(d)})\bigr)$, where $M(\cdot)$
-is the montage operator (greedy or optimal).
+\begin{corollary}[the three standard normalisations]
+\label{cor:three}
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Min--max.}
+    $A_j \equiv 1$ by construction; hence $w^{\mathrm{eff}} = w$.
+    Min--max is the unique member of the three that preserves elicited
+    weights exactly (for additive aggregations).
+  \item \textbf{Vector.}
+    $A_j = \rho_j = (\max_j x_j - \min_j x_j) / \lVert\mathbf{x}_j\rVert_2$,
+    which depends on the shape of the marginal distribution.
+    Criteria with heavy tails obtain $\rho_j$ close to unity (large
+    norm dominated by outliers); criteria with most mass at the median
+    obtain small $\rho_j$.
+  \item \textbf{Midranks scaled by $N+1$.}
+    $A_j = (r_j^{\max} - r_j^{\min})/(N+1)$, which approaches~$1$
+    when ties are absent but contracts with tie mass.
+    For a binary criterion with $n_0$ zeros and $n_1$ ones,
+    the two midranks are $(n_0+1)/2$ and $n_0 + (n_1+1)/2$,
+    giving
+    \begin{equation}
+      A_j = \frac{n_1/2}{N+1} + \frac{(n_1-1)/2}{N+1}
+           = \frac{n_1-1/2}{N+1} \approx \frac{n_1}{2(N+1)}.
+    \end{equation}
+    When $n_1 \ll N$, $A_j \approx n_1/(2N)$: binary criteria lose
+    weight in proportion to their minority class size, regardless of
+    the specific instance.
+\end{enumerate}
+\end{corollary}
 
-\begin{align}
-  Q_2[\mathcal{X}] &= \Pr\bigl[T(\mathbf{w}^{(d)}) \in \mathcal{P}(\mathbf{w}^{(d)},\mathcal{X})\bigr],
-  \label{eq:Q2}
-\end{align}
-where both the selected set and the Pareto front are evaluated using the same
-drawn weights $\mathbf{w}^{(d)}$.
-This is the primary metric: it measures whether the method's set would be a
-rational choice under the drawn weight vector.
+\noindent\textbf{Empirical calibration.}
+Table~\ref{tab:amplitude} reports $A_j$ for the three normalisations on
+the $\Nvia$ Fogo Island sites, along with the total variation
+$D = \sum_j w_j |A_j - 1|$ as a summary statistic of aggregate
+distortion.
+Min--max gives $D = 0$ by construction.
+The vector normalisation gives $D = 0.80$: criterion \textit{perm}
+dominates, with $\rho_j = 0.583$ (factor $\mathbf{2.87\times}$ relative
+to nominal weight) because its raw distribution has 350 exact zeros and
+a maximum of~532~m, giving a long-tailed norm.
+The rank normalisation gives $D = 0.11$: \textit{perm} is deflated
+($A_j = 0.547$, factor $\mathbf{0.55\times}$) because 350 tied zeros
+compress the maximum midrank to $\approx 214.5$ instead of $388$, while
+\textit{aspect} (binary, $n_1 = 94$) gives $A_j = 0.499$
+(factor $\mathbf{0.50\times}$).
+The directions are reversed: the same heavy-zero distribution inflates
+\textit{perm} under vector normalisation and deflates it under rank
+scaling.
 
-\paragraph{Montage operators.}
-\emph{Greedy}: iterate over sites in decreasing score order, accepting each site
-that satisfies \eqref{eq:dispersion} with previously accepted sites.
-\emph{Optimal}: maximise $\sum_{a \in T} s(a)$ over $\mathcal{F}$ by exhaustive
-enumeration.
+The aggregate distortion $D$ does not by itself predict $Q_2$ across
+all cells of the factorial: because TOPSIS and VIKOR are not additive,
+Lemma~\ref{lem:amplitude} does not apply exactly to them, and their
+$Q_2$ values do not follow the $D$-ordering.
+For the SAW cells, however, the ordering is consistent
+(Section~\ref{sec:results}).
 
 
 % ----------------------------------------------------------
@@ -84,75 +119,60 @@ enumeration.
 \begin{proposition}[Pareto consistency of optimal linear aggregation]
 \label{prop:p1}
 Let $v_j(a)$ be the normalised criterion values entering the objectives
-\eqref{eq:objectives}, and let $s(a) = \sum_j w_j v_j(a)$ be the SAW score
-with the same weights and normalisation.
+\eqref{eq:F1}--\eqref{eq:F3}, and let $s(a) = \sum_j w_j v_j(a)$ be
+the SAW score with the same weights and normalisation.
 Then the optimal set
-$T^* = \argmax_{T \in \mathcal{F}} \sum_{a \in T} s(a)$
-satisfies $T^* \in \mathcal{P}$, i.e., $Q_2 = 1$ almost surely.
+$T^* = \argmax_{T \in \Tset} \sum_{a \in T} s(a)$
+satisfies $T^* \in \Fset$, i.e., $Q_2 = 1$ almost surely.
 \end{proposition}
 
 \begin{proof}
-Suppose $T^*$ is dominated by $T' \in \mathcal{F}$.
-Then $F_\ell(T') \succeq F_\ell(T^*)$ for all $\ell$ and strictly for some $\ell$.
-Since each $F_\ell$ is a positive linear combination of the same per-site scores
-summed over the set, strict improvement in $F_\ell$ implies
-$\sum_{a \in T'} s(a) > \sum_{a \in T^*} s(a)$,
+Suppose $T^*$ is dominated by $T' \in \Tset$.
+Then $F_\ell(T') \succeq F_\ell(T^*)$ for all $\ell$ and strictly for
+some $\ell$.
+Since each $F_\ell$ is a positive linear combination of the same
+per-site scores summed over the portfolio, strict improvement in
+$F_\ell$ implies $\sum_{a \in T'} s(a) > \sum_{a \in T^*} s(a)$,
 contradicting the optimality of $T^*$.
 \end{proof}
 
 \begin{remark}
-Proposition~\ref{prop:p1} holds for any normalisation scheme, as long as the
-normalisation used to compute the objectives $F_\ell$ matches the one used in the
-score $s$.
-The $Q_2 = 1$ guarantee fails for the greedy set (see Proposition~\ref{prop:p4}).
+Proposition~\ref{prop:p1} holds for any normalisation, so long as the
+normalisation used to compute $F_\ell$ matches the one in the score $s$.
+We use the $Q_2 = 1$ cell as a regression test: any implementation
+returning a value below~$1$ is faulty.
 \end{remark}
 
 \noindent\textbf{Empirical verification.}
-For the Ilha do Fogo instance under min-max normalisation over 389 viable sites,
-the SAW optimal set $T^* = \{184, 430, 460\}$ belongs to the 181-set Pareto front
-$\mathcal{P}$ for every one of 500 draws of $\mathbf{w}^{(d)}$ at concentration
-parameter $\kappa = 200$ ($Q_2 = 100.0\%$).
+SAW with min--max normalisation over the $\Nvia$ viable sites:
+$Q_2[\mathcal{A}'] = 100.0\%$ for both $\kappa \in \{50, 200\}$
+($\ndraws$ draws each).
 
 
 % ---
 
 \begin{proposition}[PROMETHEE~II with usual criterion equals rank-weighted SAW]
 \label{prop:p2}
-Let $P_j(d) = \mathbf{1}[d > 0]$ be the usual preference function.
-Denote by $r_j(a)$ the midrank of site $a$ on criterion $j$
-(arithmetic mean of tied ranks).
-Then the net outranking flow satisfies:
+Let $P_j(d) = \mathbf{1}[d > 0]$.
+Denoting by $r_j(a)$ the midrank of site $a$ on criterion $j$, the
+PROMETHEE~II net flow satisfies
 \begin{equation}
   \label{eq:p2identity}
-  \phi(a) \;=\; \frac{n+1}{n-1} - \frac{2}{n-1}\sum_{j=1}^m w_j\, r_j(a),
+  \phi(a) = \frac{n+1}{n-1} - \frac{2}{n-1}\sum_{j=1}^m w_j\, r_j(a),
 \end{equation}
-where $n = |\mathcal{A}|$.
-In particular, the ranking induced by $\phi$ is identical to that of the
-rank-weighted sum $\tilde{s}(a) = \sum_j w_j r_j(a)$, for any pattern of tied
-values.
+for any tied-value pattern.
+The ranking induced by $\phi$ is therefore identical to that of
+$\tilde{s}(a) = \sum_j w_j r_j(a)$.
 \end{proposition}
 
 \begin{proof}
-For any site $a$ and criterion $j$, let $B_j(a)$ be the number of sites strictly
-worse than $a$ and $T_j(a)$ the size of the tied block containing $a$.
+For site $a$ and criterion $j$, let $B_j(a)$ count strictly worse sites
+and $T_j(a)$ be the tied-block size.
 The midrank satisfies $2r_j(a) = 2B_j(a) + T_j(a) + 1$.
-With the usual preference function, the positive outranking flow on criterion $j$
-is $\phi_j^+(a) = B_j(a)/(n-1)$ and the negative flow is
-$\phi_j^-(a) = (n - B_j(a) - T_j(a))/(n-1)$.
-The net flow on criterion $j$ is:
-\begin{align}
-  \phi_j(a) &= \frac{B_j(a) - (n - B_j(a) - T_j(a))}{n-1}
-             = \frac{2B_j(a) + T_j(a) - n}{n-1}
-             = \frac{2r_j(a) - 1 - n}{n-1}.
-\end{align}
-Summing over criteria with weights and adding a constant:
-\begin{align}
-  \phi(a) = \sum_j w_j \phi_j(a)
-          = \frac{1}{n-1}\Bigl[(1-n)\sum_j w_j + 2\sum_j w_j r_j(a) - \sum_j w_j\Bigr]
-          = \frac{n+1}{n-1} - \frac{2}{n-1}\tilde{s}(a).
-\end{align}
-The identity holds for any tied-rank pattern because the terms $B_j$ and $T_j$
-cancel through $r_j$.
+The net PROMETHEE flow on criterion $j$ is
+$\phi_j(a) = [B_j(a) - (n - B_j(a) - T_j(a))]/(n-1)
+            = [2r_j(a) - 1 - n]/(n-1)$.
+Summing with weights and simplifying gives~\eqref{eq:p2identity}.
 \end{proof}
 
 \begin{remark}[rank scaling is not innocuous]
@@ -162,93 +182,60 @@ Dividing midranks by $N+1$ --- the conventional rescaling to $(0,1)$
 With $350$ tied zeros in \texttt{perm} among $\Nvia$ sites, its maximum
 midrank is $\approx 214.5$, so the rescaled column spans
 $[0.003,\,0.550]$ while every other criterion spans $[0.003,\,0.997]$.
-The effective weight of \texttt{perm} is thereby scaled by $\approx 0.55$,
-and the exact identity of Proposition~\ref{prop:p2} no longer holds for
-the implemented score.
-This is the rank-space counterpart of the vector-normalisation distortion
-quantified in Proposition~\ref{prop:p3}: the same criterion with a
-heavy-zero distribution is deflated by $\times 0.55$ in rank space but
-inflated by $\times 2.87$ in the vector space, because the two
-mechanisms are distinct ---
-the rank-space mechanism compresses the \emph{range} of the rescaled
-variable, while the vector-space mechanism inflates the \emph{effective
-amplitude relative to the norm}.
+By Corollary~\ref{cor:three}(iii), the effective weight of
+\texttt{perm} is scaled by $\approx 0.55$, and the exact identity
+\eqref{eq:p2identity} no longer holds for the implemented score.
+This is the rank-space counterpart of the vector-normalisation
+distortion of Corollary~\ref{cor:three}(ii), with the notable
+difference that \texttt{perm} is \emph{deflated} ($\times 0.55$) in
+rank space but \emph{inflated} ($\times 2.87$) in vector space: the
+same heavy-zero distribution distorts in opposite directions under the
+two normalisations.
 \end{remark}
 
 \noindent\textbf{Empirical verification.}
-On Ilha do Fogo with $n = 389$ viable sites and $m = 11$ criteria, the maximum
-absolute difference between $\phi(a)$ and $-\frac{2}{n-1}\tilde{s}(a)$ across all
-sites is $6.7 \times 10^{-16}$ (machine precision), with Spearman correlation
-$\rho = 1.000000$ and zero ranking inversions.
-The result holds for both criteria with and without massive ties.
+On the Fogo Island dataset ($n = \Nvia$, $m = 11$ criteria), the
+maximum absolute difference between $\phi(a)$ and
+$-(2/(n-1))\tilde{s}(a)$ across all sites is $6.7 \times 10^{-16}$
+(machine precision), with Spearman $\rho = 1.000000$ and zero ranking
+inversions.
 
 
 % ---
 
-\begin{proposition}[Vector normalisation distorts effective criterion weights]
+\begin{proposition}[Vector normalisation distorts effective weights]
 \label{prop:p3}
-Under vector normalisation, $v_j(a) = x_j(a) / \|\mathbf{x}_j\|_2$.
-Define the \emph{effective weight} of criterion $j$ as:
+Under vector normalisation, $v_j(a) = x_j(a) / \lVert\mathbf{x}_j\rVert_2$.
+The amplitude is $A_j = \rho_j$ as defined in
+Lemma~\ref{lem:amplitude}, and by~\eqref{eq:weff}
 \begin{equation}
-  \label{eq:eff_weight}
-  w_j^{\mathrm{eff}} = \frac{w_j\, \rho_j}{\sum_{j'} w_{j'}\, \rho_{j'}},
-  \qquad \rho_j = \frac{\max_a x_j(a) - \min_a x_j(a)}{\|\mathbf{x}_j\|_2}.
+  \label{eq:weff_vec}
+  w_j^{\mathrm{eff}} = \frac{w_j\,\rho_j}{\sum_k w_k\,\rho_k},
+  \qquad
+  \rho_j = \frac{\max_a x_j(a) - \min_a x_j(a)}
+                {\lVert\mathbf{x}_j\rVert_2}.
 \end{equation}
-For continuous criteria, $\rho_j = (\max - \min)/\|\mathbf{x}\|_2$;
-for binary criteria with $n_1$ observations equal to one,
-$\rho_j = 1/\sqrt{n_1}$.
-Under min-max normalisation $v_j(a) = (x_j(a) - \min_a x_j) / (\max_a x_j - \min_a x_j)$,
-the amplitude is identically one for all criteria, so $w_j^{\mathrm{eff}} = w_j$.
+For binary criteria, $\rho_j = 1/\sqrt{n_1}$ exactly, where $n_1$ is
+the number of ones.
 \end{proposition}
 
 \begin{proof}
-The range of $v_j$ over sites is $\rho_j$ under vector normalisation (by definition
-of $\rho_j$) and $1$ under min-max normalisation.
-The effective weight is the range-weighted share of total score variation.
-The binary case follows from $\|\mathbf{x}_j\|_2 = \sqrt{n_1}$ when $x_j \in \{0,1\}$.
+The range of $v_j(a)$ over all sites is
+$(\max_a x_j(a) - \min_a x_j(a)) / \lVert\mathbf{x}_j\rVert_2 = \rho_j$,
+so $A_j = \rho_j$ and~\eqref{eq:weff_vec} follows from~\eqref{eq:weff}.
+For binary $x_j \in \{0,1\}$ with $n_1$ ones,
+$\lVert\mathbf{x}_j\rVert_2 = \sqrt{n_1}$ and
+$\max - \min = 1$, giving $\rho_j = 1/\sqrt{n_1}$.
 \end{proof}
 
-\noindent\textbf{Empirical verification.}
-Table~\ref{tab:eff_weights} gives $\rho_j$ and the distortion factor
-$w_j^{\mathrm{eff}}/w_j$ for all eleven criteria on the 389 viable Ilha do Fogo
-sites.
-Permeability (\textit{perm}, $w_j = 0.152$) is the most distorted: $\rho_j = 0.583$,
-distortion factor $2.865\times$ (nominal weight effectively tripled).
-Urban distance (\textit{urban}, $w_j = 0.166$) is attenuated to $0.525\times$.
-The binary criterion \textit{aspect} ($n_1 = 94$) has $\rho_j = 1/\sqrt{94} = 0.103$,
-factor $0.507\times$.
-
-
-% ---
-
-\begin{proposition}[Greedy assembly may select a Pareto-dominated set]
-\label{prop:p4}
-For a linear score $s$, the optimal set $T^*$ is Pareto-optimal
-(Proposition~\ref{prop:p1}), but the greedy set $T^g$ may be Pareto-dominated.
-\end{proposition}
-
-\begin{proof}
-By counterexample.
-On Ilha do Fogo with SAW, min-max normalisation, $d_{\min} = 10$~km, and the AHP
-weight vector $\mathbf{w}^{\mathrm{AHP}}$:
-the greedy set is $T^g = \{184, 279, 320\}$, which is Pareto-dominated
-(gap$_{\mathrm{norm}} = 0.032$), while the optimal set $T^* = \{184, 430, 460\}$
-is on the Pareto front.
-The greedy procedure selects site~279 in its second step because it has the highest
-score among sites at least 10~km from site~184.
-Sites~430 and~460, which together with~184 form the optimal set, are not individually
-the top-ranked compatible sites at each step.
-\end{proof}
-
-\begin{remark}
-The gap between the greedy and optimal sets persists under Monte Carlo weight
-perturbation.
-On draw $d = 302$ ($\kappa = 200$, $\mathbf{w}^{(d)}$ near $\mathbf{w}^{\mathrm{AHP}}$),
-the greedy set $\{184, 279, 320\}$ is non-dominated in the score-only sense
-but Pareto-dominated in $Q_2[\mathcal{A}']$: gap$_{Q_2} = 0.028$.
-This confirms that the greedy--optimal divergence is not an artefact of the fixed
-AHP weights.
-\end{remark}
+\noindent\textbf{Empirical calibration.}
+Table~\ref{tab:amplitude} lists $\rho_j$ and $w_j^{\mathrm{eff}}/w_j$
+for all eleven criteria.
+\textit{Perm} ($w_j = 0.152$): $\rho_j = 0.583$, effective-weight
+factor $\mathbf{2.87\times}$.
+\textit{Urban} ($w_j = 0.166$): factor $\mathbf{0.53\times}$.
+\textit{Aspect} (binary, $n_1 = 94$): $\rho_j = 1/\sqrt{94} = 0.103$,
+factor $0.51\times$.
 
 
 % ----------------------------------------------------------
@@ -256,27 +243,30 @@ AHP weights.
 \label{sec:consequences}
 % ----------------------------------------------------------
 
-Propositions~\ref{prop:p1}--\ref{prop:p4} partition the sources of
-sub-optimality in the factorial experiment:
+Lemma~\ref{lem:amplitude} and
+Propositions~\ref{prop:p1}--\ref{prop:p3} partition the sources of
+sub-optimality in the factorial experiment into four ordered factors:
 
 \begin{enumerate}
-  \item \emph{Normalisation effect}: under min-max normalisation (any linear method),
-        the optimal set achieves $Q_2 = 1$ by Proposition~\ref{prop:p1}.
-        Under vector normalisation, the effective weight distortion of
-        Proposition~\ref{prop:p3} may move the selected set away from the Pareto front.
-  \item \emph{Assembly effect}: the greedy set may be dominated even when the
-        method guarantees Pareto-optimality of the optimal set
-        (Proposition~\ref{prop:p4}).
-        The assembly effect is amplified when the score is well-aligned with the
-        Pareto front (min-max) and suppressed when it is not (vector).
-  \item \emph{Aggregation effect}: SAW, TOPSIS, and VIKOR share the same
-        objectives~\eqref{eq:objectives} by construction;
-        differences in $Q_2$ arise only from differences in the score
-        $s(a; \mathbf{w})$, whose magnitude is quantified by the factorial
-        experiment.
-  \item \emph{Reference set effect}: the choice between Space~$\mathcal{A}$
-        (normalisation over all $N$ candidates, including inviable sites) and
-        Space~$\mathcal{A}'$ (normalisation over the $N'$ viable sites only)
-        constitutes a fourth source of variation, formalised in the ``fourth cell''
-        experiment of Section~\ref{sec:fourthcell}.
+  \item \emph{Normalisation effect (min--max vs.\ others):}
+    Min--max is the only normalisation that preserves elicited weights
+    in additive aggregations (Corollary~\ref{cor:three}).
+    Under SAW, where the Lemma applies exactly, both the greedy and
+    optimal assembly benefit from the preservation.
+  \item \emph{Assembly effect (optimal vs.\ greedy):}
+    The greedy procedure may be Pareto-dominated even when the score
+    is well-calibrated (Section~\ref{sec:results}).
+    The assembly effect is amplified under min--max because the score
+    is well-aligned with the Pareto front, and suppressed under vector
+    normalisation because the distorted score is what is being
+    optimised.
+  \item \emph{Aggregation effect (SAW vs.\ TOPSIS vs.\ VIKOR):}
+    TOPSIS and VIKOR aggregate through ideal-point distances;
+    Lemma~\ref{lem:amplitude} does not apply exactly to them.
+    The factorial experiment measures the residual effect after
+    controlling for items~1 and~2.
+  \item \emph{Reference-set effect (normalisation over $N$ vs.\ $N'$):}
+    Including inadmissible sites in the normalisation reference shifts
+    the scale without those sites being selectable
+    (Section~\ref{sec:fourthcell}).
 \end{enumerate}
