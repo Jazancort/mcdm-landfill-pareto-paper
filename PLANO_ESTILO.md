@@ -215,39 +215,151 @@ Cada subseção precisa de âncora à Figura 1: "This subsection corresponds to 
 
 ---
 
-## 9. Figuras — PROVISÓRIO
+## 9. Figuras — COMPLETO
 
-> ⚠️ **Esta seção depende de `STYLE_GUIDE.md` e `study_design_extracted.html`, que não foram lidos. Colar os dois ficheiros aqui para fechar.**
+> ✅ Seção fechada. Fontes lidas: `STYLE_GUIDE.md` (Intervention Window, `figures/src/`) e `study_design_extracted.html` (Intervention Window, `figures/src/`).
 
-O que foi inferido apenas do IEEE Access 2026:
+### 9.1 Dois tipos de figura — duas ferramentas
 
-- Painéis rotulados (a) (b) (c) em caixa-baixa, dentro do gráfico
-- Legendas longas e descritivas, explicando cada painel
-- Figura de workflow com estágios numerados em círculos e caixas coloridas por estágio
-- Largura dupla (`figure*`) para multi-painel; coluna simples para gráfico único
-- Sem figura ocupando página inteira
+| Tipo | Ferramenta | Quando usar |
+|---|---|---|
+| **Gráfico de dados** | Python + matplotlib | Linhas, barras, scatter, box plots — dados quantitativos |
+| **Diagrama de escrita** | HTML + CSS → screenshot PNG | Workflow, fluxograma, comparação qualitativa, design de estudo |
 
-### Plano de figuras
+**Regra absoluta:** nunca matplotlib para diagramas de escrita; nunca HTML para gráficos de dados.
 
-| # | Conteúdo | Largura | Status |
-|---|---|---|---|
-| 1 | Workflow do estudo, estágios 1–6 | Dupla | A criar (derivável do `study_design_extracted.html`) |
-| 2 | Mapa de Fogo: 389 admissíveis, 84 excluídos, trio BCS com raios de 10 km | Simples | Existe (F4), redimensionar |
-| 3 | Pesos nominais vs. efetivos, 3 painéis (mm / vec / rank) | Dupla | Existe (F1), verificar se cabe sem página cheia |
-| 4 | Interação normalização × montagem, 3 retas com IC | Simples | Existe (F2) |
-| 5 | Projeções 2D da fronteira de Pareto, painéis (a)(b)(c) | Dupla | Existe (F3) |
-| 6 | $A_j^{rank}$ binário vs. $n_1$ | Simples | Existe (F5), candidata a Suplementar |
+### 9.2 rcParams obrigatórios (já implementados em `fig_utils.py`)
 
-### Correções técnicas para evitar página cheia
+```python
+plt.rcParams.update({
+    'font.family': 'sans-serif',
+    'font.sans-serif': ['Arial', 'Helvetica', 'DejaVu Sans'],
+    'font.size': 11,
+    'axes.labelsize': 13,
+    'axes.titlesize': 14,
+    'xtick.labelsize': 11,
+    'ytick.labelsize': 11,
+    'legend.fontsize': 11,
+    'figure.dpi': 150,
+    'savefig.dpi': 300,
+    'axes.linewidth': 1.0,
+    'lines.linewidth': 2.0,
+    'lines.markersize': 6,
+    'axes.spines.top': False,
+    'axes.spines.right': False,
+})
+```
+
+> **Nota de venue:** o `fig_utils.py` actual usa `font.size=11` (Intervention Window), compatível com Elsevier CAS-DC 90mm após redução a 50% (resulta em ~5.5pt — no limite mas aceitável). O mínimo Elsevier é 6pt; se a Omega pedir revisão de tamanho de fonte, baixar para 9pt.
+
+### 9.3 Paleta semântica (já implementada)
+
+```python
+C_BASELINE  = "#C0392B"   # red-brown — perm / vector baselines
+C_TREATMENT = "#2980B9"   # blue — min-max / treatment
+C_ORANGE    = "#E67E22"   # orange — vector (segunda condição)
+C_GREEN     = "#009E73"   # green — ranks
+C_GRAY      = "#7F8C8D"   # gray — neutral / other criteria
+```
+
+**Regra de ouro (adaptada do STYLE_GUIDE):** não usar a mesma cor para significados diferentes em figuras adjacentes. No contexto MCDM: azul = min-max, vermelho/marrom = vector, verde = ranks, cinza = outras.
+
+### 9.4 Padrão de legenda
+
+Sempre abaixo, horizontal, sem frame:
+
+```python
+ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.12),
+          ncol=N, frameon=False)
+plt.subplots_adjust(bottom=0.18)
+```
+
+Para 2 curvas bem separadas verticalmente: preferir **direct labels** ao final de cada linha (na cor da linha), sem `ax.legend()`.
+
+### 9.5 Figura 1 — Workflow do estudo (a criar)
+
+**Tipo:** diagrama de escrita → HTML + CSS.  
+**Referência canónica:** `study_design_extracted.html` (Intervention Window).
+
+Estrutura do HTML (baseada no template lido):
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  MÉTODO                                                          │
+│  ┌──────────┐  →  ┌──────────┐  →  ┌──────────┐  →  ┌──────┐ │
+│  │ Stage 1  │     │ Stage 2  │     │ Stage 3  │     │  …   │ │
+│  │ Dataset  │     │ Criteria │     │ Portfolio│     │      │ │
+│  │ & Exclu- │     │ & AHP    │     │ Formula- │     │      │ │
+│  │ sion     │     │ Weights  │     │ tion     │     │      │ │
+│  └──────────┘     └──────────┘     └──────────┘     └──────┘ │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+Tokens CSS obrigatórios do STYLE_GUIDE (diagramas de escrita):
+
+| Elemento | Valor |
+|---|---|
+| Fonte | `'Source Serif 4', Georgia, serif` |
+| Fundo da página | `#ffffff` |
+| Card histórico/neutro | bg `#f3f5f7`, borda `#b7bec6` |
+| Card primary | bg `#e7f0f9`, borda `2.5px solid #1d4e89` |
+| Border-radius dos cards | `12px` |
+| Número do estágio | círculo `38px`, fundo `#1d4e89` (primary) ou `#9aa3ad` (neutro) |
+| Separador interno | `height: 1px; background: #d9dee3` |
+| Seta sólida | `background: #2c3742`, ponta `border-left: 12px solid #2c3742` |
+| Largura total | `1840px` |
+| Padding | `40px 44px 34px` |
+
+**Conteúdo dos estágios para o artigo MCDM:**
+
+| Estágio | Título | Conteúdo (bullets) |
+|---|---|---|
+| 1 | Dataset & Exclusion | 473 candidate sites; 84 excluded (D2); 389 admissible (N=389) |
+| 2 | Criteria & AHP Weights | 13 spatial criteria; 3 groups; AHP weights from Andrade (2015) |
+| 3 | Portfolio Formulation | k=3 facilities; d_min=10 km; 1,944,653 feasible triples |
+| 4 | Normalisation | Min-max / Vector / Ranks; Amplitude Lemma |
+| 5 | Assembly | Greedy / Optimal (exact enumeration) |
+| 6 | Pareto Reference | 181-portfolio Pareto frontier; Q2 optimality gap |
+
+**Fluxo de geração:**
+1. Criar `scripts/fig_workflow.html` seguindo o template do STYLE_GUIDE
+2. Abrir no Chrome → F12 → Ctrl+Shift+P → "Capture full size screenshot"
+3. Guardar como `figures/fig_workflow.png`
+4. Inserir no main.tex como `figure*` (largura dupla)
+
+### 9.6 Plano de figuras (actualizado)
+
+| # | Conteúdo | Largura | Tipo | Status |
+|---|---|---|---|---|
+| 1 | Workflow do estudo, 6 estágios | Dupla | HTML/CSS | **A criar** |
+| 2 | Mapa de Fogo: 389 admissíveis, trio BCS, raios 10 km | Simples | matplotlib | Existe (F4) ✓ |
+| 3 | Pesos efectivos: 3 painéis (a)(b)(c) mm/vec/rank | Dupla | matplotlib | Existe (F1) ✓ |
+| 4 | Interação normalização × montagem, 3 retas com IC | Simples | matplotlib | Existe (F2) ✓ |
+| 5 | Projeções 2D fronteira de Pareto, painéis (a)(b)(c) | Dupla | matplotlib | Existe (F3) ✓ |
+| 6 | $A_j^{rank}$ binário vs. $n_1$ | Simples | matplotlib | Existe (F5); candidata a Suplementar |
+
+### 9.7 Correcções técnicas para evitar página cheia
 
 ```latex
-\includegraphics[width=\textwidth]{...}   % não usar 0.92\textwidth
-% height= só se necessário para controlo fino
-
+% No preâmbulo (já está placeins; adicionar os dois renewcommands):
 \renewcommand{\topfraction}{0.9}
 \renewcommand{\floatpagefraction}{0.8}
-% \usepackage{placeins} já está no preâmbulo
+
+% Em todas as \includegraphics de figure* (F1, F3):
+\includegraphics[width=\textwidth]{figures/fig_F1_slope_weights}
+% Nunca 0.92\textwidth sem height= explícito
+
+% \FloatBarrier já presente via placeins[section]
+% Adicionar manualmente entre §6 e §7 se persistir acumulação
 ```
+
+### 9.8 Regras de caption (padrão do IEEE Access 2026)
+
+- Caption descreve **o que a figura mostra** (elementos, cores, eixos, painéis)
+- Corpo do texto diz **o que a figura significa** (interpretação)
+- Painéis múltiplos: referenciar (a), (b), (c) na caption
+- 40–70 palavras para figuras simples; até 100 para multi-painel
+- Símbolo e abreviatura não-óbvios definidos na caption
 
 ---
 
