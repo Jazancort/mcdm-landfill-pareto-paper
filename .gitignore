@@ -36,7 +36,8 @@ __pycache__/
 .venv/
 .uv/
 
-# OS
+# Session logs — runtime noise, not part of the paper
+docs/session-log.md
 .DS_Store
 Thumbs.db
 
