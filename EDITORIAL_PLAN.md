@@ -4,6 +4,8 @@
 **Venue:** Omega (Elsevier, CAS-DC, coluna dupla)  
 **Data:** 29 set 2026
 
+> **Plano de reescrita estilística:** ver [`PLANO_ESTILO.md`](./PLANO_ESTILO.md) — cobre todas as violações de estilo (V1–V9), conversão dos ambientes de teorema, substituição de travessões e frases de efeito, reestruturação de seções, tabelas e figuras. Baseado no IEEE Access 2026. A seção 9 (figuras) está provisória até que `STYLE_GUIDE.md` e `study_design_extracted.html` sejam colados no documento.
+
 ---
 
 ## O que está errado e por quê
