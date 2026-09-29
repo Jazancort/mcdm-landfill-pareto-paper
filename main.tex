@@ -57,12 +57,13 @@
 \def\floatpagepagefraction{1}
 \def\textpagefraction{.001}
 
-\shorttitle{Normalisation and Assembly in MCDM Landfill Site Selection}
+\shorttitle{Normalisation as Implicit Re-weighting in MCDM Portfolio Selection}
 \shortauthors{Azancort Neto}
 
 % -----------------------------------------------------------------------
-\title[mode=title]{Normalisation and assembly in MCDM-based landfill
-  site selection: a factorial evaluation against an exact Pareto frontier}
+\title[mode=title]{Normalisation as implicit re-weighting in
+  multi-criteria portfolio selection: closed form and cost against an
+  exact Pareto frontier}
 
 \tnotemark[1]
 \tnotetext[1]{\todo{D1: add venue-specific acknowledgement once venue is
@@ -105,7 +106,135 @@
 \label{sec:intro}
 % =======================================================================
 
-\todo{Write Introduction after Literature Review is drafted.}
+Siting a waste facility is rarely a matter of choosing one location.
+Regional plans allocate several landfills at once, and the sites must be
+spatially dispersed: co-locating them concentrates traffic, leachate risk
+and public opposition in one area, and defeats the purpose of a
+distributed network.
+The decision is therefore a \emph{portfolio} problem --- choose $\kk$
+sites out of $N$ subject to a minimum pairwise separation --- rather than
+a ranking problem.
+
+Practice, however, is organised around rankings.
+The standard workflow scores candidate sites with a multi-criteria method,
+reads the ranking top-down, and skips any site too close to one already
+chosen.
+In a review of 114 landfill siting studies, \citet{Rezaeisabzevar2020}
+found TOPSIS, SAW and AHP to be the dominant tools, and normalisation
+choices to be rarely reported.
+The methodological literature compares these methods extensively, but
+almost always by measuring agreement between the rankings they produce
+\citep{Chakraborty2009,Jahan2015,Vafaei2018,Aytekin2021,Salabun2020Sym}.
+Agreement statistics establish that methods disagree; they cannot
+establish that any one of them is worse, because there is no external
+standard against which to judge.
+
+This paper supplies such a standard and uses it to ask which design
+choice in the workflow actually matters.
+For a real candidate set of $\Ncand$ sites on Fogo Island, Cape Verde,
+we enumerate the complete feasible set of $\Ntrios$ three-site portfolios
+satisfying a $d_{\min}=\dmin$~km separation constraint, and compute the
+exact Pareto frontier over three group-level objectives --- siting cost,
+environmental impact and social safety.
+Because the frontier is obtained by exhaustive enumeration rather than by
+a metaheuristic, a portfolio produced by any method can be classified as
+Pareto-efficient or not, with no approximation error.
+We then cross four aggregation methods with three normalisations and two
+assembly rules, and measure how often each cell recovers an efficient
+portfolio under Monte Carlo perturbation of the elicited weights.
+
+The answer is not about the aggregation methods.
+Choosing between SAW and TOPSIS is worth $+0.9$ percentage points (pp)
+with a $95\%$ interval of $[-0.5,\,+2.3]$ --- statistically
+indistinguishable from no effect.
+The choice of normalisation is worth $+29.9$~pp, and the choice between
+greedy and exact assembly $+16.0$~pp.
+The variable that the literature compares most is the variable that
+matters least.
+
+The reason is a mechanism that operates upstream of the aggregation
+operator, and it is the analytical core of the paper.
+That a criterion weight cannot be interpreted independently of the scale
+on which the criterion is measured has been understood since
+\citet{Choo1999}, who distinguished nominal from effective weights and
+argued that the latter governs the outcome.
+We state this relation in closed form: in any additive aggregation, the
+effective weight of criterion $j$ is $w_j^{\mathrm{eff}} \propto w_j
+A_j$, where $A_j$ is the amplitude of the normalised column.
+Three consequences follow immediately, and none is available from the
+qualitative statement.
+Min--max normalisation has $A_j \equiv 1$ and is the unique
+weight-preserving choice among the three standard families.
+Vector normalisation has $A_j = \rho_j$, determined by the distributional
+shape of the criterion, which in our data multiplies one criterion's
+weight by $2.88\times$ and divides another by $1.9\times$
+(\textit{urban}, $0.53\times$) without any of this appearing in the
+analyst's report.
+Midranks rescaled to the unit interval contract with tie mass, and every
+binary criterion loses half its weight in rank space irrespective of
+class balance.
+
+The mechanism also explains the interaction we observe between
+normalisation and assembly.
+Exact optimisation of an additive score is guaranteed to yield a
+Pareto-efficient portfolio under the weights that score encodes.
+When the score encodes $w^{\mathrm{eff}} \neq w$, exact optimisation
+solves the wrong problem exactly: replacing greedy with optimal assembly
+is worth $+29.8$~pp under min--max normalisation and $+2.2$~pp under
+vector normalisation, with an interval containing zero.
+Adding integer programming on top of a ranking --- the established
+upgrade path
+\citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012} --- pays
+only when the normalisation is already consistent with the value model.
+
+A third finding concerns the set over which normalisation constants are
+computed.
+In our data, $\Nexcl$ of the $\Ncand$ candidates overlap protected areas
+and cannot be selected.
+Computing the value scale over all $\Ncand$ nonetheless calibrates it on
+alternatives that are unavailable, and the resulting mismatch between the
+scale used by the method and the scale defining the objectives costs up
+to $80$~pp of Pareto efficiency --- far more than the re-weighting alone
+predicts.
+The loss is also strongly asymmetric, which tells us the two mechanisms
+are distinct rather than two readings of one effect.
+
+Our contributions are as follows.
+\begin{enumerate}[label=(\roman*)]
+  \item A closed-form characterisation of normalisation as implicit
+    re-weighting (Lemma~\ref{lem:amplitude}), formalising a relation
+    established qualitatively by \citet{Choo1999}, with the amplitude
+    $A_j$ identified for min--max, vector and rank normalisation
+    (Corollary~\ref{cor:three}).
+    Three effects previously reported separately --- vector-normalisation
+    distortion, tie-induced contraction in rank space, and amplitude loss
+    from normalising over inadmissible alternatives --- become corollaries
+    of one identity.
+  \item A measurement of the cost of that distortion in units of Pareto
+    efficiency rather than rank agreement, against an exhaustively
+    enumerated frontier of $\Ntrios$ portfolios under a hard separation
+    constraint.
+  \item A factorial decomposition showing that normalisation and assembly
+    dominate the choice of aggregation operator, with an interaction that
+    the main effects conceal, and an explanation of why: the distortion
+    acts through the weighted sum and the aggregation operator lies
+    downstream of it.
+  \item An exact identity between PROMETHEE~II under the usual preference
+    function and rank-weighted SAW, holding for arbitrary tie structure
+    (Proposition~\ref{prop:p2}), which follows from the axiomatic results
+    of \citet{Bouyssou1992} and \citet{Marchant1996} and which isolates
+    normalisation as the sole source of the divergence observed in
+    practice.
+\end{enumerate}
+
+\noindent
+Section~\ref{sec:litreview} reviews the relevant literature.
+Section~\ref{sec:problem} formulates the portfolio problem and the
+reference set; Section~\ref{sec:methods} describes the data and the
+methods; Section~\ref{sec:design} the experimental design.
+Section~\ref{sec:propositions} develops the closed-form analysis,
+Section~\ref{sec:results} reports the results, and
+Section~\ref{sec:discussion} discusses their implications and limits.
 
 % =======================================================================
 \section{Literature review}
@@ -1081,7 +1210,7 @@ evidential foundation.
 Two entries of Table~\ref{tab:tvorder} deserve comment because they
 isolate distinct mechanisms acting on the same criterion.
 Under vector normalisation, \texttt{perm} is \emph{inflated} to
-$2.865\times$ its nominal weight, because its long right tail
+$2.88\times$ its nominal weight, because its long right tail
 concentrates the Euclidean norm in few sites.
 Under midranks scaled by $N+1$, the same criterion is \emph{deflated}
 to $\approx0.616\times$, because its 350 tied zeros compress the
@@ -1193,7 +1322,7 @@ encodes}.
 When the score encodes $w^{\mathrm{eff}}\neq w$, optimal assembly
 solves the wrong problem exactly: it pursues the criterion trade-offs of
 $w^{\mathrm{eff}}$, which in the vector case inflates \texttt{perm}
-by $2.865\times$ and deflates \texttt{urban} to $0.525\times$.
+by $2.88\times$ and deflates \texttt{urban} to $0.53\times$.
 Greedy assembly, being myopic, is partly insulated --- it fails for its
 own reasons, but it does not optimise the distortion.
 
