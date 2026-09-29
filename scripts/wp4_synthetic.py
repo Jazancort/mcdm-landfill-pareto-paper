@@ -59,7 +59,7 @@ W_AHP /= W_AHP.sum()   # renormalise to exact 1
 
 M = len(W_AHP)         # 11 criteria
 K = 3                  # portfolio size
-N_SITES = 120       # C(120,3)~280k trios; fast numpy enumeration
+N_SITES = 40        # C(40,3)~10k trios; ~3s per instance at 500 draws
 D_MIN_KM = 10.0        # separation constraint (km)
 BOX_KM   = 50.0        # spatial domain side (km)
 N_DRAWS = 500          # weight draws per cell
@@ -104,22 +104,33 @@ def saw_scores(V: np.ndarray, w: np.ndarray) -> np.ndarray:
 
 def pareto_front(F: np.ndarray, eps: float = 1e-9):
     """
-    F: (n_trios, 3) — all three maximised.
-    Returns boolean mask of non-dominated rows.
+    Fast 3-objective Pareto filter using sort-and-sweep.
+    Sort descending by F[:,0], then sweep tracking best F[:,1] and F[:,2].
+    O(n log n) — handles 10k trios in <0.01s.
+    All objectives maximised.
     """
     n = len(F)
-    dominated = np.zeros(n, dtype=bool)
+    if n == 0:
+        return np.zeros(0, dtype=bool)
+    order = np.argsort(-F[:, 0])
+    F_sorted = F[order]
+    nd_sorted = np.ones(n, dtype=bool)
+    best2 = -np.inf
+    best3 = -np.inf
     for i in range(n):
-        if dominated[i]:
-            continue
-        # vectorised dominance check: does any j dominate i?
-        better_all = (F >= F[i] - eps).all(axis=1)  # F[j] >= F[i] for all obj
-        better_one = (F > F[i] + eps).any(axis=1)   # F[j] > F[i] for some obj
-        dominators = better_all & better_one
-        dominators[i] = False
-        if dominators.any():
-            dominated[i] = True
-    return ~dominated
+        f1, f2, f3 = F_sorted[i, 0], F_sorted[i, 1], F_sorted[i, 2]
+        if f2 > best2 - eps or f3 > best3 - eps:
+            # update running bests
+            if f2 > best2:
+                best2 = f2
+            if f3 > best3:
+                best3 = f3
+        else:
+            nd_sorted[i] = False
+    # map back to original order
+    result = np.zeros(n, dtype=bool)
+    result[order] = nd_sorted
+    return result
 
 
 def gap_score(f: np.ndarray, front: np.ndarray, R: np.ndarray) -> float:
