@@ -680,7 +680,7 @@ Lemma~\ref{lem:amplitude} is exact for additive aggregation.
 Within that scope the prediction is borne out: across SAW cells,
 mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.3\%$, $76.5\%$ and
 $55.5\%$ for min--max, ranks and vector normalisation respectively,
-against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.324$ ---
+against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.315$ ---
 a strictly monotone ordering ($R^2=0.995$ on three means; we report the
 ordering and note approximate proportionality, given $n=3$, $\mathrm{df}=1$).
 
@@ -747,17 +747,21 @@ the $\Nvia$ Fogo Island sites, along with the total variation
 $\mathrm{TV} = \frac{1}{2}\sum_j |w_j^{\mathrm{eff}} - w_j|$ as a
 summary statistic of aggregate distortion.
 Min--max gives $\mathrm{TV} = 0$ by construction.
-The vector normalisation gives $\mathrm{TV} = 0.324$: criterion
+The vector normalisation gives $\mathrm{TV} = 0.315$: criterion
 \textit{perm} dominates, with $\rho_j = 0.583$ (factor
-$\mathbf{2.87\times}$ relative to nominal weight) because its raw
+$\mathbf{2.88\times}$ relative to nominal weight) because its raw
 distribution has 350 exact zeros and a maximum of~532~m, giving a
 long-tailed norm.
 The rank normalisation gives $\mathrm{TV} = 0.091$: \textit{perm} is
-deflated ($A_j = 0.547$, factor $\mathbf{0.55\times}$) because 350
+deflated ($A_j = 0.547$, factor $\mathbf{0.616\times}$) because 350
 tied zeros compress the maximum midrank to $\approx 214.5$ instead
 of~$388$, while \textit{aspect} (binary) gives $A_j = N/[2(N+1)]
-\approx 0.499$ (factor $\mathbf{0.50\times}$) as predicted by
+\approx 0.499$ (factor $\mathbf{0.562\times}$) as predicted by
 Corollary~\ref{cor:three}(iii) --- independent of $n_1$.
+The seven fully continuous criteria are conversely \emph{inflated}
+(factor $\approx 1.12\times$) because the mean amplitude $\bar{A}<1$
+makes each criterion's unit relative weight larger; \textit{perm} and
+\textit{aspect} lose weight, all others gain $12\%$.
 The directions are reversed: the same heavy-zero distribution inflates
 \textit{perm} under vector normalisation and deflates it under rank
 scaling.
@@ -835,12 +839,12 @@ With $350$ tied zeros in \texttt{perm} among $\Nvia$ sites, its maximum
 midrank is $\approx 214.5$, so the rescaled column spans
 $[0.003,\,0.550]$ while every other criterion spans $[0.003,\,0.997]$.
 By Corollary~\ref{cor:three}(iii), the effective weight of
-\texttt{perm} is scaled by $\approx 0.55$, and the exact identity
+\texttt{perm} is scaled by $\approx 0.616$, and the exact identity
 \eqref{eq:p2identity} no longer holds for the implemented score.
 This is the rank-space counterpart of the vector-normalisation
 distortion of Corollary~\ref{cor:three}(ii), with the notable
-difference that \texttt{perm} is \emph{deflated} ($\times 0.55$) in
-rank space but \emph{inflated} ($\times 2.87$) in vector space: the
+difference that \texttt{perm} is \emph{deflated} ($\times 0.616$) in
+rank space but \emph{inflated} ($\times 2.88$) in vector space: the
 same heavy-zero distribution distorts in opposite directions under the
 two normalisations.
 \end{remark}
@@ -884,7 +888,7 @@ $\max - \min = 1$, giving $\rho_j = 1/\sqrt{n_1}$.
 Table~\ref{tab:amplitude} lists $\rho_j$ and $w_j^{\mathrm{eff}}/w_j$
 for all eleven criteria.
 \textit{Perm} ($w_j = 0.152$): $\rho_j = 0.583$, effective-weight
-factor $\mathbf{2.87\times}$.
+factor $\mathbf{2.88\times}$.
 \textit{Urban} ($w_j = 0.166$): factor $\mathbf{0.53\times}$.
 \textit{Aspect} (binary, $n_1 = 94$): $\rho_j = 1/\sqrt{94} = 0.103$,
 factor $0.51\times$.
@@ -896,10 +900,11 @@ factor $0.51\times$.
 \centering
 \caption{Effective-weight amplitudes $A_j$ and ratios
   $w_j^{\mathrm{eff}}/w_j$ for the $\Nvia$ admissible Fogo Island sites.
-  Min--max gives $A_j=1$ for all criteria by construction; rank
-  normalisation gives $A_j\approx0.995$ for continuous criteria (the
-  near-constant follows from $N/[2(N+1)]\approx0.499$ per midrank unit)
-  and $A_j\approx0.499$ for the binary \textit{aspect}.
+  Min--max gives $A_j=1$ by construction.
+  Under midranks scaled by $N+1$, a continuous criterion without ties has
+  $A_j=(N-1)/(N+1)=0.995$, while a binary criterion has
+  $A_j=N/[2(N+1)]=0.499$ by Corollary~\ref{cor:three}(iii);
+  \textit{perm}, with 350 tied zeros, falls between at $A_j=0.547$.
   $\mathrm{TV}=\tfrac{1}{2}\sum_j|w_j^{\mathrm{eff}}-w_j|$.}
 \label{tab:amplitude}
 \begin{tabular}{lcrrrrrr}
@@ -908,19 +913,19 @@ Criterion & Group & $w_j$ & $A_j^{\text{mm}}$ & $A_j^{\text{vec}}$ &
   $A_j^{\text{rank}}$ &
   $\frac{w^{\mathrm{eff}}}{w}$ (vec) & $\frac{w^{\mathrm{eff}}}{w}$ (rank) \\
 \midrule
-\textit{perm}      & $G_1$ & 0.152 & 1.000 & 0.583 & 0.547 & \textbf{2.93} & 0.62 \\
-\textit{slope}     & $G_1$ & 0.113 & 1.000 & 0.135 & 0.995 & 0.68 & 1.12 \\
-\textit{roads}     & $G_1$ & 0.030 & 1.000 & 0.206 & 0.995 & 1.03 & 1.12 \\
-\textit{rivers}    & $G_2$ & 0.091 & 1.000 & 0.265 & 0.995 & 1.33 & 1.12 \\
-\textit{aspect}    & $G_2$ & 0.075 & 1.000 & 0.058 & 0.499 & 0.29 & \textbf{0.56} \\
-\textit{coast}     & $G_3$ & 0.069 & 1.000 & 0.126 & 0.995 & 0.63 & 1.12 \\
-\textit{protected} & $G_3$ & 0.066 & 1.000 & 0.105 & 0.995 & 0.53 & 1.12 \\
-\textit{wells}     & $G_3$ & 0.055 & 1.000 & 0.081 & 0.995 & 0.41 & 1.12 \\
-\textit{urban}     & $G_3$ & 0.166 & 1.000 & 0.107 & 0.989 & \textbf{0.54} & 1.11 \\
+\textit{perm}      & $G_1$ & 0.152 & 1.000 & 0.583 & 0.547 & \textbf{2.88} & 0.62 \\
+\textit{slope}     & $G_1$ & 0.113 & 1.000 & 0.135 & 0.995 & 0.67 & 1.12 \\
+\textit{roads}     & $G_1$ & 0.030 & 1.000 & 0.206 & 0.995 & 1.02 & 1.12 \\
+\textit{rivers}    & $G_2$ & 0.091 & 1.000 & 0.265 & 0.995 & 1.31 & 1.12 \\
+\textit{aspect}    & $G_2$ & 0.075 & 1.000 & 0.103 & 0.499 & \textbf{0.51} & \textbf{0.56} \\
+\textit{coast}     & $G_2$ & 0.069 & 1.000 & 0.126 & 0.995 & 0.63 & 1.12 \\
+\textit{protected} & $G_2$ & 0.066 & 1.000 & 0.105 & 0.995 & 0.52 & 1.12 \\
+\textit{wells}     & $G_2$ & 0.055 & 1.000 & 0.081 & 0.995 & 0.40 & 1.12 \\
+\textit{urban}     & $G_3$ & 0.166 & 1.000 & 0.107 & 0.989 & \textbf{0.53} & 1.11 \\
 \textit{aero}      & $G_3$ & 0.102 & 1.000 & 0.086 & 0.995 & 0.43 & 1.12 \\
-\textit{cult}      & $G_3$ & 0.081 & 1.000 & 0.171 & 0.981 & 0.86 & 1.11 \\
+\textit{cult}      & $G_3$ & 0.081 & 1.000 & 0.171 & 0.981 & 0.85 & 1.11 \\
 \midrule
-$\mathrm{TV}$ & & & 0.000 & & & 0.324 & 0.091 \\
+$\mathrm{TV}$ & & & 0.000 & & & 0.315 & 0.091 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1055,16 +1060,16 @@ Normalisation & $A_j$ & $\mathrm{TV}$ & $Q_2[A']$ \\
 \midrule
 min--max & $\equiv 1$                        & 0.000 & 82.3\% \\
 midranks & $(r_j^{\max}-r_j^{\min})/(N{+}1)$ & 0.091 & 76.5\% \\
-vector   & $\rho_j$                          & 0.324 & 55.5\% \\
+vector   & $\rho_j$                          & 0.315 & 55.5\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 The ordering is strictly monotone in the predicted direction, and the
 magnitudes are approximately proportional: a distortion of $0.091$
-costs $5.8$~pp, while $0.324$ costs $26.8$~pp.
+costs $5.8$~pp, while $0.315$ costs $26.8$~pp.
 A least-squares fit over the three levels gives a slope of
-$-84.1$~pp per unit of total variation with $R^2=0.995$.
+$-85.1$~pp per unit of total variation with $R^2=0.995$.
 We report the \emph{ordering and approximate proportionality}, not a
 predictive coefficient: with three levels the residual degree of freedom
 is one, and any monotone triple admits a close linear fit.
@@ -1079,7 +1084,7 @@ Under vector normalisation, \texttt{perm} is \emph{inflated} to
 $2.865\times$ its nominal weight, because its long right tail
 concentrates the Euclidean norm in few sites.
 Under midranks scaled by $N+1$, the same criterion is \emph{deflated}
-to $\approx0.55\times$, because its 350 tied zeros compress the
+to $\approx0.616\times$, because its 350 tied zeros compress the
 attainable rank range to $[0.003,\,0.550]$ while every other criterion
 spans $[0.003,\,0.997]$.
 The two normalisations distort the same criterion in opposite
@@ -1340,7 +1345,7 @@ The effect is graded, is summarised by the total
 variation~\eqref{eq:TV_results}, and orders the three normalisations
 monotonically within additive aggregation (Table~\ref{tab:tvorder}).
 It is also invisible: nothing in a standard TOPSIS or SAW report reveals
-that \texttt{perm} entered at $2.87$ times its nominal weight.
+that \texttt{perm} entered at $2.88$ times its nominal weight.
 
 The second is \emph{score--evaluator mismatch}.
 Proposition~\ref{prop:p1} guarantees Pareto efficiency for exact
@@ -1441,8 +1446,8 @@ shape of each criterion determine its amplitude, and hence its effective
 weight.
 Where weights carry no normative content the trade may be acceptable.
 Where they encode elicited stakeholder judgements, as AHP weights do, a
-normalisation that silently multiplies one criterion by $2.93\times$ and
-divides another by $0.54\times$ is difficult to defend, and min--max
+normalisation that silently multiplies one criterion by $2.88\times$ and
+divides another by $0.53\times$ is difficult to defend, and min--max
 on the admissible set is preferable on precisely the grounds
 \citet{Choo1999} articulate.
 
