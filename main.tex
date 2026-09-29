@@ -240,10 +240,10 @@ are distinct rather than two readings of one effect.
 Our contributions are as follows.
 \begin{enumerate}[label=(\roman*)]
   \item A closed-form characterisation of normalisation as implicit
-    re-weighting (Lemma~\ref{lem:amplitude}), formalising a relation
+    re-weighting (the amplitude identity~\eqref{eq:weff}), formalising a relation
     established qualitatively by \citet{Choo1999}, with the amplitude
     $A_j$ identified for min--max, vector and rank normalisation
-    (Corollary~\ref{cor:three}).
+    (Section~\ref{sec:three_norms}).
     Three effects previously reported separately, namely vector-normalisation
     distortion, tie-induced contraction in rank space, and amplitude loss
     from normalising over inadmissible alternatives, become corollaries
@@ -259,7 +259,7 @@ Our contributions are as follows.
     downstream of it.
   \item An exact identity between PROMETHEE~II under the usual preference
     function and rank-weighted SAW, holding for arbitrary tie structure
-    (Proposition~\ref{prop:p2}), which follows from the axiomatic results
+    (Section~\ref{prop:p2}), which follows from the axiomatic results
     of \citet{Bouyssou1992} and \citet{Marchant1996} and which isolates
     normalisation as the sole source of the divergence observed in
     practice.
@@ -368,7 +368,7 @@ outcome is better.
 Second, the recommendation of vector normalisation rests on internal
 consistency with respect to the TOPSIS ideal-distance score; it does not
 account for the fact that distributional shape of the criterion columns
-determines the effective weight (Lemma~\ref{lem:amplitude}), which may
+determines the effective weight (the amplitude identity~\eqref{eq:weff}), which may
 conflict with elicited stakeholder judgements.
 This paper supplies the missing dimension: a comparison against an
 exhaustively enumerated Pareto frontier, which measures decision quality
@@ -400,7 +400,7 @@ by the axiomatic results of \citet{Bouyssou1992} and
 subsuming Borda and Copeland when preferences are crisp;
 \citet{Marchant1996} extended the equivalence to valued preference
 relations, which is the setting of PROMETHEE~II.
-Proposition~\ref{prop:p2} exploits this connection to provide an exact
+Section~\ref{prop:p2} exploits this connection to provide an exact
 algebraic identity between the rank-normalised SAW score and the
 PROMETHEE~II net flow.
 
@@ -680,7 +680,7 @@ Slope aspect is circular and non-monotone; following the source study, it
 enters as an indicator: $c=1$ if aspect $\notin[90^\circ,180^\circ]$ and
 $c=0$ otherwise, yielding $n_1=94$ positives among the $\Nvia$ admissible
 sites.
-This binarisation matters for Proposition~\ref{prop:p3}
+This binarisation matters for Section~\ref{prop:p3}
 and is recorded explicitly in Table~\ref{tab:amplitude}.
 
 \subsection{Criterion weights}
@@ -796,7 +796,7 @@ $Q_2$ is \emph{internal consistency}: given a weight vector, does the
 method recover a portfolio that is Pareto-efficient under that same weight
 vector?
 
-Proposition~\ref{prop:p1} (Section~\ref{sec:propositions}) establishes that
+Section~\ref{prop:p1} (Section~\ref{sec:propositions}) establishes that
 optimal-assembly SAW fixes $Q_2=1$ whenever score and objectives share the
 same normalisation. We use this cell as a regression test: any implementation
 returning $Q_2<1$ is faulty. It also delimits the factorial contrast, since
@@ -845,7 +845,8 @@ produced by min--max, vector, and rank normalisation.
 \label{sec:amplitude}
 % ----------------------------------------------------------
 
-\begin{lemma}[Normalisation as implicit re-weighting]
+\subsubsection*{The amplitude identity}
+\label{sec:amp_identity}
 \label{lem:amplitude}
 The following states in closed form a qualitative relationship established
 by \citet{Choo1999}: a weight cannot be interpreted independently of the
@@ -866,9 +867,8 @@ The effective weights are therefore
 \end{equation}
 and $w^{\mathrm{eff}} = w$ for all $w$ if and only if $A_j$ is constant
 across $j$.
-\end{lemma}
 
-\begin{proof}
+\textit{Derivation.}
 For any two alternatives $i$ and $i'$,
 $s(i) - s(i') = \sum_j w_j [n_j(x_{ij}) - n_j(x_{i'j})]$.
 The maximum absolute contribution of criterion $j$ to this difference,
@@ -878,12 +878,11 @@ therefore $w_j A_j / \sum_k w_k A_k$, which is $w_j^{\mathrm{eff}}$
 in~\eqref{eq:weff}.
 The ``if and only if'' follows because $w^{\mathrm{eff}} = w$ iff
 $w_j A_j / \sum_k w_k A_k = w_j$ for all $j$, which holds iff all
-$A_j$ equal the same constant.
-\end{proof}
+$A_j$ equal the same constant.\hfill$\square$
 
 \paragraph{Scope and empirical confirmation.}
 \label{rem:scope}
-Lemma~\ref{lem:amplitude} is exact for additive aggregation.
+the amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
 Within that scope the prediction is borne out: across SAW cells,
 mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.3\%$, $76.5\%$ and
 $55.5\%$ for min--max, ranks and vector normalisation respectively,
@@ -904,7 +903,8 @@ We read this as corroboration of the mechanism rather than as a
 limitation of it: the distortion acts through the weighted sum, and
 it is visible exactly where a weighted sum is taken.
 
-\begin{corollary}[the three standard normalisations]
+\subsection{Amplitude under the three standard normalisations}
+\label{sec:three_norms}
 \label{cor:three}
 
 A natural measure of aggregate distortion is the total variation
@@ -912,40 +912,39 @@ A natural measure of aggregate distortion is the total variation
   \label{eq:TV}
   \mathrm{TV} = \tfrac{1}{2}\sum_j |w_j^{\mathrm{eff}} - w_j|,
 \end{equation}
-which is invariant to multiplication of all $A_j$ by a common constant
-(since that constant cancels in the renormalisation of~\eqref{eq:weff}
-and leaves $w^{\mathrm{eff}}$ unchanged).
+which is invariant to multiplication of all $A_j$ by a common constant,
+since that constant cancels in the renormalisation of~\eqref{eq:weff}.
 Any faithful measure of re-weighting must inherit this invariance;
 $D = \sum_j w_j |A_j - 1|$ does not, and is therefore not an
 appropriate summary of the distortion.
+The amplitude takes the following form in each of the three families.
 
-\begin{enumerate}[label=(\roman*)]
-  \item \textbf{Min--max.}
-    $A_j \equiv 1$ by construction; hence $w^{\mathrm{eff}} = w$.
-    Min--max is the unique member of the three that preserves elicited
-    weights exactly (for additive aggregations).
-  \item \textbf{Vector.}
-    $A_j = \rho_j = (\max_j x_j - \min_j x_j) / \lVert\mathbf{x}_j\rVert_2$,
-    which depends on the shape of the marginal distribution.
-    Criteria with heavy tails obtain $\rho_j$ close to unity (large
-    norm dominated by outliers); criteria with most mass at the median
-    obtain small $\rho_j$.
-  \item \textbf{Midranks scaled by $N+1$.}
-    $A_j = (r_j^{\max} - r_j^{\min})/(N+1)$, which approaches~$1$
-    when ties are absent but contracts with tie mass.
-    For a binary criterion with $n_0$ zeros and $n_1 = N-n_0$ ones,
-    the midranks of the two groups are $(1+n_0)/2$ and $(n_0+1+N)/2$,
-    giving
-    \begin{equation}
-      A_j = \frac{(n_0+1+N)/2 - (1+n_0)/2}{N+1} = \frac{N}{2(N+1)} \approx \frac{1}{2}.
-    \end{equation}
-    The result is \emph{independent of $n_1$}: every binary criterion
-    loses approximately half its nominal weight in rank space, regardless
-    of the balance between the two classes.
-    A binary indicator contributes half the amplitude of a continuous
-    criterion with no ties.
-\end{enumerate}
-\end{corollary}
+\textbf{1) Min--max.}\;
+$A_j \equiv 1$ by construction; hence $w^{\mathrm{eff}} = w$.
+Min--max is the unique member of the three that preserves elicited
+weights exactly under additive aggregation.
+
+\textbf{2) Vector.}\;
+$A_j = \rho_j = (\max_j x_j - \min_j x_j) / \lVert\mathbf{x}_j\rVert_2$,
+which depends on the shape of the marginal distribution.
+Criteria with heavy tails obtain $\rho_j$ close to unity;
+criteria with most mass at the median obtain small $\rho_j$.
+
+\textbf{3) Midranks scaled by $N+1$.}\;
+$A_j = (r_j^{\max} - r_j^{\min})/(N+1)$, which approaches~$1$
+when ties are absent but contracts with tie mass.
+For a binary criterion with $n_0$ zeros and $n_1 = N-n_0$ ones,
+the midranks of the two groups are $(1+n_0)/2$ and $(n_0+1+N)/2$,
+giving
+\begin{equation}
+  \label{eq:Arank_binary}
+  A_j = \frac{N}{2(N+1)} \approx \frac{1}{2}.
+\end{equation}
+The result is \emph{independent of $n_1$}: every binary criterion
+loses approximately half its nominal weight in rank space, whatever the
+class balance.
+A binary indicator contributes half the amplitude of a continuous
+criterion with no ties.\hfill$\square$
 
 \noindent\textbf{Empirical calibration.}
 Table~\ref{tab:amplitude} reports $A_j$ for the three normalisations on
@@ -963,7 +962,7 @@ deflated ($A_j = 0.547$, factor $\mathbf{0.616\times}$) because 350
 tied zeros compress the maximum midrank to $\approx 214.5$ instead
 of~$388$, while \textit{aspect} (binary) gives $A_j = N/[2(N+1)]
 \approx 0.499$ (factor $\mathbf{0.562\times}$) as predicted by
-Corollary~\ref{cor:three}(iii), independent of $n_1$.
+\eqref{eq:Arank_binary}, independent of $n_1$.
 The seven fully continuous criteria are conversely \emph{inflated}
 (factor $\approx 1.12\times$) because the mean amplitude $\bar{A}<1$
 
@@ -993,7 +992,7 @@ scaling.
 \label{sec:theorems}
 % ----------------------------------------------------------
 
-\begin{proposition}[Pareto consistency of optimal linear aggregation]
+\subsection{Pareto consistency of optimal linear aggregation}
 \label{prop:p1}
 Let $v_j(a)$ be the normalised criterion values entering the objectives
 \eqref{eq:F1}--\eqref{eq:F3}, and let $s(a) = \sum_j w_j v_j(a)$ be
@@ -1001,20 +1000,18 @@ the SAW score with the same weights and normalisation.
 Then the optimal set
 $T^* = \argmax_{T \in \Tset} \sum_{a \in T} s(a)$
 satisfies $T^* \in \Fset$, i.e., $Q_2 = 1$ almost surely.
-\end{proposition}
 
-\begin{proof}
+\textit{Derivation.}
 Suppose $T^*$ is dominated by $T' \in \Tset$.
 Then $F_\ell(T') \succeq F_\ell(T^*)$ for all $\ell$ and strictly for
 some $\ell$.
 Since each $F_\ell$ is a positive linear combination of the same
 per-site scores summed over the portfolio, strict improvement in
 $F_\ell$ implies $\sum_{a \in T'} s(a) > \sum_{a \in T^*} s(a)$,
-contradicting the optimality of $T^*$.
-\end{proof}
+contradicting the optimality of $T^*$.\hfill$\square$
 
-\paragraph{Normalisation coherence in Proposition~\ref{prop:p1}.}
-Proposition~\ref{prop:p1} holds for any normalisation, provided the
+\paragraph{Normalisation coherence in Section~\ref{prop:p1}.}
+Section~\ref{prop:p1} holds for any normalisation, provided the
 normalisation used to compute $F_\ell$ matches the one in the score $s$.
 The $Q_2 = 1$ cell serves as a regression test: any implementation
 returning a value below~$1$ is faulty.
@@ -1027,7 +1024,7 @@ $Q_2[\mathcal{A}'] = 100.0\%$ for both $\kappa \in \{50, 200\}$
 
 % ---
 
-\begin{proposition}[PROMETHEE~II with usual criterion equals rank-weighted SAW]
+\subsection{PROMETHEE~II with usual criterion equals rank-weighted SAW}
 \label{prop:p2}
 Let $P_j(d) = \mathbf{1}[d > 0]$.
 Denoting by $r_j(a)$ the midrank of site $a$ on criterion $j$, the
@@ -1039,17 +1036,15 @@ PROMETHEE~II net flow satisfies
 for any tied-value pattern.
 The ranking induced by $\phi$ is therefore identical to that of
 $\tilde{s}(a) = \sum_j w_j r_j(a)$.
-\end{proposition}
 
-\begin{proof}
+\textit{Derivation.}
 For site $a$ and criterion $j$, let $B_j(a)$ count strictly worse sites
 and $T_j(a)$ be the tied-block size.
 The midrank satisfies $2r_j(a) = 2B_j(a) + T_j(a) + 1$.
 The net PROMETHEE flow on criterion $j$ is
 $\phi_j(a) = [B_j(a) - (n - B_j(a) - T_j(a))]/(n-1)
             = [2r_j(a) - 1 - n]/(n-1)$.
-Summing with weights and simplifying gives~\eqref{eq:p2identity}.
-\end{proof}
+Summing with weights and simplifying gives~\eqref{eq:p2identity}.\hfill$\square$
 
 \paragraph{Rank scaling is not innocuous.}
 \label{rem:p2normalization}
@@ -1058,11 +1053,11 @@ does not equalise criterion amplitudes when ties are massive.
 With $350$ tied zeros in \texttt{perm} among $\Nvia$ sites, its maximum
 midrank is $\approx 214.5$, so the rescaled column spans
 $[0.003,\,0.550]$ while every other criterion spans $[0.003,\,0.997]$.
-By Corollary~\ref{cor:three}(iii), the effective weight of
+By \eqref{eq:Arank_binary}, the effective weight of
 \texttt{perm} is scaled by $\approx 0.616$, and the exact identity
 \eqref{eq:p2identity} no longer holds for the implemented score.
 This is the rank-space counterpart of the vector-normalisation
-distortion of Corollary~\ref{cor:three}(ii), with the notable
+distortion of Section~\ref{sec:three_norms}(ii), with the notable
 difference that \texttt{perm} is \emph{deflated} ($\times 0.616$) in
 rank space but \emph{inflated} ($\times 2.88$) in vector space: the
 same heavy-zero distribution distorts in opposite directions under the
@@ -1078,11 +1073,11 @@ inversions.
 
 % ---
 
-\begin{proposition}[Vector normalisation distorts effective weights]
+\subsection{Vector normalisation distorts effective weights}
 \label{prop:p3}
 Under vector normalisation, $v_j(a) = x_j(a) / \lVert\mathbf{x}_j\rVert_2$.
 The amplitude is $A_j = \rho_j$ as defined in
-Lemma~\ref{lem:amplitude}, and by~\eqref{eq:weff}
+Section~\ref{sec:amp_identity}, and by~\eqref{eq:weff}
 \begin{equation}
   \label{eq:weff_vec}
   w_j^{\mathrm{eff}} = \frac{w_j\,\rho_j}{\sum_k w_k\,\rho_k},
@@ -1092,16 +1087,14 @@ Lemma~\ref{lem:amplitude}, and by~\eqref{eq:weff}
 \end{equation}
 For binary criteria, $\rho_j = 1/\sqrt{n_1}$ exactly, where $n_1$ is
 the number of ones.
-\end{proposition}
 
-\begin{proof}
+\textit{Derivation.}
 The range of $v_j(a)$ over all sites is
 $(\max_a x_j(a) - \min_a x_j(a)) / \lVert\mathbf{x}_j\rVert_2 = \rho_j$,
 so $A_j = \rho_j$ and~\eqref{eq:weff_vec} follows from~\eqref{eq:weff}.
 For binary $x_j \in \{0,1\}$ with $n_1$ ones,
 $\lVert\mathbf{x}_j\rVert_2 = \sqrt{n_1}$ and
-$\max - \min = 1$, giving $\rho_j = 1/\sqrt{n_1}$.
-\end{proof}
+$\max - \min = 1$, giving $\rho_j = 1/\sqrt{n_1}$.\hfill$\square$
 
 \noindent\textbf{Empirical calibration.}
 Table~\ref{tab:amplitude} lists $\rho_j$ and $w_j^{\mathrm{eff}}/w_j$
@@ -1122,7 +1115,7 @@ factor $0.51\times$.
   Min--max gives $A_j=1$ by construction.
   Under midranks scaled by $N+1$, a continuous criterion without ties has
   $A_j=(N-1)/(N+1)=0.995$, while a binary criterion has
-  $A_j=N/[2(N+1)]=0.499$ by Corollary~\ref{cor:three}(iii);
+  $A_j=N/[2(N+1)]=0.499$ by \eqref{eq:Arank_binary};
   \textit{perm}, with 350 tied zeros, falls between at $A_j=0.547$.
   $\mathrm{TV}=\tfrac{1}{2}\sum_j|w_j^{\mathrm{eff}}-w_j|$.}
 \label{tab:amplitude}
@@ -1176,14 +1169,14 @@ $\mathrm{TV}$ & & & 0.000 & & & 0.315 & 0.091 \\
 \label{sec:consequences}
 % ----------------------------------------------------------
 
-Lemma~\ref{lem:amplitude} and
-Propositions~\ref{prop:p1}--\ref{prop:p3} partition the sources of
+the amplitude identity~\eqref{eq:weff} and
+Sections~\ref{prop:p1}--\ref{prop:p3} partition the sources of
 sub-optimality in the factorial experiment into four ordered factors:
 
 \begin{enumerate}
   \item \emph{Normalisation effect (min--max vs.\ others):}
     Min--max is the only normalisation that preserves elicited weights
-    in additive aggregations (Corollary~\ref{cor:three}).
+    in additive aggregations (Section~\ref{sec:three_norms}).
     Under SAW, where the Lemma applies exactly, both the greedy and
     optimal assembly benefit from the preservation.
   \item \emph{Assembly effect (optimal vs.\ greedy):}
@@ -1195,7 +1188,7 @@ sub-optimality in the factorial experiment into four ordered factors:
     optimised.
   \item \emph{Aggregation effect (SAW vs.\ TOPSIS vs.\ VIKOR):}
     TOPSIS and VIKOR aggregate through ideal-point distances;
-    Lemma~\ref{lem:amplitude} does not apply exactly to them.
+    the amplitude identity~\eqref{eq:weff} does not apply exactly to them.
     The factorial experiment measures the residual effect after
     controlling for items~1 and~2.
   \item \emph{Reference-set effect (normalisation over $N$ vs.\ $N'$):}
@@ -1297,7 +1290,7 @@ Section~\ref{sec:refset} returns to this.
 \label{sec:lemmaconf}
 % ----------------------------------------------------------
 
-Lemma~\ref{lem:amplitude} predicts that performance degrades with the
+the amplitude identity~\eqref{eq:weff} predicts that performance degrades with the
 distortion the normalisation imposes on the elicited weights, measured
 on the simplex by
 \begin{equation}
@@ -1307,7 +1300,7 @@ on the simplex by
   w_j^{\mathrm{eff}} = \frac{w_j A_j}{\sum_k w_k A_k}.
 \end{equation}
 Total variation is the appropriate measure because, as noted after
-Corollary~\ref{cor:three}, $w^{\mathrm{eff}}$ is invariant to a common
+Section~\ref{sec:three_norms}, $w^{\mathrm{eff}}$ is invariant to a common
 rescaling of all amplitudes: a factor $c>0$ applied to every $A_j$
 cancels in~\eqref{eq:TV_results} and produces no re-weighting.
 
@@ -1340,7 +1333,7 @@ $-85.1$~pp per unit of total variation with $R^2=0.995$.
 We report the \emph{ordering and approximate proportionality}, not a
 predictive coefficient: with three levels the residual degree of freedom
 is one, and any monotone triple admits a close linear fit.
-The claim we make is the analytic one of Corollary~\ref{cor:three}:
+The claim we make is the analytic one of Section~\ref{sec:three_norms}:
 min--max is the unique weight-preserving choice among the three,
 for which the empirical ordering is corroboration rather than
 evidential foundation.
@@ -1371,7 +1364,7 @@ intervals paired by draw.
 \centering
 \caption{$Q_2[A']$ for the balanced $2^3$ design ($\kappa=200$,
   $\ndraws$ draws). The SAW/min--max/optimal cell is fixed at $100\%$ by
-  Proposition~\ref{prop:p1} and serves as a regression test.}
+  Section~\ref{prop:p1} and serves as a regression test.}
 \label{tab:factorial}
 \begin{tabular}{llc}
 \toprule
@@ -1434,7 +1427,7 @@ by~$5.9$~pp.
 Rank normalisation under distance-based aggregation degrades performance
 far more than the additive re-weighting accounts for, because ranks
 distort the Euclidean geometry on which those methods depend.
-Both effects are outside the scope of Lemma~\ref{lem:amplitude} and
+Both effects are outside the scope of the amplitude identity~\eqref{eq:weff} and
 both are predicted by it as exclusions.
 We therefore report the additive cells as the test of the mechanism and
 the full factorial as a description of practice.
@@ -1453,7 +1446,7 @@ worth $+2.2$~pp $[-0.5,+4.9]$, an interval containing zero.
 
 The lemma explains the asymmetry.
 Optimal assembly maximises $\sum_{i\in t}s(i)$ exactly, and by
-Proposition~\ref{prop:p1} exact maximisation of an additive score yields
+Section~\ref{prop:p1} exact maximisation of an additive score yields
 a Pareto-efficient portfolio \emph{under the weights that score
 encodes}.
 When the score encodes $w^{\mathrm{eff}}\neq w$, optimal assembly
@@ -1508,7 +1501,7 @@ within additive aggregation.
 A second mechanism governs the fourth cell, and it is more severe.
 
 \paragraph{Mechanism 2: score--evaluator mismatch.}
-Proposition~\ref{prop:p1} guarantees Pareto efficiency for the optimal
+Section~\ref{prop:p1} guarantees Pareto efficiency for the optimal
 portfolio only when the \emph{score and the objectives use the same
 normalisation}.
 When they do not, the guarantee is not weakened but voided.
@@ -1580,7 +1573,7 @@ $\Nvia$  & $A'$ & 64.6\% & \textbf{100.0\%} \\
 \end{tabular}
 \end{table}
 
-Both diagonal cells confirm Proposition~\ref{prop:p1} (optimal assembly
+Both diagonal cells confirm Section~\ref{prop:p1} (optimal assembly
 must reach $100\%$ when score and evaluator are aligned).
 The off-diagonal costs confirm Mechanism~2: mismatch dominates.
 
@@ -1591,7 +1584,7 @@ The off-diagonal costs confirm Mechanism~2: mismatch dominates.
 \label{sec:greedy}
 % ----------------------------------------------------------
 
-Proposition~\ref{prop:p1} guarantees that optimal assembly of an
+Section~\ref{prop:p1} guarantees that optimal assembly of an
 additive score attains the reference set under matching weights;
 Table~\ref{tab:factorial} shows greedy assembly of the same score
 reaching only $64.6\%$.
@@ -1638,7 +1631,7 @@ degrades portfolio quality, and the distinction matters because the
 remedies differ.
 
 The first is \emph{implicit re-weighting}, characterised in closed form
-by Lemma~\ref{lem:amplitude}: an additive score built on normalised
+by the amplitude identity~\eqref{eq:weff}: an additive score built on normalised
 columns of unequal amplitude operates on effective weights
 $w^{\mathrm{eff}}\neq w$, whatever the analyst elicited.
 The effect is graded, is summarised by the total
@@ -1648,7 +1641,7 @@ It is also invisible: nothing in a standard TOPSIS or SAW report reveals
 that \texttt{perm} entered at $2.88$ times its nominal weight.
 
 The second is \emph{score--evaluator mismatch}.
-Proposition~\ref{prop:p1} guarantees Pareto efficiency for exact
+Section~\ref{prop:p1} guarantees Pareto efficiency for exact
 maximisation of an additive score only when the score and the value
 functions defining the objectives use the same normalisation.
 When they do not, the guarantee is not weakened but voided, and the
@@ -1721,7 +1714,7 @@ contrast between VIKOR and TOPSIS.
 
 Our contribution is not the existence of the effect but its closed form
 and its cost.
-Lemma~\ref{lem:amplitude} expresses the effective weight as
+the amplitude identity~\eqref{eq:weff} expresses the effective weight as
 $w_j^{\mathrm{eff}}\propto w_j A_j$ and identifies $A_j$ for each of
 the three standard normalisations, which yields three results that the
 qualitative statement does not: min--max is the unique weight-preserving
@@ -1730,7 +1723,7 @@ space irrespective of class balance; and VIKOR's invariance to vector
 normalisation follows immediately, since a common amplitude factor
 cancels in~\eqref{eq:weff}.
 Three observations previously treated separately become corollaries of
-one identity: Proposition~\ref{prop:p3}, the rank-space contraction of
+one identity: Section~\ref{prop:p3}, the rank-space contraction of
 Section~\ref{sec:theorems}, and the amplitude loss
 of~\eqref{eq:refsetA}.
 
@@ -1760,7 +1753,7 @@ on the admissible set is preferable on precisely the grounds
 
 \subsection{The PROMETHEE--Borda identity}
 
-Proposition~\ref{prop:p2} is a corollary of results established three
+Section~\ref{prop:p2} is a corollary of results established three
 decades ago.
 \citet{Bouyssou1992} characterises the net flow method axiomatically and
 shows that it reduces to Copeland or Borda when the valued preference
@@ -1808,7 +1801,7 @@ distortion.
 \subsection{Limitations}
 
 \emph{Scope of the closed form.}
-Lemma~\ref{lem:amplitude} is exact for additive aggregation.
+the amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
 TOPSIS and VIKOR aggregate distances to ideal points, where amplitudes
 enter quadratically or in ratio form; the mechanism persists but the
 identity does not.
