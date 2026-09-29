@@ -1671,7 +1671,79 @@ screening decision.
 \label{sec:conclusion}
 % =======================================================================
 
-\todo{Write Conclusion after Discussion.}
+We evaluated ranking-based multi-criteria methods for multi-site landfill
+selection against an exhaustively enumerated Pareto frontier of
+$\Ntrios$ portfolios under a hard spatial separation constraint.
+The design crossed aggregation, normalisation and assembly, and measured
+how often each combination recovers a Pareto-efficient portfolio under
+perturbation of the elicited weights.
+
+The choice of aggregation operator --- the variable the applied
+literature compares most --- proved the least consequential of the three,
+at $+0.9$~pp with a $95\%$ interval containing zero.
+Normalisation was worth $+29.9$~pp and assembly $+16.0$~pp.
+The explanation is analytical rather than empirical: in additive
+aggregation the effective weight of a criterion is proportional to
+$w_j A_j$, where $A_j$ is the amplitude of the normalised column, so
+the normalisation fixes the operative weights before the aggregation
+operator is applied.
+Min--max normalisation is the unique member of the three standard
+families that leaves the elicited weights intact.
+Vector normalisation lets the distributional shape of each criterion set
+its weight, and rank rescaling penalises criteria with heavy tie mass ---
+by exactly one half for any binary indicator, irrespective of class
+balance.
+
+Two consequences bear directly on practice.
+First, exact optimisation inherits the distortion: replacing greedy
+assembly with complete enumeration is worth $+29.8$~pp when the score
+preserves the elicited weights and $+2.2$~pp when it does not, an
+interval containing zero.
+Integer programming on top of a ranking, the established upgrade path in
+portfolio MCDM, therefore pays only once the normalisation is consistent
+with the value model.
+Second, normalising over alternatives that cannot be selected --- in our
+data the $\Nexcl$ candidates overlapping protected areas --- calibrates
+the value scale on unavailable options and costs up to $80$~pp of Pareto
+efficiency, considerably more than the re-weighting alone accounts for.
+The loss is markedly asymmetric between the two directions of mismatch,
+which indicates that scale misalignment and implicit re-weighting are
+distinct mechanisms rather than two readings of one effect.
+
+The immediate recommendation is inexpensive: report effective weights
+alongside elicited ones.
+Given the normalised decision matrix the computation is a single line,
+and it exposes distortions that no rank-agreement diagnostic reveals.
+Where weights encode stakeholder judgements, as AHP weights do, a
+normalisation that silently multiplies one criterion by $2.88\times$ and
+divides another by $1.9\times$ is difficult to defend.
+
+Three limits delimit these findings.
+The closed form is exact for additive aggregation; TOPSIS and VIKOR
+combine distances to ideal points, where amplitudes enter quadratically
+or in ratio form, and extending the characterisation to those families
+remains open.
+The monotone relation between predicted distortion and observed
+efficiency rests on three normalisation levels, which supports an
+ordering but not a predictive coefficient; adding sum, max and
+Weitendorf normalisations would give the degrees of freedom required, at
+modest computational cost.
+And the magnitudes are specific to one candidate set: the analytical
+results hold for any instance, but the size of the distortion depends on
+the marginal distributions, and a criterion with $350$ tied zeros among
+$\Nvia$ sites is an adversarial case.
+Fogo Island quantifies the mechanism; it does not estimate how large it
+typically is.
+
+The broader implication is methodological.
+Benchmarking multi-criteria methods by agreement between their rankings
+can establish that they differ, but not that any is closer to the
+decision maker's objectives.
+Where the feasible set is enumerable --- as it is for
+cardinality-constrained siting problems of realistic size --- an exact
+frontier provides an external standard, and under that standard the
+ranking of design choices is not the one the literature's emphasis would
+suggest.
 
 % -----------------------------------------------------------------------
 \bibliographystyle{cas-model2-names}
