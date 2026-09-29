@@ -660,7 +660,7 @@ that follow correspond to Stages~1--6 in order.
 
 \subsection{Data and preprocessing}
 
-The dataset comprises $\Ncand$ candidate sites on Fogo Island, Cape Verde,
+Stage~1 of Figure~\ref{fig:workflow}. The dataset comprises $\Ncand$ candidate sites on Fogo Island, Cape Verde,
 screened from land-cover exclusion, each with $m=11$ criteria measured in
 metres, except slope aspect (degrees).
 The spatial discretisation and criteria definition follow
@@ -708,7 +708,7 @@ and is recorded explicitly in Table~\ref{tab:amplitude}.
 
 \subsection{Criterion weights}
 
-Weights are obtained by AHP \citep{Saaty1990,Saaty2008} from the pairwise
+Stage~2 of Figure~\ref{fig:workflow}. Weights are obtained by AHP \citep{Saaty1990,Saaty2008} from the pairwise
 comparison matrix of the source study \citep{Andrade2015,AzancortNeto2026}, by column
 normalisation.
 Consistency is acceptable: $\lambda_{\max}=\lmax$, $CI=0.08525$,
@@ -718,6 +718,7 @@ perturbed in the Monte Carlo design of Section~\ref{sec:design}.
 
 \subsection{Normalisation}
 
+Stage~3 of Figure~\ref{fig:workflow} is the analytical focus of the paper.
 Three normalisations are compared, spanning the standard taxonomies of
 \citet{Jahan2015} and \citet{Aytekin2021}:
 \begin{align}
@@ -743,7 +744,7 @@ treated as an experimental factor in Section~\ref{sec:design}.
 
 \subsection{Aggregation}
 
-Four aggregations produce a complete ranking of the $\Nvia$ admissible
+Stage~4 of Figure~\ref{fig:workflow}. Four aggregations produce a complete ranking of the $\Nvia$ admissible
 sites: SAW and TOPSIS \citep{Hwang1981}, VIKOR \citep{OpricovicTzeng2004},
 and PROMETHEE~II with the usual (Type~I) preference function
 \citep{Brans1986,Mareschal2008}.
@@ -753,7 +754,7 @@ inverts cost criteria and constitutes a documented implementation hazard.
 
 \subsection{Portfolio assembly}
 
-Given a site score $s(\cdot)$, two assembly rules are compared.
+Stage~5 of Figure~\ref{fig:workflow}. Given a site score $s(\cdot)$, two assembly rules are compared.
 \emph{Greedy}: add sites in decreasing score order, skipping any site
 that violates~\eqref{eq:rsep} against those already selected.
 \emph{Optimal}: maximise the additive score over the feasible set,
