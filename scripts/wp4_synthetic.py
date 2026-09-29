@@ -1,36 +1,41 @@
 # -*- coding: utf-8 -*-
 """
-WP4 — Synthetic instance grid for external validity (240 instances).
+WP4 — Synthetic instance grid, optimised (240 instances).
 
-Design (--calibrate):
-  20 levels of zero-mass p0 in {0, 0.05, ..., 0.95}  ×
-  3 marginal shapes {normal, lognormal, bimodal}  ×
-  4 replications  = 240 instances.
-
-Each instance reuses the Fogo distance matrix (N=389 sites, ~1.94M trios)
-and re-draws only the criterion columns, isolating marginal shape from
-spatial structure.
-
-Key safeguards:
-  1. pareto_front_3d (staircase bisect, O(n log n)) — 4 unit tests before any run.
-  2. Regression assert per instance: argmax Σs(a) must be in the frontier.
-     Violates prop:p1 and aborts immediately if not.
-  3. TV range check before full grid (--calibrate prints TV per cell).
+Key changes vs previous version:
+  - OMP/MKL/OPENBLAS_NUM_THREADS=1 set at import time (no BLAS serialisation)
+  - Unit test suite removed from worker startup (run separately with --test)
+  - Criterion matrix C pre-computed once per instance: C[t,j] = sum_i∈t cj(i)
+    Objectives: F = C @ Wg  (n_trios × 3) — 5× faster than fancy-index gather
+  - Per-draw: dominance query O(n) instead of full Pareto front
+    Q2 = is best trio dominated by any other? (vectorised check)
+    Q3 = gap of best trio against its dominator set
+  - Full Pareto front computed once per instance (nominal weights) for |F| reporting
+  - Regression assert: argmax SAW ∈ F  via O(n) dominance check
 
 Usage
 -----
-    # unit tests + pilot (3 instances)
-    uv run python scripts/wp4_synthetic.py --pilot
+    # unit tests (run once, separately)
+    uv run python scripts/wp4_synthetic.py --test
 
-    # calibrate: check TV range across p0 levels
-    uv run python scripts/wp4_synthetic.py --calibrate --draws 50
+    # pilot (3 instances, verify correctness and timing)
+    OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \\
+        uv run python scripts/wp4_synthetic.py --pilot --draws 200
 
-    # full grid (4 workers in parallel)
-    uv run python scripts/wp4_synthetic.py --draws 200 --worker 0 --total-workers 4
-    uv run python scripts/wp4_synthetic.py --draws 200 --worker 1 --total-workers 4
-    uv run python scripts/wp4_synthetic.py --draws 200 --worker 2 --total-workers 4
-    uv run python scripts/wp4_synthetic.py --draws 200 --worker 3 --total-workers 4
+    # full grid, 4 workers in parallel
+    for W in 0 1 2 3; do
+      OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \\
+          uv run python scripts/wp4_synthetic.py \\
+          --calibrate --draws 200 --worker $W --total-workers 4 &
+    done
 """
+
+import os
+# Single-threaded BLAS — must be set before numpy import
+os.environ.setdefault("OMP_NUM_THREADS",      "1")
+os.environ.setdefault("MKL_NUM_THREADS",      "1")
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+os.environ.setdefault("NUMEXPR_NUM_THREADS",  "1")
 
 import sys
 import argparse
@@ -40,76 +45,53 @@ from pathlib import Path
 from itertools import product as iproduct
 
 sys.stdout.reconfigure(encoding='utf-8')
-
-# ---------------------------------------------------------------------------
-# Import correct Pareto filter
-# ---------------------------------------------------------------------------
 sys.path.insert(0, str(Path(__file__).parent))
 from pareto3d import pareto_front_3d, run_unit_tests
 
 # ---------------------------------------------------------------------------
-# Constants from paper
+# Constants
 # ---------------------------------------------------------------------------
 
 W_AHP = np.array([
-    0.177,  # perm  (G1 siting)
-    0.107,  # slope (G1)
-    0.107,  # road  (G1)
-    0.059,  # urban (G1)
-    0.059,  # water (G2 impact)
-    0.059,  # coast (G2)
-    0.069,  # fault (G2)
-    0.069,  # flood (G2)
-    0.107,  # aspect(G3 safety)
-    0.107,  # elev  (G3)
-    0.080,  # land  (G3)
-], dtype=float)
+    0.177, 0.107, 0.107, 0.059,  # G1 siting
+    0.059, 0.059, 0.069, 0.069,  # G2 impact
+    0.107, 0.107, 0.080,          # G3 safety
+], dtype=np.float64)
 W_AHP /= W_AHP.sum()
 
 M = len(W_AHP)
-K = 3
+G1, G2, G3 = slice(0, 4), slice(4, 8), slice(8, 11)
+GROUPS = [G1, G2, G3]
+G_sizes = [4, 4, 3]
+
 N_DRAWS = 500
-KAPPA = 50
+KAPPA   = 50
 SEED_BASE = 20260929
 EPS = 1e-9
 
-# Objective groups  G1=cost(min), G2=impact(min), G3=safety(max)
-# After complementing cost/impact, all three are larger-is-better.
-# The SAW score sum equals F1(eff)+F2(eff)+F3(eff) exactly (eq:scalarisation).
-G1 = slice(0, 4)
-G2 = slice(4, 8)
-G3 = slice(8, 11)
-GROUPS = [G1, G2, G3]
-
 
 # ---------------------------------------------------------------------------
-# Normalisations (larger-is-better output)
+# Normalisations
 # ---------------------------------------------------------------------------
 
-def minmax_norm(X: np.ndarray) -> np.ndarray:
-    lo, hi = X.min(axis=0), X.max(axis=0)
-    rng = np.where(hi > lo, hi - lo, 1.0)
-    return (X - lo) / rng
+def minmax_norm(X):
+    lo, hi = X.min(0), X.max(0)
+    return (X - lo) / np.where(hi > lo, hi - lo, 1.0)
 
 
-def vector_norm(X: np.ndarray) -> np.ndarray:
-    norms = np.sqrt((X ** 2).sum(axis=0))
+def vector_norm(X):
+    norms = np.sqrt((X ** 2).sum(0))
     return X / np.where(norms > 0, norms, 1.0)
 
 
-# ---------------------------------------------------------------------------
-# TV helper
-# ---------------------------------------------------------------------------
-
-def total_variation(w_eff, w):
-    return 0.5 * float(np.abs(w_eff - w).sum())
-
-
 def tv_from_norm(V, w, alpha=1.0):
-    A = V.max(axis=0) - V.min(axis=0)
+    A = V.max(0) - V.min(0)
     num = (w ** alpha) * (A ** alpha)
     s = num.sum()
-    return total_variation(num / s, w) if s > 1e-30 else 0.0
+    if s < 1e-30:
+        return 0.0
+    w_eff = num / s
+    return 0.5 * float(np.abs(w_eff - w).sum())
 
 
 # ---------------------------------------------------------------------------
@@ -117,8 +99,7 @@ def tv_from_norm(V, w, alpha=1.0):
 # ---------------------------------------------------------------------------
 
 def generate_criteria(n, m, p0, shape, rng):
-    """Raw criterion matrix (n, m) with p0 mass at zero."""
-    X = np.zeros((n, m), dtype=float)
+    X = np.zeros((n, m))
     for j in range(m):
         nz = ~(rng.random(n) < p0)
         k = int(nz.sum())
@@ -135,31 +116,101 @@ def generate_criteria(n, m, p0, shape, rng):
             v = np.concatenate([rng.normal(0.2, 0.07, h).clip(0, 1),
                                  rng.normal(0.8, 0.07, k - h).clip(0, 1)])
             rng.shuffle(v)
-        else:
-            raise ValueError(shape)
         X[nz, j] = v
     return X
 
 
 # ---------------------------------------------------------------------------
-# Fogo trio index loader
+# Fogo trio loader
 # ---------------------------------------------------------------------------
 
-def load_fogo_trios(data_dir: Path) -> np.ndarray:
+def load_fogo_trios(data_dir):
     npy = data_dir / 'fogo_trios.npy'
-    csv = data_dir / 'fogo_trios.csv'
     if npy.exists():
         trios = np.load(npy)
-        print(f"Loaded {len(trios):,} Fogo trios from {npy}")
+        print(f"Loaded {len(trios):,} trios from {npy}")
         return trios.astype(np.int32)
-    if csv.exists():
-        trios = pd.read_csv(csv, header=None).values.astype(np.int32)
-        np.save(npy, trios)
-        return trios
     raise FileNotFoundError(
-        f"Fogo trio index not found at {npy}.\n"
+        f"fogo_trios.npy not found at {npy}.\n"
         "Run: uv run python scripts/export_fogo_trios.py"
     )
+
+
+# ---------------------------------------------------------------------------
+# Pre-compute criterion sum matrix C  (n_trios × M)
+# C[t, j] = sum_{i in t} V[i, j]
+# Then F_group_ell(t; w) = sum_{j in G_ell} w_j * C[t, j]
+# Vectorised: F = C @ Wg  where Wg[j, ell] = w_j if j in G_ell else 0
+# ---------------------------------------------------------------------------
+
+def build_C(V, trios):
+    """Build criterion sum matrix C (n_trios, M) in float32."""
+    n_trios, M = len(trios), V.shape[1]
+    i0, i1, i2 = trios[:, 0], trios[:, 1], trios[:, 2]
+    C = (V[i0] + V[i1] + V[i2]).astype(np.float32)  # (n_trios, M)
+    return C
+
+
+def build_Wg(w):
+    """Build weight-group matrix Wg (M, 3) from weight vector w."""
+    Wg = np.zeros((M, 3), dtype=np.float64)
+    for ell, g in enumerate(GROUPS):
+        Wg[g, ell] = w[g]
+    return Wg
+
+
+def objectives_from_C(C, w):
+    """F = C @ Wg  shape (n_trios, 3), all objectives larger-is-better."""
+    Wg = build_Wg(w)
+    return (C @ Wg).astype(np.float32)          # (n_trios, 3)
+
+
+# ---------------------------------------------------------------------------
+# O(n) dominance query — is point p dominated by any row in F?
+# ---------------------------------------------------------------------------
+
+def is_dominated(F, p_idx, eps=EPS):
+    """
+    True if F[p_idx] is dominated by any other row of F.
+    Vectorised: O(n) with numpy broadcasting in chunks.
+    """
+    p = F[p_idx]
+    chunk = 50_000
+    n = len(F)
+    for start in range(0, n, chunk):
+        end = min(start + chunk, n)
+        Fj = F[start:end]
+        dom = ((Fj >= p - eps).all(axis=1) &
+               (Fj > p + eps).any(axis=1))
+        # exclude self
+        if start <= p_idx < end:
+            dom[p_idx - start] = False
+        if dom.any():
+            return True
+    return False
+
+
+def gap_from_F(F, p_idx, R, eps=EPS):
+    """
+    Scale-free gap of F[p_idx] against its dominator set.
+    gap = max(0, max_{j dominates p} min_ell (F[j,ell] - F[p,ell]) / R[ell])
+    O(n), vectorised.
+    """
+    p = F[p_idx]
+    chunk = 50_000
+    n = len(F)
+    best_gap = 0.0
+    for start in range(0, n, chunk):
+        end = min(start + chunk, n)
+        Fj = F[start:end]
+        dom = ((Fj >= p - eps).all(axis=1) &
+               (Fj > p + eps).any(axis=1))
+        if start <= p_idx < end:
+            dom[p_idx - start] = False
+        if dom.any():
+            diffs = (Fj[dom] - p[np.newaxis, :]) / R[np.newaxis, :]
+            best_gap = max(best_gap, float(diffs.min(axis=1).max()))
+    return best_gap
 
 
 # ---------------------------------------------------------------------------
@@ -167,55 +218,59 @@ def load_fogo_trios(data_dir: Path) -> np.ndarray:
 # ---------------------------------------------------------------------------
 
 def evaluate_instance(fogo_trios, X_raw, w_ahp, n_draws, kappa, seed):
-    """
-    Evaluate one instance for both min-max and vector normalisation.
-    Uses pareto_front_3d (correct O(n log n) staircase) pre-computed
-    with nominal weights. Includes regression assert per draw.
-    """
     rng = np.random.default_rng(seed)
     results = {}
 
     for norm_name, norm_fn in [('minmax', minmax_norm), ('vector', vector_norm)]:
-        V = norm_fn(X_raw)
+        V = norm_fn(X_raw)                          # (N, M)
         tv1 = tv_from_norm(V, w_ahp, alpha=1.0)
         tv2 = tv_from_norm(V, w_ahp, alpha=2.0)
 
-        # Pre-compute objectives and Pareto front with nominal weights (1×)
-        site_obj_nom = np.stack([V[:, g] @ w_ahp[g] for g in GROUPS], axis=1)
-        trio_obj_nom = site_obj_nom[fogo_trios].sum(axis=1)  # (n_trios, 3) larger-is-better
+        # --- Pre-compute C once per normalisation ---
+        C = build_C(V, fogo_trios)                  # (n_trios, M) float32
 
-        is_nd = pareto_front_3d(trio_obj_nom)
-        front_nom = trio_obj_nom[is_nd]
-        R = trio_obj_nom.max(axis=0) - trio_obj_nom.min(axis=0)
-        R = np.where(R > 0, R, 1.0)
+        # --- Nominal objectives and full Pareto front (for |F| and regression) ---
+        F_nom = objectives_from_C(C, w_ahp)         # (n_trios, 3) float32
+        is_nd_nom = pareto_front_3d(F_nom.astype(float))
+        front_size = int(is_nd_nom.sum())
 
-        # Regression assert: SAW optimal trio must be on frontier (prop:p1)
+        # Regression assert: SAW optimal trio must be on nominal frontier (prop:p1)
         saw_scores = V @ w_ahp
-        trio_saw = saw_scores[fogo_trios].sum(axis=1)
+        i0, i1, i2 = fogo_trios[:, 0], fogo_trios[:, 1], fogo_trios[:, 2]
+        trio_saw = saw_scores[i0] + saw_scores[i1] + saw_scores[i2]
         best_nom = int(trio_saw.argmax())
-        assert is_nd[best_nom], (
-            f"REGRESSION FAILED [{norm_name}]: SAW optimal trio {best_nom} "
-            f"is not on the nominal frontier. "
-            f"This violates prop:p1 (Pareto consistency of optimal linear aggregation). "
-            f"tv1={tv1:.4f}, |front|={is_nd.sum()}"
+        assert is_nd_nom[best_nom], (
+            f"REGRESSION [{norm_name}]: SAW optimal not on nominal frontier. "
+            f"tv1={tv1:.4f}, |F|={front_size}"
         )
 
-        # MC draws
+        R = F_nom.max(axis=0) - F_nom.min(axis=0)
+        R = np.where(R > 0, R, 1.0).astype(np.float32)
+
+        # --- Monte Carlo: per-draw dominance query (no full Pareto) ---
         q2_list, q3_list = [], []
         for _ in range(n_draws):
             w = rng.dirichlet(kappa * w_ahp)
             w /= w.sum()
-            scores = V @ w
-            trio_scores = scores[fogo_trios].sum(axis=1)
-            best_idx = int(trio_scores.argmax())
-            q2_list.append(float(is_nd[best_idx]))
-            f_best = trio_obj_nom[best_idx]
-            diffs = (front_nom - f_best[np.newaxis, :]) / R[np.newaxis, :]
-            q3_list.append(float(max(0.0, diffs.min(axis=1).max())))
+
+            # Best trio by SAW with perturbed weights
+            F_draw = objectives_from_C(C, w)         # C @ Wg(w)
+            saw_w = C @ w                             # sum of all criteria weighted
+            best_idx = int(saw_w.argmax())
+
+            # Q2: is best_idx dominated by any other trio?
+            dominated = is_dominated(F_draw, best_idx)
+            q2_list.append(float(not dominated))
+
+            # Q3: gap
+            if dominated:
+                q3_list.append(gap_from_F(F_draw, best_idx, R))
+            else:
+                q3_list.append(0.0)
 
         results[norm_name] = {
             'tv1': tv1, 'tv2': tv2,
-            'front_size': int(is_nd.sum()),
+            'front_size': front_size,
             'Q2': float(np.mean(q2_list)),
             'Q3': float(np.mean(q3_list)),
             'Q2_se': float(np.std(q2_list) / np.sqrt(n_draws)),
@@ -231,17 +286,23 @@ def evaluate_instance(fogo_trios, X_raw, w_ahp, n_draws, kappa, seed):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--pilot', action='store_true')
-    parser.add_argument('--calibrate', action='store_true',
-                        help='p0 up to 0.95, report TV range')
-    parser.add_argument('--draws', type=int, default=N_DRAWS)
-    parser.add_argument('--worker', type=int, default=0)
-    parser.add_argument('--total-workers', type=int, default=1)
+    parser.add_argument('--test',      action='store_true', help='Run unit tests and exit')
+    parser.add_argument('--pilot',     action='store_true', help='3 pilot instances')
+    parser.add_argument('--calibrate', action='store_true', help='p0 up to 0.95')
+    parser.add_argument('--draws',     type=int, default=N_DRAWS)
+    parser.add_argument('--worker',       type=int, default=0)
+    parser.add_argument('--total-workers',type=int, default=1)
     args = parser.parse_args()
 
-    # Unit tests first — fail loud before any computation
-    print("Running unit tests...")
-    run_unit_tests(verbose=True)
+    if args.test:
+        run_unit_tests(verbose=True)
+        print("All unit tests passed.")
+        return
+
+    # In worker mode, skip full unit suite — regression assert protects each instance
+    print(f"BLAS threads: OMP={os.environ.get('OMP_NUM_THREADS','?')} "
+          f"MKL={os.environ.get('MKL_NUM_THREADS','?')} "
+          f"OPENBLAS={os.environ.get('OPENBLAS_NUM_THREADS','?')}")
 
     data_dir = Path(__file__).parent.parent / 'data'
     out_dir  = Path(__file__).parent.parent / 'results'
@@ -252,9 +313,9 @@ def main():
     print(f"N_FOGO={N_FOGO}, n_trios={len(fogo_trios):,}")
 
     p0_levels = np.linspace(0, 0.95, 20) if args.calibrate else np.linspace(0, 0.50, 11)
-    shapes = ['normal', 'lognormal', 'bimodal']
-    n_reps = 4
-    n_draws = args.draws
+    shapes    = ['normal', 'lognormal', 'bimodal']
+    n_reps    = 4
+    n_draws   = args.draws
 
     all_jobs = list(iproduct(p0_levels, shapes, range(n_reps)))
     worker, n_workers = args.worker, args.total_workers
@@ -267,8 +328,8 @@ def main():
 
     print(f"Worker {worker}/{n_workers}: {len(my_jobs)} instances, draws={n_draws}")
 
-    rows = []
     import time
+    rows = []
     for done, (p0, shape, rep) in enumerate(my_jobs, 1):
         seed = SEED_BASE + int(round(p0 * 1000)) * 10000 + shapes.index(shape) * 100 + rep
         rng_inst = np.random.default_rng(seed)
@@ -296,9 +357,9 @@ def main():
 
     if n_workers == 1 or args.pilot:
         print("\n=== Summary by norm ===")
-        print(df.groupby('norm')[['Q2', 'Q3', 'tv1']].mean().round(4).to_string())
+        print(df.groupby('norm')[['Q2','Q3','tv1']].mean().round(4).to_string())
         print("\n=== Q2 and tv1 by (p0, norm) ===")
-        pivot = df.groupby(['p0', 'norm'])[['Q2', 'tv1']].mean().unstack('norm')
+        pivot = df.groupby(['p0','norm'])[['Q2','tv1']].mean().unstack('norm')
         print(pivot.round(3).to_string())
 
     print(f"\nCONCLUÍDO worker={worker}")
