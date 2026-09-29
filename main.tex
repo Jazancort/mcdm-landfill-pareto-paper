@@ -1167,7 +1167,6 @@ $\mathrm{TV}$ & & & 0.000 & & & 0.315 & 0.091 \\
 \end{tabular}
 \end{table*}
 
-\FloatBarrier
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.88\textwidth]{figures/fig_F1_slope_weights.pdf}
@@ -1237,25 +1236,6 @@ assembly effects; the confirmation of the amplitude lemma against the
 factorial data; and the cost of normalisation--assembly mismatch measured
 against the exact Pareto frontier.
 
-\begin{figure*}[!t]
-\centering
-\includegraphics[width=0.92\textwidth]{figures/fig_F3_pareto.pdf}
-\caption{%
-  Two-dimensional projections of the exact Pareto frontier ($n=\Fmmsize$
-  portfolios in $\mathcal{A}'$, grey dots) and the eight canonical
-  portfolios of Table~\ref{tab:canonical} (evaluated against
-  $\mathcal{A}'$).
-  Blue diamonds: Pareto-efficient portfolios (gap~$=0$);
-  orange crosses: dominated portfolios (gap~$>0$).
-  Panel~(a): cost ($F_1$, minimise) vs.\ impact ($F_2$, minimise);
-  (b): cost vs.\ safety ($F_3$, maximise);
-  (c): impact vs.\ safety.
-  Portfolios inside the frontier in any panel may still be efficient in
-  the full three-objective space; classification is based on
-  three-objective dominance.}
-\label{fig:pareto}
-\end{figure*}
-
 % ----------------------------------------------------------
 \subsection{Base portfolios under nominal weights}
 \label{sec:base}
@@ -1277,7 +1257,7 @@ Greedy assembly of the \emph{same} SAW score returns $\{184,279,320\}$
 with $\mathrm{gap}=0.032$, a dominated portfolio sharing one site with
 the optimum.
 TOPSIS with vector normalisation and VIKOR are also dominated
-($\mathrm{gap}=0.048$ and $0.052$), while TOPSIS with min--max
+($\mathrm{gap}=0.048$ and $0.052$), while TOPSIS min--max
 normalisation and PROMETHEE~II attain the reference set.
 
 \begin{table*}[!t]
@@ -1310,6 +1290,25 @@ The failures in space~$A$ are not solely attributable to the methods;
 they are partly induced by computing the value scale over sites that
 cannot be selected.
 Section~\ref{sec:refset} returns to this.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig_F3_pareto.pdf}
+\caption{%
+  Two-dimensional projections of the exact Pareto frontier ($n=\Fmmsize$
+  portfolios in $\mathcal{A}'$, grey dots) and the eight canonical
+  portfolios of Table~\ref{tab:canonical} (evaluated against
+  $\mathcal{A}'$).
+  Blue diamonds: Pareto-efficient portfolios (gap~$=0$);
+  orange crosses: dominated portfolios (gap~$>0$).
+  Panel~(a): cost ($F_1$, minimise) vs.\ impact ($F_2$, minimise);
+  (b): cost vs.\ safety ($F_3$, maximise);
+  (c): impact vs.\ safety.
+  Portfolios inside the frontier in any panel may still be efficient in
+  the full three-objective space; classification is based on
+  three-objective dominance.}
+\label{fig:pareto}
+\end{figure*}
 
 % ----------------------------------------------------------
 \subsection{Confirmation of the amplitude lemma}
