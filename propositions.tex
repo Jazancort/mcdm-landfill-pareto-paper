@@ -98,44 +98,40 @@ appropriate summary of the distortion.
   \item \textbf{Midranks scaled by $N+1$.}
     $A_j = (r_j^{\max} - r_j^{\min})/(N+1)$, which approaches~$1$
     when ties are absent but contracts with tie mass.
-    For a binary criterion with $n_0$ zeros and $n_1$ ones,
-    the two midranks are $(n_0+1)/2$ and $n_0 + (n_1+1)/2$,
+    For a binary criterion with $n_0$ zeros and $n_1 = N-n_0$ ones,
+    the midranks of the two groups are $(1+n_0)/2$ and $(n_0+1+N)/2$,
     giving
     \begin{equation}
-      A_j = \frac{n_1/2}{N+1} + \frac{(n_1-1)/2}{N+1}
-           = \frac{n_1-1/2}{N+1} \approx \frac{n_1}{2(N+1)}.
+      A_j = \frac{(n_0+1+N)/2 - (1+n_0)/2}{N+1} = \frac{N}{2(N+1)} \approx \frac{1}{2}.
     \end{equation}
-    When $n_1 \ll N$, $A_j \approx n_1/(2N)$: binary criteria lose
-    weight in proportion to their minority class size, regardless of
-    the specific instance.
+    The result is \emph{independent of $n_1$}: every binary criterion
+    loses approximately half its nominal weight in rank space, regardless
+    of the balance between the two classes.
+    A binary indicator contributes half the amplitude of a continuous
+    criterion with no ties.
 \end{enumerate}
 \end{corollary}
 
 \noindent\textbf{Empirical calibration.}
 Table~\ref{tab:amplitude} reports $A_j$ for the three normalisations on
 the $\Nvia$ Fogo Island sites, along with the total variation
-$D = \sum_j w_j |A_j - 1|$ as a summary statistic of aggregate
-distortion.
-Min--max gives $D = 0$ by construction.
-The vector normalisation gives $D = 0.80$: criterion \textit{perm}
-dominates, with $\rho_j = 0.583$ (factor $\mathbf{2.87\times}$ relative
-to nominal weight) because its raw distribution has 350 exact zeros and
-a maximum of~532~m, giving a long-tailed norm.
-The rank normalisation gives $D = 0.11$: \textit{perm} is deflated
-($A_j = 0.547$, factor $\mathbf{0.55\times}$) because 350 tied zeros
-compress the maximum midrank to $\approx 214.5$ instead of $388$, while
-\textit{aspect} (binary, $n_1 = 94$) gives $A_j = 0.499$
-(factor $\mathbf{0.50\times}$).
+$\mathrm{TV} = \frac{1}{2}\sum_j |w_j^{\mathrm{eff}} - w_j|$ as a
+summary statistic of aggregate distortion.
+Min--max gives $\mathrm{TV} = 0$ by construction.
+The vector normalisation gives $\mathrm{TV} = 0.324$: criterion
+\textit{perm} dominates, with $\rho_j = 0.583$ (factor
+$\mathbf{2.87\times}$ relative to nominal weight) because its raw
+distribution has 350 exact zeros and a maximum of~532~m, giving a
+long-tailed norm.
+The rank normalisation gives $\mathrm{TV} = 0.091$: \textit{perm} is
+deflated ($A_j = 0.547$, factor $\mathbf{0.55\times}$) because 350
+tied zeros compress the maximum midrank to $\approx 214.5$ instead
+of~$388$, while \textit{aspect} (binary) gives $A_j = N/[2(N+1)]
+\approx 0.499$ (factor $\mathbf{0.50\times}$) as predicted by
+Corollary~\ref{cor:three}(iii) --- independent of $n_1$.
 The directions are reversed: the same heavy-zero distribution inflates
 \textit{perm} under vector normalisation and deflates it under rank
 scaling.
-
-The aggregate distortion $D$ does not by itself predict $Q_2$ across
-all cells of the factorial: because TOPSIS and VIKOR are not additive,
-Lemma~\ref{lem:amplitude} does not apply exactly to them, and their
-$Q_2$ values do not follow the $D$-ordering.
-For the SAW cells, however, the ordering is consistent
-(Section~\ref{sec:results}).
 
 
 % ----------------------------------------------------------

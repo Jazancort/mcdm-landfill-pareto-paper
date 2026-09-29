@@ -60,21 +60,11 @@ evaluates portfolios chosen under various normalisation methods using a
 reference set built with min-max, any contrast between methods in $Q_1$
 conflates normalisation effects with evaluator alignment.
 
-\begin{proposition}[additive consistency]
-\label{prop:additive}
-For any reference set choice $\wfr=w$, the optimal-assembly SAW portfolio
-under $\wsc=w$ with the same normalisation is non-dominated in $\Fset(w)$.
-Consequently $Q_2=1$ for that cell.
-\end{proposition}
-\noindent
-This is the standard weighted-sum scalarisation argument: maximising
-$\sum_\ell \lambda_\ell F_\ell$ with $\lambda>0$ yields a Pareto-optimal
-point.
-We use it as a \emph{regression test} on the pipeline rather than as a
-contribution: any implementation returning $Q_2<1$ for SAW optimal under
-its own normalisation is faulty.
-It also delimits the scope of the factorial contrast, since one of the
-eight cells is fixed at unity by construction.
+Proposition~\ref{prop:p1} (Section~\ref{sec:propositions}) establishes that
+optimal-assembly SAW fixes $Q_2=1$ whenever score and objectives share the
+same normalisation. We use this cell as a regression test: any implementation
+returning $Q_2<1$ is faulty. It also delimits the factorial contrast, since
+one of the eight cells is fixed at unity by construction.
 
 \subsection{Normalisation reference set}
 

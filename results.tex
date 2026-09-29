@@ -97,14 +97,14 @@ Normalisation & $A_j$ & $\mathrm{TV}$ & $Q_2[A']$ \\
 \midrule
 min--max & $\equiv 1$                        & 0.000 & 82.3\% \\
 midranks & $(r_j^{\max}-r_j^{\min})/(N{+}1)$ & 0.091 & 76.5\% \\
-vector   & $\rho_j$                          & 0.312 & 55.5\% \\
+vector   & $\rho_j$                          & 0.324 & 55.5\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 The ordering is strictly monotone in the predicted direction, and the
 magnitudes are approximately proportional: a distortion of $0.091$
-costs $5.8$~pp, while $0.312$ costs $26.8$~pp.
+costs $5.8$~pp, while $0.324$ costs $26.8$~pp.
 A least-squares fit over the three levels gives a slope of
 $-84.1$~pp per unit of total variation with $R^2=0.995$.
 We report the \emph{ordering and approximate proportionality}, not a
@@ -241,121 +241,9 @@ but on this evidence the upgrade pays only when the normalisation
 already preserves the elicited weights.
 Exact assembly on a vector-normalised score captures almost none of the
 available gain.
+\input{sec75}
 
-% ----------------------------------------------------------
-\subsection{The reference set as a third instantiation of the lemma}
-\label{sec:refset}
-% ----------------------------------------------------------
 
-Min--max normalisation satisfies $A_j\equiv1$ over the set on which its
-constants are computed.
-If that set includes alternatives that cannot be selected, the guarantee
-no longer applies to the decision set: over the $\Nvia$ admissible
-sites, the attainable amplitude becomes
-\begin{equation}
-  \label{eq:refsetA}
-  A_j = \frac{\max_{\Nvia}(j)-\min_{\Nvia}(j)}
-             {\max_{\Ncand}(j)-\min_{\Ncand}(j)} \;\le\; 1,
-\end{equation}
-which varies across criteria and therefore re-weights.
-The reference-set choice is thus the same mechanism as
-Sections~\ref{sec:lemmaconf}--\ref{sec:interaction}, not a separate
-phenomenon.
-
-Computing~\eqref{eq:refsetA} for the eleven criteria yields the
-distortions in Table~\ref{tab:amprefset}:
-five criteria are unaffected ($A_j=1.000$, because the same sites
-determine the range in both sets), while \texttt{perm}~($A_j=0.482$),
-\texttt{slope}~($0.683$), \texttt{rivers}~($0.648$), and
-\texttt{urban}~($0.755$) lose amplitude.
-The aggregate distortion is $\mathrm{TV}=0.107$, between the midranks
-value ($0.091$) and the vector value ($0.312$), placing the
-reference-set effect firmly within the ordering of
-Table~\ref{tab:tvorder}.
-
-\begin{table}[t]
-\centering
-\caption{Amplitude ratio~\eqref{eq:refsetA} by criterion (reference set
-  $\Ncand\to\Nvia$). Five criteria are unaffected; four lose amplitude
-  because the $\Nexcl$ excluded sites extend the range.}
-\label{tab:amprefset}
-\begin{tabular}{lcc}
-\toprule
-Criterion & $A_j$ & $w_j$ \\
-\midrule
-\texttt{perm}      & 0.482 & 0.152 \\
-\texttt{slope}     & 0.683 & 0.113 \\
-\texttt{rivers}    & 0.648 & 0.091 \\
-\texttt{urban}     & 0.755 & 0.166 \\
-\texttt{coast}     & 0.924 & 0.069 \\
-\texttt{protected} & 0.999 & 0.066 \\
-remaining 5        & 1.000 & ---   \\
-\midrule
-$\mathrm{TV}$      & \multicolumn{2}{c}{$0.107$} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The three instantiations of the lemma now form a coherent ordering:
-min--max with correct reference set ($\mathrm{TV}=0$, $Q_2=82.3\%$),
-min--max over inadmissible sites ($\mathrm{TV}=0.107$, observed
-$Q_2=15\text{--}65\%$ depending on assembly and comparison direction),
-midranks ($\mathrm{TV}=0.091$, $Q_2=76.5\%$), and vector
-($\mathrm{TV}=0.312$, $Q_2=55.5\%$).
-
-Table~\ref{tab:fourthcell} separates the set over which the
-\emph{method} computes its constants from the set over which the
-\emph{evaluator} builds the reference set.
-
-\begin{table}[t]
-\centering
-\caption{Reference-set misalignment, $Q_2$, SAW with min--max
-  normalisation, $\kappa=200$.}
-\label{tab:fourthcell}
-\begin{tabular}{llcc}
-\toprule
-Method set & Evaluator & greedy & optimal \\
-\midrule
-$\Ncand$ & $A$  & 68.4\% & \textbf{100.0\%} \\
-$\Ncand$ & $A'$ & 15.0\% &  20.0\% \\
-$\Nvia$  & $A$  & 46.6\% &  95.0\% \\
-$\Nvia$  & $A'$ & 64.6\% & \textbf{100.0\%} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The pattern is a crossover: each method set performs best under the
-evaluator sharing it.
-Both diagonal cells reach $100\%$ under optimal assembly, as
-Proposition~\ref{prop:p1} requires, which confirms the implementation
-and simultaneously delimits interpretation --- the diagonal is
-guaranteed, the off-diagonal is informative.
-
-The off-diagonal costs are asymmetric.
-A method normalising over all $\Ncand$ candidates but evaluated on the
-admissible space loses $49.6$~pp under greedy and $80.0$~pp under
-optimal assembly; the reverse misalignment costs $21.8$~pp and $5.0$~pp.
-This asymmetry is consistent with~\eqref{eq:refsetA}: including the
-$\Nexcl$ inadmissible sites extends the observed range, driving $A_j$
-further below unity for the affected criteria and thereby increasing
-$\mathrm{TV}$.
-A confound is present --- objective ranges are wider in space~$A$
-because it contains more candidates, contributing to the asymmetry
-independently of the inadmissibility argument --- and we acknowledge it
-as a limitation.
-
-Two readings must be kept apart.
-The table establishes that misalignment is costly and that the cost is
-larger when inadmissible sites extend the scale, consistent with the
-lemma.
-It does not establish which evaluator is normatively correct.
-That argument is external: it rests on the inadmissibility of the
-$\Nexcl$ excluded sites (Section~\ref{sec:methods}).
-\todo{D2: cite the Cape Verde legal instrument establishing the
-  protected-area prohibition to convert the analytical claim into a
-  normative one.}
-
-% ----------------------------------------------------------
 \subsection{The greedy shortfall}
 \label{sec:greedy}
 % ----------------------------------------------------------
