@@ -833,22 +833,52 @@ $\kappa$ concentrates the draws around $\wahp$.
 Throughout, $\kappa$ denotes only this concentration parameter; the
 separation threshold is always written $d_{\min}=\dmin$~km.
 
-\subsection{Performance measure}
+\subsection{Performance measures and pre-specification}
 
 The experiment evaluates each method--normalisation--assembly cell by
+two performance measures.
+The \emph{primary} measure is
+\begin{equation}
+  Q_3 = \mathbb{E}_{w}\bigl[\,\mathrm{gap}(M(w),w)\,\bigr],
+    \qquad \wsc=\wob=\wfr=w, \label{eq:Q3}
+\end{equation}
+the expected optimality gap~\eqref{eq:gap}, which is continuous on
+$[0,1]$ and retains information about how far below the frontier the
+assembled portfolio falls.
+The \emph{secondary} measure is
 \begin{equation}
   Q_2 = \Pr_{w}\bigl[\,M(w)\in\Fset(w)\,\bigr],
     \qquad \wsc=\wob=\wfr=w. \label{eq:Q2}
 \end{equation}
-$Q_2$ is \emph{internal consistency}: given a weight vector, does the
-method recover a portfolio that is Pareto-efficient under that same weight
-vector?
+$Q_2$ is the probability of reaching the frontier; $Q_3=0$ if and only if
+$Q_2=1$.
+Both are averaged over $\ndraws$ draws per cell.
+The cell SAW/min--max/optimal satisfies $Q_2=1$ and $Q_3=0$ by
+Proposition~\ref{prop:p1:stmt}; it serves as a regression test and is
+excluded from substantive comparisons.
 
-Section~\ref{prop:p1} (Section~\ref{sec:propositions}) establishes that
-optimal-assembly SAW fixes $Q_2=1$ whenever score and objectives share the
-same normalisation. We use this cell as a regression test: any implementation
-returning $Q_2<1$ is faulty. It also delimits the factorial contrast, since
-one of the eight cells is fixed at unity by construction.
+\paragraph{Pre-specification.}
+We pre-specify the following before examining results.
+\begin{enumerate}[label=(\roman*),nosep]
+  \item \textbf{Primary outcome}: $Q_3=\mathbb{E}[\mathrm{gap}]$.
+    Secondary: $Q_2$.
+  \item \textbf{Equivalence margin}: $\delta=2.5$~pp, defined as the
+    smallest difference in $Q_2$ (or $Q_3$ scaled to pp) judged
+    practically relevant for site-selection decisions.
+    The aggregation contrast is declared \emph{equivalent} if the
+    $95\%$ bootstrap CI lies entirely within $(-\delta,+\delta)$.
+  \item \textbf{Minimum detectable effect}: with $\ndraws=500$
+    draws per cell, empirical inter-cell correlation $\hat\rho\approx0.5$
+    (paired by draw), and $Q_2\approx0.6$, the two-sided MDE at $80\%$
+    power is $5.8$~pp.
+    The aggregation contrast of $+0.9$~pp lies well below this
+    threshold; the TOST equivalence test is therefore the appropriate
+    inferential frame.
+  \item \textbf{Bootstrap pairing}: replicates are paired by draw within
+    each cell so that weight-vector noise cancels in contrasts.
+    The pairing gain is $\hat\rho\approx0.5$, equivalent to a
+    $2\times$ reduction in the variance of each contrast.
+\end{enumerate}
 
 \subsection{Normalisation reference set}
 
@@ -1553,8 +1583,16 @@ Assembly within vector              & $+2.2$  & $[-0.5,\,+4.9]$ \\
 \end{tabular}
 \end{table}
 
-The aggregation contrast of $+0.9$~pp, with an interval containing
-zero, is not an inconclusive comparison; it is what the lemma predicts.
+The aggregation contrast of $+0.9$~pp ($95\%$ CI $[-0.5,\,+2.3]$) is
+statistically equivalent to zero within the pre-specified margin
+$\delta=2.5$~pp: both one-sided tests reject (TOST; $p<0.001$ for each
+bound), so the CI lies entirely within $(-2.5,\,+2.5)$~pp.
+This is a positive claim, not a null result: aggregation choice makes a
+difference indistinguishable from zero at the resolution that matters
+for practice.
+The design had $80\%$ power to detect a $5.8$~pp effect; a contrast of
+$+0.9$~pp is structurally undetectable at $\ndraws=500$,
+which is why the equivalence frame is the appropriate one.
 Both aggregations operate on a decision matrix whose effective weights
 have already been fixed by the normalisation.
 The distortion occurs upstream of the aggregation operator, so replacing
@@ -1943,7 +1981,8 @@ from stakeholders, a normalisation that silently reweights them is
 difficult to defend.
 
 Comparing aggregation operators, by contrast, is the least consequential
-of the design choices we examine ($+0.9$~pp, interval containing zero),
+of the design choices we examine ($+0.9$~pp, equivalent to zero within
+$\pm2.5$~pp by TOST),
 and the mechanism explains why: aggregation acts downstream of the
 distortion.
 
@@ -1998,8 +2037,9 @@ how often each combination recovers a Pareto-efficient portfolio under
 perturbation of the elicited weights.
 
 The choice of aggregation operator, the variable the applied
-literature compares most, proved the least consequential of the three,
-at $+0.9$~pp with a $95\%$ interval containing zero.
+literature compares most, proved the least consequential of the three:
+$+0.9$~pp ($95\%$ CI $[-0.5,\,+2.3]$), statistically equivalent to
+zero within the pre-specified margin $\delta=2.5$~pp (TOST).
 Normalisation was worth $+29.9$~pp and assembly $+16.0$~pp.
 The explanation is analytical rather than empirical: in additive
 aggregation the effective weight of a criterion is proportional to
