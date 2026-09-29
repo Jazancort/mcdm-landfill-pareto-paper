@@ -112,7 +112,232 @@
 \label{sec:litreview}
 % =======================================================================
 
-\todo{Write Literature Review (blocks A--G from CONSOLIDACAO\_FINAL.md).}
+% ----------------------------------------------------------
+\subsection{Portfolio construction from MCDM rankings}
+\label{sec:lit_portfolio}
+% ----------------------------------------------------------
+
+The dominant paradigm for multi-facility siting combines an MCDM score
+with a combinatorial rule.
+\citet{BransMareschal1992} introduced PROMETHEE~V, in which PROMETHEE~II
+flows serve as coefficients of a binary programme, and produced the first
+exact solution for a portfolio problem from a ranking method.
+\citet{Mavrotas2006} and \citet{Mavrotas2008} extended this to integer
+programmes under budget and logical constraints, demonstrating that the
+quality of the resulting portfolio depends on how closely the programme
+matches the method's underlying value model.
+\citet{VetscheraDeAlmeida2012} formalised $c$-optimal portfolios under
+PROMETHEE~II, showing that the portfolio with exactly $c$~facilities that
+maximises a PROMETHEE-derived score is sensitive to the score scale.
+\citet{DeAlmeidaVetschera2012} isolated this scale sensitivity:
+transforming the PROMETHEE flows before insertion into the integer
+programme changes the optimal portfolio, establishing that the selection
+step is not scale-invariant.
+
+Parallel work in portfolio decision analysis (PDA) approached the problem
+from a different direction.
+\citet{Liesio2007} and \citet{Liesio2008} proposed Robust Portfolio
+Modelling (RPM), which computes portfolios that are non-dominated in a
+scalar value space over a region of uncertain weights, using an
+interactive linear programme.
+\citet{Mild2015} applied RPM to R\&D portfolio selection; \citet{Yang2015SMAAPO}
+combined SMAA with portfolio optimisation (SMAA-PO), producing
+acceptability indices for portfolios under full weight uncertainty.
+\citet{Liesio2021} reviewed 148 PDA contributions and found that
+cardinality-constrained portfolio selection with spatial interdependencies
+between facilities remains largely unexplored.
+
+The present paper occupies a position the PDA tradition does not fill:
+the three objectives $F_1, F_2, F_3$ are kept as separate partial value
+functions (not collapsed into one score), and the reference set is an
+exhaustively enumerated Pareto frontier under a hard pairwise spatial
+separation constraint.
+RPM and SMAA-PO treat weight uncertainty around a single scalar;
+this paper treats decomposition by objective group and measures how much
+of the resulting Pareto frontier each method--normalisation--assembly
+combination recovers.
+
+% ----------------------------------------------------------
+\subsection{Normalisation and effective weights}
+\label{sec:lit_norm}
+% ----------------------------------------------------------
+
+That a criterion weight cannot be interpreted independently of the scale
+used to normalise that criterion has been known since at least
+\citet{Choo1999}, who demonstrated that nominal and effective weights
+diverge whenever criterion columns have different ranges after
+normalisation, and argued that the effective weight is the operationally
+relevant quantity.
+\citet{Milani2005} confirmed this empirically, showing that different
+normalisation norms produce different rankings in a gear material
+selection study and recommending vector normalisation on the grounds that
+it is less sensitive to the raw scale of the data.
+
+A large subsequent literature has measured the sensitivity of rankings to
+normalisation choice, principally within TOPSIS.
+\citet{Chakraborty2009} introduced the Ranking Consistency Index (RCI)
+and, through simulation, found vector normalisation the most internally
+consistent choice for TOPSIS; \citet{Vafaei2018} corroborated this for
+TOPSIS and \citet{Vafaei2022} extended the finding to SAW.
+\citet{Jahan2015} surveyed 31 normalisation techniques and emphasised
+that apparently minor differences can produce materially different
+engineering decisions.
+\citet{Aytekin2021} compared 14 techniques across 14 data structures and
+found that no single technique dominates across all settings.
+
+Two observations qualify this body of work.
+First, every study uses ranking agreement (RCI, Spearman's $\rho$,
+or Pearson correlation between ranked lists) as its performance measure,
+which establishes that outcomes differ without establishing that any
+outcome is better.
+Second, the recommendation of vector normalisation rests on internal
+consistency with respect to the TOPSIS ideal-distance score; it does not
+account for the fact that distributional shape of the criterion columns
+determines the effective weight (Lemma~\ref{lem:amplitude}), which may
+conflict with elicited stakeholder judgements.
+This paper supplies the missing dimension: a comparison against an
+exhaustively enumerated Pareto frontier, which measures decision quality
+directly.
+
+Set dependence of normalisation has also been documented for specific
+methods.
+\citet{GarciaCascales2012} showed that TOPSIS rankings reverse when the
+alternative set changes, and recommended scales independent of the set.
+\citet{Kuo2017} identified a structural failure in the TOPSIS closeness
+index under vector normalisation.
+\citet{OpricovicTzeng2004} traced the linear-versus-vector contrast
+between VIKOR and TOPSIS to normalisation choices with consequences for
+unit invariance.
+
+% ----------------------------------------------------------
+\subsection{Theory of the methods}
+\label{sec:lit_methods}
+% ----------------------------------------------------------
+
+The four methods evaluated here are standard.
+\citet{Hwang1981} introduced TOPSIS and SAW; the original PROMETHEE
+formulation is due to \citet{Brans1986}.
+For VIKOR we follow \citet{OpricovicTzeng2004}.
+The connection between PROMETHEE~II and Borda scoring is established
+by the axiomatic results of \citet{Bouyssou1992} and
+\citet{Marchant1996}.
+\citet{Bouyssou1992} characterised the net flow as a scoring method
+subsuming Borda and Copeland when preferences are crisp;
+\citet{Marchant1996} extended the equivalence to valued preference
+relations, which is the setting of PROMETHEE~II.
+Proposition~\ref{prop:p2} exploits this connection to provide an exact
+algebraic identity between the rank-normalised SAW score and the
+PROMETHEE~II net flow.
+
+Rank reversal and set dependence in PROMETHEE~II have been studied by
+\citet{Mareschal2008}, \citet{Dejaegere2022}, and \citet{Coquelet2024},
+who formalised the mechanism by which a third alternative shifts the
+flows of existing alternatives.
+These results concern a different channel than the one we study: our
+set-dependence effect (Section~\ref{sec:refset}) operates through
+normalisation constants, not through pairwise preference flows.
+
+\citet{Eppe2014} examined the computational scalability of exact
+PROMETHEE ranking for candidate sets of the size used here ($|\Tset|$
+up to several hundred candidates), confirming tractability.
+
+% ----------------------------------------------------------
+\subsection{Benchmarking MCDM methods}
+\label{sec:lit_bench}
+% ----------------------------------------------------------
+
+Systematic benchmarking of MCDM methods has expanded substantially.
+\citet{Cinelli2020} reviewed frameworks for selecting among methods and
+argued for explicit documentation of the assumptions embedded in each
+choice.
+\citet{Salabun2020Sym} compared TOPSIS, VIKOR, COPRAS, and
+PROMETHEE~II using stochastic simulations and Spearman correlation,
+confirming that methods agree moderately under standard settings but
+diverge when normalisation or weighting changes.
+\citet{PintoCosta2005} proposed weighted rank correlation coefficients
+for comparing decision matrices; \citet{Watrobski2019} developed a
+framework for method selection incorporating data complexity diagnostics.
+
+All of these benchmarks use rank agreement as their criterion of
+comparison.
+The present paper adds an external standard: a reference set of
+Pareto-optimal portfolios computed without any MCDM aggregation.
+
+% ----------------------------------------------------------
+\subsection{Spatial constraints and undesirable facilities}
+\label{sec:lit_spatial}
+% ----------------------------------------------------------
+
+The theory of facility location under spatial separation constraints
+originates in the \emph{r-separation problem}:
+\citet{MoonChaudhry1984} first formalised the problem of selecting
+facilities subject to a minimum pairwise distance constraint in the
+operations research literature.
+\citet{Erkut1989} reviewed siting models for undesirable facilities and
+noted that MCDM methods are widely used in practice but rarely compared
+against exact optimisation benchmarks.
+\citet{Erkut1996} proposed integer-friendly MIP formulations for
+r-separation that make exact solution tractable for problems of the size
+considered here.
+\citet{Kuby1987} studied the related p-dispersion problem (maximise the
+minimum inter-facility distance); \citet{Church2022} reviewed the
+broader class of dispersion and diversity maximisation models.
+\citet{Marti2022} provided the most recent comprehensive review of
+discrete dispersion maximisation from an operations research perspective.
+
+% ----------------------------------------------------------
+\subsection{Landfill site selection}
+\label{sec:lit_landfill}
+% ----------------------------------------------------------
+
+MCDM methods are the dominant tool for landfill site selection in the
+GIS-integrated literature.
+\citet{Rezaeisabzevar2020} reviewed 114 studies and found that TOPSIS,
+SAW, and AHP dominate, with normalisation choices rarely reported.
+\citet{Korucu2012} reviewed the field critically and identified the
+absence of spatial interdependencies among selected sites as a gap.
+\citet{Spigolon2018} combined MCDA with mixed-integer quadratic
+programming for multi-facility selection, but without comparing methods.
+\citet{EiseltMarianov2014} are, to our knowledge, the only study to
+compute an exact Pareto frontier for a landfill siting problem; they use
+a bi-objective MIP without any MCDM ranking component, and the frontier
+is bivariate rather than trivariate.
+No study in this literature has compared ranking-based MCDM methods
+against an exhaustively enumerated Pareto frontier under a hard spatial
+separation constraint.
+
+% ----------------------------------------------------------
+\subsection{The present contribution}
+\label{sec:lit_gap}
+% ----------------------------------------------------------
+
+Drawing together the observations above, the gap is as follows.
+The PDA tradition computes exact portfolios in a scalar value space but
+does not decompose objectives into groups or impose hard spatial
+separation.
+The normalisation literature documents sensitivity of rankings to
+normalisation choice but measures it by internal agreement, not by an
+external quality standard.
+The benchmarking literature compares methods by rank agreement.
+The landfill literature uses MCDM rankings without comparing them to any
+optimality benchmark.
+
+The present paper addresses this gap by: (i)~enumerating the exact Pareto
+frontier of $\Ntrios$ portfolios over three group-level partial value
+functions under $r$-separation; (ii)~evaluating five methods crossed with
+three normalisations and two assembly strategies against that frontier;
+and (iii)~providing a closed-form account of the mechanism by which
+normalisation implicitly re-weights criteria, expressed in terms
+established by \citet{Choo1999} and measured in terms of Pareto
+efficiency loss.
+
+In the literature reviewed (55 studies, including the 148-article PDA
+survey of \citet{Liesio2021}), no prior work evaluates ranking-based
+MCDM portfolios against an exhaustive Pareto frontier under hard spatial
+separation, crosses aggregation, normalisation, and assembly as a
+factorial, or measures the cost of normalisation choice in units of
+Pareto efficiency.
+
 
 % =======================================================================
 % §3 Problem formulation
@@ -174,7 +399,7 @@ physically independent objectives: each component is an additive weighted
 aggregate of normalised criteria.
 This distinguishes our reference set from portfolio decision analysis
 approaches that compute non-dominated portfolios in a scalar value space
-\citep{Liesio2007,Liesio2008,Yang2015}, and from bi-objective mixed-integer
+\citep{Liesio2007,Liesio2008,Yang2015SMAAPO}, and from bi-objective mixed-integer
 landfill models whose objectives are physical quantities
 \citep{EiseltMarianov2014}.
 We keep the three group-level value functions unaggregated and ask how
@@ -1141,7 +1366,7 @@ We give a closed form for the induced re-weighting, applicable to any
 additive aggregation and any normalisation, and measure the consequence
 against an exhaustively enumerated Pareto set.
 The robust portfolio modelling line \citep{Liesio2007,Liesio2008} and
-SMAA-PO \citep{Yang2015} compute non-dominated portfolios exactly, but
+SMAA-PO \citep{Yang2015SMAAPO} compute non-dominated portfolios exactly, but
 in a scalar value space under weight uncertainty; our reference set
 retains three unaggregated partial value functions, which permits the
 dominance test to detect trade-off losses that a scalar criterion cannot.
