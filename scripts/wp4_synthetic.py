@@ -1,27 +1,29 @@
 # -*- coding: utf-8 -*-
 """
-WP4 — Synthetic instance grid, v4 (240 instances, ~16 min with 4 workers).
+WP4 v5 — Synthetic instance grid (240 instances, ~36 min with 4 workers).
 
-Key design:
-  - OMP/MKL/OPENBLAS_NUM_THREADS=1 before numpy import
-  - C matrix float32, trios int16 (N=389 << 32767)
-  - Per-draw: dominance query O(n) vectorised + gap vectorised
-    Uses w of the draw — satisfies wob = wfr coherence condition (§5.1)
-    NO staircase per draw (that was the 262s bottleneck)
-  - C @ Wg in batches of 20 draws (avoids (n,600,3) tensor thrash)
-  - Full Pareto front only for nominal weights (for |F| reporting)
-  - Unit tests removed from worker startup (run with --test)
-  - Regression assert: argmax SAW ∈ F(w_draw) — O(n) dominance check
+Design
+------
+Factors:
+  N_SPARSE ∈ {0,1,2,3,4}   — number of sparse criteria (highest-weight first)
+  P0_SPARSE ∈ {0.5,0.75,0.9,0.95} — zero-mass fraction on sparse criteria
+  SHAPE ∈ {lognormal, bimodal}
+  6 replications
+  = 5×4×2×6 = 240 instances
 
-Usage
------
-    uv run python scripts/wp4_synthetic.py --test          # unit tests
-    OMP_NUM_THREADS=1 ... uv run python scripts/wp4_synthetic.py --pilot
-    for W in 0 1 2 3; do
-      OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \\
-      uv run python scripts/wp4_synthetic.py \\
-          --calibrate --draws 200 --worker $W --total-workers 4 &
-    done
+Four cells per instance (parallel to article factorial):
+  (1) SAW · min-max · optimal   → Q2=1 always (regression test)
+  (2) SAW · min-max · greedy    → combinatorial loss only
+  (3) SAW · vector  · greedy    → combinatorial + re-weighting
+  (4) SAW · vector  · optimal   → re-weighting only (wsc≠wob)
+
+Objectives F_ℓ always use min-max normalisation (§8.5 recommendation).
+Score uses the cell's own normalisation.
+
+Correctness safeguards:
+  - pareto_front_3d (4-test staircase): run once with --test
+  - Regression assert: cell (1) must give Q2=1.000 on every instance
+  - greedy derived from fogo_trios — no distance matrix needed
 """
 
 import os
@@ -44,25 +46,28 @@ from pareto3d import pareto_front_3d, run_unit_tests
 # Constants
 # ---------------------------------------------------------------------------
 W_AHP = np.array([
-    0.177, 0.107, 0.107, 0.059,   # G1 siting
-    0.059, 0.059, 0.069, 0.069,   # G2 impact
-    0.107, 0.107, 0.080,           # G3 safety
+    0.177, 0.107, 0.107, 0.059,   # G1 siting (indices 0-3)
+    0.059, 0.059, 0.069, 0.069,   # G2 impact (indices 4-7)
+    0.107, 0.107, 0.080,           # G3 safety (indices 8-10)
 ], dtype=np.float32)
 W_AHP /= W_AHP.sum()
+
+# Criteria sorted by weight descending — sparse applied to highest-weight first
+SPARSE_ORDER = np.argsort(-W_AHP)  # [0,8,9,1,2,10,6,7,4,5,3]
 
 M = len(W_AHP)
 G1, G2, G3 = slice(0, 4), slice(4, 8), slice(8, 11)
 GROUPS = [G1, G2, G3]
 
-N_DRAWS   = 500
+N_DRAWS   = 200
 KAPPA     = 50
-SEED_BASE = 20260929
+SEED_BASE = 20261001
 EPS       = np.float32(1e-6)
-BATCH     = 20   # draws per C @ Wg batch
+BATCH     = 20
 
 
 # ---------------------------------------------------------------------------
-# Normalisations
+# Normalisations (float32 output)
 # ---------------------------------------------------------------------------
 def minmax_norm(X):
     lo, hi = X.min(0), X.max(0)
@@ -81,168 +86,211 @@ def tv_from_norm(V, w, alpha=1.0):
 
 
 # ---------------------------------------------------------------------------
-# Criterion generator
+# Criterion generator — sparse on N_SPARSE highest-weight criteria
 # ---------------------------------------------------------------------------
-def generate_criteria(n, m, p0, shape, rng):
+def generate_criteria(n, m, n_sparse, p0_sparse, shape, rng):
+    """
+    Generate (n, m) criterion matrix.
+    The n_sparse criteria with highest AHP weights get zero-mass p0_sparse;
+    the remaining criteria are drawn from a continuous uniform-ish distribution.
+    """
     X = np.zeros((n, m), dtype=np.float32)
+    sparse_set = set(SPARSE_ORDER[:n_sparse].tolist())
+
     for j in range(m):
+        p0 = p0_sparse if j in sparse_set else 0.0
         nz = ~(rng.random(n) < p0)
-        k = int(nz.sum())
-        if k == 0: continue
-        if shape == 'normal':
+        k  = int(nz.sum())
+        if k == 0:
+            continue
+        if j in sparse_set:
+            # Sparse: lognormal or bimodal tail
+            if shape == 'lognormal':
+                v = rng.lognormal(-0.7, 0.6, k)
+                lo, hi = v.min(), v.max()
+                v = (v - lo) / (hi - lo + 1e-12)
+            else:  # bimodal
+                h = k // 2
+                v = np.concatenate([rng.normal(0.2, 0.07, h).clip(0, 1),
+                                     rng.normal(0.8, 0.07, k-h).clip(0, 1)])
+                rng.shuffle(v)
+        else:
+            # Continuous: normal (like geographic distances)
             v = rng.normal(0.5, 0.2, k).clip(1e-6, 1.0)
-        elif shape == 'lognormal':
-            v = rng.lognormal(-0.7, 0.6, k)
-            lo, hi = v.min(), v.max()
-            v = (v - lo) / (hi - lo + 1e-12)
-        elif shape == 'bimodal':
-            h = k // 2
-            v = np.concatenate([rng.normal(0.2, 0.07, h).clip(0, 1),
-                                 rng.normal(0.8, 0.07, k-h).clip(0, 1)])
-            rng.shuffle(v)
         X[nz, j] = v.astype(np.float32)
     return X
 
 
 # ---------------------------------------------------------------------------
-# Fogo trio loader — int16 (N=389 << 32767)
+# Fogo trio loader (int16)
 # ---------------------------------------------------------------------------
 def load_fogo_trios(data_dir):
     npy = data_dir / 'fogo_trios.npy'
     if not npy.exists():
         raise FileNotFoundError(f"fogo_trios.npy not found at {npy}")
-    trios = np.load(npy).astype(np.int16)  # 11.1 MB vs 22.2 MB int32
-    print(f"Loaded {len(trios):,} trios ({trios.nbytes/1e6:.1f} MB int16) from {npy}")
+    trios = np.load(npy).astype(np.int16)
+    print(f"Loaded {len(trios):,} trios ({trios.nbytes/1e6:.1f} MB int16)")
     return trios
 
 
 # ---------------------------------------------------------------------------
-# C matrix  (n_trios, M)  float32, 81.6 MB — built once per normalisation
+# Compatibility matrix from trios (no distance matrix needed)
+# ok[u,v] = True iff d(u,v) >= d_min AND there exists w compatible with both
+# ---------------------------------------------------------------------------
+def build_ok_matrix(trios_i16, N):
+    """151 KB bool matrix, built once."""
+    ok = np.zeros((N, N), dtype=bool)
+    t = trios_i16.astype(np.int32)
+    for a, b in ((0, 1), (0, 2), (1, 2)):
+        ok[t[:, a], t[:, b]] = True
+        ok[t[:, b], t[:, a]] = True
+    return ok
+
+
+# ---------------------------------------------------------------------------
+# Greedy assembly
+# ---------------------------------------------------------------------------
+def greedy_trio_idx(site_scores, ok, trios_i16):
+    """
+    Greedy: pick sites in descending score order, keep if compatible with all chosen.
+    Returns the index of the resulting trio in fogo_trios, or -1 if not found.
+    """
+    order = np.argsort(-site_scores)
+    chosen = []
+    for s in order:
+        si = int(s)
+        if all(ok[si, c] for c in chosen):
+            chosen.append(si)
+            if len(chosen) == 3:
+                break
+    if len(chosen) < 3:
+        return -1
+    chosen_set = frozenset(chosen)
+    # Find matching trio index
+    t = trios_i16.astype(np.int32)
+    mask = ((t[:, 0] == chosen[0]) | (t[:, 0] == chosen[1]) | (t[:, 0] == chosen[2]))
+    mask &= ((t[:, 1] == chosen[0]) | (t[:, 1] == chosen[1]) | (t[:, 1] == chosen[2]))
+    mask &= ((t[:, 2] == chosen[0]) | (t[:, 2] == chosen[1]) | (t[:, 2] == chosen[2]))
+    idx = np.where(mask)[0]
+    return int(idx[0]) if len(idx) > 0 else -1
+
+
+# ---------------------------------------------------------------------------
+# C matrix, Wg, dominance query
 # ---------------------------------------------------------------------------
 def build_C(V_f32, trios_i16):
-    """C[t, j] = sum_{i in t} V[i, j].  float32 output."""
-    i0, i1, i2 = trios_i16[:, 0].astype(np.int32), \
-                  trios_i16[:, 1].astype(np.int32), \
-                  trios_i16[:, 2].astype(np.int32)
-    return (V_f32[i0] + V_f32[i1] + V_f32[i2])  # (n_trios, M) float32
+    t = trios_i16.astype(np.int32)
+    return (V_f32[t[:, 0]] + V_f32[t[:, 1]] + V_f32[t[:, 2]])  # (n,M) float32
 
-
-# ---------------------------------------------------------------------------
-# Weight-group matrix  (M, 3)
-# ---------------------------------------------------------------------------
 def build_Wg(w_f32):
     Wg = np.zeros((M, 3), dtype=np.float32)
     for ell, g in enumerate(GROUPS):
         Wg[g, ell] = w_f32[g]
     return Wg
 
-
-# ---------------------------------------------------------------------------
-# Vectorised dominance query:  is F[best] dominated by any row of F?
-# chunk-wise to avoid (n,n,3) allocation
-# ---------------------------------------------------------------------------
 def is_dominated_vec(F_f32, best_idx):
-    """True if F[best_idx] is dominated by some other row.  O(n) vectorised."""
     p = F_f32[best_idx]
-    n = len(F_f32)
-    chunk = 100_000
-    for s in range(0, n, chunk):
-        e = min(s + chunk, n)
+    for s in range(0, len(F_f32), 100_000):
+        e = min(s + 100_000, len(F_f32))
         Fj = F_f32[s:e]
-        dom = ((Fj >= p - EPS).all(1) & (Fj > p + EPS).any(1))
+        dom = (Fj >= p - EPS).all(1) & (Fj > p + EPS).any(1)
         if s <= best_idx < e:
             dom[best_idx - s] = False
         if dom.any():
             return True
     return False
 
-
 def gap_vec(F_f32, best_idx, R_f32):
-    """Scale-free gap of F[best_idx] against its dominators.  O(n)."""
     p = F_f32[best_idx]
-    n = len(F_f32)
-    chunk = 100_000
-    best_gap = np.float32(0.0)
-    for s in range(0, n, chunk):
-        e = min(s + chunk, n)
+    best_gap = 0.0
+    for s in range(0, len(F_f32), 100_000):
+        e = min(s + 100_000, len(F_f32))
         Fj = F_f32[s:e]
-        dom = ((Fj >= p - EPS).all(1) & (Fj > p + EPS).any(1))
+        dom = (Fj >= p - EPS).all(1) & (Fj > p + EPS).any(1)
         if s <= best_idx < e:
             dom[best_idx - s] = False
         if dom.any():
             diffs = (Fj[dom] - p) / R_f32
             best_gap = max(best_gap, float(diffs.min(1).max()))
-    return float(best_gap)
+    return best_gap
 
 
 # ---------------------------------------------------------------------------
-# Instance evaluator — O(n) per draw, wob = wfr
+# Instance evaluator — 4 cells
 # ---------------------------------------------------------------------------
-def evaluate_instance(fogo_trios, X_raw, w_ahp, n_draws, kappa, seed):
+def evaluate_instance(fogo_trios, ok, X_raw, w_ahp, n_draws, kappa, seed):
     rng = np.random.default_rng(seed)
-    results = {}
     w_f32 = w_ahp.astype(np.float32)
 
-    for norm_name, norm_fn in [('minmax', minmax_norm), ('vector', vector_norm)]:
-        V = norm_fn(X_raw)                  # (N, M) float32
-        tv1 = tv_from_norm(V, w_f32, 1.0)
-        tv2 = tv_from_norm(V, w_f32, 2.0)
+    # Objectives always use min-max normalisation
+    V_mm = minmax_norm(X_raw)
+    C_mm = build_C(V_mm, fogo_trios)          # (n_trios, M) float32
+    Wg_nom = build_Wg(w_f32)
+    F_obj = (C_mm @ Wg_nom).astype(np.float32)  # (n_trios, 3) — objective space
 
-        # Pre-compute C once (no allocations inside draw loop)
-        C = build_C(V, fogo_trios)          # (n_trios, M) float32, 81.6 MB
+    # Pareto front (nominal weights, min-max objectives) — once
+    is_nd = pareto_front_3d(F_obj.astype(float))
+    front_size = int(is_nd.sum())
+    R = (F_obj.max(0) - F_obj.min(0)).astype(np.float32)
+    R = np.where(R > 0, R, np.float32(1.0))
 
-        # Nominal objectives + full Pareto front (once, for |F| and regression)
-        Wg_nom = build_Wg(w_f32)
-        F_nom  = (C @ Wg_nom).astype(np.float32)  # (n_trios, 3)
-        is_nd_nom = pareto_front_3d(F_nom.astype(float))
-        front_size = int(is_nd_nom.sum())
-        R_nom = (F_nom.max(0) - F_nom.min(0)).astype(np.float32)
-        R_nom = np.where(R_nom > 0, R_nom, np.float32(1.0))
+    # TV for each score normalisation
+    tv_mm = tv_from_norm(V_mm, w_f32)
+    V_vec = vector_norm(X_raw)
+    tv_vec = tv_from_norm(V_vec, w_f32)
+    C_vec  = build_C(V_vec, fogo_trios)
 
-        # Regression assert (nominal, cheap)
-        saw_nom = (C @ w_f32)
-        best_nom = int(saw_nom.argmax())
-        assert is_nd_nom[best_nom], (
-            f"REGRESSION [{norm_name}] nominal: tv1={tv1:.4f}, |F|={front_size}"
-        )
+    # Regression assert: SAW/mm/optimal must give Q2=1
+    saw_nom = C_mm @ w_f32
+    best_nom = int(saw_nom.argmax())
+    assert is_nd[best_nom], (
+        f"REGRESSION [mm/optimal]: tv_mm={tv_mm:.4f}, |F|={front_size}"
+    )
 
-        # Monte Carlo — per-draw, using w of that draw (wob = wfr coherence)
-        # SAW optimal: Q2=1 by prop:p1 (regression test for correctness)
-        # Q3 measures how far suboptimal draws fall from the frontier
+    # Weight draws
+    W_draws = rng.dirichlet(kappa * w_f32.astype(float), n_draws).astype(np.float32)
+    W_draws /= W_draws.sum(1, keepdims=True)
+
+    # Four cells
+    cells = {
+        'mm_opt':  {'C': C_mm,  'assembly': 'opt'},
+        'mm_grd':  {'C': C_mm,  'assembly': 'grd'},
+        'vec_grd': {'C': C_vec, 'assembly': 'grd'},
+        'vec_opt': {'C': C_vec, 'assembly': 'opt'},
+    }
+
+    results = {'tv_mm': tv_mm, 'tv_vec': tv_vec, 'front_size': front_size}
+
+    for cell_name, cfg in cells.items():
+        C_cell = cfg['C']
         q2_list, q3_list = [], []
-        W_draws = rng.dirichlet(kappa * w_f32.astype(float), size=n_draws).astype(np.float32)
-        W_draws /= W_draws.sum(1, keepdims=True)
 
-        trios_i32 = fogo_trios.astype(np.int32)
+        SAW_batch_all = (C_cell @ W_draws.T)  # (n_trios, n_draws)
 
-        for b_start in range(0, n_draws, BATCH):
-            b_end = min(b_start + BATCH, n_draws)
-            W_batch = W_draws[b_start:b_end]
-            SAW_batch = (C @ W_batch.T)  # (n_trios, b)
+        for k in range(n_draws):
+            w_k = W_draws[k]
+            best_idx = int(SAW_batch_all[:, k].argmax()) if cfg['assembly'] == 'opt' \
+                       else greedy_trio_idx(V_mm @ w_k if 'mm' in cell_name else V_vec @ w_k,
+                                            ok, fogo_trios)
+            if best_idx < 0:
+                continue
 
-            for k in range(b_end - b_start):
-                w_k = W_batch[k]
-                Wg_k = build_Wg(w_k)
-                F_k  = (C @ Wg_k).astype(np.float32)
-                best_idx = int(SAW_batch[:, k].argmax())
+            # Evaluate in objective space (min-max objectives, w of draw)
+            Wg_k = build_Wg(w_k)
+            F_k  = (C_mm @ Wg_k).astype(np.float32)   # always min-max objectives
+            R_k  = (F_k.max(0) - F_k.min(0)).astype(np.float32)
+            R_k  = np.where(R_k > 0, R_k, np.float32(1.0))
 
-                R_k = (F_k.max(0) - F_k.min(0)).astype(np.float32)
-                R_k = np.where(R_k > 0, R_k, np.float32(1.0))
+            dominated = is_dominated_vec(F_k, best_idx)
+            q2_list.append(float(not dominated))
+            q3_list.append(gap_vec(F_k, best_idx, R_k) if dominated else 0.0)
 
-                dominated = is_dominated_vec(F_k, best_idx)
-                q2_list.append(float(not dominated))
-                q3_list.append(gap_vec(F_k, best_idx, R_k) if dominated else 0.0)
+        nd = len(q2_list)
+        results[f'Q2_{cell_name}']    = float(np.mean(q2_list)) if nd else float('nan')
+        results[f'Q3_{cell_name}']    = float(np.mean(q3_list)) if nd else float('nan')
+        results[f'Q2_se_{cell_name}'] = float(np.std(q2_list)/np.sqrt(nd)) if nd > 1 else float('nan')
 
-        results[norm_name] = {
-            'tv1': tv1, 'tv2': tv2,
-            'front_size': front_size,
-            'Q2':    float(np.mean(q2_list)),
-            'Q3':    float(np.mean(q3_list)),
-            'Q2_se': float(np.std(q2_list) / np.sqrt(n_draws)),
-            'Q3_se': float(np.std(q3_list) / np.sqrt(n_draws)),
-        }
-        del C  # free 81.6 MB before next normalisation
-
+    del C_mm, C_vec
     return results
 
 
@@ -252,8 +300,8 @@ def evaluate_instance(fogo_trios, X_raw, w_ahp, n_draws, kappa, seed):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--test',         action='store_true')
-    parser.add_argument('--pilot',        action='store_true')
-    parser.add_argument('--calibrate',    action='store_true')
+    parser.add_argument('--calibrate',    action='store_true',
+                        help='12 instances; check TV range and Q2 signal before full grid')
     parser.add_argument('--draws',        type=int, default=N_DRAWS)
     parser.add_argument('--worker',       type=int, default=0)
     parser.add_argument('--total-workers',type=int, default=1)
@@ -261,7 +309,7 @@ def main():
 
     if args.test:
         run_unit_tests(verbose=True)
-        print("All unit tests passed.")
+        print("All tests passed.")
         return
 
     print(f"BLAS: OMP={os.environ.get('OMP_NUM_THREADS')} "
@@ -276,41 +324,54 @@ def main():
     N_FOGO = int(fogo_trios.astype(np.int32).max()) + 1
     print(f"N_FOGO={N_FOGO}, n_trios={len(fogo_trios):,}")
 
-    p0_levels = np.linspace(0, 0.95, 20) if args.calibrate else np.linspace(0, 0.50, 11)
-    shapes    = ['normal', 'lognormal', 'bimodal']
-    n_reps    = 4
-    n_draws   = args.draws
+    print("Building compatibility matrix from trios...")
+    ok = build_ok_matrix(fogo_trios, N_FOGO)
+    print(f"ok matrix: {ok.nbytes/1024:.0f} KB")
 
-    all_jobs = list(iproduct(p0_levels, shapes, range(n_reps)))
+    # Grid factors
+    N_SPARSE_LEVELS = [0, 1, 2, 3, 4]
+    P0_LEVELS       = [0.50, 0.75, 0.90, 0.95]
+    SHAPES          = ['lognormal', 'bimodal']
+    N_REPS          = 6
+
+    all_jobs = list(iproduct(N_SPARSE_LEVELS, P0_LEVELS, SHAPES, range(N_REPS)))
     worker, n_workers = args.worker, args.total_workers
-    my_jobs  = [j for i, j in enumerate(all_jobs) if i % n_workers == worker]
-    suffix   = f'_w{worker}' if n_workers > 1 else ''
 
-    if args.pilot:
-        my_jobs = [(0.0,'normal',0),(0.25,'lognormal',0),(0.50,'bimodal',0),(0.90,'normal',0)]
-        print(f"\n=== PILOT: {len(my_jobs)} instances, draws={n_draws} ===")
+    if args.calibrate:
+        # 12 instances: vary N_SPARSE and P0, 1 shape, 1 rep
+        cal_jobs = [(ns, p0, 'lognormal', 0)
+                    for ns in [0, 2, 4] for p0 in [0.50, 0.75, 0.90, 0.95]]
+        my_jobs = cal_jobs
+        suffix  = '_calibrate'
+        print(f"\n=== CALIBRATE: {len(my_jobs)} instances, draws={args.draws} ===")
+    else:
+        my_jobs = [j for i, j in enumerate(all_jobs) if i % n_workers == worker]
+        suffix  = f'_w{worker}' if n_workers > 1 else ''
 
-    print(f"Worker {worker}/{n_workers}: {len(my_jobs)} instances, draws={n_draws}")
+    print(f"Worker {worker}/{n_workers}: {len(my_jobs)} instances")
 
     rows = []
-    for done, (p0, shape, rep) in enumerate(my_jobs, 1):
-        seed = SEED_BASE + int(round(p0 * 1000)) * 10000 + shapes.index(shape) * 100 + rep
+    for done, (n_sp, p0, shape, rep) in enumerate(my_jobs, 1):
+        seed = SEED_BASE + n_sp * 100000 + int(p0 * 1000) * 100 + \
+               SHAPES.index(shape) * 10 + rep
         rng_inst = np.random.default_rng(seed)
-        X = generate_criteria(N_FOGO, M, p0, shape, rng_inst)
+        X = generate_criteria(N_FOGO, M, n_sp, p0, shape, rng_inst)
+
         t0 = time.time()
-        res = evaluate_instance(fogo_trios, X, W_AHP, n_draws, KAPPA, seed + 1)
+        res = evaluate_instance(fogo_trios, ok, X, W_AHP, args.draws, KAPPA, seed + 1)
         dt = time.time() - t0
 
-        for nm, vals in res.items():
-            rows.append({'p0': round(p0,3), 'shape': shape, 'rep': rep,
-                         'norm': nm, **vals})
+        rows.append({'n_sparse': n_sp, 'p0': p0, 'shape': shape, 'rep': rep, **res})
 
-        pct = 100*done/len(my_jobs)
-        print(f"[{done}/{len(my_jobs)}] {pct:.1f}% p0={p0:.2f} {shape} rep{rep} {dt:.0f}s | "
-              f"mm tv1={res['minmax']['tv1']:.3f} Q2={res['minmax']['Q2']:.3f} "
-              f"|F|={res['minmax']['front_size']} | "
-              f"vec tv1={res['vector']['tv1']:.3f} Q2={res['vector']['Q2']:.3f} "
-              f"|F|={res['vector']['front_size']}")
+        pct = 100 * done / len(my_jobs)
+        print(f"[{done}/{len(my_jobs)}] {pct:.1f}% n_sp={n_sp} p0={p0:.2f} {shape} "
+              f"rep{rep} {dt:.0f}s | "
+              f"tv_mm={res['tv_mm']:.3f} tv_vec={res['tv_vec']:.3f} "
+              f"|F|={res['front_size']} | "
+              f"mm/opt={res.get('Q2_mm_opt',0):.3f} "
+              f"mm/grd={res.get('Q2_mm_grd',0):.3f} "
+              f"vec/grd={res.get('Q2_vec_grd',0):.3f} "
+              f"vec/opt={res.get('Q2_vec_opt',0):.3f}")
         sys.stdout.flush()
 
     df = pd.DataFrame(rows)
@@ -318,11 +379,20 @@ def main():
     df.to_csv(csv_out, index=False)
     print(f"\nSaved {len(df)} rows to {csv_out}")
 
-    if n_workers == 1 or args.pilot:
-        print("\n=== Summary by norm ===")
-        print(df.groupby('norm')[['Q2','Q3','tv1']].mean().round(4).to_string())
-        print("\n=== Q2 and tv1 by (p0, norm) ===")
-        print(df.groupby(['p0','norm'])[['Q2','tv1']].mean().unstack('norm').round(3).to_string())
+    if args.calibrate or n_workers == 1:
+        print("\n=== TV range achieved ===")
+        print(df[['n_sparse','p0','tv_mm','tv_vec']].groupby(
+            ['n_sparse','p0']).mean().round(3).to_string())
+        print("\n=== Q2 by cell (mean) ===")
+        q2_cols = [c for c in df.columns if c.startswith('Q2_')]
+        print(df[q2_cols].mean().round(3).to_string())
+        print("\n=== Regression check: mm/opt must be 1.000 ===")
+        bad = df[df['Q2_mm_opt'] < 0.999]
+        if len(bad):
+            print(f"WARNING: {len(bad)} instances with Q2_mm_opt < 1")
+            print(bad[['n_sparse','p0','shape','rep','Q2_mm_opt']].to_string())
+        else:
+            print("OK — all instances Q2_mm_opt = 1.000")
 
     print(f"\nCONCLUÍDO worker={worker}")
 
