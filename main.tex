@@ -151,7 +151,7 @@ The feasible set is
 The $m$ criteria are partitioned into three groups reflecting the
 decision dimensions of landfill siting: siting and construction cost
 ($G_1$), environmental impact ($G_2$), and social safety ($G_3$)
-(Table~\ref{tab:criteria}).
+(Table~\ref{tab:amplitude}).
 Let $c_j(i)\in[0,1]$ be the partial value of site~$i$ on criterion~$j$,
 oriented so that larger is better, and let $w_j$ be the criterion weight.
 The portfolio objectives are additive within group and across sites:
@@ -248,7 +248,7 @@ enters as an indicator: $c=1$ if aspect $\notin[90^\circ,180^\circ]$ and
 $c=0$ otherwise, yielding $n_1=94$ positives among the $\Nvia$ admissible
 sites.
 This binarisation matters for Proposition~\ref{prop:p3}
-and is recorded explicitly in Table~\ref{tab:criteria}.
+and is recorded explicitly in Table~\ref{tab:amplitude}.
 
 \subsection{Criterion weights}
 
@@ -346,29 +346,16 @@ $\kappa$ concentrates the draws around $\wahp$.
 Throughout, $\kappa$ denotes only this concentration parameter; the
 separation threshold is always written $d_{\min}=\dmin$~km.
 
-\subsection{Two robustness measures}
+\subsection{Performance measure}
 
-Both quantities below satisfy the coherence condition of
-Remark~\ref{rem:coherence}:
-\begin{align}
-  Q_1 &= \Pr_{w}\bigl[\,M(w)\in\Fset(\wahp)\,\bigr],
-    && \wsc=w,\quad \wob=\wfr=\wahp, \label{eq:Q1} \\
-  Q_2 &= \Pr_{w}\bigl[\,M(w)\in\Fset(w)\,\bigr],
-    && \wsc=\wob=\wfr=w. \label{eq:Q2}
-\end{align}
-They answer different questions.
+The experiment evaluates each method--normalisation--assembly cell by
+\begin{equation}
+  Q_2 = \Pr_{w}\bigl[\,M(w)\in\Fset(w)\,\bigr],
+    \qquad \wsc=\wob=\wfr=w. \label{eq:Q2}
+\end{equation}
 $Q_2$ is \emph{internal consistency}: given a weight vector, does the
 method recover a portfolio that is Pareto-efficient under that same weight
 vector?
-$Q_1$ is \emph{robustness to weight misspecification}: how often does a
-perturbed method still land on the reference set of the nominal decision
-maker?
-$Q_2$ is the primary measure reported in this work.
-$Q_1$ is reported as absolute levels with confidence intervals and is not
-differenced across methods; because $Q_1$ with min-max normalisation
-evaluates portfolios chosen under various normalisation methods using a
-reference set built with min-max, any contrast between methods in $Q_1$
-conflates normalisation effects with evaluator alignment.
 
 Proposition~\ref{prop:p1} (Section~\ref{sec:propositions}) establishes that
 optimal-assembly SAW fixes $Q_2=1$ whenever score and objectives share the
@@ -399,48 +386,7 @@ invariance) and is reported only for marginal means.
 Effects are reported in percentage points with $\nboot$-replicate
 bootstrap intervals, paired by draw.
 
-\subsection{Evaluator robustness}
-\label{sec:evaluators}
 
-Because the reference set of the $2^3$ design uses min-max partial value
-functions, part of the normalisation effect may reflect alignment with the
-evaluator rather than an intrinsic property.
-We therefore rebuild the reference set under two alternative partial value
-functions, holding $\Tset$ fixed:
-\begin{itemize}
-  \item $\Fset_{\mathrm{vec}}$: vector-normalised partial values
-    ($|\Fset|=\Fvecsize$ portfolios);
-  \item $\Fset_{\mathrm{fix}}$: partial values on \emph{a priori} fixed
-    bounds, independent of the candidate sample
-    ($|\Fset|=\Ffixsize$ portfolios).
-\end{itemize}
-The second follows the recommendation of \citet{GarciaCascales2012} that
-the value scale should not depend on the alternative set.
-The bounds are conventional physical and planning ranges fixed before the
-analysis; we make no regulatory claim for them, since the applicable
-jurisdiction is Cape Verde and the fixed-bound evaluator serves only to
-break sample dependence, which requires independence from the sample, not
-legal authority.
-\todo{D2/slope: if any bound is to be presented as normative, convert and
-  cite correctly --- a 30\% gradient is $\arctan(0.30)\approx16.7^\circ$,
-  not $20^\circ$.}
-
-In this dataset, the two alternative evaluators produce nearly identical
-classifications: the reference sets $\Fset_{\mathrm{vec}}$ and
-$\Fset_{\mathrm{fix}}$ share only 29 portfolios in common
-($|\Fset_{\mathrm{vec}}\cap\Fset_{\mathrm{fix}}|=29$ out of a union of
-$264$; Jaccard $0.11$), yet they return the same verdict on
-$99.9\%$ of draws.
-This is not a base-rate artefact: at the observed hit rates the
-chance-agreement level is $93$--$96\%$, giving $\kappa\approx 0.98$,
-and on the informative subset --- draws where at least one evaluator
-reports non-dominance --- agreement is above $90\%$ against $1.1\%$
-expected under independence.
-The two evaluators therefore do not constitute independent evidence:
-the assembled portfolio is almost always the same across draws, and both
-exogenous scales classify that portfolio identically.
-We report $\Fset_{\mathrm{fix}}$ as a confirmatory check rather than as
-a second independent test.
 
 
 % =======================================================================
@@ -456,6 +402,9 @@ a second independent test.
 
 \begin{lemma}[Normalisation as implicit re-weighting]
 \label{lem:amplitude}
+The following states in closed form a qualitative relationship established
+by \citet{Choo1999}: a weight cannot be interpreted independently of the
+scale and range of its criterion.
 Let $n_j : \mathbb{R}^N \to \mathbb{R}^N$ be a normalisation applied
 column-wise to criterion $j$, and let
 \begin{equation}
@@ -703,6 +652,41 @@ factor $\mathbf{2.87\times}$.
 factor $0.51\times$.
 
 
+
+% ----------------------------------------------------------
+\begin{table}[t]
+\centering
+\caption{Effective-weight amplitudes $A_j$ and ratios
+  $w_j^{\mathrm{eff}}/w_j$ for the $\Nvia$ admissible Fogo Island sites.
+  Min--max gives $A_j=1$ for all criteria by construction; rank
+  normalisation gives $A_j\approx0.995$ for continuous criteria (the
+  near-constant follows from $N/[2(N+1)]\approx0.499$ per midrank unit)
+  and $A_j\approx0.499$ for the binary \textit{aspect}.
+  $\mathrm{TV}=\tfrac{1}{2}\sum_j|w_j^{\mathrm{eff}}-w_j|$.}
+\label{tab:amplitude}
+\begin{tabular}{lcrrrrrr}
+\toprule
+Criterion & Group & $w_j$ & $A_j^{\text{mm}}$ & $A_j^{\text{vec}}$ &
+  $A_j^{\text{rank}}$ &
+  $\frac{w^{\mathrm{eff}}}{w}$ (vec) & $\frac{w^{\mathrm{eff}}}{w}$ (rank) \\
+\midrule
+\textit{perm}      & $G_1$ & 0.152 & 1.000 & 0.583 & 0.547 & \textbf{2.93} & 0.62 \\
+\textit{slope}     & $G_1$ & 0.113 & 1.000 & 0.135 & 0.995 & 0.68 & 1.12 \\
+\textit{roads}     & $G_1$ & 0.030 & 1.000 & 0.206 & 0.995 & 1.03 & 1.12 \\
+\textit{rivers}    & $G_2$ & 0.091 & 1.000 & 0.265 & 0.995 & 1.33 & 1.12 \\
+\textit{aspect}    & $G_2$ & 0.075 & 1.000 & 0.058 & 0.499 & 0.29 & \textbf{0.56} \\
+\textit{coast}     & $G_3$ & 0.069 & 1.000 & 0.126 & 0.995 & 0.63 & 1.12 \\
+\textit{protected} & $G_3$ & 0.066 & 1.000 & 0.105 & 0.995 & 0.53 & 1.12 \\
+\textit{wells}     & $G_3$ & 0.055 & 1.000 & 0.081 & 0.995 & 0.41 & 1.12 \\
+\textit{urban}     & $G_3$ & 0.166 & 1.000 & 0.107 & 0.989 & \textbf{0.54} & 1.11 \\
+\textit{aero}      & $G_3$ & 0.102 & 1.000 & 0.086 & 0.995 & 0.43 & 1.12 \\
+\textit{cult}      & $G_3$ & 0.081 & 1.000 & 0.171 & 0.981 & 0.86 & 1.11 \\
+\midrule
+$\mathrm{TV}$ & & & 0.000 & & & 0.324 & 0.091 \\
+\bottomrule
+\end{tabular}
+\end{table}
+% ----------------------------------------------------------
 % ----------------------------------------------------------
 \subsection{Consequences for the factorial comparison}
 \label{sec:consequences}
@@ -733,7 +717,7 @@ sub-optimality in the factorial experiment into four ordered factors:
   \item \emph{Reference-set effect (normalisation over $N$ vs.\ $N'$):}
     Including inadmissible sites in the normalisation reference shifts
     the scale without those sites being selectable
-    (Section~\ref{sec:fourthcell}).
+    (Section~\ref{sec:refset}).
 \end{enumerate}
 
 
@@ -766,14 +750,14 @@ TOPSIS with vector normalisation and VIKOR are also dominated
 ($\mathrm{gap}=0.048$ and $0.052$), while TOPSIS with min--max
 normalisation and PROMETHEE~II attain the reference set.
 
-\begin{table*}[t]
+\begin{table}[t]
 \centering
 \caption{Portfolios under nominal weights $\wahp$, space~$A$
   (normalisation over all $\Ncand$ candidates). The gap is defined
   in~\eqref{eq:gap}; $\mathrm{gap}=0$ iff the portfolio lies in the
   reference set.}
 \label{tab:canonical}
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llccccc}
+\begin{tabular}{llccccc}
 \toprule
 Method & Assembly & Sites & $F_1$ & $F_2$ & $F_3$ & gap \\
 \midrule
@@ -786,8 +770,8 @@ PROMETHEE~II      & greedy  & $\{51,233,345\}$  & 0.0447 & 0.5900 & 0.4852 & 0.0
 \midrule
 Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.000 \\
 \bottomrule
-\end{tabular*}
-\end{table*}
+\end{tabular}
+\end{table}
 
 A first indication that the reference set is itself implicated: when
 normalisation constants are recomputed over the $\Nvia$ admissible sites
@@ -1169,33 +1153,59 @@ effect combinatorial rather than parametric: a site foreclosed by greedy
 selection cannot be recovered by any re-weighting
 (Section~\ref{sec:greedy}).
 
-\subsection{Relation to the normalisation and rank-reversal literature}
+\subsection{Relation to the normalisation literature}
 
-Set dependence of normalisation is documented, principally for TOPSIS.
-\citet{GarciaCascales2012} demonstrate rank reversal under changes to
-the alternative set and recommend scales that do not depend on it;
-\citet{Kuo2017} identifies a failure of the closeness index;
-\citet{OpricovicTzeng2004} observe that VIKOR uses a linear and TOPSIS
-a vector normalisation, with consequences for unit invariance.
-Empirical comparisons proceed largely by rank-agreement statistics
-\citep{Jahan2015,Aytekin2021,Vafaei2018,Vafaei2022,Salabun2020Sym}.
+That criterion weights cannot be interpreted independently of the
+normalisation is established.
+\citet{Choo1999} show that a weight is meaningful only relative to the
+scale and range of the criterion it multiplies, and distinguish nominal
+from effective weights; \citet{Milani2005} demonstrate empirically that
+the choice of normalisation norm changes rankings, particularly under
+TOPSIS.
+Set dependence has been documented for specific methods:
+\citet{GarciaCascales2012} exhibit rank reversal under changes to the
+alternative set, \citet{Kuo2017} identifies a failure of the closeness
+index, and \citet{OpricovicTzeng2004} trace the linear-versus-vector
+contrast between VIKOR and TOPSIS.
 
-Our contribution is to give the mechanism a closed form and to measure
-its cost against an exact reference rather than against another ranking.
-Three previously separate observations become corollaries of one
-identity: the vector-normalisation distortion of
-Proposition~\ref{prop:p3}, the tie-induced contraction in rank space
-(Remark~\ref{rem:p2normalization}), and the amplitude loss from
-normalising over inadmissible alternatives~\eqref{eq:refsetA}.
-The account also explains a structural fact the rank-agreement literature
-records without explanation: VIKOR's invariance to vector normalisation
-follows immediately, since a common amplitude factor cancels
-in~\eqref{eq:weff}.
-\todo{Before submission: targeted search on ``effective weights'',
-  ``implicit weighting'', ``normalisation weight distortion'' in MCDM to
-  confirm the closed form is not already published. If it is, reposition
-  the contribution as the empirical cost measurement against an exact
-  frontier, which stands independently.}
+Our contribution is not the existence of the effect but its closed form
+and its cost.
+Lemma~\ref{lem:amplitude} expresses the effective weight as
+$w_j^{\mathrm{eff}}\propto w_j A_j$ and identifies $A_j$ for each of
+the three standard normalisations, which yields three results that the
+qualitative statement does not: min--max is the unique weight-preserving
+choice among them; every binary criterion loses half its weight in rank
+space irrespective of class balance; and VIKOR's invariance to vector
+normalisation follows immediately, since a common amplitude factor
+cancels in~\eqref{eq:weff}.
+Three observations previously treated separately become corollaries of
+one identity: Proposition~\ref{prop:p3},
+Remark~\ref{rem:p2normalization}, and the amplitude loss
+of~\eqref{eq:refsetA}.
+
+The second difference is evidential.
+Existing comparisons measure the consequence of a normalisation choice by
+agreement between rankings
+\citep{Jahan2015,Aytekin2021,Vafaei2018,Vafaei2022,Salabun2020Sym},
+which establishes that outcomes differ without establishing that any of
+them is worse.
+We measure the consequence against an exhaustively enumerated Pareto set:
+a loss of $26.8$~pp in the probability of selecting a non-dominated
+portfolio is a statement about decision quality, not about disagreement.
+
+This leads us to qualify a standing recommendation.
+\citet{Milani2005} advise vector normalisation on the grounds that it is
+less sensitive to the scale and range of the raw data.
+Our results indicate that the advantage is bought at a price:
+insensitivity to unit artefacts is obtained by letting the distributional
+shape of each criterion determine its amplitude, and hence its effective
+weight.
+Where weights carry no normative content the trade may be acceptable.
+Where they encode elicited stakeholder judgements, as AHP weights do, a
+normalisation that silently multiplies one criterion by $2.93\times$ and
+divides another by $0.54\times$ is difficult to defend, and min--max
+on the admissible set is preferable on precisely the grounds
+\citet{Choo1999} articulate.
 
 \subsection{The PROMETHEE--Borda identity}
 
