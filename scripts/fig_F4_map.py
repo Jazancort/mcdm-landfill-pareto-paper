@@ -57,7 +57,7 @@ except Exception as e:
 # ── Figure — double-column width, tall ────────────────────────────────────
 # Elsevier double column = 190 mm. COL1 ≈ 88 mm, so 2*COL1 ≈ 176 mm ≈ 6.9 in
 FIG_W = COL1 * 2.2   # full double-column width (Elsevier ~190 mm)
-FIG_H = FIG_W * 1.00  # square-ish (island is roughly circular)
+FIG_H = FIG_W * 0.85  # slightly less tall — island + margins
 
 fig, ax = plt.subplots(figsize=(FIG_W, FIG_H))
 
@@ -158,7 +158,7 @@ ax.text(x_sb, y_sb - 0.012,
 # 10. Axes: remove everything (IEEE style — no lat/lon labels or ticks)
 ax.set_aspect(1 / lon_scale)
 ax.set_xlim(min(lons) - 0.06, max(lons) + 0.22)
-ax.set_ylim(min(lats) - 0.05, max(lats) + 0.05)
+ax.set_ylim(min(lats) - 0.09, max(lats) + 0.05)  # more bottom margin for scale/note
 ax.set_xticks([])
 ax.set_yticks([])
 ax.set_xlabel("")
