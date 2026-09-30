@@ -54,6 +54,8 @@
 \newcommand{\argmax}{\operatorname{argmax}}
 
 % -----------------------------------------------------------------------
+% Auto-generated numerical macros (scripts/generate_macros.py)
+\input{macros}
 \begin{document}
 \let\WriteBookmarks\relax
 \def\floatpagepagefraction{1}
@@ -1011,7 +1013,7 @@ Within that scope the prediction is borne out: across SAW cells,
 mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.3\%$, $76.5\%$ and
 $55.5\%$ for min--max, ranks and vector normalisation respectively,
 against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.315$,
-a strictly monotone ordering ($R^2=0.994$ on three means; we report the
+a strictly monotone ordering ($R^2=\RsqThree$ on three means; we report the
 ordering and note approximate proportionality, given $n=3$, $\mathrm{df}=1$).
 
 TOPSIS and VIKOR aggregate distances to ideal points rather than
@@ -1703,13 +1705,13 @@ vector   & $\rho_j$                          & 0.315 & 55.5\% \\
 
 The ordering is strictly monotone in the predicted direction, and the
 magnitudes are approximately proportional: a distortion of $0.091$
-costs $5.8$~pp, while $0.315$ costs $26.8$~pp.
-A least-squares fit over the three levels gives $-86.7$~pp per unit of
-total variation ($R^2=0.994$).
+costs $5.8$~pp, while $0.315$ costs $\LossTabTVorder$~pp.
+A least-squares fit over the three levels gives $-\slopeThree$~pp per unit of
+total variation ($R^2=\RsqThree$).
 We report the ordering and the approximate proportionality, and decline
 to present this figure as a predictive coefficient.
 The reason is the design rather than the sample size: \textit{vector}
-carries leverage $h_{ii}=0.947$ and contributes $61\%$ of the regressor
+carries leverage $h_{ii}=\hiiVecThree$ and contributes $\SxxPctVecThree\%$ of the regressor
 sum of squares, and the interval between $\mathrm{TV}=0.091$ and
 $\mathrm{TV}=0.315$ spans $71\%$ of the sampled range and contains no
 observation.
@@ -1728,8 +1730,8 @@ In a supplementary Monte Carlo under the same design
 at $\mathrm{TV}=0$, a reversal of $3.7$~pp that exceeds the relevance
 margin $\delta=2.5$~pp of Section~\ref{sec:design}.
 The reversal is confined to greedy assembly ($73.2\%$ against $65.8\%$,
-a paired difference of $+7.4$~pp, $t=3.34$, $p=0.0009$, $n=500$,
-intra-draw correlation $\hat\rho=0.42$);
+a paired difference of $+\PeldschusDiffGreedy$~pp, $t=\PeldschusT$, $p=\PeldschusP$, $n=\PeldschusN$,
+intra-draw correlation $\hat\rho=\PeldschusRho$);
 under optimal assembly both attain $Q_2=100\%$ on every draw, as
 Proposition~\ref{prop:p1:stmt} requires.
 A slight amplitude tilt therefore cannot improve a globally optimised
@@ -2132,7 +2134,7 @@ placing it near the $n_{\mathrm{sparse}}=1$ regime of the grid
 ($m_{\mathrm{eff}}=3.59$).
 The comparison must be made at the grid's estimand, which is the
 greedy-assembly contrast under SAW: on Fogo that is
-$64.6-54.2=10.4$~pp, not the $26.8$~pp of
+$64.6-54.2=\SAWgreedyContrast$~pp, not the $\LossTabTVorder$~pp of
 Table~\ref{tab:tvorder} (which averages both assemblies) nor the
 $29.9$~pp normalisation main effect of Table~\ref{tab:effects} (which
 averages both assemblies and both aggregations, and is therefore
@@ -2143,7 +2145,7 @@ alone, predicts $22.2$~pp at Fogo's $\lVert\delta\rVert_2=0.3127$, with
 a $95\%$ prediction interval for a new instance of $[7.5,\,36.9]$~pp;
 the model in $\mathrm{TV}$ predicts $14.0$~pp with interval
 $[-4.7,\,32.7]$~pp.
-Both intervals contain the observed $10.4$~pp, and both point
+Both intervals contain the observed $\SAWgreedyContrast$~pp, and both point
 predictions exceed it, by $11.8$ and $3.6$~pp respectively.
 We do not read the excess as a calibrated bias in either direction.
 The grid varies the marginals while holding the spatial structure fixed,
@@ -2356,7 +2358,7 @@ agreement between rankings
 which establishes that outcomes differ without establishing that any of
 them is worse.
 We measure the consequence against an exhaustively enumerated Pareto set:
-a loss of $26.8$~pp in the probability of selecting a non-dominated
+a loss of $\LossTabTVorder$~pp in the probability of selecting a non-dominated
 portfolio is a statement about decision quality, not about disagreement.
 
 This leads us to qualify a standing recommendation.
@@ -2486,13 +2488,13 @@ populates it.
 Max ($\mathrm{TV}=0.0033$) and Peldschus ($\mathrm{TV}=0.0023$) fall in
 the lowest $1\%$ of the range and constrain the intercept rather than
 the slope: across the five levels with $\mathrm{TV}<0.35$ the fit gives
-$-93.0$~pp ($\mathrm{SE}=6.8$~pp, $\mathrm{df}=3$), with \textit{vector}
-still contributing $73\%$ of the regressor sum of squares and a quadratic
+$-\slopeFive$~pp ($\mathrm{SE}=\SEfive$~pp, $\mathrm{df}=\dffive$), with \textit{vector}
+still contributing $\SxxPctVecFive\%$ of the regressor sum of squares and a quadratic
 term inestimable ($p=0.65$, $\mathrm{VIF}=23.5$).
 Sum normalisation ($\mathrm{TV}=0.567$) lies outside the regime
 altogether: $Q_2$ rises to $73.1\%$, above vector's $55.4\%$, and adding
-it to those five levels reduces $R^2$ from $0.984$ to $0.397$ with a
-slope indistinguishable from zero ($-30.9$~pp, $p=0.18$).
+it to those five levels reduces $R^2$ from $\RsqDropFrom$ to $\RsqDropTo$ with a
+slope indistinguishable from zero ($-\slopeDropSum$~pp, $p=\pDropSum$).
 The mechanism is degeneration rather than discrimination: at that
 amplitude spread the score approaches a lexicographic ordering on $F_1$
 and the portfolios returned are $F_1$-extreme points, which belong to
