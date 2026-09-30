@@ -1008,10 +1008,10 @@ $A_j$ equal the same constant.\hfill$\square$
 \label{rem:scope}
 The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
 Within that scope the prediction is borne out: across SAW cells,
-mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.9\%$, $77.1\%$ and
-$55.4\%$ for min--max, ranks and vector normalisation respectively,
-against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.311$,
-a strictly monotone ordering ($R^2=0.992$ on three means; we report the
+mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.3\%$, $76.5\%$ and
+$55.5\%$ for min--max, ranks and vector normalisation respectively,
+against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.315$,
+a strictly monotone ordering ($R^2=0.994$ on three means; we report the
 ordering and note approximate proportionality, given $n=3$, $\mathrm{df}=1$).
 
 TOPSIS and VIKOR aggregate distances to ideal points rather than
@@ -1684,50 +1684,52 @@ the lemma is exact.
   aggregation (SAW), $\kappa=200$, space~$A'$.
   Amplitudes $A_j$ are computed over the $\Nvia$ admissible sites.
   $Q_2[A']$ is the mean of greedy and optimal assembly rates
-  ($Q_2^{\mathrm{greedy}}$ and $Q_2^{\mathrm{optimal}}$).}
+  ($Q_2^{\mathrm{greedy}}$ and $Q_2^{\mathrm{optimal}}$).
+  $\mathrm{TV}$ is computed from the rounded amplitudes of
+  Table~\ref{tab:amplitude}; a supplementary run recomputing $\mathrm{TV}$
+  numerically on the normalised matrix gives $0.311$ for vector
+  (see Section~\ref{sec:discussion}).}
 \label{tab:tvorder}
 \begin{tabular}{lccc}
 \toprule
 Normalisation & $A_j$ & $\mathrm{TV}$ & $Q_2[A']$ \\
 \midrule
-min--max & $\equiv 1$                        & 0.000 & 82.9\% \\
-midranks & $(r_j^{\max}-r_j^{\min})/(N{+}1)$ & 0.091 & 77.1\% \\
-vector   & $\rho_j$                          & 0.311 & 55.4\% \\
+min--max & $\equiv 1$                        & 0.000 & 82.3\% \\
+midranks & $(r_j^{\max}-r_j^{\min})/(N{+}1)$ & 0.091 & 76.5\% \\
+vector   & $\rho_j$                          & 0.315 & 55.5\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 The ordering is strictly monotone in the predicted direction, and the
 magnitudes are approximately proportional: a distortion of $0.091$
-costs $5.8$~pp, while $0.311$ costs $27.5$~pp.
-A least-squares fit over the three levels gives $-90.2$~pp per unit of
-total variation ($R^2=0.992$); extending it to the five levels for which
-$\mathrm{TV}<0.35$ gives $-92.1$~pp ($\mathrm{SE}=6.7$~pp,
-$\mathrm{df}=3$).
+costs $5.8$~pp, while $0.315$ costs $26.8$~pp.
+A least-squares fit over the three levels gives $-86.7$~pp per unit of
+total variation ($R^2=0.994$).
 We report the ordering and the approximate proportionality, and decline
-to present either figure as a predictive coefficient.
+to present this figure as a predictive coefficient.
 The reason is the design rather than the sample size: \textit{vector}
-carries leverage $h_{ii}=0.946$ and contributes $73\%$ of the regressor
-sum of squares, the interval between $\mathrm{TV}=0.091$ and
-$\mathrm{TV}=0.311$ spans $71\%$ of the sampled range and is empty, and
-the three low-distortion levels lie within the lowest $1\%$ of that
-range, so they function as replicates at the origin rather than as
-independent anchors.
-A quadratic term is correspondingly inestimable ($p=0.65$,
-$\mathrm{VIF}=23.5$): these data cannot separate a linear channel from a
-curved one, and we therefore claim only the former's direction.
+carries leverage $h_{ii}=0.947$ and contributes $61\%$ of the regressor
+sum of squares, and the interval between $\mathrm{TV}=0.091$ and
+$\mathrm{TV}=0.315$ spans $71\%$ of the sampled range and contains no
+observation.
+With three levels a quadratic term is saturated, so these data cannot
+separate a linear channel from a curved one even in principle, and we
+therefore claim only the former's direction.
 The claim we make is the analytic one of Section~\ref{sec:three_norms}:
 min--max is the unique weight-preserving choice, for which the empirical
 ordering is corroboration rather than evidential foundation.
 
 One low-distortion level departs from the ordering, and the departure is
 informative.
-Peldschus normalisation ($\mathrm{TV}=0.0023$) attains
-$Q_2=86.6\%$, above min--max's $82.9\%$ at $\mathrm{TV}=0$, a reversal of
-$3.7$~pp that exceeds the relevance margin $\delta=2.5$~pp of
-Section~\ref{sec:design}.
+In a supplementary Monte Carlo under the same design
+(Section~\ref{sec:discussion}), Peldschus normalisation
+($\mathrm{TV}=0.0023$) attains $Q_2=86.6\%$ against min--max's $82.9\%$
+at $\mathrm{TV}=0$, a reversal of $3.7$~pp that exceeds the relevance
+margin $\delta=2.5$~pp of Section~\ref{sec:design}.
 The reversal is confined to greedy assembly ($73.2\%$ against $65.8\%$,
-a paired difference of $+7.4$~pp, $t=3.34$, $p=0.0009$, $n=500$);
+a paired difference of $+7.4$~pp, $t=3.34$, $p=0.0009$, $n=500$,
+intra-draw correlation $\hat\rho=0.42$);
 under optimal assembly both attain $Q_2=100\%$ on every draw, as
 Proposition~\ref{prop:p1:stmt} requires.
 A slight amplitude tilt therefore cannot improve a globally optimised
@@ -2463,32 +2465,41 @@ relation is not globally monotone across levels of the design
 Establishing a predictive coefficient would require levels populating the
 interval $\mathrm{TV}\in(0.10,\,0.30)$, which is empty in our design and
 accounts for $71\%$ of the sampled range.
-The standard normalisation families do not supply them: Weitendorf's
-linear transformation is algebraically identical to min--max (for a cost
-criterion, $(x_{\max}-x)/(x_{\max}-x_{\min})
-= 1-(x-x_{\min})/(x_{\max}-x_{\min})$), hence $\mathrm{TV}=0$ by
-construction and not an independent level; max and Peldschus fall in
+A supplementary Monte Carlo under the same design ($\kappa=200$,
+$\ndraws$ draws, SAW only, space~$\mathcal{A}'$; total variation
+recomputed numerically, giving $0.311$ for vector against the $0.315$
+of Table~\ref{tab:amplitude}) evaluated three further families, and none
+populates it.
+Max ($\mathrm{TV}=0.0033$) and Peldschus ($\mathrm{TV}=0.0023$) fall in
 the lowest $1\%$ of the range and constrain the intercept rather than
-the slope.
-Populating the interval therefore requires manipulating the amplitude
-directly rather than surveying families, for instance along the
-one-parameter path $A_j(t)=\rho_j^{\,t}$, $t\in[0,1]$, which
-interpolates between min--max ($t=0$) and vector normalisation ($t=1$)
-and holds $m_{\mathrm{eff}}$ within $[4.05,\,5.00]$, so that magnitude
-varies without confounding concentration --- the decoupling that
-Section~\ref{sec:external} identifies as unavailable in the present grid.
-We note also that with $\ndraws$ draws the binomial standard error of
-each $Q_2$ is $1.5$--$2.2$~pp, comparable to the residual scatter of
-the fits; discriminating curvature would require both the filled support
-and an order-of-magnitude increase in draws.
+the slope: across the five levels with $\mathrm{TV}<0.35$ the fit gives
+$-93.0$~pp ($\mathrm{SE}=6.8$~pp, $\mathrm{df}=3$), with \textit{vector}
+still contributing $73\%$ of the regressor sum of squares and a quadratic
+term inestimable ($p=0.65$, $\mathrm{VIF}=23.5$).
 Sum normalisation ($\mathrm{TV}=0.567$) lies outside the regime
-altogether: $Q_2^{\text{mean}}$ rises to $73.1\%$, above vector's
-$55.4\%$, and including it reduces $R^2$ from $0.99$ to $0.22$ with a
-slope indistinguishable from zero ($p=0.53$).
+altogether: $Q_2$ rises to $73.1\%$, above vector's $55.4\%$, and adding
+it to those five levels reduces $R^2$ from $0.984$ to $0.397$ with a
+slope indistinguishable from zero ($-30.9$~pp, $p=0.18$).
 The mechanism is degeneration rather than discrimination: at that
 amplitude spread the score approaches a lexicographic ordering on $F_1$
 and the portfolios returned are $F_1$-extreme points, which belong to
 the frontier by definition.
+The standard families cannot fill the gap: Weitendorf's linear
+transformation is algebraically identical to min--max (for a cost
+criterion, $(x_{\max}-x)/(x_{\max}-x_{\min})
+=1-(x-x_{\min})/(x_{\max}-x_{\min})$), hence $\mathrm{TV}=0$ by
+construction.
+Populating the interval requires manipulating the amplitude directly, for
+instance along the one-parameter path $A_j(t)=\rho_j^{\,t}$,
+$t\in[0,1]$, which interpolates between min--max ($t=0$) and vector
+normalisation ($t=1$) and holds $m_{\mathrm{eff}}$ within
+$[4.05,\,5.00]$, so that magnitude varies without confounding
+concentration --- the decoupling that Section~\ref{sec:external}
+identifies as unavailable in the present grid.
+We note also that with $\ndraws$ draws the binomial standard error of
+each $Q_2$ is $1.5$--$2.2$~pp, of the same order as the residual scatter
+of these fits; discriminating curvature would require both the filled
+support and an order-of-magnitude increase in draws.
 The linear channel we describe therefore operates where the score
 retains genuine trade-offs between the three objectives, and we make no
 claim outside that range.
