@@ -161,6 +161,8 @@ lines = [
     mac("NormMainEffect",    NormMainEffect,    pct(NormMainEffect)),
     mac("SAWgreedyContrast", SAWgreadyContrast, pct(SAWgreadyContrast)),
     mac("LossTabTVorder",    Q2m_mm - Q2m_vec,  pct(Q2m_mm - Q2m_vec)),
+    # TV on admissible range (vector, 389 sites): 86.7 * 0.107 = 9.3 pp
+    mac("MechOnePredAdmiss", abs(s3) * 0.107,   f"{abs(s3) * 0.107:.1f}"),
     "\n",
     "% ── §7.2: three-level regression ────────────────────────────────────────\n",
     mac("slopeThree",   abs(s3),         f"{abs(s3):.1f}"),
