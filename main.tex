@@ -30,7 +30,7 @@
 \newcommand{\Fmmsize}{181}
 % \Fvecsize and \Ffixsize removed — unused
 \newcommand{\Ncells}{24}        % 3 norm x 4 aggr x 2 assembly
-\newcommand{\Ncellsnet}{18}     % 24 minus 2 (VIKOR x vector) minus 4 (PROMETHEE invariant to norm)
+\newcommand{\Ncellsnet}{18}     % 24 minus 2 (VIKOR x vector, affine-invariant = mm) minus 4 (PROMETHEE invariant to norm)
 \newcommand{\FAsize}{213}
 \newcommand{\FAinter}{132}
 % Monte Carlo
@@ -116,9 +116,11 @@ The distortion is governed by an amplitude exponent that differs across
 aggregation families: min--max preserves elicited weights under additive
 aggregation but not under TOPSIS, where amplitudes enter quadratically
 and $\mathrm{TV}=0.160$ even when all $A_j\equiv 1$.
-The severity is further determined by criterion concentration: a
-closed-form decomposition shows that the loss scales with the product of
-TV and the effective number of criteria $m_{\rm eff}\in[2,m]$.
+The severity is further determined by how the distortion is spread: a
+closed-form decomposition shows that the loss scales with
+$\mathrm{TV}/\sqrt{m_{\rm eff}}$, where $m_{\rm eff}\in[2,m]$ is the
+effective number of distorted criteria, so that dispersing a fixed
+distortion over more criteria attenuates it.
 Min--max is the unique standard normalisation that preserves elicited
 weights under SAW; vector normalisation multiplies one criterion's weight
 by $2.88\times$ in our data; every binary criterion loses half its weight
@@ -618,9 +620,12 @@ $A_j^{\rm vec}=1/\sqrt{94}=0.103$; a hypothetical objective-aligned
 encoding would normalise $1-x$, giving $\sqrt{295}$ and $0.058$,
 differing by $\sqrt{295/94}=1.77$.
 All cells in the factorial use the decision-matrix encoding ($c_j=1$
-for the leeward class) consistently; the top-100 rank agreement between
-the two encodings under vector normalisation is $0.030$ on Fogo,
-confirming that the choice is material for TOPSIS.
+for the leeward class) consistently.
+Holding the criterion semantics fixed and varying only the order of
+operations, the two encodings agree on Kendall~$\tau_b=0.960$ and on
+$96\%$ of the top-100 set under vector normalisation: the $1.77\times$
+amplitude difference in one binary column of eleven is largely absorbed
+by the remaining ten.
 Amplitudes in Table~\ref{tab:amplitude} are measured on the decision
 matrix, with $n_1=94$ leeward sites among the $\Nvia$ admissible sites.
 Criteria in $G_3$ are built so that $c_j(i)=1$ is most favourable
@@ -934,7 +939,9 @@ $\{\text{min--max},\text{vector}\}$ $\times$ assembly
 $\{\text{greedy},\text{optimal}\}$, evaluated in $Q_2[A']$.
 A wider design adds VIKOR, PROMETHEE~II and rank normalisation.
 Of the $\Ncells$ nominal combinations, two are redundant because VIKOR
-is invariant to vector normalisation and four because PROMETHEE~II with
+is invariant to per-criterion affine transformation (min--max and vector
+are both affine, so VIKOR$\times$vector duplicates VIKOR$\times$min--max)
+and four because PROMETHEE~II with
 the usual preference function is ordinal and therefore identical under
 all three normalisations, leaving $\Ncellsnet$ estimable cells
 (Proposition~\ref{prop:exponent});
@@ -954,7 +961,7 @@ bootstrap intervals, paired by draw.
 
 The central analytical result of the paper is stated and derived in this section.
 It takes the form of a lemma that expresses effective weights in closed form,
-followed by five propositions and three corollaries that characterise the specific distortions
+followed by five propositions and two corollaries that characterise the specific distortions
 produced by min--max, vector, and rank normalisation.
 
 % ----------------------------------------------------------
@@ -1011,9 +1018,10 @@ TOPSIS and VIKOR aggregate distances to ideal points rather than
 weighted sums, so amplitudes enter quadratically or in ratio form and
 the closed form does not transfer.
 Two consequences are observable.
-First, VIKOR is invariant to vector normalisation because the common
-scale factor cancels in its ratio form; the VIKOR$\times$vector cell is
-therefore redundant and excluded from the design.
+First, VIKOR is invariant to per-criterion affine transformation,
+because both scale and shift cancel in its ratio form; min--max and
+vector normalisation are both affine, so the VIKOR$\times$vector cell
+is identical to VIKOR$\times$min--max and is excluded from the design.
 Second, pooling all aggregation families destroys the monotone ordering
 precisely as the scope restriction predicts.
 We read this as corroboration of the mechanism rather than as a
@@ -1191,15 +1199,23 @@ The three families instantiate $\alpha$ as follows.
     \emph{Scope: the exponent interpretation is by analogy with the
     additive case; the effective weight in~\eqref{eq:weff_alpha} is
     exact for the squared distance, not the distance itself.}
-  \item \textbf{VIKOR}: invariant to a common positive scale factor,
-    which cancels in the ratio to the ideal and anti-ideal points.
-    This renders the two cells VIKOR\,$\times$\,\{min--max, vector\}
-    equivalent under vector normalisation (where $A_j^{\rm vec}$
-    introduces a per-criterion scale), but not to affine shifts or to
-    rank transformations; VIKOR\,$\times$\,ranks remains distinct.
-    The exponent formulation does not apply to VIKOR; the
+  \item \textbf{VIKOR}: invariant to \emph{per-criterion} affine
+    transformation $f_{ij}\mapsto a_j f_{ij}+b_j$ with $a_j>0$, because
+    both $a_j$ and $b_j$ cancel in the ratio
+    $(f^{*}_j-f_{ij})/(f^{*}_j-f^{-}_j)$.
+    Min--max and vector normalisation are both per-criterion affine
+    within the decision matrix, so VIKOR returns identical $Q$
+    under each; midranks are not affine (they re-order the column),
+    so VIKOR\,$\times$\,ranks is distinct.
+    The exponent formulation does not apply to VIKOR; within the design
+    normalisations $\{$min--max, vector, ranks$\}$, the
     VIKOR$\,\times\,$vector cells duplicate VIKOR$\,\times\,$min--max
-    and are removed from the design.
+    and are removed from the design, leaving VIKOR$\,\times\,$ranks
+    as the sole informative VIKOR cell.
+    This immunity to per-criterion affine transformations means that
+    VIKOR is unaffected by the amplitude mechanism that governs SAW and
+    TOPSIS, a structural difference that qualifies comparisons between
+    the two families.
   \item \textbf{PROMETHEE~II (usual criterion)}: $\alpha=0$.
     The usual preference function is ordinal, hence invariant to any
     monotone transformation, so all three normalisations produce the
@@ -1782,11 +1798,11 @@ comparison of the least consequential design choice.
 Averaging $Q_2$ across all aggregation families destroys the monotone
 ordering of Table~\ref{tab:tvorder}, and does so for reasons internal to
 the mechanism.
-VIKOR normalises by ratios to the ideal and anti-ideal point, in which
-a common scale factor cancels; VIKOR is therefore invariant to vector
-normalisation, the VIKOR$\times$vector cell duplicates
-VIKOR$\times$min--max, and pooling it inflates the vector average
-by~$5.9$~pp.
+VIKOR is invariant to per-criterion affine transformations (scale and
+shift both cancel in the ratio form); min--max and vector normalisation
+are both per-criterion affine, so the VIKOR$\times$vector cell
+duplicates VIKOR$\times$min--max, and pooling it inflates the vector
+average by~$5.9$~pp.
 Rank normalisation under distance-based aggregation degrades performance
 far more than the additive re-weighting accounts for, because ranks
 distort the Euclidean geometry on which those methods depend.
@@ -2489,8 +2505,8 @@ remains open.
 The monotone ordering of the three normalisation levels within SAW
 by TV and efficiency holds on Fogo and yields Kendall $\tau_b=0.550$
 across the 240 synthetic instances of Section~\ref{sec:external};
-however, non-monotone cases arise in the grid (instances where ranks
-outperform vector despite lower TV), confirming that the ordering
+however, non-monotone cases arise in the grid (instances where vector
+outperforms ranks despite higher TV), confirming that the ordering
 reflects a central tendency rather than a deterministic law.
 A closed-form factorisation of the loss into an amplitude term and a
 concentration term (Proposition~\ref{prop:concentration}) shows that
@@ -2502,8 +2518,8 @@ results hold for any instance, but the size of the distortion depends on
 the marginal distributions, and a criterion with $350$ tied zeros among
 $\Nvia$ sites is an adversarial case.
 Fogo Island quantifies the mechanism and the synthetic grid
-(Section~\ref{sec:external}) provides an initial estimate of its
-typical size; extending both to a wider set of instances remains open.
+(Section~\ref{sec:external}) delimits how it responds to marginal
+distributions; extending both to a wider set of instances remains open.
 
 The broader implication is methodological.
 Benchmarking multi-criteria methods by agreement between their rankings
