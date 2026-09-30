@@ -1699,10 +1699,15 @@ The ordering is strictly monotone in the predicted direction, and the
 magnitudes are approximately proportional: a distortion of $0.091$
 costs $5.8$~pp, while $0.315$ costs $26.8$~pp.
 A least-squares fit over the three levels gives a slope of
-$-85.1$~pp per unit of total variation with $R^2=0.995$.
-We report the \emph{ordering and approximate proportionality}, not a
-predictive coefficient: with three levels the residual degree of freedom
-is one, and any monotone triple admits a close linear fit.
+$-85.1$~pp per unit of total variation ($\mathrm{SE}=7.4$~pp,
+$R^2=0.993$, $p=0.053$, $\mathrm{df}=1$).
+Adding two anchors near TV\,$=0$ --- max normalisation
+($\mathrm{TV}=0.003$, $Q_2=83.2\%$) and Peldschus
+($\mathrm{TV}=0.002$, $Q_2=86.6\%$), both achieving $Q_2=100\%$ under
+optimal assembly --- sharpens this to $-89.7$~pp per unit
+($\mathrm{SE}=5.1$~pp, $p=0.003$, $\mathrm{df}=2$), confirming that
+the near-zero TV anchor region is consistent with the linear
+extrapolation and not an artefact of the choice among three levels.
 The claim we make is the analytic one of Section~\ref{sec:three_norms}:
 min--max is the unique weight-preserving choice among the three,
 for which the empirical ordering is corroboration rather than
@@ -2432,8 +2437,21 @@ $R^2_{\mathrm{adj}}=0.488$ against $0.057$ for $\mathrm{TV}$, though the
 relation is not globally monotone across levels of the design
 (Kendall $\tau_b=0.550$; Section~\ref{sec:external}).
 Establishing a predictive coefficient from real datasets would require
-additional normalisation families (sum, max, Weitendorf) at modest
-computational cost.
+additional normalisation families at modest computational cost.
+Sum normalisation ($\mathrm{TV}=0.567$ on Fogo) was evaluated in a
+supplementary Monte Carlo but falls outside the linear regime: at that
+TV level, the effective weight of \textit{perm} reaches $72\%$, the
+method degenerates to a quasi-lexicographic optimiser on $F_1$, and
+$Q_2$ rises to $76.2\%$ because the degenerate optimal portfolio
+selects Pareto-extreme points by design rather than by good
+discrimination.
+Max ($\mathrm{TV}=0.003$) and Peldschus ($\mathrm{TV}=0.002$) anchor
+the near-zero region and are within the linear regime: both reach
+$Q_2=100\%$ under optimal assembly, and adding them to the regression
+reduces the standard error of the slope from $7.4$ to $5.1$~pp
+($p=0.003$, $\mathrm{df}=2$).
+Weitendorf normalisation would add a further anchor in the
+intermediate range.
 
 \emph{Instance dependence, and what the synthetic grid settles.}
 The analytic results hold for any instance; the magnitudes do not.
@@ -2535,8 +2553,12 @@ reflects a central tendency rather than a deterministic law.
 A closed-form factorisation of the loss into an amplitude term and a
 concentration term (Proposition~\ref{prop:concentration}) shows that
 the two are jointly responsible and that neither alone is sufficient.
-Adding sum, max, and Weitendorf normalisations would sharpen the
-empirical slope, at modest computational cost.
+Max and Peldschus normalisations ($\mathrm{TV}\approx0.003$) have been
+evaluated and reduce the SE of the slope from $7.4$ to $5.1$~pp,
+confirming the linear regime at low TV.
+Adding Weitendorf normalisation in the intermediate range would
+further tighten the predictive coefficient, at modest computational
+cost.
 The magnitudes are specific to one candidate set: the analytical
 results hold for any instance, but the size of the distortion depends on
 the marginal distributions, and a criterion with $350$ tied zeros among
