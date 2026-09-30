@@ -589,17 +589,19 @@ and we write $\mathbf{F}(t;w)=(F_1,F_2,F_3)$ to make the weight
 dependence explicit, since it is central to Section~\ref{sec:design}.
 
 \paragraph{Why all three are maximised.}
-Earlier formulations of this problem write $F_1$ and $F_2$ as
-minimisation objectives over raw cost and impact.
-Complementing those criteria at the normalisation step instead, and
-maximising throughout, makes the identity
+Each criterion enters as a distance from an undesirable feature or as
+its complement where the raw variable is a negative indicator, so that
+larger is better throughout: \textit{perm} is distance from
+low-permeability soil, \textit{urban} is distance from populated areas,
+and so on.
+The three group objectives therefore inherit a uniform larger-is-better
+orientation, which makes the identity
 \begin{equation}
   \label{eq:scalarisation}
   \sum_{i\in t} s(i) \;=\; F_1(t)+F_2(t)+F_3(t),
   \qquad s(i)=\textstyle\sum_{j=1}^{m} w_j\,c_j(i),
 \end{equation}
-exact rather than sign-dependent, which is what
-Section~\ref{prop:p1} turns on.
+exact rather than sign-dependent, and Section~\ref{prop:p1} turns on it.
 Equation~\eqref{eq:scalarisation} also makes explicit that the SAW score
 is the equally weighted scalarisation of the three group objectives; the
 grouping carries no additional preference information beyond $w$.
@@ -1504,6 +1506,7 @@ Method & Assembly & Sites & $F_1$ & $F_2$ & $F_3$ & gap \\
 SAW, min--max     & greedy  & $\{184,279,320\}$ & 0.1273 & 0.5963 & 0.6207 & 0.032 \\
 SAW, min--max     & optimal & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.000 \\
 TOPSIS, vector    & greedy  & $\{233,320,355\}$ & 0.1113 & 0.5669 & 0.5358 & 0.048 \\
+TOPSIS, vector    & optimal & $\{227,233,345\}$ & 0.0865 & 0.5955 & 0.5715 & 0.024 \\
 TOPSIS, min--max  & greedy  & $\{184,227,460\}$ & 0.1104 & 0.6712 & 0.6883 & 0.000 \\
 VIKOR             & greedy  & $\{233,279,320\}$ & 0.1190 & 0.5819 & 0.5879 & 0.052 \\
 PROMETHEE~II      & greedy  & $\{51,233,345\}$  & 0.0447 & 0.5900 & 0.4852 & 0.000 \\
@@ -1515,7 +1518,8 @@ Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.0
 
 A first indication that the reference set is itself implicated: when
 normalisation constants are recomputed over the $\Nvia$ admissible sites
-(space~$A'$), \emph{all six} portfolios become non-dominated.
+(space~$A'$), six of the seven method portfolios become non-dominated
+(the exception is TOPSIS vector optimal, with $\mathrm{gap}=0.002$ in~$A'$).
 The failures in space~$A$ are not solely attributable to the methods;
 they are partly induced by computing the value scale over sites that
 cannot be selected.

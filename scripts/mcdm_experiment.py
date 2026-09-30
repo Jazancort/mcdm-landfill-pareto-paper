@@ -90,10 +90,10 @@ COL = {
 }
 
 # Objective groupings
-F1_CRIT = ["perm", "slope", "roads"]           # cost (lower = better)
-F2_CRIT = ["rivers", "aspect", "coast",        # impact (lower = better)
+F1_CRIT = ["perm", "slope", "roads"]           # siting efficiency (higher = better)
+F2_CRIT = ["rivers", "aspect", "coast",        # environmental integrity (higher = better)
            "protected", "wells"]
-F3_CRIT = ["urban", "aero", "cult"]            # safety (higher = better)
+F3_CRIT = ["urban", "aero", "cult"]            # social safety (higher = better)
 
 # Criteria direction for MCDM methods
 # INV = farther = better (higher raw value → lower score in impact group)
