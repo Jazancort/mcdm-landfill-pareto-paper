@@ -1008,10 +1008,10 @@ $A_j$ equal the same constant.\hfill$\square$
 \label{rem:scope}
 The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
 Within that scope the prediction is borne out: across SAW cells,
-mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.3\%$, $76.5\%$ and
-$55.5\%$ for min--max, ranks and vector normalisation respectively,
-against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.315$,
-a strictly monotone ordering ($R^2=0.995$ on three means; we report the
+mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.9\%$, $77.1\%$ and
+$55.4\%$ for min--max, ranks and vector normalisation respectively,
+against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.311$,
+a strictly monotone ordering ($R^2=0.992$ on three means; we report the
 ordering and note approximate proportionality, given $n=3$, $\mathrm{df}=1$).
 
 TOPSIS and VIKOR aggregate distances to ideal points rather than
@@ -1682,36 +1682,59 @@ the lemma is exact.
 \centering
 \caption{Predicted distortion and observed performance under additive
   aggregation (SAW), $\kappa=200$, space~$A'$.
-  Amplitudes $A_j$ are computed over the $\Nvia$ admissible sites.}
+  Amplitudes $A_j$ are computed over the $\Nvia$ admissible sites.
+  $Q_2[A']$ is the mean of greedy and optimal assembly rates
+  ($Q_2^{\mathrm{greedy}}$ and $Q_2^{\mathrm{optimal}}$).}
 \label{tab:tvorder}
 \begin{tabular}{lccc}
 \toprule
 Normalisation & $A_j$ & $\mathrm{TV}$ & $Q_2[A']$ \\
 \midrule
-min--max & $\equiv 1$                        & 0.000 & 82.3\% \\
-midranks & $(r_j^{\max}-r_j^{\min})/(N{+}1)$ & 0.091 & 76.5\% \\
-vector   & $\rho_j$                          & 0.315 & 55.5\% \\
+min--max & $\equiv 1$                        & 0.000 & 82.9\% \\
+midranks & $(r_j^{\max}-r_j^{\min})/(N{+}1)$ & 0.091 & 77.1\% \\
+vector   & $\rho_j$                          & 0.311 & 55.4\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 The ordering is strictly monotone in the predicted direction, and the
 magnitudes are approximately proportional: a distortion of $0.091$
-costs $5.8$~pp, while $0.315$ costs $26.8$~pp.
-A least-squares fit over the three levels gives a slope of
-$-85.1$~pp per unit of total variation ($\mathrm{SE}=7.4$~pp,
-$R^2=0.993$, $p=0.053$, $\mathrm{df}=1$).
-Adding two anchors near TV\,$=0$ --- max normalisation
-($\mathrm{TV}=0.003$, $Q_2=83.2\%$) and Peldschus
-($\mathrm{TV}=0.002$, $Q_2=86.6\%$), both achieving $Q_2=100\%$ under
-optimal assembly --- sharpens this to $-89.7$~pp per unit
-($\mathrm{SE}=5.1$~pp, $p=0.003$, $\mathrm{df}=2$), confirming that
-the near-zero TV anchor region is consistent with the linear
-extrapolation and not an artefact of the choice among three levels.
+costs $5.8$~pp, while $0.311$ costs $27.5$~pp.
+A least-squares fit over the three levels gives $-90.2$~pp per unit of
+total variation ($R^2=0.992$); extending it to the five levels for which
+$\mathrm{TV}<0.35$ gives $-92.1$~pp ($\mathrm{SE}=6.7$~pp,
+$\mathrm{df}=3$).
+We report the ordering and the approximate proportionality, and decline
+to present either figure as a predictive coefficient.
+The reason is the design rather than the sample size: \textit{vector}
+carries leverage $h_{ii}=0.946$ and contributes $73\%$ of the regressor
+sum of squares, the interval between $\mathrm{TV}=0.091$ and
+$\mathrm{TV}=0.311$ spans $71\%$ of the sampled range and is empty, and
+the three low-distortion levels lie within the lowest $1\%$ of that
+range, so they function as replicates at the origin rather than as
+independent anchors.
+A quadratic term is correspondingly inestimable ($p=0.65$,
+$\mathrm{VIF}=23.5$): these data cannot separate a linear channel from a
+curved one, and we therefore claim only the former's direction.
 The claim we make is the analytic one of Section~\ref{sec:three_norms}:
-min--max is the unique weight-preserving choice among the three,
-for which the empirical ordering is corroboration rather than
-evidential foundation.
+min--max is the unique weight-preserving choice, for which the empirical
+ordering is corroboration rather than evidential foundation.
+
+One low-distortion level departs from the ordering, and the departure is
+informative.
+Peldschus normalisation ($\mathrm{TV}=0.0023$) attains
+$Q_2=86.6\%$, above min--max's $82.9\%$ at $\mathrm{TV}=0$, a reversal of
+$3.7$~pp that exceeds the relevance margin $\delta=2.5$~pp of
+Section~\ref{sec:design}.
+The reversal is confined to greedy assembly ($73.2\%$ against $65.8\%$);
+under optimal assembly both attain $Q_2=100\%$, as
+Proposition~\ref{prop:p1:stmt} requires.
+A slight amplitude tilt therefore cannot improve a globally optimised
+portfolio, but it can perturb the order in which greedy commits and so
+mitigate the foreclosure loss of Section~\ref{sec:greedy}.
+The amplitude identity governs the score; it does not govern the
+interaction between a score and a myopic assembly rule, and at
+$\mathrm{TV}$ of order $10^{-3}$ the second effect dominates the first.
 
 Two entries of Table~\ref{tab:tvorder} deserve comment because they
 isolate distinct mechanisms acting on the same criterion.
@@ -2438,20 +2461,28 @@ relation is not globally monotone across levels of the design
 (Kendall $\tau_b=0.550$; Section~\ref{sec:external}).
 Establishing a predictive coefficient from real datasets would require
 additional normalisation families at modest computational cost.
-Sum normalisation ($\mathrm{TV}=0.567$ on Fogo) was evaluated in a
-supplementary Monte Carlo but falls outside the linear regime: at that
-TV level, the effective weight of \textit{perm} reaches $72\%$, the
-method degenerates to a quasi-lexicographic optimiser on $F_1$, and
-$Q_2$ rises to $76.2\%$ because the degenerate optimal portfolio
-selects Pareto-extreme points by design rather than by good
-discrimination.
-Max ($\mathrm{TV}=0.003$) and Peldschus ($\mathrm{TV}=0.002$) anchor
-the near-zero region and are within the linear regime: both reach
-$Q_2=100\%$ under optimal assembly, and adding them to the regression
-reduces the standard error of the slope from $7.4$ to $5.1$~pp
-($p=0.003$, $\mathrm{df}=2$).
-Weitendorf normalisation would add a further anchor in the
-intermediate range.
+Establishing a predictive coefficient would require normalisation
+families populating the interval $\mathrm{TV}\in(0.10,\,0.30)$, which is
+empty in our design and accounts for $71\%$ of the sampled range;
+Weitendorf normalisation is the natural candidate.
+Four further families were evaluated in a supplementary Monte Carlo and
+none fills that interval.
+Max ($\mathrm{TV}=0.0033$) and Peldschus ($\mathrm{TV}=0.0023$) fall in
+the lowest $1\%$ of the range and add $11.8\%$ to the regressor spread,
+so they constrain the intercept rather than the slope; Peldschus
+additionally reverses the ordering against min--max under greedy
+assembly (Section~\ref{sec:lemmaconf}).
+Sum normalisation ($\mathrm{TV}=0.567$) lies outside the regime
+altogether: $Q_2^{\text{mean}}$ rises to $73.1\%$, above vector's
+$55.4\%$, and including it reduces $R^2$ from $0.99$ to $0.22$ with a
+slope indistinguishable from zero ($p=0.53$).
+The mechanism is degeneration rather than discrimination: at that
+amplitude spread the score approaches a lexicographic ordering on $F_1$
+and the portfolios returned are $F_1$-extreme points, which belong to the
+frontier by definition.
+The linear channel we describe therefore operates where the score
+retains genuine trade-offs between the three objectives, and we make no
+claim outside that range.
 
 \emph{Instance dependence, and what the synthetic grid settles.}
 The analytic results hold for any instance; the magnitudes do not.
@@ -2553,12 +2584,12 @@ reflects a central tendency rather than a deterministic law.
 A closed-form factorisation of the loss into an amplitude term and a
 concentration term (Proposition~\ref{prop:concentration}) shows that
 the two are jointly responsible and that neither alone is sufficient.
-Max and Peldschus normalisations ($\mathrm{TV}\approx0.003$) have been
-evaluated and reduce the SE of the slope from $7.4$ to $5.1$~pp,
-confirming the linear regime at low TV.
-Adding Weitendorf normalisation in the intermediate range would
-further tighten the predictive coefficient, at modest computational
-cost.
+Max, Peldschus and sum normalisations have since been evaluated and
+delimit the range over which the ordering holds rather than extending
+it: the first two constrain the intercept near $\mathrm{TV}=0$, and the
+third falls outside the regime entirely.
+Populating the empty interval $\mathrm{TV}\in(0.10,\,0.30)$ remains the
+requirement for a predictive coefficient.
 The magnitudes are specific to one candidate set: the analytical
 results hold for any instance, but the size of the distortion depends on
 the marginal distributions, and a criterion with $350$ tied zeros among
