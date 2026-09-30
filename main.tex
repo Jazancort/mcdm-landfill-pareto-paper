@@ -131,11 +131,10 @@ efficiency.
 \end{abstract}
 
 \begin{highlights}
-\item Normalisation implicitly re-weights criteria: effective weight
-  scales with $w_jA_j$; exponent $\alpha\in\{0,1,2\}$ spans immunity to
-  quadratic amplification across VIKOR, SAW, and TOPSIS
-\item VIKOR is exactly invariant to per-criterion affine transformation;
-  SAW and TOPSIS are not, with exponents $\alpha=1$ and $\alpha=2$
+\item Effective weight scales with $w_jA_j$; min--max alone preserves
+  elicited weights
+\item VIKOR is affine-invariant; SAW and TOPSIS inherit amplitude at
+  $\alpha=1$ and $\alpha=2$
 \item Normalisation is worth $+29.9$~pp of Pareto efficiency; aggregation
   choice $+0.9$~pp
 \item Exact assembly gains $+29.8$~pp under min--max but only $+2.2$~pp
@@ -2056,7 +2055,7 @@ more criteria while $\mathrm{TV}$ does not fall correspondingly;
 holding $n_{\mathrm{sparse}}=1$, the loss rises with $p_0$ up to
 $0.90$ and then falls by $16.4$~pp at $p_0=0.95$ although
 $\mathrm{TV}$ continues to rise.
-Table~\ref{tab:external} shows the reversal directly.
+Table~\ref{tab:external} reports both patterns by cell.
 
 \paragraph{The factorisation does.}
 Proposition~\ref{prop:concentration} accounts for this.
