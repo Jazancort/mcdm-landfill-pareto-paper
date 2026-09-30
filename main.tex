@@ -1726,8 +1726,9 @@ Peldschus normalisation ($\mathrm{TV}=0.0023$) attains
 $Q_2=86.6\%$, above min--max's $82.9\%$ at $\mathrm{TV}=0$, a reversal of
 $3.7$~pp that exceeds the relevance margin $\delta=2.5$~pp of
 Section~\ref{sec:design}.
-The reversal is confined to greedy assembly ($73.2\%$ against $65.8\%$);
-under optimal assembly both attain $Q_2=100\%$, as
+The reversal is confined to greedy assembly ($73.2\%$ against $65.8\%$,
+a paired difference of $+7.4$~pp, $t=3.34$, $p=0.0009$, $n=500$);
+under optimal assembly both attain $Q_2=100\%$ on every draw, as
 Proposition~\ref{prop:p1:stmt} requires.
 A slight amplitude tilt therefore cannot improve a globally optimised
 portfolio, but it can perturb the order in which greedy commits and so
@@ -2459,27 +2460,35 @@ $\lVert\delta\rVert_2$ predicts efficiency loss with
 $R^2_{\mathrm{adj}}=0.488$ against $0.057$ for $\mathrm{TV}$, though the
 relation is not globally monotone across levels of the design
 (Kendall $\tau_b=0.550$; Section~\ref{sec:external}).
-Establishing a predictive coefficient from real datasets would require
-additional normalisation families at modest computational cost.
-Establishing a predictive coefficient would require normalisation
-families populating the interval $\mathrm{TV}\in(0.10,\,0.30)$, which is
-empty in our design and accounts for $71\%$ of the sampled range;
-Weitendorf normalisation is the natural candidate.
-Four further families were evaluated in a supplementary Monte Carlo and
-none fills that interval.
-Max ($\mathrm{TV}=0.0033$) and Peldschus ($\mathrm{TV}=0.0023$) fall in
-the lowest $1\%$ of the range and add $11.8\%$ to the regressor spread,
-so they constrain the intercept rather than the slope; Peldschus
-additionally reverses the ordering against min--max under greedy
-assembly (Section~\ref{sec:lemmaconf}).
+Establishing a predictive coefficient would require levels populating the
+interval $\mathrm{TV}\in(0.10,\,0.30)$, which is empty in our design and
+accounts for $71\%$ of the sampled range.
+The standard normalisation families do not supply them: Weitendorf's
+linear transformation is algebraically identical to min--max (for a cost
+criterion, $(x_{\max}-x)/(x_{\max}-x_{\min})
+= 1-(x-x_{\min})/(x_{\max}-x_{\min})$), hence $\mathrm{TV}=0$ by
+construction and not an independent level; max and Peldschus fall in
+the lowest $1\%$ of the range and constrain the intercept rather than
+the slope.
+Populating the interval therefore requires manipulating the amplitude
+directly rather than surveying families, for instance along the
+one-parameter path $A_j(t)=\rho_j^{\,t}$, $t\in[0,1]$, which
+interpolates between min--max ($t=0$) and vector normalisation ($t=1$)
+and holds $m_{\mathrm{eff}}$ within $[4.05,\,5.00]$, so that magnitude
+varies without confounding concentration --- the decoupling that
+Section~\ref{sec:external} identifies as unavailable in the present grid.
+We note also that with $\ndraws$ draws the binomial standard error of
+each $Q_2$ is $1.5$--$2.2$~pp, comparable to the residual scatter of
+the fits; discriminating curvature would require both the filled support
+and an order-of-magnitude increase in draws.
 Sum normalisation ($\mathrm{TV}=0.567$) lies outside the regime
 altogether: $Q_2^{\text{mean}}$ rises to $73.1\%$, above vector's
 $55.4\%$, and including it reduces $R^2$ from $0.99$ to $0.22$ with a
 slope indistinguishable from zero ($p=0.53$).
 The mechanism is degeneration rather than discrimination: at that
 amplitude spread the score approaches a lexicographic ordering on $F_1$
-and the portfolios returned are $F_1$-extreme points, which belong to the
-frontier by definition.
+and the portfolios returned are $F_1$-extreme points, which belong to
+the frontier by definition.
 The linear channel we describe therefore operates where the score
 retains genuine trade-offs between the three objectives, and we make no
 claim outside that range.
@@ -2589,7 +2598,10 @@ delimit the range over which the ordering holds rather than extending
 it: the first two constrain the intercept near $\mathrm{TV}=0$, and the
 third falls outside the regime entirely.
 Populating the empty interval $\mathrm{TV}\in(0.10,\,0.30)$ remains the
-requirement for a predictive coefficient.
+requirement for a predictive coefficient, and requires direct
+manipulation of the amplitude rather than further normalisation
+families, the standard linear ones being weight-preserving by
+construction.
 The magnitudes are specific to one candidate set: the analytical
 results hold for any instance, but the size of the distortion depends on
 the marginal distributions, and a criterion with $350$ tied zeros among
