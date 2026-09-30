@@ -103,7 +103,7 @@ external to the ranking.
 For $\Ncand$ candidate sites on Fogo Island, Cape Verde, we enumerate the
 complete feasible set of $\Ntrios$ three-site portfolios under a
 $\dmin$~km separation constraint and compute the exact Pareto frontier
-over siting efficiency, environmental integrity and social safety.
+over siting cost, environmental impact and social safety.
 Crossing four aggregation methods with three normalisations and two
 assembly rules, we find that the choice between SAW and TOPSIS is worth
 $+0.9$ percentage points ($95\%$ CI $[-0.5,\,+2.3]$), whereas
@@ -180,8 +180,8 @@ choice in the workflow actually matters.
 For a real candidate set of $\Ncand$ sites on Fogo Island, Cape Verde,
 we enumerate the complete feasible set of $\Ntrios$ three-site portfolios
 satisfying a $d_{\min}=\dmin$~km separation constraint, and compute the
-exact Pareto frontier over three group-level objectives: siting efficiency,
-environmental integrity and social safety.
+exact Pareto frontier over three group-level objectives: siting cost,
+environmental impact and social safety.
 Because the frontier is obtained by exhaustive enumeration rather than by
 a metaheuristic, a portfolio produced by any method can be classified as
 Pareto-efficient or not, with no approximation error.
@@ -569,42 +569,39 @@ The feasible set is
 \subsection{Three partial value functions}
 
 The $m$ criteria are partitioned into three groups reflecting the
-decision dimensions of landfill siting: siting efficiency ($G_1$),
-environmental integrity ($G_2$), and social safety ($G_3$)
+decision dimensions of landfill siting: siting cost ($G_1$),
+environmental impact ($G_2$), and social safety ($G_3$)
 (Table~\ref{tab:amplitude}).
 Let $c_j(i)\in[0,1]$ be the partial value of site~$i$ on criterion~$j$,
-\emph{oriented so that larger is better} --- cost and impact criteria are
-complemented at normalisation --- and let $w_j$ be the criterion weight.
-All three objectives are therefore maximised, and are additive within
-group and across sites:
+where larger values denote a less desirable outcome for $G_1$ and $G_2$
+(cost and impact criteria are not inverted before entry into $F_1$
+and~$F_2$) and a more desirable outcome for $G_3$, and let $w_j$ be the
+criterion weight.
+The three objectives therefore have mixed senses:
 \begin{align}
   F_1(t) &= \sum_{i\in t}\sum_{j\in G_1} w_j\,c_j(i),
-    && \text{(siting efficiency, maximise)} \label{eq:F1}\\
+    && \text{(siting cost, minimise)} \label{eq:F1}\\
   F_2(t) &= \sum_{i\in t}\sum_{j\in G_2} w_j\,c_j(i),
-    && \text{(environmental integrity, maximise)} \label{eq:F2}\\
+    && \text{(environmental impact, minimise)} \label{eq:F2}\\
   F_3(t) &= \sum_{i\in t}\sum_{j\in G_3} w_j\,c_j(i),
     && \text{(social safety, maximise)} \label{eq:F3}
 \end{align}
 and we write $\mathbf{F}(t;w)=(F_1,F_2,F_3)$ to make the weight
 dependence explicit, since it is central to Section~\ref{sec:design}.
 
-\paragraph{Why all three are maximised.}
-Each criterion enters as a distance from an undesirable feature or as
-its complement where the raw variable is a negative indicator, so that
-larger is better throughout: \textit{perm} is distance from
-low-permeability soil, \textit{urban} is distance from populated areas,
-and so on.
-The three group objectives therefore inherit a uniform larger-is-better
-orientation, which makes the identity
-\begin{equation}
-  \label{eq:scalarisation}
-  \sum_{i\in t} s(i) \;=\; F_1(t)+F_2(t)+F_3(t),
-  \qquad s(i)=\textstyle\sum_{j=1}^{m} w_j\,c_j(i),
-\end{equation}
-exact rather than sign-dependent, and Section~\ref{prop:p1} turns on it.
-Equation~\eqref{eq:scalarisation} also makes explicit that the SAW score
-is the equally weighted scalarisation of the three group objectives; the
-grouping carries no additional preference information beyond $w$.
+\paragraph{Mixed senses and the SAW orientation.}
+Criteria in $G_1$ and $G_2$ are built so that $c_j(i)=0$ is the most
+favourable value: for distance-from-hazard criteria the raw distance is
+inverted before normalisation, and for the binary aspect criterion
+$c_j=0$ signals the leeward face.
+Criteria in $G_3$ are built so that $c_j(i)=1$ is most favourable
+(farther from urban areas, airports, and cultivation).
+The SAW method compensates for the mixed senses by complementing $G_1$
+and $G_2$ before aggregation, producing an oriented score
+$s(a)=\sum_{j\in G_1\cup G_2} w_j(1-c_j(a))+\sum_{j\in G_3} w_j c_j(a)$
+that is uniformly larger-is-better.
+Section~\ref{prop:p1} turns on the relationship between $s$ and the
+three objectives.
 
 \paragraph{What the benchmark is, and is not.}
 \label{rem:valuespace}
@@ -622,8 +619,10 @@ collapses them into a single score before the portfolio is assembled.
 
 \subsection{Reference set and the optimality gap}
 
-Portfolio $t$ \emph{dominates} $t'$ when $F_\ell(t)\ge F_\ell(t')$ for
-all $\ell\in\{1,2,3\}$, with at least one strict inequality.
+Portfolio $t$ \emph{dominates} $t'$ when $F_1(t)\le F_1(t')$,
+$F_2(t)\le F_2(t')$, and $F_3(t)\ge F_3(t')$, with at least one strict
+inequality (reflecting the senses: minimise $F_1$ and $F_2$, maximise
+$F_3$).
 Because $|\Tset|$ is finite and enumerable, the non-dominated set
 \begin{equation}
   \label{eq:front}
@@ -637,12 +636,19 @@ For dominated portfolios we report a scale-free shortfall.
 With $R_\ell = \max_{t\in\Tset}F_\ell - \min_{t\in\Tset}F_\ell$,
 \begin{equation}
   \label{eq:gap}
-  \mathrm{gap}(t) = \max\Bigl(0,\;\max_{t'\in\Tset}\;\min_{\ell\in\{1,2,3\}}
-    \frac{F_\ell(t')-F_\ell(t)}{R_\ell}\Bigr),
+  \mathrm{gap}(t) = \max_{t'\in\Tset}\;\min\!\Biggl(
+    \frac{F_1(t)-F_1(t')}{R_1},\;
+    \frac{F_2(t)-F_2(t')}{R_2},\;
+    \frac{F_3(t')-F_3(t)}{R_3}
+  \Biggr)^{+},
 \end{equation}
-so $\mathrm{gap}(t)=0$ iff $t\in\Fset$.
-Normalising by the attainable range rather than the ideal--nadir distance
-keeps the measure interpretable as a fraction of the achievable spread;
+where $(x)^{+}=\max(0,x)$, so $\mathrm{gap}(t)=0$ iff $t\in\Fset$.
+The three signed differences measure by how much $t$ is dominated in
+each objective in its own sense: the first two are positive when $t$
+incurs higher cost or impact than $t'$, and the third is positive when
+$t'$ delivers greater safety.
+Normalising by the attainable range keeps the measure interpretable as a
+fraction of the achievable spread;
 the ideal--nadir variant is reported in the Supplementary Material.
 
 
@@ -665,7 +671,7 @@ that follow correspond to Stages~1--6 in order.
 \caption{Six-stage MCDM pipeline for landfill site selection on Fogo Island,
   Cape Verde.
   Stage~1: GIS dataset with 389 viable sites and 11 criteria across three
-  objective groups (siting efficiency, environmental integrity and social safety).
+  objective groups (siting cost, environmental impact and social safety).
   Stage~2: AHP-derived nominal weights ($\mathrm{CR}=\CR$) with Dirichlet
   perturbation ($\kappa\in\{50,200\}$, $\ndraws$ draws).
   Stage~3 (primary analytical focus): three normalisation rules whose
@@ -1076,22 +1082,32 @@ Figure~\ref{fig:binary_amplitude} illustrates the binary case analytically.
 
 \begin{proposition}[Pareto consistency of optimal linear aggregation]
 \label{prop:p1:stmt}
-Let $s(a)=\sum_j w_j v_j(a)$ be the SAW score built on the same weights
-and the same normalisation as \eqref{eq:F1}--\eqref{eq:F3}, with
+Let $s(a)=\sum_{j\in G_1\cup G_2} w_j\bigl(1-c_j(a)\bigr)
+          +\sum_{j\in G_3} w_j c_j(a)$
+be the SAW score on the oriented decision matrix, built with the same
+weights and normalisation as \eqref{eq:F1}--\eqref{eq:F3}, with
 $w_j>0$ for all $j$.
 Then $T^{*}=\argmax_{T\in\Tset}\sum_{a\in T}s(a)$ satisfies
-$T^{*}\in\Fset$, i.e., $Q_2=1$ almost surely.
+$T^{*}\in\Fset$.
 \end{proposition}
 
 \begin{proof}
-By \eqref{eq:scalarisation},
-$\sum_{a\in T}s(a)=F_1(T)+F_2(T)+F_3(T)$, so $T^{*}$ maximises a
-strictly positive scalarisation of the three objectives over $\Tset$.
-A maximiser of a strictly positive scalarisation is non-dominated: if
-$T'$ dominated $T^{*}$ then $F_\ell(T')\ge F_\ell(T^{*})$ for all
-$\ell$ with at least one strict inequality, whence
-$\sum_\ell F_\ell(T')>\sum_\ell F_\ell(T^{*})$, contradicting
-optimality.
+Because $|T|=\kk$ is fixed, summing $s$ over $T$ gives
+\begin{equation}
+  \label{eq:scalarisation}
+  \sum_{a\in T}s(a) \;=\; \kk\,W_{G_1\cup G_2}
+    \;-\;F_1(T)\;-\;F_2(T)\;+\;F_3(T),
+  \qquad W_{G_1\cup G_2}=\!\!\sum_{j\in G_1\cup G_2}\!\! w_j,
+\end{equation}
+so maximising $\sum_{a\in T}s(a)$ is equivalent to minimising
+$F_1(T)+F_2(T)-F_3(T)$, a strictly positive scalarisation of the three
+objectives in their own senses (minimise $F_1$ and $F_2$, maximise $F_3$).
+Suppose $T'$ dominated $T^{*}$, that is $F_1(T')\le F_1(T^{*})$,
+$F_2(T')\le F_2(T^{*})$, $F_3(T')\ge F_3(T^{*})$ with at least one
+strict inequality.
+Then $F_1(T')+F_2(T')-F_3(T') < F_1(T^{*})+F_2(T^{*})-F_3(T^{*})$,
+whence $\sum_{a\in T'}s(a) > \sum_{a\in T^{*}}s(a)$, contradicting the
+optimality of $T^{*}$.
 \end{proof}
 
 \begin{remark}[The $Q_2=1$ cell is a regression test, not evidence]
@@ -1535,10 +1551,10 @@ Section~\ref{sec:refset} returns to this.
   $\mathcal{A}'$).
   Blue diamonds: Pareto-efficient portfolios (gap~$=0$);
   orange crosses: dominated portfolios (gap~$>0$).
-  Panel~(a): siting efficiency ($F_1$) vs.\ environmental integrity ($F_2$);
-  (b): siting efficiency vs.\ social safety ($F_3$);
-  (c): environmental integrity vs.\ social safety.
-  All three objectives are larger-is-better.
+  Panel~(a): siting cost ($F_1$) vs.\ environmental impact ($F_2$);
+  (b): siting cost vs.\ social safety ($F_3$);
+  (c): environmental impact vs.\ social safety.
+  $F_1$ and $F_2$ are minimised; $F_3$ is maximised.
   Portfolios inside the frontier in any panel may still be efficient in
   the full three-objective space; classification is based on
   three-objective dominance.}
