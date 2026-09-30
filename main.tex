@@ -30,7 +30,7 @@
 \newcommand{\Fmmsize}{181}
 % \Fvecsize and \Ffixsize removed — unused
 \newcommand{\Ncells}{24}        % 3 norm x 4 aggr x 2 assembly
-\newcommand{\Ncellsnet}{22}     % minus VIKOR x vector (2 cells)
+\newcommand{\Ncellsnet}{18}     % 24 minus 2 (VIKOR x vector) minus 4 (PROMETHEE invariant to norm)
 \newcommand{\FAsize}{213}
 \newcommand{\FAinter}{132}
 % Monte Carlo
@@ -129,7 +129,7 @@ efficiency.
 \item Normalisation implicitly re-weights criteria: effective weight
   scales with $w_jA_j$
 \item Min--max is the only standard normalisation that preserves
-  elicited weights
+  elicited weights under additive aggregation (SAW)
 \item Normalisation is worth $+29.9$~pp of Pareto efficiency; aggregation
   choice $+0.9$~pp
 \item Exact assembly gains $+29.8$~pp under min--max but only $+2.2$~pp
@@ -180,8 +180,8 @@ choice in the workflow actually matters.
 For a real candidate set of $\Ncand$ sites on Fogo Island, Cape Verde,
 we enumerate the complete feasible set of $\Ntrios$ three-site portfolios
 satisfying a $d_{\min}=\dmin$~km separation constraint, and compute the
-exact Pareto frontier over three group-level objectives: siting cost,
-environmental impact and social safety.
+exact Pareto frontier over three group-level objectives: siting efficiency,
+environmental integrity and social safety.
 Because the frontier is obtained by exhaustive enumeration rather than by
 a metaheuristic, a portfolio produced by any method can be classified as
 Pareto-efficient or not, with no approximation error.
@@ -587,8 +587,6 @@ group and across sites:
 \end{align}
 and we write $\mathbf{F}(t;w)=(F_1,F_2,F_3)$ to make the weight
 dependence explicit, since it is central to Section~\ref{sec:design}.
-Portfolio $t$ dominates $t'$ when $F_\ell(t)\ge F_\ell(t')$ for all
-$\ell\in\{1,2,3\}$, with at least one strict inequality.
 
 \paragraph{Why all three are maximised.}
 Earlier formulations of this problem write $F_1$ and $F_2$ as
@@ -665,7 +663,7 @@ that follow correspond to Stages~1--6 in order.
 \caption{Six-stage MCDM pipeline for landfill site selection on Fogo Island,
   Cape Verde.
   Stage~1: GIS dataset with 389 viable sites and 11 criteria across three
-  objective groups (cost, environmental impact, social safety).
+  objective groups (siting efficiency, environmental integrity and social safety).
   Stage~2: AHP-derived nominal weights ($\mathrm{CR}=\CR$) with Dirichlet
   perturbation ($\kappa\in\{50,200\}$, $\ndraws$ draws).
   Stage~3 (primary analytical focus): three normalisation rules whose
@@ -860,8 +858,8 @@ excluded from substantive comparisons.
 \paragraph{Pre-specification.}
 We pre-specify the following before examining results.
 \begin{enumerate}[label=(\roman*),nosep]
-  \item \textbf{Primary outcome}: $Q_3=\mathbb{E}[\mathrm{gap}]$.
-    Secondary: $Q_2$.
+  \item \textbf{Primary outcome}: $Q_2=\Pr[M(w)\in\Fset(w)]$.
+    Secondary: $Q_3=\mathbb{E}[\mathrm{gap}]$.
   \item \textbf{Equivalence margin}: $\delta=2.5$~pp, defined as the
     smallest difference in $Q_2$ (or $Q_3$ scaled to pp) judged
     practically relevant for site-selection decisions.
@@ -1343,6 +1341,84 @@ $\mathrm{TV}$ & & & 0.000 & & & 0.315 & 0.091 \\
 
 % ----------------------------------------------------------
 % ----------------------------------------------------------
+\subsection{Magnitude is not enough: the concentration of the distortion}
+\label{sec:concentration}
+% ----------------------------------------------------------
+
+The total variation~\eqref{eq:TV} is the $\ell^1$ norm of the deviation
+vector $\delta_j=w_j^{\mathrm{eff}}-w_j$, and is therefore blind to how
+that deviation is spread across criteria.
+Two distortions of identical $\mathrm{TV}$ --- one concentrated on a
+single heavily weighted criterion, one spread over several --- reorder
+the alternatives very differently, because deviations of opposite sign
+partially cancel in the weighted sum when they are distributed.
+The following identity separates the two dimensions.
+
+\begin{proposition}[Magnitude--concentration factorisation]
+\label{prop:concentration}
+Let $\delta_j = w_j^{\mathrm{eff}} - w_j$ be the deviation induced by a
+normalisation, so that $\sum_j \delta_j = 0$ and
+$\sum_j |\delta_j| = 2\,\mathrm{TV}$ by~\eqref{eq:TV}.
+Define the \emph{effective number of distorted criteria} as the
+participation ratio
+\begin{equation}
+  \label{eq:meff}
+  m_{\mathrm{eff}}
+    = \frac{\bigl(\sum_j |\delta_j|\bigr)^2}{\sum_j \delta_j^2}
+    = \frac{\lVert\delta\rVert_1^2}{\lVert\delta\rVert_2^2}.
+\end{equation}
+Then
+\begin{equation}
+  \label{eq:l2fact}
+  \lVert\delta\rVert_2
+    = \frac{2\,\mathrm{TV}}{\sqrt{m_{\mathrm{eff}}}},
+\end{equation}
+and $m_{\mathrm{eff}} \in [2,\,m]$, with the lower bound attained when
+exactly two criteria deviate in opposition and the upper bound when all
+$|\delta_j|$ are equal.
+\end{proposition}
+
+\begin{proof}
+Equation~\eqref{eq:l2fact} is immediate from~\eqref{eq:meff}:
+$\lVert\delta\rVert_2 = \lVert\delta\rVert_1/\sqrt{m_{\mathrm{eff}}}$
+and $\lVert\delta\rVert_1 = 2\,\mathrm{TV}$.
+For the bounds, $\lVert\delta\rVert_1^2/\lVert\delta\rVert_2^2 \ge 1$
+for any non-zero vector, with equality iff a single component is
+non-zero; the constraint $\sum_j \delta_j = 0$ forbids that and forces
+at least two non-zero components, giving
+$m_{\mathrm{eff}}\ge 2$, attained at
+$\delta=(c,-c,0,\dots,0)$.
+The upper bound is Cauchy--Schwarz, with equality iff all $|\delta_j|$
+coincide.
+\end{proof}
+
+\begin{remark}[What the factorisation buys]
+\label{rem:meff_reading}
+$\mathrm{TV}$ answers \emph{how much} the elicited weights were moved;
+$m_{\mathrm{eff}}$ answers \emph{over how many criteria}, on a scale
+whose endpoints are fixed by $m$ alone and therefore comparable across
+instances.
+Neither is redundant: the Euclidean norm~\eqref{eq:l2fact} is the
+product of the two, and Section~\ref{sec:external} shows that it
+predicts efficiency loss where $\mathrm{TV}$ alone does not.
+Both are computable from the normalised decision matrix in one line, and
+we recommend reporting the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
+rather than $\mathrm{TV}$ alone (Section~\ref{sec:practice}).
+\end{remark}
+
+\paragraph{Fogo Island.}
+Computing~\eqref{eq:meff} on the deviations implied by
+Table~\ref{tab:amplitude} under vector normalisation gives
+$\mathrm{TV}=0.3146$, $\lVert\delta\rVert_2=0.3127$,
+$\lVert\delta\rVert_\infty=0.2859$ (attained at \textit{perm}), and
+$m_{\mathrm{eff}}=4.05$ on the admissible range $[2,\,11]$.
+The distortion is thus not merely large but \emph{concentrated}: a
+single criterion carries $45.4\%$ of the total absolute deviation.
+This replaces the qualitative observation that \textit{perm} is an
+adversarial column with a position on a bounded scale.
+
+% ----------------------------------------------------------
+% ----------------------------------------------------------
 \subsection{Consequences for the factorial comparison}
 \label{sec:consequences}
 % ----------------------------------------------------------
@@ -1424,8 +1500,8 @@ normalisation and PROMETHEE~II attain the reference set.
 \toprule
 Method & Assembly & Sites & $F_1$ & $F_2$ & $F_3$ & gap \\
 \midrule
-SAW, min--max     & greedy  & $\{184,279,320\}$ & 0.1273 & 0.5963 & 0.6207 & 0.032 \\
-SAW, min--max     & optimal & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.000 \\
+SAW, min--max     & greedy  & $\{184,279,320\}$ & 0.758 & 0.472 & 0.621 & 0.032 \\
+SAW, min--max     & optimal & $\{184,430,460\}$ & 0.804 & 0.511 & 0.617 & 0.000 \\
 TOPSIS, vector    & greedy  & $\{233,320,355\}$ & 0.1113 & 0.5669 & 0.5358 & 0.048 \\
 TOPSIS, min--max  & greedy  & $\{184,227,460\}$ & 0.1104 & 0.6712 & 0.6883 & 0.000 \\
 VIKOR             & greedy  & $\{233,279,320\}$ & 0.1190 & 0.5819 & 0.5879 & 0.052 \\
@@ -1454,9 +1530,9 @@ Section~\ref{sec:refset} returns to this.
   $\mathcal{A}'$).
   Blue diamonds: Pareto-efficient portfolios (gap~$=0$);
   orange crosses: dominated portfolios (gap~$>0$).
-  Panel~(a): siting cost ($F_1$) vs.\ environmental impact ($F_2$);
-  (b): cost vs.\ safety ($F_3$);
-  (c): impact vs.\ safety.
+  Panel~(a): siting efficiency ($F_1$) vs.\ environmental integrity ($F_2$);
+  (b): siting efficiency vs.\ social safety ($F_3$);
+  (c): environmental integrity vs.\ social safety.
   All three objectives are larger-is-better.
   Portfolios inside the frontier in any panel may still be efficient in
   the full three-objective space; classification is based on
@@ -1799,6 +1875,150 @@ of the value model.
 
 % =======================================================================
 % =======================================================================
+% \S7.7 External validity
+% =======================================================================
+
+\subsection{External validity: synthetic instances}
+\label{sec:external}
+
+Fogo Island is a single candidate set with specific marginal
+distributions.
+To separate the mechanism from the instance, we re-draw the criterion
+columns while holding the spatial structure fixed: each synthetic
+instance reuses the Fogo distance matrix, and hence the same
+$|\Tset|=\Ntrios$ feasible trios, and varies only the marginals.
+
+\paragraph{Design.}
+The manipulated factor is the \emph{number} of sparse criteria rather
+than a global zero mass.
+The reason is analytic: $\mathrm{TV}$ is invariant to a common amplitude
+level (Section~\ref{sec:three_norms}), so applying the same zero mass to
+every column leaves the elicited weights untouched however extreme that
+mass becomes.
+Distortion requires heterogeneity \emph{across} columns.
+We therefore cross $n_{\mathrm{sparse}}\in\{0,1,2,3,4\}$ --- zero mass
+applied to the $n_{\mathrm{sparse}}$ most heavily weighted criteria ---
+with $p_0\in\{0.50,0.75,0.90,0.95\}$ and two tail shapes (lognormal,
+bimodal), with $6$ replications: $240$ instances at $200$ draws each.
+Four cells are evaluated per instance: SAW under min--max and vector
+normalisation, each with greedy and optimal assembly.
+The objectives $F_\ell$ are defined by min--max normalisation
+throughout, so the vector cells measure score--evaluator divergence as
+well as re-weighting.
+The min--max/optimal cell is the regression test of
+Proposition~\ref{prop:p1:stmt} and returned $Q_2=1$ in $240/240$
+instances.
+
+\paragraph{Unit of analysis.}
+Replications within a cell are not independent draws of the manipulated
+factor, so inference is conducted on the $20$ cell means.
+The intra-class correlation is $\mathrm{ICC}=0.35$, giving a design
+effect of $4.8$ and an effective sample size of
+$n_{\mathrm{eff}}\approx50$ against the nominal $240$; reporting on
+$240$ rows would understate the standard errors by roughly a factor
+of two.
+
+\paragraph{Total variation alone does not order the loss.}
+Over all $20$ cells the loss correlates with $\mathrm{TV}$ at
+$r=0.600$ ($95\%$ CI by Fisher transformation $[0.214,\,0.824]$,
+$n=20$), but the relation is not monotone: $23.2\%$ of the $190$ cell
+pairs are inversions (Kendall $\tau=0.533$).
+Restricting to the $16$ cells that carry a distortion at all
+($n_{\mathrm{sparse}}\ge1$), the association is not significant
+($r=0.346$, $p=0.189$): the correlation over all $20$ cells is carried
+by the four cells in which no criterion is sparse and the loss is zero
+by construction.
+Table~\ref{tab:external} shows the reversal directly --- at
+$p_0=0.95$, $\mathrm{TV}$ rises with $n_{\mathrm{sparse}}$ while the
+loss falls.
+
+\paragraph{The factorisation does.}
+Proposition~\ref{prop:concentration} accounts for this.
+Regressing the loss on the $16$ distorted cells gives
+$R^2_{\mathrm{adj}}=0.057$ for $\mathrm{TV}$ alone (not significant)
+against $R^2_{\mathrm{adj}}=0.490$ for $\lVert\delta\rVert_2$
+of~\eqref{eq:l2fact} ($r=0.724$, $p=0.002$).
+Entering magnitude and concentration separately gives
+$R^2_{\mathrm{adj}}=0.580$ with a negative coefficient on
+$m_{\mathrm{eff}}$ ($-0.026$ per effective criterion, $p=0.0009$): at
+fixed $\mathrm{TV}$, spreading the distortion over more criteria
+\emph{reduces} the loss, because deviations of opposite sign cancel in
+the weighted sum.
+The combined model reaches $R^2_{\mathrm{adj}}=0.665$.
+Magnitude is necessary but not sufficient; concentration is the missing
+term.
+
+\paragraph{Reconciliation with Fogo, and where the generator falls short.}
+Fogo has $m_{\mathrm{eff}}=4.05$ on the admissible range $[2,11]$,
+placing it near the $n_{\mathrm{sparse}}=1$ regime of the grid
+($m_{\mathrm{eff}}=3.59$).
+The model in $\lVert\delta\rVert_2$, fitted on the synthetic cells
+alone, predicts $22.2$~pp at Fogo's $\lVert\delta\rVert_2=0.3127$
+($95\%$ CI $[15.9,\,32.8]$~pp) against the $29.9$~pp observed; the
+model in $\mathrm{TV}$ predicts $14.0$~pp ($[10.3,\,20.0]$~pp),
+excluding the observed value.
+The observed loss therefore lies inside the interval of the
+$\lVert\delta\rVert_2$ model and outside that of the $\mathrm{TV}$
+model, but $7.7$~pp above the former's point prediction.
+
+The shortfall is systematic and its source identifiable.
+The generator inflates $n_{\mathrm{sparse}}$ columns and deflates the
+remainder uniformly.
+Fogo's deviation vector is not of that form: \textit{perm} is inflated
+$2.88\times$ while \textit{urban} $(0.53\times)$, \textit{aspect}
+$(0.51\times)$, \textit{aero} $(0.43\times)$ and \textit{wells}
+$(0.40\times)$ are independently and unequally deflated
+(Table~\ref{tab:amplitude}).
+Two-sided distortion of this kind displaces the weight vector further
+along the simplex than a one-sided distortion of the same
+$\lVert\delta\rVert_2$, which is why the synthetic model underestimates
+rather than overestimates.
+We report the direction of the bias rather than correcting for it: the
+synthetic grid establishes that the loss is governed by magnitude
+\emph{and} concentration, and bounds Fogo from below; it does not
+reproduce Fogo's particular deviation geometry.
+
+\begin{table*}[!t]
+\centering
+\caption{Synthetic grid: $20$ cells, $12$ instances each
+  ($240$ instances, $200$ draws per instance).
+  Loss is $Q_2(\text{min--max, greedy})-Q_2(\text{vector, greedy})$.
+  $m_{\mathrm{eff}}$ is~\eqref{eq:meff} and $\lVert\delta\rVert_2$
+  is~\eqref{eq:l2fact}, both reconstructed from the two-group amplitude
+  model.
+  Cells with $n_{\mathrm{sparse}}=0$ carry no distortion and are
+  excluded from the regressions.
+  At $p_0=0.95$, $\mathrm{TV}$ rises with $n_{\mathrm{sparse}}$ while
+  the loss falls --- the inversion that motivates
+  Proposition~\ref{prop:concentration}.}
+\label{tab:external}
+\begin{tabular}{rrrrrr}
+\toprule
+$n_{\mathrm{sparse}}$ & $p_0$ & $\mathrm{TV}$ &
+  $m_{\mathrm{eff}}$ & $\lVert\delta\rVert_2$ & Loss \\
+\midrule
+0 & --- & 0.007--0.008 & --- & --- & $\approx 0$ \\
+1 & 0.50 & 0.121 & 3.59 & 0.128 & 0.065 \\
+1 & 0.75 & 0.191 & 3.59 & 0.201 & 0.192 \\
+1 & 0.90 & 0.262 & 3.59 & 0.276 & 0.360 \\
+1 & 0.95 & 0.301 & 3.59 & 0.318 & 0.196 \\
+2 & 0.50 & 0.165 & 6.42 & 0.130 & 0.105 \\
+2 & 0.75 & 0.216 & 6.42 & 0.170 & 0.057 \\
+2 & 0.90 & 0.307 & 6.42 & 0.242 & 0.146 \\
+2 & 0.95 & 0.379 & 6.42 & 0.299 & 0.135 \\
+3 & 0.50 & 0.160 & 8.38 & 0.110 & 0.065 \\
+3 & 0.75 & 0.225 & 8.38 & 0.155 & 0.052 \\
+3 & 0.90 & 0.303 & 8.38 & 0.210 & 0.129 \\
+3 & 0.95 & 0.349 & 8.38 & 0.241 & 0.131 \\
+4 & 0.50 & 0.153 & 9.67 & 0.099 & 0.025 \\
+4 & 0.75 & 0.211 & 9.67 & 0.136 & 0.020 \\
+4 & 0.90 & 0.269 & 9.67 & 0.173 & 0.058 \\
+4 & 0.95 & 0.315 & 9.67 & 0.203 & 0.083 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+% =======================================================================
 % \S8 Discussion
 % =======================================================================
 \FloatBarrier
@@ -1824,6 +2044,13 @@ $w^{\mathrm{eff}}\neq w$, whatever the analyst elicited.
 The effect is graded, is summarised by the total
 variation~\eqref{eq:TV_results}, and orders the three normalisations
 monotonically within additive aggregation (Table~\ref{tab:tvorder}).
+Within Fogo the ordering is monotone in $\mathrm{TV}$
+(Table~\ref{tab:tvorder}), but Section~\ref{sec:external} shows that
+this does not generalise: $\mathrm{TV}$ is the $\ell^1$ norm of the
+deviation and two distortions of equal $\mathrm{TV}$ differ in effect
+according to their concentration.
+The graded quantity is $\lVert\delta\rVert_2$, of which $\mathrm{TV}$
+is one of two factors.
 It is also invisible: nothing in a standard TOPSIS or SAW report reveals
 that \texttt{perm} entered at $2.88$ times its nominal weight.
 
@@ -1958,8 +2185,7 @@ Without the identity, that divergence would plausibly be attributed to
 the method.
 
 \subsection{Implications for practice}
-
-Three recommendations follow, in decreasing order of cost to ignore.
+\label{sec:practice}
 
 First, normalise over the set of alternatives that can actually be
 chosen, and report the set used.
@@ -1973,9 +2199,18 @@ Integer programming on a mismatched score optimises the mismatch; the
 $+29.8$~pp available under min--max falls to $+2.2$~pp under vector
 normalisation.
 
-Third, report effective weights alongside elicited weights.
-The computation is one line given the normalised matrix, and it exposes
-distortions that no rank-agreement diagnostic reveals.
+Third, report effective weights alongside elicited weights, and with
+them the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
+of~\eqref{eq:TV} and~\eqref{eq:meff}.
+The computation is one line given the normalised matrix.
+$\mathrm{TV}$ alone is insufficient: it is the $\ell^1$ norm of the
+deviation and is invariant to whether that deviation sits on one
+criterion or on many, a distinction that
+Section~\ref{sec:external} shows governs the loss.
+A report stating $\mathrm{TV}=0.31$ with $m_{\mathrm{eff}}=4$ on a
+scale of $[2,11]$ tells the decision maker both that the elicited
+weights were substantially moved and that the movement is concentrated;
+neither number conveys this alone.
 Where elicited weights carry normative content, as with AHP judgements
 from stakeholders, a normalisation that silently reweights them is
 difficult to defend.
@@ -1989,27 +2224,44 @@ distortion.
 \subsection{Limitations}
 
 \emph{Scope of the closed form.}
-The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
-TOPSIS and VIKOR aggregate distances to ideal points, where amplitudes
-enter quadratically or in ratio form; the mechanism persists but the
-identity does not.
-Extending the closed form to distance-based aggregations is the natural
-next step.
+The amplitude identity~\eqref{eq:weff} is exact for additive
+aggregation.
+Proposition~\ref{prop:exponent} extends it to distance-based and
+ordinal families through the amplitude exponent, but the extension is
+exact for the squared TOPSIS distance rather than the distance itself,
+and we have not characterised families whose contribution is not
+homogeneous in $w_j n_j(\cdot)$ --- outranking methods with non-linear
+preference functions in particular.
 
 \emph{Empirical support for the ordering.}
 The monotone relation between predicted distortion and observed
 performance rests on three normalisation levels within SAW.
-Establishing a predictive coefficient requires five or more levels, which
-additional normalisation families (sum, max, Weitendorf) would supply at
-modest computational cost.
+Section~\ref{sec:external} extends the evidence: across $240$ synthetic
+instances, $\lVert\delta\rVert_2$ predicts efficiency loss with
+$R^2_{\mathrm{adj}}=0.490$ against $0.057$ for $\mathrm{TV}$.
+Establishing a predictive coefficient from real datasets would require
+additional normalisation families (sum, max, Weitendorf) at modest
+computational cost.
 
-\emph{Single instance.}
-One candidate set, one weight vector source, and $k=\kk$.
-The analytic results are instance-independent, but the magnitudes depend
-on the marginal distributions; \texttt{perm} with 350 tied zeros is an
-unusually adversarial case.
-Fogo Island quantifies the mechanism; it does not estimate its typical
-size.
+\emph{Instance dependence, and what the synthetic grid settles.}
+The analytic results hold for any instance; the magnitudes do not.
+Section~\ref{sec:external} replaces a qualitative caveat with a
+quantitative one: across $240$ synthetic instances sharing Fogo's
+spatial structure, efficiency loss is governed by the concentration of
+the distortion as well as its magnitude
+($R^2_{\mathrm{adj}}=0.490$ for $\lVert\delta\rVert_2$ against
+$0.057$ for $\mathrm{TV}$), and Fogo's $m_{\mathrm{eff}}=4.05$ places
+it at the concentrated end of the range $[2,11]$.
+Two limits remain.
+The synthetic generator produces one-sided distortion --- a few columns
+inflated, the rest deflated uniformly --- whereas Fogo's deviation
+vector is two-sided, with one criterion inflated $2.88\times$ and four
+independently deflated below $0.55\times$; the synthetic model
+consequently underestimates Fogo's loss by $7.7$~pp and should be read
+as a lower bound.
+And the joint distribution of $(\mathrm{TV},m_{\mathrm{eff}})$ in
+applied decision matrices is unknown; establishing it would require a
+corpus of published matrices rather than a single case.
 
 \emph{Weight perturbation model.}
 Dirichlet perturbation around $\wahp$ represents symmetric uncertainty in
