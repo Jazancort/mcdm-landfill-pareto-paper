@@ -2269,11 +2269,14 @@ homogeneous in $w_j n_j(\cdot)$, outranking methods with non-linear
 preference functions in particular.
 
 \emph{Empirical support for the ordering.}
-The monotone relation between predicted distortion and observed
-performance rests on three normalisation levels within SAW.
-Section~\ref{sec:external} extends the evidence: across $240$ synthetic
-instances, $\lVert\delta\rVert_2$ predicts efficiency loss with
-$R^2_{\mathrm{adj}}=0.488$ against $0.057$ for $\mathrm{TV}$.
+The ordering of the three normalisation levels within SAW by
+$\mathrm{TV}$ matches the ordering by $Q_2$ on Fogo, providing support
+for the analytic prediction within the instance; Section~\ref{sec:external}
+extends the evidence across $240$ synthetic instances, where
+$\lVert\delta\rVert_2$ predicts efficiency loss with
+$R^2_{\mathrm{adj}}=0.488$ against $0.057$ for $\mathrm{TV}$, though the
+relation is not globally monotone across levels of the design
+(Kendall $\tau_b=0.550$; Section~\ref{sec:external}).
 Establishing a predictive coefficient from real datasets would require
 additional normalisation families (sum, max, Weitendorf) at modest
 computational cost.
