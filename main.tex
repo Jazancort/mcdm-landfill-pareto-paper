@@ -132,9 +132,10 @@ efficiency.
 
 \begin{highlights}
 \item Normalisation implicitly re-weights criteria: effective weight
-  scales with $w_jA_j$
-\item Min--max is the only standard normalisation that preserves
-  elicited weights under additive aggregation (SAW)
+  scales with $w_jA_j$; exponent $\alpha\in\{0,1,2\}$ spans immunity to
+  quadratic amplification across VIKOR, SAW, and TOPSIS
+\item VIKOR is exactly invariant to per-criterion affine transformation;
+  SAW and TOPSIS are not, with exponents $\alpha=1$ and $\alpha=2$
 \item Normalisation is worth $+29.9$~pp of Pareto efficiency; aggregation
   choice $+0.9$~pp
 \item Exact assembly gains $+29.8$~pp under min--max but only $+2.2$~pp
@@ -1030,7 +1031,6 @@ it is visible exactly where a weighted sum is taken.
 
 \subsection{Amplitude under the three standard normalisations}
 \label{sec:three_norms}
-\label{cor:three}
 
 A natural measure of aggregate distortion is the total variation
 \begin{equation}
@@ -1795,9 +1795,14 @@ comparison of the least consequential design choice.
 
 \paragraph{Why pooling aggregation families obscures the mechanism.}
 \label{rem:pooling}
-Averaging $Q_2$ across all aggregation families destroys the monotone
-ordering of Table~\ref{tab:tvorder}, and does so for reasons internal to
-the mechanism.
+Averaging $Q_2$ across all aggregation families mixes methods that
+inherit the amplitude distortion with one that is immune to it by
+construction.
+VIKOR is invariant to per-criterion affine transformation, so its
+effective weights equal the elicited weights under both min--max and
+vector normalisation regardless of $A_j$; including it in a vector
+average therefore imports cells for which $\mathrm{TV}$ has no
+operative meaning.
 VIKOR is invariant to per-criterion affine transformations (scale and
 shift both cancel in the ratio form); min--max and vector normalisation
 are both per-criterion affine, so the VIKOR$\times$vector cell
@@ -2283,9 +2288,19 @@ $w_j^{\mathrm{eff}}\propto w_j A_j$ and identifies $A_j$ for each of
 the three standard normalisations, which yields three results that the
 qualitative statement does not: min--max is the unique weight-preserving
 choice among them; every binary criterion loses half its weight in rank
-space irrespective of class balance; and VIKOR's invariance to vector
-normalisation follows immediately, since a common amplitude factor
-cancels in~\eqref{eq:weff}.
+space irrespective of class balance; and VIKOR's invariance to
+per-criterion affine transformation follows immediately from its ratio
+form.
+The affine invariance of VIKOR sharpens the contrast that
+\citet{OpricovicTzeng2004} describe.
+VIKOR is not merely less sensitive to normalisation: within the affine
+family it is exactly invariant, because the scale $a_j$ and shift $b_j$
+of each criterion cancel in the ratio $(f^{*}_j-f_{ij})/(f^{*}_j-f^{-}_j)$.
+TOPSIS, by contrast, inherits the amplitude at exponent $\alpha=2$
+(Proposition~\ref{prop:exponent}), and SAW at $\alpha=1$.
+The three aggregation families therefore span the full range of exposure
+to the distortion: immunity (VIKOR), linear amplification (SAW), and
+quadratic amplification (TOPSIS).
 Three observations previously treated separately become corollaries of
 one identity: Section~\ref{prop:p3}, the rank-space contraction of
 Section~\ref{sec:three_norms}, and the amplitude loss
@@ -2385,6 +2400,16 @@ of the design choices we examine ($+0.9$~pp, equivalent to zero within
 $\pm2.5$~pp by TOST),
 and the mechanism explains why: aggregation acts downstream of the
 distortion.
+One qualification is worth stating explicitly.
+The recommendations above apply to SAW and TOPSIS, which inherit the
+amplitude at exponents $\alpha=1$ and $\alpha=2$.
+VIKOR is invariant to per-criterion affine transformation by its ratio
+construction, so the choice of normalisation within the affine family
+(min--max, vector, sum) is irrelevant for VIKOR; effective weights
+equal elicited weights regardless of $A_j$.
+The recommendations to prefer min--max and to report TV therefore apply
+to additive and distance-based aggregation, not to compromise-programming
+methods with ratio normalisation.
 
 \subsection{Limitations}
 
