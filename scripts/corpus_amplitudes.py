@@ -180,77 +180,62 @@ def compute_all(entry):
 # ─── Regression test: Fogo ─────────────────────────────────────────────────
 
 def regression_test_fogo():
-    """Regression test using EXACT values from Table 1 of the paper.
-    Source: tab:amplitude in main.tex (lines 1372–1390).
-    Expected outputs: TV=0.3146, ||delta||_2=0.3127, m_eff=4.0486.
-    These are PUBLISHED VALUES. Tolerance = 1e-3 (rounding of Aj to 3dp).
-    Modifying expected values requires written justification in DEVIATIONS.md.
-
-    Also tests TV_B/TV_W decomposition via the counterfactual:
-    If all Aj within each group are replaced by their group mean Aj_bar_g,
-    then TV_W = 0 exactly and TV = TV_B exactly.
-    This verifies the decomposition is self-consistent.
+    """Regression test: constants from fogo_constants.py only.
+    Never write Fogo w/Aj/groups by hand here. See fogo_constants.py.
+    Asserts: TV=0.3146, l2=0.3127, meff=4.0486, TV_B=0.2489, TV_W=0.1986.
     """
-    # Tab1 exact values — DO NOT CHANGE without updating DEVIATIONS.md
-    # criteria:  perm   slope  roads  rivers aspect coast  prot   wells  urban  aero   cult
-    w_tab1  = [0.152, 0.113, 0.030, 0.091, 0.075, 0.069, 0.066, 0.055, 0.166, 0.102, 0.081]
-    Aj_vec  = [0.583, 0.135, 0.206, 0.265, 0.103, 0.126, 0.105, 0.081, 0.107, 0.086, 0.171]
-    # Groups from Tab1: G1={slope,roads}(1,2), G2={rivers,aspect,coast,prot,wells}(3-7), G3={perm,urban,aero,cult}(0,8,9,10)
-    # Indices: perm=0,slope=1,roads=2,rivers=3,aspect=4,coast=5,prot=6,wells=7,urban=8,aero=9,cult=10
-    obj_groups = [[1, 2], [3, 4, 5, 6, 7], [0, 8, 9, 10]]
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.dirname(__file__))
+    from fogo_constants import W, AJ_VEC, OBJ_GROUPS
+    from fogo_constants import TV_VEC, L2_VEC, MEFF_VEC, TV_B_VEC, TV_W_VEC
 
-    w  = np.array(w_tab1, dtype=float); w = w / w.sum()
-    Aj = np.array(Aj_vec,  dtype=float)
+    res    = compute_TV_meff(W, AJ_VEC)
+    res_bw = compute_TV_between_within(W, AJ_VEC, OBJ_GROUPS)
 
-    res     = compute_TV_meff(w, Aj)
-    res_bw  = compute_TV_between_within(w, Aj, obj_groups)
+    tol    = 1e-3
+    ok_TV    = abs(res["TV"]    - TV_VEC)   < tol
+    ok_l2    = abs(res["l2"]    - L2_VEC)   < tol
+    ok_meff  = abs(res["m_eff"] - MEFF_VEC) < tol
+    ok_TVB   = abs(res_bw["TV_B"] - TV_B_VEC) < tol
+    ok_TVW   = abs(res_bw["TV_W"] - TV_W_VEC) < tol
+    ok_ident = abs(2*res["TV"]/np.sqrt(res["m_eff"]) - res["l2"]) < 1e-10
+    ok_not_D = abs(res["TV"] - float(np.sum(W * np.abs(AJ_VEC - 1.0)))) > 0.1
 
-    # Published values from §6.2 / tab:tvorder
-    TV_pub   = 0.3146
-    l2_pub   = 0.3127
-    meff_pub = 4.0486
-    tol      = 1e-3
-
-    ok_TV   = abs(res['TV']    - TV_pub)   < tol
-    ok_l2   = abs(res['l2']    - l2_pub)   < tol
-    ok_meff = abs(res['m_eff'] - meff_pub) < tol
-    ok_ident = abs(2*res['TV']/np.sqrt(res['m_eff']) - res['l2']) < 1e-10
-    ok_not_D = abs(res['TV'] - float(np.sum(w * np.abs(Aj - 1.0)))) > 0.1
-
-    # Counterfactual: replace each Aj by group-mean Aj_bar_g → TV_W must be 0
-    Aj_bar = np.zeros_like(Aj)
-    for g in obj_groups:
-        # Weighted mean Aj within group (weighted by w_j)
-        wg = w[g]; Ajg = Aj[g]
-        Aj_bar_g = np.dot(wg, Ajg) / wg.sum()
+    Aj_bar = np.zeros_like(AJ_VEC)
+    for g in OBJ_GROUPS:
+        wg = W[g]; Ajg = AJ_VEC[g]
+        Aj_bar_g = float(np.dot(wg, Ajg) / wg.sum())
         for j in g:
             Aj_bar[j] = Aj_bar_g
-    res_counterfactual = compute_TV_between_within(w, Aj_bar, obj_groups)
-    ok_counterfactual = (
-        abs(res_counterfactual['TV_W']) < 1e-10 and
-        abs(compute_TV_meff(w, Aj_bar)['TV'] - res_counterfactual['TV_B']) < 1e-10
-    )
+    res_cf = compute_TV_between_within(W, Aj_bar, OBJ_GROUPS)
+    TV_cf  = compute_TV_meff(W, Aj_bar)["TV"]
+    ok_cf  = abs(res_cf["TV_W"]) < 1e-10 and abs(TV_cf - res_cf["TV_B"]) < 1e-10
 
-    print("=== REGRESSION TEST: Fogo (Tab1 exact values) ===")
-    print(f"  TV   = {res['TV']:.4f}  expected {TV_pub}  {'✓' if ok_TV   else '✗ FAIL'}")
-    print(f"  l2   = {res['l2']:.4f}  expected {l2_pub}  {'✓' if ok_l2   else '✗ FAIL'}")
-    print(f"  meff = {res['m_eff']:.4f}  expected {meff_pub}  {'✓' if ok_meff else '✗ FAIL'}")
-    print(f"  identity 2*TV/√meff = l2:            {'✓' if ok_ident    else '✗ FAIL'}")
-    print(f"  TV ≠ D:                               {'✓' if ok_not_D    else '✗ FAIL'}")
-    print(f"  TV_B = {res_bw['TV_B']:.4f}  TV_W = {res_bw['TV_W']:.4f}")
-    print(f"  counterfactual TV_W=0 when Aj=const: {'✓' if ok_counterfactual else '✗ FAIL'}")
-
-    all_ok = ok_TV and ok_l2 and ok_meff and ok_ident and ok_not_D and ok_counterfactual
+    rows_out = [
+        ("TV",   res["TV"],       TV_VEC,   ok_TV),
+        ("l2",   res["l2"],       L2_VEC,   ok_l2),
+        ("meff", res["m_eff"],    MEFF_VEC, ok_meff),
+        ("TV_B", res_bw["TV_B"], TV_B_VEC, ok_TVB),
+        ("TV_W", res_bw["TV_W"], TV_W_VEC, ok_TVW),
+    ]
+    print("=== REGRESSION TEST: Fogo (fogo_constants.py -> main.tex) ===")
+    for name, val, exp, ok in rows_out:
+        print(f"  {name:<4} = {val:.4f}  expected {exp}  {'ok' if ok else 'FAIL'}")
+    print(f"  identity 2TV/sqrt(meff)=l2:  {'ok' if ok_ident else 'FAIL'}")
+    print(f"  TV != D:                     {'ok' if ok_not_D else 'FAIL'}")
+    print(f"  counterfactual TV_W=0:       {'ok' if ok_cf    else 'FAIL'}")
+    all_ok = ok_TV and ok_l2 and ok_meff and ok_TVB and ok_TVW and ok_ident and ok_not_D and ok_cf
     print(f"  Overall: {'PASS' if all_ok else 'FAIL'}")
 
-    assert ok_TV,   f"TV={res['TV']:.4f} deviates from published {TV_pub} by more than 1e-3"
-    assert ok_l2,   f"l2={res['l2']:.4f} deviates from published {l2_pub} by more than 1e-3"
-    assert ok_meff, f"meff={res['m_eff']:.4f} deviates from published {meff_pub} by more than 1e-3"
-    assert ok_ident, "Identity 2*TV/sqrt(meff) != l2 — formula error"
-    assert ok_not_D, "TV == D — using rejected formula D instead of TV"
-    assert ok_counterfactual, "TV_W != 0 when Aj constant within groups — decomposition bug"
+    assert ok_TV,   f"TV={res['TV']:.4f} != {TV_VEC}"
+    assert ok_l2,   f"l2={res['l2']:.4f} != {L2_VEC}"
+    assert ok_meff, f"meff={res['m_eff']:.4f} != {MEFF_VEC}"
+    assert ok_TVB,  f"TV_B={res_bw['TV_B']:.4f} != {TV_B_VEC} -- OBJ_GROUPS wrong? (perm in G1 not G3)"
+    assert ok_TVW,  f"TV_W={res_bw['TV_W']:.4f} != {TV_W_VEC} -- OBJ_GROUPS wrong? (perm in G1 not G3)"
+    assert ok_ident, "2TV/sqrt(meff) != l2"
+    assert ok_not_D, "TV == D -- wrong formula"
+    assert ok_cf,    "counterfactual TV_W != 0 -- decomposition bug"
     return True
-
 
 def main():
     # Run regression test first — must pass before corpus

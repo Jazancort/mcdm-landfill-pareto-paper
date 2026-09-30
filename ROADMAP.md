@@ -28,47 +28,78 @@ published real-world matrices. Answers §8.7.
 
 ## WS2 — Caminho A_j(t) em Fogo  [PENDING]
 
-**Purpose:** produce Q2(t) vs TV(t) and TV_W(t) with discriminating signal.
-Requires coupling constraints (greedy ≠ optimal) and frontier base rate < 5%.
-Both conditions hold on the Fogo matrix.
+**Purpose:** produce Q2(t) with discriminating signal. Requires coupling
+constraints (greedy ≠ optimal) and frontier base rate < 5%. Both hold on Fogo.
 
-**Design:**
-- Path: A_j(t) = ρ_j^t, t ∈ {0, 0.419, 0.513, 0.692, 0.868, 1.0}
-  → TV ∈ {0, 0.12, 0.15, 0.21, 0.27, 0.315}
-- Objectives fixed in min-max (ONLY — see below).
-- Score varies: mm / vec / rnk.
-- 4 cells × N=3500 draws, Athena (~17 min/cell).
+**Design (only one objective variant — matched-obj removed):**
+Objectives fixed in min-max for all cells. The "matched objectives" variant
+(objectives in the same norm as the score) gives Q2=1 by Proposition 1 in
+optimal assembly — a tautology, removed from the design.
 
-**REMOVED: "matched objectives" variant (objects casados)**
-Rationale: in optimal assembly, objectives matched to score norm gives Q2=1
-by Proposition 1 (exact positive scalarisation). This is a tautology, not a
-finding. The variant was listed in the ROADMAP but is now removed.
-Only the fixed-mm objective design produces discriminating signal.
+Path: A_j(t) = ρ_j^t, t ∈ {0, 0.419, 0.513, 0.692, 0.868, 1.0}
+→ TV ∈ {0, 0.12, 0.15, 0.21, 0.27, 0.315}
 
-**Prediction to declare BEFORE running (WS3 preliminary):**
-The loss Q2(mm) - Q2(vec) should track TV_W(t), not TV(t), because:
-  - TV_B causes between-group distortion → chooses a different point on the
-    frontier → no Q2 loss in optimal assembly.
-  - TV_W causes within-group distortion → breaks the Prop-1 scalarisation
-    argument within each group → loss in optimal assembly.
+N=3500 draws per cell, Athena (~17 min/cell).
 
-TV_W(t) for the path A_j(t) = ρ_j^t should be computed from corpus_amplitudes.py
-BEFORE running WS2. This is the pre-declared estimand.
+**TV_W(t) along the path (computed with correct groups from fogo_constants.py):**
 
-## WS3 — TV_B / TV_W decomposition and foreclosure  [PENDING]
+| t     | TV     | TV_B   | TV_W   | m_eff  |
+|-------|--------|--------|--------|--------|
+| 0.000 | 0.0000 | 0.0000 | 0.0000 | —      |
+| 0.419 | 0.1199 | 0.0910 | 0.0848 | 4.500  |
+| 0.513 | 0.1502 | 0.1146 | 0.1038 | 4.429  |
+| 0.692 | 0.2099 | 0.1622 | 0.1395 | 4.290  |
+| 0.868 | 0.2699 | 0.2113 | 0.1737 | 4.152  |
+| 1.000 | 0.3146 | 0.2489 | 0.1986 | 4.049  |
 
-- Compute TV_B(t) and TV_W(t) along the A_j(t) path.
-- Propose foreclosure/misalignment proposition: condition under which
-  TV_W alone (not TV) determines Q2 loss in optimal assembly.
-- If confirmed by WS2 data, add as corollary after rem:definitional in §6.
+**Pre-declared prediction (BEFORE running WS2):**
+The efficiency loss Q2(mm) − Q2(vec) in OPTIMAL assembly is monotone
+in TV_W(t) (Spearman ρ > 0 across the 5 non-zero t levels). Falsified if ρ ≤ 0.
 
-## WS4 — Article restructuring  [PENDING — after WS2 data]
+The loss in GREEDY assembly is not covered by this prediction (foreclosure
+is not determined by TV_W alone).
+
+**Statistical design (from e351d79 ROADMAP):**
+N=3500 per cell (SE ≈ 0.85 pp). With 4 new levels + canonical level (N=3500):
+  - Max leverage: 0.622 (vs 0.935 with 3 points)
+  - S_xx fraction on single point: 29.6% (vs 73.5%)
+  - VIF(TV, TV²): 11.78 (vs 23.75)
+  - SE(β₂): 68.0 (vs 95.3)
+
+## WS3 — Decomposição foreclosure/misalignment  [PENDING]
+
+From e351d79 ROADMAP (preserved):
+
+The empirical result — normalisation × assembly interaction — has no theory.
+Target proposition: decompose Q2 loss as L(norm, assembly) = L_forec ⊕ L_mis.
+The gain from optimal assembly is bounded above by a decreasing function of
+||delta||_2: fixing foreclosure only helps insofar as the target being optimised
+is the correct target.
+
+If proof does not close: state as verified empirical decomposition across WS1
+instances with the upper bound confirmed numerically. More valuable than the
+paper has today.
+
+With correct TV_W(t) table:
+- Pre-declare: L_optimal tracks TV_W(t), not TV(t)
+- Pre-declare: L_greedy − L_optimal tracks TV_B(t) (between-group component)
+
+These are the WS2 estimands. Run WS2, then check.
+
+## WS4 — Pipeline numérico  [COMPLETE as WS0 above]
+
+## WS5 — Reestruturação  [PENDING — after WS2 data]
+
+From e351d79: promote the normalisation × assembly interaction. Currently §7.4.
+With WS3 proposition: becomes the second pillar of the article.
 
 - §8.7: insert amplitude table from WS1 corpus.
 - §8.6: insert TV_W(t) prediction and WS2 regression.
 - Corollary after rem:definitional: Extension of Prop. 1 (affine norms,
   multi-criterion groups → Q2=1 in optimal assembly).
-- rem:scope: update to reference TV_W, not TV, as the operative measure.
+- Title: consider bringing assembly into title (stronger claim than normalisation alone).
+- Highlights: replace first highlight (Lemma) with the interaction finding.
+- Abstract: +29.8 vs +2.2 pp in second sentence, not penultimate.
 
 ## Commit history (recent)
 

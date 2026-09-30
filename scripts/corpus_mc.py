@@ -195,41 +195,71 @@ def run_entry(entry):
     # Frontier with published weights (for Prop1 regression check)
     F_mm_pub = trio_objectives(G_mm_pub, trios)
 
-    # --- Proposition 1 regression: matched cell with published weights ---
-    print(f"  [Prop1 det.] {key}  mm ...", end='', flush=True)
-    assert_matched_q2(entry, trios, F_mm_pub, norm_label='mm')
-    print(" PASS")
-
-    # Prop1 matched cells for vec and rnk
-    for match_label in ['vec', 'rnk']:
+    # --- Proposition 1 regression: one matched cell per norm (correct F) ---
+    prop1_results = {}
+    for match_label in ['mm', 'vec', 'rnk']:
         N_match  = NORM_FNS[match_label](X, dirs)
-        G_match  = build_group_scores_mm(N_match, w0, og)
+        G_match  = build_group_scores_mm(N_match, w0, og)   # objectives in SAME norm
         F_match  = trio_objectives(G_match, trios)
         frontier = pareto_nd(F_match)
         scores   = N_match @ w0
         t_idx    = top_trio_by_score(scores, trios)
         in_f     = t_idx in frontier
+        prop1_results[match_label] = in_f
         status   = "PASS" if in_f else "FAIL (BUG)"
-        print(f"  [Prop1 det.] {key}  {match_label} ... {status}")
-        assert in_f, f"Prop1 violation: {key} matched={match_label}"
+        print(f"  [Prop1 matched] {key}  {match_label} ... {status}")
+        assert in_f, (
+            f"Prop1 violation: {key} matched={match_label} — "
+            f"top trio NOT in frontier (objectives and score both in {match_label}). Bug."
+        )
 
-    # --- Mutation test: fix w_fr at published w while w_sc varies ---
-    # Prop1 must FAIL when score weights != objective weights.
-    # If it does not fail, the assertion has no power against this bug.
-    print(f"  [Prop1 mut.] {key}  fixed-w_fr vs varying-w_sc (should find violation) ...", end='', flush=True)
-    _mutation_triggered = False
-    _rng_mut = np.random.default_rng(SEED + 1)
-    _alpha_mut = KAPPA * w0
-    _W_mut = sp_dirichlet.rvs(_alpha_mut, size=200, random_state=_rng_mut)
-    for _w_draw in _W_mut:
-        # Deliberately mismatched: frontier built with w0, score with w_draw
-        # For non-trivial w_draw, top trio by score may not be in w0-frontier
-        _scores  = norm_minmax(X, dirs) @ _w_draw
-        _t_idx   = top_trio_by_score(_scores, trios)
-        if _t_idx not in pareto_nd(F_mm_pub):
-            _mutation_triggered = True
-            break
-    print(f" {'TRIGGERED (has power)' if _mutation_triggered else 'NOT TRIGGERED — assertion may lack power'}")
+    # --- Three targeted mutations — each MUST trigger (potency check) --------
+    # Mutation A: invert direction of one group (G1 criteria get cost sense)
+    # Expected: Q2 collapses because frontier is built with reversed objectives
+    print(f"  [Mut-A] {key}  invert G1 direction ...", end='', flush=True)
+    dirs_mut_A = list(dirs)
+    for j in og[0]:                          # invert G1 criteria
+        dirs_mut_A[j] = 'min' if dirs[j] == 'max' else 'max'
+    N_mut_A  = norm_minmax(X, dirs_mut_A)
+    G_mut_A  = build_group_scores_mm(N_mut_A, w0, og)
+    F_mut_A  = trio_objectives(G_mut_A, trios)
+    fr_mut_A = pareto_nd(F_mut_A)
+    scores_A = norm_minmax(X, dirs) @ w0    # score uses ORIGINAL direction
+    t_A      = top_trio_by_score(scores_A, trios)
+    mut_A_triggered = t_A not in fr_mut_A
+    print(f" {'TRIGGERED' if mut_A_triggered else 'NOT TRIGGERED'}")
+
+    # Mutation B: permute weights within G1 (w_j reshuffled, total W_G1 unchanged)
+    print(f"  [Mut-B] {key}  permute weights in G1 ...", end='', flush=True)
+    w_mut_B = w0.copy()
+    g1 = og[0]
+    if len(g1) > 1:
+        perm = np.roll(np.arange(len(g1)), 1)      # cyclic shift
+        w_mut_B[g1] = w0[g1][perm]
+    G_mm_B  = build_group_scores_mm(N_mm, w0, og)       # objectives with original w
+    F_mm_B  = trio_objectives(G_mm_B, trios)
+    fr_mm_B = pareto_nd(F_mm_B)
+    # Score uses permuted weights → different top trio
+    scores_B = N_mm @ w_mut_B
+    t_B = top_trio_by_score(scores_B, trios)
+    mut_B_triggered = t_B not in fr_mm_B
+    print(f" {'TRIGGERED' if mut_B_triggered else 'NOT TRIGGERED (no power — base rate too high?)'}")
+
+    # Mutation C: uniform w_fr vs published w_sc (mismatched weights)
+    print(f"  [Mut-C] {key}  uniform w_fr vs published w_sc ...", end='', flush=True)
+    w_unif = np.ones(n) / n
+    G_unif = build_group_scores_mm(N_mm, w_unif, og)   # frontier with uniform w
+    F_unif = trio_objectives(G_unif, trios)
+    fr_unif = pareto_nd(F_unif)
+    scores_C = N_mm @ w0                               # score with published w
+    t_C = top_trio_by_score(scores_C, trios)
+    mut_C_triggered = t_C not in fr_unif
+    print(f" {'TRIGGERED' if mut_C_triggered else 'NOT TRIGGERED (no power — base rate too high?)'}")
+
+    mut_power = {'A_invert': mut_A_triggered, 'B_permute': mut_B_triggered, 'C_uniform': mut_C_triggered}
+    n_triggered = sum(mut_power.values())
+    print(f"  [Mutation power] {n_triggered}/3 mutations triggered "
+          f"({'adequate' if n_triggered >= 2 else 'LOW — assertions may not protect this instance'})")
 
     # --- Monte Carlo: objectives fixed in mm, weighted with w_draw per draw ---
     # Frontier IS w_draw-dependent because objectives are weighted.

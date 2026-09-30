@@ -73,6 +73,7 @@ CORPUS.append({
     # G2 = mechanical strength: UTS + surface hardness
     # G3 = toughness/cost: core hardness (cost)
     'obj_groups': [[0, 1], [2, 3], [4]],
+    'groups_source': 'Milani et al. (2005) Tab.1 caption: "fatigue criteria (X1,X2), strength criteria (X3,X4), toughness/cost (X5)". Implicit from AHP hierarchy.',
 })
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -113,11 +114,13 @@ CORPUS.append({
         [128.9520, 0.3337,  6.8974],
     ],
     'notes': 'Equal weights (1/3 each) — elicited via equal judgment. TV under vector will be small given equal magnitudes. Useful for TV≈0 anchor in corpus.',
-    'active': True,   # m=16 ≥ 8
-    # 3 criteria → 2 groups (DEV-005: corrected from 1-crit degenerate groups)
-    # G1 = operational factors: illumination + reachability (both benefit)
-    # G2 = terrain: land texture (cost, complemented before aggregation)
-    'obj_groups': [[0, 1], [2]],
+    'active': True,   # m=16 ≥ 8; amplitude table only
+    # No hierarchy published in source article — amplitude table only, no Q2 analysis.
+    # DEV-005: previous grouping [[0,1],[2]] was post-result and lacked source.
+    # Corrected per PRESPEC §4: instances without published hierarchy enter amplitude
+    # table only. groups_source='none' → excluded from TV_B/TV_W and Q2.
+    'obj_groups': None,
+    'groups_source': 'none — Vafaei et al. (2018) does not publish a criterion hierarchy',
 })
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -232,6 +235,7 @@ CORPUS.append({
     # Economic (1 crit):    C  → index 9
     # Environmental (5 crit): d, P.CO2, FP, WU, EU → indices 8,10,11,12,13
     'obj_groups': [[0,1,2,3,4,5,6,7], [9], [8,10,11,12,13]],
+    'groups_source': 'Junaid et al. (2024) Tab.1: criteria grouped as Performance (mechanical), Economic (cost), Environmental (density+emissions). Confirmed by AHP sub-criteria structure in §2.2.',
 })
 
 # ─────────────────────────────────────────────────────────────────────────────
