@@ -132,40 +132,55 @@ def compute_all(entry):
 # ─── Regression test: Fogo ─────────────────────────────────────────────────
 
 def regression_test_fogo():
-    """Fogo regression test using EXACT amplitudes from WP3 run.
-    Source: results/wp3_summary.csv  norm='vector'
-      TV=0.311341, m_eff=4.032109, l2=0.310099
-    The Tab1 rounded Aj give TV=0.239 (rounding artefact) — do NOT use those.
-    The WP3 computes Aj from the full normalised matrix (exact Fogo data).
+    """Regression test using EXACT values from Table 1 of the paper.
+    Source: tab:amplitude in main.tex (lines 1372–1390).
+    Expected outputs: TV=0.3146, ||delta||_2=0.3127, m_eff=4.0486.
+    These are PUBLISHED VALUES. Tolerance = 1e-3 (rounding of Aj to 3dp).
+    Modifying expected values requires written justification in DEVIATIONS.md.
     """
-    # Values from results/wp3_summary.csv, norm='vector'
-    TV_expected   = 0.311341
-    meff_expected = 4.032109
-    l2_expected   = 0.310099
-    tol = 1e-3  # we are just checking the identity and direction
+    # Tab1 exact values — DO NOT CHANGE without updating DEVIATIONS.md
+    # criteria:  perm   slope  roads  rivers aspect coast  prot   wells  urban  aero   cult
+    w_tab1  = [0.152, 0.113, 0.030, 0.091, 0.075, 0.069, 0.066, 0.055, 0.166, 0.102, 0.081]
+    Aj_vec  = [0.583, 0.135, 0.206, 0.265, 0.103, 0.126, 0.105, 0.081, 0.107, 0.086, 0.171]
 
-    # Re-derive using Tab1 Aj (rounded) to confirm formula direction:
-    w_fogo  = np.array([0.113,0.030,0.091,0.103,0.069,0.066,0.055,0.192,0.102,0.113,0.066])
-    Aj_fogo = np.array([0.135,0.206,0.265,0.103,0.126,0.105,0.081,0.288,0.086,0.091,0.068])
-    w_fogo  = w_fogo / w_fogo.sum()
-    res = compute_TV_meff(w_fogo, Aj_fogo)
+    w  = np.array(w_tab1, dtype=float)
+    Aj = np.array(Aj_vec,  dtype=float)
+    w  = w / w.sum()
 
-    # Check: (a) formula gives correct sign/direction; (b) identity holds non-trivially
-    ok_direction = res['TV'] > 0 and res['m_eff'] > 0 and res['l2'] > 0
-    ok_ident     = abs(2*res['TV']/np.sqrt(res['m_eff']) - res['l2']) < 1e-10
-    # Check not D: D = sum w|Aj-1|; should be DIFFERENT from TV
-    D = float(np.sum(w_fogo * np.abs(Aj_fogo - 1.0)))
-    ok_not_D = abs(res['TV'] - D) > 0.1  # must differ by >0.1 (they differ by ~0.6)
+    res = compute_TV_meff(w, Aj)
 
-    print("=== REGRESSION TEST: Fogo ===")
-    print(f"  Tab1 rounded Aj give TV={res['TV']:.4f}, m_eff={res['m_eff']:.4f}, l2={res['l2']:.4f}")
-    print(f"  WP3 exact reference:  TV={TV_expected}, m_eff={meff_expected}, l2={l2_expected}")
-    print(f"  Formula direction correct (TV,meff,l2 > 0): {'✓' if ok_direction else '✗ FAIL'}")
-    print(f"  Identity 2*TV/√m_eff = l2 (non-trivial):   {'✓' if ok_ident    else '✗ FAIL'}")
-    print(f"  TV ≠ D (correct formula, not D):            {'✓' if ok_not_D    else '✗ FAIL'} (TV={res['TV']:.4f}, D={D:.4f})")
-    all_ok = ok_direction and ok_ident and ok_not_D
-    print(f"  Overall: {'PASS' if all_ok else 'FAIL'}")
-    return all_ok
+    # Published values from §6.2 / tab:tvorder
+    TV_pub   = 0.3146
+    l2_pub   = 0.3127
+    meff_pub = 4.0486
+    tol      = 1e-3
+
+    ok_TV   = abs(res['TV']    - TV_pub)   < tol
+    ok_l2   = abs(res['l2']    - l2_pub)   < tol
+    ok_meff = abs(res['m_eff'] - meff_pub) < tol
+    ok_ident = abs(2*res['TV']/np.sqrt(res['m_eff']) - res['l2']) < 1e-10
+    ok_not_D = abs(res['TV'] - float(np.sum(w * np.abs(Aj - 1.0)))) > 0.1
+
+    print("=== REGRESSION TEST: Fogo (Tab1 exact values) ===")
+    print(f"  TV   = {res['TV']:.4f}  expected {TV_pub}  {'✓' if ok_TV   else '✗ FAIL'}")
+    print(f"  l2   = {res['l2']:.4f}  expected {l2_pub}  {'✓' if ok_l2   else '✗ FAIL'}")
+    print(f"  meff = {res['m_eff']:.4f}  expected {meff_pub}  {'✓' if ok_meff else '✗ FAIL'}")
+    print(f"  identity 2*TV/√meff = l2 (non-trivial): {'✓' if ok_ident else '✗ FAIL'}")
+    print(f"  TV ≠ D (not the rejected formula):       {'✓' if ok_not_D else '✗ FAIL'}")
+
+    all_ok = ok_TV and ok_l2 and ok_meff and ok_ident and ok_not_D
+    if not all_ok:
+        print("  ✗ REGRESSION FAILED — check inputs against Tab1 before continuing")
+    else:
+        print("  Overall: PASS")
+
+    # Hard assert — test must not be weakened silently
+    assert ok_TV,   f"TV={res['TV']:.4f} deviates from published {TV_pub} by more than 1e-3"
+    assert ok_l2,   f"l2={res['l2']:.4f} deviates from published {l2_pub} by more than 1e-3"
+    assert ok_meff, f"meff={res['m_eff']:.4f} deviates from published {meff_pub} by more than 1e-3"
+    assert ok_ident, "Identity 2*TV/sqrt(meff) != l2 — formula error"
+    assert ok_not_D, "TV == D — using rejected formula D instead of TV"
+    return True
 
 
 def main():
