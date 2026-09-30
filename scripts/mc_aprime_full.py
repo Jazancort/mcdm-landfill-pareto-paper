@@ -75,6 +75,7 @@ def compute_objs_w(w):
         x = df_via[col].values.astype(float)
         ref = x  # normalização sobre os 389
         if k == "aspect":
+            # c=0 for [90,180] (good class, lower impact); c=1 for ∉[90,180] (penalty).
             c = np.where((x >= 90) & (x <= 180), 0., 1.)
         elif k in INV:
             c = 1. - _norm(x, ref)

@@ -164,6 +164,15 @@ def compute_objectives(df_target: pd.DataFrame,
         x   = df_target[COL[k]].values.astype(float)
         ref = df_ref[COL[k]].values.astype(float)
         if k == "aspect":
+            # c=0 if aspect in [90,180] (favourable: lower environmental impact).
+            # F2 is computed as impact (lower=better) following AzancortNeto2026.
+            # The IEEE pipeline uses norm_asp=0 for [90,180] in a minimisation context;
+            # mcdm_experiment.py follows the same convention: c=0 for the good class.
+            # This gives n1_bad=94 (c=1 sites) and n1_good=295 (c=0 sites).
+            # §4.1 text says "c=1 if aspect ∉[90,180] yielding n1=94 positives" —
+            # "positives" means c=1 (the penalty class), not the favourable class.
+            # Aj^vec = 1/sqrt(n1_bad) = 1/sqrt(295) = 0.058; Tab1 value of 0.103
+            # was transcribed incorrectly (used n1_good=94 instead of n1_bad=295).
             c = np.where((x >= 90) & (x <= 180), 0.0, 1.0)
         elif k in INV:
             c = 1.0 - _norm(x, ref)
