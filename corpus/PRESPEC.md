@@ -104,7 +104,44 @@ and the paper will so state in §8.7.
 If H2 gives Spearman ρ ≤ 0: the cross-instance ordering claim is unsupported
 and will be removed from the paper.
 
-## 6. Statistical reporting
+## 6. Experimental design (declared before running)
+
+**Objectives (fixed):** F_g(T) = sum of N_mm[i, j] for j in group g, i in trio T.
+Objectives are fixed under min-max normalisation in ALL cells. This is the only
+design that creates the score/objective mismatch that makes Q2 < 1. Any other
+design collapses to a tautology:
+
+- If objectives are matched to the score normalisation, Q2 = 1 exactly by
+  Proposition 1 (sum of SAW scores is a strictly positive scalarisation of
+  group objectives => selected portfolio is non-dominated). This is verified
+  as a regression assertion in corpus_mc.py, NOT reported as a finding.
+
+- Without coupling constraints, greedy == optimal by separability of the
+  additive score. No assembly factor. Q2 values will be near 100% even with
+  fixed-mm objectives, because frontier base rates in unconstrained matrices
+  with 3 groups are typically 10-35% and SAW rarely misses.
+
+**Scope decision (2026-09-30):**
+The corpus delivers two things:
+1. The amplitude table: (TV, m_eff, ||delta||_2) in 7 published matrices.
+   This is the primary contribution — demonstrates the mechanism operates
+   outside Fogo, with no simulation required.
+2. The ordering Q2(mm) >= Q2(vec) as qualitative validation. With N=3500 and
+   frontier base rates >15%, the Q2 signal is near zero — not reportable.
+
+Q2 with meaningful signal requires:
+- Coupling constraints (greedy != optimal), AND
+- Frontier base rates < 5%.
+Both conditions hold in the A_j(t) path (WS2) on the Fogo matrix. WS2 is
+the correct instrument for the Q2 claim. The corpus is not.
+
+**Regression assertion (Proposition 1):**
+For every active instance, every normalisation: when score norm matches
+objective norm (matched cell), Q2 must equal 100%. Hard assert in code.
+Failure = bug (wrong orientation, wrong group indices, mismatched scale).
+This assertion is in corpus_mc.py and runs before every Monte Carlo sweep.
+
+## 7. Statistical reporting
 
 For each instance:
 - Report Q2_greedy and Q2_optimal separately (never only Q2_mean).
