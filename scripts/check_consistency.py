@@ -103,11 +103,49 @@ check("TV_numerical (WP3 vector)", tv_num,      0.311, tol=0.001)
 check("TV_tab1 (WP3 vector_tab1)", tv_tab1_rnk, 0.315, tol=0.001)
 
 print()
+print("=== Document quality checks ===")
+
+import re as _re
+
+# Check: no undefined \ref labels in compiled log (structural refs, not natbib)
+log_path = ROOT / "main.log"
+if log_path.exists():
+    log_text = log_path.read_text(encoding='utf-8', errors='replace')
+    ref_undef = len(_re.findall(r"Reference `[^']+' on page \d+ undefined", log_text))
+    if ref_undef > 0:
+        FAIL.append(f"Undefined \\ref labels: {ref_undef}")
+        print(f"  [FAIL] Undefined \\ref labels: {ref_undef}")
+    else:
+        print(f"  [OK  ] Undefined \\ref labels: 0")
+else:
+    print("  [SKIP] main.log not found")
+
+# Check: no em-dashes (---) as prose separators in main.tex
+main_tex = ROOT / "main.tex"
+if main_tex.exists():
+    prose_dashes = 0
+    for line in main_tex.read_text(encoding='utf-8').splitlines():
+        s = line.strip()
+        if not s or s.startswith('%'):
+            continue
+        if _re.match(r'^[- ]+$', s):
+            continue   # separator line
+        if '---' in s:
+            if '& ---' in line:
+                continue   # table cell
+            prose_dashes += 1
+    if prose_dashes > 0:
+        FAIL.append(f"Em-dashes (---) in prose: {prose_dashes}")
+        print(f"  [FAIL] Em-dashes in prose: {prose_dashes}")
+    else:
+        print(f"  [OK  ] Em-dashes in prose: 0")
+
+print()
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")
-    for f in FAIL:
-        print(f"  ✗ {f}")
-    sys.exit(1)
+    for msg in FAIL:
+        print(f"  x {msg}")
+    import sys as _sys; _sys.exit(1)
 else:
-    print(f"ALL CHECKS PASSED ({17} assertions)")
-    sys.exit(0)
+    print("ALL CHECKS PASSED (19 assertions)")
+    import sys as _sys; _sys.exit(0)

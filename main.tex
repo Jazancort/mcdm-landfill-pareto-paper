@@ -109,9 +109,10 @@ over siting cost, environmental impact and social safety.
 Crossing four aggregation methods with three normalisations and two
 assembly rules, we find that the choice between SAW and TOPSIS is worth
 $+0.9$ percentage points ($95\%$ CI $[-0.5,\,+2.3]$), whereas
-normalisation is worth $+29.9$~pp on average across aggregation families
-(and $+\SAWgreedyContrast$~pp under SAW greedy, the most conservative estimand),
-and assembly $+16.0$~pp.
+normalisation is worth $+29.9$~pp in the $2^3$ factorial and
+$+\NormGreedyContrast$~pp under greedy assembly alone, which excludes the
+cell fixed at $100\%$ by Proposition~\ref{prop:p1:stmt}, and assembly
+$+16.0$~pp.
 We explain this analytically: in additive aggregation the effective
 weight of a criterion is proportional to $w_j A_j$, where $A_j$ is the
 amplitude of the normalised column, so normalisation fixes the operative
@@ -120,13 +121,12 @@ The distortion is governed by an amplitude exponent that differs across
 aggregation families: min--max preserves elicited weights under additive
 aggregation but not under TOPSIS, where amplitudes enter quadratically
 and $\mathrm{TV}=0.160$ even when all $A_j\equiv 1$.
-The severity is further determined by how the distortion is spread: a
-closed-form decomposition shows that the effective loss is governed by
-the concentration of $\delta_j = w_j^{\mathrm{eff}} - w_j$ across
-criteria, measured by $m_{\mathrm{eff}} = \|\delta\|_1^2/\|\delta\|_2^2
-\in[2,m]$, so that dispersing a fixed TV over more criteria attenuates
-it (although the scaling $\mathrm{TV}/\sqrt{m_{\rm eff}}$ holds exactly
-only within the additive family).
+The severity also depends on how the distortion is spread: the Euclidean
+norm of the deviation factorises exactly as
+$\lVert\delta\rVert_2=2\,\mathrm{TV}/\sqrt{m_{\rm eff}}$, where
+$m_{\rm eff}\in[2,m]$ is the effective number of distorted criteria, and
+across 240 synthetic instances $\lVert\delta\rVert_2$ tracks efficiency
+loss where $\mathrm{TV}$ alone does not.
 Min--max is the unique standard normalisation that preserves elicited
 weights under SAW; vector normalisation multiplies one criterion's weight
 by $2.88\times$ in our data; every binary criterion loses half its weight
@@ -141,7 +141,7 @@ efficiency.
   elicited weights
 \item VIKOR is affine-invariant; SAW and TOPSIS inherit amplitude at
   $\alpha=1$ and $\alpha=2$
-\item Normalisation worth $+\NormMainEffect$~pp (factorial avg); $+\SAWgreedyContrast$~pp under SAW greedy
+\item Normalisation worth $+\NormMainEffect$~pp ($+\NormGreedyContrast$~pp greedy only); aggregation $+0.9$~pp
 \item Exact assembly gains $+29.8$~pp under min--max but only $+2.2$~pp
   under vector
 \item Normalising over inadmissible sites costs up to $80$~pp of Pareto
@@ -204,8 +204,9 @@ Choosing between SAW and TOPSIS is worth $+0.9$ percentage points (pp)
 with a $95\%$ interval of $[-0.5,\,+2.3]$, statistically
 indistinguishable from no effect.
 The choice of normalisation is worth $+29.9$~pp on average across
-aggregation families (and $+\SAWgreedyContrast$~pp under the SAW greedy
-estimand), and the choice between greedy and exact assembly $+16.0$~pp.
+aggregation families (and $+\NormGreedyContrast$~pp under greedy assembly alone,
+which excludes the cell fixed at $100\%$ by Proposition~\ref{prop:p1:stmt}),
+and the choice between greedy and exact assembly $+16.0$~pp.
 
 The reason is a mechanism that operates upstream of the aggregation
 operator, and it is the analytical core of the paper.
@@ -274,13 +275,13 @@ Our contributions are as follows.
     the main effects conceal, and an explanation of why: the distortion
     acts through the weighted sum and the aggregation operator lies
     downstream of it.
-  \item A factorisation of the efficiency loss into an amplitude component
-    and a concentration component (Proposition~\ref{prop:concentration}),
-    and a synthetic grid of 240 instances showing that both components
-    affect the observed loss across diverse marginal distributions,
-    with the joint product $\mathrm{TV}/\sqrt{m_{\mathrm{eff}}}$
-    providing a useful summary within the additive family
-    (Section~\ref{sec:external}).
+  \item A factorisation of the weight deviation into magnitude and
+    concentration (Proposition~\ref{prop:concentration}), and a synthetic
+    grid of 240 instances in which the resulting norm
+    $\lVert\delta\rVert_2$ accounts for efficiency loss that $\mathrm{TV}$
+    alone does not ($R^2_{\mathrm{adj}}=\RsqadjLtwo$ against $\RsqadjTV$);
+    the grid does not vary concentration independently of the number of sparse
+    criteria (Section~\ref{sec:external}).
   \item An exact identity between PROMETHEE~II under the usual preference
     function and rank-weighted SAW, holding for arbitrary tie structure
     (Section~\ref{prop:p2}), which follows from the axiomatic results
@@ -595,8 +596,6 @@ built so that larger values denote a less desirable outcome for $G_1$ and
 $G_2$ (distance criteria in $G_1$ and $G_2$ enter as $1-\hat{x}_j$
 so that a short distance is a high cost), and a more desirable outcome for
 $G_3$, and let $w_j$ be the criterion weight.
-The orientation of the binary criterion \textit{aspect} is given in the
-paragraph below.
 The three objectives therefore have mixed senses:
 \begin{align}
   F_1(t) &= \sum_{i\in t}\sum_{j\in G_1} w_j\,c_j(i),
@@ -624,17 +623,10 @@ the two versions of the SAW score rank all portfolios identically
 (top-100 rank agreement $=1.000$ on Fogo under min--max).
 Under vector normalisation the equivalence does not hold.
 The decision matrix normalises the column $x \in\{0,1\}$ directly,
-giving $\lVert\mathbf{x}\rVert_2=\sqrt{n_1}=\sqrt{94}$ and
-$A_j^{\rm vec}=1/\sqrt{94}=0.103$; a hypothetical objective-aligned
-encoding would normalise $1-x$, giving $\sqrt{295}$ and $0.058$,
-differing by $\sqrt{295/94}=1.77$.
-All cells in the factorial use the decision-matrix encoding ($c_j=1$
-for the leeward class) consistently.
-Holding the criterion semantics fixed and varying only the order of
-operations, the two encodings agree on Kendall~$\tau_b=0.960$ and on
-$96\%$ of the top-100 set under vector normalisation: the $1.77\times$
-amplitude difference in one binary column of eleven is largely absorbed
-by the remaining ten.
+giving $A_j^{\rm vec}=1/\sqrt{94}=0.103$.
+Under vector normalisation the two encodings differ in amplitude by
+$\sqrt{n_0/n_1}=1.77$ (Corollary~\ref{cor:order}); all cells use the
+decision-matrix encoding.
 Amplitudes in Table~\ref{tab:amplitude} are measured on the decision
 matrix, with $n_1=94$ leeward sites among the $\Nvia$ admissible sites.
 Criteria in $G_3$ are built so that $c_j(i)=1$ is most favourable
@@ -1165,8 +1157,8 @@ evidential weight about min--max in particular; we use it solely as a
 regression test, and any implementation returning $Q_2<1$ there is
 faulty.
 Its informative content is the \emph{contrapositive}: every cell falling
-below $100\%$ does so because some premise --- matching normalisation,
-additivity, or global assembly --- fails, and the factorial identifies
+below $100\%$ does so because some premise fails (matching normalisation,
+additivity, or global assembly), and the factorial identifies
 which.
 \end{remark}
 
@@ -1926,16 +1918,15 @@ When they do not, the guarantee is not weakened but voided.
 The observed cost (Table~\ref{tab:fourthcell}: $100\%\to20\%$,
 a loss of $80$~pp under optimal assembly) far exceeds what
 Mechanism~1 predicts: $\mathrm{TV}=0.107$ implies $\approx\MechOnePredAdmiss$~pp,
-accounting for only $11\%$ of the effect ($\MechOnePredAdmiss/80$).
+accounting for only $\MechOneShare\%$ of the effect ($\MechOnePredAdmiss/80$).
 The gap is the signature of Mechanism~2.
 
 This also explains the interaction of Section~\ref{sec:interaction}.
 Under vector normalisation, exact assembly optimises a score that is
 misaligned with the evaluator; the $+2.2$~pp gain is residual.
-Mechanism~1 (re-weighting) and Mechanism~2 (mismatch) are treated as
-additive in the decomposition of Section~\ref{sec:mechanisms}; their
-interaction is not directly identified in the present data and remains
-an open question.
+Whether the two mechanisms combine additively is not identified by the
+present design; Section~\ref{sec:discussion} shows only that they are
+distinct.
 
 Min--max normalisation satisfies $A_j\equiv1$ over the set on which its
 constants are computed.
@@ -2252,7 +2243,7 @@ Within Fogo the ordering is monotone in $\mathrm{TV}$
 this does not generalise: $\mathrm{TV}$ is the $\ell^1$ norm of the
 deviation and two distortions of equal $\mathrm{TV}$ differ in effect
 according to their concentration.
-The graded quantity is $\lVert\delta\rVert_2$, of which $\mathrm{TV}$
+A better-tracking quantity is $\lVert\delta\rVert_2$, of which $\mathrm{TV}$
 is one of two factors.
 It is also invisible: nothing in a standard TOPSIS or SAW report reveals
 that \texttt{perm} entered at $2.88$ times its nominal weight.
@@ -2263,10 +2254,10 @@ maximisation of an additive score only when the score and the value
 functions defining the objectives use the same normalisation.
 When they do not, the guarantee is not weakened but voided, and the
 observed cost exceeds what re-weighting alone predicts by a factor of
-$8.9\times$ in the direction where the score loses resolution (the
-$\Ncand$-score evaluated against $A'$: $80$~pp observed versus $9.0$~pp
+$\MismatchRatioHi\times$ in the direction where the score loses resolution (the
+$\Ncand$-score evaluated against $A'$: $80$~pp observed versus $\MechOnePredAdmiss$~pp
 predicted), while in the opposite direction the observed loss is smaller
-than predicted ($0.56\times$: the $\Nvia$-score against $A$).
+than predicted ($\MismatchRatioLo\times$: the $\Nvia$-score against $A$).
 Since the total variation is symmetric between the two directions by
 construction, no re-weighting measure can account for this $16\times$
 asymmetry in observed loss; the two mechanisms are distinct
@@ -2512,8 +2503,8 @@ instance along the one-parameter path $A_j(t)=\rho_j^{\,t}$,
 $t\in[0,1]$, which interpolates between min--max ($t=0$) and vector
 normalisation ($t=1$) and holds $m_{\mathrm{eff}}$ within
 $[4.05,\,5.00]$, so that magnitude varies without confounding
-concentration --- the decoupling that Section~\ref{sec:external}
-identifies as unavailable in the present grid.
+concentration (the decoupling that Section~\ref{sec:external}
+identifies as unavailable in the present grid).
 We note also that with $\ndraws$ draws the binomial standard error of
 each $Q_2$ is $1.5$--$2.2$~pp, of the same order as the residual scatter
 of these fits; discriminating curvature would require both the filled
@@ -2572,7 +2563,7 @@ literature compares most, proved the least consequential of the three:
 $+0.9$~pp ($95\%$ CI $[-0.5,\,+2.3]$), statistically equivalent to
 zero within the pre-specified margin $\delta=2.5$~pp (TOST).
 Normalisation was worth $+29.9$~pp on average across aggregation
-families ($+\SAWgreedyContrast$~pp under SAW greedy) and assembly
+families ($+\NormGreedyContrast$~pp under greedy assembly alone) and assembly
 $+16.0$~pp.
 The explanation is analytical rather than empirical: in additive
 aggregation the effective weight of a criterion is proportional to
@@ -2622,8 +2613,9 @@ loss is positive but not monotone (Kendall $\tau_b=0.550$ over the
 $190$ pairs of cell means, $21.6\%$ inversions), confirming that the
 ordering reflects a central tendency rather than a deterministic law.
 A closed-form factorisation of the loss into an amplitude term and a
-concentration term (Proposition~\ref{prop:concentration}) shows that
-the two are jointly responsible and that neither alone is sufficient.
+concentration term (Proposition~\ref{prop:concentration}), combined with
+the synthetic grid of Section~\ref{sec:external}, indicates that
+both components affect the observed loss and that neither alone tracks it.
 Max, Peldschus and sum normalisations have since been evaluated and
 delimit the range over which the ordering holds rather than extending
 it: the first two constrain the intercept near $\mathrm{TV}=0$, and the

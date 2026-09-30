@@ -82,6 +82,15 @@ NormMainEffect = 29.9
 # SAW greedy contrast (estimand of synthetic grid, §7.7)
 SAWgreadyContrast = Q2g_mm - Q2g_vec  # = 10.4 pp
 
+# Greedy-only contrast across SAW and TOPSIS (excludes tautological optimal cells)
+# Source: tab:factorial in main.tex
+# SAW:   mm greedy=64.6, vec greedy=54.2 -> 10.4
+# TOPSIS: mm greedy=72.4, vec greedy=50.6 -> 21.8
+# Mean greedy contrast = (10.4 + 21.8) / 2 = 16.1 pp
+Q2g_topsis_mm_factorial  = 72.4
+Q2g_topsis_vec_factorial = 50.6
+NormGreedyContrast = ((Q2g_mm - Q2g_vec) + (Q2g_topsis_mm_factorial - Q2g_topsis_vec_factorial)) / 2
+
 # ─── §7.2: three-level regression on canonical Q2_mean ──────────────────────
 TV3 = np.array([TV_mm, TV_rnk, TV_vec])
 Q3  = np.array([Q2m_mm, Q2m_rnk, Q2m_vec])   # Q2m_rnk = 76.5 (canonical)
@@ -160,9 +169,14 @@ lines = [
     "% ── Canonical run: cost contrast ───────────────────────────────────────\n",
     mac("NormMainEffect",    NormMainEffect,    pct(NormMainEffect)),
     mac("SAWgreedyContrast", SAWgreadyContrast, pct(SAWgreadyContrast)),
+    mac("NormGreedyContrast", NormGreedyContrast, pct(NormGreedyContrast)),
     mac("LossTabTVorder",    Q2m_mm - Q2m_vec,  pct(Q2m_mm - Q2m_vec)),
     # TV on admissible range (vector, 389 sites): 86.7 * 0.107 = 9.3 pp
     mac("MechOnePredAdmiss", abs(s3) * 0.107,   f"{abs(s3) * 0.107:.1f}"),
+    # Mechanism 1 share and mismatch ratios (§8.1): 9.3 pp pred, 80 pp observed, 5 pp other direction
+    mac("MechOneShare",    abs(s3) * 0.107 / 80 * 100,     f"{round(abs(s3) * 0.107 / 80 * 100):.0f}"),
+    mac("MismatchRatioHi", 80 / (abs(s3) * 0.107),         f"{80 / (abs(s3) * 0.107):.1f}"),
+    mac("MismatchRatioLo", 5  / (abs(s3) * 0.107),         f"{5  / (abs(s3) * 0.107):.2f}"),
     "\n",
     "% ── §7.2: three-level regression ────────────────────────────────────────\n",
     mac("slopeThree",   abs(s3),         f"{abs(s3):.1f}"),
