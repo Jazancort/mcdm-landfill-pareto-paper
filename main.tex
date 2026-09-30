@@ -1348,8 +1348,8 @@ $\mathrm{TV}$ & & & 0.000 & & & 0.315 & 0.091 \\
 The total variation~\eqref{eq:TV} is the $\ell^1$ norm of the deviation
 vector $\delta_j=w_j^{\mathrm{eff}}-w_j$, and is therefore blind to how
 that deviation is spread across criteria.
-Two distortions of identical $\mathrm{TV}$ --- one concentrated on a
-single heavily weighted criterion, one spread over several --- reorder
+Two distortions of identical $\mathrm{TV}$, one concentrated on a
+single heavily weighted criterion and one spread over several, reorder
 the alternatives very differently, because deviations of opposite sign
 partially cancel in the weighted sum when they are distributed.
 The following identity separates the two dimensions.
@@ -1881,11 +1881,12 @@ of the value model.
 \subsection{External validity: synthetic instances}
 \label{sec:external}
 
-Fogo Island is a single candidate set with specific marginal
-distributions.
-To separate the mechanism from the instance, we re-draw the criterion
-columns while holding the spatial structure fixed: each synthetic
-instance reuses the Fogo distance matrix, and hence the same
+The preceding sections quantify both mechanisms on a single candidate
+set, Fogo Island, whose marginal distributions are specific and in one
+respect extreme: \textit{perm} carries $350$ tied zeros.
+This section separates the mechanism from the instance by re-drawing the
+criterion columns while holding the spatial structure fixed: each
+synthetic instance reuses the Fogo distance matrix, and hence the same
 $|\Tset|=\Ntrios$ feasible trios, and varies only the marginals.
 
 \paragraph{Design.}
@@ -1896,8 +1897,8 @@ level (Section~\ref{sec:three_norms}), so applying the same zero mass to
 every column leaves the elicited weights untouched however extreme that
 mass becomes.
 Distortion requires heterogeneity \emph{across} columns.
-We therefore cross $n_{\mathrm{sparse}}\in\{0,1,2,3,4\}$ --- zero mass
-applied to the $n_{\mathrm{sparse}}$ most heavily weighted criteria ---
+We therefore cross $n_{\mathrm{sparse}}\in\{0,1,2,3,4\}$, with zero mass
+applied to the $n_{\mathrm{sparse}}$ most heavily weighted criteria,
 with $p_0\in\{0.50,0.75,0.90,0.95\}$ and two tail shapes (lognormal,
 bimodal), with $6$ replications: $240$ instances at $200$ draws each.
 Four cells are evaluated per instance: SAW under min--max and vector
@@ -1924,10 +1925,10 @@ $r=0.600$ ($95\%$ CI by Fisher transformation $[0.214,\,0.824]$,
 $n=20$), but the relation is not monotone: $23.2\%$ of the $190$ cell
 pairs are inversions (Kendall $\tau=0.533$).
 Restricting to the $16$ cells that carry a distortion at all
-($n_{\mathrm{sparse}}\ge1$), the association is not significant
-($r=0.346$, $p=0.189$): the correlation over all $20$ cells is carried
-by the four cells in which no criterion is sparse and the loss is zero
-by construction.
+($n_{\mathrm{sparse}}\ge1$), the association is statistically
+indistinguishable from no effect ($r=0.346$, $p=0.189$): the
+correlation over all $20$ cells is carried by the four cells in which
+no criterion is sparse and the loss is zero by construction.
 Table~\ref{tab:external} shows the reversal directly --- at
 $p_0=0.95$, $\mathrm{TV}$ rises with $n_{\mathrm{sparse}}$ while the
 loss falls.
@@ -1935,7 +1936,8 @@ loss falls.
 \paragraph{The factorisation does.}
 Proposition~\ref{prop:concentration} accounts for this.
 Regressing the loss on the $16$ distorted cells gives
-$R^2_{\mathrm{adj}}=0.057$ for $\mathrm{TV}$ alone (not significant)
+$R^2_{\mathrm{adj}}=0.057$ for $\mathrm{TV}$ alone ($r=0.346$,
+$p=0.189$, statistically indistinguishable from no effect)
 against $R^2_{\mathrm{adj}}=0.490$ for $\lVert\delta\rVert_2$
 of~\eqref{eq:l2fact} ($r=0.724$, $p=0.002$).
 Entering magnitude and concentration separately gives
@@ -1944,9 +1946,9 @@ $m_{\mathrm{eff}}$ ($-0.026$ per effective criterion, $p=0.0009$): at
 fixed $\mathrm{TV}$, spreading the distortion over more criteria
 \emph{reduces} the loss, because deviations of opposite sign cancel in
 the weighted sum.
-The combined model reaches $R^2_{\mathrm{adj}}=0.665$.
-Magnitude is necessary but not sufficient; concentration is the missing
-term.
+The combined model, with both predictors, reaches $R^2_{\mathrm{adj}}=0.665$,
+confirming that magnitude is necessary but not sufficient: concentration
+is the term that $\mathrm{TV}$ omits.
 
 \paragraph{Reconciliation with Fogo, and where the generator falls short.}
 Fogo has $m_{\mathrm{eff}}=4.05$ on the admissible range $[2,11]$,
@@ -2201,10 +2203,10 @@ normalisation.
 
 Third, report effective weights alongside elicited weights, and with
 them the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
-of~\eqref{eq:TV} and~\eqref{eq:meff}.
-The computation is one line given the normalised matrix.
-$\mathrm{TV}$ alone is insufficient: it is the $\ell^1$ norm of the
-deviation and is invariant to whether that deviation sits on one
+of~\eqref{eq:TV} and~\eqref{eq:meff}, which requires one line given
+the normalised matrix.
+The total variation alone is insufficient: it is the $\ell^1$ norm of
+the deviation and is invariant to whether that deviation sits on one
 criterion or on many, a distinction that
 Section~\ref{sec:external} shows governs the loss.
 A report stating $\mathrm{TV}=0.31$ with $m_{\mathrm{eff}}=4$ on a
@@ -2230,7 +2232,7 @@ Proposition~\ref{prop:exponent} extends it to distance-based and
 ordinal families through the amplitude exponent, but the extension is
 exact for the squared TOPSIS distance rather than the distance itself,
 and we have not characterised families whose contribution is not
-homogeneous in $w_j n_j(\cdot)$ --- outranking methods with non-linear
+homogeneous in $w_j n_j(\cdot)$, outranking methods with non-linear
 preference functions in particular.
 
 \emph{Empirical support for the ordering.}
@@ -2253,8 +2255,8 @@ the distortion as well as its magnitude
 $0.057$ for $\mathrm{TV}$), and Fogo's $m_{\mathrm{eff}}=4.05$ places
 it at the concentrated end of the range $[2,11]$.
 Two limits remain.
-The synthetic generator produces one-sided distortion --- a few columns
-inflated, the rest deflated uniformly --- whereas Fogo's deviation
+The synthetic generator produces one-sided distortion, with a few columns
+inflated and the rest deflated uniformly, whereas Fogo's deviation
 vector is two-sided, with one criterion inflated $2.88\times$ and four
 independently deflated below $0.55\times$; the synthetic model
 consequently underestimates Fogo's loss by $7.7$~pp and should be read
