@@ -43,17 +43,23 @@ sys.path.insert(0, str(Path(__file__).parent))
 from pareto3d import pareto_front_3d, run_unit_tests
 
 # ---------------------------------------------------------------------------
-# Constants
+# Constants — weights from mcdm_experiment.py (Table 7, IEEE Access 2026)
+# Order: perm, slope, roads, rivers, aspect, coast, protected, wells,
+#        urban, aero, cult
+# G1=siting efficiency (F1): perm,slope,roads,rivers (indices 0-3)
+# G2=environmental integrity (F2): aspect,coast,protected,wells (indices 4-7)
+# G3=social safety (F3): urban,aero,cult (indices 8-10)
 # ---------------------------------------------------------------------------
 W_AHP = np.array([
-    0.177, 0.107, 0.107, 0.059,   # G1 siting (indices 0-3)
-    0.059, 0.059, 0.069, 0.069,   # G2 impact (indices 4-7)
-    0.107, 0.107, 0.080,           # G3 safety (indices 8-10)
+    0.152, 0.113, 0.030, 0.091,   # G1: perm, slope, roads, rivers
+    0.075, 0.069, 0.066, 0.055,   # G2: aspect, coast, protected, wells
+    0.166, 0.102, 0.081,           # G3: urban, aero, cult
 ], dtype=np.float32)
-W_AHP /= W_AHP.sum()
+assert abs(float(W_AHP.sum()) - 1.0) < 1e-5, "weights must sum to 1"
 
 # Criteria sorted by weight descending — sparse applied to highest-weight first
-SPARSE_ORDER = np.argsort(-W_AHP)  # [0,8,9,1,2,10,6,7,4,5,3]
+# Correct order: urban(0.166), perm(0.152), slope(0.113), aero(0.102), ...
+SPARSE_ORDER = np.argsort(-W_AHP)
 
 M = len(W_AHP)
 G1, G2, G3 = slice(0, 4), slice(4, 8), slice(8, 11)
@@ -137,13 +143,21 @@ def load_fogo_trios(data_dir):
 # Compatibility matrix from trios (no distance matrix needed)
 # ok[u,v] = True iff d(u,v) >= d_min AND there exists w compatible with both
 # ---------------------------------------------------------------------------
-def build_ok_matrix(trios_i16, N):
-    """151 KB bool matrix, built once."""
+def load_ok_matrix(data_dir, trios_i16, N):
+    """Load pre-computed ok_matrix.npy or build and save if missing."""
+    npy = data_dir / 'ok_matrix.npy'
+    if npy.exists():
+        ok = np.load(npy)
+        print(f"Loaded ok_matrix from {npy.name} ({ok.nbytes/1024:.0f} KB)")
+        return ok
+    print("Building compatibility matrix from trios...")
     ok = np.zeros((N, N), dtype=bool)
     t = trios_i16.astype(np.int32)
     for a, b in ((0, 1), (0, 2), (1, 2)):
         ok[t[:, a], t[:, b]] = True
         ok[t[:, b], t[:, a]] = True
+    np.save(npy, ok)
+    print(f"Saved ok_matrix: {ok.nbytes/1024:.0f} KB")
     return ok
 
 
@@ -165,12 +179,8 @@ def greedy_trio_idx(site_scores, ok, trios_i16):
                 break
     if len(chosen) < 3:
         return -1
-    chosen_set = frozenset(chosen)
-    # Find matching trio index
-    t = trios_i16.astype(np.int32)
-    mask = ((t[:, 0] == chosen[0]) | (t[:, 0] == chosen[1]) | (t[:, 0] == chosen[2]))
-    mask &= ((t[:, 1] == chosen[0]) | (t[:, 1] == chosen[1]) | (t[:, 1] == chosen[2]))
-    mask &= ((t[:, 2] == chosen[0]) | (t[:, 2] == chosen[1]) | (t[:, 2] == chosen[2]))
+    c0, c1, c2 = np.int16(sorted(chosen))
+    mask = (trios_i16[:, 0] == c0) & (trios_i16[:, 1] == c1) & (trios_i16[:, 2] == c2)
     idx = np.where(mask)[0]
     return int(idx[0]) if len(idx) > 0 else -1
 
@@ -251,46 +261,64 @@ def evaluate_instance(fogo_trios, ok, X_raw, w_ahp, n_draws, kappa, seed):
     W_draws = rng.dirichlet(kappa * w_f32.astype(float), n_draws).astype(np.float32)
     W_draws /= W_draws.sum(1, keepdims=True)
 
-    # Four cells
-    cells = {
-        'mm_opt':  {'C': C_mm,  'assembly': 'opt'},
-        'mm_grd':  {'C': C_mm,  'assembly': 'grd'},
-        'vec_grd': {'C': C_vec, 'assembly': 'grd'},
-        'vec_opt': {'C': C_vec, 'assembly': 'opt'},
-    }
+    # Pre-calculate SAW for optimal assembly
+    SAW_mm  = C_mm  @ W_draws.T  # (n_trios, n_draws)
+    SAW_vec = C_vec @ W_draws.T  # (n_trios, n_draws)
 
-    results = {'tv_mm': tv_mm, 'tv_vec': tv_vec, 'front_size': front_size}
+    # Pre-calculate site scores for greedy assembly (389, n_draws)
+    site_scores_mm  = V_mm  @ W_draws.T
+    site_scores_vec = V_vec @ W_draws.T
 
-    for cell_name, cfg in cells.items():
-        C_cell = cfg['C']
-        q2_list, q3_list = [], []
+    cell_q2 = {'mm_opt': [], 'mm_grd': [], 'vec_grd': [], 'vec_opt': []}
+    cell_q3 = {'mm_opt': [], 'mm_grd': [], 'vec_grd': [], 'vec_opt': []}
 
-        SAW_batch_all = (C_cell @ W_draws.T)  # (n_trios, n_draws)
+    for k in range(n_draws):
+        w_k = W_draws[k]
 
-        for k in range(n_draws):
-            w_k = W_draws[k]
-            best_idx = int(SAW_batch_all[:, k].argmax()) if cfg['assembly'] == 'opt' \
-                       else greedy_trio_idx(V_mm @ w_k if 'mm' in cell_name else V_vec @ w_k,
-                                            ok, fogo_trios)
+        # Evaluate in objective space (min-max objectives, w of draw)
+        Wg_k = build_Wg(w_k)
+        F_k  = (C_mm @ Wg_k).astype(np.float32)   # always min-max objectives
+        R_k  = (F_k.max(0) - F_k.min(0)).astype(np.float32)
+        R_k  = np.where(R_k > 0, R_k, np.float32(1.0))
+
+        idx_mm_opt  = int(SAW_mm[:, k].argmax())
+        idx_mm_grd  = greedy_trio_idx(site_scores_mm[:, k], ok, fogo_trios)
+        idx_vec_grd = greedy_trio_idx(site_scores_vec[:, k], ok, fogo_trios)
+        idx_vec_opt = int(SAW_vec[:, k].argmax())
+
+        draw_indices = {
+            'mm_opt':  idx_mm_opt,
+            'mm_grd':  idx_mm_grd,
+            'vec_grd': idx_vec_grd,
+            'vec_opt': idx_vec_opt,
+        }
+
+        # Cache dominance queries for this draw so identical trio choices
+        # across cells don't scan 1.94M rows multiple times
+        dom_cache = {}
+        gap_cache = {}
+
+        for cell_name, best_idx in draw_indices.items():
             if best_idx < 0:
                 continue
+            if best_idx not in dom_cache:
+                dom = is_dominated_vec(F_k, best_idx)
+                dom_cache[best_idx] = dom
+                gap_cache[best_idx] = gap_vec(F_k, best_idx, R_k) if dom else 0.0
 
-            # Evaluate in objective space (min-max objectives, w of draw)
-            Wg_k = build_Wg(w_k)
-            F_k  = (C_mm @ Wg_k).astype(np.float32)   # always min-max objectives
-            R_k  = (F_k.max(0) - F_k.min(0)).astype(np.float32)
-            R_k  = np.where(R_k > 0, R_k, np.float32(1.0))
+            cell_q2[cell_name].append(float(not dom_cache[best_idx]))
+            cell_q3[cell_name].append(gap_cache[best_idx])
 
-            dominated = is_dominated_vec(F_k, best_idx)
-            q2_list.append(float(not dominated))
-            q3_list.append(gap_vec(F_k, best_idx, R_k) if dominated else 0.0)
-
+    results = {'tv_mm': tv_mm, 'tv_vec': tv_vec, 'front_size': front_size}
+    for cell_name in ['mm_opt', 'mm_grd', 'vec_grd', 'vec_opt']:
+        q2_list = cell_q2[cell_name]
+        q3_list = cell_q3[cell_name]
         nd = len(q2_list)
         results[f'Q2_{cell_name}']    = float(np.mean(q2_list)) if nd else float('nan')
         results[f'Q3_{cell_name}']    = float(np.mean(q3_list)) if nd else float('nan')
         results[f'Q2_se_{cell_name}'] = float(np.std(q2_list)/np.sqrt(nd)) if nd > 1 else float('nan')
 
-    del C_mm, C_vec
+    del C_mm, C_vec, SAW_mm, SAW_vec
     return results
 
 
@@ -324,9 +352,7 @@ def main():
     N_FOGO = int(fogo_trios.astype(np.int32).max()) + 1
     print(f"N_FOGO={N_FOGO}, n_trios={len(fogo_trios):,}")
 
-    print("Building compatibility matrix from trios...")
-    ok = build_ok_matrix(fogo_trios, N_FOGO)
-    print(f"ok matrix: {ok.nbytes/1024:.0f} KB")
+    ok = load_ok_matrix(data_dir, fogo_trios, N_FOGO)
 
     # Grid factors
     N_SPARSE_LEVELS = [0, 1, 2, 3, 4]
