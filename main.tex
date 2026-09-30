@@ -954,7 +954,7 @@ bootstrap intervals, paired by draw.
 
 The central analytical result of the paper is stated and derived in this section.
 It takes the form of a lemma that expresses effective weights in closed form,
-followed by four propositions and one corollary that characterise the specific distortions
+followed by five propositions and three corollaries that characterise the specific distortions
 produced by min--max, vector, and rank normalisation.
 
 % ----------------------------------------------------------
@@ -1197,8 +1197,9 @@ The three families instantiate $\alpha$ as follows.
     equivalent under vector normalisation (where $A_j^{\rm vec}$
     introduces a per-criterion scale), but not to affine shifts or to
     rank transformations; VIKOR\,$\times$\,ranks remains distinct.
-    The exponent formulation does not apply to VIKOR, and the
-    redundancy is confined to the two vector cells.
+    The exponent formulation does not apply to VIKOR; the
+    VIKOR$\,\times\,$vector cells duplicate VIKOR$\,\times\,$min--max
+    and are removed from the design.
   \item \textbf{PROMETHEE~II (usual criterion)}: $\alpha=0$.
     The usual preference function is ordinal, hence invariant to any
     monotone transformation, so all three normalisations produce the
@@ -1473,6 +1474,45 @@ The distortion is thus not merely large but \emph{concentrated}: a
 single criterion carries $45.4\%$ of the total absolute deviation.
 This replaces the qualitative observation that \textit{perm} is an
 adversarial column with a position on a bounded scale.
+
+% ----------------------------------------------------------
+\subsection{Order of operations under vector normalisation}
+\label{sec:order_ops}
+% ----------------------------------------------------------
+
+\begin{corollary}[Order of operations under vector normalisation]
+\label{cor:order}
+For a criterion complemented to a cost orientation, the amplitude
+$A_j^{\rm vec}$ depends on whether the complement precedes or follows
+normalisation.
+Min--max is affine, so $A_j^{\rm mm}$ is invariant to the order.
+Vector normalisation is not: complementing first normalises
+$\mathbf{1}-\mathbf{x}$ and complementing afterwards normalises
+$\mathbf{x}$.
+For a binary column with $n_1$ ones and $n_0=N-n_1$ zeros:
+\[
+  A_j^{\rm complement\text{-}first} = \tfrac{1}{\sqrt{n_0}},
+  \qquad
+  A_j^{\rm normalise\text{-}first} = \tfrac{1}{\sqrt{n_1}},
+  \qquad
+  \text{ratio } = \sqrt{n_0/n_1}.
+\]
+The two normalised columns are orthogonal rather than collinear.
+\end{corollary}
+
+\paragraph{Empirical magnitude on Fogo Island.}
+For \textit{aspect} ($n_1=94$ leeward sites, $n_0=295$), the two orders
+give $A_j\in\{0.058,\,0.103\}$, a factor of $1.77$.
+Running TOPSIS with vector normalisation under each order, holding the
+criterion semantics (leeward $=$ favourable), weights, and data fixed,
+yields a Kendall~$\tau_b=0.960$ and top-100 set agreement of $0.960$
+across the $\Nvia$ admissible sites.
+The agreement is high because \textit{aspect} is one of eleven criteria:
+the 1.77$\times$ amplitude difference in one binary column is partly
+absorbed by the other ten.
+The divergence between the two orders would widen in proportion to
+$\sqrt{n_0/n_1}$ and would be undetectable in any output that a
+practitioner routinely reports.
 
 % ----------------------------------------------------------
 % ----------------------------------------------------------
@@ -2308,6 +2348,21 @@ neither number conveys this alone.
 Where elicited weights carry normative content, as with AHP judgements
 from stakeholders, a normalisation that silently reweights them is
 difficult to defend.
+
+Fourth, report the order in which orientation adjustment and
+normalisation are applied.
+Under min--max the order is immaterial because the complementation
+$x\mapsto 1-x$ is affine.
+Under vector normalisation it is not: complementing before normalising
+gives amplitude $1/\lVert\mathbf{1}-\mathbf{x}\rVert_2$ while
+normalising first gives $1/\lVert\mathbf{x}\rVert_2$, and the two
+normalised columns are orthogonal rather than collinear
+(Corollary~\ref{cor:order}).
+For a binary indicator with $n_1$ ones and $n_0$ zeros the amplitudes
+differ by $\sqrt{n_0/n_1}$; for \textit{aspect} on Fogo this is $1.77$.
+The order of operations is not reported in any study we reviewed, yet it
+determines which column is normalised and therefore which amplitude
+enters the effective weights.
 
 Comparing aggregation operators, by contrast, is the least consequential
 of the design choices we examine ($+0.9$~pp, equivalent to zero within
