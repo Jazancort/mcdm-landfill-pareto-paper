@@ -116,6 +116,9 @@ The distortion is governed by an amplitude exponent that differs across
 aggregation families: min--max preserves elicited weights under additive
 aggregation but not under TOPSIS, where amplitudes enter quadratically
 and $\mathrm{TV}=0.160$ even when all $A_j\equiv 1$.
+The severity is further determined by criterion concentration: a
+closed-form decomposition shows that the loss scales with the product of
+TV and the effective number of criteria $m_{\rm eff}\in[2,m]$.
 Min--max is the unique standard normalisation that preserves elicited
 weights under SAW; vector normalisation multiplies one criterion's weight
 by $2.88\times$ in our data; every binary criterion loses half its weight
@@ -263,6 +266,11 @@ Our contributions are as follows.
     the main effects conceal, and an explanation of why: the distortion
     acts through the weighted sum and the aggregation operator lies
     downstream of it.
+  \item A factorisation of the efficiency loss into an amplitude component
+    and a concentration component (Proposition~\ref{prop:concentration}),
+    and a synthetic grid of 240 instances showing that the joint product
+    of the two governs the observed loss across diverse marginal distributions
+    (Section~\ref{sec:external}).
   \item An exact identity between PROMETHEE~II under the usual preference
     function and rank-weighted SAW, holding for arbitrary tie structure
     (Section~\ref{prop:p2}), which follows from the axiomatic results
@@ -573,10 +581,11 @@ decision dimensions of landfill siting: siting cost ($G_1$),
 environmental impact ($G_2$), and social safety ($G_3$)
 (Table~\ref{tab:amplitude}).
 Let $c_j(i)\in[0,1]$ be the partial value of site~$i$ on criterion~$j$,
-where larger values denote a less desirable outcome for $G_1$ and $G_2$
-(cost and impact criteria are not inverted before entry into $F_1$
-and~$F_2$) and a more desirable outcome for $G_3$, and let $w_j$ be the
-criterion weight.
+built so that larger values denote a less desirable outcome for $G_1$ and
+$G_2$ (distance criteria in $G_1$ and $G_2$ enter as $1-\hat{x}_j$
+so that a short distance is a high cost; the binary aspect criterion
+assigns $c_j=0$ to the leeward class), and a more desirable outcome for
+$G_3$, and let $w_j$ be the criterion weight.
 The three objectives therefore have mixed senses:
 \begin{align}
   F_1(t) &= \sum_{i\in t}\sum_{j\in G_1} w_j\,c_j(i),
@@ -596,17 +605,24 @@ inverted before normalisation, and for the binary aspect criterion
 the leeward class ($\in[90^\circ,180^\circ]$) is assigned $c_j=0$
 in the objective computation and $c_j=1$ in the SAW/TOPSIS decision matrix
 (where it is treated as a benefit criterion).
-The two representations yield identical adjusted scores: in the objective
-matrix the leeward class has $c_j=0$, which after the orientation
-complement becomes $1-0=1$; in the decision matrix it already carries
-$c_j=1$, so no complement is applied.
-The effective score contribution is $w_j\cdot 1$ in either case, and the
-two versions of the SAW score rank all portfolios identically
-(empirically: top-100 rank agreement $=1.000$ on Fogo).
+The two representations yield identical \emph{adjusted} scores under
+min--max normalisation: the leeward class carries $c_j=0$ in the
+objective matrix, which the orientation complement turns into $1-0=1$,
+and $c_j=1$ in the decision matrix, where no complement is applied;
+the two versions of the SAW score rank all portfolios identically
+(top-100 rank agreement $=1.000$ on Fogo under min--max).
+Under vector normalisation the equivalence does not hold.
+The decision matrix normalises the column $x \in\{0,1\}$ directly,
+giving $\lVert\mathbf{x}\rVert_2=\sqrt{n_1}=\sqrt{94}$ and
+$A_j^{\rm vec}=1/\sqrt{94}=0.103$; a hypothetical objective-aligned
+encoding would normalise $1-x$, giving $\sqrt{295}$ and $0.058$,
+differing by $\sqrt{295/94}=1.77$.
+All cells in the factorial use the decision-matrix encoding ($c_j=1$
+for the leeward class) consistently; the top-100 rank agreement between
+the two encodings under vector normalisation is $0.030$ on Fogo,
+confirming that the choice is material for TOPSIS.
 Amplitudes in Table~\ref{tab:amplitude} are measured on the decision
-matrix (before the orientation complement), giving
-$A_j^{\rm vec}=1/\lVert\mathbf{x}_j\rVert_2=1/\sqrt{n_1}$ with
-$n_1=94$ leeward sites among the $\Nvia$ admissible sites.
+matrix, with $n_1=94$ leeward sites among the $\Nvia$ admissible sites.
 Criteria in $G_3$ are built so that $c_j(i)=1$ is most favourable
 (farther from urban areas, airports, and cultivation).
 The SAW method compensates for the mixed senses by complementing $G_1$
@@ -858,19 +874,19 @@ The experiment evaluates each method--normalisation--assembly cell by
 two performance measures.
 The \emph{primary} measure is
 \begin{equation}
+  Q_2 = \Pr_{w}\bigl[\,M(w)\in\Fset(w)\,\bigr],
+    \qquad \wsc=\wob=\wfr=w. \label{eq:Q2}
+\end{equation}
+$Q_2$ is the probability of reaching the frontier.
+The \emph{secondary} measure is
+\begin{equation}
   Q_3 = \mathbb{E}_{w}\bigl[\,\mathrm{gap}(M(w),w)\,\bigr],
     \qquad \wsc=\wob=\wfr=w, \label{eq:Q3}
 \end{equation}
 the expected optimality gap~\eqref{eq:gap}, which is continuous on
 $[0,1]$ and retains information about how far below the frontier the
 assembled portfolio falls.
-The \emph{secondary} measure is
-\begin{equation}
-  Q_2 = \Pr_{w}\bigl[\,M(w)\in\Fset(w)\,\bigr],
-    \qquad \wsc=\wob=\wfr=w. \label{eq:Q2}
-\end{equation}
-$Q_2$ is the probability of reaching the frontier; $Q_3=0$ if and only if
-$Q_2=1$.
+$Q_3=0$ if and only if $Q_2=1$.
 Both are averaged over $\ndraws$ draws per cell.
 The cell SAW/min--max/optimal satisfies $Q_2=1$ and $Q_3=0$ by
 Proposition~\ref{prop:p1:stmt}; it serves as a regression test and is
@@ -938,7 +954,7 @@ bootstrap intervals, paired by draw.
 
 The central analytical result of the paper is stated and derived in this section.
 It takes the form of a lemma that expresses effective weights in closed form,
-followed by three propositions that characterise the specific distortions
+followed by four propositions and one corollary that characterise the specific distortions
 produced by min--max, vector, and rank normalisation.
 
 % ----------------------------------------------------------
@@ -1175,10 +1191,19 @@ The three families instantiate $\alpha$ as follows.
     \emph{Scope: the exponent interpretation is by analogy with the
     additive case; the effective weight in~\eqref{eq:weff_alpha} is
     exact for the squared distance, not the distance itself.}
-  \item \textbf{VIKOR, PROMETHEE~II (usual criterion)}: $\alpha=0$.
-    A common scale factor cancels in VIKOR's ratio form; the usual
-    preference function is ordinal and invariant to any monotone
-    transformation, so amplitude is irrelevant.
+  \item \textbf{VIKOR}: invariant to a common positive scale factor,
+    which cancels in the ratio to the ideal and anti-ideal points.
+    This renders the two cells VIKOR\,$\times$\,\{min--max, vector\}
+    equivalent under vector normalisation (where $A_j^{\rm vec}$
+    introduces a per-criterion scale), but not to affine shifts or to
+    rank transformations; VIKOR\,$\times$\,ranks remains distinct.
+    The exponent formulation does not apply to VIKOR, and the
+    redundancy is confined to the two vector cells.
+  \item \textbf{PROMETHEE~II (usual criterion)}: $\alpha=0$.
+    The usual preference function is ordinal, hence invariant to any
+    monotone transformation, so all three normalisations produce the
+    same ranking; the six PROMETHEE cells collapse to two
+    (greedy and optimal), removing four from the design.
 \end{itemize}
 \end{proposition}
 
@@ -1345,7 +1370,7 @@ Criterion & Group & $w_j$ & $A_j^{\text{mm}}$ & $A_j^{\text{vec}}$ &
 \textit{aero}      & $G_3$ & 0.102 & 1.000 & 0.086 & 0.995 & 0.43 & 1.12 \\
 \textit{cult}      & $G_3$ & 0.081 & 1.000 & 0.171 & 0.981 & 0.85 & 1.11 \\
 \midrule
-$\mathrm{TV}$ & & & 0.000 & & & 0.315 & 0.091 \\
+$\mathrm{TV}$ & & & 0.000 & 0.315 & 0.091 & & \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -1513,13 +1538,14 @@ with objective values agreeing to $10^{-16}$.
 The pipeline therefore recovers the published solution before any
 factor is varied.
 
-Two failures are visible at nominal weights.
-Greedy assembly of the \emph{same} SAW score returns $\{184,279,320\}$
+Four of the seven method portfolios are dominated at nominal weights.
+Greedy assembly of the SAW score returns $\{184,279,320\}$
 with $\mathrm{gap}=0.032$, a dominated portfolio sharing one site with
 the optimum.
-TOPSIS with vector normalisation and VIKOR are also dominated
-($\mathrm{gap}=0.048$ and $0.052$), while TOPSIS min--max
-normalisation and PROMETHEE~II attain the reference set.
+TOPSIS with vector normalisation (both greedy, $\mathrm{gap}=0.048$,
+and optimal, $\mathrm{gap}=0.024$) and VIKOR ($\mathrm{gap}=0.052$)
+are also dominated, while SAW min--max optimal, TOPSIS min--max
+normalisation, and PROMETHEE~II attain the reference set.
 
 \begin{table*}[!t]
 \centering
@@ -1559,7 +1585,7 @@ Section~\ref{sec:refset} returns to this.
 \includegraphics[width=0.92\textwidth]{figures/fig_F3_pareto.pdf}
 \caption{%
   Two-dimensional projections of the exact Pareto frontier ($n=\Fmmsize$
-  portfolios in $\mathcal{A}'$, grey dots) and the eight canonical
+  portfolios in $\mathcal{A}'$, grey dots) and the seven canonical
   portfolios of Table~\ref{tab:canonical} (evaluated against
   $\mathcal{A}'$).
   Blue diamonds: Pareto-efficient portfolios (gap~$=0$);
@@ -2405,17 +2431,24 @@ The closed form is exact for additive aggregation; TOPSIS and VIKOR
 combine distances to ideal points, where amplitudes enter quadratically
 or in ratio form, and extending the characterisation to those families
 remains open.
-The monotone relation between predicted distortion and observed
-efficiency rests on three normalisation levels, which supports an
-ordering but not a predictive coefficient; adding sum, max and
-Weitendorf normalisations would give the degrees of freedom required, at
-modest computational cost.
-And the magnitudes are specific to one candidate set: the analytical
+The monotone ordering of the three normalisation levels within SAW
+by TV and efficiency holds on Fogo and yields Kendall $\tau_b=0.550$
+across the 240 synthetic instances of Section~\ref{sec:external};
+however, non-monotone cases arise in the grid (instances where ranks
+outperform vector despite lower TV), confirming that the ordering
+reflects a central tendency rather than a deterministic law.
+A closed-form factorisation of the loss into an amplitude term and a
+concentration term (Proposition~\ref{prop:concentration}) shows that
+the two are jointly responsible and that neither alone is sufficient.
+Adding sum, max, and Weitendorf normalisations would sharpen the
+empirical slope, at modest computational cost.
+The magnitudes are specific to one candidate set: the analytical
 results hold for any instance, but the size of the distortion depends on
 the marginal distributions, and a criterion with $350$ tied zeros among
 $\Nvia$ sites is an adversarial case.
-Fogo Island quantifies the mechanism; it does not estimate how large it
-typically is.
+Fogo Island quantifies the mechanism and the synthetic grid
+(Section~\ref{sec:external}) provides an initial estimate of its
+typical size; extending both to a wider set of instances remains open.
 
 The broader implication is methodological.
 Benchmarking multi-criteria methods by agreement between their rankings
