@@ -66,7 +66,13 @@ CORPUS.append({
         # A9: Through-hardened carbon: bend=430, surf=500,  UTS=635,  surf_h=185,  core_h=185
         [430,   500,   635,   185,   185],
     ],
-    'notes': 'Table 2 ranges averaged for single-point values. Weights from Table 4 (modified AHP). X5 cost: lower core hardness preferred per paper §3.',
+    'notes': 'Weights from Table 4 (modified AHP). X5 cost: lower core hardness preferred per paper §3.',
+    'active': True,   # m=9 ≥ 8
+    # Objective groups for Pareto frontier (3 groups, following PRESPEC.md §4)
+    # G1 = fatigue resistance: bending + surface fatigue
+    # G2 = mechanical strength: UTS + surface hardness
+    # G3 = toughness/cost: core hardness (cost)
+    'obj_groups': [[0, 1], [2, 3], [4]],
 })
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -107,6 +113,9 @@ CORPUS.append({
         [128.9520, 0.3337,  6.8974],
     ],
     'notes': 'Equal weights (1/3 each) — elicited via equal judgment. TV under vector will be small given equal magnitudes. Useful for TV≈0 anchor in corpus.',
+    'active': True,   # m=16 ≥ 8
+    # 3 criteria → 3 groups, one each
+    'obj_groups': [[0], [1], [2]],
 })
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -143,6 +152,8 @@ CORPUS.append({
         [650, 4.0,  6,  9,  8],
     ],
     'notes': 'Weights sum to 0.73 as published — possible missing 6th criterion. Normalised to 1. Flag as PENDING verification of original Chakraborty & Yeh source.',
+    'active': False,  # m=6 < 8 — excluded per PRESPEC.md §5
+    'obj_groups': None,
 })
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -175,6 +186,8 @@ CORPUS.append({
         [82,  3.9, 42, 2700, 32, 5, 91],
     ],
     'notes': 'Weights are Entropy-AHP combined (wcj). Raw matrix values from Step 1 of the paper. Sum of weights = 1.0.',
+    'active': False,  # m=5 < 8 — excluded per PRESPEC.md §5
+    'obj_groups': None,
 })
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -211,6 +224,12 @@ CORPUS.append({
         [170, 8.00, 6.0, 2,   165, 180, 5, 3, 1.10, 40,   4.0, 3, 0.2, 140],  # Nylon12CF
     ],
     'notes': 'Weights from Table 10 (3 dec). Matrix values from Table 4. 8 benefit + 6 cost criteria.',
+    'active': True,   # m=9 ≥ 8
+    # 14 criteria → 3 groups (Performance / Economic / Environmental)
+    # Performance (8 crit): TS, E, FR, EB, Sf, OT, DU, RE  → indices 0-7
+    # Economic (1 crit):    C  → index 9
+    # Environmental (5 crit): d, P.CO2, FP, WU, EU → indices 8,10,11,12,13
+    'obj_groups': [[0,1,2,3,4,5,6,7], [9], [8,10,11,12,13]],
 })
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -239,6 +258,8 @@ CORPUS.append({
         [211.75, 12.86, 645.16, 84.5, 127, 144.00, 99.835, 39.52, 45411, 0.02088, 1.79, 2.75, 0.000556, 0.176, 588.5],
     ],
     'notes': 'ASN series (Si3N4 wt%: 0,2,4,6). Weights from Table 12 (CR=0.0094). Normalised to sum=1.',
+    'active': False,  # m=4 < 8 — excluded per PRESPEC.md §5
+    'obj_groups': None,
 })
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -261,6 +282,8 @@ CORPUS.append({
         [134.43,  2.67, 239.67, 33.5,  83, 119.20, 99.177, 17.63, 14578, 0.00691, 3.46, 2.66, 0.0000596, 0.150, 426.7],
     ],
     'notes': 'AGR series (Gr wt%: 0,2,4,6). Same weights as ASN. Normalised to sum=1.',
+    'active': False,  # m=4 < 8 — excluded per PRESPEC.md §5
+    'obj_groups': None,
 })
 
 

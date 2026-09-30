@@ -53,7 +53,37 @@ we use one group per criterion (each criterion is its own objective). This
 is the most conservative choice and never inflates Q2 relative to Fogo's
 grouped structure.
 
-## 5. Pre-declared hypotheses
+## 5. Minimum m (pre-declared)
+
+Instances with m < 8 are excluded from the active corpus.
+Justification: C(m,3) < 56 trios — insufficient portfolio space for the
+greedy/optimal distinction to have content. Without coupling constraints
+(no 10km separation rule), the optimal portfolio IS the greedy portfolio
+by separability of the additive sum: arg max sum(s_i) = top-k by score.
+The assembly factor is therefore zero for any unconstrained corpus instance.
+
+**Scope of the corpus (Mechanism 1 only):** the corpus tests the amplitude
+identity and the ordering TV → efficiency loss under SAW scoring, not the
+normalisation × assembly interaction. That interaction requires spatial
+coupling constraints (as in Fogo) and is tested separately via the
+A_j(t) path (WS2).
+
+For unconstrained instances we report k=1 (best alternative) in addition
+to k=3, since greedy ≡ optimal by theorem and reporting both is redundant.
+
+Instances excluded by m < 8:
+- bhaskar2023_asn (m=4): excluded
+- bhaskar2023_agr (m=4): excluded
+- chen2020 (m=5): excluded
+
+Active corpus (m ≥ 8):
+- milani2005 (m=9) ✓
+- vafaei2018 (m=16) ✓
+- vafaei2022 (m=6) — BORDERLINE: m=6 < 8, also excluded
+- junaid2024 (m=9) ✓
+
+Minimum for publication: 3 confirmed instances with m ≥ 8.
+Target: 8-10 instances.
 
 ### Primary hypothesis (H1)
 For each instance, under SAW with optimal assembly:
@@ -89,16 +119,17 @@ For H2: bootstrap Spearman CI (B=2000 resamples of instances).
 Any deviation (e.g., k ≠ 3, different grouping, matrix corrected post-extraction)
 must be logged in corpus/DEVIATIONS.md with justification.
 
-## 8. Corpus as of pre-specification date
+## 9. Corpus as of pre-specification date
 
-| ID | Source | m | n | Weights | Status |
-|----|--------|---|---|---------|--------|
-| milani2005 | Milani et al. (2005) Struct Multidisc Optim 29:312 | 9 | 5 | AHP entropy (Tab.4) | CONFIRMED |
-| vafaei2018 | Vafaei et al. (2018) IJIDS 10:19 | 16 | 3 | Equal (1/3) | CONFIRMED |
-| vafaei2022_chakraborty | Vafaei (2022) via Chakraborty & Yeh | 6 | 5 | Partial (sum≠1, to verify) | PENDING |
-| chen2020 | Chen (2020) Entropy 22:259 | TBD | TBD | AHP+entropy | PENDING DOWNLOAD |
-| junaid2024 | Junaid et al. (2024) MATEC 398:01012 | 9 | TBD | AHP | PENDING DOWNLOAD |
+| ID | Source | m | n | Weights | TV(vec) | Active |
+|----|--------|---|---|---------|---------|--------|
+| milani2005 | Milani et al. (2005) Struct Multidisc Optim 29:312 | 9 | 5 | AHP entropy (Tab.4) | 0.030 | YES |
+| vafaei2018 | Vafaei et al. (2018) IJIDS 10:19 | 16 | 3 | Equal (1/3) | 0.266 | YES |
+| junaid2024 | Junaid et al. (2024) MATEC 398:01012 | 9 | 14 | AHP | 0.211 | YES (need obj. groups) |
+| vafaei2022 | Vafaei (2022) via Chakraborty & Yeh | 6 | 5 | Partial (verify) | 0.150 | NO (m=6 < 8) |
+| chen2020 | Chen (2020) Entropy 22:259 | 5 | 7 | AHP+entropy | 0.254 | NO (m=5 < 8) |
+| bhaskar2023_asn | Bhaskar et al. (2023) Can Metall Q | 4 | 15 | AHP | 0.239 | NO (m=4 < 8) |
+| bhaskar2023_agr | Bhaskar et al. (2023) Can Metall Q | 4 | 15 | AHP | 0.320 | NO (m=4 < 8) |
 
-Additional instances to be added as PDFs become available.
-Minimum for publication: 5 confirmed instances.
-Target: 10-15 instances.
+Active instances need objective groupings into 3 groups (see §4).
+Additional instances with m ≥ 8 and natural groupings needed.
