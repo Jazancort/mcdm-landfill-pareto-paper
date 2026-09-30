@@ -2126,23 +2126,36 @@ a separate causal channel.
 A design in which the sparse columns carry unequal zero masses would
 decouple the two, and is the natural next step.
 
-\paragraph{Reconciliation with Fogo, and where the generator falls short.}
+\paragraph{Reconciliation with Fogo.}
 Fogo has $m_{\mathrm{eff}}=4.05$ on the admissible range $[2,11]$,
 placing it near the $n_{\mathrm{sparse}}=1$ regime of the grid
 ($m_{\mathrm{eff}}=3.59$).
+The comparison must be made at the grid's estimand, which is the
+greedy-assembly contrast under SAW: on Fogo that is
+$64.6-54.2=10.4$~pp, not the $26.8$~pp of
+Table~\ref{tab:tvorder} (which averages both assemblies) nor the
+$29.9$~pp normalisation main effect of Table~\ref{tab:effects} (which
+averages both assemblies and both aggregations, and is therefore
+inflated by the optimal-assembly cells where min--max attains $100\%$
+by Proposition~\ref{prop:p1:stmt}).
 The model in $\lVert\delta\rVert_2$, fitted on the synthetic cells
-alone, predicts $22.2$~pp at Fogo's $\lVert\delta\rVert_2=0.3127$,
-with a $95\%$ prediction interval for a new instance of
-$[7.5,\,36.9]$~pp, against the $29.9$~pp observed; the model in
-$\mathrm{TV}$ predicts $14.0$~pp with interval $[-4.7,\,32.7]$~pp.
-Both intervals contain the observed value, but the
-$\lVert\delta\rVert_2$ prediction is $7.7$~pp below it while the
-$\mathrm{TV}$ prediction is $15.9$~pp below, and the latter interval
-extends into negative losses, which are not attainable.
-Fogo's $m_{\mathrm{eff}}=4.05$ lies between the two lowest values
-sampled by the grid and $0.46$ above the nearest, within the first
-spacing of $2.83$; the prediction is an interpolation, but in a
-variable sampled at four levels only.
+alone, predicts $22.2$~pp at Fogo's $\lVert\delta\rVert_2=0.3127$, with
+a $95\%$ prediction interval for a new instance of $[7.5,\,36.9]$~pp;
+the model in $\mathrm{TV}$ predicts $14.0$~pp with interval
+$[-4.7,\,32.7]$~pp.
+Both intervals contain the observed $10.4$~pp, and both point
+predictions exceed it, by $11.8$ and $3.6$~pp respectively.
+We do not read the excess as a calibrated bias in either direction.
+The grid varies the marginals while holding the spatial structure fixed,
+and its vector cells confound implicit re-weighting with
+score--evaluator divergence because the objectives remain defined on
+min--max throughout; Fogo's deviation geometry differs from the
+generator's in a way the design does not parameterise
+(see below).
+What the grid establishes is that the loss responds to magnitude and
+concentration jointly rather than to magnitude alone, and that Fogo's
+predicted loss falls inside the interval the grid implies; it does not
+establish a bound.
 
 The shortfall is systematic and its source identifiable.
 The generator inflates $n_{\mathrm{sparse}}$ columns and deflates the
@@ -2152,14 +2165,14 @@ $2.88\times$ while \textit{urban} $(0.53\times)$, \textit{aspect}
 $(0.51\times)$, \textit{aero} $(0.43\times)$ and \textit{wells}
 $(0.40\times)$ are independently and unequally deflated
 (Table~\ref{tab:amplitude}).
-Two-sided distortion of this kind displaces the weight vector further
-along the simplex than a one-sided distortion of the same
-$\lVert\delta\rVert_2$, which is why the synthetic model underestimates
-rather than overestimates.
-We report the direction of the bias rather than correcting for it: the
-synthetic grid establishes that the loss is governed by magnitude
-\emph{and} concentration, and bounds Fogo from below; it does not
-reproduce Fogo's particular deviation geometry.
+Two-sided distortion of this kind displaces the weight vector along the
+simplex differently from a one-sided distortion of the same
+$\lVert\delta\rVert_2$, so the generator does not reproduce Fogo's
+deviation geometry.
+We report the difference in geometry rather than a correction for it:
+the grid supports the joint role of magnitude and concentration, and
+does not calibrate the level of the loss for an instance outside its
+generating family.
 
 \begin{table*}[!t]
 \centering
@@ -2517,9 +2530,9 @@ Two limits remain.
 The synthetic generator produces one-sided distortion, with a few columns
 inflated and the rest deflated uniformly, whereas Fogo's deviation
 vector is two-sided, with one criterion inflated $2.88\times$ and four
-independently deflated below $0.55\times$; the synthetic model
-consequently underestimates Fogo's loss by $7.7$~pp and should be read
-as a lower bound.
+independently deflated below $0.55\times$; the grid therefore does not
+reproduce Fogo's deviation geometry and its point predictions should not
+be read as calibrated levels for this instance.
 And the joint distribution of $(\mathrm{TV},m_{\mathrm{eff}})$ in
 applied decision matrices is unknown; establishing it would require a
 corpus of published matrices rather than a single case.
@@ -2596,11 +2609,11 @@ combine distances to ideal points, where amplitudes enter quadratically
 or in ratio form, and extending the characterisation to those families
 remains open.
 The monotone ordering of the three normalisation levels within SAW
-by TV and efficiency holds on Fogo and yields Kendall $\tau_b=0.550$
-across the 240 synthetic instances of Section~\ref{sec:external};
-however, non-monotone cases arise in the grid (instances where vector
-outperforms ranks despite higher TV), confirming that the ordering
-reflects a central tendency rather than a deterministic law.
+by TV and efficiency holds on Fogo; across the 240 synthetic instances
+of Section~\ref{sec:external} the relation between TV and efficiency
+loss is positive but not monotone (Kendall $\tau_b=0.550$ over the
+$190$ pairs of cell means, $21.6\%$ inversions), confirming that the
+ordering reflects a central tendency rather than a deterministic law.
 A closed-form factorisation of the loss into an amplitude term and a
 concentration term (Proposition~\ref{prop:concentration}) shows that
 the two are jointly responsible and that neither alone is sufficient.
