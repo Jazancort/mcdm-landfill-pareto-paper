@@ -114,8 +114,10 @@ CORPUS.append({
     ],
     'notes': 'Equal weights (1/3 each) — elicited via equal judgment. TV under vector will be small given equal magnitudes. Useful for TV≈0 anchor in corpus.',
     'active': True,   # m=16 ≥ 8
-    # 3 criteria → 3 groups, one each
-    'obj_groups': [[0], [1], [2]],
+    # 3 criteria → 2 groups (DEV-005: corrected from 1-crit degenerate groups)
+    # G1 = operational factors: illumination + reachability (both benefit)
+    # G2 = terrain: land texture (cost, complemented before aggregation)
+    'obj_groups': [[0, 1], [2]],
 })
 
 # ─────────────────────────────────────────────────────────────────────────────

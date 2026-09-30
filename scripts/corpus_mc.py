@@ -97,32 +97,34 @@ def norm_ranks(X, dirs):
 NORM_FNS = {'mm': norm_minmax, 'vec': norm_vector, 'rnk': norm_ranks}
 
 
-# ─── Group objectives on min-max normalised matrix ───────────────────────────
-def build_group_scores_mm(N_mm, obj_groups):
-    """G[i, g] = sum of N_mm[i, j] for j in obj_groups[g].
-    N_mm is already benefit-oriented (all cols: higher = better).
-    Returns (m x K) matrix.
+# ─── Group objectives (weighted, on mm-normalised matrix) ───────────────────
+def build_group_scores_mm(N_mm, w, obj_groups):
+    """G[i, g] = sum_{j in g} w_j * N_mm[i, j]  — weighted group scores.
+    N_mm is benefit-oriented. w must be normalised (sum=1).
+    Returns (m x K_g) matrix; higher = better in each group.
+
+    Objectives are weighted to match the article definition F_g(a) = Σ w_j n_j(a).
+    Without weights, the Pareto frontier does not depend on w_draw and the
+    condition w_ob = w_fr (§5.1) cannot be tested. See 2b in audit notes.
     """
     m = N_mm.shape[0]
     K_g = len(obj_groups)
     G = np.zeros((m, K_g))
     for g, cols in enumerate(obj_groups):
         for j in cols:
-            G[:, g] += N_mm[:, j]
-    return G  # higher = better in each group
+            G[:, g] += w[j] * N_mm[:, j]
+    return G
 
 
 def trio_objectives(G, trios):
-    """F[t, g] = sum over i in trio of G[i, g].
-    Returns (n_trios x K_g) matrix.
-    """
+    """F[t, g] = sum_{i in trio t} G[i, g].  Higher = better."""
     n_trios = len(trios)
     K_g = G.shape[1]
     F = np.zeros((n_trios, K_g))
     for t_idx, trio in enumerate(trios):
         for i in trio:
             F[t_idx] += G[i]
-    return F  # higher = better in each group (since G is)
+    return F
 
 
 def pareto_nd(F):
@@ -150,23 +152,23 @@ def top_trio_by_score(scores, trios):
 
 
 # ─── Proposition 1 regression assertion ──────────────────────────────────────
-def assert_matched_q2(entry, trios, F_mm, norm_label='mm'):
-    """When score norm matches objective norm (both mm), Q2 must be 1.0.
-    Computes deterministically with published weights.
-    Raises AssertionError if Q2 < 1, indicating a bug.
+def assert_matched_q2(entry, trios, F_pub, norm_label='mm'):
+    """When score norm matches objective norm (both built with same w), Q2 must be 1.
+    Uses published weights for the deterministic check.
+    F_pub must have been built with the SAME norm as norm_label and the published w.
     """
     X    = np.array(entry['matrix'], dtype=float)
     w    = np.array(entry['weights'], dtype=float); w /= w.sum()
     dirs = entry['directions']
     N    = NORM_FNS[norm_label](X, dirs)
     scores = N @ w
-    frontier = pareto_nd(F_mm)
+    frontier = pareto_nd(F_pub)
     t_idx = top_trio_by_score(scores, trios)
     in_f  = t_idx in frontier
     assert in_f, (
         f"Proposition 1 violation: {entry['source_key']} norm={norm_label} "
         f"published weights — top trio {trios[t_idx]} NOT in frontier of "
-        f"{len(frontier)}/{len(trios)} trios. Bug in orientation or grouping."
+        f"{len(frontier)}/{len(trios)} trios. Bug in orientation, grouping, or weighting."
     )
 
 
@@ -184,35 +186,54 @@ def run_entry(entry):
 
     # Fixed min-max normalisation for objectives
     N_mm = norm_minmax(X, dirs)
-    G_mm = build_group_scores_mm(N_mm, og)
+    G_mm_pub = build_group_scores_mm(N_mm, w0, og)   # weighted with published w
 
-    # All trios (fixed across draws)
-    trios  = list(itertools.combinations(range(m), K))
-    F_mm   = trio_objectives(G_mm, trios)
+    # All trios (fixed)
+    trios   = list(itertools.combinations(range(m), K))
     n_trios = len(trios)
 
-    # --- Proposition 1 regression: matched cell must give Q2=100% ---
-    print(f"  [Prop1 check] {key}  matched=mm ...", end='', flush=True)
-    assert_matched_q2(entry, trios, F_mm, norm_label='mm')
+    # Frontier with published weights (for Prop1 regression check)
+    F_mm_pub = trio_objectives(G_mm_pub, trios)
+
+    # --- Proposition 1 regression: matched cell with published weights ---
+    print(f"  [Prop1 det.] {key}  mm ...", end='', flush=True)
+    assert_matched_q2(entry, trios, F_mm_pub, norm_label='mm')
     print(" PASS")
 
-    # Also check vec and rnk matched (objectives in their own norm):
+    # Prop1 matched cells for vec and rnk
     for match_label in ['vec', 'rnk']:
-        N_match = NORM_FNS[match_label](X, dirs)
-        G_match = build_group_scores_mm(N_match, og)  # same group logic
-        F_match = trio_objectives(G_match, trios)
-        frontier_match = pareto_nd(F_match)
-        scores_match   = N_match @ w0
-        t_idx_match    = top_trio_by_score(scores_match, trios)
-        in_f = t_idx_match in frontier_match
-        status = "PASS" if in_f else "FAIL (BUG)"
-        print(f"  [Prop1 check] {key}  matched={match_label} ... {status}")
-        assert in_f, (
-            f"Proposition 1 violation: {key} matched={match_label} — "
-            f"top trio NOT in frontier. Bug."
-        )
+        N_match  = NORM_FNS[match_label](X, dirs)
+        G_match  = build_group_scores_mm(N_match, w0, og)
+        F_match  = trio_objectives(G_match, trios)
+        frontier = pareto_nd(F_match)
+        scores   = N_match @ w0
+        t_idx    = top_trio_by_score(scores, trios)
+        in_f     = t_idx in frontier
+        status   = "PASS" if in_f else "FAIL (BUG)"
+        print(f"  [Prop1 det.] {key}  {match_label} ... {status}")
+        assert in_f, f"Prop1 violation: {key} matched={match_label}"
 
-    # --- Monte Carlo: objectives fixed in mm, score varies ---
+    # --- Mutation test: fix w_fr at published w while w_sc varies ---
+    # Prop1 must FAIL when score weights != objective weights.
+    # If it does not fail, the assertion has no power against this bug.
+    print(f"  [Prop1 mut.] {key}  fixed-w_fr vs varying-w_sc (should find violation) ...", end='', flush=True)
+    _mutation_triggered = False
+    _rng_mut = np.random.default_rng(SEED + 1)
+    _alpha_mut = KAPPA * w0
+    _W_mut = sp_dirichlet.rvs(_alpha_mut, size=200, random_state=_rng_mut)
+    for _w_draw in _W_mut:
+        # Deliberately mismatched: frontier built with w0, score with w_draw
+        # For non-trivial w_draw, top trio by score may not be in w0-frontier
+        _scores  = norm_minmax(X, dirs) @ _w_draw
+        _t_idx   = top_trio_by_score(_scores, trios)
+        if _t_idx not in pareto_nd(F_mm_pub):
+            _mutation_triggered = True
+            break
+    print(f" {'TRIGGERED (has power)' if _mutation_triggered else 'NOT TRIGGERED — assertion may lack power'}")
+
+    # --- Monte Carlo: objectives fixed in mm, weighted with w_draw per draw ---
+    # Frontier IS w_draw-dependent because objectives are weighted.
+    # w_ob = w_fr = w_draw (same draw weights for both score and objectives).
     results = {}
     for norm_label, norm_fn in NORM_FNS.items():
         nd = 0
@@ -220,27 +241,26 @@ def run_entry(entry):
         W = sp_dirichlet.rvs(alpha, size=N_DRAW, random_state=RNG)
 
         for w_draw in W:
-            N_score    = norm_fn(X, dirs)
-            scores     = N_score @ w_draw
-            # Frontier rebuilt with draw weights — but objectives are in mm
-            # (fixed), so frontier does NOT depend on w_draw.
-            # The condition §5.1 w_ob = w_fr is satisfied because we use
-            # the same w_draw for both score and frontier evaluation.
-            # The frontier of mm-objectives is fixed; only the portfolio
-            # selection (score) changes with w_draw.
-            frontier_draw = pareto_nd(F_mm)   # frontier is w_draw-invariant here
-            t_idx = top_trio_by_score(scores, trios)
-            if t_idx in frontier_draw:
+            N_score   = norm_fn(X, dirs)
+            scores    = N_score @ w_draw
+            # Frontier rebuilt with w_draw: objectives are weighted mm,
+            # so the frontier changes with w_draw. Condition w_ob=w_fr holds.
+            G_draw    = build_group_scores_mm(N_mm, w_draw, og)
+            F_draw    = trio_objectives(G_draw, trios)
+            frontier  = pareto_nd(F_draw)
+            t_idx     = top_trio_by_score(scores, trios)
+            if t_idx in frontier:
                 nd += 1
 
         q2 = nd / N_DRAW * 100.0
         se = np.sqrt(q2 * (100.0 - q2) / N_DRAW)
+        frontier_pub = pareto_nd(F_mm_pub)
         results[norm_label] = {
             'Q2':         round(q2, 2),
             'SE':         round(se, 2),
-            'n_frontier': len(pareto_nd(F_mm)),
+            'n_frontier': len(frontier_pub),
             'n_trios':    n_trios,
-            'base_rate':  round(len(pareto_nd(F_mm)) / n_trios * 100, 1),
+            'base_rate':  round(len(frontier_pub) / n_trios * 100, 1),
         }
     return results
 

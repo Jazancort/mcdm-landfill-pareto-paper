@@ -114,6 +114,54 @@ def compute_TV_meff(w, Aj):
     return {'TV': TV, 'l2': l2, 'm_eff': meff, 'w_eff': w_eff, 'delta': delta}
 
 
+def compute_TV_between_within(w, Aj, obj_groups):
+    """Decompose TV into between-group (TV_B) and within-group (TV_W) components.
+
+    TV_B measures distortion of group-level weights:
+        W_g = sum_{j in g} w_j   (nominal group weight)
+        W_g^eff = sum_{j in g} w_j^eff  (effective group weight)
+        TV_B = 0.5 * sum_g |W_g^eff - W_g|
+
+    TV_W measures within-group re-weighting, weighted average across groups:
+        For each group g with nominal weight W_g:
+          w_{j|g} = w_j / W_g         (relative weight within group)
+          w_{j|g}^eff = w_j^eff / W_g^eff  (relative effective weight)
+          tv_g = 0.5 * sum_{j in g} |w_{j|g}^eff - w_{j|g}|  (within-group TV)
+        TV_W = sum_g W_g * tv_g   (weighted mean of within-group TVs)
+
+    The two components are NOT additive: TV != TV_B + TV_W in general.
+    Report side by side, not as parts of a sum.
+
+    Returns dict with TV_B, TV_W, and per-group tv_g.
+    """
+    w    = np.array(w, dtype=float); w = w / w.sum()
+    Aj   = np.array(Aj, dtype=float)
+    wA   = w * Aj
+    wA_s = wA.sum()
+    w_eff = wA / wA_s if wA_s > 0 else w.copy()
+
+    K = len(obj_groups)
+    W_g     = np.array([w[g].sum()     for g in obj_groups])
+    W_g_eff = np.array([w_eff[g].sum() for g in obj_groups])
+
+    TV_B = 0.5 * np.sum(np.abs(W_g_eff - W_g))
+
+    tv_within = np.zeros(K)
+    for idx, g in enumerate(obj_groups):
+        wg  = w[g]     / W_g[idx]      if W_g[idx]     > 0 else np.zeros(len(g))
+        wge = w_eff[g] / W_g_eff[idx]  if W_g_eff[idx] > 0 else np.zeros(len(g))
+        tv_within[idx] = 0.5 * np.sum(np.abs(wge - wg))
+
+    TV_W = np.sum(W_g * tv_within)
+
+    return {
+        'TV_B':     TV_B,
+        'TV_W':     TV_W,
+        'tv_within_per_group': tv_within,  # per-group raw tv_g
+        'W_g':      W_g,
+    }
+
+
 def compute_all(entry):
     X    = np.array(entry['matrix'], dtype=float)
     w    = np.array(entry['weights'], dtype=float)
@@ -137,17 +185,25 @@ def regression_test_fogo():
     Expected outputs: TV=0.3146, ||delta||_2=0.3127, m_eff=4.0486.
     These are PUBLISHED VALUES. Tolerance = 1e-3 (rounding of Aj to 3dp).
     Modifying expected values requires written justification in DEVIATIONS.md.
+
+    Also tests TV_B/TV_W decomposition via the counterfactual:
+    If all Aj within each group are replaced by their group mean Aj_bar_g,
+    then TV_W = 0 exactly and TV = TV_B exactly.
+    This verifies the decomposition is self-consistent.
     """
     # Tab1 exact values — DO NOT CHANGE without updating DEVIATIONS.md
     # criteria:  perm   slope  roads  rivers aspect coast  prot   wells  urban  aero   cult
     w_tab1  = [0.152, 0.113, 0.030, 0.091, 0.075, 0.069, 0.066, 0.055, 0.166, 0.102, 0.081]
     Aj_vec  = [0.583, 0.135, 0.206, 0.265, 0.103, 0.126, 0.105, 0.081, 0.107, 0.086, 0.171]
+    # Groups from Tab1: G1={slope,roads}(1,2), G2={rivers,aspect,coast,prot,wells}(3-7), G3={perm,urban,aero,cult}(0,8,9,10)
+    # Indices: perm=0,slope=1,roads=2,rivers=3,aspect=4,coast=5,prot=6,wells=7,urban=8,aero=9,cult=10
+    obj_groups = [[1, 2], [3, 4, 5, 6, 7], [0, 8, 9, 10]]
 
-    w  = np.array(w_tab1, dtype=float)
+    w  = np.array(w_tab1, dtype=float); w = w / w.sum()
     Aj = np.array(Aj_vec,  dtype=float)
-    w  = w / w.sum()
 
-    res = compute_TV_meff(w, Aj)
+    res     = compute_TV_meff(w, Aj)
+    res_bw  = compute_TV_between_within(w, Aj, obj_groups)
 
     # Published values from §6.2 / tab:tvorder
     TV_pub   = 0.3146
@@ -161,25 +217,38 @@ def regression_test_fogo():
     ok_ident = abs(2*res['TV']/np.sqrt(res['m_eff']) - res['l2']) < 1e-10
     ok_not_D = abs(res['TV'] - float(np.sum(w * np.abs(Aj - 1.0)))) > 0.1
 
+    # Counterfactual: replace each Aj by group-mean Aj_bar_g → TV_W must be 0
+    Aj_bar = np.zeros_like(Aj)
+    for g in obj_groups:
+        # Weighted mean Aj within group (weighted by w_j)
+        wg = w[g]; Ajg = Aj[g]
+        Aj_bar_g = np.dot(wg, Ajg) / wg.sum()
+        for j in g:
+            Aj_bar[j] = Aj_bar_g
+    res_counterfactual = compute_TV_between_within(w, Aj_bar, obj_groups)
+    ok_counterfactual = (
+        abs(res_counterfactual['TV_W']) < 1e-10 and
+        abs(compute_TV_meff(w, Aj_bar)['TV'] - res_counterfactual['TV_B']) < 1e-10
+    )
+
     print("=== REGRESSION TEST: Fogo (Tab1 exact values) ===")
     print(f"  TV   = {res['TV']:.4f}  expected {TV_pub}  {'✓' if ok_TV   else '✗ FAIL'}")
     print(f"  l2   = {res['l2']:.4f}  expected {l2_pub}  {'✓' if ok_l2   else '✗ FAIL'}")
     print(f"  meff = {res['m_eff']:.4f}  expected {meff_pub}  {'✓' if ok_meff else '✗ FAIL'}")
-    print(f"  identity 2*TV/√meff = l2 (non-trivial): {'✓' if ok_ident else '✗ FAIL'}")
-    print(f"  TV ≠ D (not the rejected formula):       {'✓' if ok_not_D else '✗ FAIL'}")
+    print(f"  identity 2*TV/√meff = l2:            {'✓' if ok_ident    else '✗ FAIL'}")
+    print(f"  TV ≠ D:                               {'✓' if ok_not_D    else '✗ FAIL'}")
+    print(f"  TV_B = {res_bw['TV_B']:.4f}  TV_W = {res_bw['TV_W']:.4f}")
+    print(f"  counterfactual TV_W=0 when Aj=const: {'✓' if ok_counterfactual else '✗ FAIL'}")
 
-    all_ok = ok_TV and ok_l2 and ok_meff and ok_ident and ok_not_D
-    if not all_ok:
-        print("  ✗ REGRESSION FAILED — check inputs against Tab1 before continuing")
-    else:
-        print("  Overall: PASS")
+    all_ok = ok_TV and ok_l2 and ok_meff and ok_ident and ok_not_D and ok_counterfactual
+    print(f"  Overall: {'PASS' if all_ok else 'FAIL'}")
 
-    # Hard assert — test must not be weakened silently
     assert ok_TV,   f"TV={res['TV']:.4f} deviates from published {TV_pub} by more than 1e-3"
     assert ok_l2,   f"l2={res['l2']:.4f} deviates from published {l2_pub} by more than 1e-3"
     assert ok_meff, f"meff={res['m_eff']:.4f} deviates from published {meff_pub} by more than 1e-3"
     assert ok_ident, "Identity 2*TV/sqrt(meff) != l2 — formula error"
     assert ok_not_D, "TV == D — using rejected formula D instead of TV"
+    assert ok_counterfactual, "TV_W != 0 when Aj constant within groups — decomposition bug"
     return True
 
 
@@ -193,6 +262,7 @@ def main():
     rows = []
     for entry in CORPUS:
         key = entry['source_key']
+        og  = entry.get('obj_groups')  # None for inactive instances
         res = compute_all(entry)
         for norm, vals in res.items():
             # Non-trivial identity check (only when TV>0)
@@ -200,7 +270,21 @@ def main():
                 l2_check = 2 * vals['TV'] / np.sqrt(vals['m_eff'])
                 ident_ok = abs(l2_check - vals['l2']) < 1e-10
             else:
-                ident_ok = True  # trivial: TV=0 → l2=0 by construction
+                ident_ok = True
+
+            # TV_B / TV_W if groups declared
+            TV_B = float('nan')
+            TV_W = float('nan')
+            if og is not None and norm != 'mm' and vals['TV'] > 0:
+                w = np.array(entry['weights'], dtype=float); w = w / w.sum()
+                X = np.array(entry['matrix'], dtype=float)
+                dirs = entry['directions']
+                Aj_fn = {'mm': Aj_minmax, 'vec': Aj_vector, 'rnk': Aj_ranks}[norm]
+                Aj = Aj_fn(X, dirs)
+                bw = compute_TV_between_within(w, Aj, og)
+                TV_B = round(bw['TV_B'], 6)
+                TV_W = round(bw['TV_W'], 6)
+
             rows.append({
                 'source_key': key,
                 'm': entry['m'],
@@ -209,6 +293,8 @@ def main():
                 'TV':    round(vals['TV'],   6),
                 'm_eff': round(vals['m_eff'], 4) if not np.isnan(vals['m_eff']) else float('nan'),
                 'l2':    round(vals['l2'],   6),
+                'TV_B':  TV_B,
+                'TV_W':  TV_W,
                 'ident_ok': ident_ok,
             })
 
@@ -216,14 +302,20 @@ def main():
     out = os.path.join(os.path.dirname(__file__), '..', 'results', 'corpus_amplitudes.csv')
     df.to_csv(out, index=False)
 
-    print("\n=== Corpus amplitudes (corrected formulas) ===")
-    print(df[df['norm']=='vec'][['source_key','m','n','TV','m_eff','l2','ident_ok']].to_string(index=False))
+    print("\n=== Corpus amplitudes — vector norm (active instances only) ===")
+    active_keys = [e['source_key'] for e in CORPUS if e.get('active', False)]
+    print(df[(df['norm']=='vec') & (df['source_key'].isin(active_keys))][
+        ['source_key','m','n','TV','TV_B','TV_W','m_eff','l2','ident_ok']
+    ].to_string(index=False))
 
-    print("\n=== Identity check (non-trivial, TV>0 only) ===")
+    print("\n=== All instances — vector norm ===")
+    print(df[df['norm']=='vec'][['source_key','m','n','TV','TV_B','TV_W','m_eff','l2']].to_string(index=False))
+
+    print("\n=== Identity check (TV>0, all norms) ===")
     fails = df[(df['TV'] > 0) & (~df['ident_ok'])]
     if len(fails) == 0:
         n_checked = len(df[df['TV'] > 0])
-        print(f"  ALL {n_checked} PASS (non-trivial)")
+        print(f"  ALL {n_checked} PASS")
     else:
         print(fails)
 
