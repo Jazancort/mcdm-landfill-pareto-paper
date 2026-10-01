@@ -87,6 +87,18 @@ The 80 vs 5 pp asymmetry (tab:fourthcell) persists in R-W, i.e. the
 Rationale: asymmetry unexplained by TV, TV_B and TV_W in Marco A. If it
 persists in R-W (within-group only), it is not explained by the theorem.
 
+### P_E4_5 (exploratory, declared)
+In the 473→A' direction, R-W optimal loss > E1-W optimal loss,
+despite E4's TV_W being smaller than E1's TV_W (0.199).
+  Declared: Q2_opt[R-W, 473→A'] < Q2_opt[E1-W] = 64.2%
+Rationale: if the loss depends on which criterion carries the within-group
+distortion (perm, with 350 tied zeros) rather than just the size of TV_W,
+then E4's R-W (where the distortion falls on perm's group G1) should
+incur a larger loss than E1-W (where TV_W = 0.199 is spread differently).
+Confirmation would establish that the loss depends on the identity of the
+distorted criterion, not just its magnitude — pointing to the next
+theoretical result.
+
 Inherited constraint: the asymmetry was unexplained by TV, TV_B and TV_W
 (Marco A, §8.1). E4 tests whether it is explained by the affine structure.
 
@@ -117,7 +129,30 @@ If P_E4_1 fails:
     if min_389 < min_473 for some criterion, making b_j negative and the
     mapping non-affine on [0,1]). Redesign required.
 
-## 6. Computation
+## 6. Deviations from PRESPEC declared before running (DEV-E4)
+
+### DEV-E4-001: alpha parameter clarification
+Section 6 estimated "8 cells × 1000 draws × 2 alphas". The 2 alphas
+refer to the Dirichlet concentration parameter values (alpha=50 and
+alpha=200), following mc_2cube_fixed.py which uses ALPHAS = [50, 200].
+The PRESPEC declares kappa=200 as the portfolio size; alpha is a separate
+parameter governing weight uncertainty. Both alpha values are run; the
+primary estimand uses alpha=200 (matching the main factorial).
+
+### DEV-E4-002: mirror direction frontier
+The design states "direction 389→A, mirror" but the frontier for space A
+is defined over objectives computed on 473 sites (all candidates).
+Clarification: for the 389→A direction, the evaluator uses:
+  - Score: SAW with constants over 389 sites (range_389)
+  - Objectives: computed on 473 sites (as in the published tab:fourthcell)
+  - Frontier: space A (213 portfolios, objectives over 473 sites)
+This is the published 389/A cell from tab:fourthcell (row 3: greedy=58.8%,
+optimal=95.0%), confirmed as the regression test in P_E4_2.
+The affine relation A_j = 1/r_j holds because: the 389-site score has
+amplitude 1, while the A-evaluator uses 473-site objectives with
+amplitude range_473/range_389 = 1/r_j relative to the score.
+
+## 7. Computation
 
 Script: scripts/run_e4.py (to be written)
 Run on: Athena (~/scratch/mcdm-landfill-pareto)
@@ -125,7 +160,7 @@ Expected time: ~6 min (8 cells × 1000 draws × 2 alphas, greedy+optimal)
 Output: results/e4_results.csv
 Columns: cell, direction, assembly, Q2, SE, n_draws
 
-## 7. Note on frontier asymmetry
+## 8. Note on frontier asymmetry
 
 tab:fourthcell rows use different frontiers:
   473/A' uses frontier A' (181 portfolios in 389 admissible)
