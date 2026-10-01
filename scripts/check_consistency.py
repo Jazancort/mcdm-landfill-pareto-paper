@@ -328,6 +328,69 @@ if main_tex.exists():
         else:
             print(f"  [OK  ] Forbidden macro {macro} absent")
 
+# ── 7. Semantic correctness rules ───────────────────────────────────────────
+print()
+print("=== Semantic correctness rules ===")
+
+# Rule 1: prohibit "affine function of the objectives" (score is affine in
+# partial values, not in objectives; a false claim introduced in B1/B2 rework)
+BAD_PHRASES = [
+    ("affine function of the objectives",
+     "score is affine in partial values, not objectives"),
+    ("score and the objectives use the same normalisation",
+     "guarantee does not require same normalisation — replaced by amplitude condition"),
+    ("voided",
+     "'voided' removed in B2 reframe — replace with iff formulation"),
+]
+if main_tex.exists():
+    for phrase, reason in BAD_PHRASES:
+        # skip lines that are comments
+        non_comment = "\n".join(
+            l for l in tex.splitlines()
+            if not l.strip().startswith("%")
+        )
+        if phrase in non_comment:
+            FAIL.append(f"Prohibited phrase in main.tex: '{phrase}' ({reason})")
+            print(f"  [FAIL] Prohibited phrase: '{phrase}'")
+        else:
+            print(f"  [OK  ] Prohibited phrase absent: '{phrase}'")
+
+# Rule 2: non-ASCII bib keys in refs.bib
+bib_path = ROOT / "refs.bib"
+if bib_path.exists():
+    bib_text = bib_path.read_text(encoding="utf-8", errors="replace")
+    import re as _re
+    bib_keys = _re.findall(r"@\w+\{([^,\s]+),", bib_text)
+    bad_keys = [k for k in bib_keys if not k.isascii()]
+    if bad_keys:
+        FAIL.append(f"Non-ASCII bib keys in refs.bib: {bad_keys}")
+        print(f"  [FAIL] Non-ASCII bib keys: {bad_keys}")
+    else:
+        print(f"  [OK  ] All bib keys are ASCII ({len(bib_keys)} keys)")
+
+# Rule 3: Geoffrion1968, Weber1988, Poyhonen2001 cited (present in main.bbl)
+bbl_check = build_bbl if build_bbl.exists() else bbl_path
+if bbl_check.exists():
+    bbl_text = bbl_check.read_text(encoding="utf-8", errors="replace")
+    for key in ["Geoffrion1968", "Weber1988", "Poyhonen2001"]:
+        if key in bbl_text:
+            print(f"  [OK  ] {key} cited (in main.bbl)")
+        else:
+            FAIL.append(f"{key} not cited — present in refs.bib but absent from main.bbl")
+            print(f"  [FAIL] {key} not cited (absent from main.bbl)")
+
+# Rule 4: no "Repeated entry" in main.blg
+blg_path = Path(r"C:\build\paper\main.blg")
+if blg_path.exists():
+    blg_text = blg_path.read_text(encoding="utf-8", errors="replace")
+    if "Repeated entry" in blg_text:
+        FAIL.append("Duplicate bib entry detected in main.blg")
+        print("  [FAIL] Duplicate bib entry (Repeated entry in main.blg)")
+    else:
+        print("  [OK  ] No duplicate bib entries")
+else:
+    print("  [INFO] main.blg not found — skip duplicate check")
+
 print()
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")

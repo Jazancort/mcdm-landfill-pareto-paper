@@ -115,7 +115,7 @@ $\pm2.5$~pp).
 Exact assembly has no average effect: it gains $+\AsmMM$~pp under
 min--max normalisation and loses $\AsmVec$~pp under vector
 normalisation, because it maximises exactly a score whose operative
-weights the normalisation has already moved.
+weights the normalisation has already moved within objective groups.
 We characterise exactly when exact assembly survives normalisation.
 In additive aggregation the effective weight of a criterion is
 proportional to $w_jA_j$, where $A_j$ is the amplitude of the normalised
@@ -232,11 +232,11 @@ class balance.
 The mechanism also explains why exact assembly has no average effect.
 Exact optimisation of an additive score is guaranteed to yield a
 Pareto-efficient portfolio under the weights that score encodes.
-When the score encodes $w^{\mathrm{eff}}\neq w$, exact optimisation
-solves the wrong problem exactly: replacing greedy with optimal assembly
-gains $+\AsmMM$~pp under min--max normalisation and loses $\AsmVec$~pp
-under vector normalisation, and the loss appears under both SAW and
-TOPSIS.
+When $w^{\mathrm{eff}}$ departs from $w$ within an objective group,
+exact optimisation solves the wrong problem exactly: replacing greedy with
+optimal assembly gains $+\AsmMM$~pp under min--max normalisation and loses
+$\AsmVec$~pp under vector normalisation, and the loss appears under both SAW
+and TOPSIS.
 We sharpen this into a structural result.
 Exact assembly remains Pareto-efficient for every instance if and only
 if the normalised amplitudes are constant within each objective group
@@ -373,6 +373,11 @@ used to normalise that criterion has been known since at least
 diverge whenever criterion columns have different ranges after
 normalisation, and argued that the effective weight is the operationally
 relevant quantity.
+The group structure on which Theorem~\ref{thm:groupconst} rests is the
+value tree whose effects on elicited weights are documented behaviourally
+\citep{Weber1988,Poyhonen2001}: those studies show that the grouping of
+attributes changes the weights elicited; the theorem shows that, given
+the grouping, the normalisation must not change weights within a group.
 \citet{Milani2005} confirmed this empirically, showing that different
 normalisation norms produce different rankings in a gear material
 selection study and recommending vector normalisation on the grounds that
@@ -1154,9 +1159,9 @@ evidential weight about min--max in particular; we use it solely as a
 regression test, and any implementation returning $Q_2<1$ there is
 faulty.
 Its informative content is the \emph{contrapositive}: every cell falling
-below $100\%$ does so because some premise fails (matching normalisation,
-additivity, or global assembly), and the factorial identifies
-which.
+below $100\%$ does so because some premise fails (group-constant amplitudes
+relative to the objectives, additivity, or global assembly), and the factorial
+identifies which.
 \end{remark}
 
 \noindent\textbf{Empirical verification.}
@@ -1200,7 +1205,9 @@ $\sum_{a\in T}s(a)=C-\bar A_1F_1(T)-\bar A_2F_2(T)+\bar A_3F_3(T)$,
 where $C$ does not depend on $T$.
 Maximising the score is therefore a strictly positive scalarisation of
 the three objectives in their own senses, and the argument of
-Proposition~\ref{prop:p1:stmt} applies unchanged.
+Proposition~\ref{prop:p1:stmt} applies unchanged; this is the classical
+result that maximisers of a strictly positive weighted sum are (properly)
+efficient \citep{Geoffrion1968}.
 
 \textbf{(i)$\Rightarrow$(ii).}
 Suppose $j,k\in G_g$ with $A_j<A_k$.
@@ -1908,9 +1915,9 @@ aggregations.
 Optimal assembly maximises $\sum_{i\in t}s(i)$ exactly and, by
 Proposition~\ref{prop:p1:stmt}, attains the frontier \emph{under the
 weights the score encodes}.
-When the score encodes $w^{\mathrm{eff}}\neq w$, it pursues the
-trade-offs of $w^{\mathrm{eff}}$ exactly, which under vector
-normalisation inflate \textit{perm} by $2.88\times$.
+When $w^{\mathrm{eff}}$ departs from $w$ within an objective group,
+it pursues the trade-offs of $w^{\mathrm{eff}}$ exactly, which under
+vector normalisation inflate \textit{perm} by $2.88\times$.
 Greedy assembly is myopic and, on this evidence, less exposed to the
 distortion it does not optimise.
 The last sentence is an interpretation; Section~\ref{sec:e1} isolates
@@ -1925,24 +1932,31 @@ The results of Section~\ref{sec:lemmaconf} show that Mechanism~1
 within additive aggregation.
 A second mechanism governs the fourth cell, and it is more severe.
 
-\paragraph{Mechanism 2: score--evaluator mismatch.}
-Section~\ref{prop:p1} guarantees Pareto efficiency for the optimal
-portfolio only when the \emph{score and the objectives use the same
-normalisation}.
-When they do not, the guarantee is not weakened but voided.
+\paragraph{Mechanism 2: reference-set mismatch.}
+When the method computes its min--max constants on a different set from
+the evaluator, each score column is an increasing affine function of the
+evaluator's partial value, $n_j=b_j+A_j\tilde c_j$, with $A_j=r_j$ for the
+$\Ncand$-score against $A'$ and $A_j=1/r_j$ for the $\Nvia$-score against
+$A$, where $r_j$ is the ratio~\eqref{eq:refsetA}.
+Mismatch is therefore a special case of the re-weighting covered by
+Theorem~\ref{thm:groupconst}: the guarantee fails because $r_j$ varies
+within objective groups (Table~\ref{tab:amprefset}), not because the two
+normalisations differ.
+What distinguishes it on Fogo is its cost.
 The observed cost (Table~\ref{tab:fourthcell}: $100\%\to20\%$,
 a loss of $80$~pp under optimal assembly) far exceeds what
-Mechanism~1 predicts: $\mathrm{TV}=0.107$ implies $\approx\MechOnePredAdmiss$~pp,
-accounting for only $\MechOneShare\%$ of the effect ($\MechOnePredAdmiss/80$).
+Mechanism~1 predicts: as an illustrative extrapolation of the linear fit from
+Section~\ref{sec:lemmaconf}, $\mathrm{TV}=0.107$ would imply $\approx\MechOnePredAdmiss$~pp,
+accounting for only $\MechOneShare\%$ of the effect; the observed-to-predicted
+ratio is $\MismatchRatioHi\times$ in one direction and $\MismatchRatioLo\times$ in the other.
+We do not treat these ratios as a predictive model
+(Section~\ref{sec:lemmaconf}); they serve only to characterise the asymmetry.
 The gap is not accounted for by the magnitude of the re-weighting.
 
-The loss of exact assembly under vector normalisation
-(Section~\ref{sec:interaction}) is not of this kind: there the score is
-an affine function of the objectives, and Section~\ref{sec:e1} traces
-the loss to within-group re-weighting.
-Whether the two mechanisms combine additively is not identified by the
-present design; Section~\ref{sec:discussion} shows only that they are
-distinct.
+The two mechanisms are thus not structurally distinct; they differ in
+how unequal amplitudes arise, by distributional shape under vector
+normalisation or by the choice of reference set, and, on Fogo, in
+how far their cost exceeds what $\mathrm{TV}$ predicts.
 
 Min--max normalisation satisfies $A_j\equiv1$ over the set on which its
 constants are computed.
@@ -2138,18 +2152,19 @@ It is also invisible: nothing in a standard TOPSIS or SAW report reveals
 that \texttt{perm} entered at $2.88$ times its nominal weight.
 
 The second is \emph{score--evaluator mismatch}.
-Section~\ref{prop:p1} guarantees Pareto efficiency for exact
-maximisation of an additive score only when the score and the value
-functions defining the objectives use the same normalisation.
-When they do not, the guarantee is not weakened but voided, and the
-observed cost exceeds what re-weighting alone predicts by a factor of
-$\MismatchRatioHi\times$ in the direction where the score loses resolution (the
-$\Ncand$-score evaluated against $A'$: $80$~pp observed versus $\MechOnePredAdmiss$~pp
-predicted), while in the opposite direction the observed loss is smaller
-than predicted ($\MismatchRatioLo\times$: the $\Nvia$-score against $A$).
+Theorem~\ref{thm:groupconst} guarantees Pareto efficiency of exact
+maximisation on every instance if and only if the score's amplitudes,
+in the units of the objectives, are constant within each objective group.
+Reference-set mismatch violates this condition because $r_j$ varies
+within groups; on Fogo the observed cost then exceeds what re-weighting
+alone predicts by a factor of $\MismatchRatioHi\times$ in the direction where
+the score loses resolution (the $\Ncand$-score evaluated against $A'$: $80$~pp
+observed versus $\MechOnePredAdmiss$~pp predicted), while in the opposite direction
+the observed loss is smaller than predicted ($\MismatchRatioLo\times$: the
+$\Nvia$-score against $A$).
 In both directions the misaligned score is an affine function of the
-objectives, so the mismatch is itself a re-weighting; yet the two
-directions carry nearly equal distortion ($\mathrm{TV}=0.107$ and
+partial values within each criterion, so the mismatch is itself a re-weighting;
+yet the two directions carry nearly equal distortion ($\mathrm{TV}=0.107$ and
 $0.113$, with similar between- and within-group components) while the
 observed losses differ by a factor of~$16$.
 Neither the magnitude nor the group structure of the re-weighting
@@ -2161,8 +2176,8 @@ reference-set misalignment (Table~\ref{tab:fourthcell}).
 The practical ordering follows.
 Re-weighting is a modelling error that can be quantified and, if
 accepted, documented.
-Mismatch is a specification error that removes the theoretical warrant
-for optimising at all.
+Mismatch is a re-weighting the analyst does not see, induced by the
+choice of reference set rather than by the data.
 
 \subsection{Relation to portfolio decision analysis}
 
@@ -2288,8 +2303,11 @@ Screening criteria applied after normalisation leave the value scale
 calibrated on alternatives that are unavailable, which is the most
 damaging configuration we observe.
 
-Second, verify that the score and the value model share a normalisation
-before adding exact optimisation.
+Second, verify that the score's amplitudes, measured in the units of the
+value model, are constant within each objective group before adding exact
+optimisation.
+Sharing a normalisation is sufficient but not necessary
+(cell~$B$, Table~\ref{tab:e1}).
 Integer programming on a mismatched score optimises the mismatch:
 exact assembly gains $+\AsmMM$~pp under min--max and loses $\AsmVec$~pp
 to greedy assembly under vector normalisation.
