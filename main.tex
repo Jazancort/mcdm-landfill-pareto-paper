@@ -718,9 +718,8 @@ that follow correspond to Stages~1--6 in order.
   Stage~5: greedy and optimal portfolio assembly subject to a
   $d_{\min}=\dmin$~km separation constraint over $\Ntrios$ feasible trios.
   Stage~6: performance evaluated as $Q_2=\Pr[M(w)\in\mathcal{F}(w)]$
-  against the exact Pareto frontier over an 18-cell factorial
-  ($3~\text{norm}\times 4~\text{aggr}\times 2~\text{assembly}=24$
-  minus 6 excluded cells).}
+  against the exact Pareto frontier over a balanced $2^3$ factorial
+  and a wider design reported in the Supplementary Material.}
 \label{fig:workflow}
 \end{figure*}
 
@@ -913,9 +912,8 @@ We pre-specify the following before examining results.
     draws per cell, empirical inter-cell correlation $\hat\rho\approx0.5$
     (paired by draw), and $Q_2\approx0.6$, the two-sided MDE at $80\%$
     power is $5.8$~pp.
-    The aggregation contrast of $+0.9$~pp lies well below this
-    threshold; the TOST equivalence test is therefore the appropriate
-    inferential frame.
+    The TOST equivalence test is therefore the appropriate inferential
+    frame for the aggregation contrast.
   \item \textbf{Bootstrap pairing}: replicates are paired by draw within
     each cell so that weight-vector noise cancels in contrasts.
     The pairing gain is $\hat\rho\approx0.5$, equivalent to a
@@ -947,7 +945,7 @@ and four because PROMETHEE~II with
 the usual preference function is ordinal and therefore identical under
 all three normalisations, leaving $\Ncellsnet$ estimable cells
 (Proposition~\ref{prop:exponent});
-it is unbalanced and is reported only for marginal means.
+it is unbalanced and its results are reported in the Supplementary Material.
 Effects are reported in percentage points with $\nboot$-replicate
 bootstrap intervals, paired by draw.
 
@@ -1023,11 +1021,6 @@ First, VIKOR is invariant to per-criterion affine transformation,
 because both scale and shift cancel in its ratio form; min--max and
 vector normalisation are both affine, so the VIKOR$\times$vector cell
 is identical to VIKOR$\times$min--max and is excluded from the design.
-Second, pooling all aggregation families destroys the monotone ordering
-precisely as the scope restriction predicts.
-We read this as corroboration of the mechanism rather than as a
-limitation of it: the distortion acts through the weighted sum, and
-it is visible exactly where a weighted sum is taken.
 
 \subsection{Amplitude under the three standard normalisations}
 \label{sec:three_norms}
@@ -1319,7 +1312,7 @@ greedy heuristic confounds the contrast (Section~\ref{sec:greedy}),
 $Q_2[\mathcal{A}']$ falls from SAW to TOPSIS by $3.4$~pp under min--max
 ($\Delta\mathrm{TV}=0.160$) and $4.4$~pp under vector
 ($\Delta\mathrm{TV}=0.360$): both negative and ordered as predicted.
-Under greedy assembly the contrast reverses under min--max ($+7.8$~pp),
+Under greedy assembly the contrast reverses under min--max ($+8.4$~pp),
 which we attribute to the foreclosure loss of Section~\ref{sec:greedy}
 dominating a distortion of~$0.160$; we therefore report the
 optimal-assembly cells as the test of the exponent and the greedy cells
@@ -1904,7 +1897,6 @@ Mechanism~1 predicts: $\mathrm{TV}=0.107$ implies $\approx\MechOnePredAdmiss$~pp
 accounting for only $\MechOneShare\%$ of the effect ($\MechOnePredAdmiss/80$).
 The gap is the signature of Mechanism~2.
 
-This also explains the interaction of Section~\ref{sec:interaction}.
 Under vector normalisation, exact assembly optimises a score that is
 misaligned with the evaluator, which is why it loses $\AsmVec$~pp to
 greedy assembly (Section~\ref{sec:interaction}).
@@ -2078,7 +2070,7 @@ this result as evidence for it.
 \section{Discussion}
 \label{sec:discussion}
 
-The preceding results identify two independent mechanisms by which normalisation
+The preceding results identify two distinct mechanisms by which normalisation
 affects portfolio quality.
 This section interprets their relative severity, places them within the
 portfolio decision analysis literature, and connects them to the broader
@@ -2209,7 +2201,7 @@ agreement between rankings
 which establishes that outcomes differ without establishing that any of
 them is worse.
 We measure the consequence against an exhaustively enumerated Pareto set:
-a loss of $\LossTabTVorder$~pp in the probability of selecting a non-dominated
+a loss of $\EoneVloss$~pp under optimal assembly in the probability of selecting a non-dominated
 portfolio is a statement about decision quality, not about disagreement.
 
 This leads us to qualify a standing recommendation.
