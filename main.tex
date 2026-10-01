@@ -2528,75 +2528,28 @@ homogeneous in $w_j n_j(\cdot)$, outranking methods with non-linear
 preference functions in particular.
 
 \emph{Empirical support for the ordering.}
-The ordering of the three normalisation levels within SAW by
-$\mathrm{TV}$ matches the ordering by $Q_2$ on Fogo, providing support
-for the analytic prediction within the instance; Section~\ref{sec:external}
-extends the evidence across $240$ synthetic instances, where
-$\lVert\delta\rVert_2$ predicts efficiency loss with
-$R^2_{\mathrm{adj}}=0.488$ against $0.057$ for $\mathrm{TV}$, though the
-relation is not globally monotone across levels of the design
-(Kendall $\tau_b=0.550$; Section~\ref{sec:external}).
-Establishing a predictive coefficient would require levels populating the
-interval $\mathrm{TV}\in(0.10,\,0.30)$, which is empty in our design and
-accounts for $71\%$ of the sampled range.
-A supplementary Monte Carlo under the same design ($\kappa=200$,
-$\ndraws$ draws, SAW only, space~$\mathcal{A}'$; total variation
-recomputed numerically, giving $0.311$ for vector against the $0.315$
-of Table~\ref{tab:amplitude}) evaluated three further families, and none
-populates it.
-Max ($\mathrm{TV}=0.0033$) and Peldschus ($\mathrm{TV}=0.0023$) fall in
-the lowest $1\%$ of the range and constrain the intercept rather than
-the slope: across the five levels with $\mathrm{TV}<0.35$ the fit gives
-$-\slopeFive$~pp ($\mathrm{SE}=\SEfive$~pp, $\mathrm{df}=\dffive$), with \textit{vector}
-still contributing $\SxxPctVecFive\%$ of the regressor sum of squares and a quadratic
-term inestimable ($p=0.65$, $\mathrm{VIF}=23.5$).
-Sum normalisation ($\mathrm{TV}=0.567$) lies outside the regime
-altogether: $Q_2$ rises to $73.1\%$, above vector's $55.4\%$, and adding
-it to those five levels reduces $R^2$ from $\RsqDropFrom$ to $\RsqDropTo$ with a
-slope indistinguishable from zero ($-\slopeDropSum$~pp, $p=\pDropSum$).
-The mechanism is degeneration rather than discrimination: at that
-amplitude spread the score approaches a lexicographic ordering on $F_1$
-and the portfolios returned are $F_1$-extreme points, which belong to
-the frontier by definition.
-The standard families cannot fill the gap: Weitendorf's linear
-transformation is algebraically identical to min--max (for a cost
-criterion, $(x_{\max}-x)/(x_{\max}-x_{\min})
-=1-(x-x_{\min})/(x_{\max}-x_{\min})$), hence $\mathrm{TV}=0$ by
-construction.
-Populating the interval requires manipulating the amplitude directly, for
-instance along the one-parameter path $A_j(t)=\rho_j^{\,t}$,
-$t\in[0,1]$, which interpolates between min--max ($t=0$) and vector
-normalisation ($t=1$) and holds $m_{\mathrm{eff}}$ within
-$[4.05,\,5.00]$, so that magnitude varies without confounding
-concentration (the decoupling that Section~\ref{sec:external}
-identifies as unavailable in the present grid).
-We note also that with $\ndraws$ draws the binomial standard error of
-each $Q_2$ is $1.5$--$2.2$~pp, of the same order as the residual scatter
-of these fits; discriminating curvature would require both the filled
-support and an order-of-magnitude increase in draws.
-The linear channel we describe therefore operates where the score
-retains genuine trade-offs between the three objectives, and we make no
-claim outside that range.
+Under optimal assembly the three normalisation levels are ordered by
+$\mathrm{TV}$ on Fogo (Table~\ref{tab:tvorder}), but three levels with
+\textit{vector} carrying most of the regressor variance do not identify
+a predictive coefficient.
+The interval $\mathrm{TV}\in(0.10,\,0.30)$ contains no standard
+normalisation: Weitendorf's linear transformation is algebraically
+identical to min--max (for a cost criterion,
+$(x_{\max}-x)/(x_{\max}-x_{\min})=1-(x-x_{\min})/(x_{\max}-x_{\min})$),
+hence $\mathrm{TV}=0$.
+Populating the interval requires manipulating the amplitude directly,
+for instance along the path $A_j(t)=\rho_j^{\,t}$, $t\in[0,1]$, which
+interpolates between min--max ($t=0$) and vector normalisation ($t=1$).
+Further normalisation families and a synthetic grid varying the
+marginal distributions are reported in the Supplementary Material.
 
-\emph{Instance dependence, and what the synthetic grid settles.}
+\emph{Instance dependence.}
 The analytic results hold for any instance; the magnitudes do not.
-Section~\ref{sec:external} replaces a qualitative caveat with a
-quantitative one: across $240$ synthetic instances sharing Fogo's
-spatial structure, efficiency loss is governed by the concentration of
-the distortion as well as its magnitude
-($R^2_{\mathrm{adj}}=0.488$ for $\lVert\delta\rVert_2$ against
-$0.057$ for $\mathrm{TV}$), and Fogo's $m_{\mathrm{eff}}=4.05$ places
-it at the concentrated end of the range $[2,11]$.
-Two limits remain.
-The synthetic generator produces one-sided distortion, with a few columns
-inflated and the rest deflated uniformly, whereas Fogo's deviation
-vector is two-sided, with one criterion inflated $2.88\times$ and four
-independently deflated below $0.55\times$; the grid therefore does not
-reproduce Fogo's deviation geometry and its point predictions should not
-be read as calibrated levels for this instance.
-And the joint distribution of $(\mathrm{TV},m_{\mathrm{eff}})$ in
-applied decision matrices is unknown; establishing it would require a
-corpus of published matrices rather than a single case.
+Fogo's deviation vector is two-sided and concentrated
+($m_{\mathrm{eff}}=4.05$ on $[2,11]$), with one criterion inflated
+$2.88\times$, and the joint distribution of
+$(\mathrm{TV}_B,\mathrm{TV}_W)$ in applied decision matrices is unknown;
+establishing it would require a corpus of published matrices.
 
 \emph{Weight perturbation model.}
 Dirichlet perturbation around $\wahp$ represents symmetric uncertainty in
