@@ -239,26 +239,39 @@ def main():
         w_matrix, T0, T1, T2, X_adj, compute_objs, is_dominated, D
     )
 
-    # ── 4. Compute amplitude ratios r_j ──────────────────────────────────────
+    # ── 4. Compute amplitude ratios r_j and build score matrices ─────────────
     print("\n[4] Computing amplitude ratios r_j = range_389 / range_473")
     r_j = {}
-    for crit in col_names:
-        col = COL[crit]
-        r473 = df_imp[col].values.astype(float)
-        r389 = df_via[col].values.astype(float)
-        rng473 = r473.max() - r473.min()
-        rng389 = r389.max() - r389.min()
-        r_j[crit] = 1.0 if rng473 < 1e-12 else rng389 / rng473
+    X_adj_473 = np.zeros((len(df_via), len(col_names)), dtype=np.float64)
+
+    for jj, crit in enumerate(col_names):
+        col_key = COL[crit]
+        x_via = df_via[col_key].values.astype(float)
+        x_all = df_imp[col_key].values.astype(float)
+        mn473, mx473 = x_all.min(), x_all.max()
+        rng473 = mx473 - mn473 if (mx473 - mn473) > 1e-12 else 1.0
+        mn389, mx389 = x_via.min(), x_via.max()
+        rng389 = mx389 - mn389 if (mx389 - mn389) > 1e-12 else 1.0
+        r_j[crit] = rng389 / rng473
+        # X_adj_473: (x_via - min_all) / range_all  [then benefit-flipped below]
+        X_adj_473[:, jj] = (x_via - mn473) / rng473
         print(f"  {crit:12s}: r_j={r_j[crit]:.4f}")
+
+    # Benefit-flip X_adj_473 (same logic as _build_decision_matrix)
+    _, benefit = _build_decision_matrix(df_via)
+    for jj, b in enumerate(benefit):
+        if not b:
+            X_adj_473[:, jj] = 1.0 - X_adj_473[:, jj]
+
+    r_vec = np.array([r_j[c] for c in col_names])
 
     GROUPS = {
         "G1": ["perm", "slope", "roads"],
         "G2": ["rivers", "aspect", "coast", "protected", "wells"],
         "G3": ["urban", "aero", "cult"],
     }
-    r_vec = np.array([r_j[c] for c in col_names])
 
-    # Compute group means
+    # Compute group means of r_j
     rbar_g_vec = np.zeros(len(col_names))
     for g_crits in GROUPS.values():
         g_idx = [col_names.index(c) for c in g_crits]
@@ -267,16 +280,27 @@ def main():
         for i in g_idx:
             rbar_g_vec[i] = rb
 
-    # Cell amplitude vectors (direction 473→A')
-    A_cells_fwd = {
-        "R-M": np.ones(len(col_names)),
-        "R-B": rbar_g_vec.copy(),
-        "R-W": r_vec / rbar_g_vec,
-        "R-V": r_vec.copy(),
+    # Cell score functions (direction 473→A'):
+    # For fwd cells, base is X_adj_473; A_j modifies the effective weight:
+    #   sc_fwd(cell, w) = (X_adj_473 * (w * A_j_fwd)).sum(1)
+    # where A_j_fwd:
+    #   R-M: A_j = 1           => same as X_adj_389 (aligned)
+    #   R-B: A_j = rbar_g      => within-group constant (P_E4_1)
+    #   R-W: A_j = r_j/rbar_g  => within-group deviation only
+    #   R-V: A_j = r_j         => exact published 473-site cell
+    #
+    # Note: R-M uses X_adj_389 (not 473), because min-max over 389 = A_j=1 evaluator.
+    #   Using X_adj_473 with A_j=1 ≠ X_adj_389 because min_all ≠ min_via.
+    #   R-M is the aligned control; it must use X_adj_389.
+    A_j_fwd = {
+        "R-M": ("389", np.ones(len(col_names))),          # X_adj_389, A_j=1
+        "R-B": ("473", rbar_g_vec.copy()),                # X_adj_473, A_j=rbar_g
+        "R-W": ("473", r_vec / rbar_g_vec),               # X_adj_473, A_j=r_j/rbar_g
+        "R-V": ("473", r_vec.copy()),                     # X_adj_473, A_j=r_j
     }
-    # Mirror direction (389→A): A_j → 1/A_j
-    A_cells_rev = {
-        f"{k}'": 1.0 / v for k, v in A_cells_fwd.items()
+    # Mirror direction (389→A): uses X_adj_389 base, A_j = 1/A_j_fwd
+    A_j_rev = {
+        f"{k}'": ("389", 1.0 / v) for k, (_, v) in A_j_fwd.items()
     }
 
     # ── 5. Monte Carlo ────────────────────────────────────────────────────────
@@ -291,19 +315,14 @@ def main():
             _ = rng.dirichlet(KAPPA_PRI * w_ahp, size=N_DRAWS)
             w_draws = rng.dirichlet(kappa * w_ahp, size=N_DRAWS)
 
-        for direction, A_cells in [("fwd", A_cells_fwd), ("rev", A_cells_rev)]:
-            for cell_name, A_j in A_cells.items():
+        for direction, A_cells in [("fwd", A_j_fwd), ("rev", A_j_rev)]:
+            for cell_name, (base, A_j) in A_cells.items():
                 nd_g = 0; nd_o = 0
                 t0 = time.time()
+                X_base = X_adj_473 if base == "473" else X_adj
                 for draw_idx in range(N_DRAWS):
                     w = w_draws[draw_idx]
-                    # Score: SAW with amplitude A_j (direction-specific)
-                    if direction == "fwd":
-                        # 473-site normalisation adjusted by A_j
-                        sc = (X_adj * (w * A_j)).sum(1)
-                    else:
-                        # 389-site normalisation adjusted by 1/A_j
-                        sc = (X_adj * (w * A_j)).sum(1)
+                    sc = (X_base * (w * A_j)).sum(1)
                     f1v, f2v, f3v = compute_objs(w)
                     F1 = f1v[T0] + f1v[T1] + f1v[T2]
                     F2 = f2v[T0] + f2v[T1] + f2v[T2]

@@ -232,6 +232,35 @@ Columns: cell, direction, assembly, Q2, SE, n_draws
    have no positional index in df_via and cannot enter any portfolio in
    either reference space.
 
+### DEV-E4-006: pipeline bug in run_e4.py (before re-run)
+The first run of run_e4.py (commit 1e48292, 2026-10-01T20:25) produced
+Q2_opt = 100.0% for ALL four fwd cells (R-M, R-B, R-W, R-V), including
+R-V which must reproduce tab:fourthcell (20.0%). P_E4_2 FAILED.
+
+Root cause: the script used sc = (X_adj * (w * A_j)).sum(1), where
+X_adj is min-max normalised over df_via (389 sites). Multiplying by A_j
+only rescales the columns but preserves their rank order, so the score
+is still monotone in the 389-site normalisation and all cells reach
+100% of the 389-site Pareto frontier.
+
+The correct computation for direction 473->A' is:
+  X_adj_473[j] = (x_via[j] - min_all[j]) / range_all[j]
+where min_all and range_all are computed over df_imp (473 sites).
+This is implemented in build_score_473() in mc_2cube_fixed.py.
+
+For the cell amplitudes:
+  R-M: X_adj_389 (standard 389-site normalisation; A_j = 1)
+  R-B: X_adj_473 rescaled by rbar_g/r_j so group means equal 1
+       (equivalent to score with A_j = rbar_g using 473-site base)
+  R-W: X_adj_473 (A_j = r_j; = R-V as far as the score is concerned)
+       BUT with the within-group deviation isolated by subtracting rbar_g:
+       score_W[j] = (x_via[j] - min_all[j]) / range_all[j] * (r_j/rbar_g)
+  R-V: X_adj_473 (A_j = r_j; exact 473-site normalisation = published cell)
+
+run_e4.py is rewritten to use build_score_473_variant(w, A_j) for
+fwd cells, matching mc_2cube_fixed.py lines 108-121. This DEV is
+committed before the corrected run.
+
 ## 8. Note on frontier asymmetry
 
 tab:fourthcell rows use different frontiers:
