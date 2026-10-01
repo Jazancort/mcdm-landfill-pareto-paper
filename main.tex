@@ -1902,70 +1902,6 @@ distortion it does not optimise.
 The last sentence is an interpretation; Section~\ref{sec:e1} isolates
 the part of the distortion responsible.
 
-% ----------------------------------------------------------
-\subsection{Isolating within-group distortion: a pre-registered intervention}
-\label{sec:e1}
-% ----------------------------------------------------------
-
-Proposition~\ref{prop:groupconst} predicts that between-group distortion
-alone leaves exact assembly on the frontier.
-We test this by intervening on the amplitudes directly.
-Four score matrices differ only in $A_j$; objectives, frontier, draws and
-feasible set are identical to the factorial ($\kappa=200$, $\ndraws$
-draws, space $A'$).
-\textbf{M} sets $A_j\equiv1$.
-\textbf{B} sets $A_j=\bar A_g$, the weighted mean of $\rho_j$ within
-the group of $j$, which reproduces the between-group distortion of
-vector normalisation with none within groups.
-\textbf{W} sets $A_j\propto\rho_j/\bar A_g$, which equalises group
-totals while leaving within-group shares exactly as under vector
-normalisation.
-\textbf{V} sets $A_j=\rho_j$.
-The four cells form a $2\times2$ design in the presence of each
-component (Table~\ref{tab:e1}).
-Three predictions were committed to the repository before any run
-(Supplementary Material): (P1)~cell~B attains $Q_2=100\%$ under optimal
-assembly; (P2)~cells~W and~V differ by less than $5$~pp under optimal
-assembly; (P3)~cell~B under greedy assembly performs close to min--max.
-
-\begin{table}[!t]
-\centering
-\caption{Intervention on amplitudes, SAW, $\kappa=200$, $\ndraws$ draws,
-  space $A'$. $\mathrm{TV}_B$ and $\mathrm{TV}_W$ as in
-  Section~\ref{sec:groupconst}. Loss is relative to cell~M under optimal
-  assembly.}
-\label{tab:e1}
-\begin{tabular}{lcccc}
-\toprule
-Cell & $\mathrm{TV}_B$ & $\mathrm{TV}_W$ & greedy & optimal & loss (pp) \\
-\midrule
-M (min--max)        & 0        & 0        & 86.0\%  & 100.0\% & --- \\
-B (between only)    & \TVBvec  & 0        & 100.0\% & 100.0\% & 0.0 \\
-W (within only)     & 0        & \TVWvec  & 64.0\%  & 64.2\%  & 35.8 \\
-V (vector)          & \TVBvec  & \TVWvec  & 66.2\%  & 56.8\%  & 43.2 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-P1 is confirmed: cell~B reaches the frontier on every draw.
-Within-group distortion alone costs $\EoneWloss$~pp; the full vector
-distortion costs $\EoneVloss$~pp.
-P2 is falsified at the pre-specified margin: W exceeds V by
-$+7.4$~pp ($95\%$ paired bootstrap CI $[+3.8,\,+11.0]$).
-Between-group distortion, harmless on its own, therefore amplifies the
-within-group component.
-A plausible reading, which we have not tested, is that within-group
-distortion matters in proportion to the weight its group carries in
-the score, and that vector normalisation raises the weight of $G_1$,
-the group of \textit{perm}, from $0.295$ to $0.544$.
-P3 is also falsified: cell~B under greedy assembly reaches $100\%$.
-A post hoc diagnosis attributes this to the amplitudes of cell~B, which
-give $F_1$ roughly $2.5$ times the weight of the other groups; the score
-becomes nearly lexicographic in siting cost, greedy and optimal choices
-coincide in $62.8\%$ of draws, and the median greedy portfolio lies at
-the $0.8$th percentile of $F_1$.
-The proposition says nothing about greedy assembly, and we do not treat
-this result as evidence for it.
 \subsection{The reference set: a second, more severe mechanism}
 \label{sec:refset}
 % ----------------------------------------------------------
@@ -1988,7 +1924,8 @@ The gap is the signature of Mechanism~2.
 
 This also explains the interaction of Section~\ref{sec:interaction}.
 Under vector normalisation, exact assembly optimises a score that is
-misaligned with the evaluator; the $+2.2$~pp gain is residual.
+misaligned with the evaluator, which is why it loses $\AsmVec$~pp to
+greedy assembly (Section~\ref{sec:interaction}).
 Whether the two mechanisms combine additively is not identified by the
 present design; Section~\ref{sec:discussion} shows only that they are
 distinct.
@@ -2040,9 +1977,9 @@ Table~\ref{tab:fourthcell} separates the set over which the
 \toprule
 Method set & Evaluator & greedy & optimal \\
 \midrule
-$\Ncand$ & $A$  & 68.4\% & \textbf{100.0\%} \\
-$\Ncand$ & $A'$ & 15.0\% &  20.0\% \\
-$\Nvia$  & $A$  & 46.6\% &  95.0\% \\
+$\Ncand$ & $A$  & 84.6\% & \textbf{100.0\%} \\
+$\Ncand$ & $A'$ & 19.6\% &  20.0\% \\
+$\Nvia$  & $A$  & 58.8\% &  95.0\% \\
 $\Nvia$  & $A'$ & 86.0\% & \textbf{100.0\%} \\
 \bottomrule
 \end{tabular}
