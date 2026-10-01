@@ -49,23 +49,47 @@ The four corners of the 5×5 grid recover the four E1 cells exactly:
   (s_B=0, s_W=1): A_j = ρ_j · (global_mean/Ā_g^{Fogo}) → E1-W (TV_B=0, within-group = Fogo)
   (s_B=1, s_W=1): A_j = ρ_j → E1-V (actual Fogo amplitudes)
 
-ASSERTION: TV_W^eff at (0,1) must equal TV_W^eff(E1-W) = 0.1987 ± 1e-6.
-ASSERTION: Q2_optimal at (0,0) must equal 100.0% (all 1000 draws).
-ASSERTION: Q2_optimal at (1,0) must equal 100.0% (all 1000 draws).
-ASSERTION: Q2_optimal at (0,1) must equal E1-W optimal = 64.2% ± 2pp (sampling).
-ASSERTION: Q2_optimal at (1,1) must equal E1-V optimal = 56.8% ± 2pp (sampling).
+TV_W^eff is computed with ρ_j = range(X_via[:,j]) / ||X_via[:,j]|| (L2-normalised range),
+the same definition used in run_e1_v3.py. This gives Ā_g^{Fogo} = [0.3731, 0.1458, 0.1157].
+
+CORRECTION NOTE (commit after ca28423):
+  The PRESPEC_E2 and the first version of this PRESPEC_E3 stated:
+    TV_W^eff(E1-W) = 0.1987  and  TV_W^eff(E1-V) = 0.2335
+  Those values were computed with ρ_j as raw metre-scale amplitudes (np.ptp on
+  unnormalised columns), which gives a DIFFERENT scale. The correct values,
+  consistent with run_e1_v3.py and the e2_grid_results.csv computations, are:
+    TV_W^eff(E1-W) = 0.0641  (confirmed by calculation, 2026-10-01)
+    TV_W^eff(E1-V) = 0.0723  (confirmed by calculation, 2026-10-01)
+  All prior claims of 0.1987 and 0.2335 are WRONG at this scale.
+  DEV-E2-006: TV_W^eff values in PRESPEC_E2 §1.2 and e2_analysis_cells.py lines
+  136-138 used the wrong scale. The P_E2_3 residuals (E1-W: +9.6pp, E1-V: +12.2pp)
+  need to be recalculated with the correct TV_W^eff values.
+
+ASSERTIONS (using correct values):
+  ASSERTION: TV_W^eff at (0,1) = 0.0641 ± 1e-4  (E1-W)
+  ASSERTION: TV_W^eff at (1,1) = 0.0723 ± 1e-4  (E1-V)
+  ASSERTION: Q2_optimal at (0,0) = 100.0% (all 1000 draws)
+  ASSERTION: Q2_optimal at (1,0) = 100.0% (all 1000 draws)
+  ASSERTION: Q2_optimal at (0,1) ≈ E1-W optimal = 64.2% ± 2pp (sampling)
+  ASSERTION: Q2_optimal at (1,1) ≈ E1-V optimal = 56.8% ± 2pp (sampling)
 
 ### 1.3 TV_W^eff values at key grid points (pre-computed, verified)
 
-From the power-law generator with Fogo data:
+From the power-law generator with Fogo data (L2-normalised ρ_j):
   (s_B=0, s_W=0):   TV_W^eff = 0.000
-  (s_B=0, s_W=0.25): TV_W^eff ≈ 0.050 (to be confirmed by script assertion)
-  (s_B=0, s_W=0.5):  TV_W^eff ≈ 0.100 (to be confirmed)
-  (s_B=0, s_W=0.75): TV_W^eff ≈ 0.150 (to be confirmed)
-  (s_B=0, s_W=1.0):  TV_W^eff = 0.1987 (= E1-W, assertion)
-  (s_B=1, s_W=1.0):  TV_W^eff = 0.2335 (= E1-V, assertion)
+  (s_B=0, s_W=0.25): TV_W^eff ≈ 0.016 (to be confirmed by script assertion)
+  (s_B=0, s_W=0.50): TV_W^eff ≈ 0.032 (to be confirmed)
+  (s_B=0, s_W=0.75): TV_W^eff ≈ 0.048 (to be confirmed)
+  (s_B=0, s_W=1.0):  TV_W^eff = 0.0641 (= E1-W, assertion)
+  (s_B=1, s_W=1.0):  TV_W^eff = 0.0723 (= E1-V, assertion)
 
-The grid covers TV_W^eff ∈ [0, 0.234] by construction, spanning the full Fogo regime.
+The grid covers TV_W^eff ∈ [0, 0.072] with the L2-normalised scale.
+This covers the same range as E2 (max ~0.068). The advantage over E2 is that
+the generator is DETERMINISTIC and the four corners are regression-tested against E1.
+
+IMPORTANT: The claim "covering the Fogo regime" in earlier versions of this PRESPEC
+referred to TV_W^eff ≥ 0.20. This was based on the wrong scale. With the correct
+L2-normalised scale, E1-V itself is at TV_W^eff = 0.072 — E3 covers exactly E1's range.
 
 ## 2. Experimental design
 
@@ -125,8 +149,12 @@ All cells with s_W = 0 have Q2_optimal = 100.0% (Proposition 1).
 Hard assertion — not statistical. Falsified if any cell with s_W=0 gives < 100%.
 
 ### P_E3_5 (Secondary): R²(M3) > 0.80 on 20-cell subset (s_W > 0)
-If the relationship is approximately linear over the full range [0, 0.234],
-R²(M3) should be high. Falsified if R²(M3) < 0.80 (indicating non-linearity).
+If the relationship is approximately linear over [0, 0.072], R²(M3) should be high.
+Falsified if R²(M3) < 0.80 (indicating non-linearity over the tested range).
+
+NOTE: The earlier claim "R² should be high over [0, 0.234]" referred to the wrong
+TV_W^eff scale. With the correct scale, the maximum TV_W^eff is 0.072 (at E1-V).
+P_E3_5 now tests linearity over [0, 0.072].
 
 ## 4. Connection to prior experiments
 
