@@ -61,9 +61,15 @@ Q2o_rnk = 87.0   # SAW ranks optimal   → Q2m_rnk = 76.5 (tab:tvorder canonical
 # only Q2_mean=76.5 is published.
 Q2m_rnk_canonical = 76.5  # tab:tvorder canonical value
 
-# TOPSIS rows (from tab:factorial)
-Q2g_topsis_mm  = 83.4  # TOPSIS min-max greedy  (tab:effects main effect)
-Q2g_topsis_vec = 53.5  # TOPSIS vector greedy
+# TOPSIS rows — source: tab:factorial in main.tex, Round 11 (κ=200, space A', N=500)
+# Verified against diag_r14.py which checks: mm greedy=72.4, mm optimal=96.6
+# The values 83.4/53.5 that appeared in generate_macros.py were from a different
+# run (different κ or space) and are NOT the values in tab:factorial. Removed.
+# tab:factorial authoritative values (read from main.tex, NOT from a missing CSV):
+Q2g_topsis_mm_factorial  = 72.4   # tab:factorial: TOPSIS min-max greedy
+Q2g_topsis_vec_factorial = 50.6   # tab:factorial: TOPSIS vector greedy
+Q2o_topsis_mm_factorial  = 96.6   # tab:factorial: TOPSIS min-max optimal
+Q2o_topsis_vec_factorial = 52.4   # tab:factorial: TOPSIS vector optimal
 
 # tab:tvorder Q2_mean (average of greedy and optimal)
 Q2m_mm  = (Q2g_mm  + Q2o_mm)  / 2   # = 82.3
@@ -82,13 +88,9 @@ NormMainEffect = 29.9
 # SAW greedy contrast (estimand of synthetic grid, §7.7)
 SAWgreadyContrast = Q2g_mm - Q2g_vec  # = 10.4 pp
 
-# Greedy-only contrast across SAW and TOPSIS (excludes tautological optimal cells)
-# Source: tab:factorial in main.tex
-# SAW:   mm greedy=64.6, vec greedy=54.2 -> 10.4
-# TOPSIS: mm greedy=72.4, vec greedy=50.6 -> 21.8
-# Mean greedy contrast = (10.4 + 21.8) / 2 = 16.1 pp
-Q2g_topsis_mm_factorial  = 72.4
-Q2g_topsis_vec_factorial = 50.6
+# Greedy-only contrast: mean of SAW and TOPSIS greedy contrasts
+# Excludes the tautological optimal cells fixed at 100% by Proposition 1
+# Source: tab:factorial in main.tex (72.4/50.6 from Round 11, κ=200)
 NormGreedyContrast = ((Q2g_mm - Q2g_vec) + (Q2g_topsis_mm_factorial - Q2g_topsis_vec_factorial)) / 2
 
 # ─── §7.2: three-level regression on canonical Q2_mean ──────────────────────
@@ -172,11 +174,17 @@ lines = [
     mac("NormGreedyContrast", NormGreedyContrast, pct(NormGreedyContrast)),
     mac("LossTabTVorder",    Q2m_mm - Q2m_vec,  pct(Q2m_mm - Q2m_vec)),
     # TV on admissible range (vector, 389 sites): 86.7 * 0.107 = 9.3 pp
+    # 0.107 is hardcoded — source: separate WP3 run on admissible candidates only.
+    # TODO: read from a CSV when that run is stored.
     mac("MechOnePredAdmiss", abs(s3) * 0.107,   f"{abs(s3) * 0.107:.1f}"),
-    # Mechanism 1 share and mismatch ratios (§8.1): 9.3 pp pred, 80 pp observed, 5 pp other direction
-    mac("MechOneShare",    abs(s3) * 0.107 / 80 * 100,     f"{round(abs(s3) * 0.107 / 80 * 100):.0f}"),
-    mac("MismatchRatioHi", 80 / (abs(s3) * 0.107),         f"{80 / (abs(s3) * 0.107):.1f}"),
-    mac("MismatchRatioLo", 5  / (abs(s3) * 0.107),         f"{5  / (abs(s3) * 0.107):.2f}"),
+    # tab:fourthcell values: N_cand/A' = 100%->20% loss of 80pp; N_via/A = 100%->95% loss of 5pp
+    # Source: tab:fourthcell in main.tex (lines ~1973-1985)
+    mac("FourthCellLossHi",  100.0 - 20.0,   f"{100.0-20.0:.0f}"),
+    mac("FourthCellLossLo",  100.0 - 95.0,   f"{100.0-95.0:.0f}"),
+    # Mechanism 1 share and mismatch ratios (§8.1)
+    mac("MechOneShare",    abs(s3) * 0.107 / (100.0-20.0) * 100,  f"{round(abs(s3)*0.107/(100.0-20.0)*100):.0f}"),
+    mac("MismatchRatioHi", (100.0-20.0) / (abs(s3) * 0.107),      f"{(100.0-20.0)/(abs(s3)*0.107):.1f}"),
+    mac("MismatchRatioLo", (100.0-95.0) / (abs(s3) * 0.107),      f"{(100.0-95.0)/(abs(s3)*0.107):.2f}"),
     "\n",
     "% ── §7.2: three-level regression ────────────────────────────────────────\n",
     mac("slopeThree",   abs(s3),         f"{abs(s3):.1f}"),

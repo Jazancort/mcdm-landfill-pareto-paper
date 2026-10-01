@@ -117,8 +117,29 @@ if log_path.exists():
         print(f"  [FAIL] Undefined \\ref labels: {ref_undef}")
     else:
         print(f"  [OK  ] Undefined \\ref labels: 0")
+
+    # Check: no citation undefined (bbl not compiled = submission blocker)
+    cit_undef = len(_re.findall(r"Citation `[^']+' on page \d+ undefined", log_text))
+    if cit_undef > 0:
+        FAIL.append(f"Citation [?] in log: {cit_undef} — run bibtex before submitting (Makefile 'paper' target does this)")
+        print(f"  [FAIL] Citation undefined: {cit_undef}")
+    else:
+        print(f"  [OK  ] Citation undefined: 0")
 else:
     print("  [SKIP] main.log not found")
+
+# Check: main.bbl exists and is > 1 KB (submission blocker if empty)
+bbl_path = ROOT / "main.bbl"
+if bbl_path.exists():
+    bbl_size = bbl_path.stat().st_size
+    if bbl_size < 1024:
+        FAIL.append(f"main.bbl is {bbl_size} bytes (<1 KB) — run bibtex (make paper does this)")
+        print(f"  [FAIL] main.bbl: {bbl_size} bytes (<1 KB)")
+    else:
+        print(f"  [OK  ] main.bbl: {bbl_size:,} bytes")
+else:
+    FAIL.append("main.bbl not found — run bibtex (make paper does this)")
+    print(f"  [FAIL] main.bbl not found")
 
 # Check: no em-dashes (---) as prose separators in main.tex
 main_tex = ROOT / "main.tex"
@@ -147,5 +168,7 @@ if FAIL:
         print(f"  x {msg}")
     import sys as _sys; _sys.exit(1)
 else:
-    print("ALL CHECKS PASSED (19 assertions)")
+    n_arith   = 17   # arithmetic assertions (fixed)
+    n_quality = 4    # document quality checks: \ref, citations, bbl, em-dashes
+    print(f"ALL CHECKS PASSED ({n_arith + n_quality} assertions)")
     import sys as _sys; _sys.exit(0)
