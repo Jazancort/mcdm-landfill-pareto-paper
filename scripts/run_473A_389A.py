@@ -163,7 +163,7 @@ for di, w in enumerate(draws):
     trio_o = tuple(argmax_trio(sc_mm))
 
     # TOPSIS/mm
-    from mcdm_experiment import INV, COST, benefit
+    # benefit already computed above via _build_decision_matrix
     X_imp, benefit_imp = _build_decision_matrix(df_imp)
     # TOPSIS score over 389 sites (score always over viable sites)
     V = X_via * w

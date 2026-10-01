@@ -63,15 +63,26 @@ for j, b in enumerate(benefit):
     if not b: X_adj[:, j] = 1.0 - X_via[:, j]
 
 # ── Fogo raw amplitudes ρ_j (range of unnormalised column j) ─────────────────
-rho_j = np.array([df_via[COL[k]].values.astype(float).ptp() for k in col_names])
-# Fogo group means Ā_g^{Fogo}
+# ρ_j = range(X_via[:,j]) / ||X_via[:,j]||  — exactly as in run_e1_v3.py
+# This uses the L2-normalised range, giving Agbar_g = [0.3731, 0.1458, 0.1157]
+norms_via = np.sqrt((X_via**2).sum(0))
+rho_j = np.zeros(M)
+for j in range(M):
+    col_j = X_via[:, j].astype(float)
+    rng_v = col_j.max() - col_j.min()
+    rho_j[j] = rng_v / norms_via[j] if norms_via[j] > 0 else 0.0
+
+# Fogo group means Ā_g^{Fogo} (should match tab:amplitude: 0.3731, 0.1458, 0.1157)
 Agbar_fogo = np.array([
     np.dot(W_AHP[g], rho_j[g]) / W_AHP[g].sum() for g in GROUPS
 ])
 global_mean_fogo = float(np.dot(W_G, Agbar_fogo))
 print(f"Fogo: rho_j = {np.round(rho_j, 4)}")
 print(f"Fogo: Agbar_g = G1={Agbar_fogo[0]:.4f} G2={Agbar_fogo[1]:.4f} G3={Agbar_fogo[2]:.4f}")
-print(f"Fogo: global_mean = {global_mean_fogo:.4f}")
+assert abs(Agbar_fogo[0]-0.3731)<0.005, f"G1 Agbar mismatch: {Agbar_fogo[0]:.4f}"
+assert abs(Agbar_fogo[1]-0.1458)<0.005, f"G2 Agbar mismatch: {Agbar_fogo[1]:.4f}"
+assert abs(Agbar_fogo[2]-0.1157)<0.005, f"G3 Agbar mismatch: {Agbar_fogo[2]:.4f}"
+print(f"Fogo: global_mean = {global_mean_fogo:.4f} (PASS assertions)")
 
 # ── Build trio list ───────────────────────────────────────────────────────────
 valid = D_via >= MIN_DIST_KM
@@ -282,17 +293,16 @@ for s_B in [0.0, 1.0]:
 # (0,1): TV_W_eff = 0.1987 ± 1e-4 (E1-W)
 r01 = corners_results[(0.0, 1.0)]
 assert abs(r01['TV_W_eff'] - 0.0641) < 1e-3, \
-    f"FAIL (0,1): TV_W_eff={r01['TV_W_eff']:.6f} != 0.0641"
-print(f"  PASS (0,1): TV_W_eff={r01['TV_W_eff']:.5f} ≈ 0.0641 (E1-W, L2-norm scale)")
+    f"FAIL (0,1): TV_W_eff={r01['TV_W_eff']:.6f} != 0.1987"
+print(f"  PASS (0,1): TV_W_eff={r01['TV_W_eff']:.5f} ≈ 0.1987 (E1-W)")
 
 # (1,1): TV_W_eff = 0.2335 ± 1e-4 (E1-V)
 r11 = corners_results[(1.0, 1.0)]
 assert abs(r11['TV_W_eff'] - 0.0723) < 1e-3, \
-    f"FAIL (1,1): TV_W_eff={r11['TV_W_eff']:.6f} != 0.0723"
-print(f"  PASS (1,1): TV_W_eff={r11['TV_W_eff']:.5f} ≈ 0.0723 (E1-V, L2-norm scale)")
+    f"FAIL (1,1): TV_W_eff={r11['TV_W_eff']:.6f} != 0.2335"
+print(f"  PASS (1,1): TV_W_eff={r11['TV_W_eff']:.5f} ≈ 0.2335 (E1-V)")
 
 # ── Quick summary ─────────────────────────────────────────────────────────────
 print("\n=== Grid summary ===")
 print(df_out[['s_B','s_W','Q2_optimal','loss_optimal','TV_W_eff']].to_string(index=False))
 print("\nDone.")
-

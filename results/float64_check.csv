@@ -1,0 +1,5 @@
+norm,assembly,Q2_f64_eps,Q2_wp3,diff_pp
+min-max,greedy,86.0,65.8,20.200000000000003
+min-max,optimal,100.0,100.0,0.0
+vector,greedy,66.2,54.0,12.200000000000003
+vector,optimal,56.8,56.8,0.0

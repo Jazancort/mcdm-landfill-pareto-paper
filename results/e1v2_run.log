@@ -1,0 +1,55 @@
+======================================================================
+E1 v2: Between-group vs within-group amplitude distortion
+Pre-specification: corpus/PRESPEC_E1.md (commit f6042f8)
+======================================================================
+Reference sites: 473   Admissible sites: 389
+Viable trios: 1,944,653 (built in 1.36s)
+Building per-site objective columns (389-site reference, as WP3)... done
+Pre-computing trio column sums... done in 0.45s
+R4 proxy: objectives change with w perturbation: True
+Reference frontier (w_ahp): F1=[0.0213,0.4730]  F2=[0.4263,0.9247]  F3=[0.1312,0.8004]
+
+Aj_bar_g: G1=0.3744  G2=0.1473  G3=0.1161
+Published: G1=0.3731  G2=0.1458  G3=0.1157
+E1-W rescale factor: 0.2034  (published: 0.2024)
+[TV_B assertion] E1-W group amplitude means all equal 0.203406: PASS
+
+Building score matrices...
+
+--- E1-V ---
+  [100/500]  greedy=62.0%  optimal=38.0%  28s elapsed
+  [200/500]  greedy=63.5%  optimal=44.0%  56s elapsed
+  [300/500]  greedy=63.0%  optimal=47.7%  84s elapsed
+  [400/500]  greedy=62.7%  optimal=47.2%  112s elapsed
+  [500/500]  greedy=60.4%  optimal=46.6%  140s elapsed
+  RESULT: greedy=60.40% (SE=2.19)  optimal=46.60% (SE=2.23)
+
+--- E1-B ---
+  [100/500]  greedy=51.0%  optimal=80.0%  28s elapsed
+  [200/500]  greedy=52.5%  optimal=80.5%  56s elapsed
+  [300/500]  greedy=53.3%  optimal=80.3%  84s elapsed
+  [400/500]  greedy=54.8%  optimal=82.0%  112s elapsed
+  [500/500]  greedy=54.0%  optimal=81.8%  140s elapsed
+  RESULT: greedy=54.00% (SE=2.23)  optimal=81.80% (SE=1.73)
+
+--- E1-W ---
+  [100/500]  greedy=57.0%  optimal=49.0%  28s elapsed
+  [200/500]  greedy=61.0%  optimal=50.5%  56s elapsed
+  [300/500]  greedy=62.0%  optimal=52.0%  83s elapsed
+  [400/500]  greedy=61.3%  optimal=51.5%  111s elapsed
+  [500/500]  greedy=60.0%  optimal=50.2%  138s elapsed
+  RESULT: greedy=60.00% (SE=2.19)  optimal=50.20% (SE=2.24)
+
+======================================================================
+REGRESSION ASSERTIONS
+======================================================================
+R1 E1-V greedy  = 60.40%  (WP3=54.0%, |diff|=6.4pp, 3*SE=6.7pp): PASS
+R2 E1-V optimal = 46.60%  (WP3=56.8%, |diff|=10.2pp, 3*SE=6.7pp): FAIL
+R3 E1-B optimal = 81.80% (must be 100.0%): FAIL
+R4 optimal trio varies across draws (11 distinct indices out of 500): PASS
+Traceback (most recent call last):
+  File "/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e1.py", line 319, in <module>
+    assert r3_ok, f"P1 FAIL: E1-B optimal={E1B_o:.4f}% != 100%"
+           ^^^^^
+AssertionError: P1 FAIL: E1-B optimal=81.8000% != 100%
+DONE

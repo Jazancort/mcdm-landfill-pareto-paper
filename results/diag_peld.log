@@ -1,0 +1,38 @@
+Trios: 1,944,653
+  [100/500]  26s
+  [200/500]  51s
+  [300/500]  74s
+  [400/500]  96s
+  [500/500]  117s
+
+======================================================================
+A) PELDSCHUS greedy=99% DIAGNOSIS
+======================================================================
+Peldschus greedy Q2   = 99.00%
+min-max   greedy Q2   = 86.00%
+min-max pert (1e-12)  = 86.00%  (tie-break test)
+  -> If mm_pert != mm: tie-breaking in min-max is suppressing Q2
+     diff = +0.00pp
+Peldschus: greedy==optimal fraction = 88.6%
+Peldschus: median F1 percentile of greedy = 17.4%
+
+CONCLUSION: min-max Q2 invariant to perturbation -> NOT a tie-break artefact.
+
+======================================================================
+B) GREEDY TRIO OVERLAP BETWEEN NORMALISATIONS (Jaccard, 500 draws)
+======================================================================
+                min-max  Peldsch      max    ranks   vector      sum
+--------------------------------------------------------------------
+  min-max         1.000    0.469    0.984    0.120    0.245    0.194
+  Peldschus       0.469    1.000    0.477    0.013    0.035    0.023
+  max             0.984    0.477    1.000    0.116    0.246    0.197
+  ranks           0.120    0.013    0.116    1.000    0.258    0.237
+  vector          0.245    0.035    0.246    0.258    1.000    0.778
+  sum             0.194    0.023    0.197    0.237    0.778    1.000
+
+Fraction of draws with IDENTICAL greedy trio:
+  min-max vs max: 97.8% identical
+  vector vs sum: 62.6% identical
+
+Done.
+DONE

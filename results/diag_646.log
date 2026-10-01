@@ -1,0 +1,15 @@
+============================================================
+SAW/min-max/greedy: ref=389 vs ref=473
+============================================================
+ref=389 (wp3_mc style):      86.00%  (should match 86.0%)
+ref=473 (mc_2cube style):    58.80%  (should match ~64.6%)
+Agreement between the two:   72.8%
+
+Difference: +27.20pp
+CONCLUSION: The 64.6 vs 65.8 discrepancy is explained by the
+  reference set for objectives (473 vs 389 sites).
+  The CORRECT estimand for space A' is ref=389.
+  mc_2cube uses ref=473 — it measures dominance in the WRONG space.
+
+Done.
+DONE
