@@ -1,0 +1,204 @@
+%% supplementary.tex
+%% Content moved from main.tex (Marco A, 2026-10-01)
+%% This file is NOT compiled with the main paper.
+%% It contains sec:external (External validity: synthetic instances)
+%% and tab:external (Synthetic grid table).
+%%
+%% To compile standalone, wrap with:
+%%   \documentclass{article}
+%%   \usepackage{booktabs,amsmath,amssymb}
+%%   \begin{document}
+%%   \input{supplementary}
+%%   \end{document}
+
+% =======================================================================
+% =======================================================================
+% \S7.7 External validity
+% =======================================================================
+
+\subsection{External validity: synthetic instances}
+\label{sec:external}
+
+The preceding sections quantify both mechanisms on a single candidate
+set, Fogo Island, whose marginal distributions are specific and in one
+respect extreme: \textit{perm} carries $350$ tied zeros.
+This section separates the mechanism from the instance by re-drawing the
+criterion columns while holding the spatial structure fixed: each
+synthetic instance reuses the Fogo distance matrix, and hence the same
+$|\Tset|=\Ntrios$ feasible trios, and varies only the marginals.
+
+\paragraph{Design.}
+The manipulated factor is the \emph{number} of sparse criteria rather
+than a global zero mass.
+The reason is analytic: $\mathrm{TV}$ is invariant to a common amplitude
+level (Section~\ref{sec:three_norms}), so applying the same zero mass to
+every column leaves the elicited weights untouched however extreme that
+mass becomes.
+Distortion requires heterogeneity \emph{across} columns.
+We therefore cross $n_{\mathrm{sparse}}\in\{0,1,2,3,4\}$, with zero mass
+applied to the $n_{\mathrm{sparse}}$ most heavily weighted criteria,
+with $p_0\in\{0.50,0.75,0.90,0.95\}$ and two tail shapes (lognormal,
+bimodal), with $6$ replications: $240$ instances at $200$ draws each.
+Four cells are evaluated per instance: SAW under min--max and vector
+normalisation, each with greedy and optimal assembly.
+The objectives $F_\ell$ are defined by min--max normalisation
+throughout, so the vector cells measure score--evaluator divergence as
+well as re-weighting.
+The min--max/optimal cell is the regression test of
+Proposition~\ref{prop:p1:stmt} and returned $Q_2=1$ in $240/240$
+instances.
+
+\paragraph{Unit of analysis.}
+Replications within a cell are not independent draws of the manipulated
+factor, so inference is conducted on the $20$ cell means.
+The intra-class correlation is $\mathrm{ICC}=0.35$, giving a design
+effect of $4.8$ and an effective sample size of
+$n_{\mathrm{eff}}\approx50$ against the nominal $240$; reporting on
+$240$ rows would understate the standard errors by roughly a factor
+of two.
+
+\paragraph{Total variation alone does not order the loss.}
+Over all $20$ cells the loss correlates with $\mathrm{TV}$ at
+$r=0.600$ ($95\%$ CI by Fisher transformation $[0.214,\,0.824]$,
+$n=20$), but the relation is not monotone: $21.6\%$ of the $190$ cell
+pairs are inversions (Kendall $\tau_b=0.550$).
+Restricting to the $16$ cells that carry a distortion at all
+($n_{\mathrm{sparse}}\ge1$), the association is statistically
+indistinguishable from no effect ($r=0.346$, $p=0.189$): the
+correlation over all $20$ cells is carried by the four cells in which
+no criterion is sparse and the loss is zero by construction.
+The inversions run in both directions of the design.
+Holding $p_0$ fixed, the loss falls as the distortion is spread over
+more criteria while $\mathrm{TV}$ does not fall correspondingly;
+holding $n_{\mathrm{sparse}}=1$, the loss rises with $p_0$ up to
+$0.90$ and then falls by $16.4$~pp at $p_0=0.95$ although
+$\mathrm{TV}$ continues to rise.
+Table~\ref{tab:external} reports both patterns by cell.
+
+\paragraph{The factorisation does.}
+Proposition~\ref{prop:concentration} accounts for this.
+Regressing the loss on the $16$ distorted cells gives
+$R^2_{\mathrm{adj}}=0.057$ for $\mathrm{TV}$ alone ($r=0.346$,
+$p=0.189$, statistically indistinguishable from no effect)
+against $R^2_{\mathrm{adj}}=0.488$ for $\lVert\delta\rVert_2$
+of~\eqref{eq:l2fact} ($r=0.723$, $p=0.002$).
+Entering magnitude and concentration separately gives
+$R^2_{\mathrm{adj}}=0.582$ with a negative coefficient on
+$m_{\mathrm{eff}}$ ($-0.026$ per effective criterion, $p=0.0008$): at
+fixed $\mathrm{TV}$, spreading the distortion over more criteria
+\emph{reduces} the loss, because deviations of opposite sign cancel in
+the weighted sum.
+The combined model, with both predictors, reaches $R^2_{\mathrm{adj}}=0.665$,
+confirming that magnitude is necessary but not sufficient: concentration
+is the term that $\mathrm{TV}$ omits.
+
+\paragraph{What the grid does not establish.}
+Under the two-group amplitude model the participation
+ratio~\eqref{eq:meff} depends only on the total weight of the sparse
+columns, so $m_{\mathrm{eff}}$ is constant within each level of
+$n_{\mathrm{sparse}}$ and takes only the four values
+$\{3.59,\,6.42,\,8.38,\,9.67\}$ across the grid
+($\text{Spearman }\rho(m_{\mathrm{eff}},n_{\mathrm{sparse}})=1$).
+Concentration was therefore not varied orthogonally to the manipulated
+factor: the model in $\mathrm{TV}$ and $m_{\mathrm{eff}}$
+($R^2_{\mathrm{adj}}=0.582$) is a reparameterisation of the model in
+$\mathrm{TV}$ and $n_{\mathrm{sparse}}$ ($0.532$), and the
+$5$-percentage-point gain reflects the concavity of the transformation
+rather than independent information.
+The factorisation~\eqref{eq:l2fact} is an algebraic identity and holds
+for any deviation vector; what the grid supports is that the loss
+responds to the combination of magnitude and concentration rather than
+to magnitude alone, not that $m_{\mathrm{eff}}$ has been identified as
+a separate causal channel.
+A design in which the sparse columns carry unequal zero masses would
+decouple the two, and is the natural next step.
+
+\paragraph{Reconciliation with Fogo.}
+Fogo has $m_{\mathrm{eff}}=4.05$ on the admissible range $[2,11]$,
+placing it near the $n_{\mathrm{sparse}}=1$ regime of the grid
+($m_{\mathrm{eff}}=3.59$).
+The comparison must be made at the grid's estimand, which is the
+greedy-assembly contrast under SAW: on Fogo that is
+$64.6-54.2=\SAWgreedyContrast$~pp, not the $\LossTabTVorder$~pp of
+Table~\ref{tab:tvorder} (which averages both assemblies) nor the
+$29.9$~pp normalisation main effect of Table~\ref{tab:effects} (which
+averages both assemblies and both aggregations, and is therefore
+inflated by the optimal-assembly cells where min--max attains $100\%$
+by Proposition~\ref{prop:p1:stmt}).
+The model in $\lVert\delta\rVert_2$, fitted on the synthetic cells
+alone, predicts $22.2$~pp at Fogo's $\lVert\delta\rVert_2=0.3127$, with
+a $95\%$ prediction interval for a new instance of $[7.5,\,36.9]$~pp;
+the model in $\mathrm{TV}$ predicts $14.0$~pp with interval
+$[-4.7,\,32.7]$~pp.
+Both intervals contain the observed $\SAWgreedyContrast$~pp, and both point
+predictions exceed it, by $11.8$ and $3.6$~pp respectively.
+We do not read the excess as a calibrated bias in either direction.
+The grid varies the marginals while holding the spatial structure fixed,
+and its vector cells confound implicit re-weighting with
+score--evaluator divergence because the objectives remain defined on
+min--max throughout; Fogo's deviation geometry differs from the
+generator's in a way the design does not parameterise
+(see below).
+What the grid establishes is that the loss responds to magnitude and
+concentration jointly rather than to magnitude alone, and that Fogo's
+predicted loss falls inside the interval the grid implies; it does not
+establish a bound.
+
+The shortfall is systematic and its source identifiable.
+The generator inflates $n_{\mathrm{sparse}}$ columns and deflates the
+remainder uniformly.
+Fogo's deviation vector is not of that form: \textit{perm} is inflated
+$2.88\times$ while \textit{urban} $(0.53\times)$, \textit{aspect}
+$(0.51\times)$, \textit{aero} $(0.43\times)$ and \textit{wells}
+$(0.40\times)$ are independently and unequally deflated
+(Table~\ref{tab:amplitude}).
+Two-sided distortion of this kind displaces the weight vector along the
+simplex differently from a one-sided distortion of the same
+$\lVert\delta\rVert_2$, so the generator does not reproduce Fogo's
+deviation geometry.
+We report the difference in geometry rather than a correction for it:
+the grid supports the joint role of magnitude and concentration, and
+does not calibrate the level of the loss for an instance outside its
+generating family.
+
+\begin{table*}[!t]
+\centering
+\caption{Synthetic grid: $20$ cells, $12$ instances each
+  ($240$ instances, $200$ draws per instance).
+  Loss is $Q_2(\text{min--max, greedy})-Q_2(\text{vector, greedy})$.
+  $m_{\mathrm{eff}}$ is~\eqref{eq:meff} and $\lVert\delta\rVert_2$
+  is~\eqref{eq:l2fact}, both reconstructed from the two-group amplitude
+  model.
+  Cells with $n_{\mathrm{sparse}}=0$ carry no distortion and are
+  excluded from the regressions.
+  Within each level of $p_0$ the loss falls as the distortion is spread
+  over more criteria, while $\mathrm{TV}$ does not decline
+  correspondingly and at $p_0=0.95$ peaks at $n_{\mathrm{sparse}}=2$;
+  the two quantities are not ordered alike, which is what motivates
+  Proposition~\ref{prop:concentration}.}
+\label{tab:external}
+\begin{tabular}{rrrrrr}
+\toprule
+$n_{\mathrm{sparse}}$ & $p_0$ & $\mathrm{TV}$ &
+  $m_{\mathrm{eff}}$ & $\lVert\delta\rVert_2$ & Loss \\
+\midrule
+0 & --- & 0.007--0.008 & --- & --- & $\approx 0$ \\
+1 & 0.50 & 0.121 & 3.59 & 0.128 & 0.065 \\
+1 & 0.75 & 0.191 & 3.59 & 0.201 & 0.192 \\
+1 & 0.90 & 0.262 & 3.59 & 0.276 & 0.360 \\
+1 & 0.95 & 0.301 & 3.59 & 0.318 & 0.196 \\
+2 & 0.50 & 0.165 & 6.42 & 0.130 & 0.105 \\
+2 & 0.75 & 0.216 & 6.42 & 0.170 & 0.057 \\
+2 & 0.90 & 0.307 & 6.42 & 0.242 & 0.146 \\
+2 & 0.95 & 0.379 & 6.42 & 0.299 & 0.135 \\
+3 & 0.50 & 0.160 & 8.38 & 0.110 & 0.065 \\
+3 & 0.75 & 0.225 & 8.38 & 0.155 & 0.052 \\
+3 & 0.90 & 0.303 & 8.38 & 0.210 & 0.129 \\
+3 & 0.95 & 0.349 & 8.38 & 0.241 & 0.131 \\
+4 & 0.50 & 0.153 & 9.67 & 0.099 & 0.025 \\
+4 & 0.75 & 0.211 & 9.67 & 0.136 & 0.020 \\
+4 & 0.90 & 0.269 & 9.67 & 0.173 & 0.058 \\
+4 & 0.95 & 0.315 & 9.67 & 0.203 & 0.083 \\
+\bottomrule
+\end{tabular}
+\end{table*}
