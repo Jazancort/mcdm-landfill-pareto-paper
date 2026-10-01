@@ -1,0 +1,15 @@
+===========================================================================
+Reconciliation: {ref} × {dtype/eps} — SAW/min-max, alpha=200, N=500, seed=42
+Variant                            Greedy  Optimal  Target comparison
+---------------------------------------------------------------------------
+  ref=389, f32, strict               63.00%  100.00%  <- should match wp3_mc old (65.8%) or factorial old?
+  ref=473, f32, strict               45.40%   95.00%  <- target: 64.6% / 100.0% (old mc_2cube)
+  ref=389, f64, eps+nself            86.00%  100.00%  <- should match 86.0% / 100.0%
+  ref=473, f64, eps                  58.80%   95.00%  <- should match 58.8% / ? (explain_646)
+
+If ref=473/f32/strict gives 64.6%/100.0%, the explanation is:
+  mc_2cube used ref=473 for objectives AND float32 AND no-eps
+  The score (X_adj * w) uses 389-site normalisation regardless of ref
+  SAW/mm/optimal=100% is possible with ref=473 if the SAW argmax
+  happens to always be on the 473-ref frontier
+DONE

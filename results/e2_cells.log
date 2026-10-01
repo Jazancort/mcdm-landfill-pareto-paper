@@ -1,0 +1,52 @@
+======================================================================
+E2 analysis on 40 cell means (s_B × s_W combinations)
+======================================================================
+loss_opt range: [0.00, 11.50]pp  mean=2.06pp
+TV_W_eff range: [0.0000, 0.0504]
+TV_W range:     [0.0000, 0.0517]
+
+======================================================================
+OLS on 40 cell means (correct unit of analysis)
+Model    Predictor             R²     slope  intercept      p-value
+----------------------------------------------------------------------
+  M1       TV_total          0.0621    +18.79       0.70   1.2094e-01
+  M2       TV_W (3 groups)   0.5138   +135.33      -1.03   1.9652e-07
+  M3       TV_W_eff          0.5174   +137.07      -1.03   1.6996e-07
+  M4_B     TV_B              0.0017     -3.44       2.23   8.0124e-01
+  M4       TV_W+TV_B         0.5186 [coef_W=+135.84 coef_B=-5.77 int=-0.75]
+  M5       TV_W_eff+I(B>0)   0.5231 [coef_eff=+137.20 coef_I=-0.55 int=-0.59]
+
+P_E2_1 on cell means: ΔR² = R²(M3) - R²(M1) = 0.5174 - 0.0621 = 0.4553
+Bootstrap 95% CI for ΔR²: [0.2311, 0.6333]
+Threshold: 0.10
+P_E2_1: CONFIRMED (CI entirely above 0.10)
+
+P_E2_2 (hard assertion): all s_W=0 cells have Q2_optimal=100%?
+  PASS: all 30 instances with s_W=0 have Q2_optimal=100.0%
+
+P_E2_3: E1 cells on M3 regression line (residual < 5pp)?
+M3 model: loss = 137.07 * TV_W_eff + -1.03
+Cell       TV_W_eff   Observed  Predicted   Residual
+  E1-B         0.0000        0.0pp       -1.0pp       +1.0pp  OK
+  E1-W         0.1987       35.8pp       26.2pp       +9.6pp  FAIL
+  E1-V         0.2335       43.2pp       31.0pp      +12.2pp  FAIL
+
+Non-monotone cases (loss > 30pp but TV_W_eff < median):
+  None (all high-loss cells have TV_W_eff > median)
+
+Correlation (Spearman) TV_W_eff vs loss_opt:
+  ρ = 0.8585  p = 1.4115e-12
+
+======================================================================
+Tarefa 5: IC emparelhado bootstrap — óptima < greedy
+======================================================================
+Pair                   Opt Q2   Grd Q2     Diff                 95% CI        p
+---------------------------------------------------------------------------
+  SAW/min-max            100.00%    86.00%   +14.00pp [+11.00,+17.20]pp   0.0000
+  SAW/vector              56.80%    66.20%    -9.40pp [-12.40,-6.40]pp   0.0000
+  TOPSIS/min-max          96.60%    94.40%    +2.20pp [+0.20,+4.20]pp   0.0410
+  TOPSIS/vector           52.40%    63.40%   -11.00pp [-14.40,-7.80]pp   0.0000
+
+Negative diff = optimal WORSE than greedy.
+CI entirely below 0 => optimal significantly worse.
+DONE
