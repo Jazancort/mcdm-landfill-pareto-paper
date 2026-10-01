@@ -238,10 +238,11 @@ gains $+\AsmMM$~pp under min--max normalisation and loses $\AsmVec$~pp
 under vector normalisation, and the loss appears under both SAW and
 TOPSIS.
 We sharpen this into a structural result.
-If the normalised amplitudes are constant within each objective group,
-exact assembly remains Pareto-efficient whatever the distortion between
-groups (Theorem~\ref{thm:groupconst}); only distortion within a
-group can move the optimum off the frontier.
+Exact assembly remains Pareto-efficient for every instance if and only
+if the normalised amplitudes are constant within each objective group
+(Theorem~\ref{thm:groupconst}): distortion between groups only relocates
+the optimum along the frontier, and only distortion within a group can
+move it off.
 A pre-registered intervention that manipulates the two components
 separately confirms the prediction on Fogo
 (Section~\ref{sec:e1}).
@@ -964,7 +965,7 @@ bootstrap intervals, paired by draw.
 
 The central analytical result of the paper is stated and derived in this section.
 It takes the form of a lemma that expresses effective weights in closed form,
-followed by four propositions and two corollaries that characterise the specific distortions
+followed by a theorem, three propositions and two corollaries that characterise the specific distortions
 produced by min--max, vector, and rank normalisation.
 
 % ----------------------------------------------------------
@@ -1203,8 +1204,13 @@ Proposition~\ref{prop:p1:stmt} applies unchanged.
 
 \textbf{(i)$\Rightarrow$(ii).}
 Suppose $j,k\in G_g$ with $A_j<A_k$.
-Take two sites $a,a'$ that coincide on every criterion except $j$ and
-$k$, with oriented differences
+Consider an instance containing, besides sites $a$ and $a'$, sites that
+attain the minimum and maximum of every criterion, so that the min--max
+ranges, and hence $A$, are fixed independently of $a$ and $a'$.
+Let $a$ and $a'$ coincide on every criterion except $j$ and $k$, and let
+$T=\{a\}\cup R$ and $T'=\{a'\}\cup R$ for a common set $R$ of $\kk-1$
+other sites.
+Assign oriented differences
 $w_j[\tilde c_j(a')-\tilde c_j(a)]=x$ and
 $w_k[\tilde c_k(a')-\tilde c_k(a)]=y$, where $y=-\eta<0$ and
 $x=\tfrac{\eta}{2}\,(1+A_k/A_j)$, with $\eta>0$ small enough to keep all
@@ -1930,9 +1936,10 @@ Mechanism~1 predicts: $\mathrm{TV}=0.107$ implies $\approx\MechOnePredAdmiss$~pp
 accounting for only $\MechOneShare\%$ of the effect ($\MechOnePredAdmiss/80$).
 The gap is not accounted for by the magnitude of the re-weighting.
 
-Under vector normalisation, exact assembly optimises a score that is
-misaligned with the evaluator, which is why it loses $\AsmVec$~pp to
-greedy assembly (Section~\ref{sec:interaction}).
+The loss of exact assembly under vector normalisation
+(Section~\ref{sec:interaction}) is not of this kind: there the score is
+an affine function of the objectives, and Section~\ref{sec:e1} traces
+the loss to within-group re-weighting.
 Whether the two mechanisms combine additively is not identified by the
 present design; Section~\ref{sec:discussion} shows only that they are
 distinct.
@@ -2092,7 +2099,7 @@ give $F_1$ roughly $2.5$ times the weight of the other groups; the score
 becomes nearly lexicographic in siting cost, greedy and optimal choices
 coincide in $62.8\%$ of draws, and the median greedy portfolio lies at
 the $0.8$th percentile of $F_1$.
-The proposition says nothing about greedy assembly, and we do not treat
+The theorem says nothing about greedy assembly, and we do not treat
 this result as evidence for it.
 
 
@@ -2148,10 +2155,8 @@ observed losses differ by a factor of~$16$.
 Neither the magnitude nor the group structure of the re-weighting
 accounts for this asymmetry, which we report as unexplained
 (Section~\ref{sec:refset}).
-Two findings are attributable to this mechanism: the collapse under
-reference-set misalignment (Table~\ref{tab:fourthcell}), and the
-loss from exact assembly under vector normalisation
-($-\AsmVec$~pp relative to greedy).
+One finding is attributable to this mechanism: the collapse under
+reference-set misalignment (Table~\ref{tab:fourthcell}).
 
 The practical ordering follows.
 Re-weighting is a modelling error that can be quantified and, if
