@@ -1,7 +1,7 @@
 %% Elsevier CAS Double-Column template
 %% Article: Normalisation and assembly in MCDM-based landfill site selection:
 %%          a factorial evaluation against an exact Pareto frontier
-%% Updated: 01/Oct/2026 (Marco A)
+%% Updated: 01/Oct/2026 (Marco B)
 
 \documentclass[a4paper,fleqn]{cas-dc}
 
@@ -103,8 +103,9 @@ one another, which establishes that methods differ but not that any is
 worse.
 We supply an optimality benchmark that is internal to the value model but
 external to the ranking.
-For $\Ncand$ candidate sites on Fogo Island, Cape Verde, we enumerate all
-$\Ntrios$ three-site portfolios under a $\dmin$~km separation constraint
+For $\Ncand$ candidate sites on Fogo Island, Cape Verde, of which
+$\Nvia$ are admissible, we enumerate all $\Ntrios$ three-site portfolios
+of admissible sites under a $\dmin$~km separation constraint
 and compute the exact Pareto frontier over siting cost, environmental
 impact and social safety.
 Crossing aggregation, normalisation and assembly, we find that
@@ -373,11 +374,6 @@ used to normalise that criterion has been known since at least
 diverge whenever criterion columns have different ranges after
 normalisation, and argued that the effective weight is the operationally
 relevant quantity.
-The group structure on which Theorem~\ref{thm:groupconst} rests is the
-value tree whose effects on elicited weights are documented behaviourally
-\citep{Weber1988,Poyhonen2001}: those studies show that the grouping of
-attributes changes the weights elicited; the theorem shows that, given
-the grouping, the normalisation must not change weights within a group.
 \citet{Milani2005} confirmed this empirically, showing that different
 normalisation norms produce different rankings in a gear material
 selection study and recommending vector normalisation on the grounds that
@@ -594,6 +590,10 @@ The feasible set is
     \eqref{eq:rsep}\,\bigr\},
   \qquad |\Tset| = \Ntrios.
 \end{equation}
+Throughout, $S$ is the set of $\Nvia$ admissible sites
+(Section~\ref{sec:methods}); the $\Nexcl$ excluded candidates never enter
+a portfolio in either reference space and affect only the normalisation
+constants.
 
 \subsection{Three partial value functions}
 
@@ -1160,7 +1160,8 @@ regression test, and any implementation returning $Q_2<1$ there is
 faulty.
 Its informative content is the \emph{contrapositive}: every cell falling
 below $100\%$ does so because some premise fails (group-constant amplitudes
-relative to the objectives, additivity, or global assembly), and the factorial
+relative to the objectives (Theorem~\ref{thm:groupconst}), additivity, or
+global assembly), and the factorial
 identifies which.
 \end{remark}
 
@@ -1917,20 +1918,21 @@ Proposition~\ref{prop:p1:stmt}, attains the frontier \emph{under the
 weights the score encodes}.
 When $w^{\mathrm{eff}}$ departs from $w$ within an objective group,
 it pursues the trade-offs of $w^{\mathrm{eff}}$ exactly, which under
-vector normalisation inflate \textit{perm} by $2.88\times$.
+vector normalisation raise \textit{perm}'s share of $G_1$ by
+$\IntraGperm\times$ (and its overall weight by $2.88\times$).
 Greedy assembly is myopic and, on this evidence, less exposed to the
 distortion it does not optimise.
 The last sentence is an interpretation; Section~\ref{sec:e1} isolates
 the part of the distortion responsible.
 
-\subsection{The reference set: a second, more severe mechanism}
+\subsection{The reference set: the same mechanism at a higher cost}
 \label{sec:refset}
 % ----------------------------------------------------------
 
-The results of Section~\ref{sec:lemmaconf} show that Mechanism~1
-(implicit re-weighting, $\mathrm{TV}$) orders the three normalisations
-within additive aggregation.
-A second mechanism governs the fourth cell, and it is more severe.
+The results of Section~\ref{sec:lemmaconf} show that implicit
+re-weighting orders the three normalisations within additive aggregation.
+The choice of reference set produces a re-weighting of the same kind by
+a different route, and on Fogo it is far more costly.
 
 \paragraph{Mechanism 2: reference-set mismatch.}
 When the method computes its min--max constants on a different set from
@@ -1968,7 +1970,7 @@ amplitude becomes
   A_j = \frac{\max_{\Nvia}(j)-\min_{\Nvia}(j)}
              {\max_{\Ncand}(j)-\min_{\Ncand}(j)} \;\le\; 1,
 \end{equation}
-which varies across criteria and re-weights (Mechanism~1 component).
+which varies across criteria, and within groups, and therefore re-weights.
 Computing~\eqref{eq:refsetA} for the eleven criteria yields
 $\mathrm{TV}=0.107$ (Table~\ref{tab:amprefset}).
 
@@ -2124,15 +2126,16 @@ this result as evidence for it.
 \section{Discussion}
 \label{sec:discussion}
 
-The preceding results identify two distinct mechanisms by which normalisation
-affects portfolio quality.
+The preceding results identify two routes to implicit re-weighting, which
+share one structure (Theorem~\ref{thm:groupconst}) but differ in cost
+and in remedy.
 This section interprets their relative severity, places them within the
 portfolio decision analysis literature, and connects them to the broader
 normalisation debate.
 
-\subsection{Two mechanisms, ordered by severity}
+\subsection{Two routes to re-weighting, ordered by cost}
 
-The results separate two distinct ways in which a normalisation choice
+The results separate two routes by which a normalisation choice
 degrades portfolio quality, and the distinction matters because the
 remedies differ.
 
@@ -2156,12 +2159,12 @@ Theorem~\ref{thm:groupconst} guarantees Pareto efficiency of exact
 maximisation on every instance if and only if the score's amplitudes,
 in the units of the objectives, are constant within each objective group.
 Reference-set mismatch violates this condition because $r_j$ varies
-within groups; on Fogo the observed cost then exceeds what re-weighting
-alone predicts by a factor of $\MismatchRatioHi\times$ in the direction where
-the score loses resolution (the $\Ncand$-score evaluated against $A'$: $80$~pp
-observed versus $\MechOnePredAdmiss$~pp predicted), while in the opposite direction
-the observed loss is smaller than predicted ($\MismatchRatioLo\times$: the
-$\Nvia$-score against $A$).
+within groups; on Fogo the observed cost is $\MismatchRatioHi\times$ an
+illustrative linear extrapolation in $\mathrm{TV}$ (Section~\ref{sec:refset})
+in the direction where the score loses resolution (the $\Ncand$-score
+evaluated against $A'$: $80$~pp observed versus $\MechOnePredAdmiss$~pp predicted),
+while in the opposite direction the observed cost is $\MismatchRatioLo\times$
+the prediction ($\Nvia$-score against $A$).
 In both directions the misaligned score is an affine function of the
 partial values within each criterion, so the mismatch is itself a re-weighting;
 yet the two directions carry nearly equal distortion ($\mathrm{TV}=0.107$ and
@@ -2173,11 +2176,11 @@ accounts for this asymmetry, which we report as unexplained
 One finding is attributable to this mechanism: the collapse under
 reference-set misalignment (Table~\ref{tab:fourthcell}).
 
-The practical ordering follows.
-Re-weighting is a modelling error that can be quantified and, if
-accepted, documented.
-Mismatch is a re-weighting the analyst does not see, induced by the
-choice of reference set rather than by the data.
+The practical consequences differ.
+Distributional re-weighting is a property of the data under a given
+normalisation; it can be quantified and, if accepted, documented.
+Reference-set re-weighting is avoidable at no cost: computing the
+constants on the admissible set removes it entirely.
 
 \subsection{Relation to portfolio decision analysis}
 
@@ -2220,6 +2223,12 @@ scale and range of the criterion it multiplies, and distinguish nominal
 from effective weights; \citet{Milani2005} demonstrate empirically that
 the choice of normalisation norm changes rankings, particularly under
 TOPSIS.
+The group structure on which Theorem~\ref{thm:groupconst} rests is the
+value tree whose effects on elicited weights are documented behaviourally
+\citep{Weber1988,Poyhonen2001}: those studies show that the grouping of
+attributes changes the weights elicited; the theorem shows that, given
+the grouping, a normalisation may rescale whole groups but must leave
+weight ratios within each group unchanged.
 Set dependence has been documented for specific methods:
 \citet{GarciaCascales2012} exhibit rank reversal under changes to the
 alternative set, \citet{Kuo2017} identifies a failure of the closeness
@@ -2443,7 +2452,7 @@ Integer programming on top of a ranking pays only when the normalisation
 respects the grouping of the objectives; under vector normalisation it
 is worse than reading the ranking top-down.
 Normalising over alternatives that cannot be selected costs up to
-$80$~pp of Pareto efficiency, far more than re-weighting alone predicts,
+$80$~pp of Pareto efficiency, far more than its total variation suggests,
 and the loss is strongly asymmetric between the two directions of
 mismatch.
 The immediate recommendation is inexpensive: report effective weights

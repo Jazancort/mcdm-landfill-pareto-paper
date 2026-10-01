@@ -341,6 +341,14 @@ BAD_PHRASES = [
      "guarantee does not require same normalisation — replaced by amplitude condition"),
     ("voided",
      "'voided' removed in B2 reframe — replace with iff formulation"),
+    ("re-weighting alone predicts",
+     "removed in B2 — use 'far more than its total variation suggests'"),
+    ("two distinct mechanisms",
+     "removed in B2 — use 'two routes to re-weighting'"),
+    ("more severe mechanism",
+     "removed in B2 — use 'same mechanism at a higher cost'"),
+    ("Mechanism~1 component",
+     "removed in B2 — rephrase as 'varies within groups, and therefore re-weights'"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
