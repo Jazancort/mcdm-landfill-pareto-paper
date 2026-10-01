@@ -257,8 +257,8 @@ alternatives that are unavailable, and the resulting mismatch between the
 scale used by the method and the scale defining the objectives costs up
 to $80$~pp of Pareto efficiency, far more than the re-weighting alone
 predicts.
-The loss is also strongly asymmetric, which tells us the two mechanisms
-are distinct rather than two readings of one effect.
+The loss is also strongly asymmetric, which the magnitude of the
+re-weighting does not explain.
 
 Our contributions are as follows.
 \begin{enumerate}[label=(\roman*)]
@@ -1895,7 +1895,7 @@ The observed cost (Table~\ref{tab:fourthcell}: $100\%\to20\%$,
 a loss of $80$~pp under optimal assembly) far exceeds what
 Mechanism~1 predicts: $\mathrm{TV}=0.107$ implies $\approx\MechOnePredAdmiss$~pp,
 accounting for only $\MechOneShare\%$ of the effect ($\MechOnePredAdmiss/80$).
-The gap is the signature of Mechanism~2.
+The gap is not accounted for by the magnitude of the re-weighting.
 
 Under vector normalisation, exact assembly optimises a score that is
 misaligned with the evaluator, which is why it loses $\AsmVec$~pp to
@@ -2107,9 +2107,13 @@ $\MismatchRatioHi\times$ in the direction where the score loses resolution (the
 $\Ncand$-score evaluated against $A'$: $80$~pp observed versus $\MechOnePredAdmiss$~pp
 predicted), while in the opposite direction the observed loss is smaller
 than predicted ($\MismatchRatioLo\times$: the $\Nvia$-score against $A$).
-Since the total variation is symmetric between the two directions by
-construction, no re-weighting measure can account for this $16\times$
-asymmetry in observed loss; the two mechanisms are distinct
+In both directions the misaligned score is an affine function of the
+objectives, so the mismatch is itself a re-weighting; yet the two
+directions carry nearly equal distortion ($\mathrm{TV}=0.107$ and
+$0.113$, with similar between- and within-group components) while the
+observed losses differ by a factor of~$16$.
+Neither the magnitude nor the group structure of the re-weighting
+accounts for this asymmetry, which we report as unexplained
 (Section~\ref{sec:refset}).
 Two findings are attributable to this mechanism: the collapse under
 reference-set misalignment (Table~\ref{tab:fourthcell}), and the

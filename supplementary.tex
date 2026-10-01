@@ -283,21 +283,43 @@ Groups and weighted means $\bar A_g$ (from \texttt{fogo\_constants.py}):
 
 \subsection*{Outcome and deviations (DEV-E1-001 to DEV-E1-004)}
 
-Results from \texttt{run\_e1\_v3.py}, commit \texttt{18e7a66} (Athena),
-local commit \texttt{7fb70fc} (2026-09-30T14:38:44-03:00).
+Results from \texttt{run\_e1\_v3.py}, commit \texttt{18e7a66}
+(2026-09-30T23:23-03:00, Athena; reachable from G:\ after merge).
 
 \begin{description}
-\item[DEV-E1-001] Estimand mismatch in first run (\texttt{run\_e1.py}).
-  Objectives were evaluated over all 473 sites; corrected to 389 admissible
-  sites (space~$A'$) in \texttt{run\_e1\_v2.py}.
-\item[DEV-E1-002] Float32 auto-dominance bug (same as WP3 bug).
-  Corrected to float64 with epsilon guard in \texttt{run\_e1\_v3.py}.
-\item[DEV-E1-003] Cell~M missing from first two runs.
-  Added as control/regression-test cell in \texttt{run\_e1\_v3.py}.
-\item[DEV-E1-004] Final corrected run (\texttt{run\_e1\_v3.py}).
-  Results: P1~\textbf{confirmed}; P2~\textbf{falsified} at pre-specified
-  margin ($|Q_2^\text{W}-Q_2^\text{V}| = 7.4$~pp, $95\%$ CI $[+3.8,+11.0]$);
-  P3~\textbf{falsified} ($Q_2^\text{B,greedy}=100\%$, post hoc diagnosis:
-  score becomes nearly lexicographic in $F_1$).
+\item[DEV-E1-001 INVALID] \texttt{380ee1a}, 2026-09-30T22:40-03:00.\\
+  \emph{Fixed-objectives bug.}
+  Script used objectives pre-computed on a fixed weight vector rather
+  than per-draw objectives.
+  Consequence: E1-V greedy $=100\%$ (should be $\sim54\%$, matching WP3);
+  E1-W optimal $=100\%$ (should be $\sim57\%$, as predicted).
+  Pre-registration \texttt{f6042f8} precedes this run in both the G: and
+  Athena histories.
+
+\item[DEV-E1-002 INVALID] \texttt{8391944}, 2026-09-30T23:11:38-03:00.\\
+  \emph{Float32 dominance noise.}
+  Per-draw objectives corrected, but float32 arithmetic introduced
+  auto-dominance artefacts (same bug as WP3 greedy cells).
+  Consequence: E1-V greedy $=14.8\%$ (expected $\sim54\%$).
+
+\item[DEV-E1-003 INVALID] \texttt{18b7b88}, 2026-09-30T23:11:43-03:00.\\
+  \emph{Score/objective normalisation mismatch.}
+  Float64 applied but score computed over 473 sites while objectives
+  evaluated over 389 admissible sites.
+  Consequence: E1-V optimal $=46.6\%$ (expected $56.8\%$, regression
+  test \textbf{FAIL}); E1-B optimal $=81.8\%$ (expected $100\%$, P1
+  \textbf{FAIL}).
+
+\item[DEV-E1-004] \texttt{18e7a66}, 2026-09-30T23:23:14-03:00.\\
+  \emph{Corrected run (\texttt{run\_e1\_v3.py}): float64, eps$=10^{-9}$,
+  score and objectives both over 389 admissible sites.}
+  Results: \textbf{P1 confirmed} (E1-B optimal $=100\%$);
+  \textbf{P2 falsified} at the pre-specified margin
+  ($|Q_2^\text{W}-Q_2^\text{V}|=7.4$~pp, $95\%$ CI $[+3.8,+11.0]$,
+  declared margin $<5$~pp);
+  \textbf{P3 falsified} (E1-B greedy $=100\%$; post hoc diagnosis:
+  score becomes nearly lexicographic in $F_1$, greedy and optimal
+  coincide in $62.8\%$ of draws).
 \end{description}
+
 

@@ -230,8 +230,18 @@ print()
 print("=== Document quality checks ===")
 
 # Check: no undefined \ref labels in compiled log
-log_path = ROOT / "main.log"
-if log_path.exists():
+# Always read from build dir (repo log is stale/absent after make paper)
+log_candidates = [
+    Path(r"C:\build\paper\main.log"),
+    ROOT / "main.log",
+]
+log_path = next((p for p in log_candidates if p.exists() and p.stat().st_size > 1024), None)
+
+if log_path is None:
+    FAIL.append("main.log not found in C:\\build\\paper or repo root — run make paper first")
+    print("  [FAIL] main.log not found — run make paper first")
+else:
+    print(f"  [INFO] Reading {log_path}")
     log_text = log_path.read_text(encoding="utf-8", errors="replace")
     ref_undef = len(re.findall(r"Reference `[^']+' on page \d+ undefined", log_text))
     if ref_undef > 0:
@@ -246,8 +256,14 @@ if log_path.exists():
         print(f"  [FAIL] Citation undefined: {cit_undef}")
     else:
         print(f"  [OK  ] Citation undefined: 0")
-else:
-    print("  [SKIP] main.log not found")
+
+    # Check for ?? in output (unresolved cross-references)
+    qq_count = log_text.count("??")
+    if qq_count > 0:
+        FAIL.append(f"?? in compiled output: {qq_count}")
+        print(f"  [FAIL] ?? in log: {qq_count}")
+    else:
+        print(f"  [OK  ] ?? in log: 0")
 
 # Check: main.bbl exists and is > 1 KB (check build dir too)
 bbl_path = ROOT / "main.bbl"
@@ -319,6 +335,4 @@ if FAIL:
         print(f"  x {msg}")
     sys.exit(1)
 else:
-    total = 2 + 6 + 7 + 7 + 6 + 8  # groups: TV decomp, tvorder, factorial, assembly, e1, fourthcell, quality
-    print(f"ALL CHECKS PASSED ({len([x for x in dir() if not x.startswith('_')])} assertions run, {len(FAIL)} failures)")
-    sys.exit(0)
+    print(f"ALL CHECKS PASSED (0 failures)")
