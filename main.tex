@@ -47,6 +47,7 @@
 \newcommand{\Tset}{\mathcal{T}}
 \newcommand{\Fset}{\mathcal{F}}
 % Theorems
+\newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
 \newtheorem{corollary}{Corollary}
 \newtheorem{lemma}{Lemma}
@@ -115,12 +116,13 @@ Exact assembly has no average effect: it gains $+\AsmMM$~pp under
 min--max normalisation and loses $\AsmVec$~pp under vector
 normalisation, because it maximises exactly a score whose operative
 weights the normalisation has already moved.
-We characterise the mechanism analytically.
+We characterise exactly when exact assembly survives normalisation.
 In additive aggregation the effective weight of a criterion is
 proportional to $w_jA_j$, where $A_j$ is the amplitude of the normalised
-column; when amplitudes are constant within each objective group, exact
-assembly is Pareto-efficient for any weights, so distortion between
-groups only relocates the choice along the frontier.
+column; exact assembly is Pareto-efficient for any weights and any
+instance if and only if amplitudes are constant within each objective
+group (Theorem~\ref{thm:groupconst}), so distortion between groups only
+relocates the choice along the frontier.
 A pre-registered intervention on Fogo confirms this: between-group
 distortion alone costs nothing, while within-group distortion alone
 accounts for $\EoneWloss$ of the $\EoneVloss$~pp lost under vector
@@ -238,7 +240,7 @@ TOPSIS.
 We sharpen this into a structural result.
 If the normalised amplitudes are constant within each objective group,
 exact assembly remains Pareto-efficient whatever the distortion between
-groups (Proposition~\ref{prop:groupconst}); only distortion within a
+groups (Theorem~\ref{thm:groupconst}); only distortion within a
 group can move the optimum off the frontier.
 A pre-registered intervention that manipulates the two components
 separately confirms the prediction on Fogo
@@ -278,11 +280,12 @@ Our contributions are as follows.
   \item A factorial decomposition showing that normalisation dominates the
     choice of aggregation operator, and that exact assembly has no
     average effect because its sign depends on the normalisation.
-  \item A sufficient condition for exact assembly to remain
-    Pareto-efficient under normalisation (group-constant amplitudes,
-    Proposition~\ref{prop:groupconst}), a decomposition of the weight
-    deviation into between-group and within-group components, and a
-    pre-registered intervention showing that the second carries the loss.
+  \item A necessary and sufficient condition for exact assembly to remain
+    Pareto-efficient under normalisation: amplitudes must be constant
+    within each objective group (Theorem~\ref{thm:groupconst}),
+    a decomposition of the weight deviation into between-group and
+    within-group components, and a pre-registered intervention showing
+    that the within-group component carries the loss.
   \item An exact identity between PROMETHEE~II under the usual preference
     function and rank-weighted SAW, holding for arbitrary tie structure
     (Section~\ref{prop:p2}), which follows from the axiomatic results
@@ -1170,20 +1173,26 @@ share a normalisation.
 The next result relaxes this to a condition on how amplitudes vary
 across criteria.
 
-\begin{proposition}[Group-constant amplitudes preserve Pareto consistency]
-\label{prop:groupconst}
-Let every normalised column be a strictly increasing affine function of
-its oriented min--max partial value, $n_j=b_j+A_j\,\tilde c_j$ with
-$A_j>0$, where $\tilde c_j=1-c_j$ for $j\in G_1\cup G_2$ and
-$\tilde c_j=c_j$ for $j\in G_3$, and let the objectives
-\eqref{eq:F1}--\eqref{eq:F3} be built on min--max with the same weights
-$w>0$.
-If $A_j=\bar A_g$ for every $j\in G_g$, $g=1,2,3$, then
-$T^{*}=\argmax_{T\in\Tset}\sum_{a\in T}s(a)$ belongs to $\Fset(w)$, for
-every $w$ and every feasible set $\Tset$.
-\end{proposition}
+\begin{theorem}[When exact assembly survives normalisation]
+\label{thm:groupconst}
+Fix weights $w>0$ and a score whose normalised columns are strictly
+increasing affine functions of the oriented min--max partial values,
+$n_j=b_j+A_j\,\tilde c_j$ with $A_j>0$, where $\tilde c_j=1-c_j$ for
+$j\in G_1\cup G_2$ and $\tilde c_j=c_j$ for $j\in G_3$, and let the
+objectives~\eqref{eq:F1}--\eqref{eq:F3} be built on min--max with the
+same weights $w>0$.
+The following are equivalent.
+\begin{enumerate}[label=(\roman*),nosep]
+  \item For every set of sites and every feasible family $\Tset$ of
+    portfolios of size $\kk$,
+    $T^{*}=\argmax_{T\in\Tset}\sum_{a\in T}s(a)$ belongs to $\Fset(w)$.
+  \item The amplitudes are constant within each objective group:
+    $A_j=\bar A_g$ for all $j\in G_g$, $g=1,2,3$.
+\end{enumerate}
+\end{theorem}
 
 \begin{proof}
+\textbf{(ii)$\Rightarrow$(i).}
 Summing $s(a)=\sum_j w_j n_j(a)$ over a portfolio of fixed size $\kk$
 gives
 $\sum_{a\in T}s(a)=C-\bar A_1F_1(T)-\bar A_2F_2(T)+\bar A_3F_3(T)$,
@@ -1191,10 +1200,35 @@ where $C$ does not depend on $T$.
 Maximising the score is therefore a strictly positive scalarisation of
 the three objectives in their own senses, and the argument of
 Proposition~\ref{prop:p1:stmt} applies unchanged.
+
+\textbf{(i)$\Rightarrow$(ii).}
+Suppose $j,k\in G_g$ with $A_j<A_k$.
+Take two sites $a,a'$ that coincide on every criterion except $j$ and
+$k$, with oriented differences
+$w_j[\tilde c_j(a')-\tilde c_j(a)]=x$ and
+$w_k[\tilde c_k(a')-\tilde c_k(a)]=y$, where $y=-\eta<0$ and
+$x=\tfrac{\eta}{2}\,(1+A_k/A_j)$, with $\eta>0$ small enough to keep all
+partial values in $[0,1]$.
+Then $x+y=\tfrac{\eta}{2}(A_k/A_j-1)>0$, so the portfolio $T'$ that
+contains $a'$ improves objective $g$ over the portfolio $T$ that
+contains $a$ instead, and leaves the other two objectives unchanged:
+$T'$ dominates $T$.
+Yet $A_jx+A_ky=\tfrac{\eta}{2}(A_j-A_k)<0$, so $T$ has the strictly
+higher score.
+On the feasible family $\Tset=\{T,T'\}$ exact assembly returns the
+dominated portfolio, contradicting~(i).
 \end{proof}
 
+The theorem treats the affine score map as given.
+For data-dependent normalisations such as vector normalisation the
+amplitudes are themselves computed on the instance, so~(i)$\Rightarrow$(ii)
+should be read as: whenever a normalisation produces amplitudes that vary
+within a group, there exist configurations of sites under which exact
+assembly selects a dominated portfolio.
+Section~\ref{sec:e1} shows that Fogo is such a configuration.
+
 Vector normalisation has this affine form with $A_j=\rho_j$, so the
-proposition applies to it whenever $\rho_j$ is constant within groups.
+theorem applies to it whenever $\rho_j$ is constant within groups.
 The condition suggests splitting the deviation
 $\delta=w^{\mathrm{eff}}-w$ into two parts.
 With group totals $W_g=\sum_{j\in G_g}w_j$ and
@@ -1207,10 +1241,9 @@ $\mathrm{TV}_{W,g}=\tfrac12\sum_{j\in G_g}
 |w_j^{\mathrm{eff}}/W_g^{\mathrm{eff}}-w_j/W_g|$.
 Under group-constant amplitudes $\mathrm{TV}_W=0$, whatever the value of
 $\mathrm{TV}_B$.
-The proposition therefore predicts that between-group distortion alone
+The theorem therefore predicts that between-group distortion alone
 relocates the optimum along the frontier without leaving it.
-We do not claim the converse in general; Section~\ref{sec:e1} tests it
-on Fogo.
+Section~\ref{sec:e1} tests this prediction on Fogo.
 Using the amplitudes of Table~\ref{tab:amplitude}, vector normalisation
 gives $\mathrm{TV}_B=\TVBvec$ and $\mathrm{TV}_W=\TVWvec$.
 
@@ -2002,7 +2035,7 @@ of the value model.
 \subsection{Isolating within-group distortion: a pre-registered intervention}
 \label{sec:e1}
 
-Proposition~\ref{prop:groupconst} predicts that between-group distortion
+Theorem~\ref{thm:groupconst} predicts that between-group distortion
 alone leaves exact assembly on the frontier.
 We test this by intervening on the amplitudes directly.
 Four score matrices differ only in $A_j$; objectives, frontier, draws and
@@ -2374,8 +2407,9 @@ normalisation: it gained $+\AsmMM$~pp under min--max and lost
 $\AsmVec$~pp under vector normalisation.
 The explanation is analytical: in additive aggregation the effective
 weight of a criterion is proportional to $w_jA_j$, and exact assembly
-remains Pareto-efficient whenever amplitudes are constant within each
-objective group.
+is Pareto-efficient for any weights and any instance if and only if
+amplitudes are constant within each objective group
+(Theorem~\ref{thm:groupconst}).
 A pre-registered intervention on Fogo confirmed that between-group
 distortion alone costs nothing and that within-group distortion carries
 most of the loss, and falsified our prediction that the two components
@@ -2402,11 +2436,10 @@ The closed form is exact for additive aggregation; TOPSIS and VIKOR
 combine distances to ideal points, where amplitudes enter quadratically
 or in ratio form, and extending the characterisation to those families
 remains open.
-Proposition~\ref{prop:groupconst} gives a sufficient condition for exact
-assembly to stay on the frontier; we have not established the converse
-in general, and the amplification of within-group distortion by
+Theorem~\ref{thm:groupconst} is an exact characterisation for additive
+aggregation; the amplification of within-group distortion by
 between-group distortion observed in Section~\ref{sec:e1} is measured on
-one instance and not yet explained.
+one instance and not yet explained analytically.
 The magnitudes are specific to one candidate set: the analytical results
 hold for any instance, but the size of the distortion depends on the
 marginal distributions, and a criterion with $350$ tied zeros among
