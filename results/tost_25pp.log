@@ -1,0 +1,68 @@
+Colunas wp3_summary_fixed.csv: ['norm', 'TV', 'm_eff', 'l2', 'Q2_greedy', 'Q2_optimal', 'Q2_mean', 'Q2_greedy_old', 'delta_greedy']
+       norm       TV    m_eff       l2  Q2_greedy  Q2_optimal  Q2_mean  Q2_greedy_old  delta_greedy
+    min-max 0.000000      inf 0.000000       86.0       100.0     93.0           65.8          20.2
+  Peldschus 0.002299 3.555022 0.002438       99.0       100.0     99.5           73.2          25.8
+        max 0.003281 9.030819 0.002183       87.0       100.0     93.5           66.4          20.6
+      ranks 0.091088 5.977326 0.074514       86.0        88.2     87.1           66.0          20.0
+     vector 0.311341 4.032109 0.310099       66.2        56.8     61.5           54.0          12.2
+vector_tab1 0.314528 4.047826 0.312665       66.6        57.8     62.2           54.4          12.2
+        sum 0.566933 3.538708 0.602753       85.6        76.2     80.9           70.0          15.6
+
+Aggregation (SAW-TOPSIS): mean=0.55pp  std=16.08pp
+
+=================================================================
+TOST Aggregation — delta=2.5pp (pre-specified §5)
+=================================================================
+  delta = 2.5pp
+  Observed mean: 0.55pp
+  H0_lower (effect <= -2.5pp): t=4.238  p=0.00001
+  H0_upper (effect >= +2.5pp): t=-2.710  p=0.00348
+  TOST p-value = max(p_lo, p_hi) = 0.00348
+  CONCLUSION: |effect| < 2.5pp (TOST p<0.05) — EQUIVALENCE ESTABLISHED
+
+Sensitivity check: delta=2.0pp
+  |effect| < 2.0pp (TOST p=0.02223 < 0.05) — also equivalent
+
+Bootstrap CI (cross-check): [-0.85, 1.95]pp
+  (CI lies within [-2.5, +2.5] =yes)
+
+=================================================================
+ESTIMAND DECISION for §7.2 slope (Mechanism 1)
+=================================================================
+
+DECISION: use Q2_optimal only (not mean(greedy, optimal)).
+
+Rationale:
+  - The 80pp loss cited in §7.2 and tab:fourthcell is in OPTIMAL assembly
+    (389/A' optimal=100% vs 473/A' optimal=20%).
+  - Mechanism 1 predicts the Pareto-frontier quality; it applies to optimal.
+  - Greedy involves a separate stochastic process (approximation quality);
+    mixing it with optimal creates a composite estimand with no clear interpretation.
+  - Using only optimal gives a cleaner, more conservative estimate of the mechanism.
+
+tab:tvorder optimal values (from wp3_summary_fixed.csv):
+
+  TV column: TV  |  Optimal column: Q2_optimal
+      TV  Q2_optimal
+0.000000       100.0
+0.002299       100.0
+0.003281       100.0
+0.091088        88.2
+0.311341        56.8
+0.314528        57.8
+0.566933        76.2
+
+  OLS: Q2_optimal = -66.0 * TV + 94.9
+  Slope (pp per unit TV): -66.0
+  Prediction at TV=0.0911 (ranks): Q2_optimal = 88.9%
+
+  SLOPE (optimal only): -66.0 pp per unit TV
+  Prediction loss for TV=ranks (0.0911): 6.0pp
+  As fraction of 80pp loss: 7.5%
+
+NOTE FOR generate_macros.py:
+  \newcommand{\SlopeEstimand}{optimal-only}
+  \newcommand{\MechFractionPct}{~12-15\%}  (update with exact value above)
+  \newcommand{\SlopeCoeff}{...}  (from res_opt.slope above)
+
+DONE

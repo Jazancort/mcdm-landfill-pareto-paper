@@ -1,0 +1,20 @@
+  [0/500] 0s
+  [100/500] 21s
+  [200/500] 42s
+  [300/500] 62s
+  [400/500] 83s
+
+=================================================================
+tab:fourthcell 473/A results (score AND objectives ref=473)
+Cell                  Q2_greedy   Q2_optimal
+-----------------------------------------------------------------
+  saw_473/A                  84.6%        100.0%
+  topsis_473/A               91.0%         98.8%
+
+  ASSERTION PASSED: SAW/473/A optimal = 100.0% (Proposition 1).
+Traceback (most recent call last):
+  File "/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_473A_correct.py", line 225, in <module>
+    assert len(saw_389_Ap_g) == N_DRAWS, f"Expected {N_DRAWS} draws, got {len(saw_389_Ap_g)}"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected 500 draws, got 0
+DONE
