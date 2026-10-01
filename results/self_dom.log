@@ -1,0 +1,27 @@
+Trios: 1,944,653 (1.4s)
+Building trio lookup... done
+
+======================================================================
+Self-dominance test (float32 pipeline, original wp3_mc.py behaviour)
+======================================================================
+
+min-max greedy (float32 pipeline):
+  Not dominated:         329 / 500  = 65.8%  (original Q2)
+  Total dominated:       171
+  Pure self-dominance:   101  (20.2%)
+  Self + other:           18  (3.6%)
+  Other only:             52  (10.4%)
+  Corrected Q2 (no self-dom): 86.0%
+  Expected corrected Q2: ~86%
+
+vector greedy (float32 pipeline):
+  Not dominated:         270 / 500  = 54.0%  (original Q2)
+  Total dominated:       230
+  Pure self-dominance:    61  (12.2%)
+  Self + other:           30  (6.0%)
+  Other only:            139  (27.8%)
+  Corrected Q2 (no self-dom): 66.2%
+  Expected corrected Q2: ~66%
+
+Done.
+DONE

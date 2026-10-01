@@ -1,0 +1,32 @@
+Trios: 1,944,653
+  [100/500]  E1-B grd=100.0%  opt=100.0%  grd==opt=62.0%  23s
+  [200/500]  E1-B grd=100.0%  opt=100.0%  grd==opt=62.5%  46s
+  [300/500]  E1-B grd=100.0%  opt=100.0%  grd==opt=65.0%  70s
+  [400/500]  E1-B grd=100.0%  opt=100.0%  grd==opt=64.8%  93s
+  [500/500]  E1-B grd=100.0%  opt=100.0%  grd==opt=62.8%  116s
+
+======================================================================
+E1-B GREEDY=100% DIAGNOSIS
+======================================================================
+E1-B greedy   Q2 = 100.00%
+E1-B optimal  Q2 = 100.00%
+Greedy == optimal fraction: 62.8%
+  (in 314/500 draws, greedy and optimal select same trio)
+Median F1 percentile of greedy E1-B (among all trios): 0.8%
+  (100% = greedy has the highest possible F1 value = at F1 extreme)
+  (0%   = greedy has the lowest F1 = best possible F1)
+
+======================================================================
+BOOTSTRAP: E1-W optimal vs E1-V optimal (paired by draw)
+N_BOOT=10000, N_DRAWS=500
+======================================================================
+E1-W optimal Q2 = 64.20%
+E1-V optimal Q2 = 56.80%
+Mean paired diff (E1-W - E1-V) = +7.40pp
+SE (paired)                    = 1.81pp
+95% bootstrap CI               = [+3.80pp, +11.00pp]
+Two-sided p-value              = 0.0000
+CONCLUSION: E1-W optimal > E1-V optimal (TV_B helps in optimal). Unexpected.
+
+Saved to /home/julioazancort/scratch/mcdm-landfill-pareto/scripts/../results/e1_diag_bootstrap.csv
+DONE
