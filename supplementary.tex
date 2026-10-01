@@ -202,3 +202,102 @@ $n_{\mathrm{sparse}}$ & $p_0$ & $\mathrm{TV}$ &
 \bottomrule
 \end{tabular}
 \end{table*}
+
+
+% =======================================================================
+% S0  Pre-registration for Experiment E1
+% =======================================================================
+%
+% The following is PRESPEC_E1.md exactly as committed in f6042f8 on
+% 2026-09-30T14:25:20-03:00, BEFORE any E1 run was executed.
+% Commit subject: "prespec(E1): predictions declared before running --
+%   P1=E1-B optimal=100%; P2=E1-W optimal~57%; P3=E1-B greedy~65%"
+%
+% File in repository: corpus/PRESPEC_E1.md at commit f6042f8
+% Verify: git show f6042f8:corpus/PRESPEC_E1.md
+%
+% -----------------------------------------------------------------------
+
+\section*{Pre-registered Predictions for Experiment~E1}
+\label{sec:prespec_e1}
+
+\noindent
+\textbf{Committed:} 2026-09-30, commit \texttt{f6042f8}, before any E1 run.\\
+\textbf{File:} \texttt{corpus/PRESPEC\_E1.md}.
+
+\subsection*{Three predictions}
+
+\begin{description}
+\item[P1 (hard assertion)] \textbf{Cell~B optimal $= 100.0\%$.}
+  By group-constant-amplitude sufficiency (Proposition~\ref{prop:groupconst}),
+  $A_j = \bar A_g$ for all $j \in G_g$ implies the score is a strictly
+  positive scalarisation of the group objectives; hence optimal assembly
+  attains the frontier for any $w$.
+  If P1 fails, there is a bug.
+
+\item[P2 (primary empirical prediction)]
+  $|Q_2^\text{W, optimal} - Q_2^\text{V, optimal}| < 5$~pp.\\
+  \emph{Rationale:} both E1-W and E1-V have $\mathrm{TV}_W = 0.1986$.
+  By the necessity argument, within-group distortion governs efficiency loss
+  in optimal assembly; between-group distortion only displaces the optimum
+  along the frontier.
+  Predicted $Q_2^\text{W, optimal} \approx 57\%$ (close to E1-V's $56.8\%$).\\
+  \emph{Falsification criterion:} if $Q_2^\text{W, optimal} > 90\%$,
+  within-group distortion accounts for less than $10\%$ of the loss.
+
+\item[P3 (secondary prediction)]
+  $Q_2^\text{B, greedy} \neq 100.0\%$.\\
+  \emph{Rationale:} greedy assembly is not constrained to be Pareto-efficient
+  even under group-constant amplitudes; foreclosure affects greedy but not
+  optimal.
+  Predicted $Q_2^\text{B, greedy} \approx 65\%$.
+\end{description}
+
+\subsection*{Design}
+
+Four score matrices differing only in $A_j$, with identical objectives,
+frontier, draws, and feasible set ($\kappa=200$, $N=500$ draws, space $A'$):
+
+\begin{center}
+\begin{tabular}{llcc}
+\toprule
+Cell & $A_j$ & $\mathrm{TV}_B$ & $\mathrm{TV}_W$ \\
+\midrule
+M & $A_j \equiv 1$ (min--max)                        & 0       & 0 \\
+B & $A_j = \bar A_g$ (between-group only)           & 0.2489  & 0 \\
+W & $A_j \propto \rho_j/\bar A_g$ (within only)    & 0       & 0.1986 \\
+V & $A_j = \rho_j$ (vector, as in WP3)             & 0.2489  & 0.1986 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Groups and weighted means $\bar A_g$ (from \texttt{fogo\_constants.py}):
+\begin{itemize}
+\item $G_1 = \{\text{perm},\text{slope},\text{roads}\}$, indices $[0,1,2]$,
+  $W_{G_1}=0.2950$, $\bar A_{G_1}=0.3731$.
+\item $G_2 = \{\text{rivers},\text{aspect},\text{coast},\text{prot},\text{wells}\}$,
+  indices $[3\ldots7]$, $W_{G_2}=0.3560$, $\bar A_{G_2}=0.1458$.
+\item $G_3 = \{\text{urban},\text{aero},\text{cult}\}$, indices $[8,9,10]$,
+  $W_{G_3}=0.3490$, $\bar A_{G_3}=0.1157$.
+\end{itemize}
+
+\subsection*{Outcome and deviations (DEV-E1-001 to DEV-E1-004)}
+
+Results from \texttt{run\_e1\_v3.py}, commit \texttt{18e7a66} (Athena),
+local commit \texttt{7fb70fc} (2026-09-30T14:38:44-03:00).
+
+\begin{description}
+\item[DEV-E1-001] Estimand mismatch in first run (\texttt{run\_e1.py}).
+  Objectives were evaluated over all 473 sites; corrected to 389 admissible
+  sites (space~$A'$) in \texttt{run\_e1\_v2.py}.
+\item[DEV-E1-002] Float32 auto-dominance bug (same as WP3 bug).
+  Corrected to float64 with epsilon guard in \texttt{run\_e1\_v3.py}.
+\item[DEV-E1-003] Cell~M missing from first two runs.
+  Added as control/regression-test cell in \texttt{run\_e1\_v3.py}.
+\item[DEV-E1-004] Final corrected run (\texttt{run\_e1\_v3.py}).
+  Results: P1~\textbf{confirmed}; P2~\textbf{falsified} at pre-specified
+  margin ($|Q_2^\text{W}-Q_2^\text{V}| = 7.4$~pp, $95\%$ CI $[+3.8,+11.0]$);
+  P3~\textbf{falsified} ($Q_2^\text{B,greedy}=100\%$, post hoc diagnosis:
+  score becomes nearly lexicographic in $F_1$).
+\end{description}
+
