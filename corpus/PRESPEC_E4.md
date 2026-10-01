@@ -226,7 +226,7 @@ Columns: cell, direction, assembly, Q2, SE, n_draws
    (same seed as run_e1_v3.py). run_e4.py asserts bit-exact reproduction of
    tab:e1 (M=100.0, B=100.0, W=64.2, V=56.8 under optimal assembly, kappa=200)
    from this matrix before any E4 cell is run; failure aborts the run.
-5. Feasibility check (scripts/check_feasible_e4.py, commit <hash>):
+5. Feasibility check (scripts/check_feasible_e4.py, commit f607d27):
    confirmed that all 1,944,653 trios are indexed over the 389 admissible
    sites (max index 388); the 84 excluded candidates (dist_protected == 0)
    have no positional index in df_via and cannot enter any portfolio in
