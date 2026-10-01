@@ -963,7 +963,7 @@ bootstrap intervals, paired by draw.
 
 The central analytical result of the paper is stated and derived in this section.
 It takes the form of a lemma that expresses effective weights in closed form,
-followed by three propositions and two corollaries that characterise the specific distortions
+followed by four propositions and two corollaries that characterise the specific distortions
 produced by min--max, vector, and rank normalisation.
 
 % ----------------------------------------------------------
@@ -1009,12 +1009,11 @@ $A_j$ equal the same constant.\hfill$\square$
 \paragraph{Scope and empirical confirmation.}
 \label{rem:scope}
 The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
-Within that scope the prediction is borne out: across SAW cells,
-mean $Q_2[\mathcal{A}']$ at $\kappa=200$ is $82.3\%$, $76.5\%$ and
-$55.5\%$ for min--max, ranks and vector normalisation respectively,
+Within that scope the prediction is borne out: under optimal assembly,
+$Q_2[\mathcal{A}']$ at $\kappa=200$ is $100.0\%$, $88.2\%$ and
+$56.8\%$ for min--max, ranks and vector normalisation respectively,
 against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.315$,
-a strictly monotone ordering ($R^2=\RsqThree$ on three means; we report the
-ordering and note approximate proportionality, given $n=3$, $\mathrm{df}=1$).
+a strictly monotone ordering (Table~\ref{tab:tvorder}).
 
 TOPSIS and VIKOR aggregate distances to ideal points rather than
 weighted sums, so amplitudes enter quadratically or in ratio form and
@@ -1527,9 +1526,9 @@ $\mathrm{TV}$ answers \emph{how much} the elicited weights were moved;
 $m_{\mathrm{eff}}$ answers \emph{over how many criteria}, on a scale
 whose endpoints are fixed by $m$ alone and therefore comparable across
 instances.
-Neither is redundant: the Euclidean norm~\eqref{eq:l2fact} is the
-product of the two, and Section~\ref{sec:external} shows that it
-predicts efficiency loss where $\mathrm{TV}$ alone does not.
+Neither is redundant: the Euclidean norm~\eqref{eq:l2fact} is their
+ratio, and in a synthetic grid reported in the Supplementary Material it
+tracks efficiency loss better than $\mathrm{TV}$ alone.
 Both are computable from the normalised decision matrix in one line, and
 we recommend reporting the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
 rather than $\mathrm{TV}$ alone (Section~\ref{sec:practice}).
@@ -1602,12 +1601,8 @@ sub-optimality in the factorial experiment into four ordered factors:
     Under SAW, where the Lemma applies exactly, both the greedy and
     optimal assembly benefit from the preservation.
   \item \emph{Assembly effect (optimal vs.\ greedy):}
-    The greedy procedure may be Pareto-dominated even when the score
-    is well-calibrated (Section~\ref{sec:results}).
-    The assembly effect is amplified under min--max because the score
-    is well-aligned with the Pareto front, and suppressed under vector
-    normalisation because the distorted score is what is being
-    optimised.
+    Exact assembly helps under min--max and hurts under vector
+    normalisation (Section~\ref{sec:interaction}).
   \item \emph{Aggregation effect (SAW vs.\ TOPSIS vs.\ VIKOR):}
     TOPSIS and VIKOR aggregate through ideal-point distances;
     The amplitude identity~\eqref{eq:weff} does not apply exactly to them.
