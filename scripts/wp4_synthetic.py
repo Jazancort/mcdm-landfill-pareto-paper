@@ -43,26 +43,29 @@ sys.path.insert(0, str(Path(__file__).parent))
 from pareto3d import pareto_front_3d, run_unit_tests
 
 # ---------------------------------------------------------------------------
-# Constants — weights from mcdm_experiment.py (Table 7, IEEE Access 2026)
-# Order: perm, slope, roads, rivers, aspect, coast, protected, wells,
-#        urban, aero, cult
-# G1=siting efficiency (F1): perm,slope,roads,rivers (indices 0-3)
-# G2=environmental integrity (F2): aspect,coast,protected,wells (indices 4-7)
-# G3=social safety (F3): urban,aero,cult (indices 8-10)
+# Constants — canonical weights and groupings from mcdm_experiment.py
+# (Table 7, IEEE Access 2026; Andrade & Barbosa 2015)
+#
+# F1 (siting efficiency, cost): perm(0.152), slope(0.113), roads(0.030)  -> sum = 0.295
+# F2 (environmental impact, cost): rivers(0.091), aspect(0.075), coast(0.069), protected(0.066), wells(0.055) -> sum = 0.356
+# F3 (social safety, benefit): urban(0.166), aero(0.102), cult(0.081)    -> sum = 0.349
 # ---------------------------------------------------------------------------
 W_AHP = np.array([
-    0.152, 0.113, 0.030, 0.091,   # G1: perm, slope, roads, rivers
-    0.075, 0.069, 0.066, 0.055,   # G2: aspect, coast, protected, wells
-    0.166, 0.102, 0.081,           # G3: urban, aero, cult
+    0.152, 0.113, 0.030,                 # G1 (F1): perm, slope, roads
+    0.091, 0.075, 0.069, 0.066, 0.055,   # G2 (F2): rivers, aspect, coast, protected, wells
+    0.166, 0.102, 0.081,                 # G3 (F3): urban, aero, cult
 ], dtype=np.float32)
 assert abs(float(W_AHP.sum()) - 1.0) < 1e-5, "weights must sum to 1"
 
-# Criteria sorted by weight descending — sparse applied to highest-weight first
-# Correct order: urban(0.166), perm(0.152), slope(0.113), aero(0.102), ...
+# Criteria sorted by weight descending — sparse applied to highest-weight first:
+# 1º: urban (0.166) — G3
+# 2º: perm  (0.152) — G1
+# 3º: slope (0.113) — G1
+# 4º: aero  (0.102) — G3
 SPARSE_ORDER = np.argsort(-W_AHP)
 
 M = len(W_AHP)
-G1, G2, G3 = slice(0, 4), slice(4, 8), slice(8, 11)
+G1, G2, G3 = slice(0, 3), slice(3, 8), slice(8, 11)
 GROUPS = [G1, G2, G3]
 
 N_DRAWS   = 200

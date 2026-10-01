@@ -14,7 +14,9 @@ Normalizações testadas:
 Armadilha afim: checar se Aj de candidata = Aj de existente para algum j.
 Criterion-wise: se Aj_candidata[j] = Aj_existente[j] para todo j → TV idêntico.
 """
-import sys, numpy as np, pandas as pd
+import os, sys, numpy as np, pandas as pd
+if 'MCDM_DATA_DIR' not in os.environ and os.path.exists('/home/julioazancort/scratch/mcdm'):
+    os.environ['MCDM_DATA_DIR'] = '/home/julioazancort/scratch/mcdm'
 sys.path.insert(0, 'scripts')
 from mcdm_experiment import load_data, impute_nan, COL, AHP_WEIGHTS
 
@@ -40,11 +42,10 @@ X = np.zeros((len(df_via), M))
 for j, k in enumerate(names_crit):
     col = COL[k]
     vals = df_via[col].values.astype(float)
-    # aspect: c=1 if in [90,180] (favourable, n1=94), matches Tab1 Aj=0.103.
-    # aspect: c=0 for [90,180] (good: low impact), c=1 for ∉[90,180] (penalty, n1=295).
-    # Aj^vec = 1/sqrt(295) = 0.058. Tab1 value of 0.103 was a transcription error.
+    # aspect: c=1 for [90,180] (leeward/favourable, n1=94), c=0 otherwise.
+    # Yields Aj^vec = 1/sqrt(94) = 0.10314, matching Table 1 (0.103).
     if k == 'aspect':
-        X[:, j] = np.where((vals >= 90) & (vals <= 180), 0.0, 1.0)
+        X[:, j] = np.where((vals >= 90) & (vals <= 180), 1.0, 0.0)
     else:
         X[:, j] = vals
 
