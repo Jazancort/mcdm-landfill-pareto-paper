@@ -210,6 +210,28 @@ Expected time: ~6 min (8 cells × 1000 draws × 2 alphas, greedy+optimal)
 Output: results/e4_results.csv
 Columns: cell, direction, assembly, Q2, SE, n_draws
 
+### DEV-E4-005: corrections to DEV-E4-002 and DEV-E4-004 (before any run)
+1. DEV-E4-002, amplitude sentence: inverted. Correct statement: the
+   389-site score column satisfies c^389 = (1/r_j)*c^473 + b_j, so the
+   score has amplitude 1/r_j in the units of the A-evaluator (not r_j).
+   The published 389/A cell therefore has A_j = 1/r_j, and the within-group
+   mean is 1/rbar_g; R-B' sets A_j = 1/rbar_g exactly.
+2. DEV-E4-004, rationale: "at comparable TV_W" is imprecise and replaced by
+   "despite TV_W(R-W) = 0.0815 being less than half of TV_W(E1-W) = 0.199".
+   The hypothesis is that the direction of within-group distortion on perm
+   (deflation in E4-R-W vs inflation in E1-W) matters more than its size.
+3. DEV numbering is chronological; DEV-E4-003 appears above DEV-E4-002
+   in the file. No text is moved, to preserve the committed history.
+4. Weight-matrix provenance: e1_weights_k200.npy was generated from seed 42
+   (same seed as run_e1_v3.py). run_e4.py asserts bit-exact reproduction of
+   tab:e1 (M=100.0, B=100.0, W=64.2, V=56.8 under optimal assembly, kappa=200)
+   from this matrix before any E4 cell is run; failure aborts the run.
+5. Feasibility check (scripts/check_feasible_e4.py, commit <hash>):
+   confirmed that all 1,944,653 trios are indexed over the 389 admissible
+   sites (max index 388); the 84 excluded candidates (dist_protected == 0)
+   have no positional index in df_via and cannot enter any portfolio in
+   either reference space.
+
 ## 8. Note on frontier asymmetry
 
 tab:fourthcell rows use different frontiers:
