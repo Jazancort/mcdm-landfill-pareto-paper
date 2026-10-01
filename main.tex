@@ -2464,9 +2464,9 @@ damaging configuration we observe.
 
 Second, verify that the score and the value model share a normalisation
 before adding exact optimisation.
-Integer programming on a mismatched score optimises the mismatch; the
-$+29.8$~pp available under min--max falls to $+2.2$~pp under vector
-normalisation.
+Integer programming on a mismatched score optimises the mismatch:
+exact assembly gains $+\AsmMM$~pp under min--max and loses $\AsmVec$~pp
+to greedy assembly under vector normalisation.
 
 Third, report effective weights alongside elicited weights, and with
 them the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
@@ -2474,8 +2474,9 @@ of~\eqref{eq:TV} and~\eqref{eq:meff}, which requires one line given
 the normalised matrix.
 The total variation alone is insufficient: it is the $\ell^1$ norm of
 the deviation and is invariant to whether that deviation sits on one
-criterion or on many, a distinction that
-Section~\ref{sec:external} shows governs the loss.
+criterion or on many, and Section~\ref{sec:e1} shows that only the within-group part of the
+deviation costs efficiency under exact assembly; we therefore also
+recommend reporting $\mathrm{TV}_B$ and $\mathrm{TV}_W$.
 A report stating $\mathrm{TV}=0.31$ with $m_{\mathrm{eff}}=4$ on a
 scale of $[2,11]$ tells the decision maker both that the elicited
 weights were substantially moved and that the movement is concentrated;
@@ -2500,7 +2501,7 @@ determines which column is normalised and therefore which amplitude
 enters the effective weights.
 
 Comparing aggregation operators, by contrast, is the least consequential
-of the design choices we examine ($+0.9$~pp, equivalent to zero within
+of the design choices we examine ($+\AggContrast$~pp, equivalent to zero within
 $\pm2.5$~pp by TOST),
 and the mechanism explains why: aggregation acts downstream of the
 distortion.
