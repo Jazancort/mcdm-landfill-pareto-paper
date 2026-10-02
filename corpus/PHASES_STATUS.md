@@ -381,3 +381,25 @@ ou ao script `analyze_r1.py`. Não foram recalculados nesta sessão — verifica
 - Não alterar valores esperados do check sem resolver P1 (REGRESSION_GUARD)
 
 ---
+
+
+## Decision record — P2 resolução (2026-10-02)
+
+### R1-6 bootstrap verificado dos draws pareados (commit seguinte)
+
+Script: recalculado de `draws_fourthcell.npz` com `rng=42, B=9999`.
+Todos os contrastes confirmados:
+
+| Contraste | opt Δ | CI opt | grd Δ | CI grd |
+|-----------|-------|--------|-------|--------|
+| R-asp − R-V | +4.00 pp | [+2.20,+6.00] SIG | +5.60 pp | [+3.60,+7.60] SIG |
+| R-V* − R-M | +0.00 pp | [0,0] n.s. | +11.80 pp | [+8.80,+15.00] SIG |
+| R-V* − R-asp | +76.00 pp | [+72.2,+79.8] SIG | +72.60 pp | [+68.6,+76.6] SIG |
+| R-V*A − R-MA | +5.00 pp | [+3.2,+7.0] SIG | +25.80 pp | [+22.0,+29.8] SIG |
+
+**R1-6 correcto:** R-asp − R-V = +4.0 opt, +5.6 grd. CI greedy: [+3.6,+7.6] (não [+3.6,+7.8]
+como estava no Suplementar — diferença de seed/B). Texto principal e Suplementar corrigidos.
+
+**P2 FECHADO.**
+
+---
