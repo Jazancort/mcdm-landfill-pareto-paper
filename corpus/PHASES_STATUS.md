@@ -58,7 +58,7 @@ B2 — completar cobertura da provenance.csv ("6 de 7 em A'", reprodução, \FAs
 
 | ID | Tarefa | Depende | Critério de aceitação | Estado | Commit | Notas |
 |----|--------|---------|----------------------|--------|--------|-------|
-| C1 | `corpus/PRESPEC_R1.md` com R1-1 a R1-6, regras de decisão, κ, draws, hash de pesos, bootstrap, semente. Declarar que draws não examinados ficam reservados para confirmação mais forte (eventual Fase I) | B5 | Commit com data anterior a qualquer output da Fase D (verificar contra o meta.json) | TODO | | |
+| C1 | `corpus/PRESPEC_R1.md` com R1-1 a R1-6, regras de decisão, κ, draws, hash de pesos, bootstrap, semente. Declarar que draws não examinados ficam reservados para confirmação mais forte (eventual Fase I) | B5 | Commit com data anterior a qualquer output da Fase D (verificar contra o meta.json) | DONE | (ver commit C1) | R1-1 (opt, 0pp, n.s.), R1-2 (grd, +11.8pp SIG), R1-3 (diagonais 100%, PASSA), R1-4 (N/A — tab:canonical limpa), R1-5 (R-asp descritivo), R1-6 (+4pp SIG). Draws: todos usados, não há reservados; declarado explicitamente. |
 
 ---
 
@@ -148,6 +148,7 @@ B2 — completar cobertura da provenance.csv ("6 de 7 em A'", reprodução, \FAs
 
 | Ficheiro | Commit | Tipo | Conteúdo resumido |
 |----------|--------|------|-------------------|
+| `corpus/PRESPEC_R1.md` | (ver commit C1) | Pré-registo | R1-1 a R1-6; regras de decisão; κ=200/50; SHA-256 da matriz; bootstrap emparelhado seed=43; avaliação antecipada com dados existentes; draws não reservados declarados |
 | `docs/contamination-note.md` | (ver commit B5) | Nota B5 | Resumo executivo de contaminação; árvore de decisão para espaço A; substituição directa de 4 valores na tab:fourthcell |
 | `corpus/IMPROVEMENT_PLAN.md` | 918f125 | Plano | Fases Math→I, diagnósticos D1–D16, regras de execução, árvore de decisão, métricas, riscos |
 | `corpus/PHASES_STATUS.md` | 0984b51 | Tracker | Estado por tarefa (ID, depende, critério, commit); regras de manutenção |
