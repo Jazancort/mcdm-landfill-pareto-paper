@@ -297,3 +297,128 @@ retirar do texto principal e manter só no Suplementar.
 3. Commit de ambos **antes** de abrir o `main.tex`.
 
 **Nota de ordem:** a revisão externa recomenda começar pela auditoria de proveniência (Fase B) antes da refactorização (Fase A), para não dificultar a reconstrução dos resultados antigos. A Fase Math (D13–D16) tem precedência sobre ambas.
+
+
+---
+
+## Plano para nota 9 — GPT Code Interpreter (2026-10-02)
+
+> "nota 9 é subjectiva, não promessa; corrigir bugs restabelece credibilidade,
+> o salto vem de contribuição precisa, generalização e replicação."
+
+**Snapshot de referência:** commit `c1d3517` (2026-10-02, estado após A1–P8 e cosmética)
+
+---
+
+### Fase 1 — Reparar confiança (GATES: integridade + proveniência)
+
+**Estado actual:** parcialmente concluído nos commits desta sessão.  
+**Gate:** nenhuma contradição entre documento principal, suplemento, figuras e logs;
+todos os números auditáveis; nenhum resultado baseado em 473 candidatos quando a
+análise exige 389 admissíveis.
+
+Acções pendentes:
+- [ ] Matriz de rastreabilidade número-a-número (cada valor → script + commit + hash)
+- [ ] Testes que verificam invariantes reais, não apenas valores hardcoded (P8)
+- [ ] Rebuild completo de um único comando (makefile/script)
+- [x] B1 correctamente calculado (commit 8f6a15a)
+- [x] R1–R6 pareados recalculados dos draws (commit 653da6b)
+- [x] F8 documentado com DEV (commit 5ba9d86)
+- [x] R1 renomeado "post hoc exploratory" (commit 5ba9d86)
+
+---
+
+### Fase 2 — Fechar validade matemática (GATE: proposições com escopo explícito)
+
+**Estado actual:** gap qualificado (commit 04cc27e); PROMETHEE corrigido (commit 04cc27e).  
+**Gate:** contribuição matemática resumível numa resposta clara sobre compatibilidade
+score/normalização/modelo de valor; sem "se e somente se" fora do escopo provado.
+
+Acções pendentes:
+- [ ] Delimitar o teorema: normalizações afins com constantes fixas A; não extrapolar para vec normalização dependente dos dados
+- [ ] Escopo TOPSIS: (wA)² é contribuição à distância, não peso linear do índice final
+- [ ] Separar "universal" de "eficiente nesta instância"
+- [ ] Verificar novidade teórica vs. literatura existente (Choo 1999, amplitude identity)
+- [x] gap=0 iff Pareto qualificado para dominância estrita (commit 04cc27e)
+- [x] PROMETHEE equivalência afim com midranks documentada (commit 04cc27e)
+
+---
+
+### Fase 3 — Contribuição acionável (GATE: diagnóstico + correcção testável)
+
+**Estado actual:** não iniciado.  
+**Gate:** leitor sabe quando aceitar a normalização, quando corrigir pesos, quando
+declarar mudança de modelo de valor.
+
+Acções:
+- [ ] Reposicionar tese: "condições de compatibilidade score/normalização/modelo de valor"
+  em vez de "min-max ganha"
+- [ ] Seção "diagnóstico e correcção": para SAW afim com A_j > 0,
+  w*_j = (w_j / A_j) / Σ(w/A) recupera score original até escala
+- [ ] Prova + experimento controlado "before → after"
+- [ ] Não transferir correcção para TOPSIS, ranks ou transformações não afins
+
+---
+
+### Fase 4 — Generalizar além de Fogo (GATE: ≥2 instâncias independentes)
+
+**Estado actual:** grelha sintética E3 existe mas não publicada; Fogo é instância única.  
+**Gate:** se resultado não se repetir noutra instância, artigo contextualiza; não
+descarta resultado desfavorável.
+
+Acções:
+- [ ] Fogo como caso piloto/motivador, não como prova única
+- [ ] Grelha sintética pré-especificada e enumerável (E3 existente — formalizar)
+- [ ] Instância real independente OU corpus público com estrutura Pareto comparável
+- [ ] Variar: massa binária, empates, amplitudes within/between, dependência entre
+  critérios, pesos, separação espacial, estrutura de grupos
+- [ ] Plano prospectivo congelado antes de novos resultados
+
+---
+
+### Fase 5 — Estatística enxuta e decisiva (GATE: estimands primários definidos)
+
+**Estado actual:** múltiplos contrastes; R1-R6 reparados mas não hierarquizados.  
+**Gate:** cada conclusão estatística corresponde a um estimand pré-definido e pareado.
+
+Acções:
+- [ ] Tabela de estimands primários/secundários (efeito normalização × assembly em SAW;
+  efeito correcção de pesos)
+- [ ] TOPSIS como secundário; não misturar famílias em média geral
+- [ ] 500 draws = precisão Monte Carlo, não substituem replicação entre instâncias
+- [ ] ICs pareados por estrato; equivalência por estrato, não só pooled
+- [ ] Hierarquia Holm para múltiplos contrastes confirmatórios
+
+---
+
+### Fase 6 — Reprodutibilidade independente (GATE: rebuild de um comando)
+
+**Estado actual:** commits limpos; sem rebuild automatizado end-to-end.  
+**Gate:** revisor externo reproduz números principais sem intervenção dos autores.
+
+Acções:
+- [ ] Um comando gera tabelas + macros + figuras + suplemento a partir do snapshot
+- [ ] Testes verificam invariantes dos artefactos (draws, hashes, schemas, |T|=1944653)
+- [ ] Testes falham quando bugs são injectados (canary tests)
+- [ ] Rebuild completo + revisão visual de todas as figuras
+- [x] ORCID placeholder removido (commit fbc4732)
+- [x] Cross-references principal/suplemento corrigidas (esta sessão)
+
+---
+
+### Resumo de prioridade
+
+| Fase | Para submeter | Para nota 9 |
+|------|:---:|:---:|
+| F1 integridade | ✅ necessário | ✅ necessário |
+| F2 matemática | ✅ necessário | ✅ necessário |
+| F3 contribuição acionável | — | ✅ chave |
+| F4 generalização | — | ✅ chave |
+| F5 estatística | — | ✅ chave |
+| F6 reprodutibilidade | ✅ necessário | ✅ necessário |
+
+**Mínimo para submeter:** F1 + F2 + F6 completos.  
+**Salto para artigo forte:** F3 + F4 + F5 completos.  
+**Nota alta:** contribuição alinhada + generalidade demonstrada + reprodução independente.
+
+---
