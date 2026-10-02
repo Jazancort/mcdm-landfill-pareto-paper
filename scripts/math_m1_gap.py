@@ -40,7 +40,7 @@ R1=F1.max()-F1.min(); R2=F2.max()-F2.min(); R3=F3.max()-F3.min()
 print(f"R1={R1:.4f} R2={R2:.4f} R3={R3:.4f}", flush=True)
 
 EPS = 1e-9
-CHUNK = 2000   # ~120MB per chunk (2000 x 1.9M x 3 arrays of float64)
+CHUNK = 500   # ~23GB per chunk safe on Athena (92GiB available)
 
 gap = np.zeros(n, dtype=np.float32)
 weakly_dom = np.zeros(n, dtype=bool)
