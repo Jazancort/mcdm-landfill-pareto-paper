@@ -219,8 +219,8 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 
 | ID | Tarefa | Estado |
 |----|--------|--------|
-| G2o-F1 | Regenerar Figura 1 com números actuais (+25.4 pp, +0.5 pp, etc.) | TODO |
-| G2o-F4 | Corrigir etiquetas Figura 4 painel ranks (rácios rank, não vec) | TODO |
+| G2o-F1 | Regenerar Figura 1 com números actuais | DONE | |
+| G2o-F4 | Corrigir etiquetas Figura 4 painel ranks (rácios rank, não vec) | DONE | |
 
 ---
 

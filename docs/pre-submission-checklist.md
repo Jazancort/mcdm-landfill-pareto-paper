@@ -135,8 +135,8 @@ Documento criado antes de qualquer corrida ou correcção.
 
 | ID | Figura | Problema | Estado |
 |----|--------|---------|--------|
-| G2o-F1 | Figura 1 | Números antigos: "+29.9 pp", "Assembly +16.0 pp", "+0.9 pp (n.s.)", "18 cells (17 after…)" | TODO |
-| G2o-F4 | Figura 4 | Etiquetas painel ranks mostram rácios vec em vez de rácios rank | TODO |
+| G2o | fig_workflow.png regenerado do HTML (números actuais); fig_F1_slope_weights: labels rank panel corrigidas (rank ratio em vez de vec ratio) | DONE |
+| G2o | fig_workflow.png regenerado do HTML (números actuais); fig_F1_slope_weights: labels rank panel corrigidas (rank ratio em vez de vec ratio) | DONE |
 
 ---
 

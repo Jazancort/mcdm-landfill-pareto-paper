@@ -54,7 +54,7 @@ for c, (color, label) in highlight.items():
             marker="o", markersize=6)
     vec_y  = we["vec"][c]
     rank_y = we["rank"][c]
-    ratio  = vec_y / (w_nom[c] * 100)
+    ratio  = rank_y / (w_nom[c] * 100)
     ax.text(2.06, rank_y, f"{label}  ({ratio:.2f}\u00d7)",
             fontsize=11, color=color, va="center")
 
