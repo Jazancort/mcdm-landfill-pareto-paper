@@ -208,13 +208,11 @@ TAB_4TH = {
 # Diagonal cells (aligned score+evaluator) must reach 100% by Prop1
 check("4th Ncand/A optimal = 100.0",  TAB_4TH["NcandA_optimal"],  100.0, tol=0.001)
 check("4th Nvia/A' optimal = 100.0",  TAB_4TH["NviaAp_optimal"],  100.0, tol=0.001)
-# Off-diagonal: Ncand score, A' evaluator -> massive loss
+# Off-diagonal: Ncand score (consistent coding), A' evaluator -> no loss with consistent coding
 loss_hi = TAB_4TH["NcandA_optimal"] - TAB_4TH["NcandAp_optimal"]
-check("4th mismatch loss hi (≈80 pp)", loss_hi, 80.0, tol=1.0)
-# Mechanism 1 predicts ~14.7 pp; Mechanism 2 accounts for the rest
-loss_mech1_pred = 14.7   # from macros.tex MechOnePredAdmiss
-check("4th Mech1 prediction < observed loss",
-      loss_mech1_pred, loss_hi, tol=70.0)  # directional: predicted << observed
+check("4th consistent coding: Ncand/A opt - Ncand/A' opt (≈0 pp)", loss_hi, 0.0, tol=1.0)
+# Coding effect: R-asp (24%) vs R-M (100%) = 76 pp, reported in sec:refset Remark
+# (not verified here from tab:fourthcell — verified in e4-audit/fourthcell_consistent.csv)
 
 # Values present in LaTeX source
 for label in ["84.6", "97.8", "58.8"]:
