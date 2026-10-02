@@ -515,8 +515,8 @@ of the numbers.  The R1 recalculation is therefore classified as
   ($95\%$ CI $[+3.6,\,+7.6]$).
   Both exclude zero: \textbf{Effect} in both assemblies.
   Interpretation: normalising over inadmissible alternatives (R-asp) gives
-  slightly \emph{lower} $Q_2$ than vector normalisation (R-V) under a
-  consistent binary encoding, the opposite of the pattern seen in E4.
+  slightly \emph{higher} $Q_2$ than vector normalisation (R-V) under a
+  consistent binary encoding (positive contrast = R-asp $>$ R-V).
 \end{description}
 
 \subsection*{Outcomes}
@@ -709,41 +709,111 @@ Script: \texttt{run\_e5\_grid.py} v4, commit \texttt{4d438b6}.
 in $\geq70\%$ of strata $\Rightarrow$ robust predictor.
 \textbf{E5-R3:} CI includes zero in $>30\%$ of strata $\Rightarrow$ not robust.
 
+\paragraph{Deviations from PRESPEC\_E5 (DEV-E5-001 to DEV-E5-007).}
+\label{sec:dev_e5}
+\texttt{PRESPEC\_E5.md} was committed before the first E5 run.
+The executed design departs from it as follows.
+
+\begin{description}
+\item[DEV-E5-001] \emph{Instance size.}
+  Declared $N\in\{50,100,200,389\}$; executed $N\in\{50,100,200\}$.
+  $N=389$ was dropped because its $O(n^3)$ trio enumeration
+  (${\approx}9.4\times10^6$ trios) would have required $\approx7$~h per
+  instance without parallelism.
+  Consequence: no synthetic instance matches the size of Fogo ($N=389$),
+  and the grid cannot be used to place Fogo within a size-comparable
+  distribution.
+\item[DEV-E5-002] \emph{Number of instances.}
+  Declared 540; executed 405, as a direct consequence of DEV-E5-001.
+\item[DEV-E5-003] \emph{Monte Carlo draws.}
+  Declared $N_\text{draws}=200$ per instance; executed 100 for speed.
+  Per-instance MC SE is $\approx5.0$~pp at $Q_2=50\%$ and
+  $\approx1.8$~pp at $Q_2=97\%$, against $3.5$~pp and $1.2$~pp declared.
+\item[DEV-E5-004] \emph{Amplitude generator.}
+  Declared amplitudes derived from each synthetic column via $\rho_j$.
+  Executed: amplitudes imposed directly, giving
+  $\mathrm{TV}_W = 0.096\,s_W$ exactly, independently of the data.
+  $\mathrm{TV}_W$ is therefore a design constant, not a property of any
+  normalisation of the synthetic columns.
+\item[DEV-E5-005] \emph{Locus of the imposed amplitudes (critical).}
+  The imposed amplitude vector $A_j$ enters \emph{both} the score
+  (\texttt{X\_score = X\_adj * Aj}) and the objectives
+  (\texttt{X\_obj\_amp = X\_obj * Aj}).
+  Score and evaluator are therefore aligned on every instance; by
+  Proposition~1, optimal assembly attains the frontier whatever the value
+  of $\mathrm{TV}_W$.
+  E5 consequently does not test Theorem~1, which concerns amplitudes that
+  differ between score and evaluator.
+  Its only informative outcome is greedy assembly.
+\item[DEV-E5-006] \emph{Primary analysis.}
+  The declared linear mixed model was not reported in the first posted
+  version; a pooled correlation was reported instead.
+  The declared model is now reported above.
+  The random-intercept variance for replicate is estimated at the boundary
+  (0.000), so the model reduces to OLS; cluster-robust SEs by replicate
+  are given alongside.
+\item[DEV-E5-007] \emph{Estimand E5-P3.}
+  The fraction of instances where $\mathrm{TV}_W$ explains $>50\%$ of
+  $Q_2$ variance is not computable on a one-row-per-instance file, since
+  $\mathrm{TV}_W$ is constant within each instance.
+  It is not reported.
+\end{description}
+
 \subsection*{Results}
 
-\textbf{E5-R1:} $Q_2^{\mathrm{mm\,opt}} = 100\%$ on all 405 instances.
-\textbf{Pass.}
+\textbf{E5-R1 (regression):} $Q_2^{\mathrm{mm,opt}}=100\%$ on 405/405
+instances. Pass.
+Because score and objectives share the imposed amplitudes
+(DEV-E5-005), this is a check of the implementation, not evidence
+about amplitude distortion (Remark~1 in main text).
 
-\textbf{E5-R3 activated:} $r(\mathrm{TV}_W,\,\mathrm{loss\_greedy}) = 0.034$.
-$\mathrm{TV}_W$ is not a robust predictor of greedy loss.
+\textbf{Declared model.}
+$Q_2^{\mathrm{grd}} \sim \mathrm{TV}_W + \mathrm{TV}_B
++ \log N + \mathrm{geometry} + (1\mid\mathrm{rep})$.
+Coefficient on $\mathrm{TV}_W$: $-1.3$~pp per $0.1$ of $\mathrm{TV}_W$
+(95\% bootstrap CI over instances $[-5.1,\,+2.4]$, $p=0.47$).
+Adding $\log N\times\mathrm{geometry}$ leaves it unchanged
+($-1.3$~pp, CI $[-4.7,\,+2.1]$).
+Instance size ($+6.2$~pp per unit $\log N$, $p<0.001$) and
+geometry (grid $+8.1$~pp, uniform $+8.6$~pp relative to clustered,
+both $p<0.001$) are the only significant terms.
+The random-intercept variance for replicate is estimated at the
+boundary ($0.000$), so the model reduces to OLS with
+cluster-robust standard errors (DEV-E5-006).
 
-\begin{center}\small
-\begin{tabular}{rrc}
-\toprule
-$s_W$ & $\mathrm{TV}_W$ & $Q_2^{\mathrm{grd}}$ \\
-\midrule
-0.00 & 0.000 & 96.3\% \\
-0.25 & 0.024 & 98.6\% \\
-0.50 & 0.048 & 97.7\% \\
-0.75 & 0.072 & 94.8\% \\
-1.00 & 0.096 & 96.6\% \\
-\bottomrule
-\end{tabular}
-\end{center}
+\textbf{E5-R3 activated.}
+The slope of $Q_2^{\mathrm{grd}}$ on $\mathrm{TV}_W$ has a confidence
+interval including zero in 25 of 25 non-degenerate
+$N\times\mathrm{geometry}\times s_B$ strata (two strata are constant
+at 100\%).
+Pooled $r(\mathrm{TV}_W,\,\text{loss})=0.034$ ($p=0.50$).
 
-Dominant moderators: $N$ (N=50: 91\%; N=100/200: 99.7\%)
-and geometry (clustered: 91\%; grid/uniform: $\geq$99\%).
-Fogo's min--max greedy efficiency is $86.0\%$ (Table~3 in main text).
-Note that $\mathrm{TV}_W(\mathrm{mm})=0$ by construction: under min--max
-all amplitudes equal 1 within each group, so the imposed spread $s_W$
-is an experimental design variable, not a property of the normalisation.
-Fogo's $86\%$ greedy efficiency falls within the synthetic distribution
-for comparable instance sizes ($N=100/200$: mean $99.7\%$; $N=50$: mean $91\%$).
+\textbf{Distribution of greedy loss.}
+329 of 405 instances (81\%) reach $Q_2^{\mathrm{grd}}=100\%$.
+All eight instances below 50\% are $N=50$ clustered; the mean for
+that stratum is 75.6\% (SD 31.8), against $\geq97.9\%$ in every other
+$N\times\mathrm{geometry}$ stratum.
+Within $N=50$ clustered the mean is not monotone in $s_W$
+(69.8, 89.3, 85.8, 59.9, 73.4\% for $s_W=0,\ldots,1$).
+One instance ($s_W=s_B=0$, 130 feasible trios) has
+$Q_2^{\mathrm{grd}}=0\%$; this is a combinatorial effect of
+the separation constraint leaving very few trios reachable by the
+greedy heuristic under small $N$ and clustered geometry, not an
+amplitude effect (TV$_W=0$ by construction in this cell).
 
-\textbf{Conclusion:} Proposition~1 invariant generalises perfectly
-(405/405 instances). The magnitude of greedy loss is instance-specific;
-the imposed amplitude spread $s_W$ is not a sufficient predictor of
-magnitude across instances with different sizes and geometries.
+\paragraph{Conclusion.}
+E5 does not test the amplitude-distortion mechanism: with imposed
+amplitudes shared by score and objectives, optimal assembly is
+Pareto-efficient by construction (Proposition~1), and greedy loss
+is the only free outcome.
+On that outcome, imposed within-group spread has no detectable effect;
+greedy loss is governed by instance size and spatial geometry, and
+concentrated in small clustered instances where the separation
+constraint leaves few feasible trios.
+E5 therefore characterises the combinatorial component of the greedy
+shortfall, not the normalisation component.
+It contains no instance of Fogo's size ($N=389$, DEV-E5-001), and does
+not establish that the Fogo magnitudes generalise.
 
 % =======================================================================
 % S4  Data provenance

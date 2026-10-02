@@ -46,10 +46,8 @@ for ax, N in zip(axes, N_values):
                    color=color, alpha=0.55, s=25,
                    label=geo if N == 50 else None)
 
-    # Fogo reference: Q2_mm_greedy = 86.0% (horizontal line only — no TV_W x-ref)
-    ax.axhline(86.0, color='black', linestyle=':', lw=1.5, alpha=0.7,
-               label='Fogo (mm/grd=86%)' if N == 50 else None)
-    ax.text(0.082, 87.5, 'Fogo\nmm/grd', fontsize=8, color='black', ha='right', va='bottom')
+    # Fogo NOT shown: N=389, 11 criteria — no size-comparable counterpart in E5
+    # (per DEV-E5-001 and Opus review)
 
     # Regression line per panel
     x = sub['TV_W'].values
@@ -63,7 +61,7 @@ for ax, N in zip(axes, N_values):
 
     ax.set_xlabel('Imposed $\\mathrm{TV}_W$ (amplitude spread)', fontweight='bold')
     ax.set_title(f'$N = {N}$ sites', fontweight='bold')
-    ax.set_ylim(55, 105)
+    ax.set_ylim(-2, 105)
     ax.set_xlim(-0.005, 0.105)
     ax.yaxis.grid(True, alpha=0.3)
 
@@ -74,13 +72,14 @@ from matplotlib.lines import Line2D
 legend_elements = [
     Line2D([0], [0], marker='o', color='w', markerfacecolor=c, markersize=8, label=g)
     for g, c in geo_colors.items()
-] + [Line2D([0], [0], color='black', lw=1.5, ls=':', label='Fogo Q2=86%')]
+]
 axes[0].legend(handles=legend_elements, loc='lower left', frameon=False, fontsize=9)
 
 plt.suptitle(
-    'E5: $Q_2$ min–max greedy vs imposed $\\mathrm{TV}_W$ across 405 synthetic instances\n'
-    '$Q_2$ min–max optimal $=100\\%$ on all instances (not shown; Proposition~1 verified)',
-    fontsize=10.5, y=1.02
+    'E5: greedy $Q_2$ (min--max) vs imposed $\\mathrm{TV}_W = 0.096\\,s_W$, 405 instances\n'
+    'Imposed amplitudes enter score and objectives jointly; $Q_2$ optimal $=100\\%$ on all instances (Prop.~1).'
+    '  Eight $N=50$ clustered instances below 50\\% are visible at $y\\approx0$.',
+    fontsize=9.5, y=1.03
 )
 plt.tight_layout()
 

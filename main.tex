@@ -2307,10 +2307,12 @@ Post hoc decomposition attributes $76$~pp of the original ${\approx}80$~pp loss 
 coding inconsistency and the remaining $4$--$6$~pp to the normalisation
 constants (R-asp$-$R-V: $+4.0$~pp optimal ($95\%$ CI $[+2.2,\,+6.0]$),
 $+5.6$~pp greedy ($95\%$ CI $[+3.6,\,+7.6]$),
-both CIs exclude zero; \textbf{Effect}).
-With a consistent encoding, normalising over inadmissible alternatives
-(space~$A$) costs approximately $4$--$6$~pp relative to vector normalisation
-on this instance.
+both CIs exclude zero).
+With consistent aspect encoding, normalising over inadmissible alternatives
+(space~$A$) costs approximately $4$--$6$~pp \emph{relative to vector
+normalisation under the inconsistent encoding}
+(R-asp$-$R-V: $+4.0$~pp optimal, $+5.6$~pp greedy);
+under consistent encoding the cost is zero (R-V*, Table~\ref{tab:fourthcell}).
 One finding survives the correction: the directional asymmetry.
 With consistent aspect encoding, the $r_j$ amplitude pattern costs
 $0$~pp while the $1/r_j$ pattern costs $11.6$~pp, at nearly equal
@@ -2572,16 +2574,22 @@ Fogo's deviation vector is two-sided and concentrated
 $2.88\times$, and the joint distribution of
 $(\mathrm{TV}_B,\mathrm{TV}_W)$ in applied decision matrices is unknown;
 establishing it would require a corpus of published matrices.
-Experiment~E5 (Supplementary Material) stress-tested the mechanism on
-405 synthetic instances varying $N\in\{50,100,200\}$,
-spatial geometry and an imposed amplitude spread parameter $s_W\in[0,1]$
-(not derived from any normalisation; $\mathrm{TV}_W(\mathrm{mm})=0$
-by construction since all $A_j=1$ within each group under min--max).
-All instances confirmed the optimality invariant ($Q_2^{\mathrm{mm\,opt}}=100\%$);
-the imposed spread $s_W$ explains little of the greedy loss ($r=0.034$),
-with geometry and $N$ as dominant moderators.
-Fogo's min--max greedy efficiency ($86\%$, Table~\ref{tab:tvorder})
-falls within the synthetic distribution for comparable instance sizes.
+Two synthetic exercises bear on this only partially
+(Supplementary Material).
+A grid of 240 instances on the Fogo geometry shows that greedy-assembly
+loss under vector normalisation tracks the magnitude--concentration pair
+rather than $\mathrm{TV}$ alone, but does not calibrate the level of loss
+outside its generating family.
+A second grid of 405 instances ($N\le200$, three geometries;
+Experiment~E5) imposes amplitudes on score and objectives jointly, so
+optimal assembly is efficient by construction and the grid does not
+test Theorem~\ref{thm:groupconst}; on greedy assembly, the imposed
+within-group spread has no detectable effect
+($-1.3$~pp per $0.1$ of $\mathrm{TV}_W$,
+$95\%$ CI $[-5.1,\,+2.4]$), while instance size and spatial geometry
+dominate (Supplementary Material, Section~\ref{sec:e5}).
+E5 departs from its pre-specification in seven declared respects,
+including the omission of the $N=389$ level (DEV-E5-001 to DEV-E5-007).
 
 \emph{Weight perturbation model.}
 Dirichlet perturbation around $\wahp$ represents symmetric uncertainty in
@@ -2635,18 +2643,14 @@ A post hoc exploratory intervention on Fogo confirmed that between-group
 distortion alone costs nothing and that within-group distortion carries
 most of the loss, and falsified our prediction that the two components
 would not interact.
-A synthetic grid of 405 instances varying $N$, spatial geometry and
-imposed amplitude spread (Experiment~E5, Supplementary Material) confirmed
-that optimal assembly reaches $100\%$ on every instance
-(Proposition~\ref{prop:p1:stmt}).
-Under greedy assembly, the imposed amplitude spread parameter $s_W$
-(which sets the within-group heterogeneity of the amplitude vector used
-for both score and objectives) shows near-zero correlation with the
-greedy loss across synthetic instances ($r=0.034$): spatial geometry and
-instance size are the dominant moderators, and Fogo's greedy efficiency
-of $86\%$ under min--max lies $13$~pp above the synthetic mean for
-$N=50$ clustered instances at the same spread level.
-The Fogo magnitudes are therefore instance-specific; the mechanism is general.
+A synthetic grid of 405 instances (Experiment~E5) characterises the
+greedy shortfall rather than the normalisation effect: with amplitudes
+imposed jointly on score and objectives, imposed within-group spread
+has no detectable effect on greedy efficiency, which is governed
+instead by instance size and spatial geometry.
+The Fogo magnitudes are therefore instance-specific, and whether the
+within-group mechanism carries comparable costs on other applied matrices
+remains open.
 
 Two consequences bear directly on practice.
 Integer programming on top of a ranking pays only when the normalisation
