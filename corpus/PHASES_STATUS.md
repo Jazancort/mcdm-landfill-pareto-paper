@@ -126,18 +126,18 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 
 | ID | Tarefa | Depende | Critério de aceitação | Estado | Commit | Notas |
 |----|--------|---------|----------------------|--------|--------|-------|
-| G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | TODO | | R1-1 OBSERVAÇÃO, R1-2 EFEITO greedy, R1-4 N/A. Ramo: "só R1-2 é efeito (greedy)" — ver IMPROVEMENT_PLAN §4 |
-| G2a | Resumo | G1, F1 | Sem "80 pp" de mismatch; agregação correcta | TODO | | |
-| G2b | Highlights | G1, F1 | Highlight 5 retirado ou substituído | TODO | | |
-| G2c | Introdução (third finding, contribuição i) | G1 | — | TODO | | Já reescrito em 9235e63; pode precisar de ajuste após G2a |
+| G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
+| G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
+| G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
+| G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
 | G2d | §3: "Mixed senses" (uma só codificação) | A1 | — | TODO | | |
-| G2e | §5: ref-set como factor secundário; circularidade F2 | G1, F2 | — | TODO | | F2 já inserido |
+| G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
 | G2f | §6: F4, F5; manter eq:refsetA e tab:amprefset | F4, F5 | — | TODO | | F4 já feito |
-| G2g | sec:refset; tab:fourthcell com valores novos | G1, D3 | Sem "Mechanism 2" | TODO | | sec:refset já reescrito em 9235e63; tab:fourthcell valores a actualizar |
+| G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
 | G2h | Remark "non-monotone recoding" | D2, E3 | Historial bug no Suplementar | TODO | | |
 | G2i | sec:interaction: factor 1,56× como macro | E2 | — | TODO | | |
-| G2j | §8.1: um mecanismo; sem factor 16; sem "unexplained" | G1 | — | TODO | | Já reescrito em 9235e63 |
-| G2k | §8.5 Prática: rec. 1; nova recomendação codificação | G1, E1 | — | TODO | | |
+| G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
+| G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
 | G2l | Limitações: circularidade, instância única, E4 | F2 | — | TODO | | F2 já inserido |
 | G2m | Conclusão alinhada com resumo | G2a | — | TODO | | |
 | G2n | Suplementar: PRESPEC_E4, PRESPEC_R1, historial, proveniência | E5, C1, B2 | — | TODO | | |
