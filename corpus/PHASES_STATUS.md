@@ -280,3 +280,29 @@ Referência completa: docs/pre-submission-checklist.md (criado 2026-10-02)
 4. §5.4 e Limitações actualizados com resultado F8.
 
 **Estado:** DONE
+
+## Decision record — 2026-10-02
+
+### B1/D1: tab:fourthcell space-A cells (commit 4059fb1)
+
+**Problema identificado (Opus + GPT, 2026-10-02):** commits 2aa0d38 e 54195c1 construíram a fronteira A com os 473 candidatos (incluindo os 84 excluídos), violando §3.1 e a Proposição 1. A asserção de regressão foi removida em vez de se corrigir o script.
+
+**Reversão:** commit ec33779 reverteu os dois commits bugados.
+
+**Correcção aplicada:**
+- `pareto_utils.py`: adicionado parâmetro `ref_df` para separar a população de normalização do universo de portefólios.
+- `compute_b1_spaceA.py` (v3): trios = 1 944 653 admissíveis (df_via); objectivos A com `ref_df=df_imp` (473-site constants); score 473 = scalarização directa `-(F1+F2)+F3` com as mesmas colunas c_j do compute_A.
+- Script aborta com `sys.exit(1)` se 473/A optimal ≠ 100%.
+
+**Resultados B1 (N=500, κ=200, seed=42, t=237s):**
+
+| Método | Avaliador | greedy | optimal |
+|--------|-----------|--------|---------|
+| 473/A  | A (ref=473) | 84.6% ±1.6 | **100.0%** ✓ |
+| 389/A  | A (ref=473) | 58.8% ±2.2 | 95.0% ±1.0 |
+
+Os valores coincidem com os que estavam na tabela original — confirmando que a tabela original era correcta. O REGRESSION_GUARD (commit 893d9bf) garante que valores esperados de regressão não podem ser editados sem esta entrada.
+
+**Regra para o futuro:** qualquer alteração a um valor esperado de regressão no `check_consistency.py` exige uma entrada neste ficheiro com git hash e justificação.
+
+---

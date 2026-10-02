@@ -1,0 +1,5 @@
+score_set,assembly,Q2,SE
+473/A,optimal,100.0,0.0
+473/A,greedy,84.6,1.614
+389/A,optimal,95.0,0.975
+389/A,greedy,58.8,2.201
