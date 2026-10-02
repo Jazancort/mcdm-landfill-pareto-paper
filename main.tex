@@ -1952,16 +1952,18 @@ distortion it does not optimise.
 The last sentence is an interpretation; Section~\ref{sec:e1} isolates
 the part of the distortion responsible.
 
-\subsection{The reference set: the same mechanism at a higher cost}
+\subsection{The reference set: a coding inconsistency outside the theorem}
 \label{sec:refset}
 % ----------------------------------------------------------
 
 The results of Section~\ref{sec:lemmaconf} show that implicit
 re-weighting orders the three normalisations within additive aggregation.
-The choice of reference set produces a re-weighting of the same kind by
-a different route, and on Fogo it is far more costly.
+The choice of reference set can produce a re-weighting of the same kind,
+but the dominant effect on Fogo is different in nature: a criterion
+encoded differently in the score and in the objectives, which falls
+outside the scope of Theorem~\ref{thm:groupconst}.
 
-\paragraph{Mechanism 2: score--evaluator coding mismatch.}
+\paragraph{A coding inconsistency amplified by exact assembly.}
 When the method's score encodes a criterion differently from the
 objective function used to evaluate portfolios, the score is no longer
 an affine function of the objective's partial value for that criterion.
@@ -1970,6 +1972,8 @@ Theorem~\ref{thm:groupconst} for that criterion: the theorem requires the
 score column to be an affine function of the partial value in the
 evaluator's criterion space, and a recoding that is not monotone in the
 partial value breaks that condition.
+Exact assembly amplifies any such mismatch; this is not implicit
+re-weighting in the sense of the theorem, but a distinct failure mode.
 
 The cost on Fogo is large.
 An earlier version of our pipeline scored \textit{aspect}
@@ -2018,11 +2022,15 @@ The directional asymmetry identified in the original E4 design
 ($\mathrm{TV}_W=0.0815$ for the $r_j$ pattern,
 $\mathrm{TV}_W=0.0852$ for the $1/r_j$ pattern;
 cost $0$~pp vs $11.6$~pp under optimal assembly against $A'$)
-is genuine and survives the coding correction.
-With consistent encoding, larger amplitude distortion in the deflation
-direction costs more than in the inflation direction, at nearly the
-same total variation.
-We do not explain this asymmetry analytically.
+survives the coding correction.
+In these two post hoc cells with nearly equal $\mathrm{TV}_W$,
+inflating \textit{perm} (the $1/r_j$ pattern, where
+$A_j\approx 2.07\times$ for \textit{perm}) costs $11.6$~pp,
+while deflating it (the $r_j$ pattern, $A_j=0.482$) costs nothing.
+This is consistent with P\_E4\_5 being falsified: the pre-registered
+prediction anticipated the opposite ordering.
+We do not explain this asymmetry analytically, and we do not test
+whether it generalises beyond these two cells on one instance.
 
 \begin{table}[!t]
 \centering
@@ -2199,14 +2207,15 @@ this result as evidence for it.
 \section{Discussion}
 \label{sec:discussion}
 
-The preceding results identify two routes to implicit re-weighting, which
-share one structure (Theorem~\ref{thm:groupconst}) but differ in cost
-and in remedy.
+The preceding results identify one mechanism of implicit re-weighting
+(Theorem~\ref{thm:groupconst}) and one distinct failure mode (coding
+mismatch outside the theorem's scope), which differ in cost, in
+diagnostic, and in remedy.
 This section interprets their relative severity, places them within the
 portfolio decision analysis literature, and connects them to the broader
 normalisation debate.
 
-\subsection{Two routes to re-weighting, ordered by cost}
+\subsection{One mechanism and one caveat, ordered by implication}
 
 The results separate two routes by which a normalisation choice
 degrades portfolio quality, and the distinction matters because the
@@ -2227,21 +2236,23 @@ distortion carries the loss.
 It is also invisible: nothing in a standard TOPSIS or SAW report reveals
 that \texttt{perm} entered at $2.88$ times its nominal weight.
 
-The second is \emph{score--evaluator coding mismatch}.
+The caveat concerns \emph{score--evaluator coding mismatch}.
 Theorem~\ref{thm:groupconst} guarantees Pareto efficiency of exact
 maximisation on every instance if and only if the score's amplitudes,
 in the units of the objectives, are constant within each objective group.
 This condition is violated when a criterion is encoded differently in the
-score and in the objective function.
+score and in the objective function, and the encoding is not an affine
+function of the other.
 On Fogo, the score used a continuous azimuth encoding for
 \textit{aspect} while the objectives used a binary leeward indicator;
 the encoding is not monotone in the objective's partial value, so the
 theorem's premise does not hold for that criterion.
-The observed cost is $80$~pp of Pareto efficiency under optimal assembly
-(Table~\ref{tab:fourthcell}).
-Post hoc decomposition attributes $76$~pp to the coding inconsistency
-alone and a further $4$~pp to the normalisation constants (paired
-bootstrap $95\%$ CI for the residual includes zero).
+This is a pipeline inconsistency, not a property of the method: with
+consistent encoding, normalising over the $\Ncand$-site set costs nothing
+under optimal assembly (Table~\ref{tab:fourthcell}).
+Post hoc decomposition attributes the original $76$~pp loss to the
+coding inconsistency alone and a further $4$~pp to the normalisation
+constants (paired bootstrap $95\%$ CI for the residual includes zero).
 With a consistent encoding, normalising over inadmissible alternatives
 costs zero pp under optimal assembly on this instance.
 One finding survives the correction: the directional asymmetry.
