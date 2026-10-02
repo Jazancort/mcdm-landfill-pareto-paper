@@ -446,3 +446,52 @@ instâncias), concluir que TV_W não é preditor robusto e reformular a tese.
 - ETA Athena: ~45-90 min
 
 ---
+
+
+## E5 Results — 2026-10-02 (commit seguinte)
+
+**Design:** N ∈ {50,100,200} × 3 geometrias × 3 s_B × 5 s_W × 3 reps = 405 instâncias
+**N_draws = 100, κ=200, seed_base=100. Script: run_e5_grid.py v4. Commit: 4d438b6 + fixes**
+
+### Resultados principais
+
+| Métrica | Valor |
+|---------|-------|
+| Instâncias totais | 405 |
+| Q2_mm_optimal = 100% (Regressão E5-R1) | ✅ todas |
+| r(TV_W, loss_greedy) | **0.034** (quase nulo) |
+
+**Por s_W (TV_W proxy):**
+
+| s_W | TV_W médio | Q2_mm_greedy médio |
+|-----|-----------|---------------------|
+| 0.00 | 0.000 | 96.3% |
+| 0.25 | 0.024 | 98.6% |
+| 0.50 | 0.048 | 97.7% |
+| 0.75 | 0.072 | 94.8% |
+| 1.00 | 0.096 | 96.6% |
+
+**Por N:** N=50 → 91.1%, N=100 → 99.7%, N=200 → 99.7%
+**Por geometria:** clustered → 91.2%, grid → 99.3%, uniform → 99.9%
+
+### Conclusão científica (E5-R3 activada)
+
+TV_W não é preditor robusto da perda greedy nas instâncias sintéticas (r=0.034).
+A variação é principalmente explicada por N (pequeno → maior variância) e geometria
+(clustered → maior perda por concentração espacial de sites).
+
+Fogo (TV_W≈0.032, Q2_grd=66.2%) é um outlier: muito abaixo das instâncias sintéticas
+com TV_W similar (98.6%). Isto sugere que Fogo tem características não capturadas pelo
+gerador sintético — provavelmente a estrutura específica dos critérios binários/concentrados
+e a geometria do arquipélago.
+
+**Implicação para a narrativa do artigo:**
+A tese deve ser reformulada de "TV_W prediz perda" para "TV_W é condição analítica
+suficiente para perda sob certas condições (Teorema), mas a magnitude da perda depende
+de propriedades não capturadas por TV_W — demonstrado empiricamente pela grelha E5."
+Fogo permanece como caso motivador; as instâncias sintéticas documentam a variabilidade.
+
+### Figura
+`figures/fig_E5_synthetic.png` — Q2_mm_greedy vs TV_W, 3 painéis por N, coloridos por geometria.
+
+---
