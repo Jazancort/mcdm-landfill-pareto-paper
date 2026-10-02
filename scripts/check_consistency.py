@@ -205,6 +205,15 @@ TAB_4TH = {
     "NviaA_greedy":    58.8, "NviaA_optimal":   95.0,
     "NviaAp_greedy":   86.0, "NviaAp_optimal": 100.0,
 }
+
+# ── tab:coding2x2 (coding × reference set) ─────────────────────────────────
+# DEV-E4-009: arithmetic invariants
+TAB_CODING2X2 = {
+    "RMopt": 100.0, "RMgrd": 86.0,       # binary coding, 389 constants
+    "RVstarOpt": 100.0, "RVstarGrd": 97.8, # binary coding, 473 constants
+    "AspOpt": 24.0, "AspGrd": 25.2,        # continuous coding, 389 constants (R-asp)
+    "RVopt": 20.0, "RVgrd": 19.6,          # continuous coding, 473 constants (R-V, NOT vector)
+}
 # ── REGRESSION GUARD: diagonal cells derive from Prop1 — NEVER editable ────
 # These values are theorems, not measurements. Any run that gives a diagonal
 # cell < 100% has a bug in score/objective/trios alignment. Do NOT edit these
@@ -242,6 +251,26 @@ for label in ["84.6", "97.8", "58.8"]:
     else:
         FAIL.append(f"tab:fourthcell value {label} missing from main.tex")
         print(f"  [FAIL] tab:fourthcell value {label} missing from main.tex")
+
+# ── tab:coding2x2 arithmetic (DEV-E4-009) ───────────────────────────────────
+print()
+print("=== tab:coding2x2 arithmetic (DEV-E4-009) ===")
+_c = TAB_CODING2X2
+check("coding2x2 R-asp opt - R-V opt = +4.0 pp",
+      _c["AspOpt"] - _c["RVopt"], 4.0, tol=0.05)
+check("coding2x2 R-asp grd - R-V grd = +5.6 pp",
+      _c["AspGrd"] - _c["RVgrd"], 5.6, tol=0.05)
+check("coding2x2 R-V* grd - R-M grd = +11.8 pp",
+      _c["RVstarGrd"] - _c["RMgrd"], 11.8, tol=0.1)
+check("coding2x2 R-M opt = 100.0%",  _c["RMopt"],    100.0, tol=0.001)
+check("coding2x2 R-V* opt = 100.0%", _c["RVstarOpt"],100.0, tol=0.001)
+# Verify values appear in main.tex
+for label in ["100.0", "97.8", "24.0", "20.0", "25.2", "19.6"]:
+    if label in tex:
+        print(f"  [OK  ] tab:coding2x2 value {label} in main.tex")
+    else:
+        FAIL.append(f"tab:coding2x2 value {label} missing from main.tex")
+        print(f"  [FAIL] tab:coding2x2 value {label} missing from main.tex")
 
 
 # ── 6. Document quality checks ──────────────────────────────────────────────
@@ -392,6 +421,19 @@ BAD_PHRASES = [
      "removed in B2 — use 'same mechanism at a higher cost'"),
     ("Mechanism~1 component",
      "removed in B2 — rephrase as 'varies within groups, and therefore re-weights'"),
+    # DEV-E4-009 guards: R-V naming and asymmetry
+    ("entirely a coding effect",
+     "DEV-E4-009: not entirely coding — there is a 4pp interaction; use 'coding effect plus interaction'"),
+    ("direction of distortion, not its magnitude",
+     "DEV-E4-009: asymmetry withdrawn — based on pipeline with coding inconsistency"),
+    ("0~pp vs $11.6$~pp",
+     "DEV-E4-009: asymmetry values withdrawn — not recomputed with consistent coding"),
+    ("0$~$pp vs $11.6$~pp",
+     "DEV-E4-009: asymmetry values withdrawn — not recomputed with consistent coding"),
+    ("survives the coding correction",
+     "DEV-E4-009: directional asymmetry not recomputed — cannot claim it survives"),
+    ("P\\_E4\\_5 being falsified",
+     "DEV-E4-009: P_E4_5 result was from inconsistent pipeline — remove"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:

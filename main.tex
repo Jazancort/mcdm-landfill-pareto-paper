@@ -2046,39 +2046,62 @@ binary objective.
 The result (Table~\ref{tab:fourthcell}): $Q_2$ drops from $100\%$
 to $20\%$ under optimal assembly, a loss of $80$~pp.
 
-An exact decomposition via post hoc cells confirms the diagnosis:
-replacing the continuous encoding with the binary one in the score
-(cell R-V*, same normalisation constants) recovers $Q_2=100\%$;
-replacing only the aspect column in the 389-site score
-(cell R-asp) reproduces $24\%$, accounting for $76$~pp through coding
-alone; a further $4$--$6$~pp is attributable to the 473-site normalisation
-constants (R-asp$-$R-V, bootstrap CI excludes zero; total loss $\approx80$~pp).
+Table~\ref{tab:coding2x2} decomposes the loss.
+Replacing the continuous encoding with the binary one at 473-site
+constants (R-V to R-V$^*$) recovers $Q_2=100\%$.
+Introducing the continuous encoding at 389-site constants
+(R-M to R-asp) reduces $Q_2$ to $24.0\%$: $76$~pp through coding alone.
+The remaining $4.0$~pp (R-asp$-$R-V, $95\%$ CI $[+2.2,\,+6.0]$) is
+attributable to the 473-site constants, but only in the presence of the
+coding inconsistency; under consistent coding the same constants cost
+nothing.
+The $80$~pp total is thus a coding effect plus an interaction, not
+a reference-set effect.
+
+\begin{table}[t]
+\caption{Coding $\times$ reference set, $Q_2[\mathcal{A}']$, SAW min--max,
+$\kappa=200$, 500 draws. Post hoc exploratory cells.
+Rows differ only in the encoding of \textit{aspect} in the score;
+columns only in the set over which normalisation constants are computed.
+The objectives use the binary leeward indicator throughout.
+R-V denotes the original reference-set cell; it uses the continuous
+aspect encoding, not vector normalisation.}
+\label{tab:coding2x2}
+\centering
+\begin{tabular}{llcc}
+\toprule
+Score coding of \textit{aspect} & Assembly & 389 constants & 473 constants \\
+\midrule
+Binary (consistent)   & optimal & $100.0\%$ (R-M)    & $100.0\%$ (R-V$^*$) \\
+                      & greedy  & $86.0\%$            & $97.8\%$ \\
+Continuous azimuth    & optimal & $24.0\%$ (R-asp)   & $20.0\%$ (R-V) \\
+                      & greedy  & $25.2\%$            & $19.6\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 This is a pipeline inconsistency, not an inherent property of
 normalising over inadmissible sites.
 With a consistent encoding, normalising over the $\Ncand$-site set costs
 zero percentage points of Pareto efficiency under optimal assembly
 and improves greedy assembly by $\RefSetGreedyGain$~pp (post hoc cell
-R-V*, Table~\ref{tab:fourthcell}).
+R-V$^*$, Table~\ref{tab:coding2x2}).
 A post hoc exploratory diagnostic (D-greedy) attributes this greedy
-gain to the amplitude structure of R-V*: greedy and optimal assembly
-agree on $57.6\%$ of draws under R-V* versus $40.2\%$ under R-M,
-indicating that R-V*'s amplitudes are more favourable to the greedy
+gain to the amplitude structure of R-V$^*$: greedy and optimal assembly
+agree on $57.6\%$ of draws under R-V$^*$ versus $40.2\%$ under R-M,
+indicating that R-V$^*$'s amplitudes are more favourable to the greedy
 heuristic on this instance.
+The reference-set effect is therefore not a fixed cost: its sign depends
+on whether the score and the evaluator agree on the criterion encoding,
+and on this instance it is harmless or beneficial under consistent coding.
+All cells reported in this paragraph are post hoc exploratory
+(Supplementary Material, rules R1-1 to R1-6).
 
-The directional asymmetry identified in the original E4 design
-($\mathrm{TV}_W=0.0815$ for the $r_j$ pattern,
-$\mathrm{TV}_W=0.0852$ for the $1/r_j$ pattern;
-cost $0$~pp vs $11.6$~pp under optimal assembly against $A'$)
-survives the coding correction.
-In these two post hoc cells with nearly equal $\mathrm{TV}_W$,
-inflating \textit{perm} (the $1/r_j$ pattern, where
-$A_j\approx 2.07\times$ for \textit{perm}) costs $11.6$~pp,
-while deflating it (the $r_j$ pattern, $A_j=0.482$) costs nothing.
-This is consistent with P\_E4\_5 being falsified: the pre-specified
-prediction anticipated the opposite ordering.
-We do not explain this asymmetry analytically, and we do not test
-whether it generalises beyond these two cells on one instance.
+The directional asymmetry between the $r_j$ and $1/r_j$ amplitude
+patterns reported in an earlier version was computed with the pipeline
+later found to encode \textit{aspect} inconsistently (DEV-E4-007) and
+has not been recomputed with consistent coding; it is withdrawn from
+the main text.
 
 \begin{table}[!t]
 \centering
@@ -2293,31 +2316,27 @@ The caveat concerns \emph{score--evaluator coding mismatch}.
 Theorem~\ref{thm:groupconst} guarantees Pareto efficiency of exact
 maximisation on every instance if and only if the score's amplitudes,
 in the units of the objectives, are constant within each objective group.
-This condition is violated when a criterion is encoded differently in the
-score and in the objective function, and the encoding is not an affine
-function of the other.
-On Fogo, the score used a continuous azimuth encoding for
-\textit{aspect} while the objectives used a binary leeward indicator;
-the encoding is not monotone in the objective's partial value, so the
-theorem's premise does not hold for that criterion.
-This is a pipeline inconsistency, not a property of the method: with
-consistent encoding, normalising over the $\Ncand$-site set costs nothing
-under optimal assembly (Table~\ref{tab:fourthcell}).
-Post hoc decomposition attributes $76$~pp of the original ${\approx}80$~pp loss to the
-coding inconsistency and the remaining $4$--$6$~pp to the normalisation
-constants (R-asp$-$R-V: $+4.0$~pp optimal ($95\%$ CI $[+2.2,\,+6.0]$),
-$+5.6$~pp greedy ($95\%$ CI $[+3.6,\,+7.6]$),
-both CIs exclude zero).
-With consistent aspect encoding, normalising over inadmissible alternatives
-(space~$A$) costs approximately $4$--$6$~pp \emph{relative to vector
-normalisation under the inconsistent encoding}
-(R-asp$-$R-V: $+4.0$~pp optimal, $+5.6$~pp greedy);
-under consistent encoding the cost is zero (R-V*, Table~\ref{tab:fourthcell}).
-One finding survives the correction: the directional asymmetry.
-With consistent aspect encoding, the $r_j$ amplitude pattern costs
-$0$~pp while the $1/r_j$ pattern costs $11.6$~pp, at nearly equal
-total variation ($0.0815$ vs $0.0852$); the direction of distortion,
-not its magnitude, determines the cost.
+Its premise fails when a criterion is encoded in the score by a function
+that is not affine, or not even monotone, in the evaluator's partial value.
+On Fogo, an earlier version of the pipeline scored \textit{aspect} as a
+continuous azimuth while the objectives used the binary leeward indicator.
+Crossing the two codings with the two reference sets
+(Table~\ref{tab:coding2x2}) separates three effects.
+The coding inconsistency alone costs $76$~pp under optimal assembly
+($100.0\%$ to $24.0\%$, 389-site constants).
+Normalising over the $\Ncand$ candidates costs nothing under optimal
+assembly when the coding is consistent ($100.0\%$ in both cells) and
+improves greedy assembly by $\RefSetGreedyGain$~pp
+($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
+When the coding is inconsistent, the same 473-site constants cost a
+further $4.0$~pp under optimal assembly
+($95\%$ CI $[+2.2,\,+6.0]$) and $5.6$~pp under greedy assembly
+($[+3.6,\,+7.6]$).
+The reference-set effect is therefore not a fixed cost: its sign depends
+on whether the score and the evaluator agree on the criterion encoding,
+and on this instance it is harmless or beneficial under consistent coding.
+All cells in this paragraph are post hoc exploratory
+(Supplementary Material, rules R1-1 to R1-6).
 
 The practical consequences differ.
 Distributional re-weighting is a property of the data under a given

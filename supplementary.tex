@@ -464,6 +464,31 @@ Experiment~E1, via the affine identity $n_j^{473}(a)=b_j+r_j\,n_j^{389}(a)$.
   $-(F_1+F_2)+F_3$ with the same column values.  The corrected results
   (473/A optimal $=100\%$, greedy $=84.6\%$; 389/A optimal $=95\%$,
   greedy $=58.8\%$) confirm the values that were already in the table.
+
+\item[DEV-E4-009] \textit{Correction to DEV-E4-007 and to rule R1-6.}
+
+  DEV-E4-007 stated that ``the 76~pp loss attributed to the reference
+  set is entirely a coding effect''.
+  The full $2\times2$ (coding $\times$ constants,
+  Table~3 of the main text) shows that coding alone accounts for 76~pp
+  at 389-site constants, and that the 473-site constants add a further
+  4.0~pp under optimal assembly \emph{only} when the coding is
+  inconsistent (interaction of $-4.0$~pp optimal, $-17.4$~pp greedy).
+  The phrase ``entirely a coding effect'' understated the interaction.
+
+  The first version of rule R1-6 described the contrast as ``under
+  consistent coding'' and as ``relative to vector normalisation''.
+  Both cells use the continuous azimuth encoding; R-V is the original
+  reference-set cell, not vector normalisation.
+  The sign of the interpretation (``lower'') was also inverted.
+  The numbers are unchanged; only their labelling and reading are
+  corrected.
+
+  The directional asymmetry between the $r_j$ and $1/r_j$ amplitude
+  patterns reported in an earlier version of the manuscript was computed
+  with the pipeline identified in DEV-E4-007 as encoding
+  \textit{aspect} inconsistently, and has not been recomputed;
+  it is withdrawn from the main text.
 \end{description}
 
 % =======================================================================
@@ -505,18 +530,20 @@ of the numbers.  The R1 recalculation is therefore classified as
 
 \item[R1-5 (Coding-only cell R-asp)] Descriptive; post hoc exploratory.
 
-\item[R1-6 (Residual reference-set effect $\approx4\,\mathrm{pp}$)]
-  R-asp$-$R-V contrast under consistent coding; same rule as R1-1.
-  Pre-declared expectation: significant.
-  Note: the bootstrap computes R-asp$-$R-V (not R-V$-$R-asp).
-  Under optimal assembly R-asp$-$R-V$=+4.0\,\mathrm{pp}$
-  ($95\%$ CI $[+2.2,\,+6.0]$);
-  under greedy assembly $+5.6\,\mathrm{pp}$
-  ($95\%$ CI $[+3.6,\,+7.6]$).
-  Both exclude zero: \textbf{Effect} in both assemblies.
-  Interpretation: normalising over inadmissible alternatives (R-asp) gives
-  slightly \emph{higher} $Q_2$ than vector normalisation (R-V) under a
-  consistent binary encoding (positive contrast = R-asp $>$ R-V).
+\item[R1-6 (Residual reference-set effect under inconsistent coding)]
+  R-asp $-$ R-V, where both cells encode \textit{aspect} as a continuous
+  azimuth and differ only in the set over which normalisation constants
+  are computed (389 vs.\ 473).
+  Same rule as R1-1. Expectation stated before \texttt{analyze\_r1.py}
+  was run: significant.
+  Optimal: $+4.0$~pp ($95\%$ CI $[+2.2,\,+6.0]$);
+  greedy: $+5.6$~pp ($[+3.6,\,+7.6]$). Both \textbf{Effect}.
+  Interpretation: under the inconsistent encoding, normalising over
+  the 473 candidates (R-V) yields \emph{lower} $Q_2$ than normalising
+  over the 389 admissible sites (R-asp). Under the consistent encoding
+  the sign is reversed or null (R1-1, R1-2).
+  Note: R-V denotes the original reference-set cell, not vector
+  normalisation; see DEV-E4-009 and Table~3 of the main text.
 \end{description}
 
 \subsection*{Outcomes}
@@ -526,11 +553,12 @@ of the numbers.  The R1 recalculation is therefore classified as
 \toprule
 ID & Contrast & $\Delta$ & Decision \\
 \midrule
-R1-1 & R-V$^*$ opt $-$ R-M opt & $0.0\,\mathrm{pp}$ & Observation \\
-R1-2 & R-V$^*$ grd $-$ R-M grd & $+11.8\,\mathrm{pp}$ & \textbf{Effect} \\
-R1-3 & All diagonal opts $=100\%$ & --- & \textbf{Pass} \\
-R1-5 & R-asp opt $=24.0\%$        & --- & Descriptive \\
-R1-6 & R-asp grd $-$ R-V grd & $+5.6\,\mathrm{pp}$ ($[+3.6,\,+7.6]$) & \textbf{Effect} \\
+R1-1 & R-V$^*$ opt $-$ R-M opt & $0.0$~pp & Observation \\
+R1-2 & R-V$^*$ grd $-$ R-M grd & $+11.8$~pp ($[+8.8,\,+14.8]$) & Effect \\
+R1-3 & All diagonal opts $=100\%$ & --- & Pass \\
+R1-5 & R-asp opt $=24.0\%$ & --- & Descriptive \\
+R1-6 & R-asp opt $-$ R-V opt & $+4.0$~pp ($[+2.2,\,+6.0]$) & Effect \\
+R1-6 & R-asp grd $-$ R-V grd & $+5.6$~pp ($[+3.6,\,+7.6]$) & Effect \\
 \bottomrule
 \end{tabular}
 \end{center}
