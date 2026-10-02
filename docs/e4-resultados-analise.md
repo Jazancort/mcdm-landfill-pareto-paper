@@ -185,3 +185,40 @@ A assimetria é **menor** com kappa=50 (50.8 pp) do que com kappa=200 (68.4 pp).
 | `results/e4_results.csv` | `7603722` | CSV completo das 16 células |
 | `results/e1_weights_k200.npy` | `f607d27` | Matriz de pesos (SHA-256 `bea05275`) |
 | `corpus/PRESPEC_E4.md` | `9eb4322` | Pré-registo com DEV-E4-001..006 |
+
+
+---
+
+## 4 (actualização) — Resultados das células exploratórias R-V* e R-asp
+
+**Corrida:** 2026-10-01 ~22:30 UTC-3, commit `a81db36`, script `run_e4_vstar.py`.  
+**DEV declarado antes:** DEV-E4-007 (commit `b0e5c66`), estas células são post hoc.
+
+### Resultados
+
+| Célula | kappa=200 grd | kappa=200 **opt** | kappa=50 opt |
+|--------|--------------|-------------------|--------------|
+| R-V*  (aspect binário, A_j=r_j) | 97.8% | **100.0%** | **99.8%** |
+| R-asp (aspect contínuo, 389-base) | 25.2% | **24.0%** | **49.0%** |
+| R-V   (célula publicada, aspect contínuo, 473-base) | 19.6% | **20.0%** | **46.0%** |
+
+### Diagnóstico confirmado
+
+Os 80 pp de perda na célula 473/A' são explicados pela codificação inconsistente de `aspect`:
+
+1. **R-V\*** usa `X_adj_dm * r_j` — aspect binário (sotavento), idêntico ao avaliador. Amplitudes r_j idênticas à célula publicada. Resultado: **100%**. Sem perda quando a codificação é consistente.
+
+2. **R-asp** substitui apenas a coluna aspect por valores contínuos (azimutes em graus), mantendo as constantes dos 389 sítios. Resultado: **24%**. A codificação sozinha, sem alterar o conjunto de referência, produz ~76 pp de perda.
+
+3. **R-V** (célula publicada) adiciona também as constantes dos 473 sítios. Resultado: **20%**. A diferença de 4 pp entre R-asp e R-V é o efeito residual do conjunto de referência, que é pequeno e não distinguível do erro de amostragem ao nível de 3 SE.
+
+**Conclusão:** o "Mechanism 2" tal como publicado mede um score com um critério inconsistente entre o score e o modelo de valor — não o efeito do conjunto de referência. O aviso prático continua válido (normalizar sobre candidatos inadmissíveis é problemático), mas a causa dos 80 pp é diferente da declarada no artigo.
+
+### Implicações para o artigo
+
+Se R-V* ≈ 100% se confirmar (confirmado):
+- A tab:fourthcell precisa de uma coluna de codificação.
+- `sec:refset` e §8.1 precisam de ser reescritos: o resultado é sobre consistência de codificação, não sobre o conjunto de referência.
+- O resumo, os highlights e a primeira recomendação prática precisam de ser actualizados.
+- Os "80 pp" mantêm-se como resultado empírico, mas a explicação muda.
+- O resultado é **mais forte** do que o original: o score estava a usar um critério que o analista não declarou.
