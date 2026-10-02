@@ -1,6 +1,6 @@
 # Estado das fases: plano de melhoria
 Referência: `corpus/IMPROVEMENT_PLAN.md` (o plano não se duplica aqui)  
-Última actualização: 2026-10-01 23:35 | por: sessão 2026-10-01
+Última actualização: 2026-10-01 23:50 | por: sessão 2026-10-01
 
 ## Legenda
 **Estado:** `TODO` | `DOING` | `DONE` | `BLOCKED` (motivo na coluna Notas) | `SKIP` (justificar)  
@@ -8,7 +8,7 @@ Uma tarefa só passa a `DONE` quando o critério de aceitação foi verificado e
 aponta para o commit da **implementação** (não para o commit que actualiza este ficheiro).
 
 ## Próxima tarefa
-M2 → M3 → M4 (dependem de B3, agora DONE). Podem avançar na próxima sessão.
+M3 → M4 (independentes, podem correr na próxima sessão). F4 desbloqueado (M2 DONE).
 
 ---
 
@@ -20,7 +20,7 @@ M2 → M3 → M4 (dependem de B3, agora DONE). Podem avançar na próxima sessã
 | ID | Tarefa | Depende | Critério de aceitação | Estado | Commit | Notas |
 |----|--------|---------|----------------------|--------|--------|-------|
 | M1 | Verificar gap: a definição actual (mínimo das melhorias em F1, F2, F3) satisfaz gap=0 sse dominado? Testar por script se existe portfólio com gap=0 e Q2=1 | — | Script com exemplo afirmativo ou prova negativa; reformular a definição se necessário; registar em Notas se Q3=0⟺Q2=1 se mantém | DONE | bdd972d | **Análise algébrica:** gap usa dominação ESTRITA; Pareto usa dominação FRACA. Contra-exemplo teórico: t' empata F2, melhora F1 e F3 → min(+,0,+)=0 → gap=0 mas t dominado. **Verificação numérica:** 20.000 trios aleatórios dos dados do Fogo a pesos nominais — 0 contra-exemplos. A afirmação "gap=0 iff t∈F" pode ser inviolada nesta instância (a estrutura geométrica pode prevenir o contra-exemplo em prática), mas permanece matematicamente imprecisa. **Recomendação:** qualificar a afirmação ("gap=0 se t∈F; gap>0 implica existência de um dominador estrito, não meramente fraco") ou usar a formulação do ideal-nadiral já referida no Suplementar. |
-| M2 | Verificar a identidade PROMETHEE: (a) convenção posto maior=melhor no código; (b) dividir por N+1 não destrói equivalência de rankings — corrigir a frase que atribui a divergência a essa divisão; (c) a comparação "diferença à precisão de máquina" inclui a constante afim? | — | Script numérico com o sinal e a constante correctos; linha e ficheiro citados | TODO | | Depende de B3 para a convenção de postos |
+| M2 | Verificar a identidade PROMETHEE: (a) convenção posto maior=melhor no código; (b) dividir por N+1 não destrói equivalência de rankings — corrigir a frase que atribui a divergência a essa divisão; (c) a comparação "diferença à precisão de máquina" inclui a constante afim? | — | Script numérico com o sinal e a constante correctos; linha e ficheiro citados | DONE | 09cb771 | **Verificado 2026-10-01.** (a) SINAL ERRADO no manuscrito: eq:p2identity tem φ=(n+1)/(n-1)−(2/(n-1))s̃, correcto é φ=(2/(n-1))s̃−(n+1)/(n-1). Spearman(phi_code, manuscrito)=−1.0; Spearman(phi_code, correcto)=+1.0; max_diff=3.33e-16. (b) A comparação "6.7e-16" no texto refere-se a ∣φ−formula_correcta∣≈3.3e-16 — mas o texto escreve só "−(2/(n-1))s̃" omitindo a constante afim (n+1)/(n-1). (c) Divisão por N+1: correcto no texto (quebra a identidade). **Acção necessária F4:** corrigir sinal em eq:p2identity e completar a fórmula na frase de verificação. |
 | M3 | Restringir a "proposição do expoente" a SAW; reformular TOPSIS e PROMETHEE como propriedades distintas com alcance explícito (w_j²A_j² ≠ pesos efectivos do índice de proximidade TOPSIS; α=0 ≠ w_j^0) | M2 | Texto da proposição alterado; commit no main.tex | TODO | | |
 | M4 | Substituir "quota da variação total do score" por "peso ponderado pela amplitude" em todas as ocorrências | — | grep sem ocorrências da frase antiga; check passa | TODO | | |
 
@@ -157,4 +157,4 @@ M2 → M3 → M4 (dependem de B3, agora DONE). Podem avançar na próxima sessã
 
 | ID tarefa | Motivo | Desde |
 |-----------|--------|-------|
-| F4 | Aguarda M2 (B3 já DONE) | 2026-10-01 |
+| — | Nenhum bloqueio activo. M3 e M4 prontos a avançar. | — |
