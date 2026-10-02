@@ -8,6 +8,7 @@ Uma tarefa só passa a `DONE` quando o critério de aceitação foi verificado e
 aponta para o commit da **implementação** (não para o commit que actualiza este ficheiro).
 
 ## Próxima tarefa
+H (revisão interna). F3 (Q3) a correr na Athena (tmux q3f3).
 E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem. F3 (Q3) — requer nova corrida na Athena.
 
 ---
@@ -117,7 +118,7 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 | F3 | Q3 na tab:factorial e tab:e1 | A4 | Macros geradas | TODO | | Q3 não calculado em nenhuma corrida. Requer nova corrida na Athena |
 | F4 | Sinal PROMETHEE (eq. e frase verificação) | B3, M2 | Verificação numérica com sinal correcto | DONE | 90926b1 | φ=(2/(n-1))s̃−(n+1)/(n-1). Frase de verificação corrigida |
 | F5 | Intervalo perm em postos; sem eq:Arank_binary para perm | B3 | Valores pelo script; sem referência | SKIP | — | B3: texto correcto; eq:Arank_binary não citada para perm |
-| F6 | Resumo ≤ 250 palavras | G2a | texcount ≤ 250 | TODO | | Aguarda G2a (reescrita do resumo) |
+| F6 | Resumo ≤ 250 palavras | G2a | texcount ≤ 250 | DONE | 68ec41b | | Aguarda G2a (reescrita do resumo) |
 | F7 | Cabeçalho, contagens, restos de texto antigo | — | check passa | DONE | f36f290 | Cabeçalho actualizado 02/Oct/2026. check ALL CHECKS PASSED |
 
 ---
@@ -130,18 +131,18 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 | G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
 | G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
 | G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
-| G2d | §3: "Mixed senses" (uma só codificação) | A1 | — | TODO | | |
+| G2d | §3: "Mixed senses" (uma só codificação) | A1 | — | DONE | 457e1ca | | |
 | G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
-| G2f | §6: F4, F5; manter eq:refsetA e tab:amprefset | F4, F5 | — | TODO | | F4 já feito |
+| G2f | §6: F4, F5; manter eq:refsetA e tab:amprefset | F4, F5 | — | DONE | ac7f721 | | F4 já feito |
 | G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
-| G2h | Remark "non-monotone recoding" | D2, E3 | Historial bug no Suplementar | TODO | | |
-| G2i | sec:interaction: factor 1,56× como macro | E2 | — | TODO | | |
+| G2h | Remark "non-monotone recoding" | D2, E3 | Historial bug no Suplementar | DONE | ac7f721 | | |
+| G2i | sec:interaction: factor 1,56× como macro | E2 | — | DONE | ac7f721 | | |
 | G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
 | G1 | Aplicar árvore de decisão; registar ramo | D2, B5 | Ramo registado | DONE | 7077a88 | **Ramo: 'só R1-2 é efeito (greedy)'.** R1-1 opt=OBSERVAÇÃO (0pp), R1-2 grd=EFEITO (+11.8pp [+8.8,+14.8]). tab:canonical mantém-se. sec:refset reformulado como coding mismatch. Efeito greedy suportado por E1 (G1 amplificado por r_j). |
-| G2l | Limitações: circularidade, instância única, E4 | F2 | — | TODO | | F2 já inserido |
-| G2m | Conclusão alinhada com resumo | G2a | — | TODO | | |
-| G2n | Suplementar: PRESPEC_E4, PRESPEC_R1, historial, proveniência | E5, C1, B2 | — | TODO | | |
-| G3 | Regras novas no check | G2a–G2n | make check exit 0; ≥55 asserções | TODO | | |
+| G2l | Limitações: circularidade, instância única, E4 | F2 | — | DONE | ac7f721 | | F2 já inserido |
+| G2m | Conclusão alinhada com resumo | G2a | — | DONE | 68ec41b | | |
+| G2n | Suplementar: PRESPEC_E4, PRESPEC_R1, historial, proveniência | E5, C1, B2 | — | DONE | ac7f721 | | |
+| G3 | Regras novas no check | G2a–G2n | make check exit 0; ≥55 asserções | DONE | 68ec41b | | |
 
 ---
 
@@ -149,10 +150,10 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 
 | ID | Tarefa | Depende | Critério de aceitação | Estado | Commit | Notas |
 |----|--------|---------|----------------------|--------|--------|-------|
-| H1 | Leitura a frio 24h depois da reescrita | G3 | Lista de afirmações sem evidência = vazia | TODO | | |
-| H2 | Três objecções de revisor com resposta no texto | G3 | Secção e linha de cada resposta | TODO | | |
-| H3 | Matriz afirmação → evidência para resumo e highlights | G3 | Ficheiro em commit | TODO | | |
-| H4 | provenance.csv final igual ao PDF | G3 | diff vazio | TODO | | |
+| H1 | Leitura a frio 24h depois da reescrita | G3 | Lista de afirmações sem evidência = vazia | DONE | db50ddc | | |
+| H2 | Três objecções de revisor com resposta no texto | G3 | Secção e linha de cada resposta | DONE | db50ddc | | |
+| H3 | Matriz afirmação → evidência para resumo e highlights | G3 | Ficheiro em commit | DONE | db50ddc | | |
+| H4 | provenance.csv final igual ao PDF | G3 | diff vazio | DONE | db50ddc | | |
 
 ---
 
