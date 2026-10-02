@@ -131,6 +131,9 @@ def top_greedy(scores):
     return None
 
 # ── Regression test ─────────────────────────────────────────────────────────
+# ── Monte Carlo parameters (defined here so regression test can use them) ──
+N_DRAWS=500; KAPPA=200; SEED=42
+
 # ── Regression test: vec/opt with vec objectives must = 100% ─────────────────
 # Check with a single random draw (not nominal w, which may not be on frontier)
 print("\n=== Regression test (vec/opt, vec objs, random draw) ===", flush=True)
@@ -164,7 +167,6 @@ if dom_test:
 print("  Regression PASS (or acceptable)", flush=True)
 
 # ── Monte Carlo ─────────────────────────────────────────────────────────────
-N_DRAWS=500; KAPPA=200; SEED=42
 W_draws = sp_dirichlet.rvs(KAPPA*w_ahp, size=N_DRAWS,
                             random_state=np.random.default_rng(SEED))
 
