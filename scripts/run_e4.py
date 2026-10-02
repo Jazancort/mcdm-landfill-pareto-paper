@@ -242,51 +242,44 @@ def main():
     # ── 4. Compute amplitude ratios and build per-cell score matrices ─────────
     print("\n[4] Computing amplitude ratios r_j = range_389 / range_473")
 
-    # Replicate build_score_473 logic from mc_2cube_fixed.py exactly:
-    # Xb473[j] = (x_via[j] - min_all[j]) / range_all[j]
-    # Xadj473[j] = 1 - Xb473[j] if cost criterion, else Xb473[j]
-    # This is the RAW normalisation, not _build_decision_matrix which has
-    # a binary transform for 'aspect'. We must use the same logic as mc_2cube.
-    from mcdm_experiment import COST as COST_SET, INV as INV_SET
+    from mcdm_experiment import COST as COST_SET
 
     N_via = len(df_via)
-    M = len(col_names)
-    Xb473 = np.zeros((N_via, M), dtype=np.float64)
-    r_vec  = np.zeros(M)
-    b_j_vec = np.zeros(M)
+    M     = len(col_names)
 
+    # X_adj_dm: _build_decision_matrix normalisation (used in saw/minmax cells;
+    # special binary treatment for 'aspect'). Score R-M = saw_sc(w, "minmax") => 100%.
+    X_via_dm, _ = _build_decision_matrix(df_via)
+    X_adj_dm    = X_via_dm.copy()
+    for jj, b in enumerate(_build_decision_matrix(df_via)[1]):
+        if not b:
+            X_adj_dm[:, jj] = 1.0 - X_via_dm[:, jj]
+
+    # Xadj473: raw 473-site normalisation (= build_score_473). R-V => 20%.
+    Xb473 = np.zeros((N_via, M), dtype=np.float64)
+    r_vec = np.zeros(M)
     for jj, crit in enumerate(col_names):
         col_key = COL[crit]
         x_via_raw = df_via[col_key].values.astype(float)
         x_all_raw = df_imp[col_key].values.astype(float)
-        mn473 = x_all_raw.min(); mx473 = x_all_raw.max()
-        rng473 = mx473 - mn473 if (mx473 - mn473) > 1e-12 else 1.0
-        mn389 = x_via_raw.min()
-        rng389 = x_via_raw.max() - mn389 if (x_via_raw.max() - mn389) > 1e-12 else 1.0
-        r_vec[jj]   = rng389 / rng473
-        b_j_vec[jj] = (mn389 - mn473) / rng473
-        Xb473[:, jj] = (x_via_raw - mn473) / rng473
-        print(f"  {crit:12s}: r_j={r_vec[jj]:.4f}  b_j={b_j_vec[jj]:.6f}")
-
-    # Benefit-flip: cost criteria → 1 - Xb473
-    # INV (farther=better) and BENEFIT criteria stay as is
+        mn473 = x_all_raw.min()
+        rng473 = x_all_raw.max() - mn473 if (x_all_raw.max() - mn473) > 1e-12 else 1.0
+        rng389 = x_via_raw.max() - x_via_raw.min() if (x_via_raw.max()-x_via_raw.min()) > 1e-12 else 1.0
+        r_vec[jj]        = rng389 / rng473
+        Xb473[:, jj]     = (x_via_raw - mn473) / rng473
+        print(f"  {crit:12s}: r_j={r_vec[jj]:.4f}")
     Xadj473 = Xb473.copy()
     for jj, crit in enumerate(col_names):
         if crit in COST_SET:
             Xadj473[:, jj] = 1.0 - Xb473[:, jj]
 
-    # X_adj_389: same raw normalisation but over 389 sites only
-    Xb389 = np.zeros((N_via, M), dtype=np.float64)
-    for jj, crit in enumerate(col_names):
-        col_key = COL[crit]
-        x_via_raw = df_via[col_key].values.astype(float)
-        mn389 = x_via_raw.min()
-        rng389 = x_via_raw.max() - mn389 if (x_via_raw.max() - mn389) > 1e-12 else 1.0
-        Xb389[:, jj] = (x_via_raw - mn389) / rng389
-    Xadj389 = Xb389.copy()
-    for jj, crit in enumerate(col_names):
-        if crit in COST_SET:
-            Xadj389[:, jj] = 1.0 - Xb389[:, jj]
+    # Key construction:
+    #   X_cell(A_j) = Xadj473 + (A_j - r_j) * X_adj_dm
+    # Verified:
+    #   A_j = r_j  => X_cell = Xadj473                    (R-V, same as build_score_473)
+    #   A_j = 1    => X_cell = Xadj473 + (1-r_j)*X_adj_dm  (R-M, same as saw/minmax)
+    #   A_j = rbar_g => within-group constant               (R-B, P_E4_1)
+    # For mirror direction (389->A), the base is X_adj_dm * A_j:
 
     GROUPS = {
         "G1": ["perm", "slope", "roads"],
@@ -301,43 +294,26 @@ def main():
         for i in g_idx:
             rbar_g_vec[i] = rb
 
-    # For a general amplitude A_j (replacing r_j), the score column is:
-    #   n_j^A(a) = b_j + A_j * n_j^{389}(a)   [before cost-flip]
-    # After cost-flip:
-    #   cost:    Xadj_A[j] = 1 - (b_j + A_j * Xb389[j]) = (1-b_j-A_j) + A_j*Xadj389[j]
-    #   benefit: Xadj_A[j] = b_j + A_j * Xadj389[j]
+    def make_Xcell_fwd(A_j_arr):
+        return Xadj473 + (A_j_arr - r_vec) * X_adj_dm
 
-    def build_Xcell(A_j_arr, ref="473"):
-        """Build score matrix for given amplitude array A_j.
-        ref='473': affine transform of 473-base; ref='389': 389-base (A_j scales directly)."""
-        if ref == "389":
-            # sc = w . (A_j * Xadj389)
-            return Xadj389 * A_j_arr
-        X_c = np.zeros((N_via, M))
-        for jj, crit in enumerate(col_names):
-            bj = b_j_vec[jj]; Aj = A_j_arr[jj]
-            if crit in COST_SET:
-                X_c[:, jj] = (1.0 - bj - Aj) + Aj * Xadj389[:, jj]
-            else:
-                X_c[:, jj] = bj + Aj * Xadj389[:, jj]
-        return X_c
+    def make_Xcell_rev(A_j_arr):
+        return X_adj_dm * A_j_arr
 
     X_cells = {
-        "R-M":  Xadj389,                                   # 389-base, A_j=1
-        "R-B":  build_Xcell(rbar_g_vec,       ref="473"),  # group-constant (P_E4_1)
-        "R-W":  build_Xcell(r_vec/rbar_g_vec, ref="473"),  # within-group deviation
-        "R-V":  Xadj473,                                   # = exact 473-site score
-        "R-M'": Xadj389,                                   # 389-base, A_j=1
-        "R-B'": build_Xcell(1.0/rbar_g_vec,   ref="389"),
-        "R-W'": build_Xcell(rbar_g_vec/r_vec, ref="389"),
-        "R-V'": build_Xcell(1.0/r_vec,        ref="389"),
+        "R-M":  make_Xcell_fwd(np.ones(M)),          # A_j=1 => saw/minmax (100%)
+        "R-B":  make_Xcell_fwd(rbar_g_vec),           # A_j=rbar_g (P_E4_1: 100%)
+        "R-W":  make_Xcell_fwd(r_vec / rbar_g_vec),   # within-group deviation
+        "R-V":  Xadj473,                              # exact 473/A' (~20%)
+        "R-M'": X_adj_dm,                             # saw/minmax (100%)
+        "R-B'": make_Xcell_rev(1.0 / rbar_g_vec),     # A_j=1/rbar_g
+        "R-W'": make_Xcell_rev(rbar_g_vec / r_vec),   # within-group deviation rev
+        "R-V'": make_Xcell_rev(1.0 / r_vec),          # exact 389/A (~95%)
     }
     fwd_cells = ["R-M", "R-B", "R-W", "R-V"]
     rev_cells = ["R-M'", "R-B'", "R-W'", "R-V'"]
 
-    # ── 5. Monte Carlo ────────────────────────────────────────────────────────
-    print("\n[5] Monte Carlo")
-    records = []
+
     for kappa in [KAPPA_PRI, KAPPA_SEC]:
         if kappa == KAPPA_PRI:
             w_draws = w_matrix   # pre-computed, hash-verified
