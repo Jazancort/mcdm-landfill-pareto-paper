@@ -1952,10 +1952,21 @@ An earlier version of our pipeline scored \textit{aspect}
 (the terrain orientation criterion, weight~$0.075$) as a continuous
 azimuth in degrees, min--max normalised over all $\Ncand$ candidates,
 while the objectives used a binary leeward indicator
-($c=1$ for azimuth $\in[90\degree,180\degree]$, zero otherwise),
+($c=1$ for azimuth $\in[90^\circ,180^\circ]$, zero otherwise),
 following \citet{AzancortNeto2026}.
+
+For completeness, we recall the reference-set amplitude ratio.
+Min--max normalisation satisfies $A_j\equiv1$ over the set on which its
+constants are computed.
+Over the $\Nvia$ admissible sites, the attainable amplitude is
+\begin{equation}
+  \label{eq:refsetA}
+  A_j = \frac{\max_{\Nvia}(j)-\min_{\Nvia}(j)}
+             {\max_{\Ncand}(j)-\min_{\Ncand}(j)} \;\le\; 1,
+\end{equation}
+which varies across criteria and within groups (Table~\ref{tab:amprefset}).
 These two encodings are not monotonically related: an azimuth of
-$350\degree$ has a high score under the continuous encoding
+$350^\circ$ has a high score under the continuous encoding
 but is classified as non-leeward (high environmental integrity) by the
 binary objective.
 The result (Table~\ref{tab:fourthcell}): $Q_2$ drops from $100\%$
@@ -1973,7 +1984,7 @@ This is a pipeline inconsistency, not an inherent property of
 normalising over inadmissible sites.
 With a consistent encoding, normalising over the $\Ncand$-site set costs
 zero percentage points of Pareto efficiency under optimal assembly
-and improves greedy assembly by approximately $12$~pp (Table~\ref{tab:fourthcell_consistent}).
+and improves greedy assembly by approximately $12$~pp (post hoc cell R-V*, Table~\ref{tab:fourthcell}).
 We report the result here as evidence that exact assembly amplifies
 any mismatch between the score's criterion encoding and the evaluator's
 partial-value encoding, including mismatches too subtle to surface in
