@@ -63,34 +63,8 @@ compute_objs_mm, is_dominated, _ = build_pareto_utils(
     df_via, col_names, trios, eps=1e-9
 )
 
-# ── Score matrices (same as mc_2cube_fixed.py) ──────────────────────────────
-# X_adj_mm: benefit-oriented min-max score matrix
-X_via_raw, benefit_flags = _build_decision_matrix(df_via)
-X_adj_mm = X_via_raw.copy()
-for j, b in enumerate(benefit_flags):
-    if not b:
-        X_adj_mm[:, j] = 1.0 - X_via_raw[:, j]
-# X_adj_vec: vector score using same base as objectives (C_obj_mm)
-# For Prop1: score and objectives must use same normalised values
-# C_obj_mm has cost cols = _norm (small=good); for score we need benefit-oriented
-# Score SAW maximises sum, so we need high score = good site
-# For cost cols (small=good in C_obj_mm): score_cost = 1 - C_obj_mm (large=good)
-# But that's X_adj_mm again... the issue is that C_obj_mm and X_adj_mm differ for cost cols.
-# The correct Prop1 setup: objectives F_g(T) = sum_j w_j * phi_j(a) where phi_j in [0,1] benefit
-# Score = sum_j w_j * phi_j(a) where phi_j = same benefit values
-# So score_mm uses X_adj_mm, objectives use pareto_utils which uses _norm
-# Prop1 holds because pareto_utils objectives are CONSISTENT with X_adj_mm score
-# Verification: mm/opt passes 5/5 above.
-#
-# For vec: we need X_adj_vec_score = X_adj_mm / L2(X_adj_mm columns)
-# and C_obj_vec = X_adj_mm / L2(X_adj_mm columns) (same thing)
-# Then F_g_vec(T) = sum_{j in g} w_j * X_adj_vec[T, j]  (same as score)
-X_adj_vec = X_adj_mm / np.maximum(np.sqrt((X_adj_mm**2).sum(0)), 1e-12)
-print(f"Score matrices built  t={time.time()-t0:.1f}s", flush=True)
-
-# ── Objective matrix for VECTOR normalisation ────────────────────────────────
-# For F8: objectives built on vector-normalised partial values
-# Uses same encoding as pareto_utils._norm (so sign convention matches is_dominated)
+# ── Score and objective matrices for F8 ─────────────────────────────────────
+# Base: C_obj_mm = same encoding as pareto_utils (cost/inv/benefit + aspect)
 C_obj_mm = np.zeros((N, len(col_names)))
 for j, k in enumerate(col_names):
     x = df_via[COL_MAP[k]].values.astype(float)
@@ -99,10 +73,35 @@ for j, k in enumerate(col_names):
     elif k in COST:     c = _norm(x, x)
     else:               c = _norm(x, x)
     C_obj_mm[:, j] = c
+# C_obj_mm: cost cols = _norm (small=good), inv cols = 1-_norm (large=good), F3 = large=good
+# is_dominated convention: F1,F2 (from cost+inv groups) use <= (lower=better for some),
+# but in practice pareto_utils uses ALL objectives with F1<=,F2<=,F3>= which matches:
+# cost group F1: small=good → F1 small = good → is_dominated uses F1<= correctly.
 
-# Vector version: normalise X_adj_mm columns by their L2 norm
-# This is consistent with X_adj_vec score above
-C_obj_vec = X_adj_vec.copy()   # same matrix — score and objectives aligned
+# Score (mm): benefit-oriented (higher=better for all)
+# We need score_j large = good for all j
+# cost cols in C_obj_mm: small=good → score_cost = 1 - C_obj_mm[:,j]
+# Verified: X_adj_mm = benefit version of C_obj_mm
+
+# Vector normalisation: normalise C_obj_mm columns by L2
+L2_C = np.maximum(np.sqrt((C_obj_mm**2).sum(0)), 1e-12)
+C_obj_vec = C_obj_mm / L2_C   # objectives for vec frontier
+
+# Score vec: benefit-oriented version of C_obj_vec
+# For cost cols: benefit = 1 - C_obj_vec[:,j]
+# For other cols: benefit = C_obj_vec[:,j]
+C_score_vec = C_obj_vec.copy()
+for j, k in enumerate(col_names):
+    if k != "aspect" and k not in INV and k in COST:
+        C_score_vec[:, j] = 1.0 - C_obj_vec[:, j]  # invert for benefit
+
+# Score mm: benefit version of C_obj_mm (same as X_adj_mm)
+C_score_mm = C_obj_mm.copy()
+for j, k in enumerate(col_names):
+    if k != "aspect" and k not in INV and k in COST:
+        C_score_mm[:, j] = 1.0 - C_obj_mm[:, j]
+
+print(f"Score/obj matrices built  t={time.time()-t0:.1f}s", flush=True)
 
 # Group indices for objectives
 G_idx = [
@@ -126,10 +125,10 @@ def compute_f_vec(w):
 
 
 def saw_mm(w):
-    return X_adj_mm @ w
+    return C_score_mm @ w   # benefit-oriented mm score
 
 def saw_vec(w):
-    return X_adj_vec @ w
+    return C_score_vec @ w  # benefit-oriented vec score
 
 def top_opt(scores):
     """Return trio array [i,j,k] maximising sum of scores."""
