@@ -18,6 +18,8 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 |----------|--------|------|-------------------|
 | `results/e1/e1_diag_greedy_rvstar.csv` | b85c895 | Dados E1 | TV_B/TV_W r_j; greedy=opt 57.6%; 63 discriminating draws; F1 percentiles |
 | `results/e1/e1_diag_greedy_rvstar.log` | b85c895 | Log E1 | Output completo do diagnóstico |
+| `results/e1/aggregation_strata.csv` | 18361a6 | Dados F1 | SAW-TOPSIS por célula, IC emparelhado B=2000 |
+| `results/e1/aggregation_strata.log` | 18361a6 | Log F1 | Output completo com pooled e por célula |
 | `results/e1/e1_diag_greedy_rvstar.csv` | b85c895 | Dados E1 | TV_B/TV_W r_j; greedy=opt 57.6%; 63 discriminating draws; F1 percentiles |
 | `corpus/PRESPEC_R1.md` | 595a760 | Pré-registo | R1-1 a R1-6; regras de decisão; κ=200/50; SHA-256 da matriz; bootstrap emparelhado seed=43 |
 | E3 cálculo (inline Athena) | 81933a6 | Dados E3 | Spearman=0.018, p=0.73; top-25% azimute: 100% indicator=0; 6 macros adicionadas: AspSpearman, AspSpearmanP, AspTopQuartile, AspTopQuartileNonLee, AspLeewardCount, AspLeewardPct |
