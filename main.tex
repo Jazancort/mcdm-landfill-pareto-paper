@@ -1383,7 +1383,11 @@ Under $\alpha=2$ and $A_j\equiv1$, \eqref{eq:weff_alpha} gives
 $w_j^{\mathrm{eff}}\propto w_j^{2}$, so the total variation
 $\mathrm{TV}(2)=0.160$ on the Fogo weights.
 Min--max preserves elicited weights only under additive aggregation;
-combining it with TOPSIS still re-weights criteria, by squaring.
+combining it with TOPSIS re-weights criteria by squaring in the
+weighted Euclidean distance $d_i^\pm = \sqrt{\sum_j (w_j v_{ij} \mp
+v_j^\pm)^2}$; the effect on the proximity index $C_i = d_i^- / (d_i^+
++ d_i^-)$ is not a simple linear re-weighting and depends on the
+geometry of the ideal and anti-ideal points.
 \end{corollary}
 
 Table~\ref{tab:exponent} reports $\mathrm{TV}(\alpha)$ for both
