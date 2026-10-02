@@ -2021,7 +2021,7 @@ This is a pipeline inconsistency, not an inherent property of
 normalising over inadmissible sites.
 With a consistent encoding, normalising over the $\Ncand$-site set costs
 zero percentage points of Pareto efficiency under optimal assembly
-and improves greedy assembly by approximately $12$~pp (post hoc cell R-V*, Table~\ref{tab:fourthcell}).
+and improves greedy assembly by $\RefSetGreedyGain$~pp (post hoc cell R-V*, Table~\ref{tab:fourthcell}).
 We report the result here as evidence that exact assembly amplifies
 any mismatch between the score's criterion encoding and the evaluator's
 partial-value encoding, including mismatches too subtle to surface in
@@ -2071,7 +2071,7 @@ Table~\ref{tab:fourthcell} separates the set over which the
 Method set & Evaluator & greedy & optimal \\
 \midrule
 $\Ncand$ & $A$  & 84.6\% & \textbf{100.0\%} \\
-$\Ncand$ & $A'$ & 19.6\% &  20.0\% \\
+$\Ncand$ & $A'$ & 97.8\% & \textbf{100.0\%} \\
 $\Nvia$  & $A$  & 58.8\% &  95.0\% \\
 $\Nvia$  & $A'$ & 86.0\% & \textbf{100.0\%} \\
 \bottomrule
@@ -2080,9 +2080,32 @@ $\Nvia$  & $A'$ & 86.0\% & \textbf{100.0\%} \\
 
 Both diagonal cells confirm Section~\ref{prop:p1} (optimal assembly
 must reach $100\%$ when score and evaluator are aligned).
-The off-diagonal costs confirm Mechanism~2: mismatch dominates.
+The off-diagonal cells confirm that score--evaluator coding mismatch
+dominates the reference-set effect.
 
 
+
+
+\begin{remark}[A non-monotone recoding is outside the theorem]
+\label{rem:nonmonotone}
+An earlier version of our pipeline scored \textit{aspect} as a
+continuous azimuth in degrees (min--max normalised over all
+$\Ncand$ candidates), while the objectives used the leeward indicator
+($c=1$ for azimuth $\in[90^\circ,180^\circ]$).
+These are not monotonically related: Spearman $\rho = \AspSpearman$
+($p = \AspSpearmanP$), and all $\AspTopQuartile$ sites in the top
+quartile of the continuous column carry indicator value zero
+(non-leeward).
+The inconsistency reduced $Q_2$ from $100\%$ to $\RaspOptimal\%$
+under optimal assembly, through the coding effect alone.
+Because the recoding is not monotone in the evaluator's partial value,
+Theorem~\ref{thm:groupconst} does not apply; the result instead
+illustrates that exact assembly amplifies any mismatch between the
+score's criterion definition and the evaluator's.
+The provenance of this result is documented in
+\texttt{corpus/PRESPEC\_E4.md} (DEV-E4-007); the pipeline version
+history is in the Supplementary Material.
+\end{remark}
 
 
 \subsection{The greedy shortfall}
@@ -2422,8 +2445,9 @@ determines which column is normalised and therefore which amplitude
 enters the effective weights.
 
 Comparing aggregation operators, by contrast, is the least consequential
-of the design choices we examine ($+\AggContrast$~pp, equivalent to zero within
-$\pm2.5$~pp by TOST),
+of the design choices we examine ($+\AggContrast$~pp pooled, not
+significant; sign cell-dependent from $\AggStratumMMgrd$ to
+$+\AggStratumVecopt$~pp by TOST),
 and the mechanism explains why: aggregation acts downstream of the
 distortion.
 One qualification is worth stating explicitly.
@@ -2529,9 +2553,10 @@ Two consequences bear directly on practice.
 Integer programming on top of a ranking pays only when the normalisation
 respects the grouping of the objectives; under vector normalisation it
 is worse than reading the ranking top-down.
-A criterion encoded differently in the score and the objectives costs up
-to $80$~pp of Pareto efficiency; with a consistent encoding, normalising
-over inadmissible alternatives costs nothing under optimal assembly on
+A criterion encoded differently in the score and the objectives reduces
+$Q_2$ from $100\%$ to $\RaspOptimal\%$ under optimal assembly; with a
+consistent encoding, normalising over inadmissible alternatives costs
+nothing under optimal assembly on
 this instance.
 The immediate recommendation is inexpensive: report effective weights
 alongside elicited ones.
@@ -2555,6 +2580,15 @@ hold for any instance, but the size of the distortion depends on the
 marginal distributions, and a criterion with $350$ tied zeros among
 $\Nvia$ sites is an adversarial case; extending the measurement to
 further instances remains open.
+
+The reference-set analyses in Section~\ref{sec:refset} and
+Remark~\ref{rem:nonmonotone} are based on post hoc exploratory cells
+(declared in \texttt{corpus/PRESPEC\_E4.md}, DEV-E4-007) and should be
+treated as descriptive rather than confirmatory.
+The pre-registered confirmatory test found that the greedy improvement
+under consistent coding is $+\RefSetGreedyGain$~pp
+($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$); the optimal-assembly
+effect is not significant ($0$~pp, $95\%$ CI $[0,0]$).
 
 The broader implication is methodological.
 Benchmarking multi-criteria methods by agreement between their rankings
