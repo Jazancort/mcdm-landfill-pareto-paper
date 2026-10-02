@@ -79,9 +79,8 @@
 \tnotetext[1]{The authors declare no competing interests. No external funding was received for this work.}
 
 % -----------------------------------------------------------------------
-\author[1]{Julio L.~Azancort Neto}[orcid=0000-0000-0000-0000]
+\author[1]{Julio L.~Azancort Neto}
 \cormark[1]
-\fnmark[1]
 \ead{julio.azancort.neto@itec.ufpa.br}
 \credit{Conceptualization, Methodology, Software, Writing -- Original
   Draft, Writing -- Review \& Editing}
@@ -91,7 +90,6 @@
   city={Bel\'em}, state={PA}, country={Brazil}}
 
 \cortext[1]{Corresponding author}
-\fntext[1]{}
 
 % -----------------------------------------------------------------------
 \begin{abstract}
@@ -1907,17 +1905,17 @@ Aggregation & Normalisation, assembly & $Q_2[A']$ \\
 \caption{Contrasts in percentage points of $Q_2[A']$ ($\kappa=200$;
   $\nboot$ bootstrap replicates paired by draw).}
 \label{tab:effects}
-\begin{tabular}{>{\raggedright\arraybackslash}p{5.5cm}rc}
+\begin{tabular}{>{\raggedright\arraybackslash}p{5cm}rc}
 \toprule
 Contrast & Effect & 95\% CI \\
 \midrule
-Normalisation, greedy only (min--max $-$ vector) & $+25.4$ & $[+21.2,\,+29.8]$ \\
-Normalisation, full factorial                    & $+34.6$ & $[+30.7,\,+38.4]$ \\
-Aggregation (SAW $-$ TOPSIS)                     & $+\AggContrast$  & $[\AggLo,\,\AggHi]$ \\
-Assembly (optimal $-$ greedy)                    & $-1.1$  & $[-2.6,\,+0.5]$ \\
+Normalisation, greedy (mm $-$ vec) & $+25.4$ & $[+21.2,\,+29.8]$ \\
+Normalisation, full factorial      & $+34.6$ & $[+30.7,\,+38.4]$ \\
+Aggregation (SAW $-$ TOPSIS)       & $+\AggContrast$ & $[\AggLo,\,\AggHi]$ \\
+Assembly (optimal $-$ greedy)      & $-1.1$ & $[-2.6,\,+0.5]$ \\
 \midrule
-Assembly within min--max                         & $+8.1$  & $[+6.2,\,+10.1]$ \\
-Assembly within vector                           & $-10.2$ & $[-13.1,\,-7.4]$ \\
+Assembly within min--max           & $+8.1$ & $[+6.2,\,+10.1]$ \\
+Assembly within vector             & $-10.2$ & $[-13.1,\,-7.4]$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2119,10 +2117,15 @@ $\Nvia$  & $A'$ & 86.0\% & \textbf{100.0\%} \\
 \end{tabular}
 \end{table}
 
-Both diagonal cells confirm Section~\ref{prop:p1} (optimal assembly
-must reach $100\%$ when score and evaluator are aligned).
-The off-diagonal cells confirm that score--evaluator coding mismatch
-dominates the reference-set effect.
+Both $A'$-evaluator cells confirm Proposition~\ref{prop:p1:stmt}:
+optimal assembly reaches $100\%$ when score and evaluator share the
+same reference set and criterion encoding.
+The off-diagonal $A$-evaluator cells ($N_{\text{cand}}/A$: greedy
+$84.6\%$, optimal $100\%$; $N_{\text{via}}/A$: greedy $58.8\%$,
+optimal $95\%$) show that using the 473-site normalisation constants
+for the score while evaluating against the 389-site frontier
+reduces efficiency under greedy assembly but not under optimal
+assembly on this instance.
 
 
 
