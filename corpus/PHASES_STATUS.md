@@ -97,7 +97,7 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 |----|--------|---------|----------------------|--------|--------|-------|
 | E1 | Greedy ≈ 97,8% com r_j: W_g^eff, proporção greedy=óptimo, percentis F1–F3 | D2 | Script, output e 1 frase marcada como exploratória | DONE | b85c895 | R-V* greedy=opt 57.6% vs R-M 40.2%. 63 discriminating draws. G1 amplificado por r_j → greedy escolhe top-F1. Frase proposta no log |
 | E2 | TV_B e TV_W para r_j e 1/r_j | A1 | Valores em macro | DONE | f36f290 | TVWrj=0.082, TVWinvrj=0.085 adicionados a macros.tex |
-| E3 | Spearman(azimute normalizado, indicador); proporção sítios score alto e indicador 0 | A1 | Valores em macro; 1 frase "consistent with" | TODO | | Dados na Athena. Script a criar |
+| E3 | Spearman(azimute normalizado, indicador); proporção de sítios com score alto e indicador=0 | A1 | Valores em macro; 1 frase 'consistent with' | DONE | (ver commit E3) | Spearman=0.018, p=0.73. Top 25% azimute: 98 sítios, 100% indicator=0. Leeward [90-180°]: 94/389 (24.2%). 6 macros adicionadas. |
 | E4 | (Opcional) amplificação W×B | D2 | Só se houver tempo; senão SKIP | TODO | | |
 | E5 | DEV-E4-007 completo | — | Commit no PRESPEC_E4 | DONE | b0e5c66 | Já continha greedy 97.8% (L310) e TV_W(1/rj)=0.0852 (L327) |
 
