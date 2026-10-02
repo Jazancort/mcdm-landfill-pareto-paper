@@ -242,66 +242,58 @@ def main():
     # ── 4. Compute amplitude ratios and build per-cell score matrices ─────────
     print("\n[4] Computing amplitude ratios r_j = range_389 / range_473")
 
-    # b_j = (min_via - min_all) / range_all  (additive offset for 473-base score)
-    b_j_vec   = np.zeros(len(col_names))
-    r_vec     = np.zeros(len(col_names))
-    X_adj_389 = X_adj.copy()   # already built over df_via in build_trio_utils
+    # Replicate build_score_473 logic from mc_2cube_fixed.py exactly:
+    # Xb473[j] = (x_via[j] - min_all[j]) / range_all[j]
+    # Xadj473[j] = 1 - Xb473[j] if cost criterion, else Xb473[j]
+    # This is the RAW normalisation, not _build_decision_matrix which has
+    # a binary transform for 'aspect'. We must use the same logic as mc_2cube.
+    from mcdm_experiment import COST as COST_SET, INV as INV_SET
+
+    N_via = len(df_via)
+    M = len(col_names)
+    Xb473 = np.zeros((N_via, M), dtype=np.float64)
+    r_vec  = np.zeros(M)
+    b_j_vec = np.zeros(M)
 
     for jj, crit in enumerate(col_names):
         col_key = COL[crit]
-        x_via = df_via[col_key].values.astype(float)
-        x_all = df_imp[col_key].values.astype(float)
-        mn473, mx473 = x_all.min(), x_all.max()
+        x_via_raw = df_via[col_key].values.astype(float)
+        x_all_raw = df_imp[col_key].values.astype(float)
+        mn473 = x_all_raw.min(); mx473 = x_all_raw.max()
         rng473 = mx473 - mn473 if (mx473 - mn473) > 1e-12 else 1.0
-        mn389, mx389 = x_via.min(), x_via.max()
-        rng389 = mx389 - mn389 if (mx389 - mn389) > 1e-12 else 1.0
-        r_vec[jj] = rng389 / rng473
-        b_j_vec[jj] = (mn389 - mn473) / rng473   # offset before benefit-flip
-        print(f"  {crit:12s}: r_j={r_vec[jj]:.4f}  b_j={b_j_vec[jj]:.4f}")
+        mn389 = x_via_raw.min()
+        rng389 = x_via_raw.max() - mn389 if (x_via_raw.max() - mn389) > 1e-12 else 1.0
+        r_vec[jj]   = rng389 / rng473
+        b_j_vec[jj] = (mn389 - mn473) / rng473
+        Xb473[:, jj] = (x_via_raw - mn473) / rng473
+        print(f"  {crit:12s}: r_j={r_vec[jj]:.4f}  b_j={b_j_vec[jj]:.6f}")
 
-    # The affine relation (before benefit-flip):
-    #   n_j^{473}(a) = b_j + r_j * n_j^{389}(a)
-    # For a general amplitude A_j (replacing r_j), the score column is:
-    #   n_j^{A}(a) = b_j + A_j * n_j^{389}(a)
-    # After benefit-flip for minimised criteria (n_j^{389} → 1 - n_j^{389}):
-    #   n_j^{A}(a)_flipped = (1 - b_j - A_j) + A_j * n_j^{389}(a)_flipped
-    # We work in the benefit-adjusted space where X_adj_389 is already flipped.
-    # For each cell, build X_adj_cell[j] = b_j_eff + A_j * X_adj_389[j]
-    # where b_j_eff accounts for the flip.
+    # Benefit-flip: cost criteria → 1 - Xb473
+    # INV (farther=better) and BENEFIT criteria stay as is
+    Xadj473 = Xb473.copy()
+    for jj, crit in enumerate(col_names):
+        if crit in COST_SET:
+            Xadj473[:, jj] = 1.0 - Xb473[:, jj]
 
-    _, benefit = _build_decision_matrix(df_via)
-
-    def build_score_cell(A_j_arr, ref="473"):
-        """Build benefit-adjusted score matrix for amplitude A_j_arr.
-        ref='473': use 473-site base (b_j offset); ref='389': no offset."""
-        if ref == "389":
-            # score is w * A_j * X_adj_389; offset 0
-            return X_adj_389 * A_j_arr   # shape (389, 11), multiply by w per draw
-        else:
-            # n_j^A_benefit(a) = constant_j + A_j * X_adj_389[j]
-            # constant_j = b_j if benefit, (1 - b_j - r_j_or_Aj) adjusted for flip
-            X_cell = np.zeros_like(X_adj_389)
-            for jj in range(len(col_names)):
-                bj = b_j_vec[jj]
-                Aj = A_j_arr[jj]
-                if benefit[jj]:
-                    # n^473 = bj + rj * n^389 => replace rj with Aj
-                    # constant = bj, coeff = Aj
-                    X_cell[:, jj] = bj + Aj * X_adj_389[:, jj]
-                else:
-                    # benefit-flipped: n^389_flip = 1 - n^389
-                    # n^473_flip = 1 - n^473 = 1 - bj - rj*(1-n^389_flip)
-                    # => replace rj with Aj: constant = 1-bj-Aj, coeff = Aj
-                    X_cell[:, jj] = (1.0 - bj - Aj) + Aj * X_adj_389[:, jj]
-            return X_cell
+    # X_adj_389: same raw normalisation but over 389 sites only
+    Xb389 = np.zeros((N_via, M), dtype=np.float64)
+    for jj, crit in enumerate(col_names):
+        col_key = COL[crit]
+        x_via_raw = df_via[col_key].values.astype(float)
+        mn389 = x_via_raw.min()
+        rng389 = x_via_raw.max() - mn389 if (x_via_raw.max() - mn389) > 1e-12 else 1.0
+        Xb389[:, jj] = (x_via_raw - mn389) / rng389
+    Xadj389 = Xb389.copy()
+    for jj, crit in enumerate(col_names):
+        if crit in COST_SET:
+            Xadj389[:, jj] = 1.0 - Xb389[:, jj]
 
     GROUPS = {
         "G1": ["perm", "slope", "roads"],
         "G2": ["rivers", "aspect", "coast", "protected", "wells"],
         "G3": ["urban", "aero", "cult"],
     }
-
-    rbar_g_vec = np.zeros(len(col_names))
+    rbar_g_vec = np.zeros(M)
     for g_crits in GROUPS.values():
         g_idx = [col_names.index(c) for c in g_crits]
         W_g   = w_ahp[g_idx].sum()
@@ -309,18 +301,38 @@ def main():
         for i in g_idx:
             rbar_g_vec[i] = rb
 
-    # Pre-build score matrices for all cells
+    # For a general amplitude A_j (replacing r_j), the score column is:
+    #   n_j^A(a) = b_j + A_j * n_j^{389}(a)   [before cost-flip]
+    # After cost-flip:
+    #   cost:    Xadj_A[j] = 1 - (b_j + A_j * Xb389[j]) = (1-b_j-A_j) + A_j*Xadj389[j]
+    #   benefit: Xadj_A[j] = b_j + A_j * Xadj389[j]
+
+    def build_Xcell(A_j_arr, ref="473"):
+        """Build score matrix for given amplitude array A_j.
+        ref='473': affine transform of 473-base; ref='389': 389-base (A_j scales directly)."""
+        if ref == "389":
+            # sc = w . (A_j * Xadj389)
+            return Xadj389 * A_j_arr
+        X_c = np.zeros((N_via, M))
+        for jj, crit in enumerate(col_names):
+            bj = b_j_vec[jj]; Aj = A_j_arr[jj]
+            if crit in COST_SET:
+                X_c[:, jj] = (1.0 - bj - Aj) + Aj * Xadj389[:, jj]
+            else:
+                X_c[:, jj] = bj + Aj * Xadj389[:, jj]
+        return X_c
+
     X_cells = {
-        "R-M":  X_adj_389,                                  # 389-base, A_j=1
-        "R-B":  build_score_cell(rbar_g_vec, ref="473"),    # group-constant
-        "R-W":  build_score_cell(r_vec / rbar_g_vec, ref="473"),  # within only
-        "R-V":  build_score_cell(r_vec, ref="473"),         # = published 473/A'
-        "R-M'": X_adj_389,                                  # 389-base, A_j=1
-        "R-B'": build_score_cell(1.0 / rbar_g_vec, ref="389"),
-        "R-W'": build_score_cell(rbar_g_vec / r_vec, ref="389"),
-        "R-V'": build_score_cell(1.0 / r_vec, ref="389"),   # = published 389/A
+        "R-M":  Xadj389,                                   # 389-base, A_j=1
+        "R-B":  build_Xcell(rbar_g_vec,       ref="473"),  # group-constant (P_E4_1)
+        "R-W":  build_Xcell(r_vec/rbar_g_vec, ref="473"),  # within-group deviation
+        "R-V":  Xadj473,                                   # = exact 473-site score
+        "R-M'": Xadj389,                                   # 389-base, A_j=1
+        "R-B'": build_Xcell(1.0/rbar_g_vec,   ref="389"),
+        "R-W'": build_Xcell(rbar_g_vec/r_vec, ref="389"),
+        "R-V'": build_Xcell(1.0/r_vec,        ref="389"),
     }
-    fwd_cells = ["R-M",  "R-B",  "R-W",  "R-V"]
+    fwd_cells = ["R-M", "R-B", "R-W", "R-V"]
     rev_cells = ["R-M'", "R-B'", "R-W'", "R-V'"]
 
     # ── 5. Monte Carlo ────────────────────────────────────────────────────────
