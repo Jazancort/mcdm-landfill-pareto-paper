@@ -765,14 +765,22 @@ The executed design departs from it as follows.
   normalisation of the synthetic columns.
 \item[DEV-E5-005] \emph{Locus of the imposed amplitudes (critical).}
   The imposed amplitude vector $A_j$ enters \emph{both} the score
-  (\texttt{X\_score = X\_adj * Aj}) and the objectives
-  (\texttt{X\_obj\_amp = X\_obj * Aj}).
-  Score and evaluator are therefore aligned on every instance; by
-  Proposition~1, optimal assembly attains the frontier whatever the value
-  of $\mathrm{TV}_W$.
-  E5 consequently does not test Theorem~1, which concerns amplitudes that
-  differ between score and evaluator.
-  Its only informative outcome is greedy assembly.
+  and the objectives.
+  From \texttt{run\_e5\_grid.py} (commit \texttt{4d438b6}):
+  score matrix \texttt{X\_score = X\_adj * Aj[np.newaxis, :]} (line~263)
+  and objective matrix \texttt{X\_obj\_amp = X\_obj * Aj[np.newaxis, :]} (line~270).
+  Both objects use the same array \texttt{Aj}, so score and evaluator
+  have identical amplitude vectors.
+  By code inspection, $\mathrm{TV}_W > 0$ reflects spread \emph{within}
+  a common amplitude, not a mismatch \emph{between} score and evaluator
+  amplitudes.
+  When score and evaluator share the same amplitude, optimal assembly
+  is efficient by Theorem~\ref{thm:groupconst}; the
+  $Q_2^{\mathrm{opt}}=100\%$ results are therefore a pipeline consistency
+  check, not evidence about the amplitude-distortion mechanism.
+  E5 consequently does not test Theorem~\ref{thm:groupconst}, which
+  concerns amplitudes that differ between score and evaluator.
+  Its informative outcome is greedy assembly only.
 \item[DEV-E5-006] \emph{Primary analysis.}
   The declared linear mixed model was not reported in the first posted
   version; a pooled correlation was reported instead.
@@ -815,6 +823,11 @@ interval including zero in 25 of 25 non-degenerate
 $N\times\mathrm{geometry}\times s_B$ strata (two strata are constant
 at 100\%).
 Pooled $r(\mathrm{TV}_W,\,\text{loss})=0.034$ ($p=0.50$).
+We found no evidence of linear association between imposed amplitude
+spread and greedy loss in the model as fitted;
+the confidence interval ($[-5.1,\,+2.4]$~pp per $0.1$ of $\mathrm{TV}_W$)
+is consistent with small effects in either direction but excludes effects
+larger than approximately $5$~pp per $0.1$ of $\mathrm{TV}_W$.
 
 \textbf{Distribution of greedy loss.}
 329 of 405 instances (81\%) reach $Q_2^{\mathrm{grd}}=100\%$.
@@ -823,21 +836,31 @@ that stratum is 75.6\% (SD 31.8), against $\geq97.9\%$ in every other
 $N\times\mathrm{geometry}$ stratum.
 Within $N=50$ clustered the mean is not monotone in $s_W$
 (69.8, 89.3, 85.8, 59.9, 73.4\% for $s_W=0,\ldots,1$).
-One instance ($s_W=s_B=0$, 130 feasible trios) has
-$Q_2^{\mathrm{grd}}=0\%$; this is a combinatorial effect of
-the separation constraint leaving very few trios reachable by the
-greedy heuristic under small $N$ and clustered geometry, not an
-amplitude effect (TV$_W=0$ by construction in this cell).
+
+The instance with $s_W=s_B=0$ (130 feasible trios) has
+$Q_2^{\mathrm{grd}}=0\%$.
+Here $\mathrm{TV}_W=0$ by construction (no within-group amplitude spread),
+so amplitude is not the cause.
+Inspection shows the greedy heuristic failed to assemble a complete
+valid portfolio ($C=0$: no three mutually separated sites were reachable
+by the greedy top-down pass) on every draw of this instance.
+This is therefore an \emph{assembly failure}, not a dominance event.
+The reported $Q_2$ figures are unconditional:
+$Q_2^{\mathrm{grd}} = P(C \cap \text{frontier})$;
+the conditional efficiency $Q_2^{\mathrm{grd}} | C$ is undefined when $P(C)=0$.
+The $0\%$ instance should be read as a degenerate combinatorial
+outcome under extreme spatial clustering and the $d_{\min}$ separation
+constraint, not as evidence for or against the normalisation mechanism.
 
 \paragraph{Conclusion.}
 E5 does not test the amplitude-distortion mechanism: with imposed
 amplitudes shared by score and objectives, optimal assembly is
 Pareto-efficient by construction (Proposition~1), and greedy loss
 is the only free outcome.
-On that outcome, imposed within-group spread has no detectable effect;
-greedy loss is governed by instance size and spatial geometry, and
-concentrated in small clustered instances where the separation
-constraint leaves few feasible trios.
+On that outcome, we found no evidence of linear association between
+the imposed amplitude spread and greedy efficiency in the model as
+fitted; greedy loss is more strongly associated with instance size
+and spatial geometry.
 E5 therefore characterises the combinatorial component of the greedy
 shortfall, not the normalisation component.
 It contains no instance of Fogo's size ($N=389$, DEV-E5-001), and does

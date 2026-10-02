@@ -77,8 +77,8 @@ axes[0].legend(handles=legend_elements, loc='lower left', frameon=False, fontsiz
 
 plt.suptitle(
     'E5: greedy $Q_2$ (min--max) vs imposed $\\mathrm{TV}_W = 0.096\\,s_W$, 405 instances\n'
-    'Imposed amplitudes enter score and objectives jointly; $Q_2$ optimal $=100\\%$ on all instances (Prop.~1).'
-    '  Eight $N=50$ clustered instances below 50\\% are visible at $y\\approx0$.',
+    'Matched-score optimum check: $Q_2^{\\mathrm{opt}}=100\\%$ on all tested instances.'
+    '  Eight $N=50$ clustered instances fell below 50\\% (visible near $y=0$).',
     fontsize=9.5, y=1.03
 )
 plt.tight_layout()
