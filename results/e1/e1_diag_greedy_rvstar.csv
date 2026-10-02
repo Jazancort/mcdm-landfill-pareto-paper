@@ -1,0 +1,10 @@
+metric,value
+tv_b_rj,0.07145093147785798
+tv_w_rj,0.08152048268595231
+rvstar_greedy_nd_pct,97.8
+rvstar_opt_nd_pct,100.0
+rvstar_greedy_eq_opt_pct,57.599999999999994
+rm_greedy_nd_pct,86.0
+rm_opt_nd_pct,100.0
+rm_greedy_eq_opt_pct,40.2
+n_discriminating_draws,63.0
