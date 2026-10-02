@@ -20,6 +20,11 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 |----------|--------|------|-------------------|
 | `results/e1/e1_diag_greedy_rvstar.csv` | b85c895 | Dados E1 | TV_B/TV_W r_j; greedy=opt 57.6%; 63 discriminating draws; F1 percentiles |
 | `results/e1/e1_diag_greedy_rvstar.log` | b85c895 | Log E1 | Output completo do diagnóstico |
+| `results/e1/q3_results.csv` | 7c2e742 | Dados F3 | Q3=E[gap] por célula: SAW/mm/opt=0; TOPSIS/vec=0.447; Q2_zero% por célula |
+| `results/e1/compute_q3.log` | 7c2e742 | Log F3 | Output completo compute_q3.py (158.7s) |
+| `scripts/compute_q3.py` | 370ba1a | Script F3 | Q3 por draw, 8 células, kappa=200 |
+| `scripts/aggregation_strata.py` | 18361a6 | Script F1 | SAW-TOPSIS por célula, IC emparelhado B=2000 |
+| `scripts/diag_e1_greedy_rvstar.py` | 4192f3e | Script E1 | W_g^eff, greedy=opt %, draws discriminantes |
 | `results/e1/aggregation_strata.csv` | 18361a6 | Dados F1 | SAW-TOPSIS por célula, IC emparelhado B=2000 |
 | `results/e1/aggregation_strata.log` | 18361a6 | Log F1 | Output completo com pooled e por célula |
 | `results/e1/e1_diag_greedy_rvstar.csv` | b85c895 | Dados E1 | TV_B/TV_W r_j; greedy=opt 57.6%; 63 discriminating draws; F1 percentiles |
