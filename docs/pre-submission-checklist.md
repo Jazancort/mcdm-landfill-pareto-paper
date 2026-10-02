@@ -124,8 +124,8 @@ Documento criado antes de qualquer corrida ou correcção.
 
 | Sub-item | Problema | Acção | Estado |
 |----------|---------|-------|--------|
-| 2.11a | §6.2: "instead of 388" — midrank max com N=389 é 389, não 388 | Substituir 388→389 | TODO |
-| 2.11b | Resumo: "accounts for 35.8 of the 43.2 pp" sugere decomposição aditiva (há interacção +7.4) | "within-group alone costs 35.8 pp; full distortion 43.2 pp" | TODO |
+| 2.11a | §6.2 '388'→'389' midrank máximo corrigido | DONE |
+| 2.11b | abstract: 'accounts for X of Y pp' → 'within-group alone costs X pp; full Y pp' | DONE |
 | 2.11c | Fig 4: etiquetas no painel de postos mostram rácios de normalização vectorial | Regenerar com rácios correctos | TODO |
 | 2.11d | Contribuição (i) e §6.10 ponto 4: listam ref-set como efeito com custo | Actualizar para "custo 0 com codificação consistente" | TODO |
 
