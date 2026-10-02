@@ -195,13 +195,13 @@ check("E1 V optimal = SAW vec optimal", TAB_E1["V_optimal"], 56.8, tol=0.1)
 print()
 print("=== tab:fourthcell (Marco A) ===")
 # Ncand/A:  greedy=84.6, optimal=100.0
-# Ncand/A': greedy=19.6, optimal=20.0
+# Ncand/A': greedy=97.8, optimal=100.0  (consistent coding, R-V* values from fourthcell_consistent.csv)
 # Nvia/A:   greedy=58.8, optimal=95.0
 # Nvia/A':  greedy=86.0, optimal=100.0
 
 TAB_4TH = {
     "NcandA_greedy":   84.6, "NcandA_optimal": 100.0,
-    "NcandAp_greedy":  19.6, "NcandAp_optimal": 20.0,
+    "NcandAp_greedy":  97.8, "NcandAp_optimal": 100.0,
     "NviaA_greedy":    58.8, "NviaA_optimal":   95.0,
     "NviaAp_greedy":   86.0, "NviaAp_optimal": 100.0,
 }
@@ -217,7 +217,7 @@ check("4th Mech1 prediction < observed loss",
       loss_mech1_pred, loss_hi, tol=70.0)  # directional: predicted << observed
 
 # Values present in LaTeX source
-for label in ["84.6", "19.6", "58.8"]:
+for label in ["84.6", "97.8", "58.8"]:
     if label in tex:
         print(f"  [OK  ] tab:fourthcell value {label} in main.tex")
     else:
