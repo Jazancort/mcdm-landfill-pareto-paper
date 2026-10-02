@@ -130,6 +130,6 @@ print(q3.to_string(index=False))
 
 out = ROOT/"results"/"e1"
 out.mkdir(exist_ok=True)
-df_out.to_parquet(out/"q3_perdraw.parquet", index=False)
+pd.DataFrame(records).to_csv(out/"q3_perdraw.csv", index=False)
 q3.to_csv(out/"q3_results.csv", index=False)
 print(f"\nSaved. Time: {time.time()-t0:.1f}s")
