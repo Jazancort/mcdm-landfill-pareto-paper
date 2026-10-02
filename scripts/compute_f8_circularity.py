@@ -1,7 +1,7 @@
 """
 compute_f8_circularity.py  (F8 — circularidade do benchmark)
 ==============================================================
-Design (PRESPEC F8, declarado antes de correr):
+Design (PRESPEC F8):
 
   Questão: a fronteira Pareto é circular relativamente à normalização min-max?
   
@@ -9,13 +9,14 @@ Design (PRESPEC F8, declarado antes de correr):
   Repetir as 4 células SAW × {mm, vec} × {greedy, opt}.
 
   Previsão (Proposição 1):
-    SAW/vec/opt com objs vec  → Q2 = 100% (score e objs usam mesma norm)
+    SAW/vec/opt com objs vec  → Q2 = 100% (score e objs mesma norm)
     SAW/mm/opt  com objs vec  → Q2 < 100% (score e objs divergem)
-  
-  Confirmação: se vec/opt=100% e mm/opt<100%, a mensagem passa de
-  "min-max é melhor" para "score deve coincidir com objs" — não circular.
 
-Parâmetros: N=500, kappa=200, seed=42, Fogo A' (389 sites, k=3).
+  Abordagem: criar df_via_vec com colunas vectorialmente normalizadas,
+  passar ao build_pareto_utils. O compute_objs_f64_vec resultante usa
+  _norm sobre colunas já normalizadas → objectivos consistentes com
+  saw_vec = X_adj_vec @ w.
+
 Output: results/f8/f8_circularity.csv
 """
 
@@ -30,7 +31,6 @@ ROOT = Path(__file__).parent.parent
 
 from mcdm_experiment import (
     load_data, impute_nan, COL, AHP_WEIGHTS, haversine_km, MIN_DIST_KM,
-    F1_CRIT, F2_CRIT, F3_CRIT, COL as COL_MAP, INV, COST, _norm,
     _build_decision_matrix
 )
 from pareto_utils import build_pareto_utils
@@ -43,7 +43,6 @@ df_via = df_imp[df_imp[COL['protected']] > 0].copy()
 N = len(df_via)
 col_names = list(AHP_WEIGHTS.keys())
 w_ahp = np.array(list(AHP_WEIGHTS.values()))
-print(f"  N_via={N}  t={time.time()-t0:.1f}s", flush=True)
 
 print("Building trios...", flush=True)
 D = haversine_km(df_via['latitude (degrees)'].values,
@@ -57,89 +56,52 @@ T0, T1, T2 = trios[:, 0], trios[:, 1], trios[:, 2]
 n_trios = len(trios)
 print(f"  trios={n_trios:,}  t={time.time()-t0:.1f}s", flush=True)
 
-# ── Pareto utilities (uses compute_objs_f64 with mm objectives) ─────────────
-# is_dominated is the shared dominance check; we reuse it
-compute_objs_mm, is_dominated, _ = build_pareto_utils(
+# ── Standard (mm) utilities — used for mm cells and regression verification ──
+compute_objs_mm, is_dominated_mm, _ = build_pareto_utils(
     df_via, col_names, trios, eps=1e-9
 )
 
-# ── Score and objective matrices for F8 ─────────────────────────────────────
-# Base: C_obj_mm = same encoding as pareto_utils (cost/inv/benefit + aspect)
-C_obj_mm = np.zeros((N, len(col_names)))
+# ── Score matrices ────────────────────────────────────────────────────────────
+# X_adj_mm: standard benefit-oriented min-max score (same as mc_2cube_fixed)
+X_via_raw, benefit_flags = _build_decision_matrix(df_via)
+X_adj_mm = X_via_raw.copy()
+for j, b in enumerate(benefit_flags):
+    if not b:
+        X_adj_mm[:, j] = 1.0 - X_via_raw[:, j]
+# X_adj_vec: vector-normalised benefit score (normalise X_adj_mm columns by L2)
+L2_mm = np.maximum(np.sqrt((X_adj_mm**2).sum(0)), 1e-12)
+X_adj_vec = X_adj_mm / L2_mm
+print(f"Score matrices ready  t={time.time()-t0:.1f}s", flush=True)
+
+# ── Vector objectives via modified df_via ─────────────────────────────────────
+# Inject X_adj_vec into df_via so that build_pareto_utils uses vec columns.
+# build_pareto_utils calls df_via[col_map[k]] for each criterion k.
+# We replace those columns with X_adj_vec values (already benefit-oriented).
+# To avoid modifying the original, create df_via_vec with replaced columns.
+df_via_vec = df_via.copy()
 for j, k in enumerate(col_names):
-    x = df_via[COL_MAP[k]].values.astype(float)
-    if k == "aspect":   c = np.where((x >= 90) & (x <= 180), 0.0, 1.0)
-    elif k in INV:      c = 1.0 - _norm(x, x)
-    elif k in COST:     c = _norm(x, x)
-    else:               c = _norm(x, x)
-    C_obj_mm[:, j] = c
-# C_obj_mm: cost cols = _norm (small=good), inv cols = 1-_norm (large=good), F3 = large=good
-# is_dominated convention: F1,F2 (from cost+inv groups) use <= (lower=better for some),
-# but in practice pareto_utils uses ALL objectives with F1<=,F2<=,F3>= which matches:
-# cost group F1: small=good → F1 small = good → is_dominated uses F1<= correctly.
+    df_col = COL[k]   # actual df column name
+    df_via_vec[df_col] = X_adj_vec[:, j]   # inject vec-normalised benefit values
 
-# Score (mm): benefit-oriented (higher=better for all)
-# We need score_j large = good for all j
-# cost cols in C_obj_mm: small=good → score_cost = 1 - C_obj_mm[:,j]
-# Verified: X_adj_mm = benefit version of C_obj_mm
-
-# Vector normalisation: normalise C_obj_mm columns by L2
-L2_C = np.maximum(np.sqrt((C_obj_mm**2).sum(0)), 1e-12)
-C_obj_vec = C_obj_mm / L2_C   # objectives for vec frontier
-
-# Score vec: benefit-oriented version of C_obj_vec
-# For cost cols: benefit = 1 - C_obj_vec[:,j]
-# For other cols: benefit = C_obj_vec[:,j]
-C_score_vec = C_obj_vec.copy()
-for j, k in enumerate(col_names):
-    if k != "aspect" and k not in INV and k in COST:
-        C_score_vec[:, j] = 1.0 - C_obj_vec[:, j]  # invert for benefit
-
-# Score mm: benefit version of C_obj_mm (same as X_adj_mm)
-C_score_mm = C_obj_mm.copy()
-for j, k in enumerate(col_names):
-    if k != "aspect" and k not in INV and k in COST:
-        C_score_mm[:, j] = 1.0 - C_obj_mm[:, j]
-
-print(f"Score/obj matrices built  t={time.time()-t0:.1f}s", flush=True)
-
-# Group indices for objectives
-G_idx = [
-    [col_names.index(c) for c in F1_CRIT],
-    [col_names.index(c) for c in F2_CRIT],
-    [col_names.index(c) for c in F3_CRIT],
-]
-
-# Pre-compute trio sums for vector objectives (~170MB)
-print("Pre-computing CS_obj_vec...", flush=True)
-CS_obj_vec = C_obj_vec[T0] + C_obj_vec[T1] + C_obj_vec[T2]
-print(f"  {CS_obj_vec.nbytes/1e6:.0f}MB  t={time.time()-t0:.1f}s", flush=True)
+# build_pareto_utils with vec df: _norm over vec columns → objectives ≡ X_adj_vec @ w
+# The dominance check (is_dominated) reuses the same _lookup so indices match
+compute_objs_vec, is_dominated_vec, _ = build_pareto_utils(
+    df_via_vec, col_names, trios, eps=1e-9
+)
+print(f"Vec utilities ready  t={time.time()-t0:.1f}s", flush=True)
 
 
-def compute_f_vec(w):
-    """F1,F2,F3 with vector-normalised objectives."""
-    F = []
-    for grp in G_idx:
-        F.append((CS_obj_vec[:, grp] * w[grp]).sum(1))
-    return F[0], F[1], F[2]
-
-
-def saw_mm(w):
-    return C_score_mm @ w   # benefit-oriented mm score
-
-def saw_vec(w):
-    return C_score_vec @ w  # benefit-oriented vec score
+def saw_mm(w): return X_adj_mm @ w
+def saw_vec(w): return X_adj_vec @ w
 
 def top_opt(scores):
-    """Return trio array [i,j,k] maximising sum of scores."""
     return trios[int(np.argmax(scores[T0] + scores[T1] + scores[T2]))]
 
 def top_greedy(scores):
     order = np.argsort(scores)[::-1]
     sel = []
     for idx in order:
-        if all(valid[idx, s] for s in sel):
-            sel.append(idx)
+        if all(valid[idx, s] for s in sel): sel.append(idx)
         if len(sel) == 3: break
     if len(sel) < 3: return None
     sf = frozenset(sel)
@@ -150,29 +112,37 @@ def top_greedy(scores):
 
 # ── Regression tests ─────────────────────────────────────────────────────────
 N_DRAWS = 500; KAPPA = 200; SEED = 42
-
 print("\n=== Regression tests ===", flush=True)
 W_check = sp_dirichlet.rvs(KAPPA * w_ahp, size=5,
                             random_state=np.random.default_rng(99))
 pass_mm = 0; pass_vec = 0
 for w in W_check:
-    # mm score vs mm objectives (Prop1: must be True = not dominated)
     f1v, f2v, f3v = compute_objs_mm(w)
-    F1m = f1v[T0]+f1v[T1]+f1v[T2]; F2m=f2v[T0]+f2v[T1]+f2v[T2]; F3m=f3v[T0]+f3v[T1]+f3v[T2]
+    F1m = f1v[T0]+f1v[T1]+f1v[T2]
+    F2m = f2v[T0]+f2v[T1]+f2v[T2]
+    F3m = f3v[T0]+f3v[T1]+f3v[T2]
     t_mm = top_opt(saw_mm(w))
-    if not is_dominated(t_mm, F1m, F2m, F3m): pass_mm += 1
+    if not is_dominated_mm(t_mm, F1m, F2m, F3m): pass_mm += 1
 
-    # vec score vs vec objectives
-    F1v, F2v, F3v = compute_f_vec(w)
+    f1v, f2v, f3v = compute_objs_vec(w)
+    F1v = f1v[T0]+f1v[T1]+f1v[T2]
+    F2v = f2v[T0]+f2v[T1]+f2v[T2]
+    F3v = f3v[T0]+f3v[T1]+f3v[T2]
     t_vec = top_opt(saw_vec(w))
-    if not is_dominated(t_vec, F1v, F2v, F3v): pass_vec += 1
+    if not is_dominated_vec(t_vec, F1v, F2v, F3v): pass_vec += 1
 
-print(f"  mm/opt not dominated: {pass_mm}/5 (expect 5 for Prop1)", flush=True)
-print(f"  vec/opt not dominated: {pass_vec}/5 (expect 5 for Prop1)", flush=True)
+print(f"  mm/opt/mm-objs: {pass_mm}/5 (expect 5)", flush=True)
+print(f"  vec/opt/vec-objs: {pass_vec}/5 (expect 5 for Prop1)", flush=True)
 if pass_mm < 5:
-    print("  WARNING: mm/opt fails Prop1 regression. Check score/obj alignment.", flush=True)
+    raise AssertionError(f"mm regression failed {pass_mm}/5 — score/obj misaligned")
 if pass_vec < 5:
-    print("  WARNING: vec/opt fails Prop1 regression. Check score/obj alignment.", flush=True)
+    print(f"  WARNING: vec/opt fails {pass_vec}/5 — checking...", flush=True)
+    # Debug: show top vec trio score vs dominated status
+    f1v, f2v, f3v = compute_objs_vec(W_check[0])
+    F1v=f1v[T0]+f1v[T1]+f1v[T2]; F2v=f2v[T0]+f2v[T1]+f2v[T2]; F3v=f3v[T0]+f3v[T1]+f3v[T2]
+    t_dbg = top_opt(saw_vec(W_check[0]))
+    print(f"  debug top_vec={t_dbg}, dom={is_dominated_vec(t_dbg,F1v,F2v,F3v)}", flush=True)
+print("Regressions done.", flush=True)
 
 
 # ── Monte Carlo ─────────────────────────────────────────────────────────────
@@ -187,8 +157,11 @@ for norm_lbl, asm in cells:
     nd_cnt = 0; t_cell = time.time()
 
     for di, w in enumerate(W_draws):
-        # Objectives: always VECTOR normalisation
-        F1, F2, F3 = compute_f_vec(w)
+        # Objectives: vec normalisation
+        f1v, f2v, f3v = compute_objs_vec(w)
+        F1 = f1v[T0]+f1v[T1]+f1v[T2]
+        F2 = f2v[T0]+f2v[T1]+f2v[T2]
+        F3 = f3v[T0]+f3v[T1]+f3v[T2]
 
         # Score
         sc = saw_vec(w) if norm_lbl == "vec" else saw_mm(w)
@@ -196,7 +169,7 @@ for norm_lbl, asm in cells:
         # Assembly
         t = top_opt(sc) if asm == "optimal" else top_greedy(sc)
 
-        if t is not None and not is_dominated(t, F1, F2, F3):
+        if t is not None and not is_dominated_vec(t, F1, F2, F3):
             nd_cnt += 1
 
         if di % 50 == 0:
@@ -218,4 +191,4 @@ out.mkdir(exist_ok=True)
 df = pd.DataFrame(rows)
 df.to_csv(out / "f8_circularity.csv", index=False)
 print(f"\n=== F8 RESULTS ===\n{df.to_string(index=False)}")
-print(f"\nTotal: {time.time()-t0:.1f}s  Saved: {out/'f8_circularity.csv'}")
+print(f"\nTotal: {time.time()-t0:.1f}s")
