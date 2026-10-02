@@ -1423,8 +1423,14 @@ With $350$ tied zeros in \texttt{perm} among $\Nvia$ sites, its maximum
 midrank is $\approx 214.5$, so the rescaled column spans
 $[0.003,\,0.550]$ while every other criterion spans $[0.003,\,0.997]$.
 By \eqref{eq:Arank_binary}, the effective weight of
-\texttt{perm} is scaled by $\approx 0.616$, and the exact identity
-\eqref{eq:p2identity} no longer holds for the implemented score.
+\texttt{perm} is scaled by $\approx 0.616$.
+The exact identity~\eqref{eq:p2identity} continues to hold (verified
+below at $6.7\times10^{-16}$): dividing all midranks by the same
+constant $N+1$ is a common scale factor, and TV is invariant to common
+rescaling (\eqref{eq:TV_results}).
+The source of the distortion is the tie structure, not the rescaling:
+the $350$ tied zeros compress \texttt{perm}'s column regardless of
+whether the final divisor is $N+1$, $N$, or any other constant.
 This is the rank-space counterpart of the vector-normalisation
 distortion of Section~\ref{sec:three_norms}(ii), with the notable
 difference that \texttt{perm} is \emph{deflated} ($\times 0.616$) in
@@ -2386,8 +2392,12 @@ We restate it to fix the affine constants, to record that it holds
 exactly under arbitrary tie structure, and chiefly because it isolates
 normalisation as the sole source of empirical divergence: in our data
 the entire departure of the implemented rank score from the net flow is
-attributable to rescaling midranks by $N+1$ rather than to the
-aggregation.
+attributable to the tie structure inherited by the midranks, not to the
+aggregation operator.
+Dividing by $N+1$ is a common scale factor and does not alter effective
+weights; the distortion of \texttt{perm}'s amplitude to $0.616\times$
+is caused by the $350$ tied zeros compressing its midrank range,
+independently of the final rescaling constant.
 Without the identity, that divergence would plausibly be attributed to
 the method.
 

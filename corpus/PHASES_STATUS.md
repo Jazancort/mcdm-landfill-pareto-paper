@@ -239,3 +239,15 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 | 2.11d | Contrib.(i)/§6.10 | ref-set como efeito com custo → actualizar | TODO |
 
 Referência completa: docs/pre-submission-checklist.md (criado 2026-10-02)
+
+
+### Commits desta sessão (2026-10-02 manhã)
+| Commit | Item | Descrição |
+|--------|------|-----------|
+| f1ecae9 | A7 | check PDF via pdftotext |
+| 609eba6 | 2.1+2.6 | assimetria + 1 mec+1 advert |
+| 9214377 | 2.4 | post hoc / IC [0,0] |
+| cad0b1f | 2.7 | TOST equiv + ICs célula |
+| a501eae | 2.11a+b | 388→389 + abs não aditivo |
+| (este) | 2.2 | PROMETHEE N+1 → empates |
+
