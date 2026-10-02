@@ -1,0 +1,22 @@
+# run_e4_v1 — sem log ficheiro; resultados observados na sessão
+# Commit: ca50ce2 (fix(run_e4): DEV-E4-006 — use X_adj_473 for fwd cells)
+# Data: 2026-10-01 ~21:00 UTC-3
+# Pipeline: Score = (X_adj * (w * A_j)).sum(1) para todas as células
+#           X_adj = X_adj_dm (389 sítios, _build_decision_matrix)
+#           A_j = amplitude vector (r_j, rbar_g, etc.)
+# Problema: multiplicar X_adj_dm por A_j apenas reescala as colunas,
+#           preservando o rank order dentro de cada coluna.
+#           Para qualquer pesos w, argmax(X_adj_dm * A_j * w) = argmax(X_adj_dm * w)
+#           porque A_j é constante por coluna, não por sítio.
+#           Logo TODOS os cells fwd = 100%, incluindo R-V (esperado: 20%).
+
+# Resultados observados (da sessão interactiva antes de ser morto):
+# kappa=200 fwd R-M : grd=86.0% opt=100.0%
+# kappa=200 fwd R-B : grd=88.4% opt=100.0%
+# kappa=200 fwd R-W : grd=96.8% opt=100.0%
+# kappa=200 fwd R-V : grd=97.8% opt=100.0%   <-- BUG: devia ser ~20%
+# kappa=200 rev R-M': grd=86.0% opt=100.0%
+# kappa=200 rev R-B': grd=87.2% opt=100.0%
+# kappa=200 rev R-W': grd=75.6% opt=86.2%
+# kappa=200 rev R-V': grd=70.4% opt=88.4%
+# (corrida interrompida; kappa=50 não chegou a correr)
