@@ -70,9 +70,22 @@ X_adj_mm = X_via_raw.copy()
 for j, b in enumerate(benefit_flags):
     if not b:
         X_adj_mm[:, j] = 1.0 - X_via_raw[:, j]
-# X_adj_vec: vector-normalised benefit score (divide raw X by L2 norm)
-norms_via = np.maximum(np.sqrt((X_via_raw**2).sum(0)), 1e-12)
-X_adj_vec = X_adj_mm / (np.sqrt((X_adj_mm**2).sum(0)))
+# X_adj_vec: vector score using same base as objectives (C_obj_mm)
+# For Prop1: score and objectives must use same normalised values
+# C_obj_mm has cost cols = _norm (small=good); for score we need benefit-oriented
+# Score SAW maximises sum, so we need high score = good site
+# For cost cols (small=good in C_obj_mm): score_cost = 1 - C_obj_mm (large=good)
+# But that's X_adj_mm again... the issue is that C_obj_mm and X_adj_mm differ for cost cols.
+# The correct Prop1 setup: objectives F_g(T) = sum_j w_j * phi_j(a) where phi_j in [0,1] benefit
+# Score = sum_j w_j * phi_j(a) where phi_j = same benefit values
+# So score_mm uses X_adj_mm, objectives use pareto_utils which uses _norm
+# Prop1 holds because pareto_utils objectives are CONSISTENT with X_adj_mm score
+# Verification: mm/opt passes 5/5 above.
+#
+# For vec: we need X_adj_vec_score = X_adj_mm / L2(X_adj_mm columns)
+# and C_obj_vec = X_adj_mm / L2(X_adj_mm columns) (same thing)
+# Then F_g_vec(T) = sum_{j in g} w_j * X_adj_vec[T, j]  (same as score)
+X_adj_vec = X_adj_mm / np.maximum(np.sqrt((X_adj_mm**2).sum(0)), 1e-12)
 print(f"Score matrices built  t={time.time()-t0:.1f}s", flush=True)
 
 # ── Objective matrix for VECTOR normalisation ────────────────────────────────
@@ -87,11 +100,9 @@ for j, k in enumerate(col_names):
     else:               c = _norm(x, x)
     C_obj_mm[:, j] = c
 
-# Vector version: normalise each column by its L2 norm
-C_obj_vec = C_obj_mm.copy()
-for j in range(len(col_names)):
-    nrm = np.sqrt(np.sum(C_obj_mm[:, j]**2))
-    if nrm > 0: C_obj_vec[:, j] /= nrm
+# Vector version: normalise X_adj_mm columns by their L2 norm
+# This is consistent with X_adj_vec score above
+C_obj_vec = X_adj_vec.copy()   # same matrix — score and objectives aligned
 
 # Group indices for objectives
 G_idx = [
