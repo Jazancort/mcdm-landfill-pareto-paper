@@ -1,7 +1,7 @@
 %% Elsevier CAS Double-Column template
 %% Article: Normalisation and assembly in MCDM-based landfill site selection:
 %%          a factorial evaluation against an exact Pareto frontier
-%% Updated: 01/Oct/2026 (Marco B)
+%% Updated: 02/Oct/2026 (audit E4, Math M1-M4, Fase B-D)
 
 \documentclass[a4paper,fleqn]{cas-dc}
 
@@ -960,6 +960,20 @@ all three normalisations, leaving $\Ncellsnet$ estimable cells
 it is unbalanced and its results are reported in the Supplementary Material.
 Effects are reported in percentage points with $\nboot$-replicate
 bootstrap intervals, paired by draw.
+
+\paragraph{Benchmark circularity.}
+The Pareto frontier and the objectives are both built on additive
+weighted sums of min--max normalised columns, the same class of
+function the factorial evaluates.
+A benchmark that is internal to the value model cannot detect whether
+the value model itself is mis-specified; it measures departure from
+min--max rather than departure from a model-free optimum.
+The normalisation contrast therefore characterises the cost of moving
+away from the normalisation implicit in the benchmark, not the absolute
+cost of using any particular normalisation.
+We report this as the natural estimand for the research question
+(how much does the normalisation choice matter within the model class?)
+and note it in the Limitations.
 
 
 
@@ -2409,6 +2423,15 @@ to additive and distance-based aggregation, not to compromise-programming
 methods with ratio normalisation.
 
 \subsection{Limitations}
+
+\emph{Benchmark circularity.}
+The Pareto frontier is enumerated using the same weighted-sum value
+model that the methods under evaluation optimise.
+The benchmark is therefore internal to the model class: it measures
+departure from min--max normalisation rather than departure from a
+model-free optimum.
+A method that scores well on $Q_2$ may still select a portfolio that
+would be suboptimal under a different value model.
 
 \emph{Scope of the closed form.}
 The amplitude identity~\eqref{eq:weff} is exact for additive
