@@ -144,6 +144,23 @@ B2 — completar cobertura da provenance.csv ("6 de 7 em A'", reprodução, \FAs
 
 ---
 
+## Documentos criados nesta sessão (2026-10-01/02)
+
+| Ficheiro | Commit | Tipo | Conteúdo resumido |
+|----------|--------|------|-------------------|
+| `corpus/IMPROVEMENT_PLAN.md` | 918f125 | Plano | Fases Math→I, diagnósticos D1–D16, regras de execução, árvore de decisão, métricas, riscos |
+| `corpus/PHASES_STATUS.md` | 0984b51 | Tracker | Estado por tarefa (ID, depende, critério, commit); regras de manutenção |
+| `corpus/PRESPEC_E4.md` DEV-E4-007 | b0e5c66 | Pré-registo | v1-v5 declaradas; P_E4_3 testável mas não informativo; R-V*/R-asp post hoc; greedy R-V*=97.8%; auditoria aspect |
+| `results/math/README.md` | 7d4d6df | Documentação | Análise algébrica M1 (gap estrito vs fraco); contra-exemplo; opções de correcção |
+| `results/math/math_m1_gap.csv` | bdd972d | Dados | 4 métricas: n_trios=1944653, n_gap0=?, n_weakly_dom=?, n_gap0_weakly=0 (amostra 20k) |
+| `results/math/math_m1_gap.log` | bdd972d | Log | Output completo do script math_m1_gap.py |
+| `docs/provenance.csv` | 9f01740 | Proveniência | 28 linhas: número→macro→script→função score→função objs→aspect score/obj→ref score/obj→contaminado |
+| `docs/session-2026-10-01-22h22.md` | cac8491 | Sessão | Estado intercalar com valores de referência e itens pendentes |
+| `docs/e4-resultados-analise.md` | 3d4c48a | Análise | Diagnóstico final E4: R-V*=100%, R-asp=24%, bootstrap emparelhado, decomposição 76+4 pp |
+| `results/e4-audit/bootstrap_paired.csv` | 9235e63 | Dados | Bootstrap emparelhado: R-asp vs R-V (+4pp SIG), R-V* vs R-M (0pp n.s.), R-V*A vs R-MA (+5pp SIG) |
+| `results/e4-audit/fourthcell_consistent.csv` | 9235e63 | Dados | tab:fourthcell com codificação consistente: RV_star_A opt=100%, RM_A opt=95% |
+| `results/r1/README.md` | 918f125 | Instrução | Regras para Fase D: ficheiros esperados, critério de abortar, link ao PRESPEC_R1 |
+
 ## Registo de decisões
 
 | Data | Decisão | Base (ficheiro/commit) |
@@ -151,10 +168,14 @@ B2 — completar cobertura da provenance.csv ("6 de 7 em A'", reprodução, \FAs
 | 2026-10-01 | Codificação contínua de aspect em build_score_473 é inconsistente com avaliador binário. R-V*=100%, R-asp=24% confirmam. | corpus/PRESPEC_E4.md DEV-E4-007, commit b0e5c66 |
 | 2026-10-01 | B1 declarado independente de A1: proveniência documenta o código actual antes de o alterar | corpus/PHASES_STATUS.md |
 | 2026-10-01 | Fase Math adicionada antes de A: M1 (gap), M2 (PROMETHEE), M3 (proposição expoente), M4 (nomenclatura) | corpus/PHASES_STATUS.md |
-| 2026-10-01 | B3 verificado: rank 1 = melhor sítio; φ=(n+1)/(n-1)−(2/(n-1))Σ decrescente em r_j; texto do manuscrito correcto para perm (0.547); D7 não se verifica (eq:Arank_binary não é citada para perm). | amplitude_regression.py L47, Athena verificação directa |
+| 2026-10-01 | B3 verificado: rank 1 = melhor sítio; φ correcto em código; D7 não se verifica (eq:Arank_binary não citada para perm). | amplitude_regression.py L47, Athena 2026-10-01 |
+| 2026-10-01 | F5 SKIP: texto de perm já correcto, eq:Arank_binary não citada para perm. | PHASES_STATUS.md, B3 |
+| 2026-10-01/02 | M2: sinal de eq:p2identity errado no manuscrito. Corrigido em F4 (commit 90926b1). | scripts/mcdm_experiment.py L324, Athena verificação |
+| 2026-10-01/02 | M3: PROMETHEE α=0 errado (daria pesos uniformes). Substituído por "amplitude-invariant". | main.tex commit 02b6a69 |
+| 2026-10-01/02 | Contaminação confinada: tab:canonical e fig:pareto/map limpos; tab:fourthcell Ncand/* contaminados; \FAinter=132 não verificado. | docs/provenance.csv commit 9f01740 |
 
 ## Bloqueios abertos
 
 | ID tarefa | Motivo | Desde |
 |-----------|--------|-------|
-| — | Nenhum bloqueio activo. M3 e M4 prontos a avançar. | — |
+| \FAinter=132 | Script que calcula interseção F_A ∩ F_A' indisponível; valor hardcoded não verificado | 2026-10-02 |
