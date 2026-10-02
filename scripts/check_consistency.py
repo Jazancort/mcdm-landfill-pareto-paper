@@ -351,6 +351,8 @@ BAD_PHRASES = [
      "removed in 2.6 fix — use 'one mechanism (Theorem) and one caveat (coding mismatch)'"),
     ("same mechanism at a higher cost",
      "removed in 2.6 fix — coding mismatch is outside the theorem, not the same mechanism"),
+    ("not significant ($0$~pp, $95\\%$ CI $[0,0]$)",
+     "IC [0,0] means identical across all draws, not 'not significant' — use 'identical to zero by construction'"),
     ("far more costly",
      "removed in 2.6 fix — with consistent coding, reference-set effect costs 0 pp"),
     ("more severe mechanism",

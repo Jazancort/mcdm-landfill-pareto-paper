@@ -2583,10 +2583,11 @@ The reference-set analyses in Section~\ref{sec:refset} and
 Remark~\ref{rem:nonmonotone} are based on post hoc exploratory cells
 (declared in \texttt{corpus/PRESPEC\_E4.md}, DEV-E4-007) and should be
 treated as descriptive rather than confirmatory.
-The pre-registered confirmatory test found that the greedy improvement
-under consistent coding is $+\RefSetGreedyGain$~pp
-($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$); the optimal-assembly
-effect is not significant ($0$~pp, $95\%$ CI $[0,0]$).
+The pre-registered confirmatory test (PRESPEC\_R1, rule R1-2) found that
+greedy assembly improves by $+\RefSetGreedyGain$~pp under consistent
+coding ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$); under optimal
+assembly both cells reach $100\%$ on every draw, so the contrast is
+identical to zero by construction (rule R1-1: observation, not effect).
 
 The broader implication is methodological.
 Benchmarking multi-criteria methods by agreement between their rankings
