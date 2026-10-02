@@ -26,10 +26,15 @@
 \newcommand{\slopeOpt}{137.7}            % slope through 3 optimal levels
 
 % ── Marco A: Mechanism 1 prediction for admissible-only cell ────────────
-\newcommand{\MechOnePredAdmiss}{14.7}    % slopeOpt * TV(0.107)
-\newcommand{\MechOneShare}{18}           % 14.7/80 * 100
-\newcommand{\MismatchRatioHi}{5.4}       % 80 / 14.7
-\newcommand{\MismatchRatioLo}{0.34}      % 5 / 14.7
+% REMOVED 2026-10-01: MechOnePredAdmiss, MechOneShare, MismatchRatioHi,
+% MismatchRatioLo were based on 80 pp attributed to reference-set mismatch.
+% That result was an artefact of inconsistent aspect coding in build_score_473.
+% Audit: DEV-E4-007 (corpus/PRESPEC_E4.md). These macros are now prohibited
+% in check_consistency.py (see rule: forbidden_macros_e4).
+%\newcommand{\MechOnePredAdmiss}{14.7}
+%\newcommand{\MechOneShare}{18}
+%\newcommand{\MismatchRatioHi}{5.4}
+%\newcommand{\MismatchRatioLo}{0.34}
 
 % ── Marco A: tab:tvorder values ─────────────────────────────────────────
 \newcommand{\QtwommGreedy}{86.0}

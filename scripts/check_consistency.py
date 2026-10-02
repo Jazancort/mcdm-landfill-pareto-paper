@@ -319,6 +319,10 @@ FORBIDDEN_MACROS = [
     r"\slopeThree", r"\RsqThree", r"\hiiVecThree", r"\SxxPctVecThree",
     r"\slopeFive", r"\SAWgreedyContrast", r"\LossTabTVorder", r"\Peldschus",
     r"\RsqadjLtwo", r"\RsqadjTV", r"\RsqDrop",
+    # Removed 2026-10-01: based on 80 pp attributed to reference-set mismatch,
+    # which was an artefact of inconsistent aspect coding (DEV-E4-007).
+    r"\MismatchRatioHi", r"\MismatchRatioLo",
+    r"\MechOnePredAdmiss", r"\MechOneShare",
 ]
 if main_tex.exists():
     for macro in FORBIDDEN_MACROS:

@@ -130,8 +130,8 @@ accounts for $\EoneWloss$ of the $\EoneVloss$~pp lost under vector
 normalisation.
 Vector normalisation multiplies one criterion's weight by $2.88\times$
 in our data, every binary criterion loses half its weight in rank space,
-and normalising over inadmissible alternatives costs up to $80$~pp of
-Pareto efficiency.
+and a criterion encoded inconsistently between the score and the
+objective function costs up to $80$~pp of Pareto efficiency.
 \end{abstract}
 
 \begin{highlights}
@@ -144,7 +144,7 @@ Pareto efficiency.
 \item Between-group distortion costs nothing; within-group distortion
   drives the loss
 \item Normalising over inadmissible sites costs up to $80$~pp of Pareto
-  efficiency
+  efficiency when criterion encodings are inconsistent between score and evaluator
 \end{highlights}
 
 \begin{keywords}
@@ -252,17 +252,20 @@ Adding integer programming on top of a ranking
 therefore pays only when the normalisation respects the grouping of the
 objectives.
 
-A third finding concerns the set over which normalisation constants are
-computed.
+A third finding concerns the encoding of criteria in the score relative
+to the objectives.
 In our data, $\Nexcl$ of the $\Ncand$ candidates overlap protected areas
 and cannot be selected.
-Computing the value scale over all $\Ncand$ nonetheless calibrates it on
-alternatives that are unavailable, and the resulting mismatch between the
-scale used by the method and the scale defining the objectives costs up
-to $80$~pp of Pareto efficiency, far more than the re-weighting alone
-predicts.
-The loss is also strongly asymmetric, which the magnitude of the
-re-weighting does not explain.
+We find that a criterion encoded differently in the score and in the
+objective function, even one with moderate weight ($0.075$), costs up
+to $80$~pp of Pareto efficiency under optimal assembly.
+With a consistent encoding, normalising over inadmissible alternatives
+costs zero pp under optimal assembly on this instance, and greedy
+assembly improves by approximately $12$~pp.
+The loss is therefore not an inherent property of the reference set but
+of the mismatch between the score's criterion definition and the
+evaluator's; this amplifies any such inconsistency beyond what standard
+rank-agreement diagnostics would reveal.
 
 Our contributions are as follows.
 \begin{enumerate}[label=(\roman*)]
@@ -1934,45 +1937,57 @@ re-weighting orders the three normalisations within additive aggregation.
 The choice of reference set produces a re-weighting of the same kind by
 a different route, and on Fogo it is far more costly.
 
-\paragraph{Mechanism 2: reference-set mismatch.}
-When the method computes its min--max constants on a different set from
-the evaluator, each score column is an increasing affine function of the
-evaluator's partial value, $n_j=b_j+A_j\tilde c_j$, with $A_j=r_j$ for the
-$\Ncand$-score against $A'$ and $A_j=1/r_j$ for the $\Nvia$-score against
-$A$, where $r_j$ is the ratio~\eqref{eq:refsetA}.
-Mismatch is therefore a special case of the re-weighting covered by
-Theorem~\ref{thm:groupconst}: the guarantee fails because $r_j$ varies
-within objective groups (Table~\ref{tab:amprefset}), not because the two
-normalisations differ.
-What distinguishes it on Fogo is its cost.
-The observed cost (Table~\ref{tab:fourthcell}: $100\%\to20\%$,
-a loss of $80$~pp under optimal assembly) far exceeds what
-Mechanism~1 predicts: as an illustrative extrapolation of the linear fit from
-Section~\ref{sec:lemmaconf}, $\mathrm{TV}=0.107$ would imply $\approx\MechOnePredAdmiss$~pp,
-accounting for only $\MechOneShare\%$ of the effect; the observed-to-predicted
-ratio is $\MismatchRatioHi\times$ in one direction and $\MismatchRatioLo\times$ in the other.
-We do not treat these ratios as a predictive model
-(Section~\ref{sec:lemmaconf}); they serve only to characterise the asymmetry.
-The gap is not accounted for by the magnitude of the re-weighting.
+\paragraph{Mechanism 2: score--evaluator coding mismatch.}
+When the method's score encodes a criterion differently from the
+objective function used to evaluate portfolios, the score is no longer
+an affine function of the objective's partial value for that criterion.
+A non-monotone recoding voids the premise of
+Theorem~\ref{thm:groupconst} for that criterion: the theorem requires the
+score column to be an affine function of the partial value in the
+evaluator's criterion space, and a recoding that is not monotone in the
+partial value breaks that condition.
 
-The two mechanisms are thus not structurally distinct; they differ in
-how unequal amplitudes arise, by distributional shape under vector
-normalisation or by the choice of reference set, and, on Fogo, in
-how far their cost exceeds what $\mathrm{TV}$ predicts.
+The cost on Fogo is large.
+An earlier version of our pipeline scored \textit{aspect}
+(the terrain orientation criterion, weight~$0.075$) as a continuous
+azimuth in degrees, min--max normalised over all $\Ncand$ candidates,
+while the objectives used a binary leeward indicator
+($c=1$ for azimuth $\in[90\degree,180\degree]$, zero otherwise),
+following \citet{AzancortNeto2026}.
+These two encodings are not monotonically related: an azimuth of
+$350\degree$ has a high score under the continuous encoding
+but is classified as non-leeward (high environmental integrity) by the
+binary objective.
+The result (Table~\ref{tab:fourthcell}): $Q_2$ drops from $100\%$
+to $20\%$ under optimal assembly, a loss of $80$~pp.
 
-Min--max normalisation satisfies $A_j\equiv1$ over the set on which its
-constants are computed.
-If that set includes alternatives that cannot be selected, the guarantee
-no longer applies: over the $\Nvia$ admissible sites, the attainable
-amplitude becomes
-\begin{equation}
-  \label{eq:refsetA}
-  A_j = \frac{\max_{\Nvia}(j)-\min_{\Nvia}(j)}
-             {\max_{\Ncand}(j)-\min_{\Ncand}(j)} \;\le\; 1,
-\end{equation}
-which varies across criteria, and within groups, and therefore re-weights.
-Computing~\eqref{eq:refsetA} for the eleven criteria yields
-$\mathrm{TV}=0.107$ (Table~\ref{tab:amprefset}).
+An exact decomposition via post hoc cells confirms the diagnosis:
+replacing the continuous encoding with the binary one in the score
+(cell R-V*, same normalisation constants) recovers $Q_2=100\%$;
+replacing only the aspect column in the 389-site score
+(cell R-asp) reproduces $24\%$, accounting for $76$~pp through coding
+alone, with a further $4$~pp attributable to the 473-site constants
+(paired bootstrap confidence interval includes zero at $95\%$).
+
+This is a pipeline inconsistency, not an inherent property of
+normalising over inadmissible sites.
+With a consistent encoding, normalising over the $\Ncand$-site set costs
+zero percentage points of Pareto efficiency under optimal assembly
+and improves greedy assembly by approximately $12$~pp (Table~\ref{tab:fourthcell_consistent}).
+We report the result here as evidence that exact assembly amplifies
+any mismatch between the score's criterion encoding and the evaluator's
+partial-value encoding, including mismatches too subtle to surface in
+rank-agreement diagnostics.
+
+The directional asymmetry identified in the original E4 design
+($\mathrm{TV}_W=0.0815$ for the $r_j$ pattern,
+$\mathrm{TV}_W=0.0852$ for the $1/r_j$ pattern;
+cost $0$~pp vs $11.6$~pp under optimal assembly against $A'$)
+is genuine and survives the coding correction.
+With consistent encoding, larger amplitude distortion in the deflation
+direction costs more than in the inflation direction, at nearly the
+same total variation.
+We do not explain this asymmetry analytically.
 
 \begin{table}[!t]
 \centering
@@ -2154,33 +2169,35 @@ distortion carries the loss.
 It is also invisible: nothing in a standard TOPSIS or SAW report reveals
 that \texttt{perm} entered at $2.88$ times its nominal weight.
 
-The second is \emph{score--evaluator mismatch}.
+The second is \emph{score--evaluator coding mismatch}.
 Theorem~\ref{thm:groupconst} guarantees Pareto efficiency of exact
 maximisation on every instance if and only if the score's amplitudes,
 in the units of the objectives, are constant within each objective group.
-Reference-set mismatch violates this condition because $r_j$ varies
-within groups; on Fogo the observed cost is $\MismatchRatioHi\times$ an
-illustrative linear extrapolation in $\mathrm{TV}$ (Section~\ref{sec:refset})
-in the direction where the score loses resolution (the $\Ncand$-score
-evaluated against $A'$: $80$~pp observed versus $\MechOnePredAdmiss$~pp predicted),
-while in the opposite direction the observed cost is $\MismatchRatioLo\times$
-the prediction ($\Nvia$-score against $A$).
-In both directions the misaligned score is an affine function of the
-partial values within each criterion, so the mismatch is itself a re-weighting;
-yet the two directions carry nearly equal distortion ($\mathrm{TV}=0.107$ and
-$0.113$, with similar between- and within-group components) while the
-observed losses differ by a factor of~$16$.
-Neither the magnitude nor the group structure of the re-weighting
-accounts for this asymmetry, which we report as unexplained
-(Section~\ref{sec:refset}).
-One finding is attributable to this mechanism: the collapse under
-reference-set misalignment (Table~\ref{tab:fourthcell}).
+This condition is violated when a criterion is encoded differently in the
+score and in the objective function.
+On Fogo, the score used a continuous azimuth encoding for
+\textit{aspect} while the objectives used a binary leeward indicator;
+the encoding is not monotone in the objective's partial value, so the
+theorem's premise does not hold for that criterion.
+The observed cost is $80$~pp of Pareto efficiency under optimal assembly
+(Table~\ref{tab:fourthcell}).
+Post hoc decomposition attributes $76$~pp to the coding inconsistency
+alone and a further $4$~pp to the normalisation constants (paired
+bootstrap $95\%$ CI for the residual includes zero).
+With a consistent encoding, normalising over inadmissible alternatives
+costs zero pp under optimal assembly on this instance.
+One finding survives the correction: the directional asymmetry.
+With consistent aspect encoding, the $r_j$ amplitude pattern costs
+$0$~pp while the $1/r_j$ pattern costs $11.6$~pp, at nearly equal
+total variation ($0.0815$ vs $0.0852$); the direction of distortion,
+not its magnitude, determines the cost.
 
 The practical consequences differ.
 Distributional re-weighting is a property of the data under a given
 normalisation; it can be quantified and, if accepted, documented.
-Reference-set re-weighting is avoidable at no cost: computing the
-constants on the admissible set removes it entirely.
+Criterion coding mismatch is avoidable: verifying that the score and
+the objective function use the same encoding for each criterion before
+applying exact optimisation removes it entirely at no additional cost.
 
 \subsection{Relation to portfolio decision analysis}
 
@@ -2306,11 +2323,14 @@ the method.
 \subsection{Implications for practice}
 \label{sec:practice}
 
-First, normalise over the set of alternatives that can actually be
-chosen, and report the set used.
+First, verify that the score and the objective function use the same
+encoding for each criterion before adding exact optimisation.
 Screening criteria applied after normalisation leave the value scale
-calibrated on alternatives that are unavailable, which is the most
-damaging configuration we observe.
+calibrated on alternatives that are unavailable; but more consequentially,
+a criterion encoded differently in the score and the objectives can
+collapse Pareto efficiency entirely even when the reference sets agree.
+Normalising over the admissible set is a useful default, but it does not
+protect against inconsistent criterion encodings.
 
 Second, verify that the score's amplitudes, measured in the units of the
 value model, are constant within each objective group before adding exact
@@ -2451,10 +2471,10 @@ Two consequences bear directly on practice.
 Integer programming on top of a ranking pays only when the normalisation
 respects the grouping of the objectives; under vector normalisation it
 is worse than reading the ranking top-down.
-Normalising over alternatives that cannot be selected costs up to
-$80$~pp of Pareto efficiency, far more than its total variation suggests,
-and the loss is strongly asymmetric between the two directions of
-mismatch.
+A criterion encoded differently in the score and the objectives costs up
+to $80$~pp of Pareto efficiency; with a consistent encoding, normalising
+over inadmissible alternatives costs nothing under optimal assembly on
+this instance.
 The immediate recommendation is inexpensive: report effective weights
 alongside elicited ones.
 Given the normalised decision matrix the computation is a single line,
