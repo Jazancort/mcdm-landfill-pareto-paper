@@ -116,14 +116,14 @@ In additive aggregation the effective weight of criterion $j$ is
 proportional to $w_jA_j$; exact assembly is Pareto-efficient for any
 weights and any instance if and only if amplitudes are constant within
 each objective group (Theorem~\ref{thm:groupconst}).
-A pre-registered intervention confirms this on Fogo: between-group
+A post hoc exploratory intervention confirms this on Fogo: between-group
 distortion alone costs nothing, while within-group distortion alone
 costs $\EoneWloss$~pp (the full vector distortion costs $\EoneVloss$~pp).
 A criterion encoded inconsistently between score and objective reduces
 $Q_2$ from $100\%$ to $\RaspOptimal\%$ through the coding effect alone;
 with consistent encoding, normalising over inadmissible sites costs
 nothing under optimal assembly and improves greedy assembly by
-$\RefSetGreedyGain$~pp (pre-registered test R1-2,
+$\RefSetGreedyGain$~pp (post hoc exploratory rule R1-2,
 $95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
 \end{abstract}
 
@@ -241,7 +241,7 @@ if the normalised amplitudes are constant within each objective group
 (Theorem~\ref{thm:groupconst}): distortion between groups only relocates
 the optimum along the frontier, and only distortion within a group can
 move it off.
-A pre-registered intervention that manipulates the two components
+A post hoc exploratory intervention that manipulates the two components
 separately confirms the prediction on Fogo
 (Section~\ref{sec:e1}).
 Adding integer programming on top of a ranking
@@ -288,7 +288,7 @@ Our contributions are as follows.
     Pareto-efficient under normalisation: amplitudes must be constant
     within each objective group (Theorem~\ref{thm:groupconst}),
     a decomposition of the weight deviation into between-group and
-    within-group components, and a pre-registered intervention showing
+    within-group components, and a post hoc exploratory intervention showing
     that the within-group component carries the loss.
   \item An exact identity between PROMETHEE~II under the usual preference
     function and rank-weighted SAW, holding for arbitrary tie structure
@@ -2047,7 +2047,7 @@ With a consistent encoding, normalising over the $\Ncand$-site set costs
 zero percentage points of Pareto efficiency under optimal assembly
 and improves greedy assembly by $\RefSetGreedyGain$~pp (post hoc cell
 R-V*, Table~\ref{tab:fourthcell}).
-A diagnostic experiment (E1, pre-registered) attributes this greedy
+A post hoc exploratory diagnostic (D-greedy) attributes this greedy
 gain to the amplitude structure of R-V*: greedy and optimal assembly
 agree on $57.6\%$ of draws under R-V* versus $40.2\%$ under R-M,
 indicating that R-V*'s amplitudes are more favourable to the greedy
@@ -2062,7 +2062,7 @@ In these two post hoc cells with nearly equal $\mathrm{TV}_W$,
 inflating \textit{perm} (the $1/r_j$ pattern, where
 $A_j\approx 2.07\times$ for \textit{perm}) costs $11.6$~pp,
 while deflating it (the $r_j$ pattern, $A_j=0.482$) costs nothing.
-This is consistent with P\_E4\_5 being falsified: the pre-registered
+This is consistent with P\_E4\_5 being falsified: the pre-specified
 prediction anticipated the opposite ordering.
 We do not explain this asymmetry analytically, and we do not test
 whether it generalises beyond these two cells on one instance.
@@ -2171,7 +2171,7 @@ of the value model.
 % \S7.7 Pre-registered intervention (E1)
 % =======================================================================
 
-\subsection{Isolating within-group distortion: a pre-registered intervention}
+\subsection{Isolating within-group distortion: a post hoc exploratory intervention}
 \label{sec:e1}
 
 Theorem~\ref{thm:groupconst} predicts that between-group distortion
@@ -2287,9 +2287,11 @@ consistent encoding, normalising over the $\Ncand$-site set costs nothing
 under optimal assembly (Table~\ref{tab:fourthcell}).
 Post hoc decomposition attributes the original $76$~pp loss to the
 coding inconsistency alone and a further $4$~pp to the normalisation
-constants (paired bootstrap $95\%$ CI for the residual includes zero).
+constants (R-asp$-$R-V: $+4.0$~pp optimal, $+5.6$~pp greedy,
+both $95\%$ bootstrap CIs exclude zero; \textbf{Effect}).
 With a consistent encoding, normalising over inadmissible alternatives
-costs zero pp under optimal assembly on this instance.
+(space~$A$) costs approximately $4$--$6$~pp relative to vector normalisation
+on this instance.
 One finding survives the correction: the directional asymmetry.
 With consistent aspect encoding, the $r_j$ amplitude pattern costs
 $0$~pp while the $1/r_j$ pattern costs $11.6$~pp, at nearly equal
@@ -2588,7 +2590,7 @@ weight of a criterion is proportional to $w_jA_j$, and exact assembly
 is Pareto-efficient for any weights and any instance if and only if
 amplitudes are constant within each objective group
 (Theorem~\ref{thm:groupconst}).
-A pre-registered intervention on Fogo confirmed that between-group
+A post hoc exploratory intervention on Fogo confirmed that between-group
 distortion alone costs nothing and that within-group distortion carries
 most of the loss, and falsified our prediction that the two components
 would not interact.
@@ -2629,7 +2631,7 @@ The reference-set analyses in Section~\ref{sec:refset} and
 Remark~\ref{rem:nonmonotone} are based on post hoc exploratory cells
 (declared in \texttt{corpus/PRESPEC\_E4.md}, DEV-E4-007) and should be
 treated as descriptive rather than confirmatory.
-The pre-registered confirmatory test (PRESPEC\_R1, rule R1-2) found that
+The post hoc exploratory decision rule (PRESPEC\_R1, rule R1-2) found that
 greedy assembly improves by $+\RefSetGreedyGain$~pp under consistent
 coding ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$); under optimal
 assembly both cells reach $100\%$ on every draw, so the contrast is

@@ -317,7 +317,7 @@ Results from \texttt{run\_e1\_v3.py}, commit \texttt{18e7a66}
   \textbf{P2 falsified} at the pre-specified margin
   ($|Q_2^\text{W}-Q_2^\text{V}|=7.4$~pp, $95\%$ CI $[+3.8,+11.0]$,
   declared margin $<5$~pp);
-  \textbf{P3 falsified} (E1-B greedy $=100\%$; post hoc diagnosis:
+  \textbf{P3 falsified} (D-greedy: greedy $=100\%$; post hoc diagnostic:
   score becomes nearly lexicographic in $F_1$, greedy and optimal
   coincide in $62.8\%$ of draws).
 \end{description}
@@ -421,6 +421,47 @@ Experiment~E1, via the affine identity $n_j^{473}(a)=b_j+r_j\,n_j^{389}(a)$.
   \emph{improves} greedy assembly by $+\RefSetGreedyGain\,\mathrm{pp}$
   (95\% CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).  P\_E4\_3 is
   testable but uninformative as designed (see main text, \S\ref{sec:greedy}).
+
+\item[DEV-E4-008] \textit{Corrections to DEV-E4-002 and DEV-E4-006;
+  invalidation of \texttt{b1\_spaceA.csv} (commit 54195c1).}
+
+  \textbf{Correction to DEV-E4-002:}
+  DEV-E4-002 stated ``frontier $A$ (213 portfolios, objectives over 473
+  sites)''.  This was misleading.  Frontier $A$ is enumerated over the
+  same 1\,944\,653 admissible trios (indices into the 389 admissible
+  sites); the only difference from frontier $A'$ is that normalisation
+  constants (min/max per column) are computed over the 473 candidates.
+  Excluded candidates never appear in any portfolio (confirmed by
+  DEV-E4-005 and re-verified in commit \texttt{4059fb1}).
+
+  \textbf{Correction to DEV-E4-006:}
+  DEV-E4-006 stated that v1--v5 produced $Q_2^\text{opt}=100\%$
+  ``(should be $\approx20\%$)''.  This was wrong.  Under consistent
+  binary coding, $Q_2^\text{opt}=100\%$ is the correct value (it follows
+  from Proposition~1 in the main text): the score and the evaluator
+  share the same normalisation, so optimal assembly must be
+  non-dominated.  It was the v6 \texttt{build\_score\_473()} refactoring
+  that introduced the coding inconsistency (continuous \emph{aspect} in
+  the score vs.\ binary in the objectives), producing the incorrect
+  $\approx20\%$.  The inconsistency is documented in DEV-E4-007.
+
+  \textbf{Invalidation of \texttt{b1\_spaceA.csv} (commit 54195c1,
+  2026-10-02):}
+  A first attempt at the B1/D1 recalculation (commit 54195c1) built the
+  Pareto frontier over trios of all 473 candidates, including the 84
+  excluded sites.  This violated the admissibility constraint of~\S3.1
+  and produced 473/A optimal $=0\%$, which contradicts Proposition~1
+  (a diagonal cell must reach $100\%$).  The regression guard in
+  \texttt{check\_consistency.py} was incorrectly removed to suppress
+  the failure rather than fix the script.  Commits 54195c1 and
+  2aa0d38 were both reverted in commit \texttt{ec33779}.
+  The corrected B1 run (commit \texttt{8f6a15a}, script
+  \texttt{compute\_b1\_spaceA.py} v3) uses the 1\,944\,653 admissible
+  trios, computes objectives with \texttt{ref\_df=df\_all} for space~$A$
+  normalisation, and the score is the direct scalarisation
+  $-(F_1+F_2)+F_3$ with the same column values.  The corrected results
+  (473/A optimal $=100\%$, greedy $=84.6\%$; 389/A optimal $=95\%$,
+  greedy $=58.8\%$) confirm the values that were already in the table.
 \end{description}
 
 % =======================================================================
@@ -432,15 +473,17 @@ Experiment~E1, via the affine identity $n_j^{473}(a)=b_j+r_j\,n_j^{389}(a)$.
 %
 % -----------------------------------------------------------------------
 
-\section*{Pre-registered Decision Rules for Confirmatory Recalculation~R1}
+\section*{Post Hoc Decision Rules for Exploratory Recalculation~R1}
 \label{sec:prespec_r1}
 
 \noindent
 \textbf{Written:} 2026-10-02 (after auditing coding inconsistency, before Fase~D
 scripts were run).  Results of \texttt{run\_fourthcell\_consistent.py}
-were already known; this pre-registration fixes the decision rules and
-ensures that Fase~G (manuscript revision) uses automatic decisions, not
-human reading of the numbers.
+were already known when these rules were written; this document fixes
+the decision rules \emph{post hoc} (results seen, rules fixed before manuscript
+revision) so that Fase~G uses automatic decisions rather than human reading
+of the numbers.  The R1 recalculation is therefore classified as
+\textbf{post hoc exploratory}, not confirmatory.
 
 \subsection*{Decision rules}
 
@@ -461,9 +504,17 @@ human reading of the numbers.
 \item[R1-5 (Coding-only cell R-asp)] Descriptive; post hoc exploratory.
 
 \item[R1-6 (Residual reference-set effect $\approx4\,\mathrm{pp}$)]
-  R-V$-$R-asp contrast; same rule as R1-1.
-  Pre-declared expectation: significant (bootstrap showed
-  $+4.0\,\mathrm{pp}$, $95\%$ CI $[+2.2,\,+6.0]$).
+  R-asp$-$R-V contrast under consistent coding; same rule as R1-1.
+  Pre-declared expectation: significant.
+  Note: the bootstrap computes R-asp$-$R-V (not R-V$-$R-asp).
+  Under optimal assembly R-asp$-$R-V$=+4.0\,\mathrm{pp}$
+  ($95\%$ CI $[+2.2,\,+6.0]$);
+  under greedy assembly $+5.6\,\mathrm{pp}$
+  ($95\%$ CI $[+3.6,\,+7.8]$).
+  Both exclude zero: \textbf{Effect} in both assemblies.
+  Interpretation: normalising over inadmissible alternatives (R-asp) gives
+  slightly \emph{lower} $Q_2$ than vector normalisation (R-V) under a
+  consistent binary encoding, the opposite of the pattern seen in E4.
 \end{description}
 
 \subsection*{Outcomes}
@@ -477,7 +528,7 @@ R1-1 & R-V$^*$ opt $-$ R-M opt & $0.0\,\mathrm{pp}$ & Observation \\
 R1-2 & R-V$^*$ grd $-$ R-M grd & $+11.8\,\mathrm{pp}$ & \textbf{Effect} \\
 R1-3 & All diagonal opts $=100\%$ & --- & \textbf{Pass} \\
 R1-5 & R-asp opt $=24.0\%$        & --- & Descriptive \\
-R1-6 & R-V grd $-$ R-asp grd & $+4.0\,\mathrm{pp}$ & \textbf{Effect} \\
+R1-6 & R-asp grd $-$ R-V grd & $+5.6\,\mathrm{pp}$ ($[+3.6,\,+7.8]$) & \textbf{Effect} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -536,6 +587,78 @@ All decisions produced automatically by
 % S4  Data provenance
 % =======================================================================
 
+\section*{Post Hoc Experiment: Benchmark Circularity (F8)}
+\label{sec:dev_f8}
+
+\noindent
+\textbf{Classification:} Post hoc exploratory.
+Declared and run after the main factorial results were known.
+
+\noindent
+\textbf{Research question:} Is the Pareto frontier circular with respect to
+min--max normalisation?  A benchmark built on min--max objectives
+necessarily favours methods that also use min--max.  Experiment~F8
+tests this by rebuilding the frontier with vector-normalised objectives.
+
+\noindent
+\textbf{Design:} All four SAW cells from the main factorial
+(score $\in\{\text{mm},\text{vec}\}$, assembly $\in\{\text{greedy},\text{opt}\}$)
+repeated with the Pareto frontier computed from vector-normalised objectives.
+$N=500$, $\kappa=200$, seed~42.
+
+\noindent
+\textbf{Bug and fix (commit \texttt{4d0a98d}):}
+An earlier run (commit \texttt{58b06f8}) injected the vector-normalised
+score matrix \texttt{X\_adj\_vec} into a copy of \texttt{df\_via}, then
+passed it to \texttt{build\_pareto\_utils}.  This caused two errors:
+(1)~the injected column values were re-normalised a second time by the
+function's internal \texttt{\_norm} call, changing the ranking; and
+(2)~the \textit{aspect} column values ($\in[0,1]$) were no longer in
+the expected azimuth range $[90^\circ,180^\circ]$, so the binary
+encoding classified all sites as windward (constant column).
+The corrected approach (\texttt{compute\_objs\_vec\_direct}) computes
+per-column $c_j$ values directly from the raw data with per-column L2
+normalisation, and builds the SAW score as the direct scalarisation
+$-(F_1+F_2)+F_3$ using the same column values.
+A regression test (5 draws) confirmed vec/opt $=100\%$ before the full
+run was launched.
+
+\noindent
+\textbf{Results} ($N=500$, script \texttt{compute\_f8\_circularity.py} v2,
+commit \texttt{43b8427}):
+
+\begin{center}
+\begin{tabular}{llrc}
+\toprule
+Score norm & Assembly & $Q_2$ (\%) & Prop.\,1 check \\
+\midrule
+vec & optimal & 100.0 & \textbf{Pass} ($=100\%$ as required) \\
+vec & greedy  & 100.0 & \textbf{Pass} \\
+mm  & optimal &  94.4 & --- \\
+mm  & greedy  &  72.4 & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+\textbf{Interpretation:}
+The vec/opt $=100\%$ result is exactly the value predicted by Proposition~1
+(score and frontier share the same normalisation), providing a direct
+falsifiability check on the implementation.
+Under a vector-normalised frontier, min--max normalisation loses $5.6$~pp
+(optimal) and $27.6$~pp (greedy) relative to the aligned vector score.
+This reverses the direction seen in the main factorial, confirming that
+the original result reflects score--objective alignment rather than an
+intrinsic property of min--max normalisation.
+Note the asymmetry: min--max evaluated against a vector frontier loses
+$5.6$~pp, but vector evaluated against a min--max frontier loses
+$43.2$~pp ($100.0-56.8\%$); the two penalties are not symmetric because
+the frontier changes.
+
+% =======================================================================
+% S4  Data provenance
+% =======================================================================
+
 \section*{Data Provenance}
 \label{sec:provenance}
 
@@ -583,6 +706,16 @@ Greedy gain R1-2 $+11.8\,\mathrm{pp}$ (CI $[+8.8,+14.8]$) & \texttt{analyze\_r1.
 % --- tab:fourthcell contaminated ---
 $N_\text{cand}/A'$ greedy (orig.\ $19.6\%$, corrected $97.8\%$) & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & SIM \\
 $N_\text{cand}/A'$ optimal (orig.\ $20.0\%$, corrected $100.0\%$) & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & SIM \\
+% --- tab:fourthcell space A (B1/D1 corrected run) ---
+$N_\text{cand}/A$ greedy $=84.6\%$ & \texttt{compute\_b1\_spaceA.py} v3 & \texttt{8f6a15a} & NAO \\
+$N_\text{cand}/A$ optimal $=100.0\%$ (Prop.\,1 check) & \texttt{compute\_b1\_spaceA.py} v3 & \texttt{8f6a15a} & NAO \\
+$N_\text{via}/A$ greedy $=58.8\%$ & \texttt{compute\_b1\_spaceA.py} v3 & \texttt{8f6a15a} & NAO \\
+$N_\text{via}/A$ optimal $=95.0\%$ & \texttt{compute\_b1\_spaceA.py} v3 & \texttt{8f6a15a} & NAO \\
+\multicolumn{4}{l}{\footnotesize Note: earlier run (commit \texttt{54195c1}) used trios of 473 candidates — invalid; reverted \texttt{ec33779}.} \\
+% --- F8 circularity (corrected run) ---
+$Q_2[\text{vec/opt, vec frontier}]=100.0\%$ (Prop.\,1 check) & \texttt{compute\_f8\_circularity.py} v2 & \texttt{43b8427} & NAO \\
+$Q_2[\text{mm/opt, vec frontier}]=94.4\%$ & \texttt{compute\_f8\_circularity.py} v2 & \texttt{43b8427} & NAO \\
+\multicolumn{4}{l}{\footnotesize Note: earlier run (commit \texttt{58b06f8}) used injection approach — double-normalisation bug; corrected in \texttt{4d0a98d}.} \\
 % --- Geometry ---
 $|F_A|=213$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
 $|F_{A'}|=181$ & fainter (sorted dominance, inline) & \texttt{9c7a376} & NAO \\
