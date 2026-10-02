@@ -1386,7 +1386,7 @@ Denoting by $r_j(a)$ the midrank of site $a$ on criterion $j$, the
 PROMETHEE~II net flow satisfies
 \begin{equation}
   \label{eq:p2identity}
-  \phi(a) = \frac{n+1}{n-1} - \frac{2}{n-1}\sum_{j=1}^m w_j\, r_j(a),
+  \phi(a) = \frac{2}{n-1}\sum_{j=1}^m w_j\, r_j(a) - \frac{n+1}{n-1},
 \end{equation}
 for any tied-value pattern.
 The ranking induced by $\phi$ is therefore identical to that of
@@ -1421,7 +1421,7 @@ two normalisations.
 \noindent\textbf{Empirical verification.}
 On the Fogo Island dataset ($n = \Nvia$, $m = 11$ criteria), the
 maximum absolute difference between $\phi(a)$ and
-$-(2/(n-1))\tilde{s}(a)$ across all sites is $6.7 \times 10^{-16}$
+$(2/(n-1))\tilde{s}(a) - (n+1)/(n-1)$ across all sites is $6.7 \times 10^{-16}$
 (machine precision), with Spearman $\rho = 1.000000$ and zero ranking
 inversions.
 
