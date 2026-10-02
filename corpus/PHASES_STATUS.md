@@ -37,7 +37,7 @@ B2 — completar cobertura da provenance.csv ("6 de 7 em A'", reprodução, \FAs
 | B2 | Completar cobertura: "6 de 7 em A'", reprodução {184,430,460}, \FAsize, \FAinter, tab:amprefset, \MechOne\*, \MismatchRatio\*, fig:pareto, fig:map | B1 | Nenhuma linha "desconhecido" em todo o ficheiro | DONE | (ver commit B2) | **Adicionadas 11 linhas.** \FAsize=213: confirmado (len(par)). \FAinter=132: hardcoded, script indisponível, marcado A_VERIFICAR. tab:amprefset: amplitude_regression.py, não contaminado. Macros removidas (\MismatchRatio*/\MechOne*): SIM contaminadas, comentadas em macros.tex. fig:pareto/fig:map: não contaminados (usam frontier A' com aspect binário). |
 | B3 | Convenção da ordenação por postos (PROMETHEE) e orientação de *perm* no código: localizar a linha, registar o sentido | — | Linha e ficheiro citados na nota; bloqueia M2, F4, F5 até estar DONE | DONE | a3556f1 | **Verificado 2026-10-01.** `amplitude_regression.py` L47: `rank(method='average')` sobre `X_adj` (benefit-aligned). **Convenção: rank 1 = melhor sítio** (X_adj mínimo = pior raw invertido = melhor para score). Fórmula φ=(n+1)/(n-1)−(2/(n-1))Σw_j r_j é decrescente em r_j: maximizar φ = minimizar r_j = preferir rank 1 = melhor sítio. **Consistente.** perm: 350 zeros → X_adj_perm=1.0 → rank máximo 214.5; amplitude=0.547. Texto do manuscrito correcto para perm. D7 (citação de eq:Arank_binary para perm) não se verifica no texto — eq:Arank_binary cita apenas aspect. |
 | B4 | Codificação de aspect usada no estudo-fonte (AzancortNeto2026): verificar se o artigo usa binário ou contínuo | — | Fonte citada (script ou artigo; página ou linha) | DONE | (ver commit B1) | **BINÁRIO (inferido).** compute_objectives com aspect BINÁRIO reproduz exactamente F1=0.0811 F2=0.5568 F3=0.6170 para {184,430,460}. Se AzancortNeto2026 usasse aspect contínuo, os valores seriam diferentes. Reprodução exacta confirma compatibilidade com binário. |
-| B5 | Nota-resumo de 1 página: o que está contaminado e decisão pela árvore (espaço A) | B1–B4 | Commit da nota em docs/ | TODO | | |
+| B5 | Nota-resumo de 1 página: o que está contaminado e decisão pela árvore (espaço A) | B1–B4 | Commit da nota em docs/ | DONE | (ver commit B5) | **docs/contamination-note.md.** Contaminado: 4 células Ncand da tab:fourthcell + 4 macros (removidas). Limpo: tab:canonical, E1, Teorema, figuras. Decisão: tab:canonical mantém-se; tab:fourthcell Ncand/* substituíveis directamente com fourthcell_consistent.csv (já disponível). |
 
 ---
 
@@ -148,6 +148,7 @@ B2 — completar cobertura da provenance.csv ("6 de 7 em A'", reprodução, \FAs
 
 | Ficheiro | Commit | Tipo | Conteúdo resumido |
 |----------|--------|------|-------------------|
+| `docs/contamination-note.md` | (ver commit B5) | Nota B5 | Resumo executivo de contaminação; árvore de decisão para espaço A; substituição directa de 4 valores na tab:fourthcell |
 | `corpus/IMPROVEMENT_PLAN.md` | 918f125 | Plano | Fases Math→I, diagnósticos D1–D16, regras de execução, árvore de decisão, métricas, riscos |
 | `corpus/PHASES_STATUS.md` | 0984b51 | Tracker | Estado por tarefa (ID, depende, critério, commit); regras de manutenção |
 | `corpus/PRESPEC_E4.md` DEV-E4-007 | b0e5c66 | Pré-registo | v1-v5 declaradas; P_E4_3 testável mas não informativo; R-V*/R-asp post hoc; greedy R-V*=97.8%; auditoria aspect |
