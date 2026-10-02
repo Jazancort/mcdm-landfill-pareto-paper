@@ -8,6 +8,7 @@ Uma tarefa só passa a `DONE` quando o critério de aceitação foi verificado e
 aponta para o commit da **implementação** (não para o commit que actualiza este ficheiro).
 
 ## Próxima tarefa
+H (revisão interna). F3 DONE.
 H (revisão interna). F3 (Q3) a correr na Athena (tmux q3f3).
 E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem. F3 (Q3) — requer nova corrida na Athena.
 
@@ -115,7 +116,7 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 |----|--------|---------|----------------------|--------|--------|-------|
 | F1 | Agregação por estrato com IC emparelhado | A4 | `aggregation_strata.py` e macros | TODO | | mc_2cube_fixed_raw.csv tem 8000 linhas — dados existem. Requer aggregation_strata.py |
 | F2 | Circularidade do min–max: §5 e Limitações | — | Parágrafos inseridos; check passa | DONE | f36f290 | "Benchmark circularity" inserido em §5 e Limitações |
-| F3 | Q3 na tab:factorial e tab:e1 | A4 | Macros geradas | TODO | | Q3 não calculado em nenhuma corrida. Requer nova corrida na Athena |
+| F3 | Q3 na tab:factorial e tab:e1 | A4 | Macros geradas | DONE | 370ba1a | **compute_q3.py corrido 2026-10-02.** SAW/mm/opt: Q3=0.000, Q2=100%. SAW/vec/opt: Q3=0.0212, Q2=25.4%. TOPSIS/vec: Q3=0.447, Q2=0%. Q3=0⟺Q2=1 verifica-se empiricamente (consistente com M1). 4 macros Qthree* adicionadas. |
 | F4 | Sinal PROMETHEE (eq. e frase verificação) | B3, M2 | Verificação numérica com sinal correcto | DONE | 90926b1 | φ=(2/(n-1))s̃−(n+1)/(n-1). Frase de verificação corrigida |
 | F5 | Intervalo perm em postos; sem eq:Arank_binary para perm | B3 | Valores pelo script; sem referência | SKIP | — | B3: texto correcto; eq:Arank_binary não citada para perm |
 | F6 | Resumo ≤ 250 palavras | G2a | texcount ≤ 250 | DONE | 68ec41b | | Aguarda G2a (reescrita do resumo) |
