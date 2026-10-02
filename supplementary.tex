@@ -119,20 +119,22 @@ placing it near the $n_{\mathrm{sparse}}=1$ regime of the grid
 ($m_{\mathrm{eff}}=3.59$).
 The comparison must be made at the grid's estimand, which is the
 greedy-assembly contrast under SAW: on Fogo that is
-$64.6-54.2=\SAWgreedyContrast$~pp, not the $\LossTabTVorder$~pp of
-Table~\ref{tab:tvorder} (which averages both assemblies) nor the
-$29.9$~pp normalisation main effect of Table~\ref{tab:effects} (which
-averages both assemblies and both aggregations, and is therefore
-inflated by the optimal-assembly cells where min--max attains $100\%$
+$86.0-66.2=19.8$~pp (min--max minus vector, greedy assembly,
+Table~\ref{tab:tvorder}), not the
+$\AggContrast$~pp normalisation main effect of Table~\ref{tab:effects}
+(which averages both assemblies and both aggregations, and is therefore
+attenuated by the optimal-assembly cells where min--max attains $100\%$
 by Proposition~\ref{prop:p1:stmt}).
 The model in $\lVert\delta\rVert_2$, fitted on the synthetic cells
 alone, predicts $22.2$~pp at Fogo's $\lVert\delta\rVert_2=0.3127$, with
 a $95\%$ prediction interval for a new instance of $[7.5,\,36.9]$~pp;
 the model in $\mathrm{TV}$ predicts $14.0$~pp with interval
 $[-4.7,\,32.7]$~pp.
-Both intervals contain the observed $\SAWgreedyContrast$~pp, and both point
-predictions exceed it, by $11.8$ and $3.6$~pp respectively.
-We do not read the excess as a calibrated bias in either direction.
+Both prediction intervals contain the observed $19.8$~pp.
+The $\lVert\delta\rVert_2$ point prediction exceeds the observed value
+by $22.2-19.8=2.4$~pp; the TV-based prediction falls $5.8$~pp short
+($14.0-19.8=-5.8$~pp).
+We do not read the residuals as a calibrated bias in either direction.
 The grid varies the marginals while holding the spatial structure fixed,
 and its vector cells confound implicit re-weighting with
 score--evaluator divergence because the objectives remain defined on

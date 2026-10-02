@@ -294,7 +294,7 @@ Our contributions are as follows.
     function and rank-weighted SAW, holding for arbitrary tie structure
     (Section~\ref{prop:p2}), which follows from the axiomatic results
     of \citet{Bouyssou1992} and \citet{Marchant1996} and which isolates
-    normalisation as the sole source of the divergence observed in
+    the tie structure as the sole source of the divergence observed in
     practice.
 \end{enumerate}
 
@@ -1358,11 +1358,15 @@ The three families instantiate $\alpha$ as follows.
     numerical values, so any strictly monotone transformation of the
     normalised column leaves $\phi$ unchanged.
     All three normalisations therefore produce the same ranking, and
-    $w_j^{\mathrm{eff}} = w_j$ for any normalisation.
+    $w_j^{\mathrm{eff}} = w_j$ for any normalisation \emph{when there
+    are no ties on criterion~$j$}: ties contract the net flow
+    $\phi_i = \sum_k P_j(c_{ij}-c_{kj}) - P_j(c_{kj}-c_{ij})$ without
+    changing the preference function, so the effective weight of a
+    criterion with many ties is lower than $w_j$.
     The formula~\eqref{eq:weff_alpha} with a single exponent $\alpha$
     does not apply here, because the amplitude $A_j$ does not enter
     the score; the normalised weights $w_j / \sum_k w_k$ are always
-    operative.
+    operative in the tie-free case.
     The six PROMETHEE cells collapse to two (greedy and optimal),
     removing four from the design.
 \end{itemize}
@@ -2038,8 +2042,8 @@ replacing the continuous encoding with the binary one in the score
 (cell R-V*, same normalisation constants) recovers $Q_2=100\%$;
 replacing only the aspect column in the 389-site score
 (cell R-asp) reproduces $24\%$, accounting for $76$~pp through coding
-alone, with a further $4$~pp attributable to the 473-site constants
-(paired bootstrap confidence interval includes zero at $95\%$).
+alone; a further $4$--$6$~pp is attributable to the 473-site normalisation
+constants (R-asp$-$R-V, bootstrap CI excludes zero; total loss $\approx80$~pp).
 
 This is a pipeline inconsistency, not an inherent property of
 normalising over inadmissible sites.
@@ -2285,8 +2289,8 @@ theorem's premise does not hold for that criterion.
 This is a pipeline inconsistency, not a property of the method: with
 consistent encoding, normalising over the $\Ncand$-site set costs nothing
 under optimal assembly (Table~\ref{tab:fourthcell}).
-Post hoc decomposition attributes the original $76$~pp loss to the
-coding inconsistency alone and a further $4$~pp to the normalisation
+Post hoc decomposition attributes $76$~pp of the original ${\approx}80$~pp loss to the
+coding inconsistency and the remaining $4$--$6$~pp to the normalisation
 constants (R-asp$-$R-V: $+4.0$~pp optimal, $+5.6$~pp greedy,
 both $95\%$ bootstrap CIs exclude zero; \textbf{Effect}).
 With a consistent encoding, normalising over inadmissible alternatives
@@ -2419,7 +2423,7 @@ With the usual preference function the relations are crisp by
 construction, so the identity is implied.
 We restate it to fix the affine constants, to record that it holds
 exactly under arbitrary tie structure, and chiefly because it isolates
-normalisation as the sole source of empirical divergence: in our data
+the tie structure as the sole source of empirical divergence: in our data
 the entire departure of the implemented rank score from the net flow is
 attributable to the tie structure inherited by the midranks, not to the
 aggregation operator.
@@ -2439,7 +2443,9 @@ Screening criteria applied after normalisation leave the value scale
 calibrated on alternatives that are unavailable; but more consequentially,
 a criterion encoded differently in the score and the objectives can
 collapse Pareto efficiency entirely even when the reference sets agree.
-Normalising over the admissible set is a useful default, but it does not
+Normalising over the admissible set is the semantically correct default
+(the reference set defines what ``best'' and ``worst'' mean for the
+decision at hand), but it does not
 protect against inconsistent criterion encodings.
 
 Second, verify that the score's amplitudes, measured in the units of the
@@ -2496,7 +2502,8 @@ VIKOR is invariant to per-criterion affine transformation by its ratio
 construction, so the choice of normalisation within the affine family
 (min--max, vector, sum) is irrelevant for VIKOR; effective weights
 equal elicited weights regardless of $A_j$.
-The recommendations to prefer min--max and to report TV therefore apply
+The recommendations to use a normalisation that matches the value model
+and to report TV therefore apply
 to additive and distance-based aggregation, not to compromise-programming
 methods with ratio normalisation.
 
