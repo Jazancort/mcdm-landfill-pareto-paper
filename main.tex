@@ -2573,15 +2573,15 @@ $2.88\times$, and the joint distribution of
 $(\mathrm{TV}_B,\mathrm{TV}_W)$ in applied decision matrices is unknown;
 establishing it would require a corpus of published matrices.
 Experiment~E5 (Supplementary Material) stress-tested the mechanism on
-405 synthetic instances varying instance size ($N\in\{50,100,200\}$),
-spatial geometry and amplitude structure.
-All instances confirmed the optimality invariant ($Q_2^{\mathrm{mm\,opt}}=100\%$),
-but $\mathrm{TV}_W$ alone explained little of the greedy loss across instances
-($r=0.034$); spatial geometry and $N$ were stronger moderators.
-Fogo's $Q_2$ greedy of $66\%$ at $\mathrm{TV}_W\approx0.032$ lies $32$~pp
-below the synthetic mean at the same $\mathrm{TV}_W$, suggesting that
-instance-specific features of Fogo (binary criterion structure, island
-geometry) drive the magnitude beyond what $\mathrm{TV}_W$ alone predicts.
+405 synthetic instances varying $N\in\{50,100,200\}$,
+spatial geometry and an imposed amplitude spread parameter $s_W\in[0,1]$
+(not derived from any normalisation; $\mathrm{TV}_W(\mathrm{mm})=0$
+by construction since all $A_j=1$ within each group under min--max).
+All instances confirmed the optimality invariant ($Q_2^{\mathrm{mm\,opt}}=100\%$);
+the imposed spread $s_W$ explains little of the greedy loss ($r=0.034$),
+with geometry and $N$ as dominant moderators.
+Fogo's min--max greedy efficiency ($86\%$, Table~\ref{tab:tvorder})
+falls within the synthetic distribution for comparable instance sizes.
 
 \emph{Weight perturbation model.}
 Dirichlet perturbation around $\wahp$ represents symmetric uncertainty in
@@ -2636,14 +2636,17 @@ distortion alone costs nothing and that within-group distortion carries
 most of the loss, and falsified our prediction that the two components
 would not interact.
 A synthetic grid of 405 instances varying $N$, spatial geometry and
-amplitude structure (Experiment~E5) confirmed that optimal assembly
-reaches $100\%$ on every instance (Proposition~\ref{prop:p1:stmt}), but
-found that $\mathrm{TV}_W$ alone explains little of the greedy loss across
-synthetic instances ($r=0.034$): spatial geometry and instance size
-are the dominant moderators in the synthetic setting, and Fogo lies
-well below the synthetic trend at the same $\mathrm{TV}_W$.
-The Fogo magnitudes are therefore instance-specific; the mechanism
-is general.
+imposed amplitude spread (Experiment~E5, Supplementary Material) confirmed
+that optimal assembly reaches $100\%$ on every instance
+(Proposition~\ref{prop:p1:stmt}).
+Under greedy assembly, the imposed amplitude spread parameter $s_W$
+(which sets the within-group heterogeneity of the amplitude vector used
+for both score and objectives) shows near-zero correlation with the
+greedy loss across synthetic instances ($r=0.034$): spatial geometry and
+instance size are the dominant moderators, and Fogo's greedy efficiency
+of $86\%$ under min--max lies $13$~pp above the synthetic mean for
+$N=50$ clustered instances at the same spread level.
+The Fogo magnitudes are therefore instance-specific; the mechanism is general.
 
 Two consequences bear directly on practice.
 Integer programming on top of a ranking pays only when the normalisation
