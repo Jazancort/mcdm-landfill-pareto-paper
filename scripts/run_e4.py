@@ -301,18 +301,21 @@ def main():
         return X_adj_dm * A_j_arr
 
     X_cells = {
-        "R-M":  make_Xcell_fwd(np.ones(M)),          # A_j=1 => saw/minmax (100%)
-        "R-B":  make_Xcell_fwd(rbar_g_vec),           # A_j=rbar_g (P_E4_1: 100%)
-        "R-W":  make_Xcell_fwd(r_vec / rbar_g_vec),   # within-group deviation
-        "R-V":  Xadj473,                              # exact 473/A' (~20%)
-        "R-M'": X_adj_dm,                             # saw/minmax (100%)
-        "R-B'": make_Xcell_rev(1.0 / rbar_g_vec),     # A_j=1/rbar_g
-        "R-W'": make_Xcell_rev(rbar_g_vec / r_vec),   # within-group deviation rev
-        "R-V'": make_Xcell_rev(1.0 / r_vec),          # exact 389/A (~95%)
+        "R-M":  X_adj_dm,                                     # saw/minmax (100%)
+        "R-B":  X_adj_dm * rbar_g_vec,                        # group-constant (P_E4_1)
+        "R-W":  X_adj_dm * (r_vec / rbar_g_vec),              # within-group only
+        "R-V":  Xadj473,                                      # exact 473/A' (~20%)
+        "R-M'": X_adj_dm,                                     # saw/minmax (100%)
+        "R-B'": X_adj_dm * (1.0 / rbar_g_vec),               # A_j=1/rbar_g
+        "R-W'": X_adj_dm * (rbar_g_vec / r_vec),              # within-group rev
+        "R-V'": X_adj_dm * (1.0 / r_vec),                    # exact 389/A (~95%)
     }
     fwd_cells = ["R-M", "R-B", "R-W", "R-V"]
     rev_cells = ["R-M'", "R-B'", "R-W'", "R-V'"]
 
+    # ── 5. Monte Carlo ────────────────────────────────────────────────────────
+    print("\n[5] Monte Carlo")
+    records = []
 
     for kappa in [KAPPA_PRI, KAPPA_SEC]:
         if kappa == KAPPA_PRI:
