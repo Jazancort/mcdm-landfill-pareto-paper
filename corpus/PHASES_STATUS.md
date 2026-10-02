@@ -306,3 +306,24 @@ Os valores coincidem com os que estavam na tabela original — confirmando que a
 **Regra para o futuro:** qualquer alteração a um valor esperado de regressão no `check_consistency.py` exige uma entrada neste ficheiro com git hash e justificação.
 
 ---
+
+
+## Task F8 — diagnóstico circularidade vec/vec (2026-10-02)
+
+**Problema:** `compute_f8_circularity.py` reportou vec/opt = 89.4% (SE=1.4).
+Pela Proposição 1, com score em normalização vectorial e objectivos construídos
+na mesma normalização vectorial, a diagonal deve ser 100%.
+O 89.4% indica desalinhamento entre score_vec e C_obj_vec em pelo menos uma coluna.
+
+**Causa suspeita (Opus):** ordem das operações complement/normalise.
+- Objectivos: `c_j = 1 − x̂` (complement precede normalização)
+- Decisão matrix: normaliza `x` e depois complementa
+- Sob normalização vectorial, as duas ordens produzem colunas diferentes (Corolário 2)
+
+**Diagnóstico a fazer:** verificar `r(score_vec[:,j], C_obj_vec[:,j])` para cada coluna j.
+Qualquer coluna com `r < 1 - 1e-12` indica desalinhamento.
+
+**Critério de aceitação:** vec/vec optimal = 100% (REGRESSION). Script deve abortar com
+`sys.exit(1)` se falhar.
+
+---
