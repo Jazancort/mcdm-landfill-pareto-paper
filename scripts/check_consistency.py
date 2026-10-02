@@ -212,9 +212,10 @@ TAB_4TH = {
 # Changing an expected value here without a PHASES_STATUS.md "Decision record"
 # entry (with git hash, justification, and reviewer sign-off) is PROHIBITED.
 REGRESSION_DIAGONALS = [
-    ("4th [REGRESSION] Ncand/A  optimal = 100.0 (Prop1)",  TAB_4TH["NcandA_optimal"],  100.0),
-    ("4th [REGRESSION] Ncand/A' optimal = 100.0 (Prop1)",  TAB_4TH["NcandAp_optimal"], 100.0),
-    ("4th [REGRESSION] Nvia/A'  optimal = 100.0 (Prop1)",  TAB_4TH["NviaAp_optimal"],  100.0),
+    ("4th [REGRESSION] Ncand/A  optimal = 100.0 (Prop1, diagonal A473)",  TAB_4TH["NcandA_optimal"],  100.0),
+    ("4th [REGRESSION] Nvia/A'  optimal = 100.0 (Prop1, diagonal A'389)", TAB_4TH["NviaAp_optimal"],  100.0),
+    # NOTE: Ncand/A' (473 score, 389 evaluator) is OFF-diagonal — not a theorem.
+    # 100.0% is empirical for this instance. Do NOT add as regression invariant.
 ]
 regression_failed = False
 for name, computed, expected in REGRESSION_DIAGONALS:

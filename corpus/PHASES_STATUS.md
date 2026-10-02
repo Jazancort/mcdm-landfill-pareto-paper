@@ -327,3 +327,57 @@ Qualquer coluna com `r < 1 - 1e-12` indica desalinhamento.
 `sys.exit(1)` se falhar.
 
 ---
+
+
+## Decision record — 2026-10-02 (GPT/Gemini re-analysis)
+
+### Problemas confirmados que ainda não estão resolvidos
+
+**P1 — B1: erro de estimando (não apenas implementação)**
+
+O check `473/A' optimal = 100%` que mantive como regressão é **empiricamente correcto
+para esta instância** mas **não é um teorema**. As duas diagonais teóricas genuínas são:
+- A473 score + A473 evaluator → 100% (Prop1)
+- A'389 score + A'389 evaluator → 100% (Prop1)
+
+A célula `473/A'` é off-diagonal: score com constantes de 473, avaliador com constantes
+de 389. Que dê 100% é resultado empírico desta instância, não invariante matemática.
+**Acção:** remover do REGRESSION_GUARD a asserção `473/A' optimal = 100%`; manter
+apenas `Nvia/A' = 100%` e `Ncand/A = 100%` (as diagonais genuínas).
+
+**P2 — R1-6: bootstrap pareado não foi recalculado dos draws**
+
+O que fiz: obtive marginais (R-asp opt=24.0, R-V opt=20.0, R-asp grd=25.2, R-V grd=19.6)
+e deduzi CIs por draws. Mas CIs pareados não derivam de marginais — precisam de
+alinhamento por draw ID. O `bootstrap_paired.csv` tem `R-asp vs R-V opt = +4.0 [+2.2,+6.0]`
+e `grd = +5.6 [+3.6,+7.8]`. PORÉM: o GPT identificou que "+4.0 greedy" não coincide com
+os marginais (25.2−19.6=5.6, não 4.0). O bootstrap foi calculado na corrida correcta ou
+foi copy-paste de outra? **Acção:** verificar `bootstrap_paired.csv` vs `draws_fourthcell.npz`.
+
+**P5 — Prop.2 PROMETHEE: correcção anterior imprecisa**
+
+A minha adição "ties contract flows" está incorrecta se score e PROMETHEE usam os mesmos
+midranks e pesos — nesse caso a equivalência afim mantém-se com empates. A divergência
+vem da escala dos ranks, não dos empates em si. **Acção:** reverter a adição de "ties
+contract flows" e reformular com precisão.
+
+**P6 — gap=0 iff Pareto é falso**
+
+Contraexemplo confirmado por Gemini: t=(1,1,0), u=(0,1,0), v=(2,2,1) com F1,F2 min e F3 max.
+u domina t (F1 estrito), mas gap(t)=0 porque o operador min anula a folga positiva quando
+há empate noutros critérios. **Acção:** adicionar nota nas Limitações; não alterar definição
+do gap (é medida de gravidade, não de detecção de dominância — Q2 já usa dominância directa).
+
+**P7 — AggContrast = +0.5 pp: aritmética confirmada por Gemini**
+
+Média dos 4 estratos = (+(-8.4)+3.4+2.8+4.4)/4 = 2.2/4 = 0.55 ≈ 0.6 pp. OK.
+O IC [-0.8,+1.8] e p=0.003 são do bootstrap pareado — rastreáveis ao `bootstrap_paired.csv`
+ou ao script `analyze_r1.py`. Não foram recalculados nesta sessão — verificar proveniência.
+
+### O que NÃO fazer antes de verificar P2 e P5
+
+- Não submeter para revisão externa
+- Não declarar checklist completo
+- Não alterar valores esperados do check sem resolver P1 (REGRESSION_GUARD)
+
+---

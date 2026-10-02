@@ -691,7 +691,11 @@ With $R_\ell = \max_{t\in\Tset}F_\ell - \min_{t\in\Tset}F_\ell$,
     \frac{F_3(t'){-}F_3(t)}{R_3}
   \right)^{\!+},
 \end{equation}
-where $(x)^{+}=\max(0,x)$, so $\mathrm{gap}(t)=0$ iff $t\in\Fset$.
+where $(x)^{+}=\max(0,x)$, so $\mathrm{gap}(t)=0$ if $t\in\Fset$.
+The converse holds when the dominator $t'$ improves strictly on all
+three objectives; if $t'$ dominates $t$ with equality on some criteria
+the $\min$ operator returns zero and gap may fail to detect the
+dominance (see Limitations).
 The three signed differences measure by how much $t$ is dominated in
 each objective in its own sense: the first two are positive when $t$
 incurs higher cost or impact than $t'$, and the third is positive when
@@ -905,7 +909,9 @@ The \emph{secondary} measure is
 the expected optimality gap~\eqref{eq:gap}, which is continuous on
 $[0,1]$ and retains information about how far below the frontier the
 assembled portfolio falls.
-$Q_3=0$ if and only if $Q_2=1$.
+$Q_3=0$ if $Q_2=1$; the converse holds when all dominations are strict
+(gap may be zero for weakly dominated portfolios; $Q_2$ uses the full
+dominance algorithm and is the primary measure).
 Both are averaged over $\ndraws$ draws per cell.
 The cell SAW/min--max/optimal satisfies $Q_2=1$ and $Q_3=0$ by
 Proposition~\ref{prop:p1:stmt}; it serves as a regression test and is
@@ -1358,15 +1364,16 @@ The three families instantiate $\alpha$ as follows.
     numerical values, so any strictly monotone transformation of the
     normalised column leaves $\phi$ unchanged.
     All three normalisations therefore produce the same ranking, and
-    $w_j^{\mathrm{eff}} = w_j$ for any normalisation \emph{when there
-    are no ties on criterion~$j$}: ties contract the net flow
-    $\phi_i = \sum_k P_j(c_{ij}-c_{kj}) - P_j(c_{kj}-c_{ij})$ without
-    changing the preference function, so the effective weight of a
-    criterion with many ties is lower than $w_j$.
+    $w_j^{\mathrm{eff}} = w_j$ for any normalisation, including in the
+    presence of ties: when ties are broken by midranks the resulting
+    net flow is an affine function of the midrank vector, and any
+    positive affine rescaling of the ranks (such as dividing by $N+1$)
+    changes the intercept and scale of $\phi$ but not the ranking of
+    sites or portfolios.
     The formula~\eqref{eq:weff_alpha} with a single exponent $\alpha$
     does not apply here, because the amplitude $A_j$ does not enter
     the score; the normalised weights $w_j / \sum_k w_k$ are always
-    operative in the tie-free case.
+    operative.
     The six PROMETHEE cells collapse to two (greedy and optimal),
     removing four from the design.
 \end{itemize}
@@ -2564,6 +2571,15 @@ relative weights.
 For structured disagreement among stakeholders,
 SMAA-style weight-space analysis \citep{Lahdelma2002} would be
 appropriate.
+
+\emph{Gap measure and weak dominance.}
+The shortfall $\mathrm{gap}(t)$ in~\eqref{eq:gap} takes the minimum
+over strictly signed differences; if a dominator improves on $t$ in
+only one or two objectives (with equality on the rest), the minimum
+is zero and the gap does not detect the dominance.
+$Q_2$, computed from the full Pareto dominance algorithm, is therefore
+the primary efficiency measure; $Q_3$ is a complementary severity
+indicator, not an equivalent restatement of $Q_2$.
 
 \emph{Regulatory grounding.}
 The exclusion of the $\Nexcl$ overlapping sites is treated as a
