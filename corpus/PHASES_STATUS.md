@@ -167,7 +167,7 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 
 | ID | Tarefa | Depende | Critério de aceitação | Estado | Commit | Notas |
 |----|--------|---------|----------------------|--------|--------|-------|
-| I0 | Inspeccionar corpus_amplitudes.csv e corpus_mc_results.csv | — | Nota em Notas | TODO | | Pode correr em paralelo com G |
+| I0 | Inspeccionar corpus_amplitudes.csv e corpus_mc_results.csv | — | Nota em Notas | DONE | (próximo commit) | **corpus_amplitudes.csv**: 7 fontes × 3 normas = 21 linhas. TV=0 para mm (correcto). TV_vec range [0.030, 0.320]. ident_ok=True todas. **corpus_mc_results.csv**: 3 fontes activas (milani2005 m=9 n=5, vafaei2018 m=16 n=3, junaid2024 m=9 n=14). Q2=100% para TODAS as células (9 linhas). **H1 Q2(mm)≥Q2(vec): trivialmente satisfeita** — 100%=100% em todas as 3 fontes activas: resultado não discriminante com estas instâncias. **O que falta para I1:** (a) activar as 4 fontes inactivas (vafaei2022, chen2020, bhaskar2023_asn/agr) — sem grupos obj definidos; (b) instâncias com Q2<100% sob vec normalisation; (c) PRESPEC_I1 antes de qualquer corrida. **Viabilidade I1:** scripts existem e passam no teste de regressão Fogo. A infra-estrutura está pronta; falta instâncias discriminantes e pré-registo. |
 | I1 | Corpus de matrizes publicadas, com PRESPEC_I1 | I0, A1 | Secção nova | TODO | | |
 | I2 | Instâncias sintéticas, com PRESPEC_I2 | A1 | Idem | TODO | | |
 | H4 | provenance.csv final = estado do PDF | A5 | \FAinter=132 confirmado 2026-10-02 | DONE | (inline) | **\FAinter=132 CONFIRMADO**: |F_A|=213, |F_Ap|=181, intersecção=132. provenance.csv actualizado: 28 linhas, 0 A_VERIFICAR, 0 VERIFICANDO. H4 DONE. Fase H COMPLETA. |
@@ -193,5 +193,5 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 
 | ID tarefa | Motivo | Desde |
 |-----------|--------|-------|
-| \FAinter=132 | Script que calcula interseção F_A ∩ F_A' indisponível | 2026-10-02 |
-| F1, F3 | F1: requer aggregation_strata.py (dados existem). F3: requer nova corrida Athena para Q3 | 2026-10-02 |
+| \FAinter=132 | RESOLVIDO 2026-10-02 — confirmado via sorted dominance inline (9c7a376) | 2026-10-02 |
+| F1, F3 | RESOLVIDO — F1: aggregation_strata.py (18361a6); F3: compute_q3.py (7c2e742) | 2026-10-02 |
