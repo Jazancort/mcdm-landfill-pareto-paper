@@ -1,0 +1,20 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{booktabs,amsmath,amssymb,longtable,array,xcolor,microtype}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+% ── Cross-references to main.tex ──────────────────────────────────────────
+% Build order: xelatex main → xelatex suppl_wrapper → xelatex suppl_wrapper
+% The first pass reads main.aux (produced by main compilation).
+% If main.aux is absent, refs will show ?? on first pass only.
+\usepackage{xr}
+\externaldocument{main}   % reads main.aux from the same build directory
+\usepackage{hyperref}
+% ─────────────────────────────────────────────────────────────────────────
+\input{macros}
+\begin{document}
+\title{Supplementary Material}
+\maketitle
+\tableofcontents
+\newpage
+\input{supplementary}
+\end{document}

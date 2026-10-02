@@ -783,7 +783,7 @@ Slope aspect is circular and non-monotone; following \citet{AzancortNeto2026}, i
 enters as an indicator: $c=1$ if aspect $\in[90^\circ,180^\circ]$ (leeward,
 the favourable class for reducing environmental impact) and $c=0$ otherwise,
 yielding $n_1=94$ positives among the $\Nvia$ admissible sites.
-This binarisation matters for Section~\ref{prop:p3}
+This binarisation matters for Sections~\ref{sec:three_norms} and~\ref{sec:order_ops}
 and is recorded explicitly in Table~\ref{tab:amplitude}.
 
 \subsection{Criterion weights}
@@ -985,9 +985,10 @@ We rebuilt the Pareto frontier using vector-normalised objectives
 (replacing min--max group objectives with their vector-normalised
 counterparts) and repeated all four SAW cells.
 Under optimal assembly, SAW with vector normalisation attained
-$Q_2=\FEightVecOptQ\%$ against the vector frontier, confirming
-Proposition~\ref{prop:p1} exactly: when score and benchmark share the
-same normalisation, optimal assembly is fully non-dominated.
+$Q_2=\FEightVecOptQ\%$ against the vector frontier, as required by
+Proposition~\ref{prop:p1:stmt} when score and benchmark share the same
+normalisation; this is a regression check
+(Remark~\ref{rem:definitional}), not evidence.
 SAW with min--max normalisation attained only $\FEightMMOptQ\%$
 ($\mathrm{SE}=\FEightMMOptSE$~pp), a drop of ${\approx}5.6$~pp.
 Under greedy assembly the pattern was similar:
@@ -997,9 +998,9 @@ First, the direction of the advantage reverses relative to the main
 factorial: vector normalisation now dominates, confirming that the
 original result reflects score--objective alignment rather than an
 intrinsic property of min--max.
-Second, the $100\%$ attainment under vec/opt is exactly the value
-predicted by Proposition~\ref{prop:p1}, providing a direct
-falsifiability check on the implementation.
+Second, the $100\%$ attainment under vec/opt is the value
+Proposition~\ref{prop:p1:stmt} requires, and so checks the
+implementation of the rebuilt frontier.
 The practical implication: the normalisation of the score should
 coincide with the normalisation implicit in the value model's
 objective functions.
@@ -1076,6 +1077,9 @@ First, VIKOR is invariant to per-criterion affine transformation,
 because both scale and shift cancel in its ratio form; min--max and
 vector normalisation are both affine, so the VIKOR$\times$vector cell
 is identical to VIKOR$\times$min--max and is excluded from the design.
+Second, TOPSIS inherits the amplitude at a higher exponent, so
+min--max is not amplitude-neutral for it
+(Corollary~\ref{cor:mm_not_neutral}).
 
 \subsection{Amplitude under the three standard normalisations}
 \label{sec:three_norms}
@@ -1465,12 +1469,12 @@ By \eqref{eq:Arank_binary}, the effective weight of
 The exact identity~\eqref{eq:p2identity} continues to hold (verified
 below at $6.7\times10^{-16}$): dividing all midranks by the same
 constant $N+1$ is a common scale factor, and TV is invariant to common
-rescaling (\eqref{eq:TV_results}).
+rescaling (Eq.~\eqref{eq:TV}).
 The source of the distortion is the tie structure, not the rescaling:
 the $350$ tied zeros compress \texttt{perm}'s column regardless of
 whether the final divisor is $N+1$, $N$, or any other constant.
 This is the rank-space counterpart of the vector-normalisation
-distortion of Section~\ref{sec:three_norms}(ii), with the notable
+distortion of Section~\ref{sec:three_norms}, item~2, with the notable
 difference that \texttt{perm} is \emph{deflated} ($\times 0.616$) in
 rank space but \emph{inflated} ($\times 2.88$) in vector space: the
 same heavy-zero distribution distorts in opposite directions under the
@@ -1490,7 +1494,7 @@ inversions.
 \label{prop:p3}
 Under vector normalisation, $v_j(a) = x_j(a) / \lVert\mathbf{x}_j\rVert_2$.
 The amplitude is $A_j = \rho_j$ as defined in
-Section~\ref{sec:amp_identity}, and by~\eqref{eq:weff}
+Section~\ref{sec:amplitude}, and by~\eqref{eq:weff}
 \begin{equation}
   \label{eq:weff_vec}
   w_j^{\mathrm{eff}} = \frac{w_j\,\rho_j}{\sum_k w_k\,\rho_k},
@@ -2419,9 +2423,10 @@ The three aggregation families therefore span the full range of exposure
 to the distortion: immunity (VIKOR), linear amplification (SAW), and
 quadratic amplification (TOPSIS).
 Three observations previously treated separately become corollaries of
-one identity: Section~\ref{prop:p3}, the rank-space contraction of
-Section~\ref{sec:three_norms}, and the amplitude loss
-of~\eqref{eq:refsetA}.
+one identity: the vector-normalisation distortion
+(Section~\ref{sec:three_norms}), the rank-space contraction
+(Eq.~\eqref{eq:Arank_binary}), and the reference-set amplitude loss
+(Eq.~\eqref{eq:refsetA}).
 
 The second difference is evidential.
 Existing comparisons measure the consequence of a normalisation choice by
@@ -2552,9 +2557,10 @@ The benchmark is therefore internal to the model class: it measures
 departure from min--max normalisation rather than departure from a
 model-free optimum.
 Experiment~F8 partially addresses this: rebuilding the frontier with
-vector-normalised objectives reversed the advantage (SAW/vec/opt reached
-$\FEightVecOptQ\%$, exactly the $100\%$ predicted by
-Proposition~\ref{prop:p1}; SAW/mm/opt reached $\FEightMMOptQ\%$),
+vector-normalised objectives reversed the advantage
+(SAW/vec/opt reached $\FEightVecOptQ\%$, as
+Proposition~\ref{prop:p1:stmt} requires;
+SAW/mm/opt reached $\FEightMMOptQ\%$),
 confirming that the result reflects score--objective alignment rather
 than an intrinsic property of min--max normalisation.
 A method that scores well on $Q_2$ may still select a portfolio that

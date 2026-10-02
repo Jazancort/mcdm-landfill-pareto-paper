@@ -562,6 +562,35 @@ else:
         FAIL.append("A7: pdftotext timed out")
         print("  [FAIL] A7: pdftotext timed out")
 
+# ── A8: Supplementary PDF integrity ─────────────────────────────────────────
+print()
+print("=== A8: Supplementary PDF integrity (pdftotext) ===")
+suppl_pdf_candidates = [
+    Path(r"C:\build\paper\suppl_wrapper.pdf"),
+    ROOT / "suppl_wrapper.pdf",
+    ROOT / "supplementary.pdf",
+]
+suppl_pdf = next((p for p in suppl_pdf_candidates if p.exists() and p.stat().st_size > 10_000), None)
+if suppl_pdf is None:
+    print("  [INFO] A8: suppl_wrapper.pdf not found — skipping (build supplementary first)")
+else:
+    try:
+        with _tmp.NamedTemporaryFile(suffix=".txt", delete=False, mode="w") as tf:
+            tmp_s = tf.name
+        _sp.run(["pdftotext", str(suppl_pdf), tmp_s], capture_output=True, timeout=60)
+        suppl_text = Path(tmp_s).read_text(encoding="utf-8", errors="replace")
+        _os.unlink(tmp_s)
+        qq_s = suppl_text.count("??")
+        if qq_s > 0:
+            FAIL.append(f"A8: '??' found {qq_s} times in supplementary PDF (unresolved refs)")
+            print(f"  [FAIL] A8: '??' in supplementary: {qq_s} occurrences")
+            for ctx in [l for l in suppl_text.splitlines() if "??" in l][:5]:
+                print(f"    context: {ctx[:100].strip()}")
+        else:
+            print(f"  [OK  ] A8: '??' in supplementary PDF: 0")
+    except Exception as _e:
+        print(f"  [INFO] A8: pdftotext error on supplementary: {_e}")
+
 print()
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")
