@@ -39,16 +39,16 @@ COST_IDX = list(range(6))   # G1+G2 = F1+F2
 BEN_IDX  = list(range(6,9)) # G3 = F3
 
 # ── Grid parameters ───────────────────────────────────────────────────────────
-N_SITES_LEVELS  = [50, 100, 200, 389]
+N_SITES_LEVELS  = [50, 100, 200]     # N=389 removed — O(n³) too slow without parallelism
 GEO_LEVELS      = ['uniform', 'clustered', 'grid']
 SB_LEVELS       = [0.0, 0.5, 1.0]
 SW_LEVELS       = [0.0, 0.25, 0.5, 0.75, 1.0]
 N_REPS          = 3
-N_DRAWS         = 200
+N_DRAWS         = 100                # 100 draws → ±3.2pp SE at Q2=50%, ~10min total
 KAPPA           = 200
 SEED_BASE       = 100
-DMIN_BASE       = 10.0   # km at N=389
-BBOX_KM         = 80.0   # bounding box (Fogo is ~80km diameter)
+DMIN_BASE       = 10.0   # km at N=389, scaled for smaller N
+BBOX_KM         = 80.0   # bounding box
 EARTH_R         = 6371.0
 
 # ── Haversine distance ─────────────────────────────────────────────────────────
@@ -210,12 +210,27 @@ total = len(N_SITES_LEVELS) * len(GEO_LEVELS) * len(SB_LEVELS) * len(SW_LEVELS) 
 done = 0
 regression_failures = []
 
-print(f"E5 grid: {total} instances, {N_DRAWS} draws each")
-print(f"ETA: ~{total * N_DRAWS * 0.003 / 60:.0f} min")
+# Resume: load existing results if any
+out = ROOT / "results" / "e5"
+out.mkdir(exist_ok=True)
+csv_path = out / "e5_grid_results.csv"
+done_keys = set()
+if csv_path.exists():
+    df_prev = pd.read_csv(csv_path)
+    results = df_prev.to_dict('records')
+    done_keys = {(r['N'], r['geometry'], r['s_B'], r['s_W'], r['rep']) for r in results}
+    print(f"Resuming: {len(results)} instances already done")
+
+print(f"E5 grid: {total} instances total, {N_DRAWS} draws each")
+print(f"Remaining: {total - len(results)} instances")
 
 for N_s, geo, s_B, s_W, rep in iproduct(N_SITES_LEVELS, GEO_LEVELS, SB_LEVELS, SW_LEVELS, range(N_REPS)):
     seed = SEED_BASE + done * 7
     done += 1
+
+    # Skip if already done (resume)
+    if (N_s, geo, s_B, s_W, rep) in done_keys:
+        continue
 
     # d_min scaled proportionally to site density
     d_min = DMIN_BASE * np.sqrt(389 / N_s)
@@ -327,18 +342,20 @@ for N_s, geo, s_B, s_W, rep in iproduct(N_SITES_LEVELS, GEO_LEVELS, SB_LEVELS, S
         'seed': seed,
     })
 
-    if done % 30 == 0:
+    n_done = len(results)
+    if n_done % 10 == 0:
+        # Incremental save every 10 instances
+        pd.DataFrame(results).to_csv(csv_path, index=False)
         elapsed = time.time() - t0
-        eta = elapsed / done * (total - done)
-        print(f"  [{done}/{total}] N={N_s} geo={geo} s_B={s_B:.2f} s_W={s_W:.2f} rep={rep} "
-              f"Q2_opt={Q2_opt:.0f}% Q2_grd={Q2_grd:.0f}% TV_W={TV_W:.4f} eta={eta:.0f}s",
-              flush=True)
+        remaining = total - n_done - len(done_keys)
+        eta = elapsed / max(n_done, 1) * remaining if remaining > 0 else 0
+        print(f"  [{n_done}/{total}] N={N_s} geo={geo} s_B={s_B:.2f} s_W={s_W:.2f} "
+              f"Q2_opt={Q2_opt:.0f}% Q2_grd={Q2_grd:.0f}% TV_W={TV_W:.4f} "
+              f"eta={eta:.0f}s", flush=True)
 
 # ── Save results ──────────────────────────────────────────────────────────────
-out = ROOT / "results" / "e5"
-out.mkdir(exist_ok=True)
 df = pd.DataFrame(results)
-df.to_csv(out / "e5_grid_results.csv", index=False)
+df.to_csv(csv_path, index=False)
 
 print(f"\n=== E5 RESULTS ===")
 print(f"Total instances: {len(results)}")
