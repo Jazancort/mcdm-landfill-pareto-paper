@@ -976,6 +976,30 @@ We report this as the natural estimand for the research question
 (how much does the normalisation choice matter within the model class?)
 and note it in the Limitations.
 
+A targeted experiment (F8) addresses this directly.
+We rebuilt the Pareto frontier using vector-normalised objectives
+(replacing min--max group objectives with their vector-normalised
+counterparts) and repeated all four SAW cells.
+Under optimal assembly, SAW with vector normalisation attained
+$Q_2=\FEightVecOptQ\%$ ($\mathrm{SE}=\FEightVecOptSE$~pp) against
+the vector frontier, while SAW with min--max normalisation attained
+only $\FEightMMOptQ\%$ ($\mathrm{SE}=\FEightMMOptSE$~pp) — a drop of
+$\approx83$~pp.
+Under greedy assembly the pattern was similar:
+$\FEightVecGrdQ\%$ versus $\FEightMMGrdQ\%$.
+Two observations follow.
+First, the direction of the advantage reverses: vector normalisation now
+dominates, confirming that the original result reflects score--objective
+alignment rather than an intrinsic property of min--max.
+Second, vector/optimal does not attain $100\%$ ($\FEightVecOptQ\%$
+rather than the predicted $100\%$): the vector objectives differ from
+the original objectives not by a common scale but by criterion-specific
+scales, so Theorem~\ref{thm:groupconst} does not guarantee
+group-constant amplitudes under vector normalisation.
+The practical implication: the normalisation of the score should
+coincide with the normalisation implicit in the value model's
+objective functions.
+
 
 
 
@@ -2482,6 +2506,13 @@ model that the methods under evaluation optimise.
 The benchmark is therefore internal to the model class: it measures
 departure from min--max normalisation rather than departure from a
 model-free optimum.
+Experiment~F8 partially addresses this: rebuilding the frontier with
+vector-normalised objectives reversed the advantage (SAW/vec/opt reached
+$\FEightVecOptQ\%$; SAW/mm/opt reached $\FEightMMOptQ\%$), confirming
+that the result reflects score--objective alignment.
+SAW/vec/opt did not attain $100\%$ ($\FEightVecOptQ\%$), consistent
+with criterion-specific amplitude heterogeneity under vector
+normalisation.
 A method that scores well on $Q_2$ may still select a portfolio that
 would be suboptimal under a different value model.
 

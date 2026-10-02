@@ -251,3 +251,32 @@ Referência completa: docs/pre-submission-checklist.md (criado 2026-10-02)
 | a501eae | 2.11a+b | 388→389 + abs não aditivo |
 | (este) | 2.2 | PROMETHEE N+1 → empates |
 
+
+---
+
+## F8 — Experiência de circularidade (2026-10-02)
+
+| Campo | Valor |
+|-------|-------|
+| Script | scripts/compute_f8_circularity.py (7 versões, commit 84b8285→final) |
+| Tempo | 1594.5s Athena |
+| Output | results/f8/f8_circularity.csv |
+| Análise | docs/f8-analysis.md |
+
+### Resultados
+
+| score_norm | assembly | Q2 (%) | SE |
+|-----------|----------|--------|----|
+| vec | optimal | 89.4 | 1.4 |
+| mm | optimal | 6.0 | 1.1 |
+| vec | greedy | 98.4 | 0.6 |
+| mm | greedy | 35.2 | 2.1 |
+
+### Análise resumida
+
+1. vec/opt ≠ 100% (89.4%) — consistente com Teorema: vec tem amplitudes heterogéneas dentro de grupos, logo não garante 100%.
+2. Inversão da direcção confirmada: mm/opt = 100% com fronteira mm; mm/opt = 6% com fronteira vec.
+3. Mensagem central muda de "min-max é melhor" para "score-obj alignment matters" — não circular.
+4. §5.4 e Limitações actualizados com resultado F8.
+
+**Estado:** DONE
