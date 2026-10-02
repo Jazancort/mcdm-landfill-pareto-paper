@@ -97,44 +97,31 @@
 \begin{abstract}
 Multi-site facility siting is a portfolio problem: several locations must
 be chosen jointly, subject to a minimum separation between them.
-Practice relies on multi-criteria rankings read top-down, and the
-methodological literature compares such rankings by their agreement with
-one another, which establishes that methods differ but not that any is
-worse.
-We supply an optimality benchmark that is internal to the value model but
+Practice relies on multi-criteria rankings read top-down, but the
+methodological literature measures only rank agreement, establishing
+that methods differ without establishing that any is worse.
+We supply an optimality benchmark internal to the value model but
 external to the ranking.
 For $\Ncand$ candidate sites on Fogo Island, Cape Verde, of which
 $\Nvia$ are admissible, we enumerate all $\Ntrios$ three-site portfolios
-of admissible sites under a $\dmin$~km separation constraint
-and compute the exact Pareto frontier over siting cost, environmental
-impact and social safety.
+under a $\dmin$~km separation constraint and compute the exact Pareto
+frontier over siting cost, environmental impact and social safety.
 Crossing aggregation, normalisation and assembly, we find that
-normalisation is worth $+\NormGreedyContrast$ percentage points of Pareto
-efficiency under greedy assembly, whereas the choice between SAW and
-TOPSIS is not significant in the pooled contrast ($+\AggContrast$~pp,
-$95\%$ CI $[\AggLo,\,\AggHi]$), with the sign depending on the cell
-($\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp).
-Exact assembly has no average effect: it gains $+\AsmMM$~pp under
-min--max normalisation and loses $\AsmVec$~pp under vector
-normalisation, because it maximises exactly a score whose operative
-weights the normalisation has already moved within objective groups.
-We characterise exactly when exact assembly survives normalisation.
-In additive aggregation the effective weight of a criterion is
-proportional to $w_jA_j$, where $A_j$ is the amplitude of the normalised
-column; exact assembly is Pareto-efficient for any weights and any
-instance if and only if amplitudes are constant within each objective
-group (Theorem~\ref{thm:groupconst}), so distortion between groups only
-relocates the choice along the frontier.
-A pre-registered intervention on Fogo confirms this: between-group
-distortion alone costs nothing, while within-group distortion alone
-accounts for $\EoneWloss$ of the $\EoneVloss$~pp lost under vector
-normalisation.
-Vector normalisation multiplies one criterion's weight by $2.88\times$
-in our data, every binary criterion loses half its weight in rank space,
-and a criterion encoded inconsistently between the score and the
-objective function reduces $Q_2$ from $100\%$ to $24\%$ under optimal
-assembly through the coding effect alone.
-With consistent encoding, normalising over inadmissible sites costs
+normalisation is worth $+\NormGreedyContrast$~pp of Pareto efficiency
+under greedy assembly; the SAW--TOPSIS contrast is not significant
+pooled ($+\AggContrast$~pp), though the sign is cell-dependent.
+Exact assembly gains $+\AsmMM$~pp under min--max but loses $\AsmVec$~pp
+under vector normalisation.
+In additive aggregation the effective weight of criterion $j$ is
+proportional to $w_jA_j$; exact assembly is Pareto-efficient for any
+weights and any instance if and only if amplitudes are constant within
+each objective group (Theorem~\ref{thm:groupconst}).
+A pre-registered intervention confirms this on Fogo: between-group
+distortion alone costs nothing, while within-group distortion accounts
+for $\EoneWloss$ of the $\EoneVloss$~pp lost under vector normalisation.
+A criterion encoded inconsistently between score and objective reduces
+$Q_2$ from $100\%$ to $\RaspOptimal\%$ through the coding effect alone;
+with consistent encoding, normalising over inadmissible sites costs
 nothing under optimal assembly and improves greedy assembly by
 $\RefSetGreedyGain$~pp ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
 \end{abstract}
@@ -1884,7 +1871,7 @@ Contrast & Effect & 95\% CI \\
 \midrule
 Normalisation, greedy only (min--max $-$ vector) & $+25.4$ & $[+21.2,\,+29.8]$ \\
 Normalisation, full factorial                    & $+34.6$ & $[+30.7,\,+38.4]$ \\
-Aggregation (SAW $-$ TOPSIS)                     & $+0.6$  & $[-0.9,\,+2.0]$ \\
+Aggregation (SAW $-$ TOPSIS)                     & $+\AggContrast$  & $[\AggLo,\,\AggHi]$ \\
 Assembly (optimal $-$ greedy)                    & $-1.1$  & $[-2.6,\,+0.5]$ \\
 \midrule
 Assembly within min--max                         & $+8.1$  & $[+6.2,\,+10.1]$ \\
