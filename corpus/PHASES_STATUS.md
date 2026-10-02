@@ -18,6 +18,9 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 |----------|--------|------|-------------------|
 | `results/e1/e1_diag_greedy_rvstar.csv` | b85c895 | Dados E1 | TV_B/TV_W r_j; greedy=opt 57.6%; 63 discriminating draws; F1 percentiles |
 | `results/e1/e1_diag_greedy_rvstar.log` | b85c895 | Log E1 | Output completo do diagnóstico |
+| `results/e1/e1_diag_greedy_rvstar.csv` | b85c895 | Dados E1 | TV_B/TV_W r_j; greedy=opt 57.6%; 63 discriminating draws; F1 percentiles |
+| `corpus/PRESPEC_R1.md` | 595a760 | Pré-registo | R1-1 a R1-6; regras de decisão; κ=200/50; SHA-256 da matriz; bootstrap emparelhado seed=43 |
+| E3 cálculo (inline Athena) | 81933a6 | Dados E3 | Spearman=0.018, p=0.73; top-25% azimute: 100% indicator=0; 6 macros adicionadas: AspSpearman, AspSpearmanP, AspTopQuartile, AspTopQuartileNonLee, AspLeewardCount, AspLeewardPct |
 | `results/r1/r1_decisions.json` | c63b64e | Decisões D2 | R1-1 OBSERVAÇÃO, R1-2 EFEITO, R1-3 PASS, R1-4 N/A, R1-5 DESCRITIVO, R1-6 EFEITO |
 | `results/r1/r1_aggregate.csv` | c63b64e | Dados D2 | Q2 por célula × κ × montagem (12 linhas) |
 | `results/r1/r1_bootstrap.csv` | c63b64e | Dados D2 | IC emparelhados dos 4 contrastes |

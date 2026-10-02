@@ -4,9 +4,9 @@
 % ── Marco A: main contrasts (bootstrap_contrasts) ───────────────────────
 \newcommand{\NormGreedyContrast}{25.4}   % C6: greedy-only norm contrast
 \newcommand{\NormMainEffect}{34.6}       % C1: full-factorial norm main effect
-\newcommand{\AggContrast}{0.6}           % C3: aggregation contrast SAW-TOPSIS
-\newcommand{\AggLo}{-0.9}
-\newcommand{\AggHi}{+2.0}
+\newcommand{\AggContrast}{0.5}           % C3: aggregation contrast SAW-TOPSIS pooled (F1, aggregation_strata.py)
+\newcommand{\AggLo}{-0.8}
+\newcommand{\AggHi}{+1.8}
 \newcommand{\TOSTp}{0.003}               % tost_25pp, delta=2.5
 \newcommand{\AsmMain}{-1.1}              % C2: assembly main effect
 \newcommand{\AsmMainLo}{-2.6}
@@ -85,3 +85,12 @@
 \newcommand{\AspTopQuartileNonLee}{100} % of which indicator=0 (non-leeward), %
 \newcommand{\AspLeewardCount}{94}    % indicator=1 (leeward [90-180]) sites
 \newcommand{\AspLeewardPct}{24.2}    % % of 389 viable sites that are leeward
+
+% ── F1: SAW-TOPSIS contrast by stratum (aggregation_strata.py, 2026-10-02) ──
+\newcommand{\AggContrastPooled}{0.5}   % overall pooled: +0.5 pp (n.s.)
+\newcommand{\AggContrastPooledLo}{-0.8} % 95% CI lower
+\newcommand{\AggContrastPooledHi}{1.8}  % 95% CI upper
+\newcommand{\AggStratumMMgrd}{-8.4}    % minmax/greedy: SAW-TOPSIS (SIG)
+\newcommand{\AggStratumVecgrd}{2.8}    % vector/greedy: SAW-TOPSIS (SIG)
+\newcommand{\AggStratumMMopt}{3.4}     % minmax/optimal: SAW-TOPSIS (SIG)
+\newcommand{\AggStratumVecopt}{4.4}    % vector/optimal: SAW-TOPSIS (SIG)

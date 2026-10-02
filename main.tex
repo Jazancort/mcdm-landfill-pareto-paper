@@ -111,8 +111,9 @@ impact and social safety.
 Crossing aggregation, normalisation and assembly, we find that
 normalisation is worth $+\NormGreedyContrast$ percentage points of Pareto
 efficiency under greedy assembly, whereas the choice between SAW and
-TOPSIS is equivalent to zero ($+\AggContrast$~pp, equivalence margin
-$\pm2.5$~pp).
+TOPSIS is not significant in the pooled contrast ($+\AggContrast$~pp,
+$95\%$ CI $[\AggLo,\,\AggHi]$), with the sign depending on the cell
+($\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp).
 Exact assembly has no average effect: it gains $+\AsmMM$~pp under
 min--max normalisation and loses $\AsmVec$~pp under vector
 normalisation, because it maximises exactly a score whose operative
@@ -138,7 +139,7 @@ objective function costs up to $80$~pp of Pareto efficiency.
 \item Effective weight scales with $w_jA_j$; min--max alone preserves
   elicited weights
 \item Normalisation is worth $+\NormGreedyContrast$~pp of Pareto
-  efficiency; aggregation $+\AggContrast$~pp
+  efficiency; aggregation $+\AggContrast$~pp pooled (sign cell-dependent: $\AggStratumMMgrd$ to $+\AggStratumVecopt$~pp)
 \item Exact assembly helps under min--max ($+\AsmMM$~pp) but hurts under
   vector ($-\AsmVec$~pp)
 \item Between-group distortion costs nothing; within-group distortion
@@ -200,8 +201,10 @@ portfolio under Monte Carlo perturbation of the elicited weights.
 
 The answer is not about the aggregation methods.
 Choosing between SAW and TOPSIS is worth $+\AggContrast$~pp
-($95\%$ CI $[\AggLo,\,\AggHi]$), equivalent to zero within the
-pre-specified margin of $\pm2.5$~pp.
+($95\%$ CI $[\AggLo,\,\AggHi]$) in the pooled contrast, which is not
+significant; however, the sign is cell-dependent, ranging from
+$\AggStratumMMgrd$~pp (min--max, greedy) to $+\AggStratumVecopt$~pp
+(vector, optimal).
 Normalisation is worth $+\NormGreedyContrast$~pp under greedy assembly,
 and $+\NormMainEffect$~pp across the full $2^3$ factorial, which includes
 a cell fixed at $100\%$ by construction.
@@ -1881,8 +1884,10 @@ Assembly within vector                           & $-10.2$ & $[-13.1,\,-7.4]$ \\
 \end{table}
 
 The aggregation contrast of $+\AggContrast$~pp ($95\%$ CI
-$[\AggLo,\,\AggHi]$) is equivalent to zero within the pre-specified
-margin $\delta=2.5$~pp (TOST, $p=\TOSTp$).
+$[\AggLo,\,\AggHi]$) is not significant in the pooled analysis
+(TOST $p=\TOSTp$); the sign depends on the cell, from
+$\AggStratumMMgrd$~pp under min--max$\times$greedy to
+$+\AggStratumVecopt$~pp under vector$\times$optimal.
 Both aggregations operate on a decision matrix whose effective weights
 the normalisation has already fixed, so replacing one operator with the
 other cannot recover the distortion.
@@ -2493,8 +2498,9 @@ how often each combination recovers a Pareto-efficient portfolio under
 perturbation of the elicited weights.
 
 The choice of aggregation operator, the variable the applied literature
-compares most, proved the least consequential: $+\AggContrast$~pp,
-equivalent to zero within the pre-specified margin.
+compares most, had no consistent pooled effect ($+\AggContrast$~pp,
+$95\%$ CI $[\AggLo,\,\AggHi]$, not significant); the sign ranged from
+$\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp depending on the cell.
 Normalisation was worth $+\NormGreedyContrast$~pp under greedy assembly.
 Exact assembly had no average effect, because its sign depends on the
 normalisation: it gained $+\AsmMM$~pp under min--max and lost
