@@ -92,8 +92,8 @@ aponta para o commit da **implementação** (não para o commit que actualiza es
 | F1 | Agregação por estrato com IC emparelhado; contraste sem a célula fixa; resumo e highlight: "no consistent effect: sign depends on cell; pooled +0.6 pp" | A4 | `aggregation_strata.py` e macros novas; frase e highlight reformulados | TODO | | |
 | F2 | Circularidade do min–max: §5 e Limitações | — | Parágrafos inseridos; check passa | TODO | | |
 | F3 | Q3 na tab:factorial e na tab:e1 | A4 | Macros geradas pelo script | TODO | | |
-| F4 | Sinal da identidade PROMETHEE (eq. e frase de verificação) | B3, M2 | Verificação numérica com o sinal e a constante correctos | TODO | | B3 DONE. Aguarda M2. |
-| F5 | Intervalo de *perm* em postos segundo a orientação real; deixar de citar eq:Arank_binary para *perm* | B3 | Valores impressos pelo script; sem referência a eq:Arank_binary | TODO | | B3 DONE. D7 não se verifica: eq:Arank_binary já não é citada para perm. F5 pode ser SKIP após verificação em M2. |
+| F4 | Sinal da identidade PROMETHEE (eq. e frase de verificação) | B3, M2 | Verificação numérica com o sinal e a constante correctos | DONE | 90926b1 | eq:p2identity corrigida: φ=(2/(n-1))s̃−(n+1)/(n-1). Frase de verificação corrigida: compara φ com (2/(n-1))s̃−(n+1)/(n-1), não só com o termo variável. 24pp 0 erros ALL CHECKS PASSED. |
+| F5 | Intervalo de *perm* em postos segundo a orientação real; deixar de citar eq:Arank_binary para *perm* | B3 | Valores impressos pelo script; sem referência a eq:Arank_binary | SKIP | — | B3 verificou: texto do manuscrito já correcto para perm (0.547); eq:Arank_binary não é citada para perm. F5 não tem acção necessária. |
 | F6 | Resumo ≤ 250 palavras | G2a | `texcount` ≤ 250 | TODO | | |
 | F7 | Cabeçalho do .tex, contagens de resultados, restos de texto antigo | — | check passa | TODO | | |
 
