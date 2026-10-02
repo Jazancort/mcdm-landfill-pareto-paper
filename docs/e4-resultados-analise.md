@@ -1,31 +1,31 @@
-# E4 — Resultados e Análise
-**Data da corrida:** 2026-10-01, 20:25–21:50 UTC-3  
+# E4 — Resultados e Análise (versão final, 2026-10-01T22:27)
 **Commit do script final:** `efdc9d8` (run_e4.py v6)  
 **Commit dos dados:** `7603722` (e4_results.csv)  
-**PRESPEC:** commits `4716ab8`, `ece6544`, `bee5d24`, `e95caba`, `9eb4322` (todos antes de qualquer corrida)
+**Células exploratórias:** `a81db36` (run_e4_vstar.py), `2270cc4` (e4_vstar_results.csv)  
+**PRESPEC:** commits `4716ab8`, `ece6544`, `bee5d24`, `e95caba`, `9eb4322`, `b0e5c66` (DEV-E4-007)
 
 ---
 
 ## 1. Desenho
 
-O E4 testa se o mecanismo 2 (referência-set mismatch) se reduz a re-weighting dentro dos grupos no sentido do Teorema~thm:groupconst. Para isso, decompõe o score-473 em quatro células que isolam diferentes fontes de distorção.
+O E4 testa se o mecanismo 2 (reference-set mismatch) se reduz a re-weighting dentro dos grupos no sentido do Teorema~thm:groupconst. Para isso, decompõe o score-473 em quatro células que isolam diferentes fontes de distorção.
 
 **Instância:** Fogo, m=473 candidatos, m'=389 admissíveis, k=3, separação 10 km.  
 **Estimand primário:** Q2[A'], kappa=200, N=500 draws (matriz de pesos e1_weights_k200.npy, SHA-256 `bea05275...`).  
-**Avaliador:** fronteira A' (1 944 653 trios sobre 389 sítios admissíveis).
+**Avaliador:** fronteira A' (1 944 653 trios sobre 389 sítios admissíveis) — **binário** em todas as células.
 
 | Célula | Amplitudes A_j | Base do score | Interpretação |
 |--------|---------------|--------------|---------------|
 | R-M    | 1             | X_adj_dm     | Controlo alinhado (= SAW/minmax sobre 389) |
 | R-B    | rbar_g        | X_adj_dm × rbar_g | Group-constant: Teorema prevê 100% |
 | R-W    | r_j/rbar_g    | X_adj_dm × r_j/rbar_g | Dentro-de-grupo apenas |
-| R-V    | r_j (exact)   | Xadj473      | Score-473 publicado; regressão tab:fourthcell |
-| R-M'   | 1             | X_adj_dm     | Controlo alinhado (direcção 389→A) |
+| R-V    | r_j (exact)   | Xadj473 (aspect **contínuo**) | Score-473 confundido — ver §4 |
+| R-M'   | 1             | X_adj_dm     | Avaliador A' (não A — ver §4.4) |
 | R-B'   | 1/rbar_g      | X_adj_dm / rbar_g | Group-constant inverso |
 | R-W'   | rbar_g/r_j    | X_adj_dm × rbar_g/r_j | Dentro-de-grupo direcção inversa |
-| R-V'   | 1/r_j         | X_adj_dm / r_j | Score-389 publicado; regressão tab:fourthcell |
+| R-V'   | 1/r_j         | X_adj_dm / r_j | Amplitudes inversas, avaliador A' |
 
-**Nota técnica:** `X_adj_dm` é a matriz de decisão de `_build_decision_matrix(df_via)`, que usa tratamento binário para `aspect`. `Xadj473` é `(x_via - min_all)/range_all` — o mesmo que `build_score_473` no mc_2cube_fixed.py. As duas diferem para a coluna `aspect` (binária vs contínua), o que torna as células R-B e R-W não directamente comparáveis à R-V como interpolação afim. R-V é a célula de regressão; R-B, R-W, R-M são definidas em relação ao SAW/minmax (R-M).
+**Nota técnica:** `X_adj_dm` usa aspect **binário** (c=1 se azimute ∈ [90°,180°], benefit=True). `Xadj473` usa aspect **contínuo** (min-max sobre graus). Todas as células excepto R-V usam aspect binário, idêntico ao avaliador. R-V tem codificação inconsistente — a comparação R-W vs R-V está confundida (ver §4).
 
 ---
 
@@ -39,10 +39,12 @@ O E4 testa se o mecanismo 2 (referência-set mismatch) se reduz a re-weighting d
 | R-B    | 473→A'   | 88.4%     | 1.43 | **100.0%** | 0.00 |
 | R-W    | 473→A'   | 96.8%     | 0.79 | **100.0%** | 0.00 |
 | R-V    | 473→A'   | 19.6%     | 1.78 | **20.0%**  | 1.79 |
-| R-M'   | 389→A    | 86.0%     | 1.55 | **100.0%** | 0.00 |
-| R-B'   | 389→A    | 87.2%     | 1.49 | **100.0%** | 0.00 |
-| R-W'   | 389→A    | 75.6%     | 1.92 | **86.2%**  | 1.54 |
-| R-V'   | 389→A    | 70.4%     | 2.04 | **88.4%**  | 1.43 |
+| R-M'   | 389→A'   | 86.0%     | 1.55 | **100.0%** | 0.00 |
+| R-B'   | 389→A'   | 87.2%     | 1.49 | **100.0%** | 0.00 |
+| R-W'   | 389→A'   | 75.6%     | 1.92 | **86.2%**  | 1.54 |
+| R-V'   | 389→A'   | 70.4%     | 2.04 | **88.4%**  | 1.43 |
+
+**Nota:** a direcção das células com plica é 389→A' (avaliador A'), não 389→A como declarado no DEV-E4-002. Ver §4.4.
 
 ### kappa = 50 (secundário)
 
@@ -63,114 +65,120 @@ O E4 testa se o mecanismo 2 (referência-set mismatch) se reduz a re-weighting d
 
 ### P_E4_1 (asserção de regressão): R-B = 100% e R-B' = 100% em todos os draws
 **PASS.** R-B opt = 100.0% (SE = 0.00), R-B' opt = 100.0% (SE = 0.00).  
-O Teorema thm:groupconst confirma-se: com amplitudes constantes dentro de cada grupo, a montagem exacta é Pareto-eficiente em todos os 500 draws.  
-**Nota:** isto é uma asserção de regressão, não evidência. O mesmo resultado é esperado por construção (rem:definitional).
+O Teorema thm:groupconst confirma-se: com amplitudes constantes dentro de cada grupo, a montagem exacta é Pareto-eficiente em todos os 500 draws. Asserção de regressão, não evidência nova.
 
 ### P_E4_2 (controlo de regressão): R-V reproduz tab:fourthcell dentro de 3 SE
-**PASS.** R-V opt = 20.0%, ref = 20.0%, |diff| = 0.0 pp, 3 SE = 5.37 pp.  
-Pipeline correcto. A célula R-V é idêntica à célula 473/A' da tab:fourthcell.
+**PASS (direcção directa).** R-V opt = 20.0%, ref = 20.0%, |diff| = 0.0 pp, 3 SE = 5.37 pp. Pipeline correcto para a célula 473/A'.
+
+**FAIL (direcção inversa).** R-V' opt = 88.4%, ref tab:fourthcell 389/A = 95.0%, |diff| = 6.6 pp, 3 SE = 4.3 pp. A célula R-V' usa avaliador A' (não A) — é uma célula diferente da publicada. Ver §4.4.
 
 ### P_E4_3 (evidência primária): R-W loss ≥ 50% de R-V loss
-**FAIL.** R-W opt = 100.0%, loss_RW = 0.0 pp, loss_RV = 80.0 pp. Rácio = 0.00.  
-Dentro-de-grupo sozinho (R-W = X_adj_dm × r_j/rbar_g) não causa qualquer perda.
+**TESTÁVEL MAS NÃO INFORMATIVO tal como desenhado.**
+
+R-W opt = 100.0% (loss = 0 pp), R-V opt = 20.0% (loss = 80 pp). O rácio observado = 0.00.
+
+Porém a comparação R-W vs R-V está confundida: R-V usa Xadj473 com aspect **contínuo**, enquanto R-W usa X_adj_dm com aspect **binário**. A célula pré-registada pressupunha que R-V era afim de R-M; não é, porque aspect não é monotonamente relacionado entre as duas codificações. O P_E4_3 testou uma hipótese sobre o conjunto de referência mas a célula R-V mede maioritariamente um efeito de codificação. A substituição post hoc correcta é R-V*, que produz 100% — tornando o teste R-W vs R-V* trivialmente 0 pp vs 0 pp. O P_E4_3 é não informativo como desenhado.
 
 ### P_E4_4 (exploratória): assimetria fwd > rev em R-W
-**FAIL (na direcção esperada).** R-W fwd = 100% (perda 0 pp), R-W' rev = 86.2% (perda 13.8 pp).  
-A assimetria existe mas é **inversa**: é a direcção reversa (389→A) que perde, não a directa.
+**FAIL (na direcção esperada).** R-W fwd = 100%, R-W' rev = 86.2%. A assimetria existe mas é inversa e refere-se ao avaliador A' em ambas as direcções — não ao contraste A vs A' publicado.
 
 ### P_E4_5 (exploratória): R-W fwd loss > E1-W loss (35.8 pp)
 **FAIL.** R-W fwd = 100.0%. Não há perda para comparar.
 
+**Versão reformulada de P_E4_5:** o padrão 1/r_j (R-V') custa 11.6 pp (kappa=200 optimal), enquanto o padrão r_j (R-V*) custa 0 pp. Com codificação consistente e o mesmo conjunto de referência, apenas a direcção da distorção muda o custo. TV_W do padrão 1/r_j ≈ TV_W(R-W) = 0.0815 (ver §4.6).
+
 ---
 
-## 4. Diagnóstico: o que o E4 descobriu
+## 4. Diagnóstico
 
-### 4.1 Cause da perda de 80 pp na célula 473/A' — diagnóstico inicial ERRADO
+### 4.1 Causa da perda de 80 pp: codificação inconsistente de aspect
 
-O relatório original (§4.1) atribuiu a perda aos offsets absolutos `b_j = (min_via - min_473)/range_473`. Esta explicação está **matematicamente errada**.
+`Xadj473` (score R-V) trata `aspect` como contínuo: normaliza os azimutes em graus por min-max sobre 473 sítios. O avaliador (via `compute_objs_f64` em `pareto_utils.py`) trata `aspect` como binário: c=1 se azimute ∈ [90°, 180°] (sotavento indicator), c=0 caso contrário.
 
-Para um portfolio de tamanho fixo k, o score SAW com offsets é:
+Estas transformações não são monotonamente relacionadas: um azimute de 350° tem valor alto no score contínuo (≈1.0) mas vale 0 no avaliador binário. O score maximiza sítios com azimute alto; o avaliador prefere sítios com azimute ∈ [90°,180°].
 
-```
-score(T; w, b, A) = k · Σ_j w_j·b_j  +  Σ_{a∈T} Σ_j w_j·A_j·c̃_j(a)
-```
+**Esta é uma inconsistência no pipeline** (build_score_473 vs _build_decision_matrix), não uma escolha metodológica do analista. O artigo deve apresentá-la assim.
 
-O primeiro termo é a mesma constante para **todos** os portfolios T de tamanho k. Logo argmax(score) = argmax(score sem offset). O mesmo argumento aplica-se ao greedy: cada sítio recebe o mesmo incremento `Σ_j w_j·b_j`, que não muda a ordenação.
+**Os offsets b_j não são a causa.** Para portfolio de tamanho fixo k, score(T; b, A) = k·Σ_j w_j·b_j + Σ_{a∈T} Σ_j w_j·A_j·c̃_j(a). O primeiro termo é constante para todos os T de tamanho k, logo argmax(score) = argmax(score sem offset). Verificado algebricamente e numericamente (verify_e4_audit.py).
 
-**Os offsets b_j não mudam nenhuma escolha, em nenhuma montagem.**
+### 4.2 Decomposição confirmada pelas células post hoc (kappa=200, optimal)
 
-O §4.2 do relatório original ("portfólios que incluem sítios abaixo do mínimo admissível") também era falso: o A3 confirmou que todos os trios são indexados sobre os 389 sítios admissíveis.
+| Contraste | Perda | Leitura |
+|-----------|-------|---------|
+| R-M → R-V* (só conjunto de referência, codificação consistente) | **0 pp** | Normalizar sobre 473 não custa nada sob montagem óptima |
+| R-M → R-asp (só codificação, constantes de 389) | **76 pp** | A codificação explica praticamente tudo |
+| R-asp → R-V (473 sítios em cima da codificação errada) | **4 pp** | Efeito residual; significância por confirmar com bootstrap emparelhado |
 
-### 4.2 Causa provável: codificação inconsistente de `aspect`
+Sobre os 4 pp: a diferença não emparelhada é ≈1.5 SE. Não é possível afirmar significância ou não sem indicadores por draw (bootstrap emparelhado — ver §4.7).
 
-`Xadj473` (usado em R-V) trata `aspect` como contínuo: normaliza os azimutes em graus por min-max. O avaliador (via `compute_objs_f64` → `_build_decision_matrix`) trata `aspect` como binário: `c = 1` se azimute ∈ [90°, 180°] (sotavento), `c = 0` caso contrário. Estas são transformações não monotonamente relacionadas: um azimute de 350° tem valor alto no score (próximo de max/range_all) mas vale 0 no avaliador.
+### 4.3 R-V* greedy = 97.8% vs R-M greedy = 86.0%
 
-A evidência directa veio da v4 do pipeline: com `Xadj389` (constantes de 389, aspect contínuo), R-M = **24%** em vez de 100%. Sem alterar o conjunto de referência — apenas mudando a codificação de `aspect` — a perda é de ~76 pp, praticamente os 80 pp da célula publicada.
+Com codificação consistente (aspect binário), normalizar sobre os 473 sítios **melhora** a montagem greedy em ~12 pp. Este resultado contradiz a primeira recomendação prática actual do artigo ("normalise over the set of alternatives that can actually be chosen"). O efeito é consistente com kappa=50 (R-V* greedy = 97.6% vs R-M greedy = 96.0%; diferença menor porque kappa=50 já concentra pesos perto do AHP).
 
-**Hipótese:** a perda de 80 pp na célula 473/A' é explicada pela codificação inconsistente de `aspect` entre o score e o avaliador, não pelo conjunto de referência. O E4 não testou esta hipótese porque a célula R-V usa `Xadj473` (aspect contínuo) enquanto todas as outras células usam `X_adj_dm` (aspect binário).
+### 4.4 A direcção com plica usa avaliador A', não A
 
-### 4.3 Células exploratórias necessárias (post hoc, declaradas no DEV-E4-007)
+Verificado: R-M e R-M' têm médias idênticas draw-a-draw (86.0%/100.0%, kappa=200; 96.0%/100.0%, kappa=50). O DEV-E4-002 declarou que a direcção 389→A usaria a fronteira A (213 portfólios, objectivos sobre 473 sítios) — mas o pipeline não implementou isso. Todas as células usam avaliador A'.
 
-Para separar os dois efeitos:
+R-V' = 88.4% ≠ 95.0% (tab:fourthcell row 389/A): |diff| = 6.6 > 3 SE = 4.3. **FAIL.** A comparação é entre células diferentes (A' vs A), não uma regressão.
 
-| Célula | Score | Predição se hipótese correcta |
-|--------|-------|-------------------------------|
-| R-V* | `X_adj_dm × r_j` (aspect binário, constantes 473) | ≈ 100% — sem perda de codificação |
-| R-asp | `X_adj_dm` com coluna aspect trocada pela contínua, constantes 389 | ≈ 24% — codificação sozinha |
+Os valores R-V' = 88.4% e R-W' = 86.2% são um teste legítimo sobre o padrão 1/r_j contra o avaliador A'. Ver §4.6.
 
-Se R-V* ≈ 100%: os 80 pp são todos de codificação. O "Mechanism 2" desaparece como efeito de referência.  
-Se R-V* << 100%: o conjunto de referência tem efeito próprio adicional à codificação.
+### 4.5 Assimetria por kappa
 
-### 4.4 A direcção inversa não é a que foi declarada no PRESPEC
+| kappa | R-V* opt (aspect binário) | R-V opt (aspect contínuo) | Perda de codificação |
+|-------|--------------------------|--------------------------|---------------------|
+| 200   | 100.0%                   | 20.0%                    | 80.0 pp             |
+| 50    | 99.8%                    | 46.0%                    | 53.8 pp             |
 
-Verificado: R-M e R-M' têm médias idênticas draw-a-draw (86.0%/100.0%, kappa=200 e 96.0%/100.0%, kappa=50). Isto confirma que **ambas as direcções usam o avaliador A'** (fronteira sobre 389 sítios). O DEV-E4-002 declarou que a direcção 389→A usaria a fronteira A (213 portfolios, objectivos sobre 473 sítios) — mas o pipeline não implementou isso. As células com plica são uma segunda cópia da direcção directa com amplitudes invertidas, não o espelho contra a fronteira A.
+A assimetria entre direcções (R-V' vs R-V) com codificação consistente:
 
-Consequências:
-- R-V' = 88.4% ≠ 95.0% (tab:fourthcell row 3): **FAIL** (|diff|=6.6 > 3 SE=4.3).
-- P_E4_4 e a "assimetria inversa" referem-se a um desenho diferente do pré-registado.
-- R-W' = 86.2% não é evidência sobre a assimetria publicada de 80 vs 5 pp.
+| kappa | R-V* opt (r_j, 0 pp perda) | R-V' opt (1/r_j, A') | Assimetria |
+|-------|---------------------------|---------------------|-----------|
+| 200   | 100.0%                    | 88.4%               | −11.6 pp  |
+| 50    | 99.8%                     | 96.8%               | −3.0 pp   |
 
-### 4.5 Assimetria por kappa (corrigida)
+### 4.6 R-V' como teste genuíno do Teorema (P_E4_5 reformulado)
 
-| kappa | R-V fwd loss | R-V' rev loss | Assimetria (rev−fwd) |
-|-------|-------------|---------------|----------------------|
-| 200   | 80.0 pp     | 11.6 pp       | −68.4 pp             |
-| 50    | 54.0 pp     | 3.2 pp        | −50.8 pp             |
+Com codificação consistente, o contraste r_j (R-V*, 0 pp) vs 1/r_j (R-V', 11.6 pp) é evidência genuína sobre o efeito da direcção da distorção: mesmo TV_W, amplitude diferente da distorção entre os dois padrões. Calcular TV_W(padrão 1/r_j) com tvw_e4.py — esperado ≈ TV_W(R-W) = 0.0815 (mesma magnitude, sinal oposto).
 
-A assimetria é **menor** com kappa=50 (50.8 pp) do que com kappa=200 (68.4 pp). O relatório original tinha este sinal invertido — corrigido aqui.
+### 4.7 Indicadores por draw — pendente
+
+O e4_results.csv e o e4_vstar_results.csv contêm apenas médias. Para:
+- confirmar R-M = R-M' draw-a-draw (actualmente apenas médias confirmadas)
+- bootstrap emparelhado R-asp vs R-V (4 pp: significativo ou não)
+- bootstrap emparelhado R-V* vs R-M greedy (12 pp greedy: significativo ou não)
+
+É necessário modificar run_e4.py e run_e4_vstar.py para gravar indicadores por draw. Ver item 6 da lista de tarefas.
 
 ---
 
 ## 5. Historial de bugs no pipeline
 
-| Versão | Bug | Sintoma | Correcção |
-|--------|-----|---------|-----------|
-| v1 (commit `ca50ce2`) | Score fwd usava `X_adj` (389-base), escalado por `A_j` | Todos fwd = 100% incluindo R-V | Usar `Xadj473` para R-V |
-| v2/v3 (`d1bb682`) | Construção `b_j + A_j * X_adj` usava `_build_decision_matrix` para aspect (binário vs contínuo) | Diferença máxima 1.0 na coluna aspect | Identificado mas não corrigido aqui |
-| v4 (`73cd65f`) | Usava `Xadj389` raw em vez de `X_adj_dm`; R-M = 24% (não 100%) | R-M ≠ SAW/minmax | Usar `X_adj_dm` para base |
-| v5 (`f4d94d0`) | `Xadj473 + (A_j-r_j)*X_adj_dm`: R-M = 24% persistiu | A interpolação não funciona quando aspect difere | Abandonada |
-| v6 (`efdc9d8`) | `X_adj_dm * A_j` para todas excepto R-V = `Xadj473` | R-M = 100%, R-V = 20%: correcto | **Versão final** |
+| Versão | Bug | Sintoma |
+|--------|-----|---------|
+| v1 (ca50ce2) | Score usava X_adj escalado por A_j (389-base) | Todos fwd = 100% incluindo R-V |
+| v2/v3 (d1bb682) | Construção afim com aspect binário vs contínuo | R-M = 24% |
+| v4 (73cd65f) | Xadj389 raw para todas as células | R-M = 24% (aspect contínuo, 389-base) |
+| v5 (f4d94d0) | Interpolação Xadj473 + (A_j-r_j)*X_adj_dm | R-M = 24% persistiu |
+| v6 (efdc9d8) | X_adj_dm*A_j para B/W/M, Xadj473 para R-V | R-M=100%, R-V=20%: correcto para o controlo |
 
-**Nota sobre DEV-E4-006:** o bug e as iterações estão documentados no PRESPEC_E4.md antes da corrida final.
+As versões v1 a v5 foram corridas e os resultados foram vistos antes de v6. Documentado explicitamente no DEV-E4-007 (commit b0e5c66).
 
 ---
 
-## 6. Próximos passos
+## 6. Auditoria de codificação de aspect por script/espaço (2026-10-01T22:22)
 
-### Imediato (antes de integrar E4 no artigo)
-1. **DEV-E4-007:** declarar R-V* e R-asp como exploratórias post hoc; declarar v1-v5 como corridas com resultados vistos; corrigir P_E4_3 como "não avaliável tal como desenhado" por inconsistência na codificação de `aspect`.
-2. **Correr R-V* e R-asp** na Athena (mesma matriz de pesos, kappa ∈ {50, 200}).
-3. **Confirmar o pipeline das células com plica:** o code mostra que R-M' = R-M, logo o avaliador é A' em ambas as direcções. O DEV-E4-002 declarou fronteira A — isso nunca foi implementado.
-4. **Não reverter sec:refset ainda:** o enquadramento antigo ("same normalisation… voided") também não está provado. Aguardar R-V* antes de reescrever.
+| Script/Função | aspect coding | Usado em |
+|---------------|---------------|----------|
+| `pareto_utils.py` L107 — `compute_objs_f64` | **BINÁRIO** c=[90,180]=0 | Avaliador A' em todos os scripts |
+| `run_473A_389A.py` L90 — `build_objs_ref` | **BINÁRIO** c=[90,180]=0 | Avaliador A (ref=473 e ref=389) |
+| `mcdm_experiment.py` L166 — `compute_objectives` | **BINÁRIO** c=[90,180]=0 | Reprodução estudo-fonte |
+| `mcdm_experiment.py` L132 — `_build_decision_matrix` | **BINÁRIO** c=[90,180]=1, benefit=True | Score SAW/minmax (factorial, E1, run_e4) |
+| `mc_2cube_fixed.py` L113 — `build_score_473` | **CONTÍNUO** (x_via-mn)/rng | Score 473 (tab:fourthcell, R-V) |
 
-### Médio prazo (após R-V* e R-asp)
-5. **Se R-V* ≈ 100%:** os 80 pp são de codificação. Reescrever sec:refset, §8.1, resumo, highlights, recomendação prática. Adicionar tab:e4 com codificação como variável.
-6. **Se R-V* << 100%:** o conjunto de referência tem efeito próprio. Identificar a causa analiticamente antes de escrever.
-7. **Segunda instância (Marco B4).**
-8. **Script de análise completo** com bootstrap emparelhado e ICs.
+**Conclusão:** o espaço A não tem inconsistência no avaliador. A tab:canonical, FAsize, FAinter e a reprodução {184,430,460} estão correctos. A inconsistência está confinada a `build_score_473` e afecta apenas as células da tab:fourthcell que usam este score.
 
-### Interpretação para o artigo (rascunho)
-> "Experiment 4 tests whether the 80-pp loss under reference-set mismatch can be attributed to within-group re-weighting. Cells R-B and R-B' confirm the theorem (P_E4_1, both 100%). Cell R-W, which isolates within-group amplitude variation while using 389-site normalisation constants, reaches 100% (P_E4_3 not confirmed). The 80-pp loss is therefore not caused by within-group amplitude variation; it arises from the change in absolute minima between the 389 and 473 candidate sets (offsets b_j), which shifts the argmax of trios independently of group structure. The asymmetry between directions (R-W' = 86.2% vs R-W = 100%) remains unexplained by the theorem and motivates further analysis."
+A célula 473/A = 100% na tab:fourthcell é coincidência: os sítios com azimute alto (próximos de 360°) têm score alto no score contínuo E são classificados como não-sotavento pelo avaliador binário. Não é porque o avaliador A seja contínuo — é binário (pareto_utils L107, run_473A_389A L90).
 
 ---
 
@@ -179,46 +187,11 @@ A assimetria é **menor** com kappa=50 (50.8 pp) do que com kappa=200 (68.4 pp).
 | Ficheiro | Commit | Descrição |
 |----------|--------|-----------|
 | `scripts/run_e4.py` | `efdc9d8` | Script final (v6) |
+| `scripts/run_e4_vstar.py` | `a81db36` | Células post hoc R-V* e R-asp |
 | `scripts/analyze_e4.py` | `ca50ce2` | Análise das previsões |
-| `scripts/check_feasible_e4.py` | `f607d27` | Verificação de factibilidade |
 | `scripts/tvw_e4.py` | `d4e970b` | Cálculo de TV_W(R-W) |
-| `results/e4_results.csv` | `7603722` | CSV completo das 16 células |
-| `results/e1_weights_k200.npy` | `f607d27` | Matriz de pesos (SHA-256 `bea05275`) |
-| `corpus/PRESPEC_E4.md` | `9eb4322` | Pré-registo com DEV-E4-001..006 |
-
-
----
-
-## 4 (actualização) — Resultados das células exploratórias R-V* e R-asp
-
-**Corrida:** 2026-10-01 ~22:30 UTC-3, commit `a81db36`, script `run_e4_vstar.py`.  
-**DEV declarado antes:** DEV-E4-007 (commit `b0e5c66`), estas células são post hoc.
-
-### Resultados
-
-| Célula | kappa=200 grd | kappa=200 **opt** | kappa=50 opt |
-|--------|--------------|-------------------|--------------|
-| R-V*  (aspect binário, A_j=r_j) | 97.8% | **100.0%** | **99.8%** |
-| R-asp (aspect contínuo, 389-base) | 25.2% | **24.0%** | **49.0%** |
-| R-V   (célula publicada, aspect contínuo, 473-base) | 19.6% | **20.0%** | **46.0%** |
-
-### Diagnóstico confirmado
-
-Os 80 pp de perda na célula 473/A' são explicados pela codificação inconsistente de `aspect`:
-
-1. **R-V\*** usa `X_adj_dm * r_j` — aspect binário (sotavento), idêntico ao avaliador. Amplitudes r_j idênticas à célula publicada. Resultado: **100%**. Sem perda quando a codificação é consistente.
-
-2. **R-asp** substitui apenas a coluna aspect por valores contínuos (azimutes em graus), mantendo as constantes dos 389 sítios. Resultado: **24%**. A codificação sozinha, sem alterar o conjunto de referência, produz ~76 pp de perda.
-
-3. **R-V** (célula publicada) adiciona também as constantes dos 473 sítios. Resultado: **20%**. A diferença de 4 pp entre R-asp e R-V é o efeito residual do conjunto de referência, que é pequeno e não distinguível do erro de amostragem ao nível de 3 SE.
-
-**Conclusão:** o "Mechanism 2" tal como publicado mede um score com um critério inconsistente entre o score e o modelo de valor — não o efeito do conjunto de referência. O aviso prático continua válido (normalizar sobre candidatos inadmissíveis é problemático), mas a causa dos 80 pp é diferente da declarada no artigo.
-
-### Implicações para o artigo
-
-Se R-V* ≈ 100% se confirmar (confirmado):
-- A tab:fourthcell precisa de uma coluna de codificação.
-- `sec:refset` e §8.1 precisam de ser reescritos: o resultado é sobre consistência de codificação, não sobre o conjunto de referência.
-- O resumo, os highlights e a primeira recomendação prática precisam de ser actualizados.
-- Os "80 pp" mantêm-se como resultado empírico, mas a explicação muda.
-- O resultado é **mais forte** do que o original: o score estava a usar um critério que o analista não declarou.
+| `scripts/verify_e4_audit.py` | `b0e5c66` | Verificações algébricas |
+| `results/e4_results.csv` | `7603722` | 16 linhas (8 células × 2 kappas) |
+| `results/e4_vstar_results.csv` | `2270cc4` | 8 linhas (R-V* e R-asp × 2 kappas) |
+| `results/e1_weights_k200.npy` | `f607d27` | Matriz de pesos (SHA-256 bea05275) |
+| `corpus/PRESPEC_E4.md` | `b0e5c66` | DEV-E4-001..007 |

@@ -261,7 +261,7 @@ run_e4.py is rewritten to use build_score_473_variant(w, A_j) for
 fwd cells, matching mc_2cube_fixed.py lines 108-121. This DEV is
 committed before the corrected run.
 
-### DEV-E4-007: post hoc declaration — versions v1–v5, P_E4_3 not evaluable, R-V* and R-asp exploratory
+### DEV-E4-007: post hoc declaration — versions v1–v5, P_E4_3 testable but uninformative, R-V* and R-asp exploratory
 
 **Versions v1 to v5 were run before the final pipeline was fixed.**
 
@@ -276,21 +276,44 @@ before the pipeline was corrected. Specifically:
 - v6 (efdc9d8): X_adj_dm*A_j for B/W/M cells, Xadj473 for R-V. R-M=100%, R-V=20%.
 These outputs are saved in results/run_e4_v{1..6}.log for transparency.
 
-**P_E4_3 is not evaluable as designed.**
+**P_E4_3 is testable but uninformative as designed.**
 
-The cell R-V (X_adj_dm * r_j would be correct for the PRESPEC design) was implemented
-as Xadj473, which uses `aspect` as a continuous variable (azimuth in degrees,
-min-max normalised). The evaluator uses `aspect` as a binary indicator (leeward
-[90°,180°]=1, else=0). These are not monotonically related. The comparison R-W vs R-V
-is therefore confounded by a coding inconsistency, not a reference-set effect.
+The test ran and produced results: R-W opt = 100.0% (loss = 0 pp), R-V opt = 20.0%
+(loss = 80 pp). The test is therefore testable in the sense that both cells ran.
 
-Evidence: version v4 produced R-M = 24% using Xadj389 (same reference set as 389,
-but aspect continuous). This is ~76 pp loss from coding alone, accounting for
-essentially all of the 80 pp. The offsets b_j cannot cause this (verified: b_j
-shifts all portfolios by the same constant, leaving argmax unchanged).
+However, the comparison R-W vs R-V is not informative about the reference-set
+hypothesis because R-V confounds two effects:
+  (a) the reference-set effect (473-site vs 389-site normalisation constants), and
+  (b) a coding inconsistency: R-V uses Xadj473 which encodes aspect as a continuous
+      azimuth in degrees (min-max normalised), while R-W and the evaluator both use
+      aspect as a binary leeward indicator (c=1 if azimuth ∈ [90°,180°]).
 
-P_E4_3 is reported as "not evaluable as designed due to coding inconsistency in the
-aspect column between the score and the evaluator."
+These are not monotonically related. The comparison R-W vs R-V therefore does not
+isolate the within-group amplitude effect; it conflates it with a mismatch between
+the criterion definition in the score and the criterion definition in the objectives.
+The pre-registered design assumed R-V was an affine function of R-M; it is not.
+
+Verified from post hoc cells (commit 2270cc4):
+  - R-V* (X_adj_dm * r_j, aspect binary) opt = 100.0%: no loss from reference set alone
+  - R-asp (X_adj_dm with continuous aspect, 389-base) opt = 24.0%: coding alone = 76 pp
+  - R-V opt = 20.0%: coding (76 pp) + minor reference-set interaction (4 pp)
+
+The offsets b_j do not contribute (algebraic proof: b_j shifts all portfolios by
+the same constant Σ_j w_j b_j for any portfolio of size k, leaving argmax unchanged;
+verified numerically in scripts/verify_e4_audit.py).
+
+P_E4_3 is therefore reported as "testable but uninformative as designed": it ran
+and confirmed that within-group distortion alone does not cost Pareto efficiency
+(R-W = 100%), but it cannot attribute the 80 pp to the reference set because R-V
+is not the affine function of R-M that the design assumed.
+
+**Greedy results: R-V* greedy = 97.8% vs R-M greedy = 86.0% (kappa=200)**
+
+With consistent aspect coding (binary), normalising over the 473-site set IMPROVES
+greedy assembly by approximately 12 pp. This contradicts the first practical
+recommendation as currently worded ("normalise over the set of alternatives that can
+actually be chosen"). The effect is smaller at kappa=50 (97.6% vs 96.0%, ~2 pp).
+This should be reported in the manuscript alongside the reference-set analysis.
 
 **Mirror direction uses evaluator A', not A.**
 
@@ -300,20 +323,34 @@ at kappa=200; 96.0/100.0 at kappa=50). The declared frontier A (213 portfolios o
 R-V' = 88.4% vs tab:fourthcell 389/A = 95.0% (|diff|=6.6 > 3*SE=4.3): FAIL.
 P_E4_4 and the "inverse asymmetry" results do not address the published asymmetry.
 
-**Exploratory cells R-V* and R-asp declared post hoc (seen results, declared after).**
+The cells R-V' and R-W' are a legitimate test of the pattern 1/r_j vs r_j against
+evaluator A'. TV_W(1/r_j) = 0.0852 vs TV_W(r_j) = 0.0815 (diff = 0.004, computed
+2026-10-01). The cost of 1/r_j pattern = 11.6 pp vs 0 pp for r_j pattern: directional
+asymmetry with nearly equal TV_W is the surviving genuine evidence on the reference-set
+question.
 
-These cells were designed after seeing v6 results. They are declared here before
-being run, but this declaration itself is post hoc (results of other cells seen).
+**Aspect coding audit (2026-10-01T22:22):**
 
-R-V*: score = X_adj_dm * r_j  (aspect binary, same as evaluator; constantes de 473
-     implícitas via r_j). This is the correct PRESPEC cell V. If R-V* ≈ 100%,
-     the 80 pp are caused by aspect coding, not by the reference set.
+All evaluators (space A via run_473A_389A.py and space A' via pareto_utils.py) use
+binary aspect encoding: c = np.where((x >= 90) & (x <= 180), 0.0, 1.0). Only
+build_score_473 in mc_2cube_fixed.py uses continuous encoding. The tab:canonical,
+FAsize, FAinter, and the study-source reproduction {184, 430, 460} are unaffected.
+The inconsistency is confined to the tab:fourthcell cells that use build_score_473.
+The 473/A = 100% result in tab:fourthcell is coincidental: high-azimuth sites are
+both high-scoring under continuous aspect AND non-leeward under binary aspect.
 
-R-asp: score = X_adj_dm with aspect column replaced by Xadj473_aspect (continuous
-      azimuth, 389-site constants). This isolates the aspect coding effect.
-      Prediction: Q2 ≈ 24% (replicates v4 finding without changing reference set).
+**Exploratory cells R-V* and R-asp (run post hoc; results now available).**
 
-These cells are exploratory. Confirmations do not constitute pre-registered evidence.
+These cells were designed and declared after seeing v6 results, and run after this
+declaration. Results (commit 2270cc4, run 2026-10-01):
+  - R-V* (X_adj_dm * r_j, aspect binary): kappa=200 greedy=97.8% opt=100.0%;
+                                            kappa=50  greedy=97.6% opt=99.8%
+  - R-asp (X_adj_dm with continuous aspect, 389-base):
+                                            kappa=200 greedy=25.2% opt=24.0%;
+                                            kappa=50  greedy=48.6% opt=49.0%
+
+These cells are exploratory and post hoc. Results confirm the coding hypothesis but
+do not constitute pre-registered evidence. Bootstrap paired tests remain to be run.
 
 ## 8. Note on frontier asymmetry
 
