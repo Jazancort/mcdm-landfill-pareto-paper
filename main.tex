@@ -194,10 +194,10 @@ portfolio under Monte Carlo perturbation of the elicited weights.
 
 The answer is not about the aggregation methods.
 Choosing between SAW and TOPSIS is worth $+\AggContrast$~pp
-($95\%$ CI $[\AggLo,\,\AggHi]$) in the pooled contrast, which is not
-significant; however, the sign is cell-dependent, ranging from
-$\AggStratumMMgrd$~pp (min--max, greedy) to $+\AggStratumVecopt$~pp
-(vector, optimal).
+($95\%$ CI $[\AggLo,\,\AggHi]$) in the pooled contrast, which is
+equivalent to zero within $\pm2.5$~pp (TOST $p=\TOSTp$); the sign
+is cell-dependent, ranging from $\AggStratumMMgrd$~pp
+(min--max, greedy) to $+\AggStratumVecopt$~pp (vector, optimal).
 Normalisation is worth $+\NormGreedyContrast$~pp under greedy assembly,
 and $+\NormMainEffect$~pp across the full $2^3$ factorial, which includes
 a cell fixed at $100\%$ by construction.
@@ -1881,10 +1881,12 @@ Assembly within vector                           & $-10.2$ & $[-13.1,\,-7.4]$ \\
 \end{table}
 
 The aggregation contrast of $+\AggContrast$~pp ($95\%$ CI
-$[\AggLo,\,\AggHi]$) is not significant in the pooled analysis
-(TOST $p=\TOSTp$); the sign depends on the cell, from
-$\AggStratumMMgrd$~pp under min--max$\times$greedy to
-$+\AggStratumVecopt$~pp under vector$\times$optimal.
+$[\AggLo,\,\AggHi]$) is statistically indistinguishable from no effect
+in the pooled analysis (TOST equivalence test, $p=\TOSTp$,
+$\delta=2.5$~pp); the sign depends on the cell: $\AggStratumMMgrd$~pp
+($95\%$ CI $[\AggMMgrdCIlo,\,\AggMMgrdCIhi]$) under min--max$\times$greedy
+to $+\AggStratumVecopt$~pp ($95\%$ CI $[\AggVecoptCIlo,\,\AggVecoptCIhi]$)
+under vector$\times$optimal.
 Both aggregations operate on a decision matrix whose effective weights
 the normalisation has already fixed, so replacing one operator with the
 other cannot recover the distortion.
@@ -2443,9 +2445,9 @@ determines which column is normalised and therefore which amplitude
 enters the effective weights.
 
 Comparing aggregation operators, by contrast, is the least consequential
-of the design choices we examine ($+\AggContrast$~pp pooled, not
-significant; sign cell-dependent from $\AggStratumMMgrd$ to
-$+\AggStratumVecopt$~pp by TOST),
+of the design choices we examine ($+\AggContrast$~pp pooled,
+equivalent to zero within $\pm2.5$~pp by TOST; sign cell-dependent
+from $\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp),
 and the mechanism explains why: aggregation acts downstream of the
 distortion.
 One qualification is worth stating explicitly.
@@ -2531,7 +2533,8 @@ perturbation of the elicited weights.
 
 The choice of aggregation operator, the variable the applied literature
 compares most, had no consistent pooled effect ($+\AggContrast$~pp,
-$95\%$ CI $[\AggLo,\,\AggHi]$, not significant); the sign ranged from
+$95\%$ CI $[\AggLo,\,\AggHi]$, equivalent to zero within $\pm2.5$~pp
+by TOST); the sign ranged from
 $\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp depending on the cell.
 Normalisation was worth $+\NormGreedyContrast$~pp under greedy assembly.
 Exact assembly had no average effect, because its sign depends on the
