@@ -123,7 +123,8 @@ A criterion encoded inconsistently between score and objective reduces
 $Q_2$ from $100\%$ to $\RaspOptimal\%$ through the coding effect alone;
 with consistent encoding, normalising over inadmissible sites costs
 nothing under optimal assembly and improves greedy assembly by
-$\RefSetGreedyGain$~pp ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
+$\RefSetGreedyGain$~pp (pre-registered test R1-2,
+$95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
 \end{abstract}
 
 \begin{highlights}
@@ -2020,11 +2021,13 @@ This is a pipeline inconsistency, not an inherent property of
 normalising over inadmissible sites.
 With a consistent encoding, normalising over the $\Ncand$-site set costs
 zero percentage points of Pareto efficiency under optimal assembly
-and improves greedy assembly by $\RefSetGreedyGain$~pp (post hoc cell R-V*, Table~\ref{tab:fourthcell}).
-We report the result here as evidence that exact assembly amplifies
-any mismatch between the score's criterion encoding and the evaluator's
-partial-value encoding, including mismatches too subtle to surface in
-rank-agreement diagnostics.
+and improves greedy assembly by $\RefSetGreedyGain$~pp (post hoc cell
+R-V*, Table~\ref{tab:fourthcell}).
+A diagnostic experiment (E1, pre-registered) attributes this greedy
+gain to the amplitude structure of R-V*: greedy and optimal assembly
+agree on $57.6\%$ of draws under R-V* versus $40.2\%$ under R-M,
+indicating that R-V*'s amplitudes are more favourable to the greedy
+heuristic on this instance.
 
 The directional asymmetry identified in the original E4 design
 ($\mathrm{TV}_W=0.0815$ for the $r_j$ pattern,
