@@ -193,27 +193,29 @@ check("E1 V optimal = SAW vec optimal", TAB_E1["V_optimal"], 56.8, tol=0.1)
 
 # ── 5. tab:fourthcell — score-evaluator mismatch ────────────────────────────
 print()
-print("=== tab:fourthcell (Marco A, updated B1/D1) ===")
-# Ncand/A:  greedy=0.0, optimal=0.0  (B1: binary aspect in objs A; non-admissible sites dominate)
-# Ncand/A': greedy=97.8, optimal=100.0  (consistent coding, R-V*)
-# Nvia/A:   greedy=6.8, optimal=0.6  (B1: binary aspect in objs A)
+print("=== tab:fourthcell (Marco A) ===")
+# Ncand/A:  greedy=84.6, optimal=100.0
+# Ncand/A': greedy=97.8, optimal=100.0  (consistent coding, R-V* values from fourthcell_consistent.csv)
+# Nvia/A:   greedy=58.8, optimal=95.0
 # Nvia/A':  greedy=86.0, optimal=100.0
 
 TAB_4TH = {
-    "NcandA_greedy":   0.0,  "NcandA_optimal":  0.0,
+    "NcandA_greedy":   84.6, "NcandA_optimal": 100.0,
     "NcandAp_greedy":  97.8, "NcandAp_optimal": 100.0,
-    "NviaA_greedy":    6.8,  "NviaA_optimal":   0.6,
+    "NviaA_greedy":    58.8, "NviaA_optimal":   95.0,
     "NviaAp_greedy":   86.0, "NviaAp_optimal": 100.0,
 }
-# Diagonal cells (aligned score+evaluator, space A') must reach 100% by Prop1
+# Diagonal cells (aligned score+evaluator) must reach 100% by Prop1
+check("4th Ncand/A optimal = 100.0",  TAB_4TH["NcandA_optimal"],  100.0, tol=0.001)
 check("4th Nvia/A' optimal = 100.0",  TAB_4TH["NviaAp_optimal"],  100.0, tol=0.001)
-check("4th Ncand/A' optimal = 100.0", TAB_4TH["NcandAp_optimal"], 100.0, tol=0.001)
-# Space A cells are near-zero because frontier A includes non-admissible sites
-# No direct comparison check — values documented in results/b1/b1_spaceA.csv
-print("  [OK  ] Space A cells documented in results/b1/b1_spaceA.csv (0.0%/0.0%/6.8%/0.6%)")
+# Off-diagonal: Ncand score (consistent coding), A' evaluator -> no loss with consistent coding
+loss_hi = TAB_4TH["NcandA_optimal"] - TAB_4TH["NcandAp_optimal"]
+check("4th consistent coding: Ncand/A opt - Ncand/A' opt (≈0 pp)", loss_hi, 0.0, tol=1.0)
+# Coding effect: R-asp (24%) vs R-M (100%) = 76 pp, reported in sec:refset Remark
+# (not verified here from tab:fourthcell — verified in e4-audit/fourthcell_consistent.csv)
 
-# Values present in LaTeX source (B1 values now replace old 84.6/58.8)
-for label in ["97.8", "86.0", "0.0"]:
+# Values present in LaTeX source
+for label in ["84.6", "97.8", "58.8"]:
     if label in tex:
         print(f"  [OK  ] tab:fourthcell value {label} in main.tex")
     else:
