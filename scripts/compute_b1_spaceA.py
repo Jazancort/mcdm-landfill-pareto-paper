@@ -89,34 +89,41 @@ for j, b in enumerate(benefit):
 def score_389(w):
     return X_adj_389 @ w
 
-# Score 473: SAW with ref=df_all (473-site normalisation), binary aspect
-# Must use same encoding as evaluator A to satisfy Prop1 on the diagonal.
-X_raw_473 = np.zeros((N, len(col_names)), dtype=np.float64)
-for j, k in enumerate(col_names):
-    x_via = df_via[COL[k]].values.astype(float)
-    x_all = df_imp[COL[k]].values.astype(float)
-    if k == "aspect":
-        # Binary: leeward (90-180°) → 0 (favourable for cost), windward → 1
-        c = np.where((x_via >= 90) & (x_via <= 180), 0.0, 1.0)
-        X_raw_473[:, j] = c        # already "benefit" orientation for SAW
-    elif k in COST:
-        mn, mx = x_all.min(), x_all.max()
-        X_raw_473[:, j] = (x_via - mn) / max(mx - mn, 1e-12)
-    else:  # INV or BENEFIT
-        mn, mx = x_all.min(), x_all.max()
-        X_raw_473[:, j] = (x_via - mn) / max(mx - mn, 1e-12)
+# Score 473: SAW scalarisation directly from compute_A columns.
+# compute_A returns f1v (cost, lower=better), f2v (cost), f3v (benefit, higher=better).
+# Per-site SAW score consistent with Prop1:
+#   score_i = -f1_i - f2_i + f3_i   (for unit weight w_j, scale by w_j inside)
+# Equivalently, build per-column c_j exactly as compute_A does, then:
+#   score_i = sum_j w_j * s_j  where s_j = c_j for F3 columns, s_j = -c_j for F1/F2
+# Since compute_A accumulates c_j*w_j into f1v/f2v/f3v, we just use:
+#   score_i(w) = f3v_i - f1v_i - f2v_i  (both already weighted)
+# But for the assembly loop we need to pass w → scalar, so we define it as:
+#   score_473_cols[:, j] = c_j (same as compute_A, no SAW re-inversion)
+# Then score_i(w) = sum_{j in F3} w_j*c_j  -  sum_{j in F1+F2} w_j*c_j
 
-# Adjust orientation to benefit (higher = better for SAW score)
-X_adj_473 = X_raw_473.copy()
-_, benefit_flags = _build_decision_matrix(df_via)  # get orientation flags
-for j, b in enumerate(benefit_flags):
+# Build C_473 cols: same encoding as compute_A (ref=df_imp)
+C_473 = np.zeros((N, len(col_names)), dtype=np.float64)
+from mcdm_experiment import F1_CRIT, F2_CRIT, F3_CRIT
+f1_set = set(F1_CRIT); f2_set = set(F2_CRIT)
+for j, k in enumerate(col_names):
+    x   = df_via[COL[k]].values.astype(float)
+    ref = df_imp[COL[k]].values.astype(float)
     if k == "aspect":
-        pass   # already handled above as benefit
-    elif not b:
-        X_adj_473[:, j] = 1.0 - X_raw_473[:, j]
+        C_473[:, j] = np.where((x >= 90) & (x <= 180), 0.0, 1.0)
+    elif k in INV:
+        C_473[:, j] = 1.0 - _norm(x, ref)
+    elif k in COST:
+        C_473[:, j] = _norm(x, ref)
+    else:
+        C_473[:, j] = _norm(x, ref)
+
+# SAW sign vector: +1 for F3 criteria, -1 for F1/F2
+sign_473 = np.array([1.0 if k not in (f1_set | f2_set) else -1.0
+                     for k in col_names])
 
 def score_473(w):
-    return X_adj_473 @ w
+    """SAW score aligned with evaluator A: maximise -(F1+F2)+F3."""
+    return (C_473 * (w * sign_473)).sum(axis=1)
 
 # ── Greedy assembly ─────────────────────────────────────────────────────────────
 def top_greedy(sc):
