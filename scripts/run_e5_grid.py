@@ -127,45 +127,44 @@ def generate_criteria(N, seed):
             X[:, j] = (col - col.min()) / rng_j if rng_j > 1e-10 else col
     return X
 
-# ── Amplitude generator (power-law, same as E3) ───────────────────────────────
-def make_amplitudes(X, s_B, s_W):
-    """Compute per-column amplitudes using power-law generator."""
-    norms = np.sqrt((X**2).sum(0)) + 1e-12
-    rho_j = np.array([(X[:, j].max()-X[:, j].min()) / norms[j] for j in range(M)])
+# ── Amplitude generator (direct imposition, not derived from X) ───────────────
+def make_amplitudes_direct(s_B, s_W, seed_amp):
+    """Impose amplitude vector directly using s_B/s_W without deriving from X.
 
-    Agbar_fogo = np.array([
-        np.dot(W_AHP[g], rho_j[g]) / W_AHP[g].sum()
-        for g, gidx in enumerate(GROUPS)
-        for g in [np.array(gidx)]
-    ])
-    # Simplification: compute per-group mean
-    Agbar_g = np.array([
-        np.dot(W_AHP[gidx], rho_j[gidx]) / W_AHP[gidx].sum()
-        for gidx in GROUPS
-    ])
-    global_mean = float(np.dot(W_G, Agbar_g))
+    This ensures TV_W spans a meaningful range (0 to ~0.15) independent of X.
 
-    # Power-law generator
-    Agbar_target = (1.0 - s_B) * global_mean + s_B * Agbar_g
-    eff_global = float(np.dot(W_G, Agbar_target))
-    if eff_global > 1e-10:
-        Agbar_target *= global_mean / eff_global
+    s_B=0, s_W=0 → all A_j = global_mean (flat)
+    s_B=1, s_W=1 → max between/within group variation
 
+    Global mean = 0.24 (approximate Fogo value).
+    """
+    rng_a = np.random.default_rng(seed_amp)
+    global_mean = 0.24
+
+    # Between-group variation: group means spread around global_mean
+    # s_B=0 → all group means = global_mean; s_B=1 → spread up to ±50%
+    spread_B = 0.5 * s_B * global_mean
+    # Random group deviations, centred
+    dg = rng_a.uniform(-1, 1, 3)
+    dg -= float(np.dot(W_G, dg))  # centre
+    Agbar = global_mean + spread_B * dg / (np.abs(dg).max() + 1e-10)
+
+    # Within-group variation: criteria deviate from their group mean
+    # s_W=0 → A_j = Agbar[g]; s_W=1 → up to ±60% of group mean
     Aj = np.zeros(M)
     for g_idx, gidx in enumerate(GROUPS):
-        if s_W == 0.0:
-            Aj[gidx] = Agbar_target[g_idx]
-        else:
-            rho_g = rho_j[gidx]
-            Agbar_f = Agbar_g[g_idx]
-            power = (rho_g / max(Agbar_f, 1e-10)) ** s_W
-            raw = Agbar_target[g_idx] * power
-            raw_mean = np.dot(W_AHP[gidx], raw) / W_AHP[gidx].sum()
-            Aj[gidx] = raw * Agbar_target[g_idx] / max(raw_mean, 1e-10)
+        spread_W = 0.6 * s_W * Agbar[g_idx]
+        dj = rng_a.uniform(-1, 1, len(gidx))
+        # Centre within group (weighted)
+        wg = W_AHP[gidx] / W_AHP[gidx].sum()
+        dj -= float(np.dot(wg, dj))
+        scale = np.abs(dj).max() + 1e-10
+        Aj[gidx] = Agbar[g_idx] + spread_W * dj / scale
 
+    # Ensure all positive
+    Aj = np.maximum(Aj, 0.02)
     return Aj
 
-# ── TV metrics ────────────────────────────────────────────────────────────────
 def compute_tv(Aj):
     """Compute TV_B and TV_W from amplitude vector."""
     Agbar_g = np.array([
@@ -173,11 +172,9 @@ def compute_tv(Aj):
         for gidx in GROUPS
     ])
     global_mean = float(np.dot(W_G, Agbar_g))
-
     TV_B = float(np.dot(W_G, np.abs(Agbar_g - global_mean)))
     TV_W_g = np.array([
-        np.dot(W_AHP[gidx] / W_AHP[gidx].sum(),
-               np.abs(Aj[gidx] - Agbar_g[g_idx]))
+        np.dot(W_AHP[gidx] / W_AHP[gidx].sum(), np.abs(Aj[gidx] - Agbar_g[g_idx]))
         for g_idx, gidx in enumerate(GROUPS)
     ])
     TV_W = float(np.dot(W_G, TV_W_g))
@@ -241,7 +238,7 @@ for N_s, geo, s_B, s_W, rep in iproduct(N_SITES_LEVELS, GEO_LEVELS, SB_LEVELS, S
     n_trios = len(trios)
 
     X = generate_criteria(N_s, seed)
-    Aj = make_amplitudes(X, s_B, s_W)
+    Aj = make_amplitudes_direct(s_B, s_W, seed + 2000)
     TV_B, TV_W = compute_tv(Aj)
 
     # Build SAW score using Aj amplitudes
