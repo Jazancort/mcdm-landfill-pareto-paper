@@ -94,17 +94,28 @@ CS_mm  = C_mm[T0]  + C_mm[T1]  + C_mm[T2]
 print(f"  CS_vec {CS_vec.nbytes/1e6:.0f}MB  t={time.time()-t0:.1f}s", flush=True)
 
 def objs_from_CS(CS, w, G_idx):
-    """Compute (F1,F2,F3) from trio column sums and weight vector."""
+    """Compute (F1,F2,F3) matching pareto_utils sign convention:
+    F1,F2 = cost-type (sum of benefit-oriented c → negate so lower = worse site = dominatable)
+    Wait — in pareto_utils, F1,F2 are already in benefit-oriented encoding
+    (c = _norm(x) for cost cols means c small = good site → F1 small = good → minimise F1).
+    So: no negation needed. The sorted C_vec/C_mm already have the correct sign.
+    F1 small = good (cost group), F2 small = good (env group), F3 large = good (social)."""
     F = []
-    for grp in G_idx:
-        F.append((CS[:, grp] * w[grp]).sum(1))
+    for gi, grp in enumerate(G_idx):
+        val = (CS[:, grp] * w[grp]).sum(1)
+        F.append(val)
+    # F1 and F2 are in 'benefit' space (small=good for cost/env groups).
+    # is_dominated uses F1<=, F2<= (lower=better), F3>= (higher=better).
+    # This matches: small F1 (good cost) dominated by smaller F1 (even better cost). OK.
     return F[0], F[1], F[2]
 
 # SAW scores (per site)
 def saw_mm(w):  return C_mm  @ w
 def saw_vec(w): return C_vec @ w
 
-def top_opt(scores): return int(np.argmax(scores[T0]+scores[T1]+scores[T2]))
+def top_opt(scores):
+    ts = scores[T0]+scores[T1]+scores[T2]
+    return trios[int(np.argmax(ts))]   # return trio array [i,j,k]
 
 def top_greedy(scores):
     order = np.argsort(scores)[::-1]
@@ -115,17 +126,17 @@ def top_greedy(scores):
         if len(sel) == 3: break
     if len(sel) < 3: return None
     sf = frozenset(sel)
-    for i, t in enumerate(trios):
-        if frozenset(t) == sf: return i
+    for t in trios:
+        if frozenset(t) == sf: return t   # return trio array [i,j,k]
     return None
 
 # ── Regression test ─────────────────────────────────────────────────────────
 print("\n=== Regression test (vec/opt, vec objs, nominal w) ===", flush=True)
 F1n, F2n, F3n = objs_from_CS(CS_vec, w_ahp, G_idx)
-t_nom = top_opt(saw_vec(w_ahp))
-print(f"  is_dominated(top_trio, F_vec)={is_dominated(trios[t_nom], F1n, F2n, F3n)}", flush=True)
-assert not is_dominated(trios[t_nom], F1n, F2n, F3n), \
-    "REGRESSION FAIL: vec/opt not on vec frontier at nominal w — BUG"
+t_nom = top_opt(saw_vec(w_ahp))   # returns trio array [i,j,k]
+dom = is_dominated(t_nom, F1n, F2n, F3n)
+print(f"  is_dominated={dom} (should be False for Prop1)", flush=True)
+assert not dom, "REGRESSION FAIL: vec/opt not on vec frontier at nominal w — BUG"
 print("  PASS", flush=True)
 
 # ── Monte Carlo ─────────────────────────────────────────────────────────────
@@ -142,8 +153,8 @@ for norm_lbl, asm in cells:
     for di, w in enumerate(W_draws):
         F1, F2, F3 = objs_from_CS(CS_vec, w, G_idx)  # vec objectives always
         sc = saw_vec(w) if norm_lbl=="vec" else saw_mm(w)
-        t_idx = top_opt(sc) if asm=="optimal" else top_greedy(sc)
-        if t_idx is not None and not is_dominated(trios[t_idx], F1, F2, F3):
+        t = top_opt(sc) if asm=="optimal" else top_greedy(sc)
+        if t is not None and not is_dominated(t, F1, F2, F3):
             nd_cnt += 1
         if di % 50 == 0:
             eta = (time.time()-t_cell)/(di+1)*(N_DRAWS-di-1)
