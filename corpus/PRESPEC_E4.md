@@ -261,6 +261,60 @@ run_e4.py is rewritten to use build_score_473_variant(w, A_j) for
 fwd cells, matching mc_2cube_fixed.py lines 108-121. This DEV is
 committed before the corrected run.
 
+### DEV-E4-007: post hoc declaration — versions v1–v5, P_E4_3 not evaluable, R-V* and R-asp exploratory
+
+**Versions v1 to v5 were run before the final pipeline was fixed.**
+
+The script run_e4.py went through six versions (commits ca50ce2 → efdc9d8) before
+producing the final results. Versions v1 through v5 produced results that were seen
+before the pipeline was corrected. Specifically:
+- v1 (ca50ce2): all fwd cells = 100%, including R-V (should be 20%). Score used
+  X_adj_dm scaled by A_j, which preserves argmax under 389-site normalisation.
+- v2/v3 (d1bb682): attempted affine construction; R-M = 24% (wrong).
+- v4 (73cd65f): used Xadj389 raw for all cells; R-M = 24%.
+- v5 (f4d94d0): X_cell = Xadj473 + (A_j - r_j)*X_adj_dm; R-M = 24% persisted.
+- v6 (efdc9d8): X_adj_dm*A_j for B/W/M cells, Xadj473 for R-V. R-M=100%, R-V=20%.
+These outputs are saved in results/run_e4_v{1..6}.log for transparency.
+
+**P_E4_3 is not evaluable as designed.**
+
+The cell R-V (X_adj_dm * r_j would be correct for the PRESPEC design) was implemented
+as Xadj473, which uses `aspect` as a continuous variable (azimuth in degrees,
+min-max normalised). The evaluator uses `aspect` as a binary indicator (leeward
+[90°,180°]=1, else=0). These are not monotonically related. The comparison R-W vs R-V
+is therefore confounded by a coding inconsistency, not a reference-set effect.
+
+Evidence: version v4 produced R-M = 24% using Xadj389 (same reference set as 389,
+but aspect continuous). This is ~76 pp loss from coding alone, accounting for
+essentially all of the 80 pp. The offsets b_j cannot cause this (verified: b_j
+shifts all portfolios by the same constant, leaving argmax unchanged).
+
+P_E4_3 is reported as "not evaluable as designed due to coding inconsistency in the
+aspect column between the score and the evaluator."
+
+**Mirror direction uses evaluator A', not A.**
+
+Verified from results: R-M and R-M' produce identical Q2 draw-by-draw (86.0/100.0
+at kappa=200; 96.0/100.0 at kappa=50). The declared frontier A (213 portfolios over
+473-site objectives, DEV-E4-002) was never implemented. All cells use evaluator A'.
+R-V' = 88.4% vs tab:fourthcell 389/A = 95.0% (|diff|=6.6 > 3*SE=4.3): FAIL.
+P_E4_4 and the "inverse asymmetry" results do not address the published asymmetry.
+
+**Exploratory cells R-V* and R-asp declared post hoc (seen results, declared after).**
+
+These cells were designed after seeing v6 results. They are declared here before
+being run, but this declaration itself is post hoc (results of other cells seen).
+
+R-V*: score = X_adj_dm * r_j  (aspect binary, same as evaluator; constantes de 473
+     implícitas via r_j). This is the correct PRESPEC cell V. If R-V* ≈ 100%,
+     the 80 pp are caused by aspect coding, not by the reference set.
+
+R-asp: score = X_adj_dm with aspect column replaced by Xadj473_aspect (continuous
+      azimuth, 389-site constants). This isolates the aspect coding effect.
+      Prediction: Q2 ≈ 24% (replicates v4 finding without changing reference set).
+
+These cells are exploratory. Confirmations do not constitute pre-registered evidence.
+
 ## 8. Note on frontier asymmetry
 
 tab:fourthcell rows use different frontiers:

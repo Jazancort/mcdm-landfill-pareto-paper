@@ -399,6 +399,31 @@ if blg_path.exists():
 else:
     print("  [INFO] main.blg not found — skip duplicate check")
 
+# Rule 5: aspect coding consistency warning
+# The manuscript uses aspect as binary (leeward indicator) in the objectives.
+# Any score matrix for the 473-site cell must use the same binary coding.
+# This cannot be automatically verified from the .tex alone, but we can check
+# that the manuscript does not contain 'aspect' alongside 'continuous' or 'degrees'
+# in the context of the fourth cell or the score computation.
+ASPECT_INCONSISTENCY_PHRASES = [
+    "aspect.*continuous",
+    "aspect.*degrees.*score",
+    "aspect.*azimuth.*score",
+]
+if main_tex.exists():
+    import re as _re2
+    tex_lower = tex.lower()
+    for phrase in ASPECT_INCONSISTENCY_PHRASES:
+        if _re2.search(phrase, tex_lower):
+            FAIL.append(f"Potential aspect coding inconsistency in main.tex: pattern '{phrase}' found")
+            print(f"  [FAIL] Aspect coding inconsistency: '{phrase}'")
+    # Positive check: manuscript should note that aspect is binary
+    if "aspect" in tex and "binary" not in tex.lower() and "leeward" not in tex.lower():
+        print("  [WARN] 'aspect' in main.tex but 'binary' and 'leeward' not found — verify coding is documented")
+    else:
+        print("  [OK  ] aspect coding (binary/leeward) documented or aspect not in text")
+
+
 print()
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")
