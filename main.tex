@@ -2572,6 +2572,16 @@ Fogo's deviation vector is two-sided and concentrated
 $2.88\times$, and the joint distribution of
 $(\mathrm{TV}_B,\mathrm{TV}_W)$ in applied decision matrices is unknown;
 establishing it would require a corpus of published matrices.
+Experiment~E5 (Supplementary Material) stress-tested the mechanism on
+405 synthetic instances varying instance size ($N\in\{50,100,200\}$),
+spatial geometry and amplitude structure.
+All instances confirmed the optimality invariant ($Q_2^{\mathrm{mm\,opt}}=100\%$),
+but $\mathrm{TV}_W$ alone explained little of the greedy loss across instances
+($r=0.034$); spatial geometry and $N$ were stronger moderators.
+Fogo's $Q_2$ greedy of $66\%$ at $\mathrm{TV}_W\approx0.032$ lies $32$~pp
+below the synthetic mean at the same $\mathrm{TV}_W$, suggesting that
+instance-specific features of Fogo (binary criterion structure, island
+geometry) drive the magnitude beyond what $\mathrm{TV}_W$ alone predicts.
 
 \emph{Weight perturbation model.}
 Dirichlet perturbation around $\wahp$ represents symmetric uncertainty in
@@ -2625,6 +2635,15 @@ A post hoc exploratory intervention on Fogo confirmed that between-group
 distortion alone costs nothing and that within-group distortion carries
 most of the loss, and falsified our prediction that the two components
 would not interact.
+A synthetic grid of 405 instances varying $N$, spatial geometry and
+amplitude structure (Experiment~E5) confirmed that optimal assembly
+reaches $100\%$ on every instance (Proposition~\ref{prop:p1:stmt}), but
+found that $\mathrm{TV}_W$ alone explains little of the greedy loss across
+synthetic instances ($r=0.034$): spatial geometry and instance size
+are the dominant moderators in the synthetic setting, and Fogo lies
+well below the synthetic trend at the same $\mathrm{TV}_W$.
+The Fogo magnitudes are therefore instance-specific; the mechanism
+is general.
 
 Two consequences bear directly on practice.
 Integer programming on top of a ranking pays only when the normalisation

@@ -658,6 +658,90 @@ $43.2$~pp ($100.0-56.8\%$); the two penalties are not symmetric because
 the frontier changes.
 
 % =======================================================================
+% S5  Experiment E5 — Synthetic Grid for Generalisation
+% =======================================================================
+
+\section*{Post Hoc Experiment: Synthetic Grid for Generalisation (E5)}
+\label{sec:e5}
+
+\noindent
+\textbf{Classification:} Post hoc exploratory.
+Pre-specified before results: \texttt{corpus/PRESPEC\_E5.md},
+committed before any E5 run was launched.
+
+\noindent
+\textbf{Research question:}
+Is the relationship between within-group amplitude variation
+($\mathrm{TV}_W$) and greedy-assembly Pareto efficiency consistent across
+instances differing in size, spatial geometry, and amplitude structure?
+
+\subsection*{Design}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Factor & Levels \\
+\midrule
+$N$ (sites) & 50, 100, 200 \\
+Geometry & uniform, clustered, grid \\
+$s_B$ (between-group spread) & 0.0, 0.5, 1.0 \\
+$s_W$ (within-group spread) & 0.0, 0.25, 0.5, 0.75, 1.0 \\
+Replicates & 3 per cell \\
+\midrule
+Total instances & 405 \\
+$N_\text{draws}$ & 100 per instance \\
+$\kappa$ & 200 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Sites generated randomly within an $80\times80$~km bounding box.
+Three geometries: uniform random, three-cluster Gaussian, regular
+grid with jitter.
+Amplitude vectors are imposed directly via $s_W\in[0,1]$, ensuring
+$\mathrm{TV}_W$ spans $[0,\,0.096]$ independently of $N$.
+Script: \texttt{run\_e5\_grid.py} v4, commit \texttt{4d438b6}.
+
+\subsection*{Pre-specified decision rules}
+
+\textbf{E5-R1:} $Q_2^{\mathrm{mm\,opt}} = 100\%$ on every instance (regression).
+\textbf{E5-R2:} Slope of $Q_2^{\mathrm{grd}}$ on $\mathrm{TV}_W$ excludes zero
+in $\geq70\%$ of strata $\Rightarrow$ robust predictor.
+\textbf{E5-R3:} CI includes zero in $>30\%$ of strata $\Rightarrow$ not robust.
+
+\subsection*{Results}
+
+\textbf{E5-R1:} $Q_2^{\mathrm{mm\,opt}} = 100\%$ on all 405 instances.
+\textbf{Pass.}
+
+\textbf{E5-R3 activated:} $r(\mathrm{TV}_W,\,\mathrm{loss\_greedy}) = 0.034$.
+$\mathrm{TV}_W$ is not a robust predictor of greedy loss.
+
+\begin{center}\small
+\begin{tabular}{rrc}
+\toprule
+$s_W$ & $\mathrm{TV}_W$ & $Q_2^{\mathrm{grd}}$ \\
+\midrule
+0.00 & 0.000 & 96.3\% \\
+0.25 & 0.024 & 98.6\% \\
+0.50 & 0.048 & 97.7\% \\
+0.75 & 0.072 & 94.8\% \\
+1.00 & 0.096 & 96.6\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Dominant moderators: $N$ (N=50: 91\%; N=100/200: 99.7\%)
+and geometry (clustered: 91\%; grid/uniform: $\geq$99\%).
+Fogo ($\mathrm{TV}_W\approx0.032$, $Q_2^{\mathrm{grd}}=66.2\%$) lies
+$\approx32$~pp below the synthetic mean at the same $\mathrm{TV}_W$.
+
+\textbf{Conclusion:} Proposition~1 invariant generalises perfectly
+(405/405 instances). The magnitude of greedy loss is instance-specific;
+$\mathrm{TV}_W$ is a necessary condition in the theorem but not a
+sufficient predictor of magnitude across instances.
+
+% =======================================================================
 % S4  Data provenance
 % =======================================================================
 
