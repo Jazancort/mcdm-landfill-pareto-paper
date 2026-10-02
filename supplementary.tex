@@ -25,7 +25,7 @@ respect extreme: \textit{perm} carries $350$ tied zeros.
 This section separates the mechanism from the instance by re-drawing the
 criterion columns while holding the spatial structure fixed: each
 synthetic instance reuses the Fogo distance matrix, and hence the same
-$|\Tset|=\Ntrios$ feasible trios, and varies only the marginals.
+$\Ntrios$ feasible trios, and varies only the marginals.
 
 \paragraph{Design.}
 The manipulated factor is the \emph{number} of sparse criteria rather
@@ -323,3 +323,270 @@ Results from \texttt{run\_e1\_v3.py}, commit \texttt{18e7a66}
 \end{description}
 
 
+
+
+% =======================================================================
+% S1  Pre-registration for Experiment E4
+% =======================================================================
+%
+% Source: corpus/PRESPEC_E4.md
+% Committed before any E4 run; deviations DEV-E4-001..007 appended
+% chronologically as they occurred.
+% Verify: git log --oneline corpus/PRESPEC_E4.md
+%
+% -----------------------------------------------------------------------
+
+\section*{Pre-registered Design and Deviations for Experiment~E4}
+\label{sec:prespec_e4}
+
+\noindent
+\textbf{Purpose:} Test whether the reference-set mismatch (473 vs.\ 389 sites
+in the score) reduces to within-group re-weighting of the same form as
+Experiment~E1, via the affine identity $n_j^{473}(a)=b_j+r_j\,n_j^{389}(a)$.
+
+\subsection*{Pre-declared predictions}
+
+\begin{description}
+\item[P\_E4\_1 (Theorem, hard assertion)]
+  Cells R-B and R-B$'$ attain $Q_2=100\%$ under optimal assembly on
+  every draw.  Failure implies a bug or a violation of
+  Theorem~\ref{thm:groupconst}.
+
+\item[P\_E4\_2 (Regression test)]
+  R-V (fwd) reproduces the published $473/A'$ cell within $3\,\mathrm{SE}$;
+  R-V$'$ (mirror) reproduces the published $389/A$ cell within $3\,\mathrm{SE}$.
+
+\item[P\_E4\_3 (Primary empirical, declared before any run)]
+  Within-group loss $(100\%-Q_2^\text{R-W,opt})\ge 50\%$ of total loss
+  $(100\%-Q_2^\text{R-V,opt})$ in the $473\to A'$ direction.
+
+\item[P\_E4\_4 (Exploratory, declared)]
+  The $80\,\mathrm{pp}$ vs.\ $5\,\mathrm{pp}$ asymmetry of
+  tab:fourthcell persists in the within-group cells R-W and R-W$'$.
+
+\item[P\_E4\_5 (Exploratory, declared, superseded by DEV-E4-004)]
+  $Q_2^\text{R-W,opt} < Q_2^\text{E1-W,opt}=64.2\%$ despite
+  $\mathrm{TV}_W(\text{R-W})=0.0815 < 0.199=\mathrm{TV}_W(\text{E1-W})$.
+\end{description}
+
+\subsection*{Deviations (DEV-E4-001 to DEV-E4-007)}
+
+\begin{description}
+\item[DEV-E4-001] \textit{Kappa/alpha parameter clarification.}
+  The declared $\kappa=200$ is the Dirichlet concentration parameter
+  (not the portfolio size $k=3$).  Two values $\kappa\in\{50,200\}$
+  were run; the primary estimand uses $\kappa=200$.
+
+\item[DEV-E4-002] \textit{Mirror direction frontier and amplitude sign.}
+  The $389\to A$ direction uses the $A$-frontier (213 portfolios,
+  objectives over 473 sites) and amplitude $A_j=1/r_j$ (not $r_j$).
+  Corrected amplitude sentence: the 389-site score has amplitude $1/r_j$
+  relative to the $A$-evaluator.
+
+\item[DEV-E4-003] \textit{Weight-matrix provenance and $N_\text{draws}$.}
+  $N=500$ (matching the main factorial, not the declared 1000);
+  weight matrix loaded from \texttt{results/e1/e1\_weights\_k200.npy},
+  SHA-256 \texttt{bea05...487}.
+
+\item[DEV-E4-004] \textit{P\_E4\_5 restated.}
+  $\mathrm{TV}_W(\text{R-W})=0.0815$ (correcting the DEV-E4-001 value of
+  $0.163$ which omitted the factor $\tfrac{1}{2}$).  The direction of
+  distortion on \textit{perm} (deflation vs.\ inflation at comparable
+  $\mathrm{TV}_W$) is the substantive claim.
+
+\item[DEV-E4-005] \textit{Feasibility and DEV-E4-002 correction.}
+  All 1\,944\,653 trios are indexed over the 389 admissible sites;
+  excluded candidates cannot enter any portfolio.
+
+\item[DEV-E4-006] \textit{Pipeline bug in \texttt{run\_e4.py} v1--v5.}
+  Versions v1--v5 produced $Q_2^\text{opt}=100\%$ for all cells,
+  including R-V (should be $\approx20\%$), because the score rescaling
+  preserved rank order under the 389-site normalisation.
+  Version v6 uses \texttt{build\_score\_473()} for fwd cells.
+
+\item[DEV-E4-007] \textit{Post hoc declaration — coding inconsistency.}
+  R-V confounds the reference-set effect with a coding inconsistency:
+  \texttt{build\_score\_473} encodes \textit{aspect} as a continuous
+  azimuth while the evaluator uses a binary leeward indicator.
+  Post-hoc exploratory cells declared and run after this diagnosis:
+  \begin{itemize}
+  \item R-V$^*$ (consistent binary coding, $473$-site reference):
+        $\kappa=200$, greedy $=97.8\%$, optimal $=100.0\%$.
+  \item R-asp (continuous coding, $389$-site reference):
+        $\kappa=200$, greedy $=25.2\%$, optimal $=24.0\%$.
+  \end{itemize}
+  Interpretation: the $76\,\mathrm{pp}$ loss attributed to the
+  reference set is entirely a coding effect; with consistent coding the
+  $473$-site reference costs nothing under optimal assembly and
+  \emph{improves} greedy assembly by $+\RefSetGreedyGain\,\mathrm{pp}$
+  (95\% CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).  P\_E4\_3 is
+  testable but uninformative as designed (see main text, \S\ref{sec:greedy}).
+\end{description}
+
+% =======================================================================
+% S2  Pre-registration for Confirmatory Recalculation R1
+% =======================================================================
+%
+% Source: corpus/PRESPEC_R1.md, committed 2026-10-02 before Fase D runs.
+% Verify: git log --oneline corpus/PRESPEC_R1.md
+%
+% -----------------------------------------------------------------------
+
+\section*{Pre-registered Decision Rules for Confirmatory Recalculation~R1}
+\label{sec:prespec_r1}
+
+\noindent
+\textbf{Written:} 2026-10-02 (after auditing coding inconsistency, before Fase~D
+scripts were run).  Results of \texttt{run\_fourthcell\_consistent.py}
+were already known; this pre-registration fixes the decision rules and
+ensures that Fase~G (manuscript revision) uses automatic decisions, not
+human reading of the numbers.
+
+\subsection*{Decision rules}
+
+\begin{description}
+\item[R1-1 (Optimal assembly)] $\Delta_\text{ref,opt}=Q_2[\text{R-V}^*,A']-Q_2[\text{R-M},A']$
+  under consistent binary coding, $\kappa=200$.
+  \textbf{Effect} if 95\% paired bootstrap CI excludes $0$ and
+  $|\Delta|\ge2.5\,\mathrm{pp}$; otherwise \textbf{Observation}.
+
+\item[R1-2 (Greedy assembly)] Same contrast, greedy.
+
+\item[R1-3 (Regression test)] Pass if all four diagonal cells equal
+  $100.0\%$ under optimal assembly.  Fail $\Rightarrow$ abort Fase~D.
+
+\item[R1-4 (tab:canonical)] Not applicable: tab:canonical declared
+  uncontaminated in \texttt{docs/contamination-note.md}.
+
+\item[R1-5 (Coding-only cell R-asp)] Descriptive; post hoc exploratory.
+
+\item[R1-6 (Residual reference-set effect $\approx4\,\mathrm{pp}$)]
+  R-V$-$R-asp contrast; same rule as R1-1.
+  Pre-declared expectation: significant (bootstrap showed
+  $+4.0\,\mathrm{pp}$, $95\%$ CI $[+2.2,\,+6.0]$).
+\end{description}
+
+\subsection*{Outcomes}
+
+\begin{center}
+\begin{tabular}{llr@{\quad}l}
+\toprule
+ID & Contrast & $\Delta$ & Decision \\
+\midrule
+R1-1 & R-V$^*$ opt $-$ R-M opt & $0.0\,\mathrm{pp}$ & Observation \\
+R1-2 & R-V$^*$ grd $-$ R-M grd & $+11.8\,\mathrm{pp}$ & \textbf{Effect} \\
+R1-3 & All diagonal opts $=100\%$ & --- & \textbf{Pass} \\
+R1-5 & R-asp opt $=24.0\%$        & --- & Descriptive \\
+R1-6 & R-V grd $-$ R-asp grd & $+4.0\,\mathrm{pp}$ & \textbf{Effect} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+All decisions produced automatically by
+\texttt{scripts/analyze\_r1.py}, commit \texttt{c63b64e}.
+
+% =======================================================================
+% S3  Version history
+% =======================================================================
+
+\section*{Version History}
+\label{sec:versions}
+
+\begin{description}
+\item[v1 — Marco~A (commit \texttt{1e48292})]
+  First complete draft: full 2$\times$2$\times$2 factorial, tab:canonical,
+  tab:fourthcell, Theorem~\ref{thm:groupconst}, Experiment~E1 (PRESPEC\_E1
+  committed at \texttt{f6042f8} before any run).
+  PDF: 23 pages.
+
+\item[v2 — Marco~B1 (commit \texttt{1a4fe47})]
+  Theorem proof completed: necessary and sufficient conditions;
+  Proposition~\ref{prop:groupconst} iff form.
+
+\item[v3 — Fases Math--F (commit \texttt{03bbda7})]
+  Mathematical corrections (M1--M4): gap definition, PROMETHEE sign,
+  amplitude-invariant proposition, nomenclature.
+  Provenance audit (Fases B--D): coding inconsistency in
+  \texttt{build\_score\_473} identified and documented;
+  confirmatory recalculation~R1 run with consistent coding.
+  Diagnostic experiments E1--E3, E5 completed.
+  F1--F7 corrections: aggregation contrasts, benchmark circularity,
+  PROMETHEE sign in main text.
+  PDF: 24 pages.
+
+\item[v4 — Fase~G (commits \texttt{68ec41b}--\texttt{03bbda7})]
+  Full manuscript rewrite following R1 decisions.
+  Key changes: decision tree revised (only R1-2 is an effect under
+  greedy assembly); tab:fourthcell $N_\text{cand}/A'$ updated to
+  $97.8\%/100\%$; Remark~\ref{rem:nonmonotone} inserted;
+  Limitations updated with instance uniqueness and E4 exploratory status.
+  PDF: 25 pages.
+
+\item[v5 — Fase~H (commits \texttt{1c076c8}--\texttt{9c7a376})]
+  Internal review: abstract trimmed to ${\approx}240$ words;
+  tab:contrasts aggregation row converted to macros;
+  three reviewer objections answered;
+  claim-evidence matrix completed;
+  provenance audit closed ($|F_A \cap F_{A'}|=132$ confirmed).
+  PDF: 25 pages, \texttt{ALL CHECKS PASSED}.
+\end{description}
+
+% =======================================================================
+% S4  Data provenance
+% =======================================================================
+
+\section*{Data Provenance}
+\label{sec:provenance}
+
+Every quantitative claim in the manuscript is traceable to a script
+committed before that claim was inserted.
+The table below lists the key numbers, their source scripts, and whether
+the corresponding macro was affected by the coding inconsistency.
+
+\begin{table*}[!t]
+\centering
+\caption{Provenance of key manuscript values.
+  ``Script'' identifies the Python script that produced each number.
+  ``Contaminated'' (SIM/YES) means the number was produced using the
+  continuous-aspect encoding in \texttt{build\_score\_473} and was
+  updated in Fase~G; NAO/NO means it was unaffected.
+  \texttt{check\_consistency.py} verifies that no contaminated macro
+  appears in the current manuscript.}
+\label{tab:provenance}
+\begin{tabular}{p{4.5cm}p{3.5cm}cc}
+\toprule
+Quantity & Script & Commit & Contaminated \\
+\midrule
+% --- Main factorial ---
+$Q_2[\text{SAW/mm/grd}] = 86.0\%$  & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$Q_2[\text{SAW/mm/opt}] = 100.0\%$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$Q_2[\text{SAW/vec/grd}] = 66.2\%$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$Q_2[\text{SAW/vec/opt}] = 56.8\%$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$Q_2[\text{TOPSIS/mm/opt}] = 96.6\%$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$Q_2[\text{TOPSIS/vec/opt}] = 52.4\%$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+% --- Contrasts ---
+Normalisation greedy contrast $+25.4\,\mathrm{pp}$ & \texttt{mc\_2cube\_fixed.py} + bootstrap & \texttt{1e48292} & NAO \\
+SAW$-$TOPSIS pooled $+0.5\,\mathrm{pp}$ & \texttt{aggregation\_strata.py} & \texttt{18361a6} & NAO \\
+Optimal$-$greedy within mm $+8.1\,\mathrm{pp}$ & \texttt{mc\_2cube\_fixed.py} + bootstrap & \texttt{1e48292} & NAO \\
+Optimal$-$greedy within vec $-10.2\,\mathrm{pp}$ & \texttt{mc\_2cube\_fixed.py} + bootstrap & \texttt{1e48292} & NAO \\
+% --- E1 ---
+E1-W optimal $Q_2 = 64.2\%$ & \texttt{run\_e1\_v3.py} & \texttt{18e7a66} & NAO \\
+E1-V optimal $Q_2 = 56.8\%$ & \texttt{run\_e1\_v3.py} & \texttt{18e7a66} & NAO \\
+$\mathrm{TV}_W(r_j)=0.082$ & \texttt{tvw\_e4.py} & \texttt{d4e970b} & NAO \\
+$\mathrm{TV}_W(1/r_j)=0.085$ & \texttt{tvw\_e4.py} & \texttt{d4e970b} & NAO \\
+% --- R1 ---
+$Q_2[\text{R-V}^*,A',\text{opt}]=100.0\%$ & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & NAO \\
+$Q_2[\text{R-V}^*,A',\text{grd}]=97.8\%$  & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & NAO \\
+$Q_2[\text{R-asp},A',\text{opt}]=24.0\%$  & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & NAO \\
+Greedy gain R1-2 $+11.8\,\mathrm{pp}$ (CI $[+8.8,+14.8]$) & \texttt{analyze\_r1.py} & \texttt{c63b64e} & NAO \\
+% --- tab:fourthcell contaminated ---
+$N_\text{cand}/A'$ greedy (orig.\ $19.6\%$, corrected $97.8\%$) & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & SIM \\
+$N_\text{cand}/A'$ optimal (orig.\ $20.0\%$, corrected $100.0\%$) & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & SIM \\
+% --- Geometry ---
+$|F_A|=213$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$|F_{A'}|=181$ & fainter (sorted dominance, inline) & \texttt{9c7a376} & NAO \\
+$|F_A \cap F_{A'}|=132$ & fainter (sorted dominance, inline) & \texttt{9c7a376} & NAO \\
+\bottomrule
+\end{tabular}
+\end{table*}
