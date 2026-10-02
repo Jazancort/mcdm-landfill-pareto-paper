@@ -99,20 +99,32 @@ def generate_sites(N, geometry, seed, bbox_km=BBOX_KM):
 
 # ── Criterion matrix generator ─────────────────────────────────────────────────
 def generate_criteria(N, seed):
-    """Generate M=9 criterion columns with mild correlations within groups."""
+    """Generate M=9 criterion columns with realistic amplitude variation.
+
+    Key: use different distributions per criterion to get heterogeneous rho_j.
+    Binary/concentrated criteria (high binary mass) → low range, like aspect on Fogo.
+    Continuous spread criteria → high range.
+    This produces TV_W values in the 0.04-0.15 range (comparable to Fogo ~0.08).
+    """
     rng = np.random.default_rng(seed + 1000)
     X = np.zeros((N, M))
+
+    # Pre-define binary fraction per criterion within each group
+    # Higher p_binary → more binary/concentrated → lower rho_j
+    p_binary = rng.uniform(0.0, 0.7, M)  # fraction of sites that get extreme values
+
     for g, gidx in enumerate(GROUPS):
-        # Correlated within group via shared factor
+        # Shared group factor (spatial correlation within group)
         factor = rng.uniform(0, 1, N)
         for j in gidx:
-            noise = rng.uniform(0, 1, N)
-            X[:, j] = 0.6 * factor + 0.4 * noise
-    # Normalise to [0,1]
-    for j in range(M):
-        rng_j = X[:, j].max() - X[:, j].min()
-        if rng_j > 1e-10:
-            X[:, j] = (X[:, j] - X[:, j].min()) / rng_j
+            # Mix of continuous and concentrated values
+            p = p_binary[j]
+            is_extreme = rng.random(N) < p
+            extreme_val = rng.choice([0.0, 1.0], N)  # binary extreme
+            continuous = 0.5 * factor + 0.5 * rng.uniform(0, 1, N)
+            col = np.where(is_extreme, extreme_val, continuous)
+            rng_j = col.max() - col.min()
+            X[:, j] = (col - col.min()) / rng_j if rng_j > 1e-10 else col
     return X
 
 # ── Amplitude generator (power-law, same as E3) ───────────────────────────────
