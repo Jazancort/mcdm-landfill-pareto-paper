@@ -611,11 +611,11 @@ $G_3$, and let $w_j$ be the criterion weight.
 The three objectives therefore have mixed senses:
 \begin{align}
   F_1(t) &= \sum_{i\in t}\sum_{j\in G_1} w_j\,c_j(i),
-    && \text{(siting cost, minimise)} \label{eq:F1}\\
+    && \text{(cost, min)} \label{eq:F1}\\
   F_2(t) &= \sum_{i\in t}\sum_{j\in G_2} w_j\,c_j(i),
-    && \text{(environmental impact, minimise)} \label{eq:F2}\\
+    && \text{(env.\ impact, min)} \label{eq:F2}\\
   F_3(t) &= \sum_{i\in t}\sum_{j\in G_3} w_j\,c_j(i),
-    && \text{(social safety, maximise)} \label{eq:F3}
+    && \text{(social safety, max)} \label{eq:F3}
 \end{align}
 and we write $\mathbf{F}(t;w)=(F_1,F_2,F_3)$ to make the weight
 dependence explicit, since it is central to Section~\ref{sec:design}.
@@ -685,11 +685,11 @@ For dominated portfolios we report a scale-free shortfall.
 With $R_\ell = \max_{t\in\Tset}F_\ell - \min_{t\in\Tset}F_\ell$,
 \begin{equation}
   \label{eq:gap}
-  \mathrm{gap}(t) = \max_{t'\in\Tset}\;\min\!\Biggl(
-    \frac{F_1(t)-F_1(t')}{R_1},\;
-    \frac{F_2(t)-F_2(t')}{R_2},\;
-    \frac{F_3(t')-F_3(t)}{R_3}
-  \Biggr)^{+},
+  \mathrm{gap}(t) = \max_{t'\in\Tset}\;\min\!\left(
+    \frac{F_1(t){-}F_1(t')}{R_1},\;
+    \frac{F_2(t){-}F_2(t')}{R_2},\;
+    \frac{F_3(t'){-}F_3(t)}{R_3}
+  \right)^{\!+},
 \end{equation}
 where $(x)^{+}=\max(0,x)$, so $\mathrm{gap}(t)=0$ iff $t\in\Fset$.
 The three signed differences measure by how much $t$ is dominated in
@@ -921,7 +921,7 @@ We pre-specify the following before examining results.
     practically relevant for site-selection decisions.
     The aggregation contrast is declared \emph{equivalent} if the
     $95\%$ bootstrap CI lies entirely within $(-\delta,+\delta)$.
-  \item \textbf{Minimum detectable effect}: with $\ndraws=500$
+  \item \textbf{Minimum detectable effect}: with $\ndraws$
     draws per cell, empirical inter-cell correlation $\hat\rho\approx0.5$
     (paired by draw), and $Q_2\approx0.6$, the two-sided MDE at $80\%$
     power is $5.8$~pp.
@@ -1174,12 +1174,12 @@ $T^{*}\in\Fset$.
 
 \begin{proof}
 Because $|T|=\kk$ is fixed, summing $s$ over $T$ gives
-\begin{equation}
+\begin{align}
   \label{eq:scalarisation}
-  \sum_{a\in T}s(a) \;=\; \kk\,W_{G_1\cup G_2}
-    \;-\;F_1(T)\;-\;F_2(T)\;+\;F_3(T),
-  \qquad W_{G_1\cup G_2}=\!\!\sum_{j\in G_1\cup G_2}\!\! w_j,
-\end{equation}
+  \sum_{a\in T}s(a) &\;=\; \kk\,W_{G_1\cup G_2}
+    \;-\;F_1(T)\;-\;F_2(T)\;+\;F_3(T), \notag\\
+  &\quad W_{G_1\cup G_2}=\sum_{j\in G_1\cup G_2} w_j,
+\end{align}
 so maximising $\sum_{a\in T}s(a)$ is equivalent to minimising
 $F_1(T)+F_2(T)-F_3(T)$, a strictly positive scalarisation of the three
 objectives in their own senses (minimise $F_1$ and $F_2$, maximise $F_3$).
@@ -1657,11 +1657,11 @@ $\mathbf{1}-\mathbf{x}$ and complementing afterwards normalises
 $\mathbf{x}$.
 For a binary column with $n_1$ ones and $n_0=N-n_1$ zeros:
 \[
-  A_j^{\rm complement\text{-}first} = \tfrac{1}{\sqrt{n_0}},
-  \qquad
-  A_j^{\rm normalise\text{-}first} = \tfrac{1}{\sqrt{n_1}},
-  \qquad
-  \text{ratio } = \sqrt{n_0/n_1}.
+  A_j^{\rm comp\text{-}first} = \tfrac{1}{\sqrt{n_0}},
+  \quad
+  A_j^{\rm norm\text{-}first} = \tfrac{1}{\sqrt{n_1}},
+  \quad
+  \text{ratio} = \sqrt{n_0/n_1}.
 \]
 The two normalised columns are orthogonal rather than collinear.
 \end{corollary}
@@ -1896,7 +1896,7 @@ Aggregation & Normalisation, assembly & $Q_2[A']$ \\
 \caption{Contrasts in percentage points of $Q_2[A']$ ($\kappa=200$;
   $\nboot$ bootstrap replicates paired by draw).}
 \label{tab:effects}
-\begin{tabular}{lrc}
+\begin{tabular}{>{\raggedright\arraybackslash}p{5.5cm}rc}
 \toprule
 Contrast & Effect & 95\% CI \\
 \midrule
