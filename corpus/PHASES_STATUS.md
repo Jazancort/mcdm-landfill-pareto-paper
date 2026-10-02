@@ -1,6 +1,6 @@
 # Estado das fases: plano de melhoria
 Referência: `corpus/IMPROVEMENT_PLAN.md` (o plano não se duplica aqui)  
-Última actualização: 2026-10-01 23:08 | por: sessão 2026-10-01
+Última actualização: 2026-10-01 23:16 | por: sessão 2026-10-01
 
 ## Legenda
 **Estado:** `TODO` | `DOING` | `DONE` | `BLOCKED` (motivo na coluna Notas) | `SKIP` (justificar)  
@@ -8,7 +8,8 @@ Uma tarefa só passa a `DONE` quando o critério de aceitação foi verificado e
 aponta para o commit da **implementação** (não para o commit que actualiza este ficheiro).
 
 ## Próxima tarefa
-M1 → M2 → M3 → M4 (na mesma sessão, só leitura/álgebra), depois B1 (proveniência, independente de A)
+Aguardar resultado numérico de M1 (Athena, tmux gap_m1 → results/math/math_m1_gap.log).
+Depois: completar M1 → M2 → M3 → M4 em paralelo com B3 (convencção postos/perm).
 
 ---
 
@@ -19,7 +20,7 @@ M1 → M2 → M3 → M4 (na mesma sessão, só leitura/álgebra), depois B1 (pro
 
 | ID | Tarefa | Depende | Critério de aceitação | Estado | Commit | Notas |
 |----|--------|---------|----------------------|--------|--------|-------|
-| M1 | Verificar gap: a definição actual (mínimo das melhorias em F1, F2, F3) satisfaz gap=0 sse dominado? Testar por script se existe portfólio com gap=0 e Q2=1 | — | Script com exemplo afirmativo ou prova negativa; reformular a definição se necessário; registar em Notas se Q3=0⟺Q2=1 se mantém | TODO | | |
+| M1 | Verificar gap: a definição actual (mínimo das melhorias em F1, F2, F3) satisfaz gap=0 sse dominado? Testar por script se existe portfólio com gap=0 e Q2=1 | — | Script com exemplo afirmativo ou prova negativa; reformular a definição se necessário; registar em Notas se Q3=0⟺Q2=1 se mantém | DOING | a3556f1 | **Análise algébrica concluída: FALSO.** gap usa dominação estrita (min dos 3 termos>0); Pareto usa dominação fraca (pelo menos 1 estrito, restantes ≥). Contra-exemplo: t' melhora F1 e F3, empata F2 → min=0 → gap=0, mas t' domina t. Q3=0 iff Q2=1 não se sustenta. Script math_m1_gap.py (a3556f1) a contar contra-exemplos nos dados reais (Athena, tmux gap_m1). Resultado numérico pendente. |
 | M2 | Verificar a identidade PROMETHEE: (a) convenção posto maior=melhor no código; (b) dividir por N+1 não destrói equivalência de rankings — corrigir a frase que atribui a divergência a essa divisão; (c) a comparação "diferença à precisão de máquina" inclui a constante afim? | — | Script numérico com o sinal e a constante correctos; linha e ficheiro citados | TODO | | Depende de B3 para a convenção de postos |
 | M3 | Restringir a "proposição do expoente" a SAW; reformular TOPSIS e PROMETHEE como propriedades distintas com alcance explícito (w_j²A_j² ≠ pesos efectivos do índice de proximidade TOPSIS; α=0 ≠ w_j^0) | M2 | Texto da proposição alterado; commit no main.tex | TODO | | |
 | M4 | Substituir "quota da variação total do score" por "peso ponderado pela amplitude" em todas as ocorrências | — | grep sem ocorrências da frase antiga; check passa | TODO | | |
@@ -35,7 +36,7 @@ M1 → M2 → M3 → M4 (na mesma sessão, só leitura/álgebra), depois B1 (pro
 |----|--------|---------|----------------------|--------|--------|-------|
 | B1 | `docs/provenance.csv` (número → macro/tabela → script → função score → função objs → aspect score → aspect obj → ref score → ref obj → contaminado?). Começar por tab:canonical e tab:fourthcell | — | Nenhuma linha "desconhecido" nestas duas tabelas | TODO | | |
 | B2 | Completar cobertura: "6 de 7 em A'", reprodução {184,430,460}, \FAsize, \FAinter, tab:amprefset, \MechOne\*, \MismatchRatio\*, fig:pareto, fig:map | B1 | Nenhuma linha "desconhecido" em todo o ficheiro | TODO | | |
-| B3 | Convenção da ordenação por postos (PROMETHEE) e orientação de *perm* no código: localizar a linha, registar o sentido | — | Linha e ficheiro citados na nota; bloqueia M2, F4, F5 até estar DONE | TODO | | |
+| B3 | Convenção da ordenação por postos (PROMETHEE) e orientação de *perm* no código: localizar a linha, registar o sentido | — | Linha e ficheiro citados na nota; bloqueia M2, F4, F5 até estar DONE | DONE | a3556f1 | **Verificado 2026-10-01.** `amplitude_regression.py` L47: `rank(method='average')` sobre `X_adj` (benefit-aligned). **Convenção: rank 1 = melhor sítio** (X_adj mínimo = pior raw invertido = melhor para score). Fórmula φ=(n+1)/(n-1)−(2/(n-1))Σw_j r_j é decrescente em r_j: maximizar φ = minimizar r_j = preferir rank 1 = melhor sítio. **Consistente.** perm: 350 zeros → X_adj_perm=1.0 → rank máximo 214.5; amplitude=0.547. Texto do manuscrito correcto para perm. D7 (citação de eq:Arank_binary para perm) não se verifica no texto — eq:Arank_binary cita apenas aspect. |
 | B4 | Codificação de aspect usada no estudo-fonte (AzancortNeto2026): verificar se o artigo usa binário ou contínuo | — | Fonte citada (script ou artigo; página ou linha) | TODO | | |
 | B5 | Nota-resumo de 1 página: o que está contaminado e decisão pela árvore (espaço A) | B1–B4 | Commit da nota em docs/ | TODO | | |
 
@@ -92,8 +93,8 @@ M1 → M2 → M3 → M4 (na mesma sessão, só leitura/álgebra), depois B1 (pro
 | F1 | Agregação por estrato com IC emparelhado; contraste sem a célula fixa; resumo e highlight: "no consistent effect: sign depends on cell; pooled +0.6 pp" | A4 | `aggregation_strata.py` e macros novas; frase e highlight reformulados | TODO | | |
 | F2 | Circularidade do min–max: §5 e Limitações | — | Parágrafos inseridos; check passa | TODO | | |
 | F3 | Q3 na tab:factorial e na tab:e1 | A4 | Macros geradas pelo script | TODO | | |
-| F4 | Sinal da identidade PROMETHEE (eq. e frase de verificação) | B3, M2 | Verificação numérica com o sinal e a constante correctos | TODO | | BLOCKED até B3 |
-| F5 | Intervalo de *perm* em postos segundo a orientação real; deixar de citar eq:Arank_binary para *perm* | B3 | Valores impressos pelo script; sem referência a eq:Arank_binary | TODO | | BLOCKED até B3 |
+| F4 | Sinal da identidade PROMETHEE (eq. e frase de verificação) | B3, M2 | Verificação numérica com o sinal e a constante correctos | TODO | | B3 DONE. Aguarda M2. |
+| F5 | Intervalo de *perm* em postos segundo a orientação real; deixar de citar eq:Arank_binary para *perm* | B3 | Valores impressos pelo script; sem referência a eq:Arank_binary | TODO | | B3 DONE. D7 não se verifica: eq:Arank_binary já não é citada para perm. F5 pode ser SKIP após verificação em M2. |
 | F6 | Resumo ≤ 250 palavras | G2a | `texcount` ≤ 250 | TODO | | |
 | F7 | Cabeçalho do .tex, contagens de resultados, restos de texto antigo | — | check passa | TODO | | |
 
@@ -151,11 +152,11 @@ M1 → M2 → M3 → M4 (na mesma sessão, só leitura/álgebra), depois B1 (pro
 | 2026-10-01 | Codificação contínua de aspect em build_score_473 é inconsistente com avaliador binário. R-V*=100%, R-asp=24% confirmam. | corpus/PRESPEC_E4.md DEV-E4-007, commit b0e5c66 |
 | 2026-10-01 | B1 declarado independente de A1: proveniência documenta o código actual antes de o alterar | corpus/PHASES_STATUS.md |
 | 2026-10-01 | Fase Math adicionada antes de A: M1 (gap), M2 (PROMETHEE), M3 (proposição expoente), M4 (nomenclatura) | corpus/PHASES_STATUS.md |
+| 2026-10-01 | B3 verificado: rank 1 = melhor sítio; φ=(n+1)/(n-1)−(2/(n-1))Σ decrescente em r_j; texto do manuscrito correcto para perm (0.547); D7 não se verifica (eq:Arank_binary não é citada para perm). | amplitude_regression.py L47, Athena verificação directa |
 
 ## Bloqueios abertos
 
 | ID tarefa | Motivo | Desde |
 |-----------|--------|-------|
-| F4 | Aguarda B3 (convenção postos no código) | 2026-10-01 |
-| F5 | Aguarda B3 | 2026-10-01 |
-| M2 | Aguarda B3 (parcialmente) | 2026-10-01 |
+| F4 | Aguarda M2 (B3 já DONE) | 2026-10-01 |
+| M1 | Aguarda resultado numérico (Athena, tmux gap_m1) | 2026-10-01 |
