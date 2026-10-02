@@ -426,6 +426,59 @@ if main_tex.exists():
         print("  [OK  ] aspect coding (binary/leeward) documented or aspect not in text")
 
 
+# ── A7. PDF integrity: pdftotext must find 0 '??' ───────────────────────────
+# Reads the compiled PDF directly — independent of .log which can be stale.
+# Catches broken \ref, \cite, \pageref that survive to the output file.
+print()
+print("=== A7: PDF integrity (pdftotext) ===")
+pdf_candidates = [
+    Path(r"C:\build\paper\main.pdf"),
+    ROOT / "main.pdf",
+]
+pdf_path = next((p for p in pdf_candidates if p.exists() and p.stat().st_size > 100_000), None)
+if pdf_path is None:
+    FAIL.append("A7: main.pdf not found (>100 KB) — run xelatex first")
+    print("  [FAIL] main.pdf not found — run xelatex first")
+else:
+    import subprocess as _sp, tempfile as _tmp, os as _os
+    try:
+        # Write to temp file to avoid encoding issues with stdout pipe on Windows
+        with _tmp.NamedTemporaryFile(suffix=".txt", delete=False, mode="w") as tf:
+            tmp_path = tf.name
+        _sp.run(
+            ["pdftotext", str(pdf_path), tmp_path],
+            capture_output=True, timeout=60
+        )
+        pdf_text = Path(tmp_path).read_text(encoding="utf-8", errors="replace")
+        _os.unlink(tmp_path)
+        if not pdf_text.strip():
+            FAIL.append("A7: pdftotext produced empty output — PDF may not be text-extractable")
+            print("  [FAIL] A7: pdftotext empty output")
+        else:
+            # Count literal '??' — unresolved cross-references render as ??
+            qq_pdf = pdf_text.count("??")
+            if qq_pdf > 0:
+                FAIL.append(f"A7: '??' found {qq_pdf} times in PDF (unresolved \\ref or \\cite)")
+                print(f"  [FAIL] A7: '??' in PDF: {qq_pdf} occurrences — unresolved refs/cites")
+                # Show first 5 contexts
+                lines_with_qq = [l for l in pdf_text.splitlines() if "??" in l]
+                for ctx in lines_with_qq[:5]:
+                    print(f"    context: {ctx[:100].strip()}")
+            else:
+                print(f"  [OK  ] A7: '??' in PDF: 0 (all refs and cites resolved)")
+            # Also count 'Page 1 of 100' or similar last-page artefact
+            if "Page 1 of 100" in pdf_text or "1 of 100" in pdf_text:
+                FAIL.append("A7: last-page reference unresolved ('1 of 100' in PDF)")
+                print("  [FAIL] A7: last-page ref unresolved")
+            else:
+                print("  [OK  ] A7: last-page reference resolved")
+    except FileNotFoundError:
+        FAIL.append("A7: pdftotext not found — install poppler-utils")
+        print("  [FAIL] A7: pdftotext not installed — install poppler-utils (winget install poppler)")
+    except _sp.TimeoutExpired:
+        FAIL.append("A7: pdftotext timed out")
+        print("  [FAIL] A7: pdftotext timed out")
+
 print()
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")

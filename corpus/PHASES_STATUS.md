@@ -203,7 +203,7 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 
 | ID | Tarefa | Estado |
 |----|--------|--------|
-| A7 | Adicionar regra check_consistency.py que corre pdftotext e conta '??' no PDF — deve dar 0 | TODO |
+| A7 | Adicionar regra check_consistency.py que corre pdftotext e conta '??' no PDF — deve dar 0 | DONE | |
 
 ---
 

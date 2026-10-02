@@ -9,7 +9,7 @@ Documento criado antes de qualquer corrida ou correcção.
 
 | ID | Problema | Onde | Causa | Estado |
 |----|---------|------|-------|--------|
-| A7 | `check_consistency.py` não lê o PDF — `??` invisíveis ao check | check_consistency.py | Verifica .log mas não o PDF | TODO |
+| A7 | `check_consistency.py` lê o PDF via pdftotext e conta `??` e last-page ref — ambos OK | DONE |
 | COMP | Compilar xelatex×3+bibtex; confirmar `??`=0 no PDF via pdftotext | main.pdf | Sequência incompleta | TODO |
 | COMP-EQ | Equações (17) e Cor.2 saem da coluna | p.9 e p.12 | Display demasiado largo | TODO |
 | COMP-TAB | Coluna "95% CI" da Tab.6 sobrepõe texto | p.17 | Tabela larga 1 coluna | TODO |
