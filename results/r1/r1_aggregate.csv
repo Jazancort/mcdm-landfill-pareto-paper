@@ -1,0 +1,13 @@
+cell,kappa,assembly,Q2,SE
+RV_star_Aprime,200,greedy,97.8,0.656
+RV_star_Aprime,200,optimal,100.0,0.0
+RM_Aprime,200,greedy,86.0,1.552
+RM_Aprime,200,optimal,100.0,0.0
+RV_star_A,200,greedy,84.6,1.614
+RV_star_A,200,optimal,100.0,0.0
+RM_A,200,greedy,58.8,2.201
+RM_A,200,optimal,95.0,0.975
+R_asp_Aprime,200,greedy,25.2,1.942
+R_asp_Aprime,200,optimal,24.0,1.91
+R_V_Aprime,200,greedy,19.6,1.775
+R_V_Aprime,200,optimal,20.0,1.789

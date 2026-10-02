@@ -1,0 +1,5 @@
+pair,diff_opt_pp,ci_lo_opt,ci_hi_opt,sig_opt,diff_grd_pp,ci_lo_grd,ci_hi_grd,sig_grd
+R-asp vs R-V  (4pp residual ref-set: sig?),4.0,2.2,6.0,SIG,5.6,3.6,7.8,SIG
+R-V* vs R-M   (ref-set effect consistent),0.0,0.0,0.0,n.s.,11.8,8.8,14.8,SIG
+R-V* vs R-asp (76pp coding effect),76.0,72.2,79.6,SIG,72.6,68.6,76.4,SIG
+"R-V*A vs R-MA (ref-set, evaluator A)",5.0,3.2,7.0,SIG,25.8,22.0,29.8,SIG
