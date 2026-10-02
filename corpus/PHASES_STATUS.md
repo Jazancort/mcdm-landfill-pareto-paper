@@ -403,3 +403,46 @@ como estava no Suplementar — diferença de seed/B). Texto principal e Suplemen
 **P2 FECHADO.**
 
 ---
+
+
+## F4 — Grelha sintética expandida (E5) — 2026-10-02
+
+### Estado actual dos experimentos sintéticos
+
+| Experimento | Script | Células | N sites | Variação | Estado |
+|-------------|--------|---------|---------|----------|--------|
+| E2 | wp4_synthetic_fixed.py | 240 (s_B×s_W, 6 reps) | sintético ~50-200 | amplitudes | ✅ concluído, não integrado no artigo |
+| E3 | run_e3_grid.py | 25 (s_B×s_W, 1 rep) | 389 (Fogo) | amplitudes over Fogo | ✅ concluído, não integrado |
+| wp4 | — | 60 células | variável | lognormal | ✅ parcial |
+
+**Limitação crítica:** E2 e E3 variam amplitudes mas mantêm a mesma estrutura espacial
+(Fogo ou geometria sintética fixa). Para F4 (generalização genuína) precisamos de:
+1. Diferentes N de sites (50, 100, 200, 389)
+2. Diferentes geometrias espaciais (uniform random, clustered, grid)
+3. Diferentes estruturas de grupos (2 grupos vs 3 grupos, diferentes W_g)
+4. Diferentes distribuições de amplitudes (não só power-law)
+
+### Estimands primários de E5 (a pré-especificar)
+
+**Questão principal:** a relação entre TV_W (within-group amplitude variation) e
+Q2_greedy loss é monotónica e generalizável além de Fogo?
+
+**Estimands:**
+1. E[Q2_mm_greedy | TV_W, N, geometry] — regressão de Q2 em TV_W com covariáveis
+2. E[Q2_mm_optimal | TV_W] = 100% (regressão — invariante teórico)
+3. Slope dQ2_greedy/dTV_W — é consistente entre instâncias independentes?
+
+**Gate de stop/fail:** se o slope for inconsistente (intervalo inclui 0 em >30% das
+instâncias), concluir que TV_W não é preditor robusto e reformular a tese.
+
+### Decisão de design E5
+
+- N ∈ {50, 100, 200, 389} — 4 níveis
+- geometry ∈ {uniform_random, clustered_2, grid} — 3 tipos
+- s_B ∈ {0, 0.5, 1.0} — 3 níveis (between-group)
+- s_W ∈ {0, 0.25, 0.5, 0.75, 1.0} — 5 níveis (within-group)
+- 3 replicates por célula × 4 N × 3 geo × 3 s_B × 5 s_W = 540 instâncias
+- N_draws = 200 por instância (Monte Carlo preciso a ±2pp)
+- ETA Athena: ~45-90 min
+
+---
