@@ -148,8 +148,10 @@ $\RefSetGreedyGain$~pp ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
   vector ($-\AsmVec$~pp)
 \item Between-group distortion costs nothing; within-group distortion
   drives the loss
-\item Normalising over inadmissible sites costs up to $80$~pp of Pareto
-  efficiency when criterion encodings are inconsistent between score and evaluator
+\item Inconsistent criterion encoding between score and objectives
+  reduces $Q_2$ from $100\%$ to $\RaspOptimal\%$; with consistent
+  encoding the reference-set effect is $+\RefSetGreedyGain$~pp on greedy
+  assembly and zero on optimal
 \end{highlights}
 
 \begin{keywords}
@@ -264,11 +266,13 @@ to the objectives.
 In our data, $\Nexcl$ of the $\Ncand$ candidates overlap protected areas
 and cannot be selected.
 We find that a criterion encoded differently in the score and in the
-objective function, even one with moderate weight ($0.075$), costs up
-to $80$~pp of Pareto efficiency under optimal assembly.
+objective function, even one with moderate weight ($0.075$), reduces
+$Q_2$ from $100\%$ to $\RaspOptimal\%$ under optimal assembly through
+the coding inconsistency alone.
 With a consistent encoding, normalising over inadmissible alternatives
 costs zero pp under optimal assembly on this instance, and greedy
-assembly improves by approximately $12$~pp.
+assembly improves by $\RefSetGreedyGain$~pp
+($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
 The loss is therefore not an inherent property of the reference set but
 of the mismatch between the score's criterion definition and the
 evaluator's; this amplifies any such inconsistency beyond what standard
@@ -645,8 +649,10 @@ Under vector normalisation the equivalence does not hold.
 The decision matrix normalises the column $x \in\{0,1\}$ directly,
 giving $A_j^{\rm vec}=1/\sqrt{94}=0.103$.
 Under vector normalisation the two encodings differ in amplitude by
-$\sqrt{n_0/n_1}=1.77$ (Corollary~\ref{cor:order}); all cells use the
-decision-matrix encoding.
+$\sqrt{n_0/n_1}=1.77$ (Corollary~\ref{cor:order}); the score and
+objective functions use the decision-matrix encoding throughout
+(a pipeline inconsistency in an earlier version that used a continuous
+azimuth encoding is documented in Section~\ref{sec:refset}).
 Amplitudes in Table~\ref{tab:amplitude} are measured on the decision
 matrix, with $n_1=94$ leeward sites among the $\Nvia$ admissible sites.
 Criteria in $G_3$ are built so that $c_j(i)=1$ is most favourable
