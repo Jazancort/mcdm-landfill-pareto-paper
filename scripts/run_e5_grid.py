@@ -247,10 +247,11 @@ for N_s, geo, s_B, s_W, rep in iproduct(N_SITES_LEVELS, GEO_LEVELS, SB_LEVELS, S
     # Inject amplitudes into score columns
     X_score = X_adj * Aj[np.newaxis, :]  # element-wise per column
 
-    # Build objective utilities (same Aj, but cost-oriented for F1/F2)
-    X_obj = X.copy()
-    for j in COST_IDX:
-        X_obj[:, j] = 1.0 - X[:, j]  # cost-oriented (lower=better accumulated in F1/F2)
+    # Build objective matrices — cost cols use RAW X (lower=better for F1/F2)
+    # build_pareto_utils convention: F1/F2 accumulated with lower=better (cost orientation)
+    # Score uses (1-x) for cost (benefit-oriented)
+    # => score and -(F1+F2)+F3 are affinely related → same optimal → Prop1 holds
+    X_obj = X.copy()   # cost cols stay raw (not inverted)
     X_obj_amp = X_obj * Aj[np.newaxis, :]
 
     # Build per-trio objective arrays from amplitude-scaled columns
