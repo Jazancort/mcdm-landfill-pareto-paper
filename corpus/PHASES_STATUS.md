@@ -1,6 +1,6 @@
 # Estado das fases: plano de melhoria
 Referência: `corpus/IMPROVEMENT_PLAN.md` (o plano não se duplica aqui)  
-Última actualização: 2026-10-02 00:36 | por: sessão 2026-10-01/02
+Última actualização: 2026-10-02 00:41 | por: sessão 2026-10-01/02
 
 ## Legenda
 **Estado:** `TODO` | `DOING` | `DONE` | `BLOCKED` (motivo na coluna Notas) | `SKIP` (justificar)  
@@ -8,7 +8,7 @@ Uma tarefa só passa a `DONE` quando o critério de aceitação foi verificado e
 aponta para o commit da **implementação** (não para o commit que actualiza este ficheiro).
 
 ## Próxima tarefa
-**Fase Math concluída.** Próxima fase: B (proveniência). Começar por B1 (tab:canonical e tab:fourthcell, independente de A).
+B2 — completar cobertura da provenance.csv ("6 de 7 em A'", reprodução, \FAsize, \FAinter, tab:amprefset, macros \MechOne*/\MismatchRatio*, fig:pareto, fig:map).
 
 ---
 
@@ -33,10 +33,10 @@ aponta para o commit da **implementação** (não para o commit que actualiza es
 
 | ID | Tarefa | Depende | Critério de aceitação | Estado | Commit | Notas |
 |----|--------|---------|----------------------|--------|--------|-------|
-| B1 | `docs/provenance.csv` (número → macro/tabela → script → função score → função objs → aspect score → aspect obj → ref score → ref obj → contaminado?). Começar por tab:canonical e tab:fourthcell | — | Nenhuma linha "desconhecido" nestas duas tabelas | TODO | | |
+| B1 | `docs/provenance.csv` (número → macro/tabela → script → função score → função objs → aspect score → aspect obj → ref score → ref obj → contaminado?). Começar por tab:canonical e tab:fourthcell | — | Nenhuma linha "desconhecido" nestas duas tabelas | DONE | (ver commit B1) | **tab:canonical:** 8 linhas, todas NAO contaminadas — score (_build_decision_matrix) e objectivos (compute_objectives/exhaustive_search_pareto.csv) ambos usam aspect BINÁRIO. **tab:fourthcell:** células Ncand/* SIM contaminadas (build_score_473 usa aspect contínuo); células Nvia/* NAO (ambos binários). |
 | B2 | Completar cobertura: "6 de 7 em A'", reprodução {184,430,460}, \FAsize, \FAinter, tab:amprefset, \MechOne\*, \MismatchRatio\*, fig:pareto, fig:map | B1 | Nenhuma linha "desconhecido" em todo o ficheiro | TODO | | |
 | B3 | Convenção da ordenação por postos (PROMETHEE) e orientação de *perm* no código: localizar a linha, registar o sentido | — | Linha e ficheiro citados na nota; bloqueia M2, F4, F5 até estar DONE | DONE | a3556f1 | **Verificado 2026-10-01.** `amplitude_regression.py` L47: `rank(method='average')` sobre `X_adj` (benefit-aligned). **Convenção: rank 1 = melhor sítio** (X_adj mínimo = pior raw invertido = melhor para score). Fórmula φ=(n+1)/(n-1)−(2/(n-1))Σw_j r_j é decrescente em r_j: maximizar φ = minimizar r_j = preferir rank 1 = melhor sítio. **Consistente.** perm: 350 zeros → X_adj_perm=1.0 → rank máximo 214.5; amplitude=0.547. Texto do manuscrito correcto para perm. D7 (citação de eq:Arank_binary para perm) não se verifica no texto — eq:Arank_binary cita apenas aspect. |
-| B4 | Codificação de aspect usada no estudo-fonte (AzancortNeto2026): verificar se o artigo usa binário ou contínuo | — | Fonte citada (script ou artigo; página ou linha) | TODO | | |
+| B4 | Codificação de aspect usada no estudo-fonte (AzancortNeto2026): verificar se o artigo usa binário ou contínuo | — | Fonte citada (script ou artigo; página ou linha) | DONE | (ver commit B1) | **BINÁRIO (inferido).** compute_objectives com aspect BINÁRIO reproduz exactamente F1=0.0811 F2=0.5568 F3=0.6170 para {184,430,460}. Se AzancortNeto2026 usasse aspect contínuo, os valores seriam diferentes. Reprodução exacta confirma compatibilidade com binário. |
 | B5 | Nota-resumo de 1 página: o que está contaminado e decisão pela árvore (espaço A) | B1–B4 | Commit da nota em docs/ | TODO | | |
 
 ---
