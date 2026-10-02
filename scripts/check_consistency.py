@@ -205,14 +205,34 @@ TAB_4TH = {
     "NviaA_greedy":    58.8, "NviaA_optimal":   95.0,
     "NviaAp_greedy":   86.0, "NviaAp_optimal": 100.0,
 }
-# Diagonal cells (aligned score+evaluator) must reach 100% by Prop1
-check("4th Ncand/A optimal = 100.0",  TAB_4TH["NcandA_optimal"],  100.0, tol=0.001)
-check("4th Nvia/A' optimal = 100.0",  TAB_4TH["NviaAp_optimal"],  100.0, tol=0.001)
+# ── REGRESSION GUARD: diagonal cells derive from Prop1 — NEVER editable ────
+# These values are theorems, not measurements. Any run that gives a diagonal
+# cell < 100% has a bug in score/objective/trios alignment. Do NOT edit these
+# expected values; fix the script instead.
+# Changing an expected value here without a PHASES_STATUS.md "Decision record"
+# entry (with git hash, justification, and reviewer sign-off) is PROHIBITED.
+REGRESSION_DIAGONALS = [
+    ("4th [REGRESSION] Ncand/A  optimal = 100.0 (Prop1)",  TAB_4TH["NcandA_optimal"],  100.0),
+    ("4th [REGRESSION] Ncand/A' optimal = 100.0 (Prop1)",  TAB_4TH["NcandAp_optimal"], 100.0),
+    ("4th [REGRESSION] Nvia/A'  optimal = 100.0 (Prop1)",  TAB_4TH["NviaAp_optimal"],  100.0),
+]
+regression_failed = False
+for name, computed, expected in REGRESSION_DIAGONALS:
+    diff = abs(computed - expected)
+    if diff > 0.001:
+        print(f"  [REGRESSION FAIL] {name}: got {computed:.4f} — ABORTING")
+        FAIL.append(f"REGRESSION: {name}: got {computed:.4f}")
+        regression_failed = True
+    else:
+        print(f"  [OK  ] {name}")
+if regression_failed:
+    print("\nREGRESSION GUARD TRIGGERED: diagonal cells must be 100% by Prop1.")
+    print("Do NOT edit expected values — fix the score/objective/trios alignment.")
+    sys.exit(2)
+
 # Off-diagonal: Ncand score (consistent coding), A' evaluator -> no loss with consistent coding
 loss_hi = TAB_4TH["NcandA_optimal"] - TAB_4TH["NcandAp_optimal"]
 check("4th consistent coding: Ncand/A opt - Ncand/A' opt (≈0 pp)", loss_hi, 0.0, tol=1.0)
-# Coding effect: R-asp (24%) vs R-M (100%) = 76 pp, reported in sec:refset Remark
-# (not verified here from tab:fourthcell — verified in e4-audit/fourthcell_consistent.csv)
 
 # Values present in LaTeX source
 for label in ["84.6", "97.8", "58.8"]:
