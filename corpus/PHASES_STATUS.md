@@ -170,7 +170,7 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 | I0 | Inspeccionar corpus_amplitudes.csv e corpus_mc_results.csv | — | Nota em Notas | TODO | | Pode correr em paralelo com G |
 | I1 | Corpus de matrizes publicadas, com PRESPEC_I1 | I0, A1 | Secção nova | TODO | | |
 | I2 | Instâncias sintéticas, com PRESPEC_I2 | A1 | Idem | TODO | | |
-| I3 | Segunda instância real, com PRESPEC_I3 | H4 | Idem | DOING | — | | |
+| H4 | provenance.csv final = estado do PDF | A5 | \FAinter=132 confirmado 2026-10-02 | DONE | (inline) | **\FAinter=132 CONFIRMADO**: |F_A|=213, |F_Ap|=181, intersecção=132. provenance.csv actualizado: 28 linhas, 0 A_VERIFICAR, 0 VERIFICANDO. H4 DONE. Fase H COMPLETA. |
 
 ---
 
