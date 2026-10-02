@@ -195,3 +195,47 @@ E3 (Spearman aspect) — próximo. F1 (aggregation_strata.py) — dados existem.
 |-----------|--------|-------|
 | \FAinter=132 | RESOLVIDO 2026-10-02 — confirmado via sorted dominance inline (9c7a376) | 2026-10-02 |
 | F1, F3 | RESOLVIDO — F1: aggregation_strata.py (18361a6); F3: compute_q3.py (7c2e742) | 2026-10-02 |
+
+
+---
+
+## Fase A7 (nova): check PDF via pdftotext
+
+| ID | Tarefa | Estado |
+|----|--------|--------|
+| A7 | Adicionar regra check_consistency.py que corre pdftotext e conta '??' no PDF — deve dar 0 | TODO |
+
+---
+
+## Fase F8 (nova): experiência de circularidade
+
+| ID | Tarefa | Estado |
+|----|--------|--------|
+| F8 | Reconstruir fronteira Pareto com objectivos em vector normalisation; repetir 4 células SAW; previsão vec/opt=100% | TODO |
+
+---
+
+## Fase G2o (nova): regenerar figuras
+
+| ID | Tarefa | Estado |
+|----|--------|--------|
+| G2o-F1 | Regenerar Figura 1 com números actuais (+25.4 pp, +0.5 pp, etc.) | TODO |
+| G2o-F4 | Corrigir etiquetas Figura 4 painel ranks (rácios rank, não vec) | TODO |
+
+---
+
+## Ajustes de texto pré-submissão (revisão externa 2026-10-02)
+
+| ID | Secção | Problema | Estado |
+|----|--------|---------|--------|
+| 2.1 | §7.5/§8.1 | Direcção assimetria invertida — inflação custa, não deflação | TODO |
+| 2.2 | §6.5/6.6/8.4 | PROMETHEE N+1 não quebra identidade — fonte é empates | TODO |
+| 2.4 | §7.5+Conclusão | Post hoc vs confirmatory inconsistente; IC [0,0] → 'identical' | TODO |
+| 2.6 | §7.5/§8 | 1 mecanismo+1 advertência; bug só suplementar; reordenar §7.5 | TODO |
+| 2.7 | §8.5 | TOST p pequeno = equivalência demonstrada; IC por célula | TODO |
+| 2.8 | §Resultados | Contraste montagem inclui célula 100% por construção | TODO |
+| 2.11a | §6.2 | '388' → '389' midrank máximo | TODO |
+| 2.11b | Resumo | decomposição não aditiva: 'accounts for' → frase correcta | TODO |
+| 2.11d | Contrib.(i)/§6.10 | ref-set como efeito com custo → actualizar | TODO |
+
+Referência completa: docs/pre-submission-checklist.md (criado 2026-10-02)
