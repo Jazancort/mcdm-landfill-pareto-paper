@@ -29,40 +29,35 @@ import numpy as np
 def build_pareto_utils(df_via, col_names, trio_arr, eps=1e-9,
                        inv_set=None, cost_set=None,
                        f1_crit=None, f2_crit=None, f3_crit=None,
-                       col_map=None):
+                       col_map=None, ref_df=None):
     """
     Build and return the three shared utilities for Monte Carlo scripts.
 
     Parameters
     ----------
     df_via : DataFrame
-        Admissible sites (space A', 389 sites). Used as normalisation reference.
+        Sites whose objectives are computed (space A' = 389 admissible sites,
+        or any subset). Trios index into this DataFrame.
     col_names : list[str]
         Criterion names in AHP weight order (11 criteria).
     trio_arr : np.ndarray (M, 3), int32
-        Pre-built array of sorted viable trio indices.
+        Pre-built array of sorted viable trio indices (into df_via).
     eps : float
-        Dominance tolerance (default 1e-9). Invariant over {0, 1e-12, 1e-9, 1e-6}
-        for this dataset (confirmed by sensitivity analysis in wp3_mc_fixed.py).
-    inv_set : set[str] or None
-        Criteria where higher raw = better (farther from hazard).
-    cost_set : set[str] or None
-        Cost criteria (lower raw = better, not in inv_set).
-    f1_crit, f2_crit, f3_crit : list[str] or None
-        Criteria belonging to each objective group.
-    col_map : dict[str,str] or None
-        Maps criterion name to DataFrame column name.
+        Dominance tolerance (default 1e-9).
+    ref_df : DataFrame or None
+        Reference population for min-max normalisation constants.
+        If None (default), uses df_via itself (standard space A').
+        Pass df_all (473 sites) to get space-A normalisation constants
+        while keeping portfolios restricted to df_via sites.
+    inv_set, cost_set, f1_crit, f2_crit, f3_crit, col_map : see defaults.
 
     Returns
     -------
     compute_objs_f64 : callable(w) -> (f1v, f2v, f3v)
-        Returns per-site objective arrays in float64 for weight vector w.
     is_dominated : callable(trio_tuple, F1, F2, F3) -> bool
-        Returns True if trio_tuple is dominated in (F1, F2, F3).
     trio_lookup : dict
-        sorted_tuple -> index in trio_arr (used internally by is_dominated).
     """
-    # Defaults from mcdm_experiment constants (imported lazily to avoid circular dep)
+    # ── Defaults ──────────────────────────────────────────────────────────────
     if inv_set is None:
         from mcdm_experiment import INV as _INV
         inv_set = _INV
@@ -76,6 +71,10 @@ def build_pareto_utils(df_via, col_names, trio_arr, eps=1e-9,
         from mcdm_experiment import COL as _COL
         col_map = _COL
 
+    # ref_df: population used for normalisation constants (min/max per column)
+    # Default: df_via itself (space A').  Pass df_all for space-A constants.
+    _ref_df = ref_df if ref_df is not None else df_via
+
     # ── Sorted-index lookup ───────────────────────────────────────────────────
     T0, T1, T2 = trio_arr[:,0], trio_arr[:,1], trio_arr[:,2]
     _lookup = {
@@ -88,14 +87,14 @@ def build_pareto_utils(df_via, col_names, trio_arr, eps=1e-9,
 
     def compute_objs_f64(w):
         """
-        Per-site (f1, f2, f3) in float64, normalised over df_via (space A').
+        Per-site (f1, f2, f3) in float64.
 
-        F1, F2: cost-type (lower value = better site = lower objective score).
-        F3: benefit-type (higher value = better site = higher objective score).
+        Normalisation constants come from _ref_df (df_via by default, or df_all
+        when ref_df=df_all is passed — space-A normalisation).
+        Objective values are computed for sites in df_via only.
 
-        Convention: a trio T is Pareto-dominated if there exists T' with
-          F1(T') <= F1(T) + eps  AND  F2(T') <= F2(T) + eps  AND  F3(T') >= F3(T) - eps
-          with at least one strict inequality (gap > eps).
+        F1, F2: cost-type (lower = better).
+        F3: benefit-type (higher = better).
         """
         N = len(df_via)
         f1v = np.zeros(N, dtype=np.float64)
@@ -103,7 +102,7 @@ def build_pareto_utils(df_via, col_names, trio_arr, eps=1e-9,
         f3v = np.zeros(N, dtype=np.float64)
         for j, k in enumerate(col_names):
             x   = df_via[col_map[k]].values.astype(np.float64)
-            ref = x   # reference = df_via (389 sites, space A')
+            ref = _ref_df[col_map[k]].values.astype(np.float64)
             if k == "aspect":
                 c = np.where((x >= 90) & (x <= 180), 0.0, 1.0)
             elif k in inv_set:
