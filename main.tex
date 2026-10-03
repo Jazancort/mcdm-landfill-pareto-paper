@@ -2623,6 +2623,23 @@ dominate (Supplementary Material, Experiment~E5).
 E5 departs from its pre-specification in seven declared respects,
 including the omission of the $N=389$ level (DEV-E5-001 to DEV-E5-007).
 
+A prospective controlled study (Experiment~E6) addresses the main
+limitation of E5 by separating score and objective normalisations.
+Forty-five synthetic instances ($N\in\{50,100,200\}$, three spatial
+geometries, five seeds) were generated under a pre-registered protocol
+and scored under five conditions that isolate the within-group component:
+an aligned control (M), within-group distortion alone (W), full vector
+amplitudes (V), between-group distortion (B), and exact compensation (C).
+Under optimal assembly, M, B and C attain $Q_2=100\%$ on every instance,
+confirming Theorem~\ref{thm:groupconst} as a regression test.
+The empirical estimand is the within-group loss $Q_2[\mathrm{M}]-Q_2[\mathrm{W}]$,
+estimated at $4.4$~pp with a $95\%$ hierarchical confidence interval of
+$[2.2,\,6.6]$~pp across the 45 instances ($\kappa=200$, $n_{\mathrm{draws}}=200$).
+W and V produce identical attainment ($95.6\%$), confirming that
+within-group distortion alone accounts for the loss on this synthetic family.
+These results hold for the generating distribution (three geometries,
+three sizes) and do not extend to all applied matrices.
+
 \emph{Weight perturbation model.}
 Dirichlet perturbation around $\wahp$ represents symmetric uncertainty in
 relative weights.
@@ -2685,6 +2702,11 @@ imposed jointly on score and objectives, we found no evidence of linear
 association between the imposed amplitude spread and greedy efficiency
 in the model as fitted; greedy efficiency was more strongly associated
 with instance size and spatial geometry.
+A prospective controlled study of 45 instances (Experiment~E6)
+separates score from objective normalisations and isolates the
+within-group distortion: the estimated within-group loss is $4.4$~pp
+($95\%$ CI $[2.2,\,6.6]$~pp, hierarchical bootstrap across the
+synthetic family).
 The Fogo magnitudes are therefore instance-specific, and whether the
 within-group mechanism carries comparable costs on other applied matrices
 remains open.
