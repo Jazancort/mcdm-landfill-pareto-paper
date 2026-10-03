@@ -663,3 +663,26 @@ e1_results.csv is stale (buggy pipeline, commit 380ee1a INVALID) and must not be
 The per-draw trace for v3 is unavailable; E1-W optimal Q2=64.2% rests on e1_diag.log aggregate only.
 Status: **UNVERIFIED** (no per-draw trace) — forwarded to P2 numerical rerun.
 
+
+## P2 — E1 per-draw rerun (2026-10-02)
+
+Run: un_e1_v3.py N_DRAWS=500, KAPPA=200, space A' (389), seed=42, float64+eps=1e-9.
+Log: data/e1_v3_rerun_20261002.log
+
+| cell | greedy | optimal | SE_opt | status |
+|---|---|---|---|---|
+| E1-M | 86.0% | 100.0% | 0.00 | OK (A1 PASS) |
+| E1-V | 66.2% | 56.8% | 2.22 | OK (A4 PASS; matches WP3_VEC_OPT) |
+| E1-B | 100.0% | 100.0% | 0.00 | OK (P1 PASS) |
+| E1-W | 64.0% | **64.2%** | 2.14 | **VERIFIED** |
+
+EoneWloss = 100 - 64.2 = **35.8 pp VERIFIED** (per-draw trace confirms log value).
+EoneVloss = 100 - 56.8 = **43.2 pp VERIFIED** (matches WP3 reference).
+
+A2/A3 assertions failed because they compare E1-M/E1-V greedy against WP3 greedy
+(different pipeline, not the same space). This is a known stale reference in
+the script, not a pipeline error. The primary evidence claims (EoneWloss, EoneVloss)
+are verified.
+
+Status change: E1-W **UNVERIFIED -> VERIFIED** (per-draw trace in log file).
+

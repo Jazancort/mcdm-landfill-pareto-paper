@@ -1,0 +1,53 @@
+======================================================================
+E1 v3: Amplitude decomposition (min diff from wp3_mc.py)
+Pre-spec: corpus/PRESPEC_E1.md (f6042f8)  eps=1e-9  float64
+======================================================================
+Viable trios: 1,944,653 (1.4s)
+Aj_bar_g: G1=0.3744  G2=0.1473  G3=0.1161
+E1-W rescale: 0.2034 (published 0.2024)
+[TV_B] E1-W group amplitude means = 0.203406 (constant): PASS
+
+--- E1-M: A_j=1 (min-max, regression test) ---
+  [100/500]  grd=89.0%  opt=100.0%  16s
+  [200/500]  grd=87.0%  opt=100.0%  31s
+  [300/500]  grd=85.7%  opt=100.0%  45s
+  [400/500]  grd=86.8%  opt=100.0%  59s
+  [500/500]  grd=86.0%  opt=100.0%  73s
+  RESULT: greedy=86.00% (SE=1.55)  optimal=100.00% (SE=0.00)
+
+--- E1-V: A_j=rho_j (vector, WP3 reference) ---
+  [100/500]  grd=67.0%  opt=55.0%  14s
+  [200/500]  grd=69.0%  opt=57.0%  29s
+  [300/500]  grd=69.3%  opt=59.0%  44s
+  [400/500]  grd=68.8%  opt=57.8%  59s
+  [500/500]  grd=66.2%  opt=56.8%  76s
+  RESULT: greedy=66.20% (SE=2.12)  optimal=56.80% (SE=2.22)
+
+--- E1-B: A_j=Ajbar_g (constant within group, TV_W=0) ---
+  [100/500]  grd=100.0%  opt=100.0%  15s
+  [200/500]  grd=100.0%  opt=100.0%  31s
+  [300/500]  grd=100.0%  opt=100.0%  45s
+  [400/500]  grd=100.0%  opt=100.0%  63s
+  [500/500]  grd=100.0%  opt=100.0%  79s
+  RESULT: greedy=100.00% (SE=0.00)  optimal=100.00% (SE=0.00)
+
+--- E1-W: A_j=rho/Ajbar*scale (TV_B=0) ---
+  [100/500]  grd=60.0%  opt=60.0%  15s
+  [200/500]  grd=64.0%  opt=64.0%  30s
+  [300/500]  grd=66.3%  opt=66.3%  45s
+  [400/500]  grd=65.0%  opt=65.2%  59s
+  [500/500]  grd=64.0%  opt=64.2%  74s
+  RESULT: greedy=64.00% (SE=2.15)  optimal=64.20% (SE=2.14)
+
+======================================================================
+CHAINED ASSERTIONS
+======================================================================
+A1 E1-M optimal = 100.00% (must be 100.0%): PASS
+A2 E1-M greedy  = 86.00% (WP3=65.8%, tol=3*SE=6.7pp): FAIL
+A3 E1-V greedy  = 66.20% (WP3=54.0%, tol=6.7pp): FAIL
+A4 E1-V optimal = 56.80% (WP3=56.8%, tol=6.7pp): PASS
+Traceback (most recent call last):
+  File "G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\scripts\run_e1_v3.py", line 287, in <module>
+    assert a1 and a2, "Pipeline broken: E1-M fails. Stop."
+           ^^^^^^^^^
+AssertionError: Pipeline broken: E1-M fails. Stop.
