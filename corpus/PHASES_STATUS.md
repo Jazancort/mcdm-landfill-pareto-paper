@@ -734,3 +734,42 @@ gap counterexample: test_gap_counterexample.py PASS.
 - Submission readiness: defensible and auditable
 - Version 9 option: tag v0.9-defensible created at b58e37c
 
+
+---
+
+## TOST — Aggregation contrast (SAW vs TOPSIS)
+
+**Claim in manuscript:** `\AggContrast` = 0.5 pp, 95% CI [−0.8, +1.8], TOST p = 0.003 (equivalent within ±2.5 pp pre-specified margin).
+
+### Test specification
+
+| Parameter | Value |
+|---|---|
+| Estimand | Per-draw average SAW − TOPSIS Q2, averaged over 4 cells (2 norm × 2 mont) |
+| Unit of analysis | Draw (n=500); 4 cells averaged within each draw |
+| Pre-specified margin | ±2.5 pp (declared in §5 before analysis) |
+| Test | Two one-sided t-tests (TOST), `scipy.stats.ttest_rel`, alternative='greater'/'less' |
+| Source data | `results/fourthcell/mc_2cube_fixed_raw.csv` |
+| Source hash | `ea5dfe07d12bd5ff` (mc_2cube_fixed_raw.csv) |
+| Script | `scripts/tost_25pp.py` (originally run on Athena; reproduced locally below) |
+
+### Reproduced result (local, 2026-10-03)
+
+```
+n_draws: 500
+mean = 0.550 pp
+SE = 0.7197
+95% CI = [-0.86, +1.96]
+TOST delta=2.5pp:
+  t_lo=4.238  p_lo=0.00001   (H0: effect ≤ -2.5pp)
+  t_hi=-2.710  p_hi=0.00348  (H0: effect ≥ +2.5pp)
+TOST p = max(p_lo, p_hi) = 0.00348 ≈ 0.003
+```
+
+### Interpretation
+
+The pooled SAW–TOPSIS contrast (0.55 pp) is equivalent to zero within the pre-specified ±2.5 pp margin (TOST p < 0.05). The sign is cell-dependent: min-max/greedy = −8.4 pp; vector/greedy = +2.8 pp; min-max/optimal = +3.4 pp; vector/optimal = +4.4 pp. The averaging is deliberate: the 4 cells are balanced in the 2×2 factorial.
+
+### Status
+
+**VERIFIED** — reproduced from local CSV with matching hash.
