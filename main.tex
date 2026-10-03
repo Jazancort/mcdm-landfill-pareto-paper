@@ -112,10 +112,12 @@ the pre-specified $\pm2.5$~pp margin (TOST), though the sign is
 cell-dependent.
 Exact assembly gains $+\AsmMM$~pp under min--max but loses $\AsmVec$~pp
 under vector normalisation.
-In additive aggregation the effective weight of criterion $j$ is
+In additive aggregation with normalised criterion columns that are
+strictly increasing affine functions of the oriented min--max partial
+values, the effective weight of criterion $j$ is
 proportional to $w_jA_j$; exact assembly is Pareto-efficient for any
-weights and any instance of the additive model if and only if amplitudes
-are constant within each objective group (Theorem).
+weights and any instance if and only if amplitudes are constant within
+each objective group (Theorem).
 A targeted follow-up experiment confirms this on Fogo: between-group
 distortion alone costs nothing, while within-group distortion alone
 costs $\EoneWloss$~pp.
@@ -849,7 +851,11 @@ that violates~\eqref{eq:rsep} against those already selected.
 \emph{Optimal}: maximise the additive score over the feasible set,
 $\argmax_{t\in\Tset}\sum_{i\in t}s(i)$, by complete enumeration
 of~$\Tset$.
-Both are exact given $s$; they differ only in whether the separation
+Optimal assembly solves the global constrained maximisation problem
+exactly for the given score $s$; greedy assembly exactly implements
+the stated sequential rule, but it is a heuristic for the global
+constrained problem.
+They differ only in whether the separation
 constraint is handled myopically or globally.
 Greedy assembly is the implicit rule whenever a ranking is read top-down,
 which is the dominant practice in the applied siting literature; optimal
@@ -972,7 +978,7 @@ is invariant to per-criterion affine transformation (min--max and vector
 are both affine, so VIKOR$\times$vector duplicates VIKOR$\times$min--max)
 and four because PROMETHEE~II with
 the usual preference function is ordinal and therefore identical under
-all three normalisations, leaving $\Ncellsnet$ estimable cells
+all three normalisations, leaving $\Ncellsnet$ retained cells
 (Remark~\ref{prop:exponent});
 it is unbalanced and its results are reported in the Supplementary Material.
 Effects are reported in percentage points with $\nboot$-replicate
@@ -1695,9 +1701,13 @@ For a binary column with $n_1$ ones and $n_0=N-n_1$ zeros:
   \quad
   \text{ratio} = \sqrt{n_0/n_1}.
 \]
-The two normalised columns are not collinear (they are linearly
-independent when $n_0\neq n_1$, since neither is a scalar multiple
-of the other), and each has a different amplitude $A_j$.
+The two normalised columns are affinely related
+($v = (1-1/\sqrt{n_1})\mathbf{1} + \sqrt{n_0/n_1}\,u$),
+so the issue is not linear independence but the change in range
+amplitude induced by the order of operations.
+(Note: when $n_1=1$ and $n_0>1$ the columns are proportional despite
+$n_0\neq n_1$; the amplitude ratio $\sqrt{n_0/n_1}$ is specific to
+the binary-column case and is not a law for rankings or $Q_2$ in general.)
 \end{corollary}
 
 \paragraph{Empirical magnitude on Fogo Island.}
@@ -1708,11 +1718,11 @@ criterion semantics (leeward $=$ favourable), weights, and data fixed,
 yields a Kendall~$\tau_b=0.960$ and top-100 set agreement of $0.960$
 across the $\Nvia$ admissible sites.
 The agreement is high because \textit{aspect} is one of eleven criteria:
-the 1.77$\times$ amplitude difference in one binary column is partly
+the $1.77\times$ amplitude difference in one binary column is partly
 absorbed by the other ten.
-The divergence between the two orders would widen in proportion to
-$\sqrt{n_0/n_1}$ and would be undetectable in any output that a
-practitioner routinely reports.
+These are empirical observations for this matrix and weighting scheme;
+the amplitude ratio $\sqrt{n_0/n_1}$ is not a law for Kendall~$\tau_b$,
+top-$k$ agreement, or Pareto attainment in general.
 
 % ----------------------------------------------------------
 % ----------------------------------------------------------
@@ -1809,14 +1819,12 @@ Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.0
 \end{tabular*}
 \end{table*}
 
-A first indication that the reference set is itself implicated: when
-normalisation constants are recomputed over the $\Nvia$ admissible sites
-(space~$A'$), the Pareto membership of method portfolios improves
-(see Table~\ref{tab:canonical}).
-The failures in space~$A$ are not solely attributable to the methods;
-they are partly induced by computing the value scale over sites that
-cannot be selected.
-Section~\ref{sec:refset} returns to this.
+The canonical portfolios in Table~\ref{tab:canonical} show that Pareto
+membership changes when the evaluation space and normalisation constants
+change, but that table alone does not identify whether the change is
+due to the reference set, binary coding, or their interaction.
+Section~\ref{sec:refset} uses a post hoc two-by-two check to separate
+these mechanisms.
 
 \begin{figure*}[!t]
 \centering
@@ -2319,7 +2327,7 @@ every instance, confirming the regression invariant of
 Theorem~\ref{thm:groupconst}.
 The primary estimand, within-group loss $Q_2[\text{M}]-Q_2[\text{W}]$,
 is $4.4$~pp ($95\%$ normal-approximation CI $[2.2,\,6.6]$~pp, based on
-the per-instance paired differences $d_i = 100\cdot\bar{I}_{i,M}-\bar{I}_{i,W}$
+the per-instance paired differences $d_i = 100\bigl(\bar{I}_{i,M}-\bar{I}_{i,W}\bigr)$
 averaged over $n_{\text{draws}}=200$ weight draws, $n=45$ instances;
 a bootstrap sensitivity check with $B=4000$ gives $[2.4,\,6.8]$~pp).
 W and V had the same mean attainment ($95.6\%$) at the reported
@@ -2596,9 +2604,9 @@ Under min--max the order is immaterial because the complementation
 $x\mapsto 1-x$ is affine.
 Under vector normalisation it is not: complementing before normalising
 gives amplitude $1/\lVert\mathbf{1}-\mathbf{x}\rVert_2$ while
-normalising first gives $1/\lVert\mathbf{x}\rVert_2$, and the two
-normalised columns are not collinear (neither is a scalar multiple
-of the other) (Corollary~\ref{cor:order}).
+normalising first gives $1/\lVert\mathbf{x}\rVert_2$; the two
+columns are affinely related with amplitude ratio $\sqrt{n_0/n_1}$,
+as stated in Corollary~\ref{cor:order}.
 For a binary indicator with $n_1$ ones and $n_0$ zeros the amplitudes
 differ by $\sqrt{n_0/n_1}$; for \textit{aspect} on Fogo this is $1.77$.
 The order of operations is not reported in any study we reviewed, yet it
@@ -2702,8 +2710,10 @@ amplitudes (V), between-group distortion (B), and exact compensation (C).
 Under optimal assembly, M, B and C attain $Q_2=100\%$ on every instance,
 confirming Theorem~\ref{thm:groupconst} as a regression test.
 The empirical estimand is the within-group loss $Q_2[\mathrm{M}]-Q_2[\mathrm{W}]$,
-estimated at $4.4$~pp with a $95\%$ hierarchical confidence interval of
-$[2.2,\,6.6]$~pp across the 45 instances ($\kappa=200$, $n_{\mathrm{draws}}=200$).
+estimated at $4.4$~pp with a $95\%$ normal-approximation confidence
+interval of $[2.2,\,6.6]$~pp using the 45 instances as the primary
+resampling unit ($\kappa=200$, $n_{\mathrm{draws}}=200$;
+bootstrap sensitivity $[2.4,\,6.8]$~pp).
 W and V had the same mean Pareto attainment ($95.6\%$) at the reported
 precision; the paired $V-W$ contrast was zero to the available decimal
 places on this synthetic family.
@@ -2763,11 +2773,15 @@ Normalisation was worth $+\NormGreedyContrast$~pp under greedy assembly.
 Exact assembly had no average effect, because its sign depends on the
 normalisation: it gained $+\AsmMM$~pp under min--max and lost
 $\AsmVec$~pp under vector normalisation.
-The explanation is analytical: in additive aggregation the effective
-weight of a criterion is proportional to $w_jA_j$, and exact assembly
-is Pareto-efficient for any weights and any instance of the additive model if and only if
-amplitudes are constant within each objective group
-(Theorem~\ref{thm:groupconst}).
+The explanation is analytical: in additive aggregation with criterion
+columns that are strictly increasing affine functions of the oriented
+min--max partial values, the effective weight of criterion $j$ is
+proportional to $w_jA_j$, and exact assembly is Pareto-efficient for
+any weights and any instance if and only if amplitudes are constant
+within each objective group (Theorem~\ref{thm:groupconst}).
+Rank normalisation is reported separately as an empirical observation:
+it can reallocate effective range but may also change within-column
+scale shape, so the affine-scale theorem does not cover it in general.
 A follow-up intervention with pre-specified predictions on Fogo confirmed that between-group
 distortion alone costs nothing and that within-group distortion carries
 most of the loss; the prediction that the two components would not
