@@ -773,3 +773,38 @@ The pooled SAW–TOPSIS contrast (0.55 pp) is equivalent to zero within the pre-
 ### Status
 
 **VERIFIED** — reproduced from local CSV with matching hash.
+
+
+---
+
+## E6 — Synthetic Independent Controlled Study
+
+**Protocol hash:** `08db40bdcf53b2b3`
+**Run date:** 2026-10-03, Athena (RTX 4000 Ada), 584s total
+**Script:** `scripts/run_e6_generator.py` (commit `8fb8c55`)
+**Seeds:** `results/e6/e6_seeds.json` (frozen before execution)
+
+### Design
+
+- 45 base instances: 3 N ∈ {50,100,200} × 3 geometries × 5 spatial seeds
+- 5 score conditions: M (aligned), B (between-group), W (within-group), V (vector), C (compensated)
+- 200 Dirichlet draws per instance (κ=200, seed=9999)
+- k=3, M=11 criteria in 3 groups (3,5,3), d_min=5km
+
+### Regression invariant
+
+M=100%, B=100%, C=100% on all 45 instances — confirmed by `validate_e6.py` exit 0.
+
+### Primary estimand
+
+| Estimand | Value | 95% CI (hierarchical, n=45 instances) |
+|---|---|---|
+| Q2[M, opt] | 100.0% | — (analytic) |
+| Q2[W, opt] | 95.6% | [93.4, 97.8] |
+| Q2[V, opt] | 95.6% | [93.4, 97.8] |
+| **Loss within (M−W)** | **4.4 pp** | — |
+| V − W | 0.0 pp | — |
+
+### Status
+
+**VERIFIED** — `validate_e6.py` exit 0. No post-hoc adjustments. Protocol hash matches seeds file.

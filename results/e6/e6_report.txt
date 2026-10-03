@@ -1,0 +1,30 @@
+============================================================
+E6 SUMMARY REPORT
+============================================================
+
+N instances: 45
+N draws per instance: 200
+Conditions: ['B', 'C', 'M', 'V', 'W']
+
+POOLED Q2 BY CONDITION AND ASSEMBLY:
+condition assembly     q2_pct   se_pct      ci_lo      ci_hi  count
+        B   greedy 100.000000 0.000000 100.000000 100.000000   9000
+        B  optimal 100.000000 0.000000 100.000000 100.000000   9000
+        C   greedy 100.000000 0.000000 100.000000 100.000000   9000
+        C  optimal 100.000000 0.000000 100.000000 100.000000   9000
+        M   greedy 100.000000 0.000000 100.000000 100.000000   9000
+        M  optimal 100.000000 0.000000 100.000000 100.000000   9000
+        V   greedy  95.611111 0.215941  95.187867  96.034355   9000
+        V  optimal  95.611111 0.215941  95.187867  96.034355   9000
+        W   greedy  95.611111 0.215941  95.187867  96.034355   9000
+        W  optimal  95.611111 0.215941  95.187867  96.034355   9000
+
+PRIMARY ESTIMAND: Q2[M,opt] - Q2[W,opt]
+  Q2[M,opt] = 100.0%
+  Q2[W,opt] = 95.6%
+  Loss within = 4.4 pp
+
+REGRESSION INVARIANT (M=B=C=100% under optimal):
+  M: 100.0%  OK
+  B: 100.0%  OK
+  C: 100.0%  OK
