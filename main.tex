@@ -1444,7 +1444,7 @@ geometry of the ideal and anti-ideal points.
 Table~\ref{tab:exponent} reports $\mathrm{TV}(\alpha)$ for both
 $\alpha\in\{1,2\}$ and all three normalisations.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering
 \caption{%
   Total variation of effective weights under the additive ($\alpha=1$)
@@ -1452,7 +1452,7 @@ $\alpha\in\{1,2\}$ and all three normalisations.
   AHP weights.
   Min--max is neutral for SAW ($\alpha=1$) but not for TOPSIS ($\alpha=2$).}
 \label{tab:exponent}
-\begin{tabular}{lrrr}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrr}
 \toprule
 Normalisation & $\mathrm{TV}(\alpha{=}1)$ & $\mathrm{TV}(\alpha{=}2)$
               & $\Delta\mathrm{TV}$ \\
@@ -1461,8 +1461,8 @@ Min--max & 0.000 & 0.160 & $+0.160$ \\
 Ranks    & 0.091 & 0.206 & $+0.115$ \\
 Vector   & 0.315 & 0.675 & $+0.360$ \\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{tabular*}
+\end{table*}
 
 \medskip\noindent\textbf{Empirical comparison of SAW and TOPSIS distortions.}
 On Fogo, the metric $\Delta\mathrm{TV}=\mathrm{TV}(2)-\mathrm{TV}(1)$
@@ -1898,7 +1898,7 @@ The three normalisations display a monotone ordering on this instance;
 the amplitude identity alone does not imply a monotone relationship
 between $\mathrm{TV}$ and Pareto attainment in general.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering
 \caption{Weight distortion ($\mathrm{TV}$) and observed Pareto attainment
   under additive aggregation (SAW), $\kappa=\,$200, space~$A'$, $\ndraws$ draws.
@@ -1906,7 +1906,7 @@ between $\mathrm{TV}$ and Pareto attainment in general.
   Table~\ref{tab:amplitude}; the monotone ordering is an observation on
   this instance, not a consequence of the amplitude identity alone.}
 \label{tab:tvorder}
-\begin{tabular}{lcccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccc}
 \toprule
 Normalisation & $A_j$ & $\mathrm{TV}$ & greedy & optimal \\
 \midrule
@@ -1914,8 +1914,8 @@ min--max & $\equiv 1$                        & 0.000 & 86.0\% & 100.0\% \\
 midranks & $(r_j^{\max}-r_j^{\min})/(N{+}1)$ & 0.091 & 86.0\% &  88.2\% \\
 vector   & $\rho_j$                          & 0.315 & 66.2\% &  56.8\% \\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{tabular*}
+\end{table*}
 
 Under optimal assembly, the reported table shows a monotone empirical
 decline in attainment as the effective-weight deviation increases across
@@ -1945,13 +1945,13 @@ Table~\ref{tab:factorial} reports the balanced $2^3$ design and
 Table~\ref{tab:effects} the contrasts, with $\nboot$-replicate bootstrap
 intervals paired by draw.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering
 \caption{$Q_2[A']$ for the balanced $2^3$ design ($\kappa=200$,
   $\ndraws$ draws). The SAW/min--max/optimal cell is fixed at $100\%$ by
   Proposition~\ref{prop:p1:stmt}.}
 \label{tab:factorial}
-\begin{tabular}{llc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llc}
 \toprule
 Aggregation & Normalisation, assembly & $Q_2[A']$ \\
 \midrule
@@ -1967,15 +1967,15 @@ Aggregation & Normalisation, assembly & $Q_2[A']$ \\
  & vector, greedy    & 63.4\% \\
  & vector, optimal   & 52.4\% \\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{tabular*}
+\end{table*}
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering\small
 \caption{Contrasts in percentage points of $Q_2[A']$ ($\kappa=200$;
   $\nboot$ bootstrap replicates paired by draw).}
 \label{tab:effects}
-\begin{tabular}{>{\raggedright\arraybackslash}p{5cm}rc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{7.5cm}rc}
 \toprule
 Contrast & Effect & 95\% CI \\
 \midrule
@@ -1987,8 +1987,8 @@ Assembly (optimal $-$ greedy)      & $-1.1$ & $[-2.6,\,+0.5]$ \\
 Assembly within min--max           & $+8.1$ & $[+6.2,\,+10.1]$ \\
 Assembly within vector             & $-10.2$ & $[-13.1,\,-7.4]$ \\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{tabular*}
+\end{table*}
 
 The pooled aggregation contrast was small ($+\AggContrast$~pp, $95\%$ CI
 $[\AggLo,\,\AggHi]$) and the pre-specified TOST analysis supported
@@ -2031,12 +2031,12 @@ worth $\AsmMain$~pp ($95\%$ CI $[\AsmMainLo,\,\AsmMainHi]$).
 The average conceals two regimes of opposite sign
 (Table~\ref{tab:assembly}).
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering
 \caption{Optimal minus greedy assembly, $Q_2[A']$ in percentage points,
   paired by draw ($\kappa=200$, $\ndraws$ draws).}
 \label{tab:assembly}
-\begin{tabular}{llrc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llrc}
 \toprule
 Aggregation & Normalisation & Difference & 95\% CI \\
 \midrule
@@ -2045,8 +2045,8 @@ SAW    & vector   & $-9.4$  & $[-12.4,\,-6.4]$ \\
 TOPSIS & min--max & $+2.2$  & $[+0.2,\,+4.2]$ \\
 TOPSIS & vector   & $-11.0$ & $[-14.4,\,-7.8]$ \\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{tabular*}
+\end{table*}
 
 Under min--max, exact assembly helps; under vector normalisation it is
 worse than reading the ranking top-down by $\AsmVec$~pp, for both
@@ -2125,7 +2125,7 @@ nothing.
 The $80$~pp total is thus a coding effect plus an interaction, not
 a reference-set effect.
 
-\begin{table}[t]
+\begin{table*}[t]
 \caption{Coding $\times$ reference set, $Q_2[\mathcal{A}']$, SAW min--max,
 $\kappa=200$, 500 draws. Post hoc exploratory cells.
 Rows differ only in the encoding of \textit{aspect} in the score;
@@ -2135,7 +2135,7 @@ R-V denotes the original reference-set cell; it uses the continuous
 aspect encoding, not vector normalisation.}
 \label{tab:coding2x2}
 \centering
-\begin{tabular}{llcc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llcc}
 \toprule
 Score coding of \textit{aspect} & Assembly & 389 constants & 473 constants \\
 \midrule
@@ -2144,8 +2144,8 @@ Binary (consistent)   & optimal & $100.0\%$ (R-M)    & $100.0\%$ (R-V$^*$) \\
 Continuous azimuth    & optimal & $24.0\%$ (R-asp)   & $20.0\%$ (R-V) \\
                       & greedy  & $25.2\%$            & $19.6\%$ \\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{tabular*}
+\end{table*}
 
 This is a pipeline inconsistency, not an inherent property of
 normalising over inadmissible sites.
@@ -2170,7 +2170,7 @@ later found to encode \textit{aspect} inconsistently (DEV-E4-007) and
 has not been recomputed with consistent coding; it is withdrawn from
 the main text.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering
 \caption{Amplitude ratio~\eqref{eq:refsetA} by criterion.}
 \label{tab:amprefset}
@@ -2188,8 +2188,8 @@ remaining 5        & 1.000 & ---   \\
 \midrule
 $\mathrm{TV}$      & \multicolumn{2}{c}{$0.107$} \\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{tabular*}
+\end{table*}
 
 Table~\ref{tab:coding2x2} holds the evaluator fixed at $\mathcal{A}'$
 (the 389 admissible sites) throughout, so all four cells are comparable.
@@ -2280,14 +2280,14 @@ Three predictions were committed to the repository before any E1 run
 assembly; (P2)~cells~W and~V differ by less than $5$~pp under optimal
 assembly; (P3)~cell~B under greedy assembly performs close to min--max.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering
 \caption{Intervention on amplitudes, SAW, $\kappa=200$, $\ndraws$ draws,
   space $A'$. $\mathrm{TV}_B$ and $\mathrm{TV}_W$ as in
   Section~\ref{sec:groupconst}. Loss is relative to cell~M under optimal
   assembly.}
 \label{tab:e1}
-\begin{tabular}{lccccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lccccc}
 \toprule
 Cell & $\mathrm{TV}_B$ & $\mathrm{TV}_W$ & greedy & optimal & loss \\
 \midrule
@@ -2296,8 +2296,8 @@ B (between only) & \TVBvec & 0       & 100.0\% & 100.0\% & 0.0 \\
 W (within only)  & 0       & \TVWvec & 64.0\%  & 64.2\%  & 35.8 \\
 V (vector)       & \TVBvec & \TVWvec & 66.2\%  & 56.8\%  & 43.2 \\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{tabular*}
+\end{table*}
 
 P1 is confirmed: cell~B reaches the frontier on every draw.
 Within-group distortion alone costs $\EoneWloss$~pp; the full vector
@@ -2380,7 +2380,7 @@ precision; the paired $V-W$ contrast was zero at this resolution,
 which is an empirical observation on the generating family and does not
 establish the absence of between-group interaction in general.
 
-\begin{table}[ht]
+\begin{table*}[ht]
 \centering
 \caption{Experiment~E6: Pareto attainment ($Q_2$, \%) across 45 synthetic
 instances ($N\in\{50,100,200\}$, 3 geometries, 5 seeds; optimal assembly).
@@ -2390,7 +2390,7 @@ for this generating family, not guaranteed by group-weight positivity
 alone. W/V: empirical within-group amplitude perturbations.
 $\kappa=200$, $n_{\text{draws}}=200$.}
 \label{tab:e6summary}
-\begin{tabular}{lrr}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrr}
 \toprule
 Condition & Mean $Q_2$ (\%) & $95\%$ CI \\
 \midrule
@@ -2402,8 +2402,8 @@ V (full vector amplitudes)  & $95.6$  & $[93.4,\;97.8]$ \\
 \midrule
 $Q_2[\text{M}]-Q_2[\text{W}]$ (primary loss) & $4.4$~pp & $[2.2,\;6.6]$ \\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{tabular*}
+\end{table*}
 These results hold for the synthetic family defined by the generating
 protocol and do not extend to all applied matrices.
 The within-group loss of $4.4$~pp in the synthetic family is smaller than
