@@ -780,20 +780,12 @@ that follow correspond to Stages~1--6 in order.
 \includegraphics[width=\textwidth]{figures/fig_workflow.png}
 \caption{Six-stage MCDM pipeline for landfill site selection on Fogo Island,
   Cape Verde.
-  Stage~1: GIS dataset with 389 viable sites and 11 criteria across three
-  objective groups (siting cost, environmental impact and social safety).
-  Stage~2: AHP-derived nominal weights ($\mathrm{CR}=\CR$) with Dirichlet
-  perturbation ($\kappa\in\{50,200\}$, $\ndraws$ draws).
-  Stage~3 (primary analytical focus): three normalisation rules whose
-  amplitude $A_j$ determines the effective weight
-  $w_j^{\mathrm{eff}}=w_jA_j/\sum_k w_kA_k$ (Eq.~\eqref{eq:weff}).
-  Stage~4: four aggregation methods spanning additive, distance-based and
-  outranking families.
-  Stage~5: greedy and optimal portfolio assembly subject to a
-  $d_{\min}=\dmin$~km separation constraint over $\Ntrios$ feasible trios.
-  Stage~6: performance evaluated as $Q_2=\Pr[M(w)\in\mathcal{F}(w)]$
-  against the exact Pareto frontier over a balanced $2^3$ factorial
-  and a wider design reported in the Supplementary Material.}
+  Stage~1: GIS dataset (389 viable sites, 11 criteria, three objective groups).
+  Stage~2: AHP-derived weights with Dirichlet perturbation.
+  Stage~3: three normalisation rules (min--max, vector, midranks).
+  Stage~4: four aggregation methods.
+  Stage~5: greedy and optimal portfolio assembly ($k=3$, $d_{\min}=\dmin$~km).
+  Stage~6: performance evaluated as $Q_2$ against the exact Pareto frontier.}
 \label{fig:workflow}
 \end{figure*}
 
@@ -1229,12 +1221,9 @@ Figure~\ref{fig:binary_amplitude} illustrates the binary case analytically.
 \caption{%
   $A_j^{\rm rank}$ for a binary criterion as a function of $n_1$ (number
   of ones), with $N=\Nvia$.
-  The amplitude is $N/[2(N+1)]=0.499$ for any class balance, independent
-  of $n_1$ (solid line), compared with $(N-1)/(N+1)=0.995$ for a
-  continuous criterion without ties (dashed line); the shaded region marks
-  the gap of~$0.496$.
-  The marker shows \textit{aspect} at $n_1=94$.
-  This figure is purely analytical: no data from Fogo Island enter it.}
+  Solid line: amplitude $N/[2(N+1)]=0.499$, independent of class balance.
+  Dashed line: amplitude $(N-1)/(N+1)=0.995$ for a continuous criterion.
+  Marker: \textit{aspect} at $n_1=94$.}
 \label{fig:binary_amplitude}
 \end{figure}
 
@@ -1636,16 +1625,9 @@ $\mathrm{TV}$ & & & 0.000 & 0.315 & 0.091 & & \\
 \caption{%
   Effective weights $w_j^{\rm eff}$ (\%) under three normalisations for all
   eleven criteria.
-  Under min--max (left), effective weights equal elicited weights by
-  construction: all lines are horizontal at their nominal level (dashed
-  reference lines).
-  Under vector normalisation (centre), \textit{perm} is inflated to
-  $2.88\times$ its nominal weight because its heavy-zero distribution
-  concentrates the Euclidean norm; \textit{urban} and \textit{aspect}
-  are correspondingly deflated ($0.53\times$ and $0.51\times$).
-  Under midranks (right), the pattern reverses: \textit{perm} is
-  deflated ($0.62\times$) while the seven fully continuous criteria gain
-  $\approx 12\%$.
+  Left: min--max (effective weights equal elicited weights).
+  Centre: vector normalisation.
+  Right: midranks.
   Grey lines show the eight remaining criteria; ratios in parentheses
   are relative to vector normalisation.}
 \label{fig:slope_weights}
@@ -1889,17 +1871,11 @@ these mechanisms.
 \caption{%
   Two-dimensional projections of the exact Pareto frontier ($n=\Fmmsize$
   portfolios in $\mathcal{A}'$, grey dots) and the seven canonical
-  portfolios of Table~\ref{tab:canonical} (evaluated against
-  $\mathcal{A}'$).
-  Blue diamonds: Pareto-efficient portfolios (gap~$=0$);
-  orange crosses: dominated portfolios (gap~$>0$).
-  Panel~(a): siting cost ($F_1$) vs.\ environmental impact ($F_2$);
-  (b): siting cost vs.\ social safety ($F_3$);
-  (c): environmental impact vs.\ social safety.
-  $F_1$ and $F_2$ are minimised; $F_3$ is maximised.
-  Portfolios inside the frontier in any panel may still be efficient in
-  the full three-objective space; classification is based on
-  three-objective dominance.}
+  portfolios of Table~\ref{tab:canonical}.
+  Blue diamonds: Pareto-efficient (gap~$=0$);
+  orange crosses: dominated (gap~$>0$).
+  (a)~$F_1$ vs.\ $F_2$; (b)~$F_1$ vs.\ $F_3$; (c)~$F_2$ vs.\ $F_3$.
+  Classification is based on three-objective dominance.}
 \label{fig:pareto}
 \end{figure*}
 
