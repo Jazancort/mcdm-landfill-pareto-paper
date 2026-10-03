@@ -2494,23 +2494,21 @@ establish the absence of between-group interaction in general.
 
 \begin{table}[ht]
 \centering
-\caption{Experiment E6 summary across 45 synthetic instances
-         ($N\in\{50,100,200\}$, 3 geometries, 5 seeds;
-         $\kappa=200$, $n_{\text{draws}}=200$).
-         $Q_2$ is the Pareto-attainment rate (\%) under each score condition.
-         M/B/C are analytic controls; W and V are empirical.}
+\caption{Experiment~E6: Pareto attainment ($Q_2$, \%) across 45 synthetic
+instances. M/B/C: analytic controls; W/V: empirical.
+$\kappa=200$, $n_{\text{draws}}=200$.}
 \label{tab:e6summary}
-\begin{tabular}{lccc}
+\begin{tabular}{lrr}
 \toprule
-Condition & Assembly & Mean $Q_2$ (\%) & $95\%$ CI \\
+Condition & Mean $Q_2$ (\%) & $95\%$ CI \\
 \midrule
-M (aligned, control)         & Optimal  & $100.0$ & -- \\
-B (between-group amplitude)  & Optimal  & $100.0$ & -- \\
-C (compensated weights)      & Optimal  & $100.0$ & -- \\
-W (within-group amplitude)   & Optimal  & $95.6$  & $[93.4,\,97.8]$ \\
-V (full vector amplitudes)   & Optimal  & $95.6$  & $[93.4,\,97.8]$ \\
+M (aligned, control)        & $100.0$ & -- \\
+B (between-group amplitude) & $100.0$ & -- \\
+C (compensated weights)     & $100.0$ & -- \\
+W (within-group amplitude)  & $95.6$  & $[93.4,\;97.8]$ \\
+V (full vector amplitudes)  & $95.6$  & $[93.4,\;97.8]$ \\
 \midrule
-Primary loss $Q_2[\text{M}]-Q_2[\text{W}]$ & & $4.4$~pp & $[2.2,\,6.6]$ \\
+$Q_2[\text{M}]-Q_2[\text{W}]$ (primary loss) & $4.4$~pp & $[2.2,\;6.6]$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2815,7 +2813,7 @@ further instances remains open.
 
 The reference-set analyses in Section~\ref{sec:refset} and
 Remark~\ref{rem:nonmonotone} are based on post hoc exploratory cells
-(declared in \texttt{corpus/PRESPEC\_E4.md}, DEV-E4-007) and should be
+(declared in the pre-specification log, entry DEV-E4-007) and should be
 treated as descriptive rather than confirmatory.
 The post hoc exploratory decision rule (PRESPEC\_R1, rule R1-2) found that
 greedy assembly improves by $+\RefSetGreedyGain$~pp under consistent
