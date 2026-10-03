@@ -2632,6 +2632,9 @@ The shortfall $\mathrm{gap}(t)$ in~\eqref{eq:gap} takes the minimum
 over strictly signed differences; if a dominator improves on $t$ in
 only one or two objectives (with equality on the rest), the minimum
 is zero and the gap does not detect the dominance.
+A concrete instance: with $k=3$ minimisation objectives, portfolio
+$t=(3,5,5)$ is dominated by $t'=(3,5,4)$ (strict improvement on
+objective~3, ties elsewhere), yet $\mathrm{gap}(t)=\min(0,0,1)=0$.
 $Q_2$, computed from the full Pareto dominance algorithm, is therefore
 the primary efficiency measure; $Q_3$ is a complementary severity
 indicator, not an equivalent restatement of $Q_2$.
