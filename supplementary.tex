@@ -686,50 +686,17 @@ $43.2$~pp ($100.0-56.8\%$); the two penalties are not symmetric because
 the frontier changes.
 
 % =======================================================================
-% S4b  Reference-set comparison (Table S1 — moved from main text)
+% S4b  Reference-set comparison (ARCHIVED — not active evidence)
+% The score×evaluator table (tab:fourthcell) was added here after P1
+% review but the GPT gate requires it to be archived, not presented
+% as supporting evidence, until a full numerical audit of the A-space
+% (473-candidate) pipeline is completed in P2.
+% Data are preserved in the repository history for reproducibility.
 % =======================================================================
 
-\section*{Reference-Set Comparison: Score $\times$ Evaluator}
-\label{sec:refset_suppl}
-
-Table~\ref{tab:fourthcell} extends the coding $\times$ reference-set
-analysis of Table~3 (main text) by also varying the evaluator frontier.
-Each row fixes the set over which the score's normalisation constants
-are computed; each column fixes the set over which the evaluator builds
-the Pareto frontier.
-The two \emph{aligned} cells (score and evaluator share the same
-reference set) confirm Proposition~1: $Q_2^{\mathrm{opt}}=100\%$ when
-score and evaluator are consistent.
-The two \emph{crossed} cells show that this guarantee does not extend
-automatically: $N_{\text{cand}}/A'$ reaches $100\%$ on this instance
-(an empirical result, not guaranteed by the theorem), while
-$N_{\text{via}}/A$ reaches only $95\%$, demonstrating that the alignment
-condition matters for the direction score$\supset$evaluator.
-
-\begin{table}[h]
-\centering
-\caption{Score--evaluator alignment, $Q_2[\text{evaluator}]$, SAW min--max,
-$\kappa=200$, 500 draws. Post hoc exploratory.
-Rows: set used to compute score normalisation constants.
-Columns: set used to build the evaluator's Pareto frontier.
-Bold: $Q_2^{\mathrm{opt}}=100\%$ (aligned cells guaranteed by
-Proposition~1; crossed 100\% is empirical on this instance).}
-\label{tab:fourthcell}
-\begin{tabular}{llcc}
-\toprule
-Score set & Evaluator & greedy & optimal \\
-\midrule
-$N_{\mathrm{cand}}$ (473) & $A$ (473)   & 84.6\% & \textbf{100.0\%} \\
-$N_{\mathrm{cand}}$ (473) & $A'$ (389)  & 97.8\% & \textbf{100.0\%}$^{\dagger}$ \\
-$N_{\mathrm{via}}$ (389)  & $A$ (473)   & 58.8\% &  95.0\% \\
-$N_{\mathrm{via}}$ (389)  & $A'$ (389)  & 86.0\% & \textbf{100.0\%} \\
-\bottomrule
-\end{tabular}
-
-\smallskip
-\noindent$^{\dagger}$Empirical result on this instance; not guaranteed
-by Proposition~1 (mismatched reference sets).
-\end{table}
+% [ARCHIVED] The score×evaluator analysis (Score set: Ncand/Nvia;
+% Evaluator: A/A') is not presented as active evidence in this version.
+% See corpus/PHASES_STATUS.md for the provenance status.
 
 % =======================================================================
 % S5  Experiment E5 — Synthetic Grid for Generalisation

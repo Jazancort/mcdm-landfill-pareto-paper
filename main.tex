@@ -114,7 +114,7 @@ In additive aggregation the effective weight of criterion $j$ is
 proportional to $w_jA_j$; exact assembly is Pareto-efficient for any
 weights and any instance if and only if amplitudes are constant within
 each objective group (Theorem~\ref{thm:groupconst}).
-A post hoc exploratory intervention confirms this on Fogo: between-group
+A follow-up intervention with pre-specified predictions confirms this on Fogo: between-group
 distortion alone costs nothing, while within-group distortion alone
 costs $\EoneWloss$~pp (the full vector distortion costs $\EoneVloss$~pp).
 A criterion encoded inconsistently between score and objective reduces
@@ -240,7 +240,7 @@ if the normalised amplitudes are constant within each objective group
 (Theorem~\ref{thm:groupconst}): distortion between groups only relocates
 the optimum along the frontier, and only distortion within a group can
 move it off.
-A post hoc exploratory intervention that manipulates the two components
+A follow-up intervention with pre-specified predictions that manipulates the two components
 separately confirms the prediction on Fogo
 (Section~\ref{sec:e1}).
 Adding integer programming on top of a ranking
@@ -288,8 +288,9 @@ Our contributions are as follows.
     Pareto-efficient under normalisation: amplitudes must be constant
     within each objective group (Theorem~\ref{thm:groupconst}),
     a decomposition of the weight deviation into between-group and
-    within-group components, and a post hoc exploratory intervention showing
-    that the within-group component carries the loss.
+    within-group components, and a follow-up intervention with
+    pre-specified predictions showing that the within-group component
+    carries the loss.
   \item An exact identity between PROMETHEE~II under the usual preference
     function and rank-weighted SAW, holding for arbitrary tie structure
     including heterogeneous tie patterns across criteria
@@ -1326,12 +1327,12 @@ The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
 The families evaluated here differ in how the normalised column enters the
 score, and the difference is captured by a single exponent.
 
-\begin{proposition}[Amplitude exponent]
+\begin{proposition}[Amplitude exponent: SAW exact; TOPSIS by analogy]
 \label{prop:exponent}
-Consider an aggregation that assigns to criterion $j$ a contribution
-homogeneous of degree $\alpha$ in the product $w_j\,n_j(\cdot)$, where
-$n_j$ is the normalised column.
-The effective weights satisfy
+For SAW ($\alpha=1$), the effective weights satisfy~\eqref{eq:weff}
+exactly.
+By analogy, treating the squared TOPSIS distance as having homogeneity
+degree $\alpha=2$ in $w_j\,n_j(\cdot)$ gives
 \begin{equation}
   \label{eq:weff_alpha}
   w_j^{\mathrm{eff}}(\alpha)
@@ -1339,6 +1340,10 @@ The effective weights satisfy
           {\sum_k w_k^{\alpha} A_k^{\alpha}},
 \end{equation}
 with $\mathrm{TV}(\alpha)=\tfrac{1}{2}\sum_j|w_j^{\mathrm{eff}}(\alpha)-w_j|$.
+\emph{This formula is exact for $\alpha=1$ (SAW). For $\alpha=2$ (TOPSIS) the
+effective weight is exact for the squared distance, not the distance
+itself; the interpretation is by analogy with the additive case and
+is not guaranteed to hold for the ratio $Q_2$.}
 The three families instantiate $\alpha$ as follows.
 \begin{itemize}[nosep]
   \item \textbf{SAW}: $\alpha=1$.  Recovers~\eqref{eq:weff}.
@@ -1422,15 +1427,20 @@ Vector   & 0.315 & 0.675 & $+0.360$ \\
 \end{tabular}
 \end{table}
 
-\paragraph{Empirical test of the exponent.}
-Proposition~\ref{prop:exponent} predicts that TOPSIS inherits a larger
-distortion than SAW, by an amount increasing in
-$\Delta\mathrm{TV}=\mathrm{TV}(2)-\mathrm{TV}(1)$.
+\paragraph{Empirical comparison of SAW and TOPSIS distortions.}
+On Fogo, the metric $\Delta\mathrm{TV}=\mathrm{TV}(2)-\mathrm{TV}(1)$
+is positive under both normalisations, and the same ordering is observed
+empirically.
 Restricting to optimal assembly, where no combinatorial loss from the
 greedy heuristic confounds the contrast (Section~\ref{sec:greedy}),
 $Q_2[\mathcal{A}']$ falls from SAW to TOPSIS by $3.4$~pp under min--max
 ($\Delta\mathrm{TV}=0.160$) and $4.4$~pp under vector
-($\Delta\mathrm{TV}=0.360$): both negative and ordered as predicted.
+($\Delta\mathrm{TV}=0.360$): both negative and ordered consistently with
+the larger $\Delta\mathrm{TV}$.
+This is an empirical observation on one instance; whether the
+exponent~($\alpha=2$) analogy extends to a general prediction of
+monotone loss in TV depends on the geometry of the specific instance and
+is not guaranteed by the formula.
 Under greedy assembly the contrast reverses under min--max ($+8.4$~pp),
 which we attribute to the foreclosure loss of Section~\ref{sec:greedy}
 dominating a distortion of~$0.160$; we therefore report the
@@ -2072,9 +2082,6 @@ coding inconsistency; under consistent coding the same constants cost
 nothing.
 The $80$~pp total is thus a coding effect plus an interaction, not
 a reference-set effect.
-A supplementary reference-set comparison that varies the evaluator
-frontier across four score/evaluator combinations confirms the
-coding-dependence of the effect (Supplementary Material, Table~S1).
 
 \begin{table}[t]
 \caption{Coding $\times$ reference set, $Q_2[\mathcal{A}']$, SAW min--max,
@@ -2144,11 +2151,6 @@ $\mathrm{TV}$      & \multicolumn{2}{c}{$0.107$} \\
 
 Table~\ref{tab:coding2x2} holds the evaluator fixed at $\mathcal{A}'$
 (the 389 admissible sites) throughout, so all four cells are comparable.
-A supplementary reference-set table that also varies the evaluator
-frontier is in the Supplementary Material (Table~S1); its aligned cells
-confirm Proposition~\ref{prop:p1:stmt} and its crossed cells show that
-the alignment condition is not automatically satisfied in the
-score$\neq$evaluator direction.
 
 \begin{remark}[A non-monotone recoding is outside the theorem]
 \label{rem:nonmonotone}
@@ -2205,7 +2207,7 @@ of the value model.
 % \S7.7 Pre-registered intervention (E1)
 % =======================================================================
 
-\subsection{Isolating within-group distortion: a post hoc exploratory intervention}
+\subsection{Isolating within-group distortion: a follow-up intervention with pre-specified predictions}
 \label{sec:e1}
 
 Theorem~\ref{thm:groupconst} predicts that between-group distortion
@@ -2231,7 +2233,7 @@ normalisation.
 \textbf{V} sets $A_j=\rho_j$.
 The four cells form a $2\times2$ design in the presence of each
 component (Table~\ref{tab:e1}).
-Three predictions were committed to the repository before any run
+Three predictions were committed to the repository before any E1 run
 (Supplementary Material): (P1)~cell~B attains $Q_2=100\%$ under optimal
 assembly; (P2)~cells~W and~V differ by less than $5$~pp under optimal
 assembly; (P3)~cell~B under greedy assembly performs close to min--max.
@@ -2666,10 +2668,11 @@ weight of a criterion is proportional to $w_jA_j$, and exact assembly
 is Pareto-efficient for any weights and any instance if and only if
 amplitudes are constant within each objective group
 (Theorem~\ref{thm:groupconst}).
-A post hoc exploratory intervention on Fogo confirmed that between-group
+A follow-up intervention with pre-specified predictions on Fogo confirmed that between-group
 distortion alone costs nothing and that within-group distortion carries
-most of the loss, and falsified our prediction that the two components
-would not interact.
+most of the loss; the prediction that the two components would not
+interact was not confirmed (P2 point estimate exceeds the 5~pp threshold;
+the confidence interval includes values below it).
 A synthetic grid of 405 instances (Experiment~E5) characterises the
 greedy shortfall rather than the normalisation effect: with amplitudes
 imposed jointly on score and objectives, we found no evidence of linear
