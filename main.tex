@@ -112,9 +112,7 @@ the pre-specified $\pm2.5$~pp margin (TOST), though the sign is
 cell-dependent.
 Exact assembly gains $+\AsmMM$~pp under min--max but loses $\AsmVec$~pp
 under vector normalisation.
-In additive aggregation with normalised criterion columns that are
-strictly increasing affine functions of the oriented min--max partial
-values, the effective weight of criterion $j$ is
+In additive aggregation, the effective weight of criterion $j$ is
 proportional to $w_jA_j$; exact assembly is Pareto-efficient for any
 weights and any instance if and only if amplitudes are constant within
 each objective group (Theorem).
@@ -923,7 +921,7 @@ A dominance test is well defined only if $\wob=\wfr$.
 If they differ, the portfolio and the members of the reference set are
 points of different objective spaces and their componentwise comparison
 has no decision-theoretic content.
-We state this explicitly because it is easy to violate silently when the
+This constraint is easy to violate silently when the
 reference set is precomputed once and the Monte Carlo loop recomputes
 portfolio objectives per draw.
 
@@ -1640,9 +1638,9 @@ $\mathrm{TV}$ & & & 0.000 & 0.315 & 0.091 & & \\
 
 The total variation~\eqref{eq:TV} is half the $\ell^1$ norm of the deviation
 vector $\delta_j=w_j^{\mathrm{eff}}-w_j$, and is therefore blind to how
-that deviation is spread across criteria.
+that deviation is distributed across criteria.
 Two distortions of identical $\mathrm{TV}$, one concentrated on a
-single heavily weighted criterion and one spread over several, reorder
+single heavily weighted criterion and one distributed over several, reorder
 the alternatives very differently, because deviations of opposite sign
 partially cancel in the weighted sum when they are distributed.
 The following identity separates the two dimensions.
@@ -2061,7 +2059,7 @@ TOPSIS & vector   & $-11.0$ & $[-14.4,\,-7.8]$ \\
 \end{table}
 
 Under min--max, exact assembly helps; under vector normalisation it is
-significantly worse than reading the ranking top-down, for both
+worse than reading the ranking top-down by $\AsmVec$~pp, for both
 aggregations.
 Optimal assembly maximises $\sum_{i\in t}s(i)$ exactly and, by
 Proposition~\ref{prop:p1:stmt}, attains the frontier \emph{under the
@@ -2131,7 +2129,7 @@ constants (R-V to R-V$^*$) recovers $Q_2=100\%$.
 Introducing the continuous encoding at 389-site constants
 (R-M to R-asp) reduces $Q_2$ to $24.0\%$: $76$~pp through coding alone.
 The remaining $4.0$~pp (R-asp$-$R-V, $95\%$ CI $[+2.2,\,+6.0]$) is
-attributable to the 473-site constants, but only in the presence of the
+explained by the 473-site constants, but only in the presence of the
 coding inconsistency; under consistent coding the same constants cost
 nothing.
 The $80$~pp total is thus a coding effect plus an interaction, not
@@ -2236,7 +2234,7 @@ Section~\ref{prop:p1} guarantees that optimal assembly of an
 additive score attains the reference set under matching weights;
 Table~\ref{tab:factorial} shows greedy assembly of the same score
 reaching only $86.0\%$.
-The shortfall is attributable to the assembly rule alone, with
+The shortfall is consistent with the assembly rule alone, with
 aggregation, normalisation and reference set held fixed.
 
 Draw~$302$ ($\kappa=200$) exhibits it concretely.
@@ -2341,8 +2339,9 @@ this result as evidence for it.
 Experiment~E1 is a single instance; Experiment~E6 is a prospective
 synthetic study designed to test whether the within-group mechanism
 carries costs outside the Fogo geometry.
-The protocol was pre-registered before execution (seeds archived in
-\texttt{results/e6/e6\_seeds.json}, protocol hash \texttt{08db40bd}).
+The protocol was pre-registered before execution: seeds and geometry
+parameters were frozen before any instance was run, and the frozen
+protocol file is archived in the supplementary repository.
 
 \paragraph{Design.}
 Forty-five base instances ($N\in\{50,100,200\}$, three spatial
@@ -2753,7 +2752,7 @@ A second grid of 405 instances ($N\le200$, three geometries;
 Experiment~E5) imposes amplitudes on score and objectives jointly, so
 optimal assembly is efficient by construction and the grid does not
 test Theorem~\ref{thm:groupconst}; on greedy assembly, we found no
-evidence of linear association between the imposed within-group spread
+evidence of linear association between the imposed within-group amplitude
 and greedy loss in the model as fitted
 ($-1.3$~pp per $0.1$ of $\mathrm{TV}_W$,
 $95\%$ CI $[-5.1,\,+2.4]$), while instance size and spatial geometry
@@ -2807,8 +2806,8 @@ With ranges $2,1,1$, portfolios $t=(1,1,0)$ and $u=(0,1,0)$ and $v=(2,2,1)$:
 $u$ dominates $t$ (improves $F_1$ strictly, ties $F_2$ and $F_3$), yet
 $\mathrm{gap}(t)=\min\bigl((t_1-u_1)/2,\,(t_2-u_2)/1,\,(u_3-t_3)/1\bigr)
 =\min(0.5,\,0,\,0)=0$.
-Thus gap$(t)=0$ and $t$ is dominated (confirmed by
-\texttt{test\_gap\_counterexample.py}, which exits with status~0).
+Thus gap$(t)=0$ and $t$ is dominated (confirmed by a unit test
+that verifies this counterexample directly, exiting with status~0).
 $Q_2$, computed from the full Pareto dominance algorithm, is therefore
 the primary efficiency measure; $Q_3$ is a complementary severity
 indicator, not an equivalent restatement of $Q_2$.
