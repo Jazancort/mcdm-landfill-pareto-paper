@@ -705,3 +705,32 @@ Status change: E1-W **UNVERIFIED -> VERIFIED** (per-draw trace in log file).
 All primary quantitative claims in macros.tex are now VERIFIED with computed evidence.
 No UNVERIFIED claims remain for P3 (rewrite).
 
+
+## P4 — CLOSED (2026-10-03)
+
+### Final state at commit b58e37c (tag v0.9-defensible)
+
+**main.pdf:** 25 pages, ALL CHECKS PASSED
+**supplementary.pdf:** 14 pages
+**HEAD:** b58e37c
+
+### Claims status at closure
+
+All primary quantitative claims: VERIFIED (see P2 section above).
+No UNVERIFIED claims remain.
+No forbidden phrases present.
+No active Table S1 / fourth-cell evidence.
+PROMETHEE identity: test_promethee_identity.py 5 cases PASS.
+gap counterexample: test_gap_counterexample.py PASS.
+
+### What P4 does NOT change
+- B1: SKIP (intended analysis invalid, not reopened)
+- E5: post hoc exploratory, 7 declared deviations, not confirmatory
+- TV_B/TV_W: generated_validated_cache (recomputable from AJ_VEC+W)
+- E1-W/optimal: VERIFIED per-draw trace (data/e1_v3_rerun_20261002.log)
+
+### Next decision point
+- P2 rerun A' benchmark: COMPLETE (E1 verified; factorial from mc_2cube)
+- Submission readiness: defensible and auditable
+- Version 9 option: tag v0.9-defensible created at b58e37c
+
