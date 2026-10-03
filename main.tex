@@ -100,7 +100,8 @@ methodological literature measures only rank agreement, establishing
 that methods differ without establishing that any is worse.
 We supply an optimality benchmark internal to the value model but
 external to the ranking.
-For $\Ncand$ candidate sites on Fogo Island, Cape Verde, we enumerate
+For $\Ncand$ candidate sites on Fogo Island, Cape Verde ($\Nvia$ admissible
+after applying spatial and regulatory filters), we enumerate
 all $\Ntrios$ three-site portfolios under a $\dmin$~km separation
 constraint and compute the exact Pareto frontier over siting cost,
 environmental impact and social safety.
@@ -1391,8 +1392,8 @@ $w_j^{\mathrm{eff}}\propto w_j^{2}$, so the total variation
 $\mathrm{TV}(2)=0.160$ on the Fogo weights.
 Min--max preserves elicited weights only under additive aggregation;
 combining it with TOPSIS re-weights criteria by squaring in the
-weighted Euclidean distance $d_i^\pm = \sqrt{\sum_j (w_j v_{ij} \mp
-v_j^\pm)^2}$; the effect on the proximity index $C_i = d_i^- / (d_i^+
+weighted Euclidean distance $d_i^\pm = \sqrt{\sum_j w_j^2(v_{ij} -
+v_j^\pm)^2}$ (Eq.~\ref{eq:weff_alpha}); the effect on the proximity index $C_i = d_i^- / (d_i^+
 + d_i^-)$ is not a simple linear re-weighting and depends on the
 geometry of the ideal and anti-ideal points.
 \end{corollary}
@@ -1609,6 +1610,8 @@ The following identity separates the two dimensions.
 Let $\delta_j = w_j^{\mathrm{eff}} - w_j$ be the deviation induced by a
 normalisation, so that $\sum_j \delta_j = 0$ and
 $\sum_j |\delta_j| = 2\,\mathrm{TV}$ by~\eqref{eq:TV}.
+Assume $\mathrm{TV}>0$ (i.e.\ $\delta\neq\mathbf{0}$); if $\mathrm{TV}=0$
+there is no distortion and $m_{\mathrm{eff}}$ is undefined.
 Define the \emph{effective number of distorted criteria} as the
 participation ratio
 \begin{equation}
@@ -2282,6 +2285,74 @@ the $0.8$th percentile of $F_1$.
 The theorem says nothing about greedy assembly, and we do not treat
 this result as evidence for it.
 
+\subsection{Prospective controlled study (Experiment~E6)}
+\label{sec:e6}
+
+Experiment~E1 is a single instance; Experiment~E6 is a prospective
+synthetic study designed to test whether the within-group mechanism
+carries costs outside the Fogo geometry.
+The protocol was pre-registered before execution (seeds archived in
+\texttt{results/e6/e6\_seeds.json}, protocol hash \texttt{08db40bd}).
+
+\paragraph{Design.}
+Forty-five base instances ($N\in\{50,100,200\}$, three spatial
+geometries, five seeds) were generated with $M=11$ criteria in three
+groups (3, 5, 3) and fixed group weights $W_G=(0.295,0.356,0.349)$.
+Each instance used $k=3$, a $d_{\min}=5$~km separation constraint, and
+$n_{\text{draws}}=200$ Dirichlet weight draws ($\kappa=200$, seed 9999).
+The Pareto frontier was computed from the min-max-normalised objectives
+under the fixed base weights $W_{\text{CRIT}}$ (independent of the Dirichlet
+draws, which affect only the score).
+Five score conditions varied only the criterion amplitudes, leaving the
+objective definition, the feasible set $\mathcal{T}$, and the weight
+draw fixed per cell: M (amplitudes $A_j\equiv1$, aligned control),
+B (between-group amplitude), W (within-group amplitude), V (full vector
+amplitudes $A_j=\rho_j$), and C (compensation: $w'_j\propto w_j/\rho_j$).
+Inference used the 45 instances as the primary resampling unit
+(paired differences averaged over draws per instance; normal-approximation
+CI on $n=45$; bootstrap $B=4000$ as sensitivity check),
+avoiding pseudoreplication across draws.
+
+\paragraph{Results.}
+Under optimal assembly, conditions M, B and C attain $Q_2=100\%$ on
+every instance, confirming the regression invariant of
+Theorem~\ref{thm:groupconst}.
+The primary estimand, within-group loss $Q_2[\text{M}]-Q_2[\text{W}]$,
+is $4.4$~pp ($95\%$ normal-approximation CI $[2.2,\,6.6]$~pp, based on
+the per-instance paired differences $d_i = 100\cdot\bar{I}_{i,M}-\bar{I}_{i,W}$
+averaged over $n_{\text{draws}}=200$ weight draws, $n=45$ instances;
+a bootstrap sensitivity check with $B=4000$ gives $[2.4,\,6.8]$~pp).
+W and V had the same mean attainment ($95.6\%$) at the reported
+precision; the paired $V-W$ contrast was zero at this resolution,
+which is an empirical observation on the generating family and does not
+establish the absence of between-group interaction in general.
+
+\begin{table}[ht]
+\centering
+\caption{Experiment~E6: Pareto attainment ($Q_2$, \%) across 45 synthetic
+instances ($N\in\{50,100,200\}$, 3 geometries, 5 seeds; optimal assembly).
+M/B/C: analytic controls; W/V: empirical. $\kappa=200$, $n_{\text{draws}}=200$.}
+\label{tab:e6summary}
+\begin{tabular}{lrr}
+\toprule
+Condition & Mean $Q_2$ (\%) & $95\%$ CI \\
+\midrule
+M (aligned, control)        & $100.0$ & -- \\
+B (between-group amplitude) & $100.0$ & -- \\
+C (compensated weights)     & $100.0$ & -- \\
+W (within-group amplitude)  & $95.6$  & $[93.4,\;97.8]$ \\
+V (full vector amplitudes)  & $95.6$  & $[93.4,\;97.8]$ \\
+\midrule
+$Q_2[\text{M}]-Q_2[\text{W}]$ (primary loss) & $4.4$~pp & $[2.2,\;6.6]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+These results hold for the synthetic family defined by the generating
+protocol and do not extend to all applied matrices.
+The within-group loss of $4.4$~pp in the synthetic family is smaller than
+the $\EoneWloss$~pp observed on the Fogo data in Experiment~E1; the two
+magnitudes arise from different synthetic criterion distributions,
+spatial layouts and instance sizes, and should not be compared directly.
 
 % =======================================================================
 % \S8 Discussion
@@ -2455,69 +2526,6 @@ normalisation that silently multiplies one criterion by $2.88\times$ and
 divides another by $0.53\times$ is difficult to defend, and min--max
 on the admissible set is preferable on precisely the grounds
 \citet{Choo1999} articulate.
-
-\subsection{Prospective controlled study (Experiment~E6)}
-\label{sec:e6}
-
-Experiment~E1 is a single instance; Experiment~E6 is a prospective
-synthetic study designed to test whether the within-group mechanism
-carries costs outside the Fogo geometry.
-The protocol was pre-registered before execution (seeds archived in
-\texttt{results/e6/e6\_seeds.json}, protocol hash \texttt{08db40bd}).
-
-\paragraph{Design.}
-Forty-five base instances ($N\in\{50,100,200\}$, three spatial
-geometries, five seeds) were generated with $M=11$ criteria in three
-groups (3, 5, 3) and fixed group weights $W_G=(0.295,0.356,0.349)$.
-Each instance used $k=3$, a $d_{\min}=5$~km separation constraint, and
-$n_{\text{draws}}=200$ Dirichlet weight draws ($\kappa=200$, seed 9999).
-The Pareto frontier was computed from the min-max-normalised objectives
-under the base weights.
-Five score conditions varied only the criterion amplitudes, leaving the
-objective definition, the feasible set $\mathcal{T}$, and the weight
-draw fixed per cell: M (amplitudes $A_j\equiv1$, aligned control),
-B (between-group amplitude), W (within-group amplitude), V (full vector
-amplitudes $A_j=\rho_j$), and C (compensation: $w'_j\propto w_j/\rho_j$).
-Inference used a hierarchical bootstrap with the 45 instances as the
-resampling unit, avoiding pseudoreplication across draws.
-
-\paragraph{Results.}
-Under optimal assembly, conditions M, B and C attain $Q_2=100\%$ on
-every instance, confirming the regression invariant of
-Theorem~\ref{thm:groupconst}.
-The primary estimand, within-group loss $Q_2[\text{M}]-Q_2[\text{W}]$,
-is $4.4$~pp ($95\%$ hierarchical CI $[2.2,\,6.6]$~pp).
-W and V had the same mean attainment ($95.6\%$) at the reported
-precision; the paired $V-W$ contrast was zero at this resolution,
-which is an empirical observation on the generating family and does not
-establish the absence of between-group interaction in general.
-
-\begin{table}[ht]
-\centering
-\caption{Experiment~E6: Pareto attainment ($Q_2$, \%) across 45 synthetic
-instances. M/B/C: analytic controls; W/V: empirical.
-$\kappa=200$, $n_{\text{draws}}=200$.}
-\label{tab:e6summary}
-\begin{tabular}{lrr}
-\toprule
-Condition & Mean $Q_2$ (\%) & $95\%$ CI \\
-\midrule
-M (aligned, control)        & $100.0$ & -- \\
-B (between-group amplitude) & $100.0$ & -- \\
-C (compensated weights)     & $100.0$ & -- \\
-W (within-group amplitude)  & $95.6$  & $[93.4,\;97.8]$ \\
-V (full vector amplitudes)  & $95.6$  & $[93.4,\;97.8]$ \\
-\midrule
-$Q_2[\text{M}]-Q_2[\text{W}]$ (primary loss) & $4.4$~pp & $[2.2,\;6.6]$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-These results hold for the synthetic family defined by the generating
-protocol and do not extend to all applied matrices.
-The within-group loss of $4.4$~pp in the synthetic family is smaller than
-the $\EoneWloss$~pp observed on the Fogo data in Experiment~E1; the two
-magnitudes arise from different criteria distributions and group structures
-and should not be compared directly.
 
 \subsection{The PROMETHEE--Borda identity}
 
@@ -2722,7 +2730,8 @@ With ranges $2,1,1$, portfolios $t=(1,1,0)$ and $u=(0,1,0)$ and $v=(2,2,1)$:
 $u$ dominates $t$ (improves $F_1$ strictly, ties $F_2$ and $F_3$), yet
 $\mathrm{gap}(t)=\min\bigl((t_1-u_1)/2,\,(t_2-u_2)/1,\,(u_3-t_3)/1\bigr)
 =\min(0.5,\,0,\,0)=0$.
-Thus gap$(t)=0$ and $t$ is dominated (verified as Experiment~\ref{thm:groupconst} regression test).
+Thus gap$(t)=0$ and $t$ is dominated (confirmed by
+\texttt{test\_gap\_counterexample.py}, which exits with status~0).
 $Q_2$, computed from the full Pareto dominance algorithm, is therefore
 the primary efficiency measure; $Q_3$ is a complementary severity
 indicator, not an equivalent restatement of $Q_2$.
@@ -2773,7 +2782,7 @@ with instance size and spatial geometry.
 A prospective controlled study of 45 instances (Experiment~E6)
 separates score from objective normalisations and isolates the
 within-group distortion: the estimated within-group loss is $4.4$~pp
-($95\%$ CI $[2.2,\,6.6]$~pp, hierarchical bootstrap across the
+($95\%$ normal-approximation CI $[2.2,\,6.6]$~pp,
 synthetic family).
 The Fogo magnitudes are therefore instance-specific, and whether the
 within-group mechanism carries comparable costs on other applied matrices
