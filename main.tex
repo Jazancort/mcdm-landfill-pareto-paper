@@ -114,14 +114,14 @@ In additive aggregation the effective weight of criterion $j$ is
 proportional to $w_jA_j$; exact assembly is Pareto-efficient for any
 weights and any instance if and only if amplitudes are constant within
 each objective group (Theorem~\ref{thm:groupconst}).
-A follow-up intervention with pre-specified predictions confirms this on Fogo: between-group
+A targeted follow-up experiment confirms this on Fogo: between-group
 distortion alone costs nothing, while within-group distortion alone
 costs $\EoneWloss$~pp (the full vector distortion costs $\EoneVloss$~pp).
 A criterion encoded inconsistently between score and objective reduces
 $Q_2$ from $100\%$ to $\RaspOptimal\%$ through the coding effect alone;
 with consistent encoding, normalising over inadmissible sites costs
 nothing under optimal assembly and improves greedy assembly by
-$\RefSetGreedyGain$~pp (post hoc exploratory rule R1-2,
+$\RefSetGreedyGain$~pp (post hoc exploratory, rule R1-2,
 $95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
 \end{abstract}
 
@@ -2207,7 +2207,7 @@ of the value model.
 % \S7.7 Pre-registered intervention (E1)
 % =======================================================================
 
-\subsection{Isolating within-group distortion: a follow-up intervention with pre-specified predictions}
+\subsection{Isolating within-group distortion: a follow-up intervention}
 \label{sec:e1}
 
 Theorem~\ref{thm:groupconst} predicts that between-group distortion
@@ -2686,12 +2686,11 @@ remains open.
 Two consequences bear directly on practice.
 Integer programming on top of a ranking pays only when the normalisation
 respects the grouping of the objectives; under vector normalisation on
-this instance it is worse than reading the ranking top-down.
+Fogo it is worse than reading the ranking top-down.
 A criterion encoded differently in the score and the objectives reduces
 $Q_2$ from $100\%$ to $\RaspOptimal\%$ under optimal assembly; with a
 consistent encoding, normalising over inadmissible alternatives costs
-nothing under optimal assembly on
-this instance.
+nothing under optimal assembly.
 The immediate recommendation is inexpensive: report effective weights
 alongside elicited ones.
 Given the normalised decision matrix the computation is a single line,
