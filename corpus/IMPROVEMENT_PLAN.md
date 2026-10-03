@@ -210,7 +210,7 @@ Se qualquer etapa revelar que um claim central não pode ser sustentado com a ev
 | I-2 | `iff "for any weights and any instance"` em L116 e L2667 (abstract + conclusion): adicionar qualificador explícito de âmbito — "within additive aggregation under the fixed partial value model". | [x] |
 | I-3 | Label `prop:exponent` vs `rem:exponent`: verificar que `\ref{prop:exponent}` em L969 resolve correctamente após a promoção a remark; corrigir se necessário. | [x] |
 | I-4 | Confirmar no PDF compilado que `\end{remark}…\begin{corollary}` produz numeração correcta sem overlap. | [x] |
-| I-5 | Limitations §8.2: adicionar nota explícita de que gap=0 não implica Pareto sem condições; fornecer o contraexemplo de dominância fraca. | [ ] |
+| I-5 | Limitations §8.2: adicionar nota explícita de que gap=0 não implica Pareto sem condições; fornecer o contraexemplo de dominância fraca. | [x] |
 | I-6 | PROMETHEE-Borda identity §3.3: explicitar hipótese de ausência de empates (ou comportamento sob empates) para que a identidade não seja atribuída a empates arbitrários. | [ ] |
 
 ---
