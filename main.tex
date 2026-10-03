@@ -673,7 +673,7 @@ The three objectives therefore have mixed senses:
 and we write $\mathbf{F}(t;w)=(F_1,F_2,F_3)$ to make the weight
 dependence explicit, since it is central to Section~\ref{sec:design}.
 
-\paragraph{Mixed senses and the SAW orientation.}
+\medskip\noindent\textbf{Mixed senses and the SAW orientation.}
 Criteria in $G_1$ and $G_2$ are built so that $c_j(i)=0$ is the most
 favourable value: for distance-from-hazard criteria the raw distance is
 inverted before normalisation, and for the binary aspect criterion
@@ -709,7 +709,7 @@ which is uniformly larger-is-better.
 Section~\ref{prop:p1} turns on the relationship between $s$ and the
 three objectives.
 
-\paragraph{What the benchmark is, and is not.}
+\medskip\noindent\textbf{What the benchmark is, and is not.}
 \label{rem:valuespace}
 $\mathbf{F}$ is a three-dimensional partial value space, not a vector of
 physically independent objectives: each component is an additive weighted
@@ -822,22 +822,19 @@ criterion evaluations.
 \label{fig:map}
 \end{figure*}
 
-\paragraph{Missing values.}
-Three entries are missing: roads (site~41), urban distance (site~385), and
+\textit{Missing values.}\ Three entries are missing: roads (site~41), urban distance (site~385), and
 aerodromes (site~429).
 Each is imputed by the midpoint of the observed range of its criterion over
 all $\Ncand$ candidates.
 Because the affected sites are three out of $\Ncand$ and none enters any
 reported portfolio, the choice of imputation rule is immaterial.
 
-\paragraph{Regulatory exclusion.}
-Sites overlapping a protected area (\texttt{dist\_protected}$=0$) cannot
+\textit{Regulatory exclusion.}\ Sites overlapping a protected area (\texttt{dist\_protected}$=0$) cannot
 be licensed and are removed, leaving $\Nvia=\Ncand-\Nexcl$ admissible
 sites.
 
 
-\paragraph{Criterion orientation.}
-Nine criteria are monotone distances; slope is a monotone cost.
+\textit{Criterion orientation.}\ Nine criteria are monotone distances; slope is a monotone cost.
 Slope aspect is circular and non-monotone; following \citet{AzancortNeto2026},
 the leeward indicator $b_{\mathrm{asp}}=\mathbf{1}[\mathrm{aspect}\in[90^\circ,180^\circ]]$
 takes value~$1$ for the favourable orientation (the wind carries emissions away
@@ -941,7 +938,7 @@ distinction is not cosmetic:
     $\Fset(\wfr)$ of~\eqref{eq:front}.
 \end{enumerate}
 
-\paragraph{Coherence condition.}
+\medskip\noindent\textbf{Coherence condition.}
 \label{rem:coherence}
 A dominance test is well defined only if $\wob=\wfr$.
 If they differ, the portfolio and the members of the reference set are
@@ -988,7 +985,7 @@ but its $Q_2=1$ is not used as standalone evidence that min--max is
 substantively superior; the headline normalisation contrast is reported
 on the greedy stratum where no cell is fixed at $100\%$ by construction.
 
-\paragraph{Pre-specification.}
+\medskip\noindent\textbf{Pre-specification.}
 We pre-specify the following before examining results.
 \begin{enumerate}[label=(\roman*),nosep]
   \item \textbf{Primary outcome}: $Q_2=\Pr[M(w)\in\Fset(w)]$.
@@ -1040,7 +1037,7 @@ it is unbalanced and its results are reported in the Supplementary Material.
 Effects are reported in percentage points with $\nboot$-replicate
 bootstrap intervals, paired by draw.
 
-\paragraph{Benchmark circularity.}
+\medskip\noindent\textbf{Benchmark circularity.}
 The Pareto frontier and the objectives are both built on additive
 weighted sums of min--max normalised columns, the same class of
 function the factorial evaluates.
@@ -1134,7 +1131,7 @@ The ``if and only if'' follows because $w^{\mathrm{eff}} = w$ iff
 $w_j A_j / \sum_k w_k A_k = w_j$ for all $j$, which holds iff all
 $A_j$ equal the same constant.\hfill$\square$
 
-\paragraph{Scope and empirical confirmation.}
+\medskip\noindent\textbf{Scope and empirical confirmation.}
 \label{rem:scope}
 The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
 Within that scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $100.0\%$,
@@ -1485,7 +1482,7 @@ Vector   & 0.315 & 0.675 & $+0.360$ \\
 \end{tabular}
 \end{table}
 
-\paragraph{Empirical comparison of SAW and TOPSIS distortions.}
+\medskip\noindent\textbf{Empirical comparison of SAW and TOPSIS distortions.}
 On Fogo, the metric $\Delta\mathrm{TV}=\mathrm{TV}(2)-\mathrm{TV}(1)$
 is positive under both normalisations, and the same ordering is observed
 empirically.
@@ -1531,7 +1528,7 @@ $\phi_j(a) = [B_j(a) - (n - B_j(a) - T_j(a))]/(n-1)
             = [2r_j(a) - 1 - n]/(n-1)$.
 Summing with weights and simplifying gives~\eqref{eq:p2identity}.\hfill$\square$
 
-\paragraph{Rank scaling is not innocuous.}
+\medskip\noindent\textbf{Rank scaling is not innocuous.}
 \label{rem:p2normalization}
 Dividing midranks by $N+1$, the conventional rescaling to $(0,1)$,
 does not equalise criterion amplitudes when ties are massive.
@@ -1726,7 +1723,7 @@ we recommend reporting the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
 rather than $\mathrm{TV}$ alone (Section~\ref{sec:practice}).
 \end{remark}
 
-\paragraph{Fogo Island.}
+\medskip\noindent\textbf{Fogo Island.}
 Computing~\eqref{eq:meff} on the deviations implied by
 Table~\ref{tab:amplitude} under vector normalisation gives
 $\mathrm{TV}=0.3146$, $\lVert\delta\rVert_2=0.3127$,
@@ -1770,7 +1767,7 @@ $n_0\neq n_1$; the amplitude ratio $\sqrt{n_0/n_1}$ is specific to
 the binary-column case and is not a law for rankings or $Q_2$ in general.)
 \end{corollary}
 
-\paragraph{Empirical magnitude on Fogo Island.}
+\medskip\noindent\textbf{Empirical magnitude on Fogo Island.}
 For \textit{aspect} ($n_1=94$ leeward sites, $n_0=295$), the two orders
 give $A_j\in\{0.058,\,0.103\}$, a factor of $1.77$.
 Running TOPSIS with vector normalisation under each order, holding the
@@ -2037,7 +2034,7 @@ We report the greedy-only contrast as the headline normalisation effect
 because the full-factorial contrast includes the SAW/min--max/optimal
 cell, which attains $100\%$ by construction.
 
-\paragraph{Why pooling aggregation families obscures the mechanism.}
+\medskip\noindent\textbf{Why pooling aggregation families obscures the mechanism.}
 \label{rem:pooling}
 Averaging $Q_2$ across all aggregation families mixes methods that
 inherit the amplitude distortion with one that is immune to it by
@@ -2108,7 +2105,7 @@ but the dominant effect on Fogo is different in nature: a criterion
 encoded differently in the score and in the objectives, which falls
 outside the scope of Theorem~\ref{thm:groupconst}.
 
-\paragraph{A coding inconsistency amplified by exact assembly.}
+\medskip\noindent\textbf{A coding inconsistency amplified by exact assembly.}
 When the method's score encodes a criterion differently from the
 objective function used to evaluate portfolios, the score is no longer
 an affine function of the objective's partial value for that criterion.
@@ -2367,7 +2364,7 @@ The protocol was pre-registered before execution: seeds and geometry
 parameters were frozen before any instance was run, and the frozen
 protocol file is archived in the supplementary repository.
 
-\paragraph{Design.}
+\subsubsection*{Design}
 Forty-five base instances ($N\in\{50,100,200\}$, three spatial
 geometries, five seeds) were generated with $M=11$ criteria in three
 groups (3, 5, 3) and fixed group weights $W_G=(0.295,0.356,0.349)$.
@@ -2386,7 +2383,7 @@ Inference used the 45 instances as the primary resampling unit
 CI on $n=45$; bootstrap $B=4000$ as sensitivity check),
 avoiding pseudoreplication across draws.
 
-\paragraph{Results.}
+\subsubsection*{Results}
 Under exact assembly (exhaustive argmax over all pre-enumerated feasible
 trios), conditions M, B and C recorded $Q_2=100\%$ across all 45
 generated instances and 200 weight draws per instance
