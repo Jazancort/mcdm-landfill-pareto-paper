@@ -771,20 +771,6 @@ decisions that affect the downstream amplitude calculations.
 Figure~\ref{fig:workflow} summarises the six-stage pipeline; the subsections
 that follow correspond to Stages~1--6 in order.
 
-\begin{figure*}[!t]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_workflow.png}
-\caption{Six-stage MCDM pipeline for landfill site selection on Fogo Island,
-  Cape Verde.
-  Stage~1: GIS dataset (389 viable sites, 11 criteria, three objective groups).
-  Stage~2: AHP-derived weights with Dirichlet perturbation.
-  Stage~3: three normalisation rules (min--max, vector, midranks).
-  Stage~4: four aggregation methods.
-  Stage~5: greedy and optimal portfolio assembly ($k=3$, $d_{\min}=\dmin$~km).
-  Stage~6: performance evaluated as $Q_2$ against the exact Pareto frontier.}
-\label{fig:workflow}
-\end{figure*}
-
 \subsection{Data and preprocessing}
 
 Stage~1 of Figure~\ref{fig:workflow}. The dataset comprises $\Ncand$ candidate sites on Fogo Island, Cape Verde,
@@ -894,6 +880,20 @@ Greedy assembly is the implicit rule whenever a ranking is read top-down,
 which is the dominant practice in the applied siting literature; optimal
 assembly corresponds to the ranking-plus-integer-programming paradigm
 \citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012}.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_workflow.png}
+\caption{Six-stage MCDM pipeline for landfill site selection on Fogo Island,
+  Cape Verde.
+  Stage~1: GIS dataset (389 viable sites, 11 criteria, three objective groups).
+  Stage~2: AHP-derived weights with Dirichlet perturbation.
+  Stage~3: three normalisation rules (min--max, vector, midranks).
+  Stage~4: four aggregation methods.
+  Stage~5: greedy and optimal portfolio assembly ($k=3$, $d_{\min}=\dmin$~km).
+  Stage~6: performance evaluated as $Q_2$ against the exact Pareto frontier.}
+\label{fig:workflow}
+\end{figure*}
 
 % =======================================================================
 % S5 Experimental design

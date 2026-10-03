@@ -104,39 +104,46 @@ body {
 
 /* ══════════════════════════════════════════════
    CONNECTOR: U-turn from col-5 down to col-1
-   Strategy: same grid as floors.
-   Each cell uses border — no pseudo-elements,
-   no position:absolute, no height hacks.
+   Same grid as .floor. Each cell draws its
+   portion with border — no pseudo-elements,
+   no position:absolute, no z-index fights.
+
+   Visual:
+     col1      col2-4 (span 3)   col5
+     |                            |
+     └────── label text ──────────┘
+
+   col1: border-left + border-bottom (corner bottom-left)
+   col2/3/4 (mid): border-bottom only + label centred
+   col5: border-right + border-bottom (corner bottom-right)
+
+   Arrow pointing down into card 4 is a separate
+   ::after on .cn-left (placed outside the grid flow
+   so it doesn't expand the row height).
    ══════════════════════════════════════════════ */
 .connector {
   display: grid;
   grid-template-columns: 1fr 120px 1fr 120px 1fr;
-  height: 56px;
+  height: 64px;
+  /* gap-free so borders meet */
 }
 
-/* col 1 — left vertical + bottom bar, with arrowhead div */
+/* col 1: receives the arrow — LEFT border + bottom (corner bottom-left)
+   The horizontal bar arrives from the right and turns DOWN here      */
 .cn-left {
   grid-column: 1;
-  border-right: none;
-  border-left: none;
-  border-top: none;
-  border-bottom: 2px solid #2c3742; /* bottom bar, left segment */
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-}
-/* the vertical drop inside col 1 */
-.cn-left-vert {
-  width: 2px;
-  height: 100%;
-  background: #2c3742;
+  border-left: 2px solid #2c3742;
+  border-bottom: 2px solid #2c3742;
+  /* push corner to centre of cell */
+  margin-left: 50%;
   position: relative;
 }
-/* arrowhead at bottom of left vert */
-.cn-left-vert::after {
+/* arrowhead pointing down at the bottom of the left border */
+.cn-left::after {
   content: '';
   position: absolute;
-  left: 50%; bottom: -7px;
+  left: -1px;
+  bottom: -13px;
   transform: translateX(-50%);
   width: 0; height: 0;
   border-left: 7px solid transparent;
@@ -144,36 +151,32 @@ body {
   border-top: 11px solid #2c3742;
 }
 
-/* cols 2-4 — just the bottom bar */
+/* col 2-4: bottom bar + label */
 .cn-mid {
   grid-column: 2 / span 3;
   border-bottom: 2px solid #2c3742;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  padding-bottom: 6px; /* lift label above the line */
+  padding-bottom: 7px;
 }
 .cn-label {
   font-size: 16px; font-style: italic; color: #3a4552;
   background: #fff;
   padding: 0 14px;
-  /* sits just above the border-bottom */
-  margin-bottom: 0;
 }
 
-/* col 5 — right vertical + bottom bar */
+/* col 5: source — RIGHT border + bottom (corner bottom-right)
+   The line comes DOWN from card 3 and turns LEFT toward col-1  */
 .cn-right {
   grid-column: 5;
+  border-right: 2px solid #2c3742;
   border-bottom: 2px solid #2c3742;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  /* push corner to centre of cell */
+  margin-right: 50%;
 }
-.cn-right-vert {
-  width: 2px;
-  height: 100%;
-  background: #2c3742;
-}
+.cn-left-vert,
+.cn-right-vert { display: none; }
 
 /* ══════════════════════════════════════════════
    COLOUR SCHEMES — 6 clearly distinct families
