@@ -39,6 +39,18 @@ print(f"  Loss within (M-W) = {m_opt-w_opt:.1f} pp")
 print(f"  V-W = {v_opt-w_opt:.1f} pp")
 
 print()
+print("PRIMARY LOSS CI (paired per-instance, normal SEM):")
+m_inst = df[(df.condition=="M")&(df.assembly=="optimal")].groupby("inst_id")["q2"].mean()*100
+w_inst = df[(df.condition=="W")&(df.assembly=="optimal")].groupby("inst_id")["q2"].mean()*100
+delta  = m_inst - w_inst
+n      = len(delta)
+se     = delta.std(ddof=1) / np.sqrt(n)
+ci_lo  = delta.mean() - 1.96*se
+ci_hi  = delta.mean() + 1.96*se
+print(f"  mean = {delta.mean():.2f} pp  SE = {se:.2f}  n = {n} instances")
+print(f"  95% CI = [{ci_lo:.1f}, {ci_hi:.1f}]")
+
+print()
 print("HIERARCHICAL CI (bootstrapped at instance level):")
 for cond in ["W","V"]:
     sub = df[(df.condition==cond)&(df.assembly=="optimal")]
