@@ -186,6 +186,47 @@ except Exception as e:
 if not spot_ok:
     all_ok = False
 
+# ── 5. Independent Pareto audit (brute-force, no import from generator) ─────
+print()
+print("INDEPENDENT PARETO AUDIT (brute-force O(n^2), no import from run_e6_generator):")
+ind_audit_ok = False
+try:
+    import importlib.util
+    _audit_path = ROOT / "scripts" / "audit_pareto_independent.py"
+    _spec = importlib.util.spec_from_file_location("_indep_audit", _audit_path)
+    _mod  = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_mod)
+
+    _test_cases = [
+        (50, "uniform",   10),
+        (50, "clustered", 10),
+        (50, "grid",      10),
+    ]
+    _all_match = True
+    for _N, _geom, _sid in _test_cases:
+        _inst_id = f"N{_N}_{_geom}_s{_sid}"
+        _lat, _lon, _X = _mod.regenerate_instance(_N, _geom, _sid)
+        _trios = _mod.ind_feasible_trios(_lat, _lon, _mod.DMIN_KM)
+        _F     = _mod.ind_objectives(_X, _trios, _mod.GROUPS, _mod.W_G)
+        _par   = _mod.ind_pareto_brute(_F)
+        _row   = df[(df.inst_id==_inst_id)&(df.draw==0)&
+                    (df.condition=="M")&(df.assembly=="optimal")]
+        _n_csv = int(_row.n_pareto.values[0]) if len(_row)>0 else -1
+        _m     = len(_par) == _n_csv
+        print(f"  {_inst_id:22s}  n_pareto_brute={len(_par)}  csv={_n_csv}  match={_m}")
+        if not _m:
+            _all_match = False
+    ind_audit_ok = _all_match
+    if ind_audit_ok:
+        print("  INDEPENDENT AUDIT PASSED")
+    else:
+        print("  INDEPENDENT AUDIT FAILED")
+        all_ok = False
+except Exception as _e:
+    print(f"  INDEPENDENT AUDIT SKIPPED (error): {_e}")
+    ind_audit_ok = False
+    all_ok = False
+
 print()
 if all_ok:
     print("VALIDATION PASSED")
