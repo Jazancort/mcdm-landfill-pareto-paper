@@ -607,7 +607,6 @@ separation, crosses aggregation, normalisation, and assembly as a
 factorial, or measures the cost of normalisation choice in units of
 Pareto efficiency.
 
-
 % =======================================================================
 % S3 Problem formulation
 % =======================================================================
@@ -672,7 +671,6 @@ The three objectives therefore have mixed senses:
 and we write $\mathbf{F}(t;w)=(F_1,F_2,F_3)$ to make the weight
 dependence explicit, since it is central to Section~\ref{sec:design}.
 
-\medskip\noindent\textbf{Mixed senses and the SAW orientation.}
 Criteria in $G_1$ and $G_2$ are built so that $c_j(i)=0$ is the most
 favourable value: for distance-from-hazard criteria the raw distance is
 inverted before normalisation, and for the binary aspect criterion
@@ -708,7 +706,6 @@ which is uniformly larger-is-better.
 Section~\ref{prop:p1} turns on the relationship between $s$ and the
 three objectives.
 
-\medskip\noindent\textbf{What the benchmark is, and is not.}
 \label{rem:valuespace}
 $\mathbf{F}$ is a three-dimensional partial value space, not a vector of
 physically independent objectives: each component is an additive weighted
@@ -759,7 +756,6 @@ $t'$ delivers greater safety.
 Normalising by the attainable range keeps the measure interpretable as a
 fraction of the achievable spread;
 the ideal--nadir variant is reported in the Supplementary Material.
-
 
 % =======================================================================
 % S4 Methods
@@ -824,7 +820,6 @@ reported portfolio, the choice of imputation rule is immaterial.
 be licensed and are removed, leaving $\Nvia=\Ncand-\Nexcl$ admissible
 sites.
 
-
 \textit{Criterion orientation.}\ Nine criteria are monotone distances; slope is a monotone cost.
 Slope aspect is circular and non-monotone; following \citet{AzancortNeto2026},
 the leeward indicator $b_{\mathrm{asp}}=\mathbf{1}[\mathrm{aspect}\in[90^\circ,180^\circ]]$
@@ -847,8 +842,6 @@ Consistency is acceptable: $\lambda_{\max}=\lmax$, $CI=0.08525$,
 $RI=1.51$, hence $CR=\CR<0.10$.
 The weight vector $\wahp$ is held fixed in the base experiment and
 perturbed in the Monte Carlo design of Section~\ref{sec:design}.
-
-\medskip\noindent\textbf{Normalisation.}
 
 Stage~3 of Figure~\ref{fig:workflow} is the analytical focus of the paper.
 Three normalisations are compared, spanning the standard taxonomies of
@@ -884,8 +877,6 @@ In TOPSIS and VIKOR the ideal and anti-ideal points are computed on the
 already oriented criterion matrix; applying the orientation a second time
 inverts cost criteria and constitutes a documented implementation hazard.
 
-\medskip\noindent\textbf{Portfolio assembly.}
-
 Stage~5 of Figure~\ref{fig:workflow}. Given a site score $s(\cdot)$, two assembly rules are compared.
 \emph{Greedy}: add sites in decreasing score order, skipping any site
 that violates~\eqref{eq:rsep} against those already selected.
@@ -902,7 +893,6 @@ Greedy assembly is the implicit rule whenever a ranking is read top-down,
 which is the dominant practice in the applied siting literature; optimal
 assembly corresponds to the ranking-plus-integer-programming paradigm
 \citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012}.
-
 
 % =======================================================================
 % S5 Experimental design
@@ -929,7 +919,6 @@ distinction is not cosmetic:
     $\Fset(\wfr)$ of~\eqref{eq:front}.
 \end{enumerate}
 
-\medskip\noindent\textbf{Coherence condition.}
 \label{rem:coherence}
 A dominance test is well defined only if $\wob=\wfr$.
 If they differ, the portfolio and the members of the reference set are
@@ -976,7 +965,6 @@ but its $Q_2=1$ is not used as standalone evidence that min--max is
 substantively superior; the headline normalisation contrast is reported
 on the greedy stratum where no cell is fixed at $100\%$ by construction.
 
-\medskip\noindent\textbf{Pre-specification.}
 We pre-specify the following before examining results.
 \begin{enumerate}[label=(\roman*),nosep]
   \item \textbf{Primary outcome}: $Q_2=\Pr[M(w)\in\Fset(w)]$.
@@ -1026,7 +1014,6 @@ it is unbalanced and its results are reported in the Supplementary Material.
 Effects are reported in percentage points with $\nboot$-replicate
 bootstrap intervals, paired by draw.
 
-\medskip\noindent\textbf{Benchmark circularity.}
 The Pareto frontier and the objectives are both built on additive
 weighted sums of min--max normalised columns, the same class of
 function the factorial evaluates.
@@ -1064,9 +1051,6 @@ implementation of the rebuilt frontier.
 The practical implication: the normalisation of the score should
 coincide with the normalisation implicit in the value model's
 objective functions.
-
-
-
 
 % =======================================================================
 % S6 Propositions
@@ -1117,7 +1101,6 @@ The ``if and only if'' follows because $w^{\mathrm{eff}} = w$ iff
 $w_j A_j / \sum_k w_k A_k = w_j$ for all $j$, which holds iff all
 $A_j$ equal the same constant.\hfill$\square$
 
-\medskip\noindent\textbf{Scope and empirical confirmation.}
 \label{rem:scope}
 The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
 Within that scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $100.0\%$,
@@ -1183,7 +1166,6 @@ Its effective weight share, however, depends on the full vector
 $w_jA_j/\sum_\ell w_\ell A_\ell$: if all binary columns share this
 same amplitude, the elicited weight ratios among them are unchanged.\hfill$\square$
 
-\noindent\textbf{Empirical calibration.}
 Table~\ref{tab:amplitude} reports $A_j$ for the three normalisations on
 the $\Nvia$ Fogo Island sites, along with the total variation
 $\mathrm{TV} = \frac{1}{2}\sum_j |w_j^{\mathrm{eff}} - w_j|$ as a
@@ -1269,7 +1251,6 @@ global assembly), and the factorial
 identifies which.
 \end{remark}
 
-\noindent\textbf{Empirical verification.}
 SAW with min--max normalisation over the $\Nvia$ viable sites:
 $Q_2[\mathcal{A}'] = 100.0\%$ for both $\kappa \in \{50, 200\}$
 ($\ndraws$ draws each).
@@ -1364,7 +1345,6 @@ relocates the optimum along the frontier without leaving it.
 Section~\ref{sec:e1} tests this prediction on Fogo.
 Using the amplitudes of Table~\ref{tab:amplitude}, vector normalisation
 gives $\mathrm{TV}_B=\TVBvec$ and $\mathrm{TV}_W=\TVWvec$.
-
 
 % ---
 
@@ -1464,7 +1444,6 @@ Vector   & 0.315 & 0.675 & $+0.360$ \\
 \end{tabular*}
 \end{table*}
 
-\medskip\noindent\textbf{Empirical comparison of SAW and TOPSIS distortions.}
 On Fogo, the metric $\Delta\mathrm{TV}=\mathrm{TV}(2)-\mathrm{TV}(1)$
 is positive under both normalisations, and the same ordering is observed
 empirically.
@@ -1510,7 +1489,6 @@ $\phi_j(a) = [B_j(a) - (n - B_j(a) - T_j(a))]/(n-1)
             = [2r_j(a) - 1 - n]/(n-1)$.
 Summing with weights and simplifying gives~\eqref{eq:p2identity}.\hfill$\square$
 
-\medskip\noindent\textbf{Rank scaling is not innocuous.}
 \label{rem:p2normalization}
 Dividing midranks by $N+1$, the conventional rescaling to $(0,1)$,
 does not equalise criterion amplitudes when ties are massive.
@@ -1533,13 +1511,11 @@ rank space but \emph{inflated} ($\times 2.88$) in vector space: the
 same heavy-zero distribution distorts in opposite directions under the
 two normalisations.
 
-\noindent\textbf{Empirical verification.}
 On the Fogo Island dataset ($n = \Nvia$, $m = 11$ criteria), the
 maximum absolute difference between $\phi(a)$ and
 $(2/(n-1))\tilde{s}(a) - (n+1)/(n-1)$ across all sites is $6.7 \times 10^{-16}$
 (machine precision), with Spearman $\rho = 1.000000$ and zero ranking
 inversions.
-
 
 % ---
 
@@ -1566,7 +1542,6 @@ For binary $x_j \in \{0,1\}$ with $n_1$ ones,
 $\lVert\mathbf{x}_j\rVert_2 = \sqrt{n_1}$ and
 $\max - \min = 1$, giving $\rho_j = 1/\sqrt{n_1}$.\hfill$\square$
 
-\noindent\textbf{Empirical calibration.}
 Table~\ref{tab:amplitude} lists $\rho_j$ and $w_j^{\mathrm{eff}}/w_j$
 for all eleven criteria.
 \textit{Perm} ($w_j = 0.152$): $\rho_j = 0.583$, effective-weight
@@ -1698,7 +1673,6 @@ we recommend reporting the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
 rather than $\mathrm{TV}$ alone (Section~\ref{sec:practice}).
 \end{remark}
 
-\medskip\noindent\textbf{Fogo Island.}
 Computing~\eqref{eq:meff} on the deviations implied by
 Table~\ref{tab:amplitude} under vector normalisation gives
 $\mathrm{TV}=0.3146$, $\lVert\delta\rVert_2=0.3127$,
@@ -1742,7 +1716,6 @@ $n_0\neq n_1$; the amplitude ratio $\sqrt{n_0/n_1}$ is specific to
 the binary-column case and is not a law for rankings or $Q_2$ in general.)
 \end{corollary}
 
-\medskip\noindent\textbf{Empirical magnitude on Fogo Island.}
 For \textit{aspect} ($n_1=94$ leeward sites, $n_0=295$), the two orders
 give $A_j\in\{0.058,\,0.103\}$, a factor of $1.77$.
 Running TOPSIS with vector normalisation under each order, holding the
@@ -1785,7 +1758,6 @@ sub-optimality in the factorial experiment into four ordered factors:
     the scale without those sites being selectable
     (Section~\ref{sec:refset}).
 \end{enumerate}
-
 
 % =======================================================================
 % S7 Results
@@ -2003,7 +1975,6 @@ We report the greedy-only contrast as the headline normalisation effect
 because the full-factorial contrast includes the SAW/min--max/optimal
 cell, which attains $100\%$ by construction.
 
-\medskip\noindent\textbf{Why pooling aggregation families obscures the mechanism.}
 \label{rem:pooling}
 Averaging $Q_2$ across all aggregation families mixes methods that
 inherit the amplitude distortion with one that is immune to it by
@@ -2074,7 +2045,6 @@ but the dominant effect on Fogo is different in nature: a criterion
 encoded differently in the score and in the objectives, which falls
 outside the scope of Theorem~\ref{thm:groupconst}.
 
-\medskip\noindent\textbf{A coding inconsistency amplified by exact assembly.}
 When the method's score encodes a criterion differently from the
 objective function used to evaluate portfolios, the score is no longer
 an affine function of the objective's partial value for that criterion.
@@ -2215,7 +2185,6 @@ The provenance of this result is documented in
 history is in the Supplementary Material.
 \end{remark}
 
-
 \subsection{The greedy shortfall}
 \label{sec:greedy}
 % ----------------------------------------------------------
@@ -2326,7 +2295,6 @@ this result as evidence for it.
 \subsection{Prospective controlled study (Experiment~E6)}
 \label{sec:e6}
 
-\medskip\noindent\textbf{Design.}
 Experiment~E1 is a single instance; Experiment~E6 is a prospective
 synthetic study designed to test whether the within-group mechanism
 carries costs outside the Fogo geometry.
@@ -2584,7 +2552,6 @@ reduces another to $0.53\times$ is difficult to defend, and min--max
 on the admissible set is preferable on precisely the grounds
 \citet{Choo1999} articulate.
 
-\medskip\noindent\textbf{The PROMETHEE--Borda identity.}
 Section~\ref{prop:p2} is a corollary of results established three
 decades ago.
 \citet{Bouyssou1992} characterises the net flow method axiomatically and
@@ -2812,7 +2779,6 @@ approaches, including augmented epsilon-constraint variants such as
 AUGMECON2 \citep{MavrotasFlorios2013}, offer a natural route beyond
 complete enumeration, subject to an appropriate integer formulation,
 parameterisation, and numerical tolerance control.
-
 
 % =======================================================================
 \FloatBarrier
