@@ -2491,8 +2491,35 @@ W and V had the same mean attainment ($95.6\%$) at the reported
 precision; the paired $V-W$ contrast was zero at this resolution,
 which is an empirical observation on the generating family and does not
 establish the absence of between-group interaction in general.
+
+\begin{table}[ht]
+\centering
+\caption{Experiment E6 summary across 45 synthetic instances
+         ($N\in\{50,100,200\}$, 3 geometries, 5 seeds;
+         $\kappa=200$, $n_{\text{draws}}=200$).
+         $Q_2$ is the Pareto-attainment rate (\%) under each score condition.
+         M/B/C are analytic controls; W and V are empirical.}
+\label{tab:e6summary}
+\begin{tabular}{lccc}
+\toprule
+Condition & Assembly & Mean $Q_2$ (\%) & $95\%$ CI \\
+\midrule
+M (aligned, control)         & Optimal  & $100.0$ & -- \\
+B (between-group amplitude)  & Optimal  & $100.0$ & -- \\
+C (compensated weights)      & Optimal  & $100.0$ & -- \\
+W (within-group amplitude)   & Optimal  & $95.6$  & $[93.4,\,97.8]$ \\
+V (full vector amplitudes)   & Optimal  & $95.6$  & $[93.4,\,97.8]$ \\
+\midrule
+Primary loss $Q_2[\text{M}]-Q_2[\text{W}]$ & & $4.4$~pp & $[2.2,\,6.6]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 These results hold for the synthetic family defined by the generating
 protocol and do not extend to all applied matrices.
+The within-group loss of $4.4$~pp in the synthetic family is smaller than
+the $\EoneWloss$~pp observed on the Fogo data in Experiment~E1; the two
+magnitudes arise from different criteria distributions and group structures
+and should not be compared directly.
 
 \subsection{The PROMETHEE--Borda identity}
 
