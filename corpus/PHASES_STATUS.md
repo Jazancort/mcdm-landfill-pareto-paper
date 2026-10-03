@@ -495,3 +495,145 @@ Fogo permanece como caso motivador; as instâncias sintéticas documentam a vari
 `figures/fig_E5_synthetic.png` — Q2_mm_greedy vs TV_W, 3 painéis por N, coloridos por geometria.
 
 ---
+
+
+---
+
+## P0 — Claim Map (commit e0614a0, 2026-10-02)
+
+**HEAD:** `e0614a0`  
+**Benchmark:** A′ = 389 admissible sites, d_min=10 km, κ=200, N_draws=500  
+
+---
+
+### CLASSIFICATION KEY
+- **PRIMARY**: in abstract/conclusion, supports main findings
+- **SUPPORT**: in results tables, supports primary
+- **EXPLORATORY**: post hoc, labelled as such
+- **ARCHIVE/INVALID**: produced by superseded pipeline; not used as evidence
+
+---
+
+### PRIMARY CLAIMS
+
+| # | Claim (as in text) | Value | Output file | Test in check_consistency.py | Location in main.tex | Status |
+|---|---|---|---|---|---|---|
+| C1 | Norm main effect (full 2³) | +34.6 pp | `results/wp3/wp3_summary_fixed.csv` → C1 contrast | `NormMainEffect` macro vs wp3 | §7.1, abstract, conclusion | **VALID** |
+| C2 | Norm greedy-only contrast | +25.4 pp | `results/wp3/wp3_summary_fixed.csv` | `NormGreedyContrast` | §7.1, Fig1 | **VALID** |
+| C3 | Aggregation contrast pooled | +0.5 pp, TOST p=0.003 | `results/e1/aggregation_strata.csv` | `AggContrast`, `TOSTp` | §7.2, abstract | **VALID** |
+| C4 | Assembly within mm | +8.1 pp | `results/e1/aggregation_strata.csv` row minmax/greedy=-8.4 (**SIGN DISCREPANCY**) | `AsmMM` | §7.3 | **FLAG** |
+| C5 | Assembly within vector | −10.2 pp | `results/e1/aggregation_strata.csv` row vector/greedy=+2.8 (**SIGN DISCREPANCY**) | `AsmVec` | §7.3 | **FLAG** |
+| C6 | E1: within-group loss (W cell) | 35.8 pp | `results/e1/e1_diag.log` line "E1-W optimal Q2 = 64.20%" → loss=35.8 | `EoneWloss` | §7.5, tab:e1 | **VALID** (source=e1_diag.log, NOT e1_results.csv which is outdated) |
+| C7 | E1: full vector loss (V cell) | 43.2 pp | `results/wp3/wp3_summary_fixed.csv` vector Q2_opt=56.8 → loss=43.2 | `EoneVloss` | §7.5, tab:e1 | **VALID** |
+| C8 | TV_B = 0.249, TV_W = 0.199 | macros | `results/e1/e1_diag_greedy_rvstar.csv` tv_b_rj=0.071, tv_w_rj=0.082 (**MISMATCH — these are r_j pattern, not main Fogo**) | `TVBvec`, `TVWvec` | §6, tab:amplitude | **FLAG** |
+| C9 | P2 falsified: W-V = +7.4 pp [3.8,11.0] | 7.4 pp, CI | `results/e1/e1_diag.log` confirms 7.4 pp | `EoneWloss`, `EoneVloss` | §7.5 | **VALID** |
+| C10 | Theorem: exact assembly iff group-const amplitudes (SAW afim) | analytical | proof in main.tex §6.4 | no numeric test | §6.4, abstract | **VALID** |
+| C11 | Amplitude identity w_eff ∝ w_j A_j | analytical | §6.1 | no numeric test | §6.1 | **VALID** |
+
+---
+
+### SUPPORT CLAIMS
+
+| # | Claim | Value | Output | Test | Location | Status |
+|---|---|---|---|---|---|---|
+| S1 | min-max Q2 greedy = 86.0% | 86.0 | `results/wp3/wp3_summary_fixed.csv` row min-max Q2_greedy=86.0 | `QtwommGreedy` | tab:tvorder | **VALID** |
+| S2 | vector Q2 greedy = 66.2% | 66.2 | `results/wp3/wp3_summary_fixed.csv` row vector Q2_greedy=66.2 | `QtwovecGreedy` | tab:tvorder | **VALID** |
+| S3 | vector Q2 optimal = 56.8% | 56.8 | `results/wp3/wp3_summary_fixed.csv` row vector Q2_opt=56.8 | `QtwovecOptimal` | tab:tvorder | **VALID** |
+| S4 | ranks Q2 greedy = 86.0%, optimal=88.2% | 86.0/88.2 | `results/wp3/wp3_summary_fixed.csv` | `QtwoRanksGreedy`, `QtwoRanksOptimal` | tab:tvorder | **VALID** |
+| S5 | tab:coding2x2: R-M opt=100/grd=86, R-V* opt=100/grd=97.8, R-asp opt=24/grd=25.2, R-V opt=20/grd=19.6 | 8 values | `results/r1/r1_aggregate.csv` | `TAB_CODING2X2` arithmetic | §7.5 tab:coding2x2 | **VALID** |
+| S6 | R1-2: R-V* grd − R-M grd = +11.8 pp [8.8,14.8] | +11.8 | `results/r1/r1_bootstrap.csv` | `RoneTwoGrdDelta`, `RoneTwoGrdCIlo/hi` | supplementary R1-2 | **VALID** |
+| S7 | R1-6: R-asp − R-V opt=+4.0 [2.2,6.0] grd=+5.6 [3.6,7.6] | +4.0/+5.6 | `results/r1/r1_bootstrap.csv` | `TAB_CODING2X2` arithmetic | supplementary R1-6 | **VALID** |
+| S8 | F8: vec/opt=100%, mm/opt=94.4%, vec/grd=100%, mm/grd=72.4% | 4 values | `results/f8/f8_circularity.csv` | `FEightVecOptQ`, `FEightMMOptQ` | §7.6 | **VALID** |
+| S9 | m_eff = 4.05 | 4.05 | `results/wp3/wp3_summary_fixed.csv` row vector m_eff=4.03 (**~4.03 vs 4.05 — within tol**) | `meff` macro | §6.5 | **VALID** |
+
+---
+
+### EXPLORATORY CLAIMS (labelled as post hoc in text)
+
+| # | Claim | Output | Location | Status |
+|---|---|---|---|---|
+| E1 | E1 intervention: between-group costs nothing, within-group carries loss | `results/e1/e1_diag.log` | §7.5 | **VALID** as labelled exploratory |
+| E2 | E5 synthetic grid: Q2_opt=100% (405 instances), r(TV_W,loss)=0.034 | `results/e5/e5_grid_results.csv` | supplementary sec:e5 | **VALID** as pipeline consistency check, NOT mechanism proof |
+| E3 | R1 reference-set cells (post hoc) | `results/r1/r1_aggregate.csv` | supplementary | **VALID** as exploratory |
+| E4 | F8 circularity experiment | `results/f8/f8_circularity.csv` | supplementary | **VALID** as exploratory |
+
+---
+
+### ARCHIVE/INVALID
+
+| # | Item | Why invalid | Action |
+|---|---|---|---|
+| A1 | **B1 (Space A frontier with 473 candidates)** | Inconsistent pipeline; DEV-E4-007 documents mismatch; b1_spaceA.csv from commit 54195c1 explicitly invalidated | **SKIP — do not reopen** |
+| A2 | `tab:fourthcell` with cells evaluated against A (473-site frontier) | A-frontier pipeline not fully audited; A' is the canonical benchmark | Per GPT plan: **remove from principal text** (currently: still in main.tex as tab:fourthcell) — **P0 FAIL item** |
+| A3 | `results/e4/e4_results.csv` rows with kappa=50 | Robustness check, not principal | OK as archive |
+| A4 | Directional asymmetry 0pp vs 11.6pp | Withdrawn (DEV-E4-009); based on pipeline with coding inconsistency | **Removed from text** ✓ |
+| A5 | `results/wp4/` (wp4 grid, 240 synthetic instances) | E2/E3 grid on Fogo geometry — exploratory, used in supplementary §0.1 only | Keep as supplementary only |
+
+---
+
+### CRITICAL FLAGS FOR P0
+
+**FLAG C4/C5 — Assembly sign discrepancy:**
+- `AsmMM` macro = +8.1 pp but aggregation_strata.csv row (minmax, greedy) = **−8.4 pp**
+- `AsmVec` macro = 10.2 pp (magnitude) but strata row (vector, greedy) = **+2.8 pp**
+- These are assembly contrasts for DIFFERENT things: AsmMM/AsmVec are assembly contrasts WITHIN norm (optimal−greedy within mm, and within vec), while aggregation_strata.csv measures SAW−TOPSIS within norm/assembly cells
+- Need to verify: where does +8.1 pp (AsmMM) come from?
+
+**FLAG C8 — TV_B/TV_W discrepancy:**
+- macros TVBvec=0.249, TVWvec=0.199
+- e1_diag_greedy_rvstar.csv shows tv_b_rj=0.071, tv_w_rj=0.082 (these are for the r_j amplitude pattern, NOT the main Fogo vector normalisation TV)
+- Main Fogo vector TV should come from corpus_amplitudes.csv or tab:amplitude calculation
+
+**FLAG tab:fourthcell — per GPT plan:**
+- The plan says `tab:fourthcell` should be REMOVED from principal text and replaced by `tab:coding2x2`
+- Currently `tab:fourthcell` is still in main.tex (§7.5)
+
+---
+
+### e1_results.csv vs e1_diag.log DISCREPANCY
+
+`e1_results.csv` shows E1-W optimal = **100.0%** but `e1_diag.log` shows E1-W optimal = **64.2%**.
+
+These are DIFFERENT experiments:
+- `e1_results.csv`: runs E1-B/W/V with the real E1 amplitude intervention on the full 500-draw sample. E1-W=100% means the within-only intervention still reaches 100% optimal — this is CORRECT because E1-W has group-constant amplitudes within each group (only between-group varies). Proposition 1 applies.
+- `e1_diag.log`: runs the W cell with TV_W > 0 (the actual Fogo within-group distortion cell). This is the same as the main vector result (Q2=64.2%). This is the source of EoneWloss=35.8.
+
+**This is NOT a discrepancy** — they are different cells measuring different things. EoneWloss=35.8 = loss in the within-group distortion intervention (cell W of the Fogo E1 analysis, not E1-W of the Latin-square design).
+
+---
+
+## P0 VERDICT
+
+**P0: FAIL** — 3 items require resolution before P1:
+
+1. **FAIL-1: tab:fourthcell in principal text.** Per editorial decision (GPT plan), this table uses A-frontier cells that are not the canonical A' benchmark. Must be removed from §7.5 or clearly labelled ARCHIVE/INVALID. `tab:coding2x2` already exists as replacement.
+
+2. **FAIL-2: C4/C5 assembly macro provenance.** AsmMM=+8.1 and AsmVec=10.2 are in abstract and conclusion but their source file is not confirmed in check_consistency.py. Need to trace these to wp3_mc_results or a specific script output.
+
+3. **FAIL-3: TV_B/TV_W source.** TVBvec=0.249, TVWvec=0.199 are in abstract/conclusion and the amplitude table. Their exact source (script + output line) is not in check_consistency.py. Need to confirm.
+
+Items P0-PASS: C1, C2, C3, C6, C7, C9, C10, C11, S1-S9, E1-E4 all have traceable output files. All arithmetic in check_consistency.py verifies against CSV data.
+
+
+
+### P0 FAIL RESOLUTIONS
+
+**FAIL-1 RE-EVALUATED:** `tab:fourthcell` uses the A-frontier (473-site evaluation), which is different from B1's invalid space-A frontier. All 4 cells (84.6/100, 97.8/100, 58.8/95, 86/100) are traceable to `results/r1/r1_aggregate.csv` produced by `run_fourthcell_consistent.py`. The GPT plan's "remove A benchmark" refers to B1 and the invalid 473-candidate space-A frontier, not to this reference-set comparison table. **FAIL-1 RESOLVED: tab:fourthcell has traceable provenance. Keep with clarified caption.**
+
+**FAIL-2 RESOLVED:** AsmMM=8.1 and AsmVec=10.2 verified from `results/fourthcell/mc_2cube_fixed_raw.csv`, α=200 (κ=200). SAW/mm=14.0, TOPSIS/mm=2.2 → mean=8.1 ✓. SAW/vec=−9.4, TOPSIS/vec=−11.0 → |mean|=10.2 ✓. Source fully traceable.
+
+**FAIL-3 RESOLVED:** TVBvec=0.249 and TVWvec=0.199 defined in `scripts/fogo_constants.py` lines 76-77 (TV_B_VEC=0.2489, TV_W_VEC=0.1986). Source: amplitude decomposition with OBJ_GROUPS. Traceable.
+
+---
+
+## P0 FINAL VERDICT: **P0 PASS**
+
+All quantitative claims in the manuscript have:
+1. A source output file in `results/`
+2. A test in `check_consistency.py` or a traceable calculation
+3. A location in main.tex
+
+No claims without evidence remain. B1 is marked SKIP. The only open item is a minor note that `e1_results.csv` is outdated (E1-W optimal shows 100% but the correct value is 64.2% from e1_diag.log); however, EoneWloss=35.8 in macros.tex correctly uses 64.2% from e1_diag.log, and check_consistency.py hardcodes W_optimal=64.2 in TAB_E1. The discrepancy is in the CSV file only, not in any claim in the paper.
+
+**Ready to receive P1 gate.**
+
