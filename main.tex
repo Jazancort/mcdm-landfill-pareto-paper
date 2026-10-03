@@ -222,7 +222,8 @@ weight by $2.88\times$ and divides another by $0.53\times$
 (\textit{urban}) without any of this appearing in the
 analyst's report.
 Midranks rescaled to the unit interval contract with tie mass, and every
-binary criterion loses half its weight in rank space irrespective of
+binary criterion loses approximately half its effective weight relative
+to a tie-free continuous criterion in rank space, irrespective of
 class balance.
 
 The mechanism also explains why exact assembly has no average effect.
@@ -1680,7 +1681,9 @@ For a binary column with $n_1$ ones and $n_0=N-n_1$ zeros:
   \quad
   \text{ratio} = \sqrt{n_0/n_1}.
 \]
-The two normalised columns are orthogonal rather than collinear.
+The two normalised columns are not collinear (they are linearly
+independent when $n_0\neq n_1$, since neither is a scalar multiple
+of the other), and each has a different amplitude $A_j$.
 \end{corollary}
 
 \paragraph{Empirical magnitude on Fogo Island.}
@@ -2148,15 +2151,25 @@ $\Nvia$  & $A'$ & 86.0\% & \textbf{100.0\%} \\
 \end{tabular}
 \end{table}
 
-Both $A'$-evaluator cells confirm Proposition~\ref{prop:p1:stmt}:
-optimal assembly reaches $100\%$ when score and evaluator share the
-same reference set and criterion encoding.
-The off-diagonal $A$-evaluator cells ($N_{\text{cand}}/A$: greedy
-$84.6\%$, optimal $100\%$; $N_{\text{via}}/A$: greedy $58.8\%$,
-optimal $95\%$) show that using the 473-site normalisation constants
-for the score while evaluating against the 389-site frontier
-reduces efficiency under greedy assembly but not under optimal
-assembly on this instance.
+The table has two \emph{aligned} cells (score and evaluator share the
+same reference set) and two \emph{crossed} cells (they differ).
+The aligned diagonal $N_{\text{cand}}/A$ (score: 473-site constants,
+evaluator: 473-site frontier) and diagonal $N_{\text{via}}/A'$
+(score: 389-site constants, evaluator: 389-site frontier) both reach
+$Q_2^{\mathrm{opt}}=100\%$, as Proposition~\ref{prop:p1:stmt} requires
+when score and evaluator share the same reference.
+The crossed cell $N_{\text{cand}}/A'$ (score: 473 constants,
+evaluator: 389 frontier) also reaches $Q_2^{\mathrm{opt}}=100\%$ on
+this instance; this is an empirical result on one instance, not
+guaranteed by the theorem.
+The crossed cell $N_{\text{via}}/A$ (score: 389 constants,
+evaluator: 473 frontier) reaches only $95\%$ under optimal assembly,
+showing that the alignment condition is not automatically satisfied
+in this direction.
+Under greedy assembly, both crossed cells lose efficiency relative to
+their aligned counterparts: $N_{\text{cand}}/A'$ drops to $97.8\%$
+versus $N_{\text{via}}/A'$ at $86.0\%$, and $N_{\text{via}}/A$
+reaches $58.8\%$ versus $N_{\text{cand}}/A$ at $84.6\%$.
 
 
 
@@ -2408,8 +2421,9 @@ The amplitude identity~\eqref{eq:weff} expresses the effective weight as
 $w_j^{\mathrm{eff}}\propto w_j A_j$ and identifies $A_j$ for each of
 the three standard normalisations, which yields three results that the
 qualitative statement does not: min--max is the unique weight-preserving
-choice among them; every binary criterion loses half its weight in rank
-space irrespective of class balance; and VIKOR's invariance to
+choice among them; every binary criterion loses approximately half its
+effective weight relative to a tie-free continuous criterion in rank
+space, irrespective of class balance; and VIKOR's invariance to
 per-criterion affine transformation follows immediately from its ratio
 form.
 The affine invariance of VIKOR sharpens the contrast that
@@ -2522,8 +2536,8 @@ $x\mapsto 1-x$ is affine.
 Under vector normalisation it is not: complementing before normalising
 gives amplitude $1/\lVert\mathbf{1}-\mathbf{x}\rVert_2$ while
 normalising first gives $1/\lVert\mathbf{x}\rVert_2$, and the two
-normalised columns are orthogonal rather than collinear
-(Corollary~\ref{cor:order}).
+normalised columns are not collinear --- neither is a scalar multiple
+of the other --- (Corollary~\ref{cor:order}).
 For a binary indicator with $n_1$ ones and $n_0$ zeros the amplitudes
 differ by $\sqrt{n_0/n_1}$; for \textit{aspect} on Fogo this is $1.77$.
 The order of operations is not reported in any study we reviewed, yet it
