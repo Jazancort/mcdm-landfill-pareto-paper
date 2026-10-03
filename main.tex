@@ -2636,7 +2636,6 @@ methods with ratio normalisation.
 
 \subsection{Limitations}
 
-\emph{Benchmark circularity.}
 The Pareto frontier is enumerated using the same weighted-sum value
 model that the methods under evaluation optimise.
 The benchmark is therefore internal to the model class: it measures
@@ -2652,7 +2651,6 @@ than an intrinsic property of min--max normalisation.
 A method that scores well on $Q_2$ may still select a portfolio that
 would be suboptimal under a different value model.
 
-\emph{Scope of the closed form.}
 The amplitude identity~\eqref{eq:weff} is exact for additive
 aggregation.
 Remark~\ref{prop:exponent} extends it to distance-based and
@@ -2662,7 +2660,6 @@ and we have not characterised families whose contribution is not
 homogeneous in $w_j n_j(\cdot)$, outranking methods with non-linear
 preference functions in particular.
 
-\emph{Empirical support for the ordering.}
 Under optimal assembly the three normalisation levels are ordered by
 $\mathrm{TV}$ on Fogo (Table~\ref{tab:tvorder}), but three levels with
 \textit{vector} carrying most of the regressor variance do not identify
@@ -2678,7 +2675,6 @@ interpolates between min--max ($t=0$) and vector normalisation ($t=1$).
 Further normalisation families and a synthetic grid varying the
 marginal distributions are reported in the Supplementary Material.
 
-\emph{Instance dependence.}
 The analytic results hold for any instance; the magnitudes do not.
 Fogo's deviation vector is two-sided and concentrated
 ($m_{\mathrm{eff}}=4.05$ on $[2,11]$), with one criterion inflated
@@ -2731,14 +2727,12 @@ interaction in general; it is an empirical observation on the 45 instances gener
 These results hold for the generating distribution (three geometries,
 three sizes) and do not extend to all applied matrices.
 
-\emph{Weight perturbation model.}
 Dirichlet perturbation around $\wahp$ represents symmetric uncertainty in
 relative weights.
 For structured disagreement among stakeholders,
 SMAA-style weight-space analysis \citep{Lahdelma2002} would be
 appropriate.
 
-\emph{Gap measure and weak dominance.}
 The shortfall $\mathrm{gap}(t)$ in~\eqref{eq:gap} takes the minimum
 over strictly signed differences; if a dominator improves on $t$ in
 only one or two objectives (with equality on the rest), the minimum
@@ -2755,11 +2749,11 @@ $Q_2$, computed from the full Pareto dominance algorithm, is therefore
 the primary efficiency measure; $Q_3$ is a complementary severity
 indicator, not an equivalent restatement of $Q_2$.
 
-\emph{Regulatory grounding.}
 The exclusion of the $\Nexcl$ overlapping sites is treated as a
-screening decision.
+screening decision rather than a methodological choice: sites removed by
+regulatory overlap are outside the feasible set by law and do not
+affect the comparison.
 
-\emph{Scalability.}
 The exhaustive enumeration of $\Ntrios$ feasible trios is tractable for
 the present instance size.
 For larger candidate sets, exact multiobjective integer-programming
