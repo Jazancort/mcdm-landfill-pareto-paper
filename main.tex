@@ -246,7 +246,8 @@ separately confirms the prediction on Fogo
 Adding integer programming on top of a ranking
 \citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012}
 therefore pays only when the normalisation respects the grouping of the
-objectives.
+objectives (on this instance; whether this transfers to other instances
+depends on the amplitude structure).
 
 A third finding concerns the encoding of criteria in the score relative
 to the objectives.
@@ -292,9 +293,9 @@ Our contributions are as follows.
   \item An exact identity between PROMETHEE~II under the usual preference
     function and rank-weighted SAW, holding for arbitrary tie structure
     (Section~\ref{prop:p2}), which follows from the axiomatic results
-    of \citet{Bouyssou1992} and \citet{Marchant1996} and which isolates
-    the tie structure as the sole source of the divergence observed in
-    practice.
+    of \citet{Bouyssou1992} and \citet{Marchant1996}; on Fogo Island
+    the entire departure of the implemented rank score from the net flow
+    is attributable to tie structure, not to the aggregation operator.
 \end{enumerate}
 
 \noindent
@@ -2025,7 +2026,7 @@ Theorem~\ref{thm:groupconst} for that criterion: the theorem requires the
 score column to be an affine function of the partial value in the
 evaluator's criterion space, and a recoding that is not monotone in the
 partial value breaks that condition.
-Exact assembly amplifies any such mismatch; this is not implicit
+Exact assembly can amplify such mismatches; this is not implicit
 re-weighting in the sense of the theorem, but a distinct failure mode.
 
 The cost on Fogo is large.
@@ -2048,7 +2049,7 @@ Over the $\Nvia$ admissible sites, the attainable amplitude is
 which varies across criteria and within groups (Table~\ref{tab:amprefset}).
 These two encodings are not monotonically related: an azimuth of
 $350^\circ$ has a high score under the continuous encoding
-but is classified as non-leeward (high environmental integrity) by the
+but is classified as non-leeward ($c=0$, the unfavourable class) by the
 binary objective.
 Under the continuous encoding $Q_2$ drops from $100\%$ to $20\%$
 under optimal assembly, a loss of $80$~pp.
@@ -2158,7 +2159,7 @@ The inconsistency reduced $Q_2$ from $100\%$ to $\RaspOptimal\%$
 under optimal assembly, through the coding effect alone.
 Because the recoding is not monotone in the evaluator's partial value,
 Theorem~\ref{thm:groupconst} does not apply; the result instead
-illustrates that exact assembly amplifies any mismatch between the
+illustrates that exact assembly can amplify mismatches between the
 score's criterion definition and the evaluator's.
 The provenance of this result is documented in
 \texttt{corpus/PRESPEC\_E4.md} (DEV-E4-007); the pipeline version
@@ -2205,6 +2206,13 @@ of the value model.
 Theorem~\ref{thm:groupconst} predicts that between-group distortion
 alone leaves exact assembly on the frontier.
 We test this by intervening on the amplitudes directly.
+The intervention was not part of the original pre-registered factorial
+design but was specified as a follow-up analysis before any experimental
+run; three quantitative predictions (P1--P3 below) were committed to the
+repository at commit \texttt{f6042f8} (2026-09-30) before the first run.
+We therefore classify E1 as a \emph{follow-up analysis with
+pre-specified predictions}, not as confirmatory evidence for the theorem
+nor as fully post hoc exploratory.
 Four score matrices differ only in $A_j$; objectives, frontier, draws and
 feasible set are identical to the factorial ($\kappa=200$, $\ndraws$
 draws, space $A'$).
@@ -2451,11 +2459,13 @@ to valued relations.
 With the usual preference function the relations are crisp by
 construction, so the identity is implied.
 We restate it to fix the affine constants, to record that it holds
-exactly under arbitrary tie structure, and chiefly because it isolates
-the tie structure as the sole source of empirical divergence: in our data
+exactly under arbitrary tie structure, and because on Fogo Island
 the entire departure of the implemented rank score from the net flow is
 attributable to the tie structure inherited by the midranks, not to the
 aggregation operator.
+(When all criteria have the same tie structure, the amplitude is uniform
+and no divergence occurs; the tie structure matters only when it varies
+across criteria.)
 Dividing by $N+1$ is a common scale factor and does not alter effective
 weights; the distortion of \texttt{perm}'s amplitude to $0.616\times$
 is caused by the $350$ tied zeros compressing its midrank range,
@@ -2669,8 +2679,8 @@ remains open.
 
 Two consequences bear directly on practice.
 Integer programming on top of a ranking pays only when the normalisation
-respects the grouping of the objectives; under vector normalisation it
-is worse than reading the ranking top-down.
+respects the grouping of the objectives; under vector normalisation on
+this instance it is worse than reading the ranking top-down.
 A criterion encoded differently in the score and the objectives reduces
 $Q_2$ from $100\%$ to $\RaspOptimal\%$ under optimal assembly; with a
 consistent encoding, normalising over inadmissible alternatives costs
