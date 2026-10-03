@@ -277,3 +277,49 @@ F-1 → F-2
 
 **Total: 18 itens atómicos.**
 Para executar: diga o ID (ex: `faz I-1`) e o item será executado, diff mostrado, validado semanticamente e confirmado antes de fechar.
+
+---
+
+## Log de execução
+
+> Registo permanente de cada item concluído: commit, o que foi alterado, evidência verificada.
+
+---
+
+### I-1 — `tab:tvorder` caption
+**Commit:** `06a74e1`
+**Alteração:** caption substituída de `"Predicted distortion and observed performance under additive aggregation"` para `"Weight distortion (TV) and observed Pareto attainment under additive aggregation"`. Adicionada nota `"the monotone ordering is an observation on this instance, not a consequence of the amplitude identity alone"` directamente na caption.
+**Evidência:** grep `"Predicted distortion"` = 0; todas as refs à tabela usam linguagem observacional qualificada; build 26pp sem erros; check_consistency 0 failures.
+**Razão:** a caption anterior induzia leitura de que o teorema prediz o resultado empírico Q2, contradizendo o próprio parágrafo introdutório que já negava esse carácter preditivo universal.
+
+---
+
+### I-2 — iff "for any weights and any instance"
+**Commit:** `eb9a168`
+**Alteração:** `"any instance"` → `"any instance of the additive model"` em L116 (abstract) e L2668 (conclusion). O iff é matematicamente correcto dentro do modelo aditivo; o qualificador torna explícito que não se aplica a TOPSIS, PROMETHEE ou métodos não-aditivos.
+**Evidência:** 2 ocorrências de `"any instance of the additive model"` confirmadas; o preâmbulo `"In additive aggregation"` já estava presente em ambas as frases; build 26pp; 0 failures.
+**Razão:** sem o qualificador, um revisor pode interpretar o resultado como válido para qualquer método MCDM — o que o paper explicitamente não afirma.
+
+---
+
+### I-3 — Label `prop:exponent` vs `rem:exponent`
+**Commit:** `f4f0269`
+**Alteração:** 3 ocorrências de `Proposition~\ref{prop:exponent}` → `Remark~\ref{prop:exponent}` (L977, L2424, L2575). Label interno `prop:exponent` mantido inalterado (é só chave LaTeX, sem impacto visual).
+**Evidência:** grep `"prop:exponent"` = 4 ocorrências (1 label + 3 refs); todas as refs usam `Remark~`; `.aux` confirma `remark.2`; PDF tipografa "Remark 2" consistente com `\begin{remark}`; build 26pp; 0 failures.
+**Razão:** o ambiente é `\begin{remark}` mas o texto dizia "Proposition" — inconsistência visível no PDF que sinalizava confusão entre força lógica do enunciado e a sua tipografia.
+
+---
+
+### I-4 — `\end{remark}...\begin{corollary}` numeração
+**Commit:** nenhum (confirmação positiva, sem alteração)
+**Verificação:** `.aux` extraído do build confirma: `prop:exponent` = Remark 2 (`remark.2`), `cor:mm_not_neutral` = Corollary 1 (`corollary.1`), `cor:order` = Corollary 2 (`corollary.2`). Transição em L1387–1389: `\end{remark}` → linha em branco → `\begin{corollary}`. Contadores `remark` e `corollary` são independentes em LaTeX.
+**Evidência:** output `.aux` mostra numeração correcta sem overlap; único warning é fonte `T1/zi4/m/it` (inconsolata italic) — irrelevante para numeração.
+**Razão:** item de verificação preventiva após promoção de `proposition` para `remark` — confirmado OK sem necessidade de patch.
+
+---
+
+### I-5 — Limitations gap=0 ≠ Pareto (contraexemplo de dominância fraca)
+**Commit:** `b91dfcf`
+**Alteração:** adicionado contraexemplo numérico concreto no parágrafo *Gap measure and weak dominance* (§8.2): `"A concrete instance: with k=3 minimisation objectives, portfolio t=(3,5,5) is dominated by t'=(3,5,4) (strict improvement on objective 3, ties elsewhere), yet gap(t)=min(0,0,1)=0."`
+**Evidência:** L2635–2637 no TeX; grep confirma presença; build 26pp; 0 failures.
+**Razão:** o texto anterior explicava o mecanismo em prosa mas não tinha exemplo verificável. O contraexemplo numérico torna a limitação inequívoca: um revisor que questione "gap=0 não confirma eficiência?" tem agora resposta imediata no texto.
