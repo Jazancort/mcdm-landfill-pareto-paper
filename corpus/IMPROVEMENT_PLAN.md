@@ -220,10 +220,10 @@ Se qualquer etapa revelar que um claim central não pode ser sustentado com a ev
 
 | ID | Tarefa | Status |
 |----|--------|--------|
-| G-1 | Criar `README.md` com: pré-requisitos, 3 passos executáveis (clone → rerun → verify), hash esperado do `verify_macros_permanent.py`. | [ ] |
-| G-2 | `PHASES_STATUS`: adicionar entrada TOST com statistic, CI, p, n_draws e fonte CSV — calculados dos dados reais, não pré-fixados. | [ ] |
-| G-3 | Criar tabela de contribuição × literatura: para cada contribuição i–v, indicar o antecedente mais próximo, o que é novo e o que é reuso. | [ ] |
-| G-4 | Limitations: confirmar que o item gap/weak dominance está consistente com a resolução R2 (gap=0 ≠ Pareto without conditions). | [ ] |
+| G-1 | Criar `README.md` com: pré-requisitos, 3 passos executáveis (clone → rerun → verify), hash esperado do `verify_macros_permanent.py`. | [x] |
+| G-2 | `PHASES_STATUS`: adicionar entrada TOST com statistic, CI, p, n_draws e fonte CSV — calculados dos dados reais, não pré-fixados. | [x] |
+| G-3 | Criar tabela de contribuição × literatura: para cada contribuição i–v, indicar o antecedente mais próximo, o que é novo e o que é reuso. | [x] |
+| G-4 | Limitations: confirmar que o item gap/weak dominance está consistente com a resolução R2 (gap=0 ≠ Pareto without conditions). | [x] |
 
 ---
 
@@ -346,3 +346,33 @@ Para executar: diga o ID (ex: `faz I-1`) e o item será executado, diff mostrado
 | **(iii)** | Decomposição factorial — normalização domina agregação; exact assembly sem efeito médio | BransMarchant (1992): PROMETHEE-V com IP; Mavrotas (2006): AUGMECON; literatura de comparação SAW vs TOPSIS | Factorial 2×2×2 com controle de viabilidade; TOST equivalência pré-especificada; resultado de dominância normalização > agregação quantificado em pp de Q2 | Desenho factorial da literatura de comparação |
 | **(iv)** | Condição iff: amplitudes constantes dentro de cada grupo objetivo → exact assembly Pareto-eficiente | Liesiö et al. (2007): condições de consistência Pareto para PDA; Stewart (1992): agregação aditiva e Pareto | Theorem thm:groupconst com prova; decomposição entre-grupos vs dentro-grupos; follow-up E1 com predições pré-especificadas | Estrutura de grupos de Liesiö; resultado de eficiência Pareto de Stewart |
 | **(v)** | Identidade exacta PROMETHEE II ≡ rank-weighted SAW para qualquer estrutura de empates | Bouyssou (1992): caracterização axiomática net flow; Marchant (1996): scoring rules e net flow | Identidade via midranks — `φ(a) = (2/(n-1)) Σ w_j r_j(a) − (n+1)/(n-1)` — exacta a precisão de máquina (6.7×10⁻¹⁶); empates tratados por construção via P_j(0)=0 | Resultados axiomáticos de Bouyssou (1992) e Marchant (1996) |
+
+---
+
+### G-1 — README.md com 3 passos executáveis
+**Commit:** `695767a`
+**Entregável:** `README.md` (108 linhas) com pré-requisitos, 3 passos (clone → `run_e1_v3.py` → `verify_macros_permanent.py`), hash esperado `ea5dfe07d12bd5ff`, tabela de 6 scripts-chave, estrutura do repositório, tabela de tags.
+**Evidência:** ficheiro criado e commitado; 3 passos são copy-paste executáveis.
+
+---
+
+### G-2 — PHASES_STATUS: entrada TOST completa
+**Commit:** `2cae031`
+**Entregável:** secção `## TOST — Aggregation contrast` adicionada ao final de `corpus/PHASES_STATUS.md` com: estimand, unidade de análise (draw, n=500), margem pré-especificada (±2.5 pp), test statistic, CI e p-value reproduzidos localmente.
+**Evidência:** reproduzido via `fourthcell/mc_2cube_fixed_raw.csv` hash `ea5dfe07`: mean=0.550 pp, SE=0.7197, 95% CI=[−0.86, +1.96], t_hi=−2.710, p_hi=0.00348, TOST p=0.003. Valores coincidem com macros do manuscrito.
+**Razão:** o p=0.003 estava em `macros.tex` sem rastreabilidade documentada; a entrada em PHASES_STATUS fecha a cadeia de proveniência.
+
+---
+
+### G-3 — Tabela contribuição × literatura
+**Commit:** `ae7a466`
+**Entregável:** tabela 5-linhas em `corpus/IMPROVEMENT_PLAN.md` com colunas: contribuição, claim, antecedente mais próximo, novo, reuso.
+**Evidência:** contribuições i–v lidas de §1 L271-302 do TeX; antecedentes baseados nas citações existentes (Choo 1999, Liesiö 2007/2021, Bouyssou 1992, Marchant 1996, BransMareschal 1992).
+**Razão:** artefacto de rastreabilidade interna — evidencia que nenhuma das 5 contribuições vende resultado conhecido como teoria nova.
+
+---
+
+### G-4 — Limitations gap/weak dominance consistente com R2
+**Commit:** nenhum (confirmação positiva)
+**Verificação:** `test_gap_counterexample.py` exit 0; texto das Limitations (pós I-5) diz exactamente o que o teste documenta: gap(t)=0 AND t dominated; Q2 determinado por algoritmo de dominância completo. Sem inconsistência.
+**Razão:** R2 (gap ≠ Pareto) e I-5 (contraexemplo na Limitations) são consistentes — o teste é a evidência, o texto é a declaração.
