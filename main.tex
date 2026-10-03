@@ -106,8 +106,9 @@ under a $\dmin$~km separation constraint and compute the exact Pareto
 frontier over siting cost, environmental impact and social safety.
 Crossing aggregation, normalisation and assembly, we find that
 normalisation is worth $+\NormGreedyContrast$~pp of Pareto efficiency
-under greedy assembly; the SAW--TOPSIS contrast is not significant
-pooled ($+\AggContrast$~pp), though the sign is cell-dependent.
+under greedy assembly; the pooled SAW--TOPSIS contrast ($+\AggContrast$~pp)
+is equivalent within the pre-specified $\pm2.5$~pp margin (TOST), though
+the sign is cell-dependent.
 Exact assembly gains $+\AsmMM$~pp under min--max but loses $\AsmVec$~pp
 under vector normalisation.
 In additive aggregation the effective weight of criterion $j$ is
@@ -245,9 +246,9 @@ separately confirms the prediction on Fogo
 (Section~\ref{sec:e1}).
 Adding integer programming on top of a ranking
 \citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012}
-therefore pays only when the normalisation respects the grouping of the
-objectives (on this instance; whether this transfers to other instances
-depends on the amplitude structure).
+improved Pareto attainment under min--max and reduced it under vector
+normalisation on Fogo; the benefit is conditional on the normalisation
+matching the grouping of the objectives.
 
 A third finding concerns the encoding of criteria in the score relative
 to the objectives.
@@ -783,10 +784,15 @@ sites.
 
 \paragraph{Criterion orientation.}
 Nine criteria are monotone distances; slope is a monotone cost.
-Slope aspect is circular and non-monotone; following \citet{AzancortNeto2026}, it
-enters as an indicator: $c=1$ if aspect $\in[90^\circ,180^\circ]$ (leeward,
-the favourable class for reducing environmental impact) and $c=0$ otherwise,
-yielding $n_1=94$ positives among the $\Nvia$ admissible sites.
+Slope aspect is circular and non-monotone; following \citet{AzancortNeto2026},
+the leeward indicator $b_{\mathrm{asp}}=\mathbf{1}[\mathrm{aspect}\in[90^\circ,180^\circ]]$
+takes value~$1$ for the favourable orientation (the wind carries emissions away
+from inhabited areas) and~$0$ otherwise.
+The score uses $b_{\mathrm{asp}}$ directly (higher is better), with $n_1=94$
+positives among the $\Nvia$ admissible sites.
+The environmental-impact objective (F2, minimisation) uses the complement
+$c_{\mathrm{asp}}=1-b_{\mathrm{asp}}$: lower is better, so leeward sites ($b_{\mathrm{asp}}=1$,
+$c_{\mathrm{asp}}=0$) have lower cost and are preferred.
 This binarisation matters for Sections~\ref{sec:three_norms} and~\ref{sec:order_ops}
 and is recorded explicitly in Table~\ref{tab:amplitude}.
 
@@ -947,9 +953,10 @@ We pre-specify the following before examining results.
 
 Min-max and vector constants may be computed over all $\Ncand$ candidates
 (space~$A$) or over the $\Nvia$ admissible ones (space~$A'$).
-Space~$A$ reproduces the source study ($|\Fset|=\FAsize$ portfolios);
+Space~$A$ reproduces the source study (frontier size $|\Fset|=\FAsize$ portfolios
+under the A-space pipeline, reported for context only);
 space~$A'$ is the factorial design ($|\Fset|=\Fmmsize$), and the two
-reference sets share only $\FAinter$ portfolios.
+reference sets share only $\FAinter$ portfolios (A-space pipeline).
 Including inadmissible sites shifts the scale without those sites being
 selectable, a set-dependence mechanism documented for TOPSIS by
 \citet{GarciaCascales2012}.
@@ -1069,11 +1076,10 @@ $A_j$ equal the same constant.\hfill$\square$
 \paragraph{Scope and empirical confirmation.}
 \label{rem:scope}
 The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
-Within that scope the prediction is borne out: under optimal assembly,
-$Q_2[\mathcal{A}']$ at $\kappa=200$ is $100.0\%$, $88.2\%$ and
-$56.8\%$ for min--max, ranks and vector normalisation respectively,
-against predicted distortions $\mathrm{TV}=0$, $0.091$ and $0.315$,
-a strictly monotone ordering (Table~\ref{tab:tvorder}).
+Within that scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $100.0\%$,
+$88.2\%$ and $56.8\%$ for min--max, ranks and vector normalisation
+respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $0.315$,
+a strictly monotone ordering on this instance (Table~\ref{tab:tvorder}).
 
 TOPSIS and VIKOR aggregate distances to ideal points rather than
 weighted sums, so amplitudes enter quadratically or in ratio form and
@@ -1327,32 +1333,32 @@ The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
 The families evaluated here differ in how the normalised column enters the
 score, and the difference is captured by a single exponent.
 
-\begin{proposition}[Amplitude exponent: SAW exact; TOPSIS by analogy]
+\begin{remark}[Amplitude structure beyond additive aggregation]
 \label{prop:exponent}
 For SAW ($\alpha=1$), the effective weights satisfy~\eqref{eq:weff}
 exactly.
-By analogy, treating the squared TOPSIS distance as having homogeneity
-degree $\alpha=2$ in $w_j\,n_j(\cdot)$ gives
+The TOPSIS squared distance takes the form
 \begin{equation}
   \label{eq:weff_alpha}
-  w_j^{\mathrm{eff}}(\alpha)
-   = \frac{w_j^{\alpha} A_j^{\alpha}}
-          {\sum_k w_k^{\alpha} A_k^{\alpha}},
+  (d_i^\pm)^2=\sum_j w_j^2\bigl(v_{ij}-v_j^\pm\bigr)^2,
 \end{equation}
+where $v_j^\pm$ are the ideal and anti-ideal coordinates in the
+normalised space.
+By analogy with the additive case, treating this as homogeneous of
+degree $\alpha=2$ in $w_j n_j(\cdot)$ gives
+$w_j^{\mathrm{eff}}(\alpha)=w_j^{\alpha}A_j^{\alpha}/\sum_k w_k^{\alpha}A_k^{\alpha}$
 with $\mathrm{TV}(\alpha)=\tfrac{1}{2}\sum_j|w_j^{\mathrm{eff}}(\alpha)-w_j|$.
-\emph{This formula is exact for $\alpha=1$ (SAW). For $\alpha=2$ (TOPSIS) the
-effective weight is exact for the squared distance, not the distance
-itself; the interpretation is by analogy with the additive case and
-is not guaranteed to hold for the ratio $Q_2$.}
-The three families instantiate $\alpha$ as follows.
+\emph{This formula is exact for $\alpha=1$ (SAW). For TOPSIS the
+analogy holds for the squared distance, not the distance itself,
+and does not imply a monotone relationship between
+$\mathrm{TV}(2)-\mathrm{TV}(1)$ and $Q_2$ loss.}
+The three families stand as follows.
 \begin{itemize}[nosep]
-  \item \textbf{SAW}: $\alpha=1$.  Recovers~\eqref{eq:weff}.
-  \item \textbf{TOPSIS}: $\alpha=2$, because
-    $(d^{\pm})^2=\sum_j w_j^2\bigl(v_j-v_j^{\pm}\bigr)^2$ and the
-    square root is monotone so it does not affect rankings.
-    \emph{Scope: the exponent interpretation is by analogy with the
-    additive case; the effective weight in~\eqref{eq:weff_alpha} is
-    exact for the squared distance, not the distance itself.}
+  \item \textbf{SAW}: $\alpha=1$; the amplitude identity~\eqref{eq:weff} is exact.
+  \item \textbf{TOPSIS}: structure as in~\eqref{eq:weff_alpha} with $\alpha=2$
+    for the squared distance; the square root is monotone so rankings are
+    preserved, but $C_i=d_i^-/(d_i^-+d_i^+)$ is not a linear function of
+    the score and is not to be interpreted as a $Q_2$ probability.
   \item \textbf{VIKOR}: invariant to \emph{per-criterion} affine
     transformation $f_{ij}\mapsto a_j f_{ij}+b_j$ with $a_j>0$, because
     both $a_j$ and $b_j$ cancel in the ratio
@@ -1366,30 +1372,19 @@ The three families instantiate $\alpha$ as follows.
     VIKOR$\,\times\,$vector cells duplicate VIKOR$\,\times\,$min--max
     and are removed from the design, leaving VIKOR$\,\times\,$ranks
     as the sole informative VIKOR cell.
-    This immunity to per-criterion affine transformations means that
-    VIKOR is unaffected by the amplitude mechanism that governs SAW and
-    TOPSIS, a structural difference that qualifies comparisons between
-    the two families.
-  \item \textbf{PROMETHEE~II (usual criterion)}: amplitude-invariant.
+  \item \textbf{PROMETHEE~II (usual criterion)}: ordinal-invariant.
     The usual preference function $P_j(d)=\mathbf{1}[d>0]$ depends
-    only on the rank order of sites on criterion $j$, not on the
-    numerical values, so any strictly monotone transformation of the
-    normalised column leaves $\phi$ unchanged.
-    All three normalisations therefore produce the same ranking, and
-    $w_j^{\mathrm{eff}} = w_j$ for any normalisation, including in the
-    presence of ties: when ties are broken by midranks the resulting
-    net flow is an affine function of the midrank vector, and any
-    positive affine rescaling of the ranks (such as dividing by $N+1$)
-    changes the intercept and scale of $\phi$ but not the ranking of
-    sites or portfolios.
-    The formula~\eqref{eq:weff_alpha} with a single exponent $\alpha$
-    does not apply here, because the amplitude $A_j$ does not enter
-    the score; the normalised weights $w_j / \sum_k w_k$ are always
-    operative.
+    only on the rank order of sites on criterion $j$; any strictly
+    monotone transformation of the normalised column leaves $\phi$
+    unchanged, so all three normalisations produce the same ranking.
+    The amplitude $A_j$ does not enter the score; the weight-flow
+    identity (Section~\ref{prop:p2}) holds with oriented midranks and
+    nominal weights as input, but this does not imply that nominal
+    weights equal effective weights under other definitions of amplitude.
     The six PROMETHEE cells collapse to two (greedy and optimal),
     removing four from the design.
 \end{itemize}
-\end{proposition}
+\end{remark}
 
 \begin{corollary}[Min--max is not amplitude-neutral for TOPSIS]
 \label{cor:mm_not_neutral}
@@ -1443,10 +1438,8 @@ monotone loss in TV depends on the geometry of the specific instance and
 is not guaranteed by the formula.
 Under greedy assembly the contrast reverses under min--max ($+8.4$~pp),
 which we attribute to the foreclosure loss of Section~\ref{sec:greedy}
-dominating a distortion of~$0.160$; we therefore report the
-optimal-assembly cells as the test of the exponent and the greedy cells
-as a description of practice, in parallel with the scope restriction
-of Section~\ref{sec:lemmaconf}.
+dominating a distortion of~$0.160$; the greedy cells are therefore
+reported as a description of practice, not as a test of the analogy.
 
 % ---
 
@@ -1629,23 +1622,26 @@ Then
   \lVert\delta\rVert_2
     = \frac{2\,\mathrm{TV}}{\sqrt{m_{\mathrm{eff}}}},
 \end{equation}
-and $m_{\mathrm{eff}} \in [2,\,m]$, with the lower bound attained when
-exactly two criteria deviate in opposition and the upper bound when all
-$|\delta_j|$ are equal.
+and $m_{\mathrm{eff}} \ge 2$ (lower bound) and $m_{\mathrm{eff}} \le m$ (upper bound).
 \end{proposition}
 
 \begin{proof}
 Equation~\eqref{eq:l2fact} is immediate from~\eqref{eq:meff}:
 $\lVert\delta\rVert_2 = \lVert\delta\rVert_1/\sqrt{m_{\mathrm{eff}}}$
 and $\lVert\delta\rVert_1 = 2\,\mathrm{TV}$.
-For the bounds, $\lVert\delta\rVert_1^2/\lVert\delta\rVert_2^2 \ge 1$
-for any non-zero vector, with equality iff a single component is
-non-zero; the constraint $\sum_j \delta_j = 0$ forbids that and forces
-at least two non-zero components, giving
-$m_{\mathrm{eff}}\ge 2$, attained at
-$\delta=(c,-c,0,\dots,0)$.
-The upper bound is Cauchy--Schwarz, with equality iff all $|\delta_j|$
-coincide.
+For the lower bound, let $S=\sum_{\delta_j>0}\delta_j$.
+Since $\sum_j\delta_j=0$ we have $S=-\sum_{\delta_j<0}\delta_j>0$,
+so $\lVert\delta\rVert_1=2S$.
+Also $\lVert\delta\rVert_2^2\le 2S^2$
+(because the positive and negative parts each contribute at most $S^2$
+to the squared norm, with equality when each part is concentrated on a
+single component).
+Therefore $m_{\mathrm{eff}}=\lVert\delta\rVert_1^2/\lVert\delta\rVert_2^2\ge 4S^2/(2S^2)=2$.
+The upper bound is Cauchy--Schwarz: $\lVert\delta\rVert_1^2\le m\,\lVert\delta\rVert_2^2$,
+so $m_{\mathrm{eff}}\le m$.
+The upper bound is attained when all $|\delta_j|$ coincide; the lower bound
+$m_{\mathrm{eff}}=2$ is attained for $\delta=(c,-c,0,\dots,0)$ with $c\neq0$
+(requires $m\ge2$ and an even-symmetric pattern).
 \end{proof}
 
 \begin{remark}[What the factorisation buys]
@@ -1811,8 +1807,8 @@ Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.0
 
 A first indication that the reference set is itself implicated: when
 normalisation constants are recomputed over the $\Nvia$ admissible sites
-(space~$A'$), six of the seven method portfolios become non-dominated
-(the exception is TOPSIS vector optimal, with $\mathrm{gap}=0.002$ in~$A'$).
+(space~$A'$), the Pareto membership of method portfolios improves
+(see Table~\ref{tab:canonical}).
 The failures in space~$A$ are not solely attributable to the methods;
 they are partly induced by computing the value scale over sites that
 cannot be selected.
@@ -1843,8 +1839,8 @@ Section~\ref{sec:refset} returns to this.
 \label{sec:lemmaconf}
 % ----------------------------------------------------------
 
-The amplitude identity~\eqref{eq:weff} predicts that performance degrades with the
-distortion the normalisation imposes on the elicited weights, measured
+The amplitude identity~\eqref{eq:weff} characterises the weight deviation
+the normalisation imposes on the elicited weights, measured
 on the simplex by
 \begin{equation}
   \label{eq:TV_results}
@@ -1857,9 +1853,12 @@ Section~\ref{sec:three_norms}, $w^{\mathrm{eff}}$ is invariant to a common
 rescaling of all amplitudes: a factor $c>0$ applied to every $A_j$
 cancels in~\eqref{eq:TV_results} and produces no re-weighting.
 
-Table~\ref{tab:tvorder} pairs the predicted distortion with observed
-performance, restricted to additive aggregation, the scope in which
+Table~\ref{tab:tvorder} pairs the distortion with observed
+performance on Fogo, restricted to additive aggregation, the scope in which
 the lemma is exact.
+The three normalisations display a monotone ordering on this instance;
+the amplitude identity alone does not imply a monotone relationship
+between $\mathrm{TV}$ and Pareto attainment in general.
 
 \begin{table}[!t]
 \centering
@@ -2064,7 +2063,7 @@ Over the $\Nvia$ admissible sites, the attainable amplitude is
 which varies across criteria and within groups (Table~\ref{tab:amprefset}).
 These two encodings are not monotonically related: an azimuth of
 $350^\circ$ has a high score under the continuous encoding
-but is classified as non-leeward ($c=0$, the unfavourable class) by the
+but is classified as non-leeward ($b_{\mathrm{asp}}=0$, the unfavourable class for the score) by the
 binary objective.
 Under the continuous encoding $Q_2$ drops from $100\%$ to $20\%$
 under optimal assembly, a loss of $80$~pp.
@@ -2684,13 +2683,14 @@ within-group mechanism carries comparable costs on other applied matrices
 remains open.
 
 Two consequences bear directly on practice.
-Integer programming on top of a ranking pays only when the normalisation
-respects the grouping of the objectives; under vector normalisation on
-Fogo it is worse than reading the ranking top-down.
+In the Fogo factorial, exact assembly improved Pareto attainment under
+min--max and reduced it under vector normalisation, relative to the
+min--max value model; under vector normalisation it performs worse than
+reading the ranking top-down.
 A criterion encoded differently in the score and the objectives reduces
 $Q_2$ from $100\%$ to $\RaspOptimal\%$ under optimal assembly; with a
 consistent encoding, normalising over inadmissible alternatives costs
-nothing under optimal assembly.
+nothing under optimal assembly on this instance.
 The immediate recommendation is inexpensive: report effective weights
 alongside elicited ones.
 Given the normalised decision matrix the computation is a single line,
@@ -2721,8 +2721,9 @@ treated as descriptive rather than confirmatory.
 The post hoc exploratory decision rule (PRESPEC\_R1, rule R1-2) found that
 greedy assembly improves by $+\RefSetGreedyGain$~pp under consistent
 coding ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$); under optimal
-assembly both cells reach $100\%$ on every draw, so the contrast is
-identical to zero by construction (rule R1-1: observation, not effect).
+assembly both cells reach $100\%$ on the sampled draws, so the estimated
+contrast was zero on this instance (rule R1-1: observation, not a
+general zero-cost guarantee for mismatched reference sets).
 
 The broader implication is methodological.
 Benchmarking multi-criteria methods by agreement between their rankings
