@@ -1,0 +1,9 @@
+cell,assembly,Q2,SE
+E1-M,greedy,100.0,0.0
+E1-M,optimal,100.0,0.0
+E1-V,greedy,50.0,15.811388300841896
+E1-V,optimal,50.0,15.811388300841896
+E1-B,greedy,100.0,0.0
+E1-B,optimal,100.0,0.0
+E1-W,greedy,40.0,15.491933384829668
+E1-W,optimal,40.0,15.491933384829668
