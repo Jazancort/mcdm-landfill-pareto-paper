@@ -370,6 +370,15 @@ this paper treats decomposition by objective group and measures how much
 of the resulting Pareto frontier each method--normalisation--assembly
 combination recovers.
 
+Multiattribute portfolio value functions provide an established framework
+for portfolio decision analysis under multiple objectives and resource
+constraints \citep{Liesio2014}.
+The present study focuses on a specific benchmarking design: an
+exhaustively enumerated feasible portfolio set under pairwise spatial
+separation, group-level partial value functions, and a factorial comparison
+of score normalisation, aggregation, and assembly procedures against an
+explicit Pareto frontier.
+
 % ----------------------------------------------------------
 \subsection{Normalisation and effective weights}
 \label{sec:lit_norm}
@@ -421,6 +430,25 @@ index under vector normalisation.
 \citet{OpricovicTzeng2004} traced the linear-versus-vector contrast
 between VIKOR and TOPSIS to normalisation choices with consequences for
 unit invariance.
+
+Nominal weights need not coincide with statistical importance in aggregate
+indices, because dispersion, dependence among indicators, and sensitivity
+structure can make an indicator influential even when its stated weight is
+small, or conversely \citep{Paruolo2013,Becker2017}.
+Here, effective weight has a narrower meaning: it denotes the range-based
+coefficient induced by normalisation, $w_j A_j / \sum_k w_k A_k$, rather
+than a variance-based, correlational, or causal importance measure.
+The two diagnostics therefore address different aspects of an aggregate
+score.
+
+Normalisation choices also have documented consequences for aggregate
+sustainability scores and their interpretation \citep{Pollesch2016}.
+Recent work analyses how normalisation and distance metrics affect rank
+reversal in TOPSIS when high-performing alternatives are added
+\citep{ShyurShih2024}.
+The present study measures a different outcome: the ability of
+ranking-based portfolio construction to attain Pareto-efficient solutions
+under hard spatial constraints within an explicit partial-value model.
 
 % ----------------------------------------------------------
 \subsection{Theory of the methods}
@@ -2788,6 +2816,15 @@ indicator, not an equivalent restatement of $Q_2$.
 \emph{Regulatory grounding.}
 The exclusion of the $\Nexcl$ overlapping sites is treated as a
 screening decision.
+
+\emph{Scalability.}
+The exhaustive enumeration of $\Ntrios$ feasible trios is tractable for
+the present instance size.
+For larger candidate sets, exact multiobjective integer-programming
+approaches, including augmented epsilon-constraint variants such as
+AUGMECON2 \citep{MavrotasFlorios2013}, offer a natural route beyond
+complete enumeration, subject to an appropriate integer formulation,
+parameterisation, and numerical tolerance control.
 
 
 % =======================================================================
