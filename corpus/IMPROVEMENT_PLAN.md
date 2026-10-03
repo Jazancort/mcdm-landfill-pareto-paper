@@ -211,7 +211,7 @@ Se qualquer etapa revelar que um claim central não pode ser sustentado com a ev
 | I-3 | Label `prop:exponent` vs `rem:exponent`: verificar que `\ref{prop:exponent}` em L969 resolve correctamente após a promoção a remark; corrigir se necessário. | [x] |
 | I-4 | Confirmar no PDF compilado que `\end{remark}…\begin{corollary}` produz numeração correcta sem overlap. | [x] |
 | I-5 | Limitations §8.2: adicionar nota explícita de que gap=0 não implica Pareto sem condições; fornecer o contraexemplo de dominância fraca. | [x] |
-| I-6 | PROMETHEE-Borda identity §3.3: explicitar hipótese de ausência de empates (ou comportamento sob empates) para que a identidade não seja atribuída a empates arbitrários. | [ ] |
+| I-6 | PROMETHEE-Borda identity §3.3: explicitar hipótese de ausência de empates (ou comportamento sob empates) para que a identidade não seja atribuída a empates arbitrários. | [x] |
 
 ---
 
@@ -323,3 +323,11 @@ Para executar: diga o ID (ex: `faz I-1`) e o item será executado, diff mostrado
 **Alteração:** adicionado contraexemplo numérico concreto no parágrafo *Gap measure and weak dominance* (§8.2): `"A concrete instance: with k=3 minimisation objectives, portfolio t=(3,5,5) is dominated by t'=(3,5,4) (strict improvement on objective 3, ties elsewhere), yet gap(t)=min(0,0,1)=0."`
 **Evidência:** L2635–2637 no TeX; grep confirma presença; build 26pp; 0 failures.
 **Razão:** o texto anterior explicava o mecanismo em prosa mas não tinha exemplo verificável. O contraexemplo numérico torna a limitação inequívoca: um revisor que questione "gap=0 não confirma eficiência?" tem agora resposta imediata no texto.
+
+---
+
+### I-6 — PROMETHEE-Borda §3.3: hipótese P_j(0)=0
+**Commit:** `171d789`
+**Alteração:** adicionada declaração explícita após `P_j(d) = 1[d>0]`: `"(the usual criterion: strict preference for any positive difference, indifference at d=0, so P_j(0)=0 and tied sites contribute zero net preference on that criterion)"`.
+**Evidência:** L1449-1451 no TeX confirmados; a derivação já usava midranks com `T_j(a)` para blocos de empates — a hipótese agora está visível antes da derivação; identidade verificada empiricamente a `6.7×10⁻¹⁶`; build 26pp; 0 failures.
+**Razão:** a identidade `φ(a) = (2/(n-1)) Σ w_j r_j(a) − (n+1)/(n-1)` é exacta precisamente porque `P_j(0)=0` — os empates entram naturalmente via midranks. Sem declarar esta hipótese, um revisor pode argumentar que a identidade falha com algum padrão de empates, quando na verdade vale para qualquer padrão por construção.
