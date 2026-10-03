@@ -331,3 +331,18 @@ Para executar: diga o ID (ex: `faz I-1`) e o item será executado, diff mostrado
 **Alteração:** adicionada declaração explícita após `P_j(d) = 1[d>0]`: `"(the usual criterion: strict preference for any positive difference, indifference at d=0, so P_j(0)=0 and tied sites contribute zero net preference on that criterion)"`.
 **Evidência:** L1449-1451 no TeX confirmados; a derivação já usava midranks com `T_j(a)` para blocos de empates — a hipótese agora está visível antes da derivação; identidade verificada empiricamente a `6.7×10⁻¹⁶`; build 26pp; 0 failures.
 **Razão:** a identidade `φ(a) = (2/(n-1)) Σ w_j r_j(a) − (n+1)/(n-1)` é exacta precisamente porque `P_j(0)=0` — os empates entram naturalmente via midranks. Sem declarar esta hipótese, um revisor pode argumentar que a identidade falha com algum padrão de empates, quando na verdade vale para qualquer padrão por construção.
+
+
+---
+
+## Tabela de contribuição × literatura (G-3)
+
+> Para cada contribuição i–v do §1, indica o antecedente mais próximo, o que é novo e o que é reuso.
+
+| Contrib. | Claim no §1 | Antecedente mais próximo | Novo no paper | Reuso/extensão |
+|---|---|---|---|---|
+| **(i)** | Amplitude identity `w_eff ∝ w_j A_j` para SAW — caracterização fechada da re-ponderação implícita | Choo & Wedley (1999): relação qualitativa entre normalização e pesos; Jahan & Edwards (2015): revisão de efeitos de normalização | Fórmula fechada com A_j explícito para min-max, vector e ranks; três efeitos anteriores como corolários de uma identidade | Relação qualitativa de Choo (1999) |
+| **(ii)** | Custo da distorção em unidades de eficiência de Pareto contra fronteira exaustiva | Liesiö et al. (2021): métricas de eficiência de portfólio; estudos de Fogo: ranking por método único | Q2 como medida primária contra fronteira enumerada por exaustão sob restrição espacial rígida; 8-cell factorial com 500 draws Dirichlet | Dados de Fogo; método de fronteira de Liesiö |
+| **(iii)** | Decomposição factorial — normalização domina agregação; exact assembly sem efeito médio | BransMarchant (1992): PROMETHEE-V com IP; Mavrotas (2006): AUGMECON; literatura de comparação SAW vs TOPSIS | Factorial 2×2×2 com controle de viabilidade; TOST equivalência pré-especificada; resultado de dominância normalização > agregação quantificado em pp de Q2 | Desenho factorial da literatura de comparação |
+| **(iv)** | Condição iff: amplitudes constantes dentro de cada grupo objetivo → exact assembly Pareto-eficiente | Liesiö et al. (2007): condições de consistência Pareto para PDA; Stewart (1992): agregação aditiva e Pareto | Theorem thm:groupconst com prova; decomposição entre-grupos vs dentro-grupos; follow-up E1 com predições pré-especificadas | Estrutura de grupos de Liesiö; resultado de eficiência Pareto de Stewart |
+| **(v)** | Identidade exacta PROMETHEE II ≡ rank-weighted SAW para qualquer estrutura de empates | Bouyssou (1992): caracterização axiomática net flow; Marchant (1996): scoring rules e net flow | Identidade via midranks — `φ(a) = (2/(n-1)) Σ w_j r_j(a) − (n+1)/(n-1)` — exacta a precisão de máquina (6.7×10⁻¹⁶); empates tratados por construção via P_j(0)=0 | Resultados axiomáticos de Bouyssou (1992) e Marchant (1996) |
