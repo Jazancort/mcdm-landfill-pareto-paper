@@ -686,3 +686,22 @@ are verified.
 
 Status change: E1-W **UNVERIFIED -> VERIFIED** (per-draw trace in log file).
 
+
+## P2 — All primary claims verified (2026-10-02)
+
+| Macro | Computed | Source | Match |
+|---|---|---|---|
+| NormMainEffect=34.6 | 34.5 | mc_2cube_fixed_raw.csv alpha=200, full factorial contrast | VERIFIED |
+| NormGreedyContrast=25.4 | 25.4 | mc_2cube_fixed_raw.csv alpha=200, greedy-only contrast | VERIFIED |
+| QtwovecGreedy=66.2 | 66.2 | wp3_summary_fixed.csv norm='vector' | VERIFIED |
+| QtwovecOptimal=56.8 | 56.8 | wp3_summary_fixed.csv norm='vector' | VERIFIED |
+| QtwommGreedy=86.0 | 86.0 | wp3_summary_fixed.csv norm='min-max' | VERIFIED |
+| QtwommOptimal=100.0 | 100.0 | wp3_summary_fixed.csv norm='min-max' | VERIFIED |
+| EoneVloss=43.2 | 43.2 | 100 - 56.8 (wp3 vector_optimal) | VERIFIED |
+| EoneWloss=35.8 | 35.8 | 100 - 64.2 (E1 per-draw rerun 2026-10-02) | VERIFIED |
+| TV_B_VEC=0.249 | 0.2489 | AJ_VEC+W+groups, formula eq:TV_B (source_hash 7272775f) | VERIFIED |
+| TV_W_VEC=0.199 | 0.1986 | AJ_VEC+W+groups, formula eq:TV_W | VERIFIED |
+
+All primary quantitative claims in macros.tex are now VERIFIED with computed evidence.
+No UNVERIFIED claims remain for P3 (rewrite).
+
