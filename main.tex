@@ -1236,7 +1236,6 @@ whence $\sum_{a\in T'}s(a) > \sum_{a\in T^{*}}s(a)$, contradicting the
 optimality of $T^{*}$.
 \end{proof}
 
-\begin{remark}[The $Q_2=1$ cell is a regression test, not evidence]
 \label{rem:definitional}
 Proposition~\ref{prop:p1:stmt} holds for \emph{any} normalisation,
 provided the normalisation used to compute $F_\ell$ matches the one in
@@ -1250,7 +1249,6 @@ below $100\%$ does so because some premise fails (group-constant amplitudes
 relative to the objectives (Theorem~\ref{thm:groupconst}), additivity, or
 global assembly), and the factorial
 identifies which.
-\end{remark}
 
 SAW with min--max normalisation over the $\Nvia$ viable sites:
 $Q_2[\mathcal{A}'] = 100.0\%$ for both $\kappa \in \{50, 200\}$
@@ -1356,7 +1354,6 @@ The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
 The families evaluated here differ in how the normalised column enters the
 score, and the difference is captured by a single exponent.
 
-\begin{remark}[Amplitude structure beyond additive aggregation]
 \label{prop:exponent}
 For SAW ($\alpha=1$), the effective weights satisfy~\eqref{eq:weff}
 exactly.
@@ -1407,9 +1404,7 @@ The three families stand as follows.
     The six PROMETHEE cells collapse to two (greedy and optimal),
     removing four from the design.
 \end{itemize}
-\end{remark}
 
-\begin{corollary}[Min--max is not amplitude-neutral for TOPSIS]
 \label{cor:mm_not_neutral}
 Under $\alpha=2$ and $A_j\equiv1$, \eqref{eq:weff_alpha} gives
 $w_j^{\mathrm{eff}}\propto w_j^{2}$, so the total variation
@@ -1420,7 +1415,6 @@ weighted Euclidean distance $d_i^\pm = \sqrt{\sum_j w_j^2(v_{ij} -
 v_j^\pm)^2}$ (Eq.~\ref{eq:weff_alpha}); the effect on the proximity index $C_i = d_i^- / (d_i^+
 + d_i^-)$ is not a simple linear re-weighting and depends on the
 geometry of the ideal and anti-ideal points.
-\end{corollary}
 
 Table~\ref{tab:exponent} reports $\mathrm{TV}(\alpha)$ for both
 $\alpha\in\{1,2\}$ and all three normalisations.
@@ -1660,7 +1654,6 @@ $m_{\mathrm{eff}}=2$ is attained for $\delta=(c,-c,0,\dots,0)$ with $c\neq0$
 (requires $m\ge2$ and an even-symmetric pattern).
 \end{proof}
 
-\begin{remark}[What the factorisation buys]
 \label{rem:meff_reading}
 $\mathrm{TV}$ answers \emph{how much} the elicited weights were moved;
 $m_{\mathrm{eff}}$ answers \emph{over how many criteria}, on a scale
@@ -1672,7 +1665,6 @@ tracks efficiency loss better than $\mathrm{TV}$ alone.
 Both are computable from the normalised decision matrix in one line, and
 we recommend reporting the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
 rather than $\mathrm{TV}$ alone (Section~\ref{sec:practice}).
-\end{remark}
 
 Computing~\eqref{eq:meff} on the deviations implied by
 Table~\ref{tab:amplitude} under vector normalisation gives
@@ -1689,7 +1681,6 @@ adversarial column with a position on a bounded scale.
 \label{sec:order_ops}
 % ----------------------------------------------------------
 
-\begin{corollary}[Order of operations under vector normalisation]
 \label{cor:order}
 For a criterion complemented to a cost orientation, the amplitude
 $A_j^{\rm vec}$ depends on whether the complement precedes or follows
@@ -1715,7 +1706,6 @@ amplitude induced by the order of operations.
 (Note: when $n_1=1$ and $n_0>1$ the columns are proportional despite
 $n_0\neq n_1$; the amplitude ratio $\sqrt{n_0/n_1}$ is specific to
 the binary-column case and is not a law for rankings or $Q_2$ in general.)
-\end{corollary}
 
 For \textit{aspect} ($n_1=94$ leeward sites, $n_0=295$), the two orders
 give $A_j\in\{0.058,\,0.103\}$, a factor of $1.77$.
@@ -2165,7 +2155,6 @@ $\mathrm{TV}$      & \multicolumn{2}{c}{$0.107$} \\
 Table~\ref{tab:coding2x2} holds the evaluator fixed at $\mathcal{A}'$
 (the 389 admissible sites) throughout, so all four cells are comparable.
 
-\begin{remark}[A non-monotone recoding is outside the theorem]
 \label{rem:nonmonotone}
 An earlier version of our pipeline scored \textit{aspect} as a
 continuous azimuth in degrees (min--max normalised over all
@@ -2184,7 +2173,6 @@ score's criterion definition and the evaluator's.
 The provenance of this result is documented in
 \texttt{corpus/PRESPEC\_E4.md} (DEV-E4-007); the pipeline version
 history is in the Supplementary Material.
-\end{remark}
 
 \subsection{The greedy shortfall}
 \label{sec:greedy}
