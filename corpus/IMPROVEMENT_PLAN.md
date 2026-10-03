@@ -206,7 +206,7 @@ Se qualquer etapa revelar que um claim central não pode ser sustentado com a ev
 
 | ID | Tarefa | Status |
 |----|--------|--------|
-| I-1 | `tab:tvorder` caption: verificar se ainda contém "predicted distortion" ou linguagem de predição universal; restringir ao domínio aditivo de Fogo se necessário. | [ ] |
+| I-1 | `tab:tvorder` caption: verificar se ainda contém "predicted distortion" ou linguagem de predição universal; restringir ao domínio aditivo de Fogo se necessário. | [x] |
 | I-2 | `iff "for any weights and any instance"` em L116 e L2667 (abstract + conclusion): adicionar qualificador explícito de âmbito — "within additive aggregation under the fixed partial value model". | [ ] |
 | I-3 | Label `prop:exponent` vs `rem:exponent`: verificar que `\ref{prop:exponent}` em L969 resolve correctamente após a promoção a remark; corrigir se necessário. | [ ] |
 | I-4 | Confirmar no PDF compilado que `\end{remark}…\begin{corollary}` produz numeração correcta sem overlap. | [ ] |
