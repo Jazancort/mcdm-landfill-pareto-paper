@@ -90,7 +90,11 @@ check("tvorder: optimal rnk > vec",
 main_tex = ROOT / "main.tex"
 if main_tex.exists():
     tex = main_tex.read_text(encoding="utf-8")
-    # tab:tvorder rows
+
+suppl_tex_path = ROOT / "supplementary.tex"
+suppl_tex = suppl_tex_path.read_text(encoding="utf-8") if suppl_tex_path.exists() else ""
+
+# tab:tvorder rows
     for label, val in [("86.0", 86.0), ("88.2", 88.2), ("66.2", 66.2), ("56.8", 56.8)]:
         if label in tex:
             print(f"  [OK  ] tab:tvorder value {label} present in main.tex")
@@ -244,13 +248,14 @@ if regression_failed:
 loss_hi = TAB_4TH["NcandA_optimal"] - TAB_4TH["NcandAp_optimal"]
 check("4th consistent coding: Ncand/A opt - Ncand/A' opt (≈0 pp)", loss_hi, 0.0, tol=1.0)
 
-# Values present in LaTeX source
+# tab:fourthcell moved to Supplementary Material (Table S1, P1 item 1)
+# Values 84.6/97.8/58.8 are in supplementary.tex, not in main.tex
 for label in ["84.6", "97.8", "58.8"]:
-    if label in tex:
-        print(f"  [OK  ] tab:fourthcell value {label} in main.tex")
+    if label in suppl_tex:
+        print(f"  [OK  ] tab:fourthcell value {label} in supplementary.tex (Table S1)")
     else:
-        FAIL.append(f"tab:fourthcell value {label} missing from main.tex")
-        print(f"  [FAIL] tab:fourthcell value {label} missing from main.tex")
+        FAIL.append(f"tab:fourthcell value {label} missing from supplementary.tex")
+        print(f"  [FAIL] tab:fourthcell value {label} missing from supplementary.tex")
 
 # ── tab:coding2x2 arithmetic (DEV-E4-009) ───────────────────────────────────
 print()

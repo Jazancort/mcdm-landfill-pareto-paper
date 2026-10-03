@@ -2050,10 +2050,12 @@ These two encodings are not monotonically related: an azimuth of
 $350^\circ$ has a high score under the continuous encoding
 but is classified as non-leeward (high environmental integrity) by the
 binary objective.
-The result (Table~\ref{tab:fourthcell}): $Q_2$ drops from $100\%$
-to $20\%$ under optimal assembly, a loss of $80$~pp.
+Under the continuous encoding $Q_2$ drops from $100\%$ to $20\%$
+under optimal assembly, a loss of $80$~pp.
 
-Table~\ref{tab:coding2x2} decomposes the loss.
+Table~\ref{tab:coding2x2} decomposes the loss by crossing the criterion
+encoding with the normalisation reference set, holding the evaluator
+fixed at $\mathcal{A}'$ (the 389 admissible sites) throughout.
 Replacing the continuous encoding with the binary one at 473-site
 constants (R-V to R-V$^*$) recovers $Q_2=100\%$.
 Introducing the continuous encoding at 389-site constants
@@ -2064,6 +2066,9 @@ coding inconsistency; under consistent coding the same constants cost
 nothing.
 The $80$~pp total is thus a coding effect plus an interaction, not
 a reference-set effect.
+A supplementary reference-set comparison that varies the evaluator
+frontier across four score/evaluator combinations confirms the
+coding-dependence of the effect (Supplementary Material, Table~S1).
 
 \begin{table}[t]
 \caption{Coding $\times$ reference set, $Q_2[\mathcal{A}']$, SAW min--max,
@@ -2131,48 +2136,13 @@ $\mathrm{TV}$      & \multicolumn{2}{c}{$0.107$} \\
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:fourthcell} separates the set over which the
-\emph{method} computes its constants from the set over which the
-\emph{evaluator} builds the reference set.
-
-\begin{table}[!t]
-\centering
-\caption{Score--evaluator alignment, $Q_2$, SAW min--max, $\kappa=200$.}
-\label{tab:fourthcell}
-\begin{tabular}{llcc}
-\toprule
-Method set & Evaluator & greedy & optimal \\
-\midrule
-$\Ncand$ & $A$  & 84.6\% & \textbf{100.0\%} \\
-$\Ncand$ & $A'$ & 97.8\% & \textbf{100.0\%} \\
-$\Nvia$  & $A$  & 58.8\% &  95.0\% \\
-$\Nvia$  & $A'$ & 86.0\% & \textbf{100.0\%} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The table has two \emph{aligned} cells (score and evaluator share the
-same reference set) and two \emph{crossed} cells (they differ).
-The aligned diagonal $N_{\text{cand}}/A$ (score: 473-site constants,
-evaluator: 473-site frontier) and diagonal $N_{\text{via}}/A'$
-(score: 389-site constants, evaluator: 389-site frontier) both reach
-$Q_2^{\mathrm{opt}}=100\%$, as Proposition~\ref{prop:p1:stmt} requires
-when score and evaluator share the same reference.
-The crossed cell $N_{\text{cand}}/A'$ (score: 473 constants,
-evaluator: 389 frontier) also reaches $Q_2^{\mathrm{opt}}=100\%$ on
-this instance; this is an empirical result on one instance, not
-guaranteed by the theorem.
-The crossed cell $N_{\text{via}}/A$ (score: 389 constants,
-evaluator: 473 frontier) reaches only $95\%$ under optimal assembly,
-showing that the alignment condition is not automatically satisfied
-in this direction.
-Under greedy assembly, both crossed cells lose efficiency relative to
-their aligned counterparts: $N_{\text{cand}}/A'$ drops to $97.8\%$
-versus $N_{\text{via}}/A'$ at $86.0\%$, and $N_{\text{via}}/A$
-reaches $58.8\%$ versus $N_{\text{cand}}/A$ at $84.6\%$.
-
-
-
+Table~\ref{tab:coding2x2} holds the evaluator fixed at $\mathcal{A}'$
+(the 389 admissible sites) throughout, so all four cells are comparable.
+A supplementary reference-set table that also varies the evaluator
+frontier is in the Supplementary Material (Table~S1); its aligned cells
+confirm Proposition~\ref{prop:p1:stmt} and its crossed cells show that
+the alignment condition is not automatically satisfied in the
+score$\neq$evaluator direction.
 
 \begin{remark}[A non-monotone recoding is outside the theorem]
 \label{rem:nonmonotone}
