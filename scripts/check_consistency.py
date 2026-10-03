@@ -95,12 +95,12 @@ suppl_tex_path = ROOT / "supplementary.tex"
 suppl_tex = suppl_tex_path.read_text(encoding="utf-8") if suppl_tex_path.exists() else ""
 
 # tab:tvorder rows
-    for label, val in [("86.0", 86.0), ("88.2", 88.2), ("66.2", 66.2), ("56.8", 56.8)]:
-        if label in tex:
-            print(f"  [OK  ] tab:tvorder value {label} present in main.tex")
-        else:
-            FAIL.append(f"tab:tvorder value {label} missing from main.tex")
-            print(f"  [FAIL] tab:tvorder value {label} missing from main.tex")
+for label, val in [("86.0", 86.0), ("88.2", 88.2), ("66.2", 66.2), ("56.8", 56.8)]:
+    if label in tex:
+        print(f"  [OK  ] tab:tvorder value {label} present in main.tex")
+    else:
+        FAIL.append(f"tab:tvorder value {label} missing from main.tex")
+        print(f"  [FAIL] tab:tvorder value {label} missing from main.tex")
 
 
 # ── 2. tab:factorial — 2^3 design ───────────────────────────────────────────
