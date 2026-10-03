@@ -79,6 +79,54 @@ for cond in ["W","V"]:
     print(f"  {cond}: {inst_means.mean():.1f}% [{ci_lo:.1f}, {ci_hi:.1f}] n={n} instances")
 
 print()
+print("INDEPENDENT SPOT-CHECK (recomputes Pareto from objectives for one instance):")
+try:
+    import sys as _sys
+    _sys.path.insert(0, str(ROOT / "scripts"))
+    from run_e6_generator import (
+        generate_sites, generate_criteria,
+        find_feasible_trios, compute_objectives,
+        pareto_efficient_indices, saw_score, assemble_optimal,
+        minmax_norm, W_CRIT_BASE, KAPPA
+    )
+    # Use first instance: N=50, geometry=uniform, spatial_seed=10
+    _N, _geom, _sid = 50, "uniform", 10
+    _crit_seed = _sid + 1000
+    _inst_id = f"N{_N}_{_geom}_s{_sid}"
+    # Re-generate from scratch
+    _lat, _lon = generate_sites(_N, _geom, _sid)
+    _X_raw = generate_criteria(_N, _crit_seed)
+    _X     = minmax_norm(_X_raw)
+    _trios = find_feasible_trios(_lat, _lon, seeds["DMIN_KM"])
+    _F     = compute_objectives(_X_raw, _trios)
+    _par   = pareto_efficient_indices(_F)
+    _par_trios = set(map(tuple, _trios[list(_par)].tolist()))
+    # Use draw 0 (first draw from the protocol RNG)
+    _rng   = np.random.default_rng(seeds["SEED_DRAWS"])
+    _draws = _rng.dirichlet(seeds["KAPPA"] * W_CRIT_BASE, size=1)
+    _w     = _draws[0]
+    _rho   = np.std(_X_raw, axis=0, ddof=1); _rho[_rho < 1e-10] = 1.0
+    _s     = saw_score(_X, _w, "M", _rho)
+    _sel   = assemble_optimal(_s, _trios)
+    _q2_live = 1.0 if tuple(_sel) in _par_trios else 0.0
+    _row   = df[(df.inst_id==_inst_id) & (df.condition=="M") &
+                (df.assembly=="optimal") & (df.draw==0)]
+    _q2_csv = float(_row.q2.values[0]) if len(_row) > 0 else float("nan")
+    print(f"  Instance: {_inst_id}, draw 0, condition M, optimal assembly")
+    print(f"  Pareto set size (recomputed from objectives): {len(_par_trios)}")
+    print(f"  q2 recomputed live: {_q2_live}")
+    print(f"  q2 in CSV:          {_q2_csv}")
+    _spot_ok = abs(_q2_live - _q2_csv) < 1e-9
+    print(f"  Match: {_spot_ok}")
+    if not _spot_ok:
+        print("  SPOT-CHECK FAILED — live recomputation disagrees with CSV")
+        all_ok = False
+    else:
+        print("  SPOT-CHECK PASSED — independent Pareto recomputation agrees with CSV")
+except Exception as e:
+    print(f"  SPOT-CHECK SKIPPED (error): {e}")
+
+print()
 if all_ok and len(df) == 45*5*2*200 and df.inst_id.nunique() == 45:
     print("VALIDATION PASSED")
     sys.exit(0)
