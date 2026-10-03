@@ -97,7 +97,7 @@ xelatex -interaction=nonstopmode main.tex
 ```
 
 Expected final output: `main.pdf` with all checks passing (exit 0).
-Note: `run_e1_v3.py` takes ~5–10 min; skip and use existing results if already run.
+Note: `run_e1_v3.py` takes ~5–10 min on a modern CPU. The full E6 study (`run_e6_generator.py`, 45 instances × 200 draws) was run on an Athena server (NVIDIA RTX 4000 Ada) and took ~584 s; outputs are pre-committed in `results/e6/` for local validation without re-running.
 
 ---
 

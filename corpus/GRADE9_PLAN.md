@@ -52,29 +52,29 @@ O que segue são os **itens adicionais** identificados na pós-auditoria GPT/Gem
 
 | ID | Tarefa | Status |
 |---|---|---|
-| **P-1** | Verificar se abstract contém "389 admissíveis" em contexto correcto (não misturar com 473) | [ ] |
-| **P-2** | Verificar que sec:e6 distingue explicitamente "4.4pp no E6" de "35.8pp no Fogo" — magnitudes diferentes por desenho | [ ] |
-| **P-3** | Auditar toda ocorrência de "for any instance" fora de contextos matemáticos formais (≥ 2 hits no PDF) | [ ] |
-| **P-4** | Verificar I2: formulação "within the class of fixed positive affine transformations... group-constant slopes are necessary and sufficient" — confirmar que o texto não afirma mais do que o teorema prova | [ ] |
-| **P-5** | Verificar m_eff: se δ=0, confirmar que o texto não deriva S>0 a partir de soma zero; corrigir se necessário | [ ] |
-| **P-6** | Verificar TOPSIS: confirmar que o texto não mistura coeficiente quadrático da distância com closeness coefficient | [ ] |
+| **P-1** | Verificar se abstract contém "389 admissíveis" em contexto correcto (não misturar com 473) | ✅ PASS — abstract não menciona 473; \Ncand e \Nvia definidos em macros L23-25 |
+| **P-2** | Verificar que sec:e6 distingue explicitamente "4.4pp no E6" de "35.8pp no Fogo" — magnitudes diferentes por desenho | ✅ DONE — frase adicionada: "4.4pp na família sintética é menor que \EoneWloss pp no Fogo... não comparar directamente" |
+| **P-3** | Auditar toda ocorrência de "for any instance" fora de contextos matemáticos formais (≥ 2 hits no PDF) | ✅ PASS — L2638 e L2784 são afirmações sobre resultados analíticos, não claims empíricos |
+| **P-4** | Verificar I2: "within the class of fixed positive affine transformations... group-constant slopes are necessary and sufficient" — confirmar que o texto não afirma mais do que o teorema prova | ✅ PASS — L286: "A necessary and sufficient condition... Theorem~\ref{thm:groupconst}" |
+| **P-5** | Verificar m_eff: se δ=0, confirmar que o texto não deriva S>0 a partir de soma zero; corrigir se necessário | ✅ PASS — prova pressupõe TV>0 (caso não-trivial); S>0 derivado de ≥1 δ_j>0 |
+| **P-6** | Verificar TOPSIS: confirmar que o texto não mistura coeficiente quadrático da distância com closeness coefficient | ✅ PASS — L1358: C_i = d_i^-/(d_i^- + d_i^+) definido correctamente |
 
 ### Bloco Q — Qualidade de Integração (P2)
 
 | ID | Tarefa | Status |
 |---|---|---|
-| **Q-1** | sec:e6 em Results: confirmar que a tabela/narrativa cobre as 5 condições × 2 assemblies com contagens de base; se só prosa, adicionar tabela minimalista | [ ] |
-| **Q-2** | Limitations §8.1: confirmar que a frase de E6 no final (adicionada em W-1) é consistente com sec:e6 — sem duplicação nem contradição | [ ] |
-| **Q-3** | Conclusion: confirmar que a frase E6 diz "synthetic family" e não generaliza para todas as matrizes | [ ] |
-| **Q-4** | Abstract: confirmar que nenhuma frase usa linguagem de garantia universal que não seja sustentada pelos teoremas (e.g., "always", "all configurations") | [ ] |
+| **Q-1** | sec:e6 em Results: confirmar que a tabela/narrativa cobre as 5 condições × 2 assemblies com contagens de base; se só prosa, adicionar tabela minimalista | ✅ DONE — `tab:e6summary` adicionada: 5 condições × CI, primary loss |
+| **Q-2** | Limitations §8.1: confirmar que a frase de E6 no final (adicionada em W-1) é consistente com sec:e6 — sem duplicação nem contradição | ✅ PASS — L2666-2682: consistente, não contradiz sec:e6 |
+| **Q-3** | Conclusion: confirmar que a frase E6 diz "synthetic family" e não generaliza para todas as matrizes | ✅ PASS — L2752-2756: "synthetic family" explícito |
+| **Q-4** | Abstract: confirmar que nenhuma frase usa linguagem de garantia universal que não seja sustentada pelos teoremas (e.g., "always", "all configurations") | ✅ PASS — 0 hits no abstract |
 
 ### Bloco R — Reprodutibilidade (P3)
 
 | ID | Tarefa | Status |
 |---|---|---|
-| **R-1** | Confirmar que `e6_seeds.json`, `e6_raw_results.csv`, `e6_summary.csv` estão todos commitados e acessíveis no HEAD | [ ] |
-| **R-2** | README: confirmar que o pipeline end-to-end menciona que `run_e1_v3.py` é ~5–10min e que o E6 completo levou 584s na Athena (para reprodução independente) | [ ] |
-| **R-3** | `validate_e6.py`: confirmar que o script valida contagens de base (45), seeds (5), geometrias (3), N (3) — não só os números finais | [ ] |
+| **R-1** | Confirmar que `e6_seeds.json`, `e6_raw_results.csv`, `e6_summary.csv` estão todos commitados e acessíveis no HEAD | ✅ PASS — git ls-files: 5 artefactos em results/e6/ |
+| **R-2** | README: confirmar que o pipeline end-to-end menciona que `run_e1_v3.py` é ~5–10min e que o E6 completo levou 584s na Athena (para reprodução independente) | ✅ DONE — README actualizado com runtimes e nota sobre artefactos pré-commitados |
+| **R-3** | `validate_e6.py`: confirmar que o script valida contagens de base (45), seeds (5), geometrias (3), N (3) — não só os números finais | ✅ PASS — L13-14: `inst_id.nunique()==45`; L53: `len(df)==45*5*2*200` |
 
 ### Bloco S — Submissão Final (P3)
 
