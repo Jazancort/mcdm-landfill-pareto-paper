@@ -228,36 +228,31 @@ showed no clear pooled average effect
 
 The reason is a mechanism that operates upstream of the aggregation
 operator, and it is the analytical core of the paper.
-That a criterion weight cannot be interpreted independently of the scale
-on which the criterion is measured has been understood since
-\citet{Choo1999}, who distinguished nominal from effective weights and
-argued that the latter governs the outcome.
-We state this relation in closed form: in any additive aggregation, the
-effective weight of criterion $j$ is $w_j^{\mathrm{eff}} \propto w_j
-A_j$, where $A_j$ is the amplitude of the normalised column.
-Three consequences follow immediately, and none is available from the
-qualitative statement.
+\citet{Choo1999} distinguished nominal from effective weights and argued
+that the effective weight governs the outcome; we state this relation in
+closed form.
+In any additive aggregation, the effective weight of criterion $j$ is
+$w_j^{\mathrm{eff}} \propto w_j A_j$, where $A_j$ is the amplitude of
+the normalised column.
+Three consequences follow immediately.
 Min--max normalisation has $A_j \equiv 1$ and is the unique
 weight-preserving choice among the three standard families.
 Vector normalisation has $A_j = \rho_j$, determined by the distributional
-shape of the criterion, which in our data multiplies one criterion's
-weight by $2.88\times$ and reduces another to $0.53\times$
-(\textit{urban}) without any of this appearing in the
-analyst's report.
-Midranks rescaled to the unit interval contract with tie mass, and every
-binary criterion loses approximately half its effective weight relative
-to a tie-free continuous criterion in rank space, irrespective of
-class balance.
+shape of the criterion; in our data this multiplies one criterion's
+weight by $2.88\times$ and reduces another (\textit{urban}) to
+$0.53\times$, without any of this appearing in the analyst's report.
+Under rank normalisation, every binary criterion loses approximately
+half its effective weight relative to a tie-free continuous criterion,
+regardless of class balance.
 
 The mechanism also explains why exact assembly has no average effect.
-Exact optimisation of an additive score is guaranteed to yield a
-Pareto-efficient portfolio under the weights that score encodes.
+Exact optimisation of an additive score yields a Pareto-efficient
+portfolio under the weights that score encodes.
 When $w^{\mathrm{eff}}$ departs from $w$ within an objective group,
 exact optimisation solves the wrong problem exactly: replacing greedy with
 optimal assembly gains $+\AsmMM$~pp under min--max normalisation and loses
 $\AsmVec$~pp under vector normalisation, and the loss appears under both SAW
 and TOPSIS.
-We sharpen this into a structural result.
 Exact assembly remains Pareto-efficient for every instance if and only
 if the normalised amplitudes are constant within each objective group
 (Theorem~\ref{thm:groupconst}): distortion between groups only relocates
@@ -296,10 +291,10 @@ Our contributions are as follows.
     established qualitatively by \citet{Choo1999}, with the amplitude
     $A_j$ identified for min--max, vector and rank normalisation
     (Section~\ref{sec:three_norms}).
-    Three effects previously reported separately, namely vector-normalisation
-    distortion, tie-induced contraction in rank space, and amplitude loss
-    from normalising over inadmissible alternatives, become corollaries
-    of one identity.
+    Three effects previously reported separately become corollaries of
+    one identity: vector-normalisation distortion, tie-induced weight
+    contraction in rank space, and amplitude loss from normalising over
+    inadmissible alternatives.
   \item A measurement of the cost of that distortion in units of Pareto
     efficiency rather than rank agreement, against an exhaustively
     enumerated frontier of $\Ntrios$ portfolios under a hard separation
@@ -2622,8 +2617,7 @@ equivalent to zero within $\pm2.5$~pp by TOST; sign cell-dependent
 from $\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp),
 and the mechanism explains why: aggregation acts downstream of the
 distortion.
-One qualification is worth stating explicitly.
-The recommendations above apply to SAW and TOPSIS, which inherit the
+However, these recommendations apply to SAW and TOPSIS, which inherit the
 amplitude at exponents $\alpha=1$ and $\alpha=2$.
 VIKOR is invariant to per-criterion affine transformation by its ratio
 construction, so the choice of normalisation within the affine family
@@ -2656,14 +2650,14 @@ aggregation.
 Remark~\ref{prop:exponent} extends it to distance-based and
 ordinal families through the amplitude exponent, but the extension is
 exact for the squared TOPSIS distance rather than the distance itself,
-and we have not characterised families whose contribution is not
-homogeneous in $w_j n_j(\cdot)$, outranking methods with non-linear
-preference functions in particular.
+and we have not characterised families where the score's dependence on
+$w_j$ and $n_j(\cdot)$ is non-linear, outranking methods with
+non-linear preference functions in particular.
 
 Under optimal assembly the three normalisation levels are ordered by
-$\mathrm{TV}$ on Fogo (Table~\ref{tab:tvorder}), but three levels with
-\textit{vector} carrying most of the regressor variance do not identify
-a predictive coefficient.
+$\mathrm{TV}$ on Fogo (Table~\ref{tab:tvorder}), but with only three
+levels and \textit{vector} accounting for most of the variance, the
+data do not support a reliable predictive slope.
 The interval $\mathrm{TV}\in(0.10,\,0.30)$ contains no standard
 normalisation: Weitendorf's linear transformation is algebraically
 identical to min--max (for a cost criterion,
@@ -2784,12 +2778,11 @@ Normalisation was worth $+\NormGreedyContrast$~pp under greedy assembly.
 Exact assembly had no average effect, because its sign depends on the
 normalisation: it gained $+\AsmMM$~pp under min--max and lost
 $\AsmVec$~pp under vector normalisation.
-The explanation is analytical: in additive aggregation with criterion
-columns that are strictly increasing affine functions of the oriented
-min--max partial values, the effective weight of criterion $j$ is
-proportional to $w_jA_j$, and exact assembly is Pareto-efficient for
-any weights and any instance if and only if amplitudes are constant
-within each objective group (Theorem~\ref{thm:groupconst}).
+The explanation is analytical: the effective weight of criterion $j$ in
+additive aggregation is proportional to $w_jA_j$, and exact assembly is
+Pareto-efficient for any weights and any instance if and only if
+amplitudes are constant within each objective group
+(Theorem~\ref{thm:groupconst}).
 Rank normalisation is reported separately as an empirical observation:
 it can reallocate effective range but may also change within-column
 scale shape, so the affine-scale theorem does not cover it in general.
@@ -2830,7 +2823,7 @@ Where weights encode stakeholder judgements, as AHP weights do, a
 normalisation that silently multiplies one criterion by $2.88\times$ and
 reduces another to $0.53\times$ is difficult to defend.
 
-Three limits delimit these findings.
+Three limits apply to these findings.
 The closed form is exact for additive aggregation; TOPSIS and VIKOR
 combine distances to ideal points, where amplitudes enter quadratically
 or in ratio form, and extending the characterisation to those families
@@ -2840,21 +2833,20 @@ aggregation; the amplification of within-group distortion by
 between-group distortion observed in Section~\ref{sec:e1} is measured on
 one instance and not yet explained analytically.
 The magnitudes are specific to one candidate set: the analytical results
-hold for any instance, but the size of the distortion depends on the
-marginal distributions, and a criterion with $350$ tied zeros among
-$\Nvia$ sites is an adversarial case; extending the measurement to
-further instances remains open.
+hold for any instance, but the size of the distortion depends on how
+each criterion's values are distributed, and a criterion with $350$ tied
+zeros among $\Nvia$ sites is an extreme case; extending the measurement
+to further instances remains open.
 
 The reference-set analyses in Section~\ref{sec:refset} and
 Remark~\ref{rem:nonmonotone} are based on post hoc exploratory cells
-(declared in the pre-specification log, entry DEV-E4-007) and should be
-treated as descriptive rather than confirmatory.
-The post hoc exploratory decision rule (PRESPEC\_R1, rule R1-2) found that
-greedy assembly improves by $+\RefSetGreedyGain$~pp under consistent
-coding ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$); under optimal
+and should be treated as descriptive rather than confirmatory.
+The post hoc analysis found that greedy assembly improves by
+$+\RefSetGreedyGain$~pp under consistent coding
+($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$); under optimal
 assembly both cells reach $100\%$ on the sampled draws, so the estimated
-contrast was zero on this instance (rule R1-1: observation, not a
-general zero-cost guarantee for mismatched reference sets).
+contrast was zero on this instance, which is an observation, not a
+general zero-cost guarantee for mismatched reference sets.
 
 The broader implication is methodological.
 Benchmarking multi-criteria methods by agreement between their rankings
