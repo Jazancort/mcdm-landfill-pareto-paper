@@ -1524,13 +1524,13 @@ inversions.
 Under vector normalisation, $v_j(a) = x_j(a) / \lVert\mathbf{x}_j\rVert_2$.
 The amplitude is $A_j = \rho_j$ as defined in
 Section~\ref{sec:amplitude}, and by~\eqref{eq:weff}
-\begin{equation}
+\begin{align}
   \label{eq:weff_vec}
-  w_j^{\mathrm{eff}} = \frac{w_j\,\rho_j}{\sum_k w_k\,\rho_k},
-  \qquad
-  \rho_j = \frac{\max_a x_j(a) - \min_a x_j(a)}
+  w_j^{\mathrm{eff}} &= \frac{w_j\,\rho_j}{\sum_k w_k\,\rho_k},
+  &
+  \rho_j &= \frac{\max_a x_j(a) - \min_a x_j(a)}
                 {\lVert\mathbf{x}_j\rVert_2}.
-\end{equation}
+\end{align}
 For binary criteria, $\rho_j = 1/\sqrt{n_1}$ exactly, where $n_1$ is
 the number of ones.
 
