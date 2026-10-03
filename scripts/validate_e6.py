@@ -16,6 +16,23 @@ print(f"Conditions: {sorted(df.condition.unique())}")
 print(f"Protocol hash: {seeds['protocol_hash']}")
 print()
 
+# Robustness checks (NaN, domain, completeness)
+print("ROBUSTNESS CHECKS:")
+nan_q2 = df.q2.isna().sum()
+print(f"  NaN in q2:       {nan_q2}  (expected 0)")
+non_binary = (~df.q2.isin([0.0, 1.0])).sum()
+print(f"  Non-binary q2:   {non_binary}  (expected 0)")
+expected_rows = 45 * 5 * 2 * 200
+row_ok = len(df) == expected_rows
+print(f"  Row count:       {len(df)} == {expected_rows}? {row_ok}")
+inst_ok = df.inst_id.nunique() == 45
+print(f"  Instance count:  {df.inst_id.nunique()} == 45? {inst_ok}")
+if nan_q2 > 0 or non_binary > 0 or not row_ok or not inst_ok:
+    print("  ROBUSTNESS FAILED — see above")
+    sys.exit(1)
+print("  All robustness checks PASS")
+print()
+
 # Regression invariant
 print("REGRESSION INVARIANT (M=B=C=100% under optimal):")
 all_ok = True

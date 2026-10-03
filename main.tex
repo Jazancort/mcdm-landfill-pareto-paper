@@ -2336,16 +2336,22 @@ CI on $n=45$; bootstrap $B=4000$ as sensitivity check),
 avoiding pseudoreplication across draws.
 
 \paragraph{Results.}
-Under optimal assembly, conditions M, B and C attain $Q_2=100\%$ on
-every instance across all $9{,}000$ draw-instances (45 bases
-$\times$ 200 draws), confirmed by per-draw Pareto membership checks
-in \texttt{validate\_e6.py}.
-The group-scalarisation argument ($\lambda_g = \sum_{j\in G_g}w_j
-/ W_{G_g} > 0$ for all groups) is consistent with this finding and
-provides a structural explanation; the 100\% result is reported as
-an empirical observation on this generating family, confirmed
-draw-by-draw, rather than as a universal analytic guarantee
-independent of instance geometry.
+\paragraph{Results.}
+Under exact assembly (exhaustive argmax over all pre-enumerated feasible
+trios), conditions M, B and C recorded $Q_2=100\%$ across all 45
+generated instances and 200 weight draws per instance
+($9{,}000$ instance-draw pairs).
+The $Q_2$ flags in the raw results file were computed during execution by
+comparing each selected trio against the Pareto-efficient set derived from
+the per-instance objectives; \texttt{validate\_e6.py} confirms that all
+recorded flags lie in $\{0,1\}$ and that the full $45 \times 5 \times 2
+\times 200$ matrix is complete.
+This is reported as an empirical result for the sampled generating family.
+It is consistent with the design intent, but it is not established as a
+universal analytic consequence: because score weights vary within groups
+while the objective weights are fixed, within-group residual terms can in
+principle cause the argmax to differ from a Pareto-efficient solution,
+and whether this occurs depends on instance geometry.
 The primary estimand, within-group loss $Q_2[\text{M}]-Q_2[\text{W}]$,
 is $4.4$~pp ($95\%$ normal-approximation CI $[2.2,\,6.6]$~pp, based on
 the per-instance paired differences $d_i = 100\bigl(\bar{I}_{i,M}-\bar{I}_{i,W}\bigr)$
@@ -2360,9 +2366,11 @@ establish the absence of between-group interaction in general.
 \centering
 \caption{Experiment~E6: Pareto attainment ($Q_2$, \%) across 45 synthetic
 instances ($N\in\{50,100,200\}$, 3 geometries, 5 seeds; optimal assembly).
-M/B/C: empirical controls attaining $Q_2=100\%$ on all 9,000 draw-instances
-in this generating family (per-draw Pareto check); W/V: empirical
-within-group amplitude perturbations. $\kappa=200$, $n_{\text{draws}}=200$.}
+M/B/C: recorded attainment of $Q_2=100\%$ for each condition across
+$9{,}000$ instance-draw pairs under exact assembly; empirical result
+for this generating family, not guaranteed by group-weight positivity
+alone. W/V: empirical within-group amplitude perturbations.
+$\kappa=200$, $n_{\text{draws}}=200$.}
 \label{tab:e6summary}
 \begin{tabular}{lrr}
 \toprule
@@ -2731,12 +2739,13 @@ and scored under five conditions that isolate the within-group component:
 an aligned control (M), within-group distortion alone (W), full vector
 amplitudes (V), between-group distortion (B), and exact compensation (C).
 Under optimal assembly, M, B and C attain $Q_2=100\%$ on every
-instance across all $9{,}000$ draw-instances, confirmed by
-per-draw Pareto membership checks.
-The group-scalarisation structure ($\lambda_g>0$) is consistent with
-this and provides a structural explanation, but the 100\% attainment
-is reported as an empirical finding on this generating family rather
-than a universal analytic guarantee.
+instance across all $9{,}000$ draw-instances.
+This is an empirical result for this generating family.
+It should not be interpreted as a universal analytic guarantee:
+because score weights vary within groups while the objective weights
+are fixed, within-group residual terms can in principle cause the
+argmax to miss a Pareto-efficient solution, and whether this occurs
+depends on instance geometry.
 The empirical estimand is the within-group loss $Q_2[\mathrm{M}]-Q_2[\mathrm{W}]$,
 estimated at $4.4$~pp with a $95\%$ normal-approximation confidence
 interval of $[2.2,\,6.6]$~pp using the 45 instances as the primary
