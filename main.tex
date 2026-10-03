@@ -292,10 +292,11 @@ Our contributions are as follows.
     that the within-group component carries the loss.
   \item An exact identity between PROMETHEE~II under the usual preference
     function and rank-weighted SAW, holding for arbitrary tie structure
+    including heterogeneous tie patterns across criteria
     (Section~\ref{prop:p2}), which follows from the axiomatic results
-    of \citet{Bouyssou1992} and \citet{Marchant1996}; on Fogo Island
-    the entire departure of the implemented rank score from the net flow
-    is attributable to tie structure, not to the aggregation operator.
+    of \citet{Bouyssou1992} and \citet{Marchant1996}; ties can change
+    criterion amplitudes but do not create disagreement between the two
+    scores when both use the same oriented midranks and weights.
 \end{enumerate}
 
 \noindent
@@ -909,9 +910,11 @@ The \emph{secondary} measure is
 the expected optimality gap~\eqref{eq:gap}, which is continuous on
 $[0,1]$ and retains information about how far below the frontier the
 assembled portfolio falls.
-$Q_3=0$ if $Q_2=1$; the converse holds when all dominations are strict
-(gap may be zero for weakly dominated portfolios; $Q_2$ uses the full
-dominance algorithm and is the primary measure).
+$Q_3=0$ if $Q_2=1$; the converse does not hold in general: a portfolio
+with $\mathrm{gap}=0$ may still be dominated (the gap measures
+simultaneous improvement and can be zero for weakly dominated
+portfolios). Pareto membership is determined by the dominance algorithm;
+$Q_2$ is the primary measure.
 Both are averaged over $\ndraws$ draws per cell.
 The cell SAW/min--max/optimal satisfies $Q_2=1$ and $Q_3=0$ by
 Proposition~\ref{prop:p1:stmt}; it serves as a regression test and is
@@ -1774,8 +1777,10 @@ normalisation, and PROMETHEE~II attain the reference set.
 \centering
 \caption{Portfolios under nominal weights $\wahp$, space~$A$
   (normalisation over all $\Ncand$ candidates). The gap is defined
-  in~\eqref{eq:gap}; $\mathrm{gap}=0$ iff the portfolio lies in the
-  reference set.}
+  in~\eqref{eq:gap}. Pareto membership (blue diamonds in
+  Figure~\ref{fig:pareto}) is determined by a separate dominance test;
+  the gap measures simultaneous improvement and can be zero for a
+  dominated portfolio.}
 \label{tab:canonical}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llccccc}
 \toprule
@@ -2458,20 +2463,18 @@ relations are crisp; \citet{Marchant1996} extends the Borda equivalence
 to valued relations.
 With the usual preference function the relations are crisp by
 construction, so the identity is implied.
-We restate it to fix the affine constants, to record that it holds
-exactly under arbitrary tie structure, and because on Fogo Island
-the entire departure of the implemented rank score from the net flow is
-attributable to the tie structure inherited by the midranks, not to the
-aggregation operator.
-(When all criteria have the same tie structure, the amplitude is uniform
-and no divergence occurs; the tie structure matters only when it varies
-across criteria.)
+We restate it to fix the affine constants and to record that it holds
+exactly under arbitrary tie structure, including heterogeneous tie
+patterns across criteria.
+Ties can change criterion amplitudes relative to min--max values but do
+not create disagreement between PROMETHEE~II and the weighted midrank
+score when both use the same oriented midranks and the same weights.
 Dividing by $N+1$ is a common scale factor and does not alter effective
 weights; the distortion of \texttt{perm}'s amplitude to $0.616\times$
 is caused by the $350$ tied zeros compressing its midrank range,
 independently of the final rescaling constant.
-Without the identity, that divergence would plausibly be attributed to
-the method.
+Without the identity, that amplitude reduction would plausibly be
+attributed to the aggregation operator rather than to the tie structure.
 
 \subsection{Implications for practice}
 \label{sec:practice}

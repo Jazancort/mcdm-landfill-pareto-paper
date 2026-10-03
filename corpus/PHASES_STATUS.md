@@ -637,3 +637,29 @@ No claims without evidence remain. B1 is marked SKIP. The only open item is a mi
 
 **Ready to receive P1 gate.**
 
+
+## R0 — Numeric provenance audit (generated_validated_cache policy)
+
+### TV_B_VEC / TV_W_VEC
+
+| field | value | computed from | formula | source_hash(AJ_VEC+W) | match |
+|---|---|---|---|---|---|
+| TV_B_VEC | 0.2489 | AJ_VEC + W + OBJ_GROUPS | eq:TV_B = (1/2) sum_g |W_g^eff - W_g|; w_eff = w*A/dot(w,A) | 7272775f86629f87 | COMPUTED_MATCH |
+| TV_W_VEC | 0.1986 | AJ_VEC + W + OBJ_GROUPS | eq:TV_W = sum_g W_g * TV_{W,g} | 7272775f86629f87 | COMPUTED_MATCH |
+| TV_VEC   | 0.3146 | AJ_VEC + W              | eq:TV = (1/2) sum_j |w_eff_j - w_j| | 7272775f86629f87 | COMPUTED_MATCH |
+
+Constants in fogo_constants.py are **generated_validated_cache** — recomputable from AJ_VEC+W by the manuscript formula.
+They are NOT evidence; they are cached outputs of the above computation.
+
+### E1 source conflict
+
+| claim | macro | csv source | log source | status |
+|---|---|---|---|---|
+| EoneWloss = 35.8 | \\EoneWloss{35.8} | e1_results.csv W/optimal = 100.0% (INVALID — buggy pipeline) | e1_diag.log W optimal = 64.20% (valid v3 pipeline) | **UNVERIFIED**: log value used in macro; CSV is stale/invalid |
+| EoneVloss = 43.2 | \\EoneVloss{43.2} | e1_results.csv V/optimal = 56.8% → loss=43.2 | e1_diag.log consistent | VALID via CSV+log agreement |
+
+The authoritative source for E1-W/optimal is **e1_diag.log** from commit c97235d (float64+eps v3 pipeline).
+e1_results.csv is stale (buggy pipeline, commit 380ee1a INVALID) and must not be used as evidence.
+The per-draw trace for v3 is unavailable; E1-W optimal Q2=64.2% rests on e1_diag.log aggregate only.
+Status: **UNVERIFIED** (no per-draw trace) — forwarded to P2 numerical rerun.
+
