@@ -736,14 +736,14 @@ All dominance tests use a tolerance $\varepsilon=10^{-9}$.
 
 For dominated portfolios we report a scale-free shortfall.
 With $R_\ell = \max_{t\in\Tset}F_\ell - \min_{t\in\Tset}F_\ell$,
-\begin{equation}
+\begin{multline}
   \label{eq:gap}
   \mathrm{gap}(t) = \max_{t'\in\Tset}\;\min\!\left(
     \frac{F_1(t){-}F_1(t')}{R_1},\;
-    \frac{F_2(t){-}F_2(t')}{R_2},\;
-    \frac{F_3(t'){-}F_3(t)}{R_3}
-  \right)^{\!+},
-\end{equation}
+    \frac{F_2(t){-}F_2(t')}{R_2},\right.\\
+  \left.\frac{F_3(t'){-}F_3(t)}{R_3}
+  \right)^{\!+\!},
+\end{multline}
 where $(x)^{+}=\max(0,x)$, so $\mathrm{gap}(t)=0$ if $t\in\Fset$.
 The converse holds when the dominator $t'$ improves strictly on all
 three objectives; if $t'$ dominates $t$ with equality on some criteria
