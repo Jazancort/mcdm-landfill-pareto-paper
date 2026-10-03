@@ -1,9 +1,10 @@
 # Plano de Execução — Nota 9 Editorial (EJOR)
 
 **Repositório:** `Jazancort/mcdm-landfill-pareto`  
-**HEAD actual:** `74ffb2a` (2026-10-03)  
+**HEAD actual:** `03f0fcf` (v1.8 — 2026-10-03)  
 **Plano criado:** 2026-10-03  
-**Escopo:** fechado — 20 itens originais + pós-auditoria GPT/Gemini; sem E7, sem nova pergunta
+**Escopo:** fechado — 20 itens originais + pós-auditoria GPT/Gemini; sem E7, sem nova pergunta  
+**Avaliação GPT final:** 9,0/10 provisória (v1.8)
 
 ---
 
@@ -131,16 +132,41 @@ Cada critério é **verificável** — não é aspiracional.
 ## Log de Execução
 
 ```
-Data       | ID   | Arquivo              | Mudança                        | Commit  | Resultado
------------|------|----------------------|-------------------------------|---------|----------
-2026-10-03 | I5   | main.tex             | Contraexemplo F3-max correcto  | 74ffb2a | PASS
-2026-10-03 | W/V  | main.tex             | Claim suavizado (empirical)    | 74ffb2a | PASS
-2026-10-03 | sec  | main.tex             | sec:e6 adicionada              | 74ffb2a | PASS
-2026-10-03 | G3   | IMPROVEMENT_PLAN.md  | PROM = derivação, não orig.    | 74ffb2a | PASS
+Data       | ID        | Arquivo              | Mudança                                  | Commit  | Resultado
+-----------|-----------|----------------------|------------------------------------------|---------|----------
+2026-10-03 | I5        | main.tex             | Contraexemplo F3-max correcto            | 74ffb2a | PASS
+2026-10-03 | W/V       | main.tex             | Claim suavizado (empirical)              | 74ffb2a | PASS
+2026-10-03 | sec:e6    | main.tex             | sec:e6 adicionada em Results             | 74ffb2a | PASS
+2026-10-03 | G3        | IMPROVEMENT_PLAN.md  | PROM = derivação, não orig.              | 74ffb2a | PASS
+2026-10-03 | P-2       | main.tex             | E6 vs Fogo magnitude distinction        | aa3753f | PASS
+2026-10-03 | Q-1       | main.tex             | tab:e6summary adicionada                 | aa3753f | PASS
+2026-10-03 | R-2       | README.md            | Runtimes E1/E6                           | 2afa033 | PASS
+2026-10-03 | CI-label  | main.tex             | 'hierarchical CI' → 'normal-approx CI'  | caf7c02 | PASS
+2026-10-03 | sec:e6-pos| main.tex             | sec:e6 movida para antes de Discussion   | caf7c02 | PASS
+2026-10-03 | P6-TOPSIS | main.tex             | Fórmula TOPSIS corrigida na prosa        | caf7c02 | PASS
+2026-10-03 | P5-meff   | main.tex             | δ≠0 guard adicionado                     | caf7c02 | PASS
+2026-10-03 | audit-CI  | validate_e6.py       | CI [2.2,6.6] calculado de raw data       | 19caed0 | PASS
+2026-10-03 | GPT-r2-D  | main.tex             | 'hierarchical confidence' removido       | 8340c85 | PASS
+2026-10-03 | GPT-r2-F  | main.tex             | 'not collinear'/'widen prop.' removidos  | 8340c85 | PASS
+2026-10-03 | GPT-r2-H  | main.tex             | Greedy heurístico vs global clarificado  | 8340c85 | PASS
+2026-10-03 | GPT-r2-G  | main.tex             | 'estimable'→'retained cells'             | 8340c85 | PASS
+2026-10-03 | GPT-r2-E  | main.tex             | Escopo afim no abstract+conclusion       | 8340c85 | PASS
+2026-10-03 | GPT-r2-I  | main.tex             | 'partly induced' → 2×2 decomp            | 8340c85 | PASS
+2026-10-03 | GPT-r3-A  | main.tex+validate    | E6 empírico; λg explicado; spotcheck     | 1a337f9 | PASS
+2026-10-03 | GPT-r3-B  | main.tex             | Ranks qualificados empiricamente         | 1a337f9 | PASS
+2026-10-03 | GPT-r3-C  | main.tex             | TOST e assembly linguagem correcta       | 1a337f9 | PASS
+2026-10-03 | GPT-r3-D  | main.tex             | u,v definidos no corolário               | 1a337f9 | PASS
+2026-10-03 | GPT-r3-TV | main.tex             | TV = half ell1 norm (×2)                 | 1a337f9 | PASS
+2026-10-03 | GPT-r4    | main.tex+validate    | E6 empírico final; completeness; fail-ok | 0f62c5c | PASS
+2026-10-03 | GPT-r5-42 | validate_e6.py       | 42/92 reconciliado (X_norm, sem duplo +1000) | 03f0fcf | PASS
+2026-10-03 | GPT-r5-all| main.tex+validate    | Completude chave; fail-closed; label conserv | 03f0fcf | PASS
 ```
 
 ---
 
-## Próxima Acção
+## Estado Final
 
-**Executar S1:** verificar P-1 a P-4 (abstract 473/389, sec:e6 magnitudes E6 vs Fogo, "for any instance", I2 escopo do teorema). Cada item recebe PASS ou BLOCKED com localização exacta no TeX.
+**Todos os 17 itens do plano: PASS/DONE**  
+**Avaliação GPT: 9,0/10**  
+**Item opcional não bloqueador:** implementação independente de Pareto dominance  
+**Próxima acção:** submissão ao EJOR

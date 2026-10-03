@@ -1,6 +1,35 @@
 # Estado das fases: plano de melhoria
 Referência: `corpus/IMPROVEMENT_PLAN.md` (o plano não se duplica aqui)  
-Última actualização: 2026-10-02 01:49 | por: sessão 2026-10-01/02
+Última actualização: 2026-10-03 03:30 | por: sessão 2026-10-03
+
+---
+
+## Nota de Validação E6 (v1.8 — 2026-10-03)
+
+**HEAD:** `03f0fcf` — tag `v1.8-final-candidate`  
+**Avaliação GPT:** 9,0/10 provisória
+
+> The validation checks binary indicators and the completeness and uniqueness of
+> the prespecified instance--draw--condition--assembly keys. A same-implementation
+> reproducibility check for one instance covers conditions M and W and reproduces
+> the recorded Pareto-set size and selected $Q_2$ indicators. This check does not
+> constitute an independent implementation of Pareto dominance or a rerun of all
+> instance--draw pairs. The reported 100% results for M, B, and C should therefore
+> be interpreted as empirical findings for this generating family, not as
+> consequences of positive group-weight sums alone.
+
+**Reconciliação 42/46/92:** causa raiz identificada — spot-check anterior usava
+`sid+1000` como argumento (`generate_criteria` já adiciona 1000 internamente) e
+`X_raw` em vez de `X_norm`. Com `generate_criteria(N, sid)` + `X_norm`: `n_pareto=42` == CSV.
+
+**validate_e6.py checks (PASS):**
+- NaN: 0; non-binary: 0; rows: 90000/90000; instances: 45/45
+- Completeness by key (cartesian product 45×200×5×2): 0 missing, 0 extra, 0 duplicates
+- Regression invariant M/B/C=100% under optimal: OK
+- Primary loss: 4.4pp [2.2, 6.6] 95% CI
+- Spot-check n_pareto=42 matches CSV; q2 M=1.0, W=1.0 for draw 0
+
+---
 
 ## Legenda
 **Estado:** `TODO` | `DOING` | `DONE` | `BLOCKED` (motivo na coluna Notas) | `SKIP` (justificar)  
