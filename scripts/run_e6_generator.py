@@ -154,7 +154,9 @@ def generate_criteria(N, seed):
 # FEASIBLE TRIO FINDER
 # ---------------------------------------------------------------------------
 def find_feasible_trios(lat, lon, dmin_km):
-    """Return array of (i,j,k) indices with pairwise distance >= dmin_km."""
+    """Return array of (i,j,k) indices with pairwise distance >= dmin_km.
+    Vectorised: builds distance matrix then uses np.argwhere on boolean mask.
+    """
     N = len(lat)
     lat_r = np.radians(lat)
     lon_r = np.radians(lon)
@@ -164,14 +166,15 @@ def find_feasible_trios(lat, lon, dmin_km):
     dist = 2 * 6371.0 * np.arcsin(np.sqrt(np.clip(a, 0, 1)))
     ok = dist >= dmin_km
     np.fill_diagonal(ok, False)
+    # Upper-triangle pairs that satisfy distance
+    ii, jj = np.where(np.triu(ok, k=1))
+    # For each valid pair (i,j), find all k > j where ok[i,k] and ok[j,k]
     trios = []
-    for i in range(N):
-        for j in range(i+1, N):
-            if not ok[i, j]:
-                continue
-            for kk in range(j+1, N):
-                if ok[i, kk] and ok[j, kk]:
-                    trios.append((i, j, kk))
+    for idx in range(len(ii)):
+        i, j = ii[idx], jj[idx]
+        ks = np.where(ok[i, j+1:] & ok[j, j+1:])[0] + j + 1
+        for k in ks:
+            trios.append((i, j, int(k)))
     return np.array(trios, dtype=np.int32) if trios else np.empty((0, 3), dtype=np.int32)
 
 
@@ -182,16 +185,13 @@ def compute_objectives(X, trios):
     """
     F1, F2: sum of costs (G1, G2) — minimise
     F3: sum of benefits (G3) — maximise
-    Returns (T, 3) array.
+    Returns (T, 3) array. Vectorised via NumPy indexing.
     """
-    n_trios = len(trios)
-    F = np.zeros((n_trios, 3))
-    for t_idx, (i, j, kk) in enumerate(trios):
-        sites = [i, j, kk]
-        F[t_idx, 0] = sum(X[s, c] for s in sites for c in COST_IDX[:3])    # G1
-        F[t_idx, 1] = sum(X[s, c] for s in sites for c in COST_IDX[3:])    # G2
-        F[t_idx, 2] = sum(X[s, c] for s in sites for c in BEN_IDX)         # G3
-    return F
+    X_trios = X[trios]                                       # (T, k, M)
+    F1 = X_trios[:, :, COST_IDX[:3]].sum(axis=(1, 2))       # G1 sum
+    F2 = X_trios[:, :, COST_IDX[3:]].sum(axis=(1, 2))       # G2 sum
+    F3 = X_trios[:, :, BEN_IDX].sum(axis=(1, 2))             # G3 sum
+    return np.column_stack([F1, F2, F3])
 
 
 # ---------------------------------------------------------------------------
@@ -300,22 +300,86 @@ def compute_q2(selected_trio, F, pareto_idx):
 
 
 def pareto_efficient_indices(F):
-    """Return set of indices of non-dominated rows in F (F1,F2 min; F3 max)."""
+    """Non-dominated indices for 3-objective problem (F0,F1 min; F2 max).
+    Uses a sort-and-sweep approach: O(n log n) average case.
+    """
     n = len(F)
-    pareto_set = set()
-    for i in range(n):
-        dominated = False
-        for j in range(n):
-            if i == j:
-                continue
-            # j dominates i if: F1_j<=F1_i, F2_j<=F2_i, F3_j>=F3_i, at least one strict
-            if (F[j,0] <= F[i,0] and F[j,1] <= F[i,1] and F[j,2] >= F[i,2] and
-                (F[j,0] < F[i,0] or F[j,1] < F[i,1] or F[j,2] > F[i,2])):
-                dominated = True
-                break
-        if not dominated:
-            pareto_set.add(i)
-    return pareto_set
+    if n == 0:
+        return set()
+    # All objectives to minimise
+    Fm = np.column_stack([F[:, 0], F[:, 1], -F[:, 2]])
+    # Sort by F0 ascending, break ties by F1, then F2
+    order = np.lexsort((Fm[:, 2], Fm[:, 1], Fm[:, 0]))
+    Fs = Fm[order]            # sorted matrix
+    orig_idx = order          # mapping sorted→original
+
+    dominated_sorted = np.zeros(n, dtype=bool)
+
+    # After sorting by F0, point i can only be dominated by points j < i
+    # (with F0[j] <= F0[i]). But we still need to check F1 and F2.
+    # Use a running Pareto front on (F1, F2) for the prefix seen so far.
+    # For each new point, check if it's dominated by the current 2D front.
+    # Maintain front sorted by F1; a point in front dominates new_pt iff
+    #   front_F1 <= new_F1 AND front_F2 <= new_F2.
+    # The front is itself non-dominated in (F1,F2), so it has F1 increasing
+    # and F2 decreasing. If any front point has F1<=new_F1 and F2<=new_F2,
+    # then the minimum F2 in the prefix with F1<=new_F1 is <= new_F2.
+
+    # But we must also handle ties in F0 carefully: points with same F0
+    # cannot dominate each other through F0 alone — we process them together.
+
+    front_F1 = []   # sorted ascending
+    front_F2 = []   # corresponding F2 values (should be descending for non-dom front)
+
+    i = 0
+    while i < n:
+        # Find group of points with same F0[i]
+        j = i
+        while j < n and Fs[j, 0] == Fs[i, 0]:
+            j += 1
+        group = Fs[i:j]   # (g, 3)
+        group_dominated = np.zeros(j - i, dtype=bool)
+
+        # Check each point in group against current front
+        for li in range(j - i):
+            f1_new, f2_new = group[li, 1], group[li, 2]
+            # Is there a front point with F1 <= f1_new AND F2 <= f2_new?
+            for fi in range(len(front_F1)):
+                if front_F1[fi] <= f1_new and front_F2[fi] <= f2_new:
+                    group_dominated[li] = True
+                    break
+
+        dominated_sorted[i:j] = group_dominated
+
+        # Add non-dominated group points to front, then prune front
+        for li in range(j - i):
+            if not group_dominated[li]:
+                f1_new, f2_new = group[li, 1], group[li, 2]
+                # Insert and maintain front: remove points dominated by new point
+                front_F1_new, front_F2_new = [], []
+                for fi in range(len(front_F1)):
+                    # Keep front point if it's NOT dominated by new point
+                    if not (f1_new <= front_F1[fi] and f2_new <= front_F2[fi]):
+                        front_F1_new.append(front_F1[fi])
+                        front_F2_new.append(front_F2[fi])
+                # Insert new point (maintain sorted by F1)
+                inserted = False
+                for fi in range(len(front_F1_new)):
+                    if front_F1_new[fi] > f1_new:
+                        front_F1_new.insert(fi, f1_new)
+                        front_F2_new.insert(fi, f2_new)
+                        inserted = True
+                        break
+                if not inserted:
+                    front_F1_new.append(f1_new)
+                    front_F2_new.append(f2_new)
+                front_F1, front_F2 = front_F1_new, front_F2_new
+        i = j
+
+    # Map back to original indices
+    dominated_orig = np.zeros(n, dtype=bool)
+    dominated_orig[orig_idx] = dominated_sorted
+    return set(np.where(~dominated_orig)[0])
 
 
 # ---------------------------------------------------------------------------
