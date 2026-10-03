@@ -525,7 +525,7 @@ The present paper adds an external standard: a reference set of
 Pareto-optimal portfolios computed without any MCDM aggregation.
 
 % ----------------------------------------------------------
-\subsection{Spatial constraints and undesirable facilities}
+\subsection{Spatial constraints and landfill site selection}
 \label{sec:lit_spatial}
 % ----------------------------------------------------------
 
@@ -547,7 +547,6 @@ broader class of dispersion and diversity maximisation models.
 discrete dispersion maximisation from an operations research perspective.
 
 % ----------------------------------------------------------
-\subsection{Landfill site selection}
 \label{sec:lit_landfill}
 % ----------------------------------------------------------
 
@@ -839,7 +838,7 @@ $c_{\mathrm{asp}}=0$) have lower cost and are preferred.
 This binarisation matters for Sections~\ref{sec:three_norms} and~\ref{sec:order_ops}
 and is recorded explicitly in Table~\ref{tab:amplitude}.
 
-\subsection{Criterion weights}
+\subsection{Criterion weights and normalisation}
 
 Stage~2 of Figure~\ref{fig:workflow}. Weights are obtained by AHP \citep{Saaty1990,Saaty2008} from the pairwise
 comparison matrix of the source study \citep{Andrade2015,AzancortNeto2026}, by column
@@ -849,7 +848,7 @@ $RI=1.51$, hence $CR=\CR<0.10$.
 The weight vector $\wahp$ is held fixed in the base experiment and
 perturbed in the Monte Carlo design of Section~\ref{sec:design}.
 
-\subsection{Normalisation}
+\medskip\noindent\textbf{Normalisation.}
 
 Stage~3 of Figure~\ref{fig:workflow} is the analytical focus of the paper.
 Three normalisations are compared, spanning the standard taxonomies of
@@ -875,7 +874,7 @@ TOPSIS rank reversal \citep{GarciaCascales2012,Kuo2017}.
 The reference set over which the normalisation constants are computed is
 treated as an experimental factor in Section~\ref{sec:design}.
 
-\subsection{Aggregation}
+\subsection{Aggregation and portfolio assembly}
 
 Stage~4 of Figure~\ref{fig:workflow}. Four aggregations produce a complete ranking of the $\Nvia$ admissible
 sites: SAW and TOPSIS \citep{Hwang1981}, VIKOR \citep{OpricovicTzeng2004},
@@ -885,7 +884,7 @@ In TOPSIS and VIKOR the ideal and anti-ideal points are computed on the
 already oriented criterion matrix; applying the orientation a second time
 inverts cost criteria and constitutes a documented implementation hazard.
 
-\subsection{Portfolio assembly}
+\medskip\noindent\textbf{Portfolio assembly.}
 
 Stage~5 of Figure~\ref{fig:workflow}. Given a site score $s(\cdot)$, two assembly rules are compared.
 \emph{Greedy}: add sites in decreasing score order, skipping any site
@@ -999,7 +998,7 @@ We pre-specify the following before examining results.
     $2\times$ reduction in the variance of each contrast.
 \end{enumerate}
 
-\subsection{Normalisation reference set}
+\subsection{Factorial design}
 
 Min-max and vector constants may be computed over all $\Ncand$ candidates
 (space~$A$) or over the $\Nvia$ admissible ones (space~$A'$).
@@ -1010,8 +1009,6 @@ reference sets share only $\FAinter$ portfolios (A-space pipeline).
 Including inadmissible sites shifts the scale without those sites being
 selectable, a set-dependence mechanism documented for TOPSIS by
 \citet{GarciaCascales2012}.
-
-\subsection{Factorial design}
 
 The main experiment is a balanced $2^3$: aggregation
 $\{\text{SAW},\text{TOPSIS}\}$ $\times$ normalisation
@@ -1086,9 +1083,6 @@ produced by min--max, vector, and rank normalisation.
 % ----------------------------------------------------------
 \subsection{The amplitude lemma}
 \label{sec:amplitude}
-% ----------------------------------------------------------
-
-\subsubsection*{The amplitude identity}
 \label{sec:amp_identity}
 \label{lem:amplitude}
 The following states in closed form a qualitative relationship established
@@ -2333,14 +2327,13 @@ this result as evidence for it.
 \subsection{Prospective controlled study (Experiment~E6)}
 \label{sec:e6}
 
+\medskip\noindent\textbf{Design.}
 Experiment~E1 is a single instance; Experiment~E6 is a prospective
 synthetic study designed to test whether the within-group mechanism
 carries costs outside the Fogo geometry.
 The protocol was pre-registered before execution: seeds and geometry
 parameters were frozen before any instance was run, and the frozen
 protocol file is archived in the supplementary repository.
-
-\subsubsection*{Design}
 Forty-five base instances ($N\in\{50,100,200\}$, three spatial
 geometries, five seeds) were generated with $M=11$ criteria in three
 groups (3, 5, 3) and fixed group weights $W_G=(0.295,0.356,0.349)$.
@@ -2592,8 +2585,7 @@ reduces another to $0.53\times$ is difficult to defend, and min--max
 on the admissible set is preferable on precisely the grounds
 \citet{Choo1999} articulate.
 
-\subsection{The PROMETHEE--Borda identity}
-
+\medskip\noindent\textbf{The PROMETHEE--Borda identity.}
 Section~\ref{prop:p2} is a corollary of results established three
 decades ago.
 \citet{Bouyssou1992} characterises the net flow method axiomatically and
