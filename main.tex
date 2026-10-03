@@ -2343,14 +2343,17 @@ generated instances and 200 weight draws per instance
 The $Q_2$ flags in the raw results file were computed during execution by
 comparing each selected trio against the Pareto-efficient set derived from
 the per-instance objectives; \texttt{validate\_e6.py} confirms that all
-recorded flags lie in $\{0,1\}$ and that the full $45 \times 5 \times 2
-\times 200$ matrix is complete.
-This is reported as an empirical result for the sampled generating family.
-It is consistent with the design intent, but it is not established as a
-universal analytic consequence: because score weights vary within groups
-while the objective weights are fixed, within-group residual terms can in
-principle cause the argmax to differ from a Pareto-efficient solution,
-and whether this occurs depends on instance geometry.
+recorded flags lie in $\{0,1\}$, that the full $45 \times 5 \times 2
+\times 200$ key-combination matrix is complete with no missing or
+duplicate entries, and that a same-implementation reproducibility
+check (re-running generation, objectives, Pareto, and assembly for
+one instance) reproduces the recorded $Q_2$ values and the stored
+$n_{\text{pareto}}$.
+This constitutes a reproducibility check of the original pipeline,
+not an independent implementation of Pareto dominance.
+The 100\% result for M, B and C is an empirical finding for this
+generating family; it is not established as a universal consequence of
+positive group-weight sums alone.
 The primary estimand, within-group loss $Q_2[\text{M}]-Q_2[\text{W}]$,
 is $4.4$~pp ($95\%$ normal-approximation CI $[2.2,\,6.6]$~pp, based on
 the per-instance paired differences $d_i = 100\bigl(\bar{I}_{i,M}-\bar{I}_{i,W}\bigr)$
