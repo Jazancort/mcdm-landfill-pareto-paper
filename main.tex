@@ -203,7 +203,8 @@ Normalisation is worth $+\NormGreedyContrast$~pp under greedy assembly,
 and $+\NormMainEffect$~pp across the full $2^3$ factorial, which includes
 a cell fixed at $100\%$ by construction.
 Exact assembly, the established upgrade over reading a ranking top-down,
-has no average effect ($\AsmMain$~pp, $95\%$ CI $[\AsmMainLo,\,\AsmMainHi]$).
+showed no clear pooled average effect
+($\AsmMain$~pp, $95\%$ CI $[\AsmMainLo,\,\AsmMainHi]$).
 
 The reason is a mechanism that operates upstream of the aggregation
 operator, and it is the analytical core of the paper.
@@ -220,7 +221,7 @@ Min--max normalisation has $A_j \equiv 1$ and is the unique
 weight-preserving choice among the three standard families.
 Vector normalisation has $A_j = \rho_j$, determined by the distributional
 shape of the criterion, which in our data multiplies one criterion's
-weight by $2.88\times$ and divides another by $0.53\times$
+weight by $2.88\times$ and reduces another to $0.53\times$
 (\textit{urban}) without any of this appearing in the
 analyst's report.
 Midranks rescaled to the unit interval contract with tie mass, and every
@@ -929,8 +930,11 @@ portfolios). Pareto membership is determined by the dominance algorithm;
 $Q_2$ is the primary measure.
 Both are averaged over $\ndraws$ draws per cell.
 The cell SAW/min--max/optimal satisfies $Q_2=1$ and $Q_3=0$ by
-Proposition~\ref{prop:p1:stmt}; it serves as a regression test and is
-excluded from substantive comparisons.
+Proposition~\ref{prop:p1:stmt}.
+It is retained in the full factorial for accounting and reproducibility,
+but its $Q_2=1$ is not used as standalone evidence that min--max is
+substantively superior; the headline normalisation contrast is reported
+on the greedy stratum where no cell is fixed at $100\%$ by construction.
 
 \paragraph{Pre-specification.}
 We pre-specify the following before examining results.
@@ -1134,11 +1138,15 @@ giving
   \label{eq:Arank_binary}
   A_j = \frac{N}{2(N+1)} \approx \frac{1}{2}.
 \end{equation}
-The result is \emph{independent of $n_1$}: every binary criterion
-loses approximately half its nominal weight in rank space, whatever the
-class balance.
-A binary indicator contributes half the amplitude of a continuous
-criterion with no ties.\hfill$\square$
+The result holds for any $n_1\in\{1,\ldots,N-1\}$: the rank-space
+amplitude of a binary criterion is $N/[2(N+1)]$, which is
+approximately half the tie-free amplitude $(N-1)/(N+1)$, giving a
+relative amplitude ratio of approximately $N/[2(N-1)]\approx\tfrac{1}{2}$.
+A binary indicator therefore has about half the rank-space range of
+a tie-free continuous criterion.
+Its effective weight share, however, depends on the full vector
+$w_jA_j/\sum_\ell w_\ell A_\ell$: if all binary columns share this
+same amplitude, the elicited weight ratios among them are unchanged.\hfill$\square$
 
 \noindent\textbf{Empirical calibration.}
 Table~\ref{tab:amplitude} reports $A_j$ for the three normalisations on
@@ -1602,7 +1610,7 @@ $\mathrm{TV}$ & & & 0.000 & 0.315 & 0.091 & & \\
 \label{sec:concentration}
 % ----------------------------------------------------------
 
-The total variation~\eqref{eq:TV} is the $\ell^1$ norm of the deviation
+The total variation~\eqref{eq:TV} is half the $\ell^1$ norm of the deviation
 vector $\delta_j=w_j^{\mathrm{eff}}-w_j$, and is therefore blind to how
 that deviation is spread across criteria.
 Two distortions of identical $\mathrm{TV}$, one concentrated on a
@@ -1693,7 +1701,9 @@ Min--max is affine, so $A_j^{\rm mm}$ is invariant to the order.
 Vector normalisation is not: complementing first normalises
 $\mathbf{1}-\mathbf{x}$ and complementing afterwards normalises
 $\mathbf{x}$.
-For a binary column with $n_1$ ones and $n_0=N-n_1$ zeros:
+For a binary column with $n_1$ ones and $n_0=N-n_1$ zeros,
+let $u = (\mathbf{1}-\mathbf{x})/\sqrt{n_0}$ (complement-first normalised)
+and $v = \mathbf{1} - \mathbf{x}/\sqrt{n_1}$ (normalise-first then complement):
 \[
   A_j^{\rm comp\text{-}first} = \tfrac{1}{\sqrt{n_0}},
   \quad
@@ -1701,8 +1711,8 @@ For a binary column with $n_1$ ones and $n_0=N-n_1$ zeros:
   \quad
   \text{ratio} = \sqrt{n_0/n_1}.
 \]
-The two normalised columns are affinely related
-($v = (1-1/\sqrt{n_1})\mathbf{1} + \sqrt{n_0/n_1}\,u$),
+The two normalised columns are affinely related:
+$v = (1-1/\sqrt{n_1})\mathbf{1} + \sqrt{n_0/n_1}\,u$,
 so the issue is not linear independence but the change in range
 amplitude induced by the order of operations.
 (Note: when $n_1=1$ and $n_0>1$ the columns are proportional despite
@@ -1891,8 +1901,13 @@ vector   & $\rho_j$                          & 0.315 & 66.2\% &  56.8\% \\
 \end{tabular}
 \end{table}
 
-Under optimal assembly, the setting in which the amplitude identity is
-the only source of loss, efficiency falls strictly with $\mathrm{TV}$.
+Under optimal assembly, the reported table shows a monotone empirical
+decline in attainment as the effective-weight deviation increases across
+the three displayed normalisations.
+For rank normalisation this pattern should not be interpreted as an
+amplitude-only effect, because ranks may also change within-column
+spacing and tie structure; the monotone pattern is an empirical
+observation on this instance.
 A least-squares line through the three levels has slope
 $-\slopeOpt$~pp per unit of total variation; with three levels and
 \textit{vector} carrying most of the regressor variance, we report the
@@ -1959,10 +1974,9 @@ Assembly within vector             & $-10.2$ & $[-13.1,\,-7.4]$ \\
 \end{tabular}
 \end{table}
 
-The aggregation contrast of $+\AggContrast$~pp ($95\%$ CI
-$[\AggLo,\,\AggHi]$) is statistically indistinguishable from no effect
-in the pooled analysis (TOST equivalence test, $p=\TOSTp$,
-$\delta=2.5$~pp); the sign depends on the cell: $\AggStratumMMgrd$~pp
+The pooled aggregation contrast was small ($+\AggContrast$~pp, $95\%$ CI
+$[\AggLo,\,\AggHi]$) and the pre-specified TOST analysis supported
+equivalence within the $\delta=2.5$~pp margin ($p=\TOSTp$); the sign depends on the cell: $\AggStratumMMgrd$~pp
 ($95\%$ CI $[\AggMMgrdCIlo,\,\AggMMgrdCIhi]$) under min--max$\times$greedy
 to $+\AggStratumVecopt$~pp ($95\%$ CI $[\AggVecoptCIlo,\,\AggVecoptCIhi]$)
 under vector$\times$optimal.
@@ -2325,6 +2339,10 @@ avoiding pseudoreplication across draws.
 Under optimal assembly, conditions M, B and C attain $Q_2=100\%$ on
 every instance, confirming the regression invariant of
 Theorem~\ref{thm:groupconst}.
+The analytic guarantee applies because, in each condition, the additive
+score reduces to $\lambda_1(-F_1) + \lambda_2(-F_2) + \lambda_3 F_3$ with
+$\lambda_g = \sum_{j\in G_g}w_j / W_{G_g} > 0$ for all groups, which is
+sufficient for Pareto-efficiency regardless of within-group weight ratios.
 The primary estimand, within-group loss $Q_2[\text{M}]-Q_2[\text{W}]$,
 is $4.4$~pp ($95\%$ normal-approximation CI $[2.2,\,6.6]$~pp, based on
 the per-instance paired differences $d_i = 100\bigl(\bar{I}_{i,M}-\bar{I}_{i,W}\bigr)$
@@ -2339,7 +2357,9 @@ establish the absence of between-group interaction in general.
 \centering
 \caption{Experiment~E6: Pareto attainment ($Q_2$, \%) across 45 synthetic
 instances ($N\in\{50,100,200\}$, 3 geometries, 5 seeds; optimal assembly).
-M/B/C: analytic controls; W/V: empirical. $\kappa=200$, $n_{\text{draws}}=200$.}
+M/B/C: score conditions for which the theorem guarantees $Q_2=100\%$
+(group-level scalarisation positive for any $w>0$); W/V: empirical
+within-group amplitude perturbations. $\kappa=200$, $n_{\text{draws}}=200$.}
 \label{tab:e6summary}
 \begin{tabular}{lrr}
 \toprule
@@ -2531,7 +2551,7 @@ weight.
 Where weights carry no normative content the trade may be acceptable.
 Where they encode elicited stakeholder judgements, as AHP weights do, a
 normalisation that silently multiplies one criterion by $2.88\times$ and
-divides another by $0.53\times$ is difficult to defend, and min--max
+reduces another to $0.53\times$ is difficult to defend, and min--max
 on the admissible set is preferable on precisely the grounds
 \citet{Choo1999} articulate.
 
@@ -2585,7 +2605,7 @@ Third, report effective weights alongside elicited weights, and with
 them the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
 of~\eqref{eq:TV} and~\eqref{eq:meff}, which requires one line given
 the normalised matrix.
-The total variation alone is insufficient: it is the $\ell^1$ norm of
+The total variation alone is insufficient: it is half the $\ell^1$ norm of
 the deviation and is invariant to whether that deviation sits on one
 criterion or on many, and Section~\ref{sec:e1} shows that only the within-group part of the
 deviation costs efficiency under exact assembly; we therefore also
@@ -2708,7 +2728,10 @@ and scored under five conditions that isolate the within-group component:
 an aligned control (M), within-group distortion alone (W), full vector
 amplitudes (V), between-group distortion (B), and exact compensation (C).
 Under optimal assembly, M, B and C attain $Q_2=100\%$ on every instance,
-confirming Theorem~\ref{thm:groupconst} as a regression test.
+confirming Theorem~\ref{thm:groupconst}: in each condition the score is
+a positive group-level scalarisation of the objectives
+($\lambda_g = \sum_{j\in G_g}w_j/W_{G_g}>0$ for all groups and all
+positive draws), which is the condition the theorem requires.
 The empirical estimand is the within-group loss $Q_2[\mathrm{M}]-Q_2[\mathrm{W}]$,
 estimated at $4.4$~pp with a $95\%$ normal-approximation confidence
 interval of $[2.2,\,6.6]$~pp using the 45 instances as the primary
@@ -2817,7 +2840,7 @@ Given the normalised decision matrix the computation is a single line,
 and it exposes distortions that no rank-agreement diagnostic reveals.
 Where weights encode stakeholder judgements, as AHP weights do, a
 normalisation that silently multiplies one criterion by $2.88\times$ and
-divides another by $0.53\times$ is difficult to defend.
+reduces another to $0.53\times$ is difficult to defend.
 
 Three limits delimit these findings.
 The closed form is exact for additive aggregation; TOPSIS and VIKOR
