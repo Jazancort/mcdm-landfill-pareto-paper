@@ -399,12 +399,11 @@ explicit Pareto frontier.
 \label{sec:lit_norm}
 % ----------------------------------------------------------
 
-That a criterion weight cannot be interpreted independently of the scale
-used to normalise that criterion has been known since at least
-\citet{Choo1999}, who demonstrated that nominal and effective weights
-diverge whenever criterion columns have different ranges after
-normalisation, and argued that the effective weight is the operationally
-relevant quantity.
+\citet{Choo1999} demonstrated that a criterion weight cannot be
+interpreted independently of the scale used to normalise that criterion:
+nominal and effective weights diverge whenever criterion columns have
+different ranges after normalisation, and the effective weight is the
+operationally relevant quantity.
 \citet{Milani2005} confirmed this empirically, showing that different
 normalisation norms produce different rankings in a gear material
 selection study and recommending vector normalisation on the grounds that
@@ -1726,20 +1725,20 @@ Sections~\ref{prop:p1}--\ref{prop:p3} partition the sources of
 sub-optimality in the factorial experiment into four ordered factors:
 
 \begin{enumerate}
-  \item \emph{Normalisation effect (min--max vs.\ others):}
+  \item \textbf{Normalisation effect} (min--max vs.\ others):
     Min--max is the only normalisation that preserves elicited weights
     in additive aggregations (Section~\ref{sec:three_norms}).
     Under SAW, where the Lemma applies exactly, both the greedy and
     optimal assembly benefit from the preservation.
-  \item \emph{Assembly effect (optimal vs.\ greedy):}
+  \item \textbf{Assembly effect} (optimal vs.\ greedy):
     Exact assembly helps under min--max and hurts under vector
     normalisation (Section~\ref{sec:interaction}).
-  \item \emph{Aggregation effect (SAW vs.\ TOPSIS vs.\ VIKOR):}
+  \item \textbf{Aggregation effect} (SAW vs.\ TOPSIS vs.\ VIKOR):
     TOPSIS and VIKOR aggregate through ideal-point distances;
     The amplitude identity~\eqref{eq:weff} does not apply exactly to them.
     The factorial experiment measures the residual effect after
     controlling for items~1 and~2.
-  \item \emph{Reference-set effect (normalisation over $N$ vs.\ $N'$):}
+  \item \textbf{Reference-set effect} (normalisation over $N$ vs.\ $N'$):
     Including inadmissible sites in the normalisation reference shifts
     the scale without those sites being selectable
     (Section~\ref{sec:refset}).
@@ -1884,7 +1883,7 @@ spacing and tie structure; the monotone pattern is an empirical
 observation on this instance.
 A least-squares line through the three levels has slope
 $-\slopeOpt$~pp per unit of total variation; with three levels and
-\textit{vector} carrying most of the regressor variance, we report the
+\textit{vector} accounting for most of the variation, we report the
 ordering and decline to treat the slope as a predictive coefficient.
 Under greedy assembly the ordering is weak: min--max and midranks tie at
 $86.0\%$, because a myopic rule commits to the same leading sites under
@@ -2122,7 +2121,7 @@ All cells reported in this paragraph are post hoc exploratory
 
 The directional asymmetry between the $r_j$ and $1/r_j$ amplitude
 patterns reported in an earlier version was computed with the pipeline
-later found to encode \textit{aspect} inconsistently (DEV-E4-007) and
+later found to encode \textit{aspect} inconsistently and
 has not been recomputed with consistent coding; it is withdrawn from
 the main text.
 
@@ -2165,9 +2164,8 @@ Because the recoding is not monotone in the evaluator's partial value,
 Theorem~\ref{thm:groupconst} does not apply; the result instead
 illustrates that exact assembly can amplify mismatches between the
 score's criterion definition and the evaluator's.
-The provenance of this result is documented in
-\texttt{corpus/PRESPEC\_E4.md} (DEV-E4-007); the pipeline version
-history is in the Supplementary Material.
+The provenance of this result is documented in the pre-specification
+log; the pipeline version history is in the Supplementary Material.
 
 \subsection{The greedy shortfall}
 \label{sec:greedy}
@@ -2258,7 +2256,7 @@ distortion costs $\EoneVloss$~pp.
 P2 is falsified at the pre-specified margin: W exceeds V by
 $+7.4$~pp, beyond the declared $<5$~pp threshold
 ($95\%$ paired bootstrap CI $[+3.8,\,+11.0]$;
-note that the interval includes values below $5$~pp,
+the interval includes values below $5$~pp,
 so the falsification rests on the point estimate exceeding the threshold,
 not on statistical certainty that the true effect exceeds $5$~pp).
 Between-group distortion, harmless on its own, therefore amplifies the
@@ -2319,7 +2317,7 @@ $n_{\text{pareto}}$.
 This constitutes a reproducibility check of the original pipeline,
 not an independent implementation of Pareto dominance.
 The 100\% result for M, B and C is an empirical finding for this
-generating family; it is not established as a universal consequence of
+synthetic family; it is not established as a universal consequence of
 positive group-weight sums alone.
 The primary estimand, within-group loss $Q_2[\text{M}]-Q_2[\text{W}]$,
 is $4.4$~pp ($95\%$ normal-approximation CI $[2.2,\,6.6]$~pp, based on
@@ -2465,8 +2463,8 @@ selection cannot be recovered by any re-weighting
 
 \subsection{Relation to the normalisation literature}
 
-That criterion weights cannot be interpreted independently of the
-normalisation is established.
+The dependence of criterion weights on the normalisation choice is
+established.
 \citet{Choo1999} show that a weight is meaningful only relative to the
 scale and range of the criterion it multiplies, and distinguish nominal
 from effective weights; \citet{Milani2005} demonstrate empirically that
@@ -2702,8 +2700,8 @@ an aligned control (M), within-group distortion alone (W), full vector
 amplitudes (V), between-group distortion (B), and exact compensation (C).
 Under optimal assembly, M, B and C attain $Q_2=100\%$ on every
 instance across all $9{,}000$ draw-instances.
-This is an empirical result for this generating family.
-It should not be interpreted as a universal analytic guarantee:
+This is an empirical result for these 45 instances and should not be
+interpreted as a universal analytic guarantee:
 because score weights vary within groups while the objective weights
 are fixed, within-group residual terms can in principle cause the
 argmax to miss a Pareto-efficient solution, and whether this occurs
