@@ -65,6 +65,42 @@ xelatex -interaction=nonstopmode "$repo\main.tex"
 
 ---
 
+## End-to-end pipeline (1 command)
+
+Runs all validation steps and builds the PDF:
+
+```bash
+# Linux/macOS
+bash -c "
+  uv run python scripts/run_e1_v3.py &&
+  uv run python scripts/verify_macros_permanent.py &&
+  uv run python scripts/validate_e6.py &&
+  uv run python scripts/check_consistency.py &&
+  uv run python scripts/test_promethee_identity.py &&
+  uv run python scripts/test_gap_counterexample.py &&
+  xelatex -interaction=nonstopmode main.tex
+"
+```
+
+```powershell
+# Windows PowerShell
+$repo = "path\to\mcdm-landfill-pareto"
+cd $repo
+uv run python scripts/run_e1_v3.py
+uv run python scripts/verify_macros_permanent.py
+uv run python scripts/validate_e6.py
+uv run python scripts/check_consistency.py
+uv run python scripts/test_promethee_identity.py
+uv run python scripts/test_gap_counterexample.py
+Copy-Item macros.tex C:\build\paper\macros.tex -Force
+xelatex -interaction=nonstopmode main.tex
+```
+
+Expected final output: `main.pdf` with all checks passing (exit 0).
+Note: `run_e1_v3.py` takes ~5–10 min; skip and use existing results if already run.
+
+---
+
 ## Key scripts
 
 | Script | Purpose |
