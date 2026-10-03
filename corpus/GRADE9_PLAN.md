@@ -80,9 +80,9 @@ O que segue são os **itens adicionais** identificados na pós-auditoria GPT/Gem
 
 | ID | Tarefa | Status |
 |---|---|---|
-| **S-1** | Cold read do PDF completo como revisor EJOR: verificar fluxo de argumento, claims vs evidência, captions, figuras | [ ] |
-| **S-2** | Build final limpo: main.pdf + suppl_wrapper.pdf, zero warnings LaTeX relevantes | [ ] |
-| **S-3** | Mover tag `v1.0-submission-candidate` para o commit final pós-P/Q/R ou criar `v1.1-submission-candidate` | [ ] |
+| **S-1** | Cold read do PDF completo como revisor EJOR: verificar fluxo de argumento, claims vs evidência, captions, figuras | ✅ DONE — cold read completo; 0 problemas estruturais; P2 honest ("not confirmed"); E6 table renders; contribution list coerente |
+| **S-2** | Build final limpo: main.pdf + suppl_wrapper.pdf, zero warnings LaTeX relevantes | ✅ DONE — 0 ??; tabela E6 overfull 55pt→10pt; caminho interno L2816 removido; 24 overfull residuais são todos do template CAS-DC (pre-existentes) |
+| **S-3** | Mover tag `v1.0-submission-candidate` para o commit final pós-P/Q/R ou criar `v1.1-submission-candidate` | ✅ DONE — tag `v1.1-grade9-candidate` criada em commit 7e0135c |
 
 ---
 
