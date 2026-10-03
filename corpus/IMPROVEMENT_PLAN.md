@@ -189,3 +189,91 @@ Se qualquer etapa revelar que um claim central não pode ser sustentado com a ev
 ## Primeira tarefa acionável imediata
 
 **Etapa 1, item (e):** localizar L116 e L2667 (iff "for any weights and any instance"), adicionar qualificador "within additive aggregation under the fixed partial value model". Depois localizar L1865 (`tab:tvorder` caption) e remover linguagem de predição universal. Build + check_consistency. Nenhum dado novo necessário.
+
+
+---
+
+## Checklist de execução — itens atómicos
+
+> Cada item é uma sessão de trabalho independente.
+> Solicite um ID por vez. O item só fecha quando diff, validação semântica e build estiverem confirmados.
+> Status: `[ ]` pendente · `[x]` concluído · `[~]` bloqueado
+
+---
+
+### Bloco I — Reparos de integridade
+*(sem estes, claims ficam frágeis)*
+
+| ID | Tarefa | Status |
+|----|--------|--------|
+| I-1 | `tab:tvorder` caption: verificar se ainda contém "predicted distortion" ou linguagem de predição universal; restringir ao domínio aditivo de Fogo se necessário. | [ ] |
+| I-2 | `iff "for any weights and any instance"` em L116 e L2667 (abstract + conclusion): adicionar qualificador explícito de âmbito — "within additive aggregation under the fixed partial value model". | [ ] |
+| I-3 | Label `prop:exponent` vs `rem:exponent`: verificar que `\ref{prop:exponent}` em L969 resolve correctamente após a promoção a remark; corrigir se necessário. | [ ] |
+| I-4 | Confirmar no PDF compilado que `\end{remark}…\begin{corollary}` produz numeração correcta sem overlap. | [ ] |
+| I-5 | Limitations §8.2: adicionar nota explícita de que gap=0 não implica Pareto sem condições; fornecer o contraexemplo de dominância fraca. | [ ] |
+| I-6 | PROMETHEE-Borda identity §3.3: explicitar hipótese de ausência de empates (ou comportamento sob empates) para que a identidade não seja atribuída a empates arbitrários. | [ ] |
+
+---
+
+### Bloco G — Melhorias de qualidade
+*(ganho real rumo à rubrica)*
+
+| ID | Tarefa | Status |
+|----|--------|--------|
+| G-1 | Criar `README.md` com: pré-requisitos, 3 passos executáveis (clone → rerun → verify), hash esperado do `verify_macros_permanent.py`. | [ ] |
+| G-2 | `PHASES_STATUS`: adicionar entrada TOST com statistic, CI, p, n_draws e fonte CSV — calculados dos dados reais, não pré-fixados. | [ ] |
+| G-3 | Criar tabela de contribuição × literatura: para cada contribuição i–v, indicar o antecedente mais próximo, o que é novo e o que é reuso. | [ ] |
+| G-4 | Limitations: confirmar que o item gap/weak dominance está consistente com a resolução R2 (gap=0 ≠ Pareto without conditions). | [ ] |
+
+---
+
+### Bloco E — Experimento sintético E6
+*(único novo experimento autorizado — critério E da rubrica)*
+
+| ID | Tarefa | Status |
+|----|--------|--------|
+| E6-A | Escrever e commitar o script gerador de instâncias (45 bases: 3×N × 3×geometria × 5×semente); congelar sementes e parâmetros **antes** de qualquer execução. | [ ] |
+| E6-B | Implementar as 5 condições de score (M, B, W, V, C) com as fórmulas exactas do protocolo; testar que M=B=C atingem Q2=100% como regressão. | [ ] |
+| E6-C | Executar E6 completo (45 instâncias × 5 condições × 200 draws); gerar relatório com estimativas pontuais e IC hierárquico por bootstrap. | [ ] |
+| E6-D | Validar resultados: M/B/C = 100% em todas as instâncias; W e V com IC documentado; nenhum ajuste post hoc; entrada em PHASES_STATUS. | [ ] |
+
+---
+
+### Bloco W — Integração editorial
+*(depois de E6 concluído)*
+
+| ID | Tarefa | Status |
+|----|--------|--------|
+| W-1 | Incorporar E6 no manuscrito: secção de resultados + captions das tabelas/figuras do E6. | [ ] |
+| W-2 | Actualizar abstract ≤ 250 palavras; confirmar que as 5 contribuições do §1 mapeiam 1-para-1 com os resultados. | [ ] |
+| W-3 | README: adicionar pipeline end-to-end em 1 comando (gera tabelas, macros e PDF sem intervenção manual). | [ ] |
+| W-4 | Build supplementary limpo: 0 `??`, secção S4b archived sem warnings. | [ ] |
+
+---
+
+### Bloco F — One-pass final e congelamento
+*(só depois de I + G + E + W completos)*
+
+| ID | Tarefa | Status |
+|----|--------|--------|
+| F-1 | Leitura linear do PDF: auditar rubrica V/C/E/S/A/R critério a critério com citação de linha; qualquer FAIL → patch cirúrgico dentro desta sessão. | [ ] |
+| F-2 | Commit final limpo + tag `v1.0-submission-candidate` no GitHub. | [ ] |
+
+---
+
+### Ordem de execução sugerida
+
+```
+I-1 → I-2 → I-3 → I-4 → I-5 → I-6
+      ↓
+G-1 → G-2 → G-3 → G-4
+      ↓
+E6-A → E6-B → E6-C → E6-D
+      ↓
+W-1 → W-2 → W-3 → W-4
+      ↓
+F-1 → F-2
+```
+
+**Total: 18 itens atómicos.**
+Para executar: diga o ID (ex: `faz I-1`) e o item será executado, diff mostrado, validado semanticamente e confirmado antes de fechar.
