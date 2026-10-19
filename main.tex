@@ -16,6 +16,7 @@
 \usepackage{placeins}  % auto FloatBarrier at each \section
 \usepackage{morefloats} % expand float register pool (fixes Float(s) lost)
 \usepackage{url}  % allow line-breaking in URLs (\url{})
+\providecommand{\orcid}[1]{}  % ORCID — displayed via submission system
 
 % -----------------------------------------------------------------------
 % Macros --- centralise every number that appears more than once
@@ -77,10 +78,10 @@
   exact Pareto frontier}
 
 \tnotemark[1]
-\tnotetext[1]{The authors declare no competing interests. No external funding was received for this work.}
+\tnotetext[1]{The author declares no competing interests. No external funding was received for this work.}
 
 % -----------------------------------------------------------------------
-\author[1]{Julio L.~Azancort Neto}
+\author[1]{Julio L.~Azancort Neto\orcid{0009-0000-2754-8503}}
 \cormark[1]
 \ead{julio.azancort.neto@itec.ufpa.br}
 \credit{Conceptualization, Methodology, Software, Writing -- Original
@@ -2051,7 +2052,7 @@ Aggregation & Normalisation, assembly & $Q_2[A']$ \\
 $\dagger$ Three informative cells only (SAW/mm-opt excluded: $Q_2=100\%$ by Proposition~\ref{prop:p1}).
 $\ddagger$ SAW/mm assembly: $+14.0$~pp analytically (Proposition~\ref{prop:p1}).}
 \label{tab:effects}
-\begin{tabular}{>{\raggedright\arraybackslash}p{4.9cm}rc}
+\begin{tabular}{>{\raggedright\arraybackslash}p{5.4cm}rc}
 \toprule
 Contrast & Effect & 95\% CI \\
 \midrule
@@ -2899,9 +2900,36 @@ suggest.
 
 % -----------------------------------------------------------------------
 % BLOCO4: DOI — substituir 23479281 pelo número real após ativar webhook no zenodo.org
+% BLOCO: secções obrigatórias Elsevier — inseridas antes de Code availability
+% -----------------------------------------------------------------------
+\section*{CRediT authorship contribution statement}
+
+\textbf{Julio L.~Azancort Neto:} Conceptualization, Methodology, Software,
+Formal analysis, Investigation, Writing -- Original Draft,
+Writing -- Review \& Editing.
+
+\section*{Declaration of competing interest}
+
+The author declares no known competing financial interests or personal
+relationships that could have appeared to influence the work reported in
+this article.
+
+\section*{Funding}
+
+No external funding was received for this work.
+
+\section*{Data availability}
+
+The spatial dataset for Fogo Island (candidate site centroids, criterion
+layers, AHP weights) was obtained from \citet{AzancortNeto2026} and is
+publicly available via GitHub
+(\url{https://github.com/Jazancort/NSGA2-GIS-Landfill-Optimization-Cape-Verde})
+and Zenodo (\url{https://zenodo.org/records/17704387}).
+
+% -----------------------------------------------------------------------
 \section*{Code availability}
 
-The replication package for this article (source code, pre-registered
+The replication package for this article (source code, pre-specified
 analysis plans, and pre-computed data) is publicly available
 online\footnote{\url{https://github.com/Jazancort/mcdm-landfill-pareto-replication}}
 (v1.0, DOI:~\url{10.5281/zenodo.23479281}).
