@@ -15,6 +15,7 @@
 \usepackage{enumitem}
 \usepackage{placeins}  % auto FloatBarrier at each \section
 \usepackage{morefloats} % expand float register pool (fixes Float(s) lost)
+\usepackage{url}  % allow line-breaking in URLs (\url{})
 
 % -----------------------------------------------------------------------
 % Macros --- centralise every number that appears more than once
@@ -2881,6 +2882,18 @@ cardinality-constrained siting problems of realistic size, an exact
 frontier provides an external standard, and under that standard the
 ranking of design choices is not the one the literature's emphasis would
 suggest.
+
+% -----------------------------------------------------------------------
+% BLOCO4: DOI — substituir ZENODO-DOI-AQUI pelo número real após ativar webhook no zenodo.org
+\section*{Code availability}
+
+The replication package for this article (source code, pre-registered
+analysis plans, and pre-computed data) is publicly available
+online\footnote{\url{https://github.com/Jazancort/mcdm-landfill-pareto-replication}}
+(v1.0, DOI:~\url{10.5281/zenodo.ZENODO-DOI-AQUI}).
+The provenance audit script \texttt{verify\_macros\_permanent.py}
+recomputes all primary quantitative claims and exits~0 on
+exact agreement with the values in this article.
 
 % -----------------------------------------------------------------------
 \FloatBarrier
