@@ -169,6 +169,9 @@ chosen.
 In a review of 114 landfill siting studies, \citet{Rezaeisabzevar2020}
 found TOPSIS, SAW and AHP to be the dominant tools, and normalisation
 choices to be rarely reported.
+\citet{EiseltMarianov2015} provide a complementary survey of mathematical
+location models for municipal solid waste facilities, covering
+bi-objective MIP and MCDM formulations.
 The methodological literature compares these methods extensively, but
 almost always by measuring agreement between the rankings they produce
 \citep{Chakraborty2009,Jahan2015,Vafaei2018,Aytekin2021,Salabun2020Sym}.
@@ -357,11 +360,11 @@ cardinality-constrained portfolio selection with spatial interdependencies
 between facilities remains largely unexplored.
 Within PDA, \citet{Barbati2018} optimised portfolios under multiple
 satisfaction levels defined jointly across criteria, a formulation that
-avoids collapsing value into a single additive score; the present paper
-adopts a different approach, keeping three partial value functions
-separate and measuring how often each method--normalisation--assembly
-combination recovers their jointly optimal frontier.
-
+avoids collapsing value into a single additive score; \citet{Carazo2010}
+developed a multi-objective binary programme for project portfolio
+selection under resource and dependency constraints, demonstrating that
+combinatorial multi-objective portfolio problems are tractable in
+practice.
 The present paper occupies a position the PDA tradition does not fill:
 the three objectives $F_1, F_2, F_3$ are kept as separate partial value
 functions (not collapsed into one score), and the reference set is an
@@ -383,6 +386,12 @@ used to normalise that criterion has been known since at least
 diverge whenever criterion columns have different ranges after
 normalisation, and argued that the effective weight is the operationally
 relevant quantity.
+In goal programming, \citet{Kettani2004} identified an analogous
+double role: weights simultaneously normalise deviations to a common
+scale and encode preferences, and the two roles interact whenever the
+achievable range of each goal changes; the present paper shows that
+the same tension arises in additive MCDM through the amplitude
+identity~\eqref{eq:weff}.
 \citet{Milani2005} confirmed this empirically, showing that different
 normalisation norms produce different rankings in a gear material
 selection study and recommending vector normalisation on the grounds that
@@ -493,6 +502,12 @@ the present paper uses the separability of the location problem to
 enumerate all $\Ntrios$ feasible portfolios exactly, enabling a comparison
 against a provably complete Pareto frontier rather than a threshold
 approximation.
+In the combinatorial optimisation literature, \citet{Guerreiro2023}
+developed exact and approximate methods for Pareto front determination
+using Minimal Correction Subsets; their approach targets boolean
+satisfaction problems, whereas the present paper enumerates all
+$\Ntrios$ feasible portfolios directly and computes the full trivariate
+frontier without approximation.
 The present paper adds an external standard: a reference set of
 Pareto-optimal portfolios computed without any MCDM aggregation.
 
@@ -512,6 +527,11 @@ against exact optimisation benchmarks.
 \citet{Erkut1996} proposed integer-friendly MIP formulations for
 r-separation that make exact solution tractable for problems of the size
 considered here.
+Multi-criteria models for undesirable facility siting on networks were
+characterised by \citet{Colebrook2007}, who derived efficient solutions
+and exact algorithms; the present problem is defined on a spatial
+surface rather than a network, and replaces the network distance with
+a minimum Euclidean separation constraint.
 Multi-objective facility location problems with Pareto frontier
 computation appear in a range of siting contexts.
 \citet{Paul2017} used the $\varepsilon$-constraint method to generate
