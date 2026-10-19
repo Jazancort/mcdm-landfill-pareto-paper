@@ -274,8 +274,7 @@ Our contributions are as follows.
     enumerated frontier of $\Ntrios$ portfolios under a hard separation
     constraint.
   \item A factorial decomposition showing that normalisation dominates the
-    choice of aggregation operator, and that exact assembly has no
-    simple average effect: its sign depends on the normalisation (positive under min--max, negative under vector).
+    choice of aggregation operator, and that the value of exact assembly is conditional on the normalisation, reversing sign between min--max and vector.
   \item A necessary and sufficient condition for exact assembly to remain
     Pareto-efficient under normalisation: amplitudes must be constant
     within each objective group (Theorem~\ref{thm:groupconst}),
@@ -915,7 +914,7 @@ and PROMETHEE~II with the usual (Type~I) preference function
 \citep{Brans1986,Mareschal2008}.
 In TOPSIS and VIKOR the ideal and anti-ideal points are computed on the
 already oriented criterion matrix; applying the orientation a second time
-inverts cost criteria and constitutes a documented implementation hazard.
+inverts cost criteria; implementations that fail to separate orientation from normalisation will rank sites incorrectly.
 
 \subsection{Portfolio assembly}
 
@@ -1127,7 +1126,7 @@ objective functions.
 
 The central analytical result of the paper is stated and derived in this section.
 It takes the form of a lemma that expresses effective weights in closed form,
-followed by a theorem, three propositions and one corollary that characterise the specific distortions
+followed by a theorem, two propositions and one corollary that characterise the specific distortions
 produced by min--max, vector, and rank normalisation.
 
 % ----------------------------------------------------------
@@ -1135,7 +1134,6 @@ produced by min--max, vector, and rank normalisation.
 \label{sec:amplitude}
 % ----------------------------------------------------------
 
-\subsubsection*{The amplitude identity}
 \label{sec:amp_identity}
 \label{lem:amplitude}
 The following states in closed form a qualitative relationship established
@@ -2217,7 +2215,7 @@ Continuous azimuth  & optimal & $24.0\%$ (R-asp) & $20.0\%$ (R-V) \\
 \end{tabular}
 \end{table}
 
-This is a pipeline inconsistency, not an inherent property of
+This reflects an aspect-encoding mismatch between the score and the objectives, not an inherent property of
 normalising over inadmissible sites.
 With a consistent encoding, normalising over the $\Ncand$-site set costs
 zero percentage points of Pareto efficiency under optimal assembly
@@ -2234,9 +2232,6 @@ and on this instance it is harmless or beneficial under consistent coding.
 All cells reported in this paragraph are post hoc exploratory
 (Supplementary Material).
 
-The directional asymmetry between the $r_j$ and $1/r_j$ amplitude
-patterns has not been re-examined with consistent aspect coding and is
-not reported here.
 
 \begin{table}[!t]
 \centering
@@ -2322,7 +2317,7 @@ of the value model.
 Theorem~\ref{thm:groupconst} predicts that between-group distortion
 alone leaves exact assembly on the frontier.
 We test this by intervening on the amplitudes directly.
-The intervention was not part of the original pre-registered factorial
+The intervention was not part of the original pre-specified factorial
 design but was specified as a follow-up analysis before any experimental
 run; three quantitative predictions (P1--P3 below) were committed to the
 repository before the first run (Supplementary Material).
@@ -2632,8 +2627,7 @@ optimisation.
 Sharing a normalisation is sufficient but not necessary
 (cell~$B$, Table~\ref{tab:e1}).
 Integer programming on a mismatched score optimises the mismatch:
-SAW assembly is guaranteed under min--max (Proposition~\ref{prop:p1:stmt}); TOPSIS gains $+\AsmMMtopsis$~pp; both lose $\AsmVec$~pp
-to greedy assembly under vector normalisation.
+SAW assembly is guaranteed under min--max (Proposition~\ref{prop:p1:stmt}); TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation exact assembly loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy assembly.
 
 Third, report effective weights alongside elicited weights, and with
 them the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
@@ -2919,9 +2913,8 @@ No external funding was received for this work.
 
 The spatial dataset for Fogo Island (candidate site centroids, criterion
 layers, AHP weights) was obtained from \citet{AzancortNeto2026} and is
-publicly available via GitHub
-(\url{https://github.com/Jazancort/NSGA2-GIS-Landfill-Optimization-Cape-Verde})
-and Zenodo (\url{https://zenodo.org/records/17704387}).
+publicly available via Zenodo (\url{https://zenodo.org/records/17704387})
+and GitHub.\footnote{\url{https://github.com/Jazancort/NSGA2-GIS-Landfill-Optimization-Cape-Verde}}
 
 % -----------------------------------------------------------------------
 \section*{Code availability}
