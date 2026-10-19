@@ -357,6 +357,12 @@ acceptability indices for portfolios under full weight uncertainty.
 \citet{Liesio2021} reviewed 148 PDA contributions and found that
 cardinality-constrained portfolio selection with spatial interdependencies
 between facilities remains largely unexplored.
+Within PDA, \citet{Barbati2018} optimised portfolios under multiple
+satisfaction levels defined jointly across criteria, a formulation that
+avoids collapsing value into a single additive score; the present paper
+adopts a different approach, keeping three partial value functions
+separate and measuring how often each method--normalisation--assembly
+combination recovers their jointly optimal frontier.
 
 The present paper occupies a position the PDA tradition does not fill:
 the three objectives $F_1, F_2, F_3$ are kept as separate partial value
@@ -409,6 +415,11 @@ conflict with elicited stakeholder judgements.
 This paper supplies the missing dimension: a comparison against an
 exhaustively enumerated Pareto frontier, which measures decision quality
 directly.
+\citet{Liao2020} developed a double-normalisation aggregation method
+that combines linear and vector normalisations to reduce sensitivity to
+extreme values; the amplitude identity~\eqref{eq:weff} derived below
+explains analytically why such combinations alter effective weights and
+quantifies the resulting distortion.
 
 Set dependence of normalisation has also been documented for specific
 methods.
@@ -471,6 +482,19 @@ framework for method selection incorporating data complexity diagnostics.
 
 All of these benchmarks use rank agreement as their criterion of
 comparison.
+\citet{Mulliner2016} compared SAW, TOPSIS, and COPRAS for sustainable
+housing assessment and showed that sensitivity analyses across weights
+produce different rankings without identifying which ranking is closest
+to the decision maker's objectives.
+\citet{Mohammadi2020} proposed an ensemble-ranking framework that
+aggregates the outputs of different MCDM methods into a consensus ranking,
+using confidence indicators to quantify disagreement.
+In a portfolio context, \citet{Korotkov2021} computed optimality
+thresholds to benchmark project portfolios without full enumeration;
+the present paper uses the separability of the location problem to
+enumerate all $\Ntrios$ feasible portfolios exactly, enabling a comparison
+against a provably complete Pareto frontier rather than a threshold
+approximation.
 The present paper adds an external standard: a reference set of
 Pareto-optimal portfolios computed without any MCDM aggregation.
 
@@ -490,6 +514,17 @@ against exact optimisation benchmarks.
 \citet{Erkut1996} proposed integer-friendly MIP formulations for
 r-separation that make exact solution tractable for problems of the size
 considered here.
+Multi-objective facility location problems with Pareto frontier
+computation appear in a range of siting contexts.
+\citet{Paul2017} used the $\varepsilon$-constraint method to generate
+non-dominated solutions for multi-objective emergency facility relocation
+under coverage constraints; \citet{Kinay2019} demonstrated tractability
+of multi-criteria location under chance constraints via vectorial and
+goal-programming formulations.
+These formulations treat demand allocation and capacity explicitly;
+the present problem is deterministic, capacitatively unconstrained, and
+includes instead a hard pairwise separation constraint that reduces the
+feasible set from all $\binom{\Ncand}{\kk}$ triples to $\Ntrios$.
 \citet{Kuby1987} studied the related p-dispersion problem (maximise the
 minimum inter-facility distance); \citet{Church2022} reviewed the
 broader class of dispersion and diversity maximisation models.
