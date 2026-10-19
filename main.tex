@@ -491,6 +491,7 @@ PROMETHEE ranking for candidate sets of the size used here
 \label{sec:lit_bench}
 % ----------------------------------------------------------
 
+\begin{sloppypar}
 Systematic benchmarking of MCDM methods has expanded substantially.
 \citet{Cinelli2020} reviewed frameworks for selecting among methods and
 argued for explicit documentation of the assumptions embedded in each
@@ -502,6 +503,7 @@ diverge when normalisation or weighting changes.
 \citet{PintoCosta2005} proposed weighted rank correlation coefficients
 for comparing decision matrices; \citet{Watrobski2019} developed a
 framework for method selection incorporating data complexity diagnostics.
+\end{sloppypar}
 
 All of these benchmarks use rank agreement as their criterion of
 comparison.
@@ -740,12 +742,14 @@ three objectives.
 $\mathbf{F}$ is a three-dimensional partial value space, not a vector of
 physically independent objectives: each component is an additive weighted
 aggregate of normalised criteria.
+\begin{sloppypar}
 This distinguishes our reference set from portfolio decision analysis
 approaches that compute non-dominated portfolios in a scalar value space
 \citep{Liesio2007,Liesio2008,Yang2015SMAAPO}, from exact $\varepsilon$-constraint
 methods for bi-objective combinatorial problems \citep{Berube2009}, and
 from bi-objective mixed-integer landfill models whose objectives are
 physical quantities \citep{EiseltMarianov2014}.
+\end{sloppypar}
 We keep the three group-level value functions unaggregated and ask how
 much of the resulting trade-off surface is lost when a ranking method
 collapses them into a single score before the portfolio is assembled.
@@ -1627,9 +1631,11 @@ the number of ones.
 The range of $v_j(a)$ over all sites is
 $(\max_a x_j(a) - \min_a x_j(a)) / \lVert\mathbf{x}_j\rVert_2 = \rho_j$,
 so $A_j = \rho_j$ and~\eqref{eq:weff_vec} follows from~\eqref{eq:weff}.
+\begin{sloppypar}
 For binary $x_j \in \{0,1\}$ with $n_1$ ones,
 $\lVert\mathbf{x}_j\rVert_2 = \sqrt{n_1}$ and
 $\max - \min = 1$, giving $\rho_j = 1/\sqrt{n_1}$.\hfill$\square$
+\end{sloppypar}
 
 \noindent\textbf{Empirical calibration.}
 Table~\ref{tab:amplitude} lists $\rho_j$ and $w_j^{\mathrm{eff}}/w_j$
@@ -2042,7 +2048,7 @@ Aggregation & Normalisation, assembly & $Q_2[A']$ \\
 \caption{Contrasts in percentage points of $Q_2[A']$ ($\kappa=200$;
   $\nboot$ bootstrap replicates paired by draw).}
 \label{tab:effects}
-\begin{tabular}{>{\raggedright\arraybackslash}p{5cm}rc}
+\begin{tabular}{>{\raggedright\arraybackslash}p{4.6cm}rc}
 \toprule
 Contrast & Effect & 95\% CI \\
 \midrule
@@ -2207,7 +2213,7 @@ The objectives use the binary leeward indicator throughout.
 R-V denotes the original reference-set cell; it uses the continuous
 aspect encoding, not vector normalisation.}
 \label{tab:coding2x2}
-\centering
+\centering\small
 \begin{tabular}{@{}ll@{\hspace{4pt}}c@{\hspace{4pt}}c@{}}
 \toprule
 Aspect encoding & Assembly & 389-site & 473-site \\
@@ -2357,7 +2363,8 @@ assembly; (P3)~cell~B under greedy assembly performs close to min--max.
   Section~\ref{sec:groupconst}. Loss is relative to cell~M under optimal
   assembly.}
 \label{tab:e1}
-\begin{tabular}{lccccc}
+\small
+\begin{tabular}{@{}l@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}r@{}}
 \toprule
 Cell & $\mathrm{TV}_B$ & $\mathrm{TV}_W$ & greedy & optimal & loss \\
 \midrule
