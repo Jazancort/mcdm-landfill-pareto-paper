@@ -127,16 +127,16 @@ $95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
 \end{abstract}
 
 \begin{highlights}
-\item Effective weight scales with $w_jA_j$; min--max alone preserves
-  elicited weights
-\item Normalisation worth $+\NormGreedyContrast$~pp (greedy);
-  aggregation $+\AggContrast$~pp, sign cell-dependent
-\item Exact assembly gains $+\AsmMM$~pp under min--max; loses
-  $\AsmVec$~pp under vector (both $p{<}0.001$)
-\item Between-group distortion costs nothing; within-group distortion
-  drives the loss
-\item Non-monotone criterion coding costs up to 80~pp; consistent
-  coding eliminates it
+\item Normalisation re-weights criteria: effective weight is
+  proportional to $w_jA_j$ (Theorem~\ref{thm:groupconst})
+\item Exact assembly is Pareto-safe iff amplitudes are constant
+  within objective groups
+\item On Fogo, normalisation moves Pareto attainment
+  $\NormGreedyContrast$~pp; pooled aggregation moves ${<}1$~pp
+\item Under vector normalisation, exact optimisation does worse than
+  greedy ranking (Experiment F8, Section~\ref{sec:design})
+\item Score-objective coding mismatches can cut Pareto attainment from
+  $100\%$ to $24\%$
 \end{highlights}
 
 \begin{keywords}
@@ -1112,8 +1112,9 @@ SAW with min--max normalisation attained only $\FEightMMOptQ\%$
 Under greedy assembly the pattern was similar:
 $\FEightVecGrdQ\%$ (vec) versus $\FEightMMGrdQ\%$ (mm).
 The $100\%$ under vec/greedy is interpretable as a near-lexicographic
-effect: vector normalisation inflates the weight of \texttt{perm}
-to $\approx\IntraGperm\times$ its nominal value; the greedy algorithm
+effect: vector normalisation inflates the total weight of \texttt{perm}
+by $\approx 2.88\times$ relative to its nominal value (a within-$G_1$ amplification of $\approx\IntraGperm\times$);
+the greedy algorithm
 commits to the highest-scoring site first, and when scoring is dominated
 by one criterion, the greedy selection coincides with the dominant
 criterion's frontier as often as the vector optimal does.
@@ -2405,18 +2406,21 @@ this result as evidence for it.
 Theorem~\ref{thm:groupconst} gives a sufficient condition for efficiency
 (constant amplitudes within groups); it does not claim that any $\mathrm{TV}_W > 0$
 will produce loss.
-The reference-set cell R-V$^*$ illustrates the distinction: its
-within-group amplitudes range from $0.482$ (\texttt{perm}) to $1.0$
-(\texttt{roads}) in $G_1$, giving $\mathrm{TV}_W=0.027$ and
-$\mathrm{TV}_B=0.143$, yet $Q_2=100.0\%$ under optimal assembly on
+The reference-set cell R-V$^*$ illustrates the distinction.
+Its within-group amplitudes range from $0.482$ (\texttt{perm}) to $1.0$
+(\texttt{roads}) in $G_1$, giving $\mathrm{TV}_W\approx0.082$ and
+$\mathrm{TV}_B\approx0.072$, yet $Q_2=100.0\%$ under optimal assembly on
 every draw.
-E1-W, by contrast, has $\mathrm{TV}_W=0.066$ and $\mathrm{TV}_B\approx0$
-and loses $\EoneWloss$~pp.
-The structural difference is that R-V$^*$'s reference-set shrinkage
-is dominated by the between-group component ($\mathrm{TV}_B=0.143$),
-whereas E1-W isolates pure within-group distortion.
-Whether $\mathrm{TV}_W$ translates into loss depends on the pattern of
-distortion, not only its magnitude.
+E1-W, by contrast, has $\mathrm{TV}_W=\TVWvec$ and $\mathrm{TV}_B\approx0$
+and loses $\EoneWloss$~pp under optimal assembly.
+R-V$^*$ carries roughly $40\%$ of E1-W's within-group distortion and
+loses nothing; the magnitude of $\mathrm{TV}_W$ alone therefore does not
+determine loss.
+Whether $\mathrm{TV}_W$ translates into loss depends on the structure of
+the distortion within each group: a plausible mechanism is that R-V$^*$'s
+shrinkage (concentrated in \texttt{perm} within $G_1$) does not separate
+the candidate portfolios near the optimum, whereas E1-W's more uniform
+within-group compression does.
 \end{remark}
 
 
