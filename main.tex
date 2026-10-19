@@ -352,7 +352,8 @@ from a different direction.
 Modelling (RPM), which computes portfolios that are non-dominated in a
 scalar value space over a region of uncertain weights, using an
 interactive linear programme.
-\citet{Mild2015} applied RPM to R\&D portfolio selection; \citet{Yang2015SMAAPO}
+\citet{Mild2015} combined a multiattribute value function with portfolio optimization
+for infrastructure maintenance; \citet{Yang2015SMAAPO}
 combined SMAA with portfolio optimisation (SMAA-PO), producing
 acceptability indices for portfolios under full weight uncertainty.
 \citet{Liesio2021} reviewed 148 PDA contributions and found that
@@ -524,11 +525,10 @@ approximation.
 In the combinatorial optimisation literature, \citet{Guerreiro2023}
 developed exact and approximate methods for Pareto front determination
 using Minimal Correction Subsets; their approach targets boolean
-satisfaction problems, whereas the present paper enumerates all
-$\Ntrios$ feasible portfolios directly and computes the full trivariate
+satisfaction problems, whereas the present paper computes the full trivariate
 frontier without approximation.
 The present paper adds an external standard: a reference set of
-Pareto-optimal portfolios computed without any MCDM aggregation.
+Pareto-optimal portfolios computed without collapsing the three group-level objectives into a single score.
 
 % ----------------------------------------------------------
 \subsection{Spatial constraints and undesirable facilities}
@@ -536,15 +536,14 @@ Pareto-optimal portfolios computed without any MCDM aggregation.
 % ----------------------------------------------------------
 
 The theory of facility location under spatial separation constraints
-originates in the \emph{r-separation problem}:
-\citet{Current1990} reviewed the multi-objective analysis of facility
-location decisions, establishing that efficiency and equity objectives
-generate inherent trade-offs that single-criterion methods cannot
-resolve; spatial separation constraints were identified as a key
-complicating factor.
+originates in the \emph{r-separation problem}.
 \citet{MoonChaudhry1984} first formalised the problem of selecting
 facilities subject to a minimum pairwise distance constraint in the
 operations research literature.
+\citet{Current1990} reviewed the multi-objective analysis of facility
+location decisions, establishing that efficiency and equity objectives
+generate inherent trade-offs that single-criterion methods cannot resolve;
+spatial separation constraints were identified as a key complicating factor.
 \citet{Erkut1989} reviewed siting models for undesirable facilities and
 noted that MCDM methods are widely used in practice but rarely compared
 against exact optimisation benchmarks.
@@ -555,7 +554,7 @@ Multi-criteria models for undesirable facility siting on networks were
 characterised by \citet{Colebrook2007}, who derived efficient solutions
 and exact algorithms; the present problem is defined on a spatial
 surface rather than a network, and replaces the network distance with
-a minimum Euclidean separation constraint.
+a minimum pairwise separation constraint (great-circle distance, Section~\ref{sec:methods}).
 Multi-objective facility location problems with Pareto frontier
 computation appear in a range of siting contexts.
 \citet{Paul2017} used the $\varepsilon$-constraint method to generate
@@ -564,7 +563,7 @@ under coverage constraints; \citet{Kinay2019} demonstrated tractability
 of multi-criteria location under chance constraints via vectorial and
 goal-programming formulations.
 These formulations treat demand allocation and capacity explicitly;
-the present problem is deterministic, capacitatively unconstrained, and
+the present problem is deterministic, uncapacitated, and
 includes instead a hard pairwise separation constraint that reduces the
 feasible set from all $\binom{\Nvia}{\kk}$ triples to $\Ntrios$.
 \citet{Kuby1987} studied the related p-dispersion problem (maximise the
@@ -591,7 +590,7 @@ landfill siting in Greece, combining GIS-based scoring with ELECTRE TRI
 to handle weight uncertainty across multiple stakeholder scenarios; that
 study evaluates suitability class assignments rather than portfolio
 efficiency against a Pareto frontier.
-\citet{EiseltMarianov2014} are, to our knowledge, the only study to
+\citet{EiseltMarianov2014} were, to our knowledge, the only prior study to
 compute an exact Pareto frontier for a landfill siting problem; they use
 a bi-objective MIP without any MCDM ranking component, and the frontier
 is bivariate rather than trivariate.
