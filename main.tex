@@ -390,10 +390,11 @@ normalisation, and argued that the effective weight is the operationally
 relevant quantity.
 Behavioural antecedents of this observation exist in preference
 elicitation research: \citet{vonNitzsch1993} showed in a controlled
-study that subjects systematically change their stated weights when
-attribute ranges change, and \citet{Fischer1995} documented range
-sensitivity as a persistent feature of multi-attribute value models,
-attributing it to the range-frequency mechanism in human judgement.
+study that subjects adjust their stated weights insufficiently when
+attribute ranges change, systematically under-weighting range differences
+relative to what the MAVT framework requires,
+and \citet{Fischer1995} documented range sensitivity as a persistent
+feature of multi-attribute value models.
 These behavioural results establish that the problem is not merely
 notational; it reflects how decision makers actually process
 weighted criteria.
@@ -1079,13 +1080,10 @@ cost of using any particular normalisation.
 The choice of min--max for the benchmark is defended within the
 multi-attribute value theory (MAVT) framework on which the AHP weights
 rest.
-In MAVT, a criterion weight encodes the importance of a unit change
-relative to the specified value range; the range determines the scale on
-which the weight is operationally meaningful \citep{Choo1999,Kettani2004}.
-Min--max normalisation over the admissible set $\mathcal{A}'$ is the
-linear partial value function with local range: it assigns $0$ to the
-least preferred admissible site and $1$ to the most preferred on each
-criterion, which is the scale the AHP elicitation presupposes.
+In MAVT, a criterion weight is a scale constant encoding the value of moving from the worst to the best outcome on that criterion over the declared range \citep{KeeneyRaiffa1976,BeltonStewart2002,Choo1999,Kettani2004}.
+Min--max normalisation over $\mathcal{A}'$ is the linear partial value function with this local range.
+We interpret the AHP weights as MAVT scale constants anchored to $\mathcal{A}'$, which requires that the pairwise comparisons were made with the admissible range in mind.
+This is a modelling assumption: AHP pairwise comparisons are not inherently anchored to attribute ranges, and the anchoring interpretation is a point of known debate \citep{BeltonStewart2002}.
 Adopting a different normalisation for the benchmark objectives would
 require a separate argument that the resulting frontier better represents
 the decision maker's preferences; no such argument is available for
