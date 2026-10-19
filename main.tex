@@ -2378,6 +2378,25 @@ the $0.8$th percentile of $F_1$.
 The theorem says nothing about greedy assembly, and we do not treat
 this result as evidence for it.
 
+\begin{remark}[TV$_W > 0$ is not sufficient for efficiency loss]
+\label{rem:TVW}
+Theorem~\ref{thm:groupconst} gives a sufficient condition for efficiency
+(constant amplitudes within groups); it does not claim that any $\mathrm{TV}_W > 0$
+will produce loss.
+The reference-set cell R-V$^*$ illustrates the distinction: its
+within-group amplitudes range from $0.482$ (\texttt{perm}) to $1.0$
+(\texttt{roads}) in $G_1$, giving $\mathrm{TV}_W=0.027$ and
+$\mathrm{TV}_B=0.143$, yet $Q_2=100.0\%$ under optimal assembly on
+every draw.
+E1-W, by contrast, has $\mathrm{TV}_W=0.066$ and $\mathrm{TV}_B\approx0$
+and loses $\EoneWloss$~pp.
+The structural difference is that R-V$^*$'s reference-set shrinkage
+is dominated by the between-group component ($\mathrm{TV}_B=0.143$),
+whereas E1-W isolates pure within-group distortion.
+Whether $\mathrm{TV}_W$ translates into loss depends on the pattern of
+distortion, not only its magnitude.
+\end{remark}
+
 
 % =======================================================================
 % \S8 Discussion
@@ -2411,7 +2430,8 @@ Within Fogo the ordering is monotone in $\mathrm{TV}$ under optimal
 assembly (Table~\ref{tab:tvorder}), but Section~\ref{sec:e1} shows that
 $\mathrm{TV}$ conflates two components with different consequences:
 between-group distortion alone costs nothing, and within-group
-distortion carries the loss.
+distortion carries the loss on this instance
+(Remark~\ref{rem:TVW} qualifies the generality of this claim).
 It is also invisible: nothing in a standard TOPSIS or SAW report reveals
 that \texttt{perm} entered at $2.88$ times its nominal weight.
 
