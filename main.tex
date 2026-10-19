@@ -364,7 +364,9 @@ avoids collapsing value into a single additive score; \citet{Carazo2010}
 developed a multi-objective binary programme for project portfolio
 selection under resource and dependency constraints, demonstrating that
 combinatorial multi-objective portfolio problems are tractable in
-practice.
+practice; \citet{Doerner2006} further combined ant-colony optimisation
+with ILP preprocessing to approximate the full Pareto front of project
+portfolios directly, bypassing the ranking step entirely.
 The present paper occupies a position the PDA tradition does not fill:
 the three objectives $F_1, F_2, F_3$ are kept as separate partial value
 functions (not collapsed into one score), and the reference set is an
@@ -408,6 +410,11 @@ that apparently minor differences can produce materially different
 engineering decisions.
 \citet{Aytekin2021} compared 14 techniques across 14 data structures and
 found that no single technique dominates across all settings.
+\citet{Wolters1995} introduced sensitivity analysis specifically for
+additive MCDM methods, characterising changes in criterion evaluations
+and weights needed to alter the first-ranked alternative; the amplitude
+identity~\eqref{eq:weff} derived in this paper explains analytically why
+normalisation choice produces those changes.
 
 Two observations qualify this body of work.
 First, every study uses ranking agreement (RCI, Spearman's $\rho$,
@@ -518,6 +525,11 @@ Pareto-optimal portfolios computed without any MCDM aggregation.
 
 The theory of facility location under spatial separation constraints
 originates in the \emph{r-separation problem}:
+\citet{Current1990} reviewed the multi-objective analysis of facility
+location decisions, establishing that efficiency and equity objectives
+generate inherent trade-offs that single-criterion methods cannot
+resolve; spatial separation constraints were identified as a key
+complicating factor.
 \citet{MoonChaudhry1984} first formalised the problem of selecting
 facilities subject to a minimum pairwise distance constraint in the
 operations research literature.
@@ -562,6 +574,11 @@ SAW, and AHP dominate, with normalisation choices rarely reported.
 absence of spatial interdependencies among selected sites as a gap.
 \citet{Spigolon2018} combined MCDA with mixed-integer quadratic
 programming for multi-facility selection, but without comparing methods.
+\citet{Demesouka2019} applied spatial MCDM with robustness analysis to
+landfill siting in Greece, combining GIS-based scoring with ELECTRE TRI
+to handle weight uncertainty across multiple stakeholder scenarios; that
+study evaluates suitability class assignments rather than portfolio
+efficiency against a Pareto frontier.
 \citet{EiseltMarianov2014} are, to our knowledge, the only study to
 compute an exact Pareto frontier for a landfill siting problem; they use
 a bi-objective MIP without any MCDM ranking component, and the frontier
@@ -715,9 +732,10 @@ physically independent objectives: each component is an additive weighted
 aggregate of normalised criteria.
 This distinguishes our reference set from portfolio decision analysis
 approaches that compute non-dominated portfolios in a scalar value space
-\citep{Liesio2007,Liesio2008,Yang2015SMAAPO}, and from bi-objective mixed-integer
-landfill models whose objectives are physical quantities
-\citep{EiseltMarianov2014}.
+\citep{Liesio2007,Liesio2008,Yang2015SMAAPO}, from exact $\varepsilon$-constraint
+methods for bi-objective combinatorial problems \citep{Berube2009}, and
+from bi-objective mixed-integer landfill models whose objectives are
+physical quantities \citep{EiseltMarianov2014}.
 We keep the three group-level value functions unaggregated and ask how
 much of the resulting trade-off surface is lost when a ranking method
 collapses them into a single score before the portfolio is assembled.
@@ -2678,6 +2696,12 @@ relative weights.
 For structured disagreement among stakeholders,
 SMAA-style weight-space analysis \citep{Lahdelma2002} would be
 appropriate.
+For robustness concepts that extend Pareto efficiency to uncertain data
+rather than uncertain weights, \citet{Engau2020} characterise
+non-dominated solutions under dominance relations derived from
+distributional assumptions; our perturbation model is simpler but
+sufficient for the present purpose of measuring how often each cell
+recovers the nominal frontier.
 
 \emph{Gap measure and weak dominance.}
 The shortfall $\mathrm{gap}(t)$ in~\eqref{eq:gap} takes the minimum
