@@ -12,6 +12,8 @@
 \newcommand{\AsmMainLo}{-2.6}
 \newcommand{\AsmMainHi}{+0.5}
 \newcommand{\AsmMM}{8.1}                 % C4: assembly within min-max (all cells, incl Prop 1 cell)
+\newcommand{\AsmVecSAW}{9.4}              % C5a: SAW/vector assembly loss (opt-greedy magnitude)
+\newcommand{\AsmVecTOPSIS}{11.0}          % C5b: TOPSIS/vector assembly loss (opt-greedy magnitude)
 \newcommand{\AsmMMtopsis}{2.2}            % C4b: assembly within mm TOPSIS only (informative)
 \newcommand{\AsmMMtopsisLo}{0.2}          % C4b lower CI
 \newcommand{\AsmMMtopsisHi}{4.2}          % C4b upper CI
@@ -107,12 +109,15 @@
 
 
 % ── F3: Q3 results (compute_q3.py, 2026-10-02) ───────────────────────────────
-\newcommand{\QthreeSAWmmOpt}{0.000}    % Q3 SAW/minmax/optimal (=0, Q2=100%)
-\newcommand{\QthreeSAWmmGrd}{0.0018}   % Q3 SAW/minmax/greedy (valid)
-\newcommand{\QthreeTOPSISmmGrd}{0.0117} % Q3 TOPSIS/minmax/greedy (valid)
-% Vector-cell Q3 invalid (uses wrong frontier); deferred
-\newcommand{\QthreeSAWvecOpt}{0.0212}  % Q3 SAW/vec/opt (WRONG frontier — do not use)
-\newcommand{\QthreeTOPSISvecOpt}{0.447} % Q3 TOPSIS/vec/opt (WRONG frontier — do not use)
+\newcommand{\QthreeSAWmmOpt}{0.000}       % Q3 SAW/mm/opt (=0, Q2=100%)
+\newcommand{\QthreeSAWmmGrd}{0.0018}      % Q3 SAW/mm/grdy
+\newcommand{\QthreeSAWvecGrd}{0.0216}     % Q3 SAW/vec/grdy
+\newcommand{\QthreeSAWvecOpt}{0.0212}     % Q3 SAW/vec/opt (overwrite old)
+\newcommand{\QthreeTOPSISmmGrd}{0.0009}   % Q3 TOPSIS/mm/grdy (corrected)
+\newcommand{\QthreeTOPSISmmOpt}{0.0005}   % Q3 TOPSIS/mm/opt (corrected)
+\newcommand{\QthreeTOPSISvecGrd}{0.447}   % Q3 TOPSIS/vec/grdy (vs min-max frontier)
+\newcommand{\QthreeTOPSISvecOpt}{0.447}   % Q3 TOPSIS/vec/opt (vs min-max frontier)
+% All 8 Q3 values above (computed vs min-max reference frontier)
 % Q3=0 iff Q2=1 holds empirically: SAW/mm/opt is the only cell with Q3=0 and Q2=100%
 
 

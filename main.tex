@@ -95,49 +95,38 @@
 
 % -----------------------------------------------------------------------
 \begin{abstract}
-Multi-site facility siting is a portfolio problem: several locations must
-be chosen jointly, subject to a minimum separation between them.
-Practice relies on multi-criteria rankings read top-down, but the
-methodological literature measures only rank agreement, establishing
-that methods differ without establishing that any is worse.
-We supply an optimality benchmark internal to the value model but
-external to the ranking.
-For $\Ncand$ candidate sites on Fogo Island, Cape Verde, of which
-$\Nvia$ are admissible, we enumerate all $\Ntrios$ three-site portfolios
-under a $\dmin$~km separation constraint and compute the exact Pareto
-frontier over siting cost, environmental impact and social safety.
-Crossing aggregation, normalisation and assembly, we find that
-normalisation is worth $+\NormGreedyContrast$~pp of Pareto efficiency
-under greedy assembly on this instance; the pooled SAW--TOPSIS mean has no consistent direction ($+\AggContrast$~pp,
-pooled mean equivalent to zero within $\pm2.5$~pp (TOST $p=\TOSTp$), though the sign is strongly cell-dependent.
-Exact assembly is analytically guaranteed for SAW under min--max (Proposition~\ref{prop:p1}) and gains $+\AsmMMtopsis$~pp for TOPSIS; both methods lose $\AsmVec$~pp
-under vector normalisation on Fogo.
-In additive aggregation the effective weight of criterion $j$ is
-proportional to $w_jA_j$; exact assembly is Pareto-efficient for any
-weights and any instance of the additive model if and only if amplitudes are constant within
-each objective group (Theorem~\ref{thm:groupconst}).
-A targeted follow-up experiment confirms this on Fogo: between-group
-distortion alone costs nothing, while within-group distortion alone
-costs $\EoneWloss$~pp (the full vector distortion costs $\EoneVloss$~pp).
-A criterion encoded inconsistently between score and objective reduces
-$Q_2$ from $100\%$ to $\RaspOptimal\%$ on Fogo through the coding effect alone;
-with consistent encoding, normalising over inadmissible sites costs
-nothing under optimal assembly and improves greedy assembly by
-$\RefSetGreedyGain$~pp (post hoc exploratory,
-$95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
+Multi-site facility siting is a portfolio problem: several locations are chosen
+jointly under a minimum separation. Practice reads multi-criteria rankings
+top-down; the methodological literature compares methods by rank agreement,
+which shows that they differ, not that any is worse. We supply a benchmark
+external to the ranking, though internal to the value model. For $\Nvia$ admissible
+sites on Fogo Island, Cape Verde, we enumerate all $\Ntrios$ three-site
+portfolios satisfying a $\dmin$~km separation and compute the exact Pareto frontier
+over siting cost, environmental impact and social safety. Analytically, under
+additive aggregation with affine normalisation, the effective weight of a
+criterion is proportional to its weight times the amplitude of its normalised
+column, and exact assembly is Pareto-efficient on every instance if and only if
+amplitudes are constant within each objective group. Empirically, on this
+instance, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp under greedy
+assembly, whereas the pooled SAW--TOPSIS contrast is equivalent to zero within
+$\pm2.5$~pp ($\AggContrast$~pp, TOST $p=\TOSTp$) but conceals a significant
+interaction ($\AggStratumMMgrd$ to $+\AggStratumVecopt$~pp). The value of exact
+assembly depends on the normalisation: under min--max it is guaranteed for SAW
+and adds $+\AsmMMtopsis$~pp for TOPSIS; under vector normalisation it loses
+$\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy
+assembly. An intervention with pre-specified predictions shows that
+between-group distortion alone costs nothing, while within-group distortion
+alone costs $\EoneWloss$~pp. Separately, a criterion encoded inconsistently
+between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$.
 \end{abstract}
 
 \begin{highlights}
-\item Normalisation re-weights criteria: effective weight is
-  proportional to $w_jA_j$ (Theorem~\ref{thm:groupconst})
-\item Exact assembly is Pareto-safe iff amplitudes are constant
-  within objective groups
-\item On Fogo, normalisation moves Pareto attainment
-  $\NormGreedyContrast$~pp; pooled aggregation moves ${<}1$~pp
-\item Under vector normalisation, exact optimisation does worse than
-  greedy ranking (Experiment F8, Section~\ref{sec:design})
-\item Score-objective coding mismatches can cut Pareto attainment from
-  $100\%$ to $24\%$
+\item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
+\item Exact assembly is Pareto-safe iff amplitudes are constant within objective groups
+\item On Fogo, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp;
+  aggregation by ${<}1$~pp
+\item Under vector normalisation, exact optimisation loses $9$--$11$~pp to greedy ranking
+\item Score--objective coding mismatches can cut Pareto attainment from $100\%$ to $24\%$
 \end{highlights}
 
 \begin{keywords}
@@ -196,7 +185,7 @@ portfolio under Monte Carlo perturbation of the elicited weights.
 
 The answer is not about the aggregation methods.
 Choosing between SAW and TOPSIS has no consistent pooled direction
-($+\AggContrast$~pp, $95\%$ CI $[\AggLo,\,\AggHi]$, TOST $p=\TOSTp$
+($\AggContrast$~pp, $95\%$ CI $[\AggLo,\,\AggHi]$, TOST $p=\TOSTp$
 within $\pm2.5$~pp), but this pooled mean masks a strong interaction:
 SAW performs significantly worse than TOPSIS under min--max$\times$greedy
 ($\AggStratumMMgrd$~pp) and slightly better in the remaining cells.
@@ -204,7 +193,7 @@ Normalisation is worth $+\NormGreedyContrast$~pp under greedy assembly,
 and $+\NormMainEffect$~pp across the full $2^3$ factorial, which includes
 a cell fixed at $100\%$ by construction.
 Exact assembly, the established upgrade over reading a ranking top-down,
-has no average effect ($\AsmMain$~pp, $95\%$ CI $[\AsmMainLo,\,\AsmMainHi]$).
+has an effect whose sign depends on the normalisation: positive under min--max (TOPSIS: $+\AsmMMtopsis$~pp), negative under vector ($-\AsmVecSAW$ to $-\AsmVecTOPSIS$~pp).
 
 The reason is a mechanism that operates upstream of the aggregation
 operator, and it is the analytical core of the paper.
@@ -229,12 +218,12 @@ binary criterion loses approximately half its effective weight relative
 to a tie-free continuous criterion in rank space, irrespective of
 class balance.
 
-The mechanism also explains why exact assembly has no average effect.
+The mechanism also explains why the value of exact assembly depends on the normalisation.
 Exact optimisation of an additive score is guaranteed to yield a
 Pareto-efficient portfolio under the weights that score encodes.
 When $w^{\mathrm{eff}}$ departs from $w$ within an objective group,
 exact optimisation solves the wrong problem exactly: on Fogo, under min--max
-normalisation SAW assembly is guaranteed at $100\%$ by Proposition~\ref{prop:p1}
+normalisation SAW assembly is guaranteed at $100\%$ by Proposition~\ref{prop:p1:stmt}
 and TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation both methods
 lose $\AsmVec$~pp.
 Exact assembly remains Pareto-efficient for every instance if and only
@@ -286,7 +275,7 @@ Our contributions are as follows.
     constraint.
   \item A factorial decomposition showing that normalisation dominates the
     choice of aggregation operator, and that exact assembly has no
-    average effect because its sign depends on the normalisation.
+    simple average effect: its sign depends on the normalisation (positive under min--max, negative under vector).
   \item A necessary and sufficient condition for exact assembly to remain
     Pareto-efficient under normalisation: amplitudes must be constant
     within each objective group (Theorem~\ref{thm:groupconst}),
@@ -1080,7 +1069,7 @@ cost of using any particular normalisation.
 The choice of min--max for the benchmark is defended within the
 multi-attribute value theory (MAVT) framework on which the AHP weights
 rest.
-In MAVT, a criterion weight is a scale constant encoding the value of moving from the worst to the best outcome on that criterion over the declared range \citep{KeeneyRaiffa1976,BeltonStewart2002,Choo1999,Kettani2004}.
+In MAVT, a criterion weight is a scale constant encoding the value of moving from the worst to the best outcome on that criterion over the declared range \citep{KeeneyRaiffa1976,BeltonStewart2002,Choo1999}.
 Min--max normalisation over $\mathcal{A}'$ is the linear partial value function with this local range.
 We interpret the AHP weights as MAVT scale constants anchored to $\mathcal{A}'$, which requires that the pairwise comparisons were made with the admissible range in mind.
 This is a modelling assumption: AHP pairwise comparisons are not inherently anchored to attribute ranges, and the anchoring interpretation is a point of known debate \citep{BeltonStewart2002}.
@@ -1541,10 +1530,12 @@ is positive under both normalisations, and the same ordering is observed
 empirically.
 Restricting to optimal assembly, where no combinatorial loss from the
 greedy heuristic confounds the contrast (Section~\ref{sec:greedy}),
-$Q_2[\mathcal{A}']$ falls from SAW to TOPSIS by $3.4$~pp under min--max
-($\Delta\mathrm{TV}=0.160$) and $4.4$~pp under vector
-($\Delta\mathrm{TV}=0.360$): both negative and ordered consistently with
-the larger $\Delta\mathrm{TV}$.
+Under optimal assembly with vector normalisation, where no combinatorial
+loss from the greedy heuristic confounds the contrast,
+$Q_2[\mathcal{A}']$ falls from SAW to TOPSIS by $4.4$~pp
+($\Delta\mathrm{TV}=0.360$). The corresponding min--max contrast is not
+informative, because the SAW cell is fixed at $100\%$ by
+Proposition~\ref{prop:p1:stmt}.
 This is an empirical observation on one instance; whether the
 exponent~($\alpha=2$) analogy extends to a general prediction of
 monotone loss in TV depends on the geometry of the specific instance and
@@ -1846,7 +1837,7 @@ sub-optimality in the factorial experiment into four ordered factors:
     optimal assembly benefit from the preservation.
   \item \emph{Assembly effect (optimal vs.\ greedy):}
     Exact assembly helps under min--max and hurts under vector
-    normalisation (Section~\ref{sec:interaction}).
+    normalisation (Section~\ref{sec:assembly}).
   \item \emph{Aggregation effect (SAW vs.\ TOPSIS vs.\ VIKOR):}
     TOPSIS and VIKOR aggregate through ideal-point distances;
     The amplitude identity~\eqref{eq:weff} does not apply exactly to them.
@@ -2017,57 +2008,60 @@ Supplementary Material.
 % ----------------------------------------------------------
 
 Table~\ref{tab:factorial} reports the balanced $2^3$ design and
-Table~\ref{tab:effects} the contrasts, with $\nboot$-replicate bootstrap
+Table~\ref{tab:contrasts} the contrasts, with $\nboot$-replicate bootstrap
 intervals paired by draw.
 
 \begin{table}[!t]
 \centering
-\caption{$Q_2[A']$ for the balanced $2^3$ design ($\kappa=200$,
+\caption{$Q_2[A']$ and $Q_3$ for the balanced $2^3$ design ($\kappa=200$,
   $\ndraws$ draws). The SAW/min--max/optimal cell is fixed at $100\%$ by
-  Proposition~\ref{prop:p1:stmt}.}
+  Proposition~\ref{prop:p1:stmt}. $^\star Q_3$ is computed against the min--max
+  reference frontier; see Section~\ref{sec:e1q3}.}
 \label{tab:factorial}
-\begin{tabular}{llc}
+\begin{tabular}{llcc}
 \toprule
-Aggregation & Normalisation, assembly & $Q_2[A']$ \\
+Aggregation & Normalisation, assembly & $Q_2[A']$ & $Q_3$\rlap{$^\star$} \\
 \midrule
 \multirow{4}{*}{SAW}
- & min--max, greedy  & 86.0\% \\
- & min--max, optimal & \textbf{100.0\%} \\
- & vector, greedy    & 66.2\% \\
- & vector, optimal   & 56.8\% \\
+ & min--max, greedy  & 86.0\% & $\QthreeSAWmmGrd$ \\
+ & min--max, optimal & \textbf{100.0\%} & $\QthreeSAWmmOpt$ \\
+ & vector, greedy    & 66.2\% & $\QthreeSAWvecGrd$ \\
+ & vector, optimal   & 56.8\% & $\QthreeSAWvecOpt$ \\
 \midrule
 \multirow{4}{*}{TOPSIS}
- & min--max, greedy  & 94.4\% \\
- & min--max, optimal & 96.6\% \\
- & vector, greedy    & 63.4\% \\
- & vector, optimal   & 52.4\% \\
+ & min--max, greedy  & 94.4\% & $\QthreeTOPSISmmGrd$ \\
+ & min--max, optimal & 96.6\% & $\QthreeTOPSISmmOpt$ \\
+ & vector, greedy    & 63.4\% & $\QthreeTOPSISvecGrd$ \\
+ & vector, optimal   & 52.4\% & $\QthreeTOPSISvecOpt$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering\small
-\caption{Contrasts in percentage points of $Q_2[A']$ ($\kappa=200$;
-  $\nboot$ bootstrap replicates paired by draw.
-$\dagger$ Three informative cells only (SAW/mm-opt excluded: $Q_2=100\%$ by Proposition~\ref{prop:p1}).
-$\ddagger$ SAW/mm assembly: $+14.0$~pp analytically (Proposition~\ref{prop:p1}).}
-\label{tab:effects}
-\begin{tabular}{>{\raggedright\arraybackslash}p{5.4cm}rc}
+\caption{Contrasts in percentage points of $Q_2[\mathcal{A}']$ ($\kappa=200$;
+$\nboot$ bootstrap replicates paired by draw).
+$^\dagger$ Informative cells only: SAW/min--max/optimal is excluded because
+$Q_2=100\%$ by Proposition~\ref{prop:p1:stmt}. No pooled assembly contrast is
+reported because the effect reverses sign with the normalisation
+(Section~\ref{sec:assembly}).}
+\label{tab:contrasts}
+\begin{tabular}{lrc}
 \toprule
-Contrast & Effect & 95\% CI \\
+Contrast & Effect & $95\%$ CI \\
 \midrule
-Normalisation, greedy (mm $-$ vec) & $+25.4$ & $[+21.2,\,+29.8]$ \\
-Normalisation, full factorial      & $+34.6$ & $[+30.7,\,+38.4]$ \\
-Aggregation (SAW $-$ TOPSIS)$^\dagger$ & $\AggContrast$ & $[\AggLo,\,\AggHi]$ \\
-Assembly (optimal $-$ greedy)      & $-1.1$ & $[-2.6,\,+0.5]$ \\
+Normalisation, greedy (mm $-$ vec)            & $+25.4$ & $[+21.2,\,+29.8]$ \\
+Normalisation, informative cells$^\dagger$    & $+31.7$ & $[+28.9,\,+34.3]$ \\
+Aggregation (SAW $-$ TOPSIS)$^\dagger$        & $\AggContrast$  & $[\AggLo,\,\AggHi]$ \\
 \midrule
-Assembly within min--max (TOPSIS)$^\ddagger$ & $+\AsmMMtopsis$ & $[+\AsmMMtopsisLo,\,+\AsmMMtopsisHi]$ \\
-Assembly within vector             & $-10.2$ & $[-13.1,\,-7.4]$ \\
+Assembly within min--max (TOPSIS)             & $+\AsmMMtopsis$ & $[+\AsmMMtopsisLo,\,+\AsmMMtopsisHi]$ \\
+Assembly within vector (mean of SAW, TOPSIS)  & $-10.2$ & $[-13.1,\,-7.4]$ \\
+Assembly $\times$ normalisation (TOPSIS)      & $+13.2$ & $[+9.4,\,+17.0]$ \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
-The aggregation contrast of $+\AggContrast$~pp ($95\%$ CI
+The aggregation contrast of $\AggContrast$~pp ($95\%$ CI
 $[\AggLo,\,\AggHi]$) has no consistent pooled direction
 (TOST $p=\TOSTp$, $\delta=2.5$~pp, $90\%$ CI within $\pm\delta$).
 This pooled mean masks a strong interaction: the per-cell
@@ -2106,46 +2100,39 @@ We therefore report the additive cells as the test of the mechanism and
 the full factorial as a description of practice.
 
 % ----------------------------------------------------------
-\subsection{Exact assembly: no average effect, opposite signs}
-\label{sec:interaction}
-% ----------------------------------------------------------
+\subsection{Exact assembly: an effect conditional on normalisation}
+\label{sec:assembly}
 
-Averaged over the factorial, replacing greedy with optimal assembly is
-worth $\AsmMain$~pp ($95\%$ CI $[\AsmMainLo,\,\AsmMainHi]$).
-The average conceals two regimes of opposite sign
-(Table~\ref{tab:assembly}).
+Tables~\ref{tab:factorial} and~\ref{tab:contrasts} show the per-cell $Q_2$ values and contrasts. We do not report a contrast pooled over all cells: the effect changes
+sign with the normalisation, and any average would describe neither regime.
+Pooled over the three informative cells (excluding SAW/min--max/optimal, fixed
+at $100\%$ by Proposition~\ref{prop:p1:stmt}), it is $-6.1$~pp
+($95\%$ CI $[-7.7,\,-4.5]$); including that cell, it is $-1.1$~pp. The
+difference between the two figures is itself an artefact of the constructed cell.
 
-\begin{table}[!t]
-\centering
-\caption{Optimal minus greedy assembly, $Q_2[A']$ in percentage points,
-  paired by draw ($\kappa=200$, $\ndraws$ draws).}
-\label{tab:assembly}
-\begin{tabular}{llrc}
-\toprule
-Aggregation & Normalisation & Difference & 95\% CI \\
-\midrule
-SAW    & min--max & $+14.0$ & $[+11.0,\,+17.2]$ \\
-SAW    & vector   & $-9.4$  & $[-12.4,\,-6.4]$ \\
-TOPSIS & min--max & $+2.2$  & $[+0.2,\,+4.2]$ \\
-TOPSIS & vector   & $-11.0$ & $[-14.4,\,-7.8]$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+Under min--max normalisation, exact assembly is guaranteed to reach the
+frontier for SAW (Proposition~\ref{prop:p1:stmt}); the $+14.0$~pp contrast in
+that cell measures the greedy shortfall (Section~\ref{sec:greedy}), not an
+empirical benefit of optimisation. For TOPSIS, whose score is not additive in
+the objectives, exact assembly adds $+\AsmMMtopsis$~pp
+($95\%$ CI $[+\AsmMMtopsisLo,\,+\AsmMMtopsisHi]$), a gain whose lower bound
+is close to zero. Under vector normalisation, exact assembly is worse than
+reading the ranking top-down for both aggregations: $-\AsmVecSAW$~pp for SAW
+($[-12.4,\,-6.4]$) and $-\AsmVecTOPSIS$~pp for TOPSIS ($[-14.2,\,-7.8]$). For
+TOPSIS the assembly-by-normalisation interaction is $+13.2$~pp ($95\%$ CI
+$[+9.4,\,+17.0]$).
 
-Under min--max, exact assembly helps; under vector normalisation it is
-significantly worse than reading the ranking top-down, for both
-aggregations.
-Optimal assembly maximises $\sum_{i\in t}s(i)$ exactly and, by
-Proposition~\ref{prop:p1:stmt}, attains the frontier \emph{under the
-weights the score encodes}.
-When $w^{\mathrm{eff}}$ departs from $w$ within an objective group,
-it pursues the trade-offs of $w^{\mathrm{eff}}$ exactly, which under
-vector normalisation raise \textit{perm}'s share of $G_1$ by
-$\IntraGperm\times$ (and its overall weight by $2.88\times$).
-Greedy assembly is myopic and, on this evidence, less exposed to the
-distortion it does not optimise.
-The last sentence is an interpretation; Section~\ref{sec:e1} isolates
-the part of the distortion responsible.
+The reversal has a direct reading. Optimal assembly maximises
+$\sum_{i\in t} s(i)$ exactly and, by Proposition~\ref{prop:p1:stmt}, reaches
+the frontier defined by the weights the score encodes. Under vector
+normalisation those weights are $w^{\mathrm{eff}}$, which raise
+\textit{perm}'s share of $G_1$ by $\approx\IntraGperm\times$ (and its overall
+weight by $\approx 2.88\times$); exact assembly therefore pursues the trade-offs
+of $w^{\mathrm{eff}}$ precisely, and departs from the frontier defined by $w$.
+Greedy assembly is myopic and, on this evidence, less exposed to a distortion
+it does not optimise. This last statement is an interpretation;
+Section~\ref{sec:e1} isolates the component of the distortion responsible.
+
 
 \subsection{The reference set: a coding inconsistency outside the theorem}
 \label{sec:refset}
@@ -2420,10 +2407,11 @@ R-V$^*$ carries roughly $40\%$ of E1-W's within-group distortion and
 loses nothing; the magnitude of $\mathrm{TV}_W$ alone therefore does not
 determine loss.
 Whether $\mathrm{TV}_W$ translates into loss depends on the structure of
-the distortion within each group: a plausible mechanism is that R-V$^*$'s
-shrinkage (concentrated in \texttt{perm} within $G_1$) does not separate
-the candidate portfolios near the optimum, whereas E1-W's more uniform
-within-group compression does.
+the distortion. A plausible, untested mechanism is the direction of the
+within-group distortion: E1-W inflates \textit{perm}, the most heavily
+weighted criterion of $G_1$ (within-group share $\approx\IntraGperm\times$),
+whereas R-V$^*$ deflates it (amplitude $0.482$ against $0.683$ and $1.0$
+for the other $G_1$ criteria).
 \end{remark}
 
 
@@ -2644,7 +2632,7 @@ optimisation.
 Sharing a normalisation is sufficient but not necessary
 (cell~$B$, Table~\ref{tab:e1}).
 Integer programming on a mismatched score optimises the mismatch:
-SAW assembly is guaranteed under min--max (Proposition~\ref{prop:p1}); TOPSIS gains $+\AsmMMtopsis$~pp; both lose $\AsmVec$~pp
+SAW assembly is guaranteed under min--max (Proposition~\ref{prop:p1:stmt}); TOPSIS gains $+\AsmMMtopsis$~pp; both lose $\AsmVec$~pp
 to greedy assembly under vector normalisation.
 
 Third, report effective weights alongside elicited weights, and with
@@ -2680,8 +2668,7 @@ determines which column is normalised and therefore which amplitude
 enters the effective weights.
 
 Comparing aggregation operators, by contrast, is the least consequential
-of the design choices we examine in terms of pooled mean ($+\AggContrast$~pp,
-pooled mean equivalent to zero within $\pm2.5$~pp (TOST $p=\TOSTp$), sign cell-dependent
+of the design choices we examine: the pooled contrast is equivalent to zero ($\AggContrast$~pp, TOST $p=\TOSTp$), although its sign depends on the cell ($\AggStratumMMgrd$ to $+\AggStratumVecopt$~pp)
 ($\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp, a cell-dependent
 interaction),
 and the mechanism explains why: aggregation acts downstream of the
@@ -2770,6 +2757,14 @@ with numerical criterion scores; extracting a comparable decision matrix
 would require constructing instances from publicly available spatial data,
 which is left for future work.
 
+\emph{Anchoring of the weights.}
+Behavioural studies report that elicited weights adjust insufficiently to
+attribute ranges \citep{vonNitzsch1993,Fischer1995}.
+The anchoring of the AHP weights to $\mathcal{A}'$ assumed in
+Section~\ref{sec:design} may therefore not hold; $Q_2$ then measures
+attainment relative to the stated value model, not to the decision
+maker's underlying preferences.
+
 \emph{Weight perturbation model.}
 Dirichlet perturbation around $\wahp$ represents symmetric uncertainty in
 relative weights.
@@ -2794,8 +2789,10 @@ objective~3, ties elsewhere), yet $\mathrm{gap}(t)=\min(0,0,1)=0$.
 $Q_2$, computed from the full Pareto dominance algorithm, is therefore
 the primary efficiency measure; $Q_3$ is a complementary severity
 indicator, not an equivalent restatement of $Q_2$.
-$Q_3$ for the two non-trivial min-max cells (SAW/mm/greedy: $\QthreeSAWmmGrd$; TOPSIS/mm/greedy: $\QthreeTOPSISmmGrd$) is consistent with the $Q_2$ ordering and is reported in the Supplementary Material.
-$Q_3$ for vector-normalised cells requires a method-specific Pareto frontier and is not reported here.
+$Q_3$ for all eight cells is reported in Table~\ref{tab:factorial}.
+\label{sec:e1q3}
+$Q_3$ and $Q_2$ measure different aspects of efficiency and need not agree: a cell may attain the frontier often ($Q_2$ high) while falling far below it when it misses ($Q_3$ high), and $Q_3$ is blind to weak dominance.
+For cells using vector normalisation, $Q_3$ is computed against the min--max reference frontier; this differs from $Q_2$, which is computed against the cell-specific frontier.
 
 \emph{Regulatory grounding.}
 The exclusion of the $\Nexcl$ overlapping sites is treated as a
@@ -2816,16 +2813,16 @@ how often each combination recovers a Pareto-efficient portfolio under
 perturbation of the elicited weights.
 
 The choice of aggregation operator, the variable the applied literature
-compares most, had no consistent pooled direction on Fogo ($+\AggContrast$~pp,
+compares most, had no consistent pooled direction on Fogo ($\AggContrast$~pp,
 $95\%$ CI $[\AggLo,\,\AggHi]$, TOST $p=\TOSTp$);
 the sign ranged from $\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp
 depending on the cell, confirming a cell-dependent interaction rather
 than an absence of effect.
 Normalisation was worth $+\NormGreedyContrast$~pp under greedy assembly
 on Fogo.
-Exact assembly had no average effect on this instance, because its sign
-depends on the normalisation: SAW assembly was guaranteed under min--max (Proposition~\ref{prop:p1})
-and TOPSIS gained $+\AsmMMtopsis$~pp; both methods lost $\AsmVec$~pp under vector.
+Exact assembly had no unconditional benefit on this instance: the value depends on the normalisation. SAW assembly was guaranteed under min--max (Proposition~\ref{prop:p1:stmt})
+and TOPSIS gained $+\AsmMMtopsis$~pp; under vector normalisation exact assembly
+lost $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) to greedy assembly.
 The explanation is analytical: in additive aggregation the effective
 weight of a criterion is proportional to $w_jA_j$, and exact assembly
 is Pareto-efficient for any weights and any instance of the additive model if and only if
