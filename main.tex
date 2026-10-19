@@ -108,7 +108,7 @@ frontier over siting cost, environmental impact and social safety.
 Crossing aggregation, normalisation and assembly, we find that
 normalisation is worth $+\NormGreedyContrast$~pp of Pareto efficiency
 under greedy assembly on this instance; the pooled SAW--TOPSIS mean has no consistent direction ($+\AggContrast$~pp,
-TOST within $\pm2.5$~pp), though the sign is strongly cell-dependent.
+pooled mean equivalent to zero within $\pm2.5$~pp (TOST $p=\TOSTp$), though the sign is strongly cell-dependent.
 Exact assembly is analytically guaranteed for SAW under min--max (Proposition~\ref{prop:p1}) and gains $+\AsmMMtopsis$~pp for TOPSIS; both methods lose $\AsmVec$~pp
 under vector normalisation on Fogo.
 In additive aggregation the effective weight of criterion $j$ is
@@ -1026,12 +1026,10 @@ We pre-specify the following before examining results.
     smallest difference in $Q_2$ (or $Q_3$ scaled to pp) judged
     practically relevant for site-selection decisions.
     The aggregation contrast is declared \emph{equivalent} if the
-    $95\%$ bootstrap CI lies entirely within $(-\delta,+\delta)$.
-  \item \textbf{Minimum detectable effect}: with $\ndraws$
-    draws per cell and $Q_2\approx0.6$, the two-sided MDE at $80\%$
-    power is $5.8$~pp.
-    The TOST equivalence test is therefore the appropriate inferential
-    frame for testing whether the pooled aggregation mean is non-zero.
+    $90\%$ bootstrap CI lies entirely within $(-\delta,+\delta)$
+    (corresponding to TOST at $\alpha=0.05$, one-sided $\alpha=0.025$).
+  \item \textbf{Equivalence test}: TOST with $\delta=2.5$~pp tests whether the pooled mean is
+    \emph{equivalent to zero} within the margin, not whether it is non-zero.
   \item \textbf{Bootstrap pairing}: replicates are paired by draw within
     each cell so that weight-vector noise cancels in contrasts; the
     within-draw correlation across cells is positive by construction
@@ -2068,8 +2066,8 @@ Assembly within vector             & $-10.2$ & $[-13.1,\,-7.4]$ \\
 
 The aggregation contrast of $+\AggContrast$~pp ($95\%$ CI
 $[\AggLo,\,\AggHi]$) has no consistent pooled direction
-(TOST $p=\TOSTp$, $\delta=2.5$~pp).
-This pooled mean, however, masks a strong interaction: the per-cell
+(TOST $p=\TOSTp$, $\delta=2.5$~pp, $90\%$ CI within $\pm\delta$).
+This pooled mean masks a strong interaction: the per-cell
 contrasts range from $\AggStratumMMgrd$~pp
 ($95\%$ CI $[\AggMMgrdCIlo,\,\AggMMgrdCIhi]$) under min--max$\times$greedy,
 where TOPSIS significantly outperforms SAW, to $+\AggStratumVecopt$~pp
@@ -2680,7 +2678,7 @@ enters the effective weights.
 
 Comparing aggregation operators, by contrast, is the least consequential
 of the design choices we examine in terms of pooled mean ($+\AggContrast$~pp,
-TOST within $\pm2.5$~pp), though the sign is cell-dependent
+pooled mean equivalent to zero within $\pm2.5$~pp (TOST $p=\TOSTp$), sign cell-dependent
 ($\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp, a cell-dependent
 interaction),
 and the mechanism explains why: aggregation acts downstream of the
@@ -2818,7 +2816,7 @@ perturbation of the elicited weights.
 
 The choice of aggregation operator, the variable the applied literature
 compares most, had no consistent pooled direction on Fogo ($+\AggContrast$~pp,
-$95\%$ CI $[\AggLo,\,\AggHi]$, TOST within $\pm2.5$~pp);
+$95\%$ CI $[\AggLo,\,\AggHi]$, TOST $p=\TOSTp$);
 the sign ranged from $\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp
 depending on the cell, confirming a cell-dependent interaction rather
 than an absence of effect.
