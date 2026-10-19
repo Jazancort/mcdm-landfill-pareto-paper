@@ -106,11 +106,11 @@ under a $\dmin$~km separation constraint and compute the exact Pareto
 frontier over siting cost, environmental impact and social safety.
 Crossing aggregation, normalisation and assembly, we find that
 normalisation is worth $+\NormGreedyContrast$~pp of Pareto efficiency
-under greedy assembly; the pooled SAW--TOPSIS contrast ($+\AggContrast$~pp)
+under greedy assembly on this instance; the pooled SAW--TOPSIS contrast ($+\AggContrast$~pp)
 is equivalent within the pre-specified $\pm2.5$~pp margin (TOST), though
 the sign is cell-dependent.
 Exact assembly gains $+\AsmMM$~pp under min--max but loses $\AsmVec$~pp
-under vector normalisation.
+under vector normalisation on Fogo.
 In additive aggregation the effective weight of criterion $j$ is
 proportional to $w_jA_j$; exact assembly is Pareto-efficient for any
 weights and any instance of the additive model if and only if amplitudes are constant within
@@ -119,7 +119,7 @@ A targeted follow-up experiment confirms this on Fogo: between-group
 distortion alone costs nothing, while within-group distortion alone
 costs $\EoneWloss$~pp (the full vector distortion costs $\EoneVloss$~pp).
 A criterion encoded inconsistently between score and objective reduces
-$Q_2$ from $100\%$ to $\RaspOptimal\%$ through the coding effect alone;
+$Q_2$ from $100\%$ to $\RaspOptimal\%$ on Fogo through the coding effect alone;
 with consistent encoding, normalising over inadmissible sites costs
 nothing under optimal assembly and improves greedy assembly by
 $\RefSetGreedyGain$~pp (post hoc exploratory,
@@ -232,7 +232,7 @@ The mechanism also explains why exact assembly has no average effect.
 Exact optimisation of an additive score is guaranteed to yield a
 Pareto-efficient portfolio under the weights that score encodes.
 When $w^{\mathrm{eff}}$ departs from $w$ within an objective group,
-exact optimisation solves the wrong problem exactly: replacing greedy with
+exact optimisation solves the wrong problem exactly: on Fogo, replacing greedy with
 optimal assembly gains $+\AsmMM$~pp under min--max normalisation and loses
 $\AsmVec$~pp under vector normalisation, and the loss appears under both SAW
 and TOPSIS.
@@ -621,10 +621,11 @@ normalisation implicitly re-weights criteria, expressed in terms
 established by \citet{Choo1999} and measured in terms of Pareto
 efficiency loss.
 
-In the literature reviewed (55 studies, including the 148-article PDA
-survey of \citet{Liesio2021}), no prior work evaluates ranking-based
-MCDM portfolios against an exhaustive Pareto frontier under hard spatial
-separation, crosses aggregation, normalisation, and assembly as a
+In the literature reviewed (the studies cited in Sections~\ref{sec:litreview}
+and~\ref{sec:lit_gap}, including the 148-article PDA survey of \citet{Liesio2021}),
+no prior work evaluates ranking-based MCDM portfolios against an exhaustive
+Pareto frontier under hard spatial separation, crosses aggregation, normalisation,
+and assembly as a
 factorial, or measures the cost of normalisation choice in units of
 Pareto efficiency.
 
@@ -2734,14 +2735,15 @@ how often each combination recovers a Pareto-efficient portfolio under
 perturbation of the elicited weights.
 
 The choice of aggregation operator, the variable the applied literature
-compares most, had no consistent pooled effect ($+\AggContrast$~pp,
+compares most, had no consistent pooled effect on Fogo ($+\AggContrast$~pp,
 $95\%$ CI $[\AggLo,\,\AggHi]$, equivalent to zero within $\pm2.5$~pp
 by TOST); the sign ranged from
 $\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp depending on the cell.
-Normalisation was worth $+\NormGreedyContrast$~pp under greedy assembly.
-Exact assembly had no average effect, because its sign depends on the
-normalisation: it gained $+\AsmMM$~pp under min--max and lost
-$\AsmVec$~pp under vector normalisation.
+Normalisation was worth $+\NormGreedyContrast$~pp under greedy assembly
+on Fogo.
+Exact assembly had no average effect on this instance, because its sign
+depends on the normalisation: it gained $+\AsmMM$~pp under min--max and
+lost $\AsmVec$~pp under vector normalisation.
 The explanation is analytical: in additive aggregation the effective
 weight of a criterion is proportional to $w_jA_j$, and exact assembly
 is Pareto-efficient for any weights and any instance of the additive model if and only if
@@ -2767,10 +2769,10 @@ In the Fogo factorial, exact assembly improved Pareto attainment under
 min--max and reduced it under vector normalisation, relative to the
 min--max value model; under vector normalisation it performs worse than
 reading the ranking top-down.
-A criterion encoded differently in the score and the objectives reduces
-$Q_2$ from $100\%$ to $\RaspOptimal\%$ under optimal assembly; with a
-consistent encoding, normalising over inadmissible alternatives costs
-nothing under optimal assembly on this instance.
+A criterion encoded differently in the score and the objectives
+reduces $Q_2$ from $100\%$ to $\RaspOptimal\%$ under optimal assembly
+on Fogo; with a consistent encoding, normalising over inadmissible
+alternatives costs nothing under optimal assembly on this instance.
 The immediate recommendation is inexpensive: report effective weights
 alongside elicited ones.
 Given the normalised decision matrix the computation is a single line,
