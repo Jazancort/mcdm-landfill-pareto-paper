@@ -109,7 +109,7 @@ Crossing aggregation, normalisation and assembly, we find that
 normalisation is worth $+\NormGreedyContrast$~pp of Pareto efficiency
 under greedy assembly on this instance; the pooled SAW--TOPSIS mean has no consistent direction ($+\AggContrast$~pp,
 TOST within $\pm2.5$~pp), though the sign is strongly cell-dependent.
-Exact assembly gains $+\AsmMM$~pp under min--max but loses $\AsmVec$~pp
+Exact assembly is analytically guaranteed for SAW under min--max (Proposition~\ref{prop:p1}) and gains $+\AsmMMtopsis$~pp for TOPSIS; both methods lose $\AsmVec$~pp
 under vector normalisation on Fogo.
 In additive aggregation the effective weight of criterion $j$ is
 proportional to $w_jA_j$; exact assembly is Pareto-efficient for any
@@ -232,10 +232,10 @@ The mechanism also explains why exact assembly has no average effect.
 Exact optimisation of an additive score is guaranteed to yield a
 Pareto-efficient portfolio under the weights that score encodes.
 When $w^{\mathrm{eff}}$ departs from $w$ within an objective group,
-exact optimisation solves the wrong problem exactly: on Fogo, replacing greedy with
-optimal assembly gains $+\AsmMM$~pp under min--max normalisation and loses
-$\AsmVec$~pp under vector normalisation, and the loss appears under both SAW
-and TOPSIS.
+exact optimisation solves the wrong problem exactly: on Fogo, under min--max
+normalisation SAW assembly is guaranteed at $100\%$ by Proposition~\ref{prop:p1}
+and TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation both methods
+lose $\AsmVec$~pp.
 Exact assembly remains Pareto-efficient for every instance if and only
 if the normalised amplitudes are constant within each objective group
 (Theorem~\ref{thm:groupconst}): distortion between groups only relocates
@@ -2047,18 +2047,20 @@ Aggregation & Normalisation, assembly & $Q_2[A']$ \\
 \begin{table}[!t]
 \centering\small
 \caption{Contrasts in percentage points of $Q_2[A']$ ($\kappa=200$;
-  $\nboot$ bootstrap replicates paired by draw).}
+  $\nboot$ bootstrap replicates paired by draw.
+$\dagger$ Three informative cells only (SAW/mm-opt excluded: $Q_2=100\%$ by Proposition~\ref{prop:p1}).
+$\ddagger$ SAW/mm assembly: $+14.0$~pp analytically (Proposition~\ref{prop:p1}).}
 \label{tab:effects}
-\begin{tabular}{>{\raggedright\arraybackslash}p{4.6cm}rc}
+\begin{tabular}{>{\raggedright\arraybackslash}p{4.9cm}rc}
 \toprule
 Contrast & Effect & 95\% CI \\
 \midrule
 Normalisation, greedy (mm $-$ vec) & $+25.4$ & $[+21.2,\,+29.8]$ \\
 Normalisation, full factorial      & $+34.6$ & $[+30.7,\,+38.4]$ \\
-Aggregation (SAW $-$ TOPSIS)       & $+\AggContrast$ & $[\AggLo,\,\AggHi]$ \\
+Aggregation (SAW $-$ TOPSIS)$^\dagger$ & $\AggContrast$ & $[\AggLo,\,\AggHi]$ \\
 Assembly (optimal $-$ greedy)      & $-1.1$ & $[-2.6,\,+0.5]$ \\
 \midrule
-Assembly within min--max           & $+8.1$ & $[+6.2,\,+10.1]$ \\
+Assembly within min--max (TOPSIS)$^\ddagger$ & $+\AsmMMtopsis$ & $[+\AsmMMtopsisLo,\,+\AsmMMtopsisHi]$ \\
 Assembly within vector             & $-10.2$ & $[-13.1,\,-7.4]$ \\
 \bottomrule
 \end{tabular}
@@ -2641,7 +2643,7 @@ optimisation.
 Sharing a normalisation is sufficient but not necessary
 (cell~$B$, Table~\ref{tab:e1}).
 Integer programming on a mismatched score optimises the mismatch:
-exact assembly gains $+\AsmMM$~pp under min--max and loses $\AsmVec$~pp
+SAW assembly is guaranteed under min--max (Proposition~\ref{prop:p1}); TOPSIS gains $+\AsmMMtopsis$~pp; both lose $\AsmVec$~pp
 to greedy assembly under vector normalisation.
 
 Third, report effective weights alongside elicited weights, and with
@@ -2823,8 +2825,8 @@ than an absence of effect.
 Normalisation was worth $+\NormGreedyContrast$~pp under greedy assembly
 on Fogo.
 Exact assembly had no average effect on this instance, because its sign
-depends on the normalisation: it gained $+\AsmMM$~pp under min--max and
-lost $\AsmVec$~pp under vector normalisation.
+depends on the normalisation: SAW assembly was guaranteed under min--max (Proposition~\ref{prop:p1})
+and TOPSIS gained $+\AsmMMtopsis$~pp; both methods lost $\AsmVec$~pp under vector.
 The explanation is analytical: in additive aggregation the effective
 weight of a criterion is proportional to $w_jA_j$, and exact assembly
 is Pareto-efficient for any weights and any instance of the additive model if and only if

@@ -4,14 +4,17 @@
 % ── Marco A: main contrasts (bootstrap_contrasts) ───────────────────────
 \newcommand{\NormGreedyContrast}{25.4}   % C6: greedy-only norm contrast
 \newcommand{\NormMainEffect}{34.6}       % C1: full-factorial norm main effect
-\newcommand{\AggContrast}{0.5}           % C3: aggregation contrast SAW-TOPSIS pooled (F1, aggregation_strata.py)
-\newcommand{\AggLo}{-0.8}
-\newcommand{\AggHi}{+1.8}
+\newcommand{\AggContrast}{-0.4}          % C3: aggregation contrast SAW-TOPSIS, 3 informative cells (excl SAW/mm/opt)
+\newcommand{\AggLo}{-1.9}
+\newcommand{\AggHi}{+1.1}
 \newcommand{\TOSTp}{0.003}               % tost_25pp, delta=2.5
 \newcommand{\AsmMain}{-1.1}              % C2: assembly main effect
 \newcommand{\AsmMainLo}{-2.6}
 \newcommand{\AsmMainHi}{+0.5}
-\newcommand{\AsmMM}{8.1}                 % C4: assembly within min-max
+\newcommand{\AsmMM}{8.1}                 % C4: assembly within min-max (all cells, incl Prop 1 cell)
+\newcommand{\AsmMMtopsis}{2.2}            % C4b: assembly within mm TOPSIS only (informative)
+\newcommand{\AsmMMtopsisLo}{0.2}          % C4b lower CI
+\newcommand{\AsmMMtopsisHi}{4.2}          % C4b upper CI
 \newcommand{\AsmVec}{10.2}               % C5: assembly within vector (magnitude)
 
 % ── Marco A: E1 intervention results ────────────────────────────────────
@@ -87,9 +90,9 @@
 \newcommand{\AspLeewardPct}{24.2}    % % of 389 viable sites that are leeward
 
 % ── F1: SAW-TOPSIS contrast by stratum (aggregation_strata.py, 2026-10-02) ──
-\newcommand{\AggContrastPooled}{0.5}   % overall pooled: +0.5 pp (n.s.)
-\newcommand{\AggContrastPooledLo}{-0.8} % 95% CI lower
-\newcommand{\AggContrastPooledHi}{1.8}  % 95% CI upper
+\newcommand{\AggContrastPooled}{-0.4}  % 3-cell pooled: -0.4 pp (excl Prop 1 cell)
+\newcommand{\AggContrastPooledLo}{-1.9} % 95% CI lower
+\newcommand{\AggContrastPooledHi}{1.1}  % 95% CI upper
 \newcommand{\AggStratumMMgrd}{-8.4}    % minmax/greedy: SAW-TOPSIS pp (SIG)
 \newcommand{\AggStratumVecgrd}{2.8}    % vector/greedy: SAW-TOPSIS pp (SIG)
 \newcommand{\AggStratumMMopt}{3.4}     % minmax/optimal: SAW-TOPSIS pp (SIG)
