@@ -25,18 +25,19 @@ Criado: 2026-10-01 | Sequência: Bloco 4 → 1 → 3 → 2 → submissão
 
 ## Bloco 3 — Pacote de reprodução público (Semana 2 — 2-3 dias)
 
-- [ ] **3.1** Criar repositório GitHub público `mcdm-landfill-pareto-replication` (separado do repo de desenvolvimento)
-- [ ] **3.2** Incluir no repo:
+- [x] **3.1** Criar repositório GitHub público `mcdm-landfill-pareto-replication` — https://github.com/Jazancort/mcdm-landfill-pareto-replication (2026-10-19)
+- [x] **3.2** Incluir no repo:
   - `scripts/run_e1_v3.py` (experimento E1 principal)
   - `scripts/generate_macros.py` (gera macros_auto.tex)
-  - `scripts/verify_macros_permanent.py` (verifica reprodutibilidade)
-  - `corpus/PRESPEC_E1.md` e `corpus/PRESPEC_E3.md`
-  - `data/` — instruções de acesso ou dados públicos (verificar licença)
-  - `README.md` com 3 passos: clone → run_e1_v3 → verify
-- [ ] **3.3** Testar que `uv run python scripts/run_e1_v3.py` reproduz os resultados do artigo a partir de um clone limpo
-- [ ] **3.4** Tag `v1.0` no GitHub + Zenodo webhook → DOI automático
-- [ ] **3.5** Adicionar no main.tex: `Data and code available at \url{https://doi.org/10.5281/zenodo.XXXXXXX}`
-- [ ] **3.6** Actualizar o hash esperado no README quando os macros estabilizarem
+  - `scripts/verify_macros_permanent.py` (ALL CHECKS PASSED — hash 813030ffd9520c2d)
+  - `corpus/PRESPEC_E1.md`
+  - `data/e1_v3_rerun_20261002.log`
+  - `results/fourthcell/mc_2cube_fixed_raw.csv`
+  - `README.md` com 3 passos: clone → uv pip install → verify
+- [ ] **3.3** Testar que `uv run python scripts/run_e1_v3.py` reproduz os resultados do artigo a partir de um clone limpo (requer MCDM_DATA_DIR com dados GIS)
+- [x] **3.4** Tag `v1.0` no GitHub → **AGUARDA**: ativar webhook Zenodo em zenodo.org → DOI automático
+- [x] **3.5** Seção "Code availability" adicionada ao main.tex (linha ~2887): `\url{https://github.com/...}` + placeholder `ZENODO-DOI-AQUI` para substituir após webhook
+- [ ] **3.6** Após Zenodo: substituir `ZENODO-DOI-AQUI` em main.tex pelo DOI real; recompilar 4-pass
 
 ---
 
