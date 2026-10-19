@@ -1030,7 +1030,7 @@ We pre-specify the following before examining results.
 Min-max and vector constants may be computed over all $\Ncand$ candidates
 (space~$A$) or over the $\Nvia$ admissible ones (space~$A'$).
 Space~$A$ reproduces the source study (frontier size $|\Fset|=\FAsize$ portfolios
-under the A-space pipeline, reported for context only);
+at the nominal AHP weights $\wahp$, reported for context only);
 space~$A'$ is the factorial design ($|\Fset|=\Fmmsize$), and the two
 reference sets share only $\FAinter$ portfolios (A-space pipeline).
 Including inadmissible sites shifts the scale without those sites being
@@ -1168,12 +1168,20 @@ The ``if and only if'' follows because $w^{\mathrm{eff}} = w$ iff
 $w_j A_j / \sum_k w_k A_k = w_j$ for all $j$, which holds iff all
 $A_j$ equal the same constant.\hfill$\square$
 
+For affine normalisation $n_j(x) = b_j + A_j \tilde{n}_j(x)$ (which
+includes min--max and vector), the score reduces to
+$s(i) = \mathrm{const} + \sum_j w_j A_j \tilde{n}_j(x_{ij})$, identical
+to SAW with weights $w^{\mathrm{eff}}$ applied to the column $\tilde{n}_j$.
+The ranking under any affine normalisation is therefore equivalent to SAW
+under min--max with weights $w^{\mathrm{eff}}$.
+
 \paragraph{Scope and empirical confirmation.}
 \label{rem:scope}
 The amplitude identity~\eqref{eq:weff} is exact for additive aggregation
 under affine normalisation (including min--max and vector);
-for rank normalisation, midranks are not affine in the original values
-and $A_j$ approximates the column amplitude rather than determining it exactly.
+for rank normalisation, midranks are not affine in the original values,
+so the effective weight $w_j^{\mathrm{eff}}$ approximates the weight shift
+rather than determining it exactly.
 Within this scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $100.0\%$,
 $88.2\%$ and $56.8\%$ for min--max, ranks and vector normalisation
 respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $0.315$,
@@ -1187,8 +1195,8 @@ First, VIKOR is invariant to per-criterion affine transformation,
 because both scale and shift cancel in its ratio form; min--max and
 vector normalisation are both affine, so the VIKOR$\times$vector cell
 is identical to VIKOR$\times$min--max and is excluded from the design.
-Second, TOPSIS inherits the amplitude at a higher exponent, so
-min--max is not amplitude-neutral for it
+Second, by analogy with the quadratic exponent, TOPSIS amplifies the
+criterion contribution non-linearly, so min--max is not amplitude-neutral for it
 (Remark~\ref{rem:mm_not_neutral}).
 
 \subsection{Amplitude under the three standard normalisations}
@@ -1493,7 +1501,7 @@ $w_j^{\mathrm{eff}}\propto w_j^{2}$, so the total variation
 $\mathrm{TV}(2)=0.160$ on the Fogo weights.
 Min--max preserves elicited weights only under additive aggregation;
 combining it with TOPSIS re-weights criteria by squaring in the
-weighted Euclidean distance $d_i^\pm = \sqrt{\sum_j (w_j v_{ij} \mp
+weighted Euclidean distance $d_i^\pm = \sqrt{\sum_j w_j^2(v_{ij} -
 v_j^\pm)^2}$; the effect on the proximity index $C_i = d_i^- / (d_i^+
 + d_i^-)$ is not a simple linear re-weighting and depends on the
 geometry of the ideal and anti-ideal points.
@@ -1915,7 +1923,7 @@ Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.0
 A first indication that the reference set is itself implicated: when
 normalisation constants are recomputed over the $\Nvia$ admissible sites
 (space~$A'$), the Pareto membership of method portfolios improves
-(see Table~\ref{tab:canonical}).
+(confirmed in Section~\ref{sec:refset}).
 The failures in space~$A$ are not solely attributable to the methods;
 they are partly induced by computing the value scale over sites that
 cannot be selected.
