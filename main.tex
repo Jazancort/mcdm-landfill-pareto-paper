@@ -810,7 +810,7 @@ that follow correspond to Stages~1--6 in order.
   Stage~1: GIS dataset with 389 viable sites and 11 criteria across three
   objective groups (siting cost, environmental impact and social safety).
   Stage~2: AHP-derived nominal weights ($\mathrm{CR}=\CR$) with Dirichlet
-  perturbation ($\kappa\in\{50,200\}$, $\ndraws$ draws).
+  perturbation ($\kappa=200$, $\ndraws$ draws).
   Stage~3 (primary analytical focus): three normalisation rules whose
   amplitude $A_j$ determines the effective weight
   $w_j^{\mathrm{eff}}=w_jA_j/\sum_k w_kA_k$ (Eq.~\eqref{eq:weff}).
@@ -975,7 +975,12 @@ reference set is precomputed once and the Monte Carlo loop recomputes
 portfolio objectives per draw.
 
 Weights are perturbed as $w\sim\mathrm{Dir}(\kappa\,\wahp)$ with
-concentration $\kappa\in\{50,200\}$ and $\ndraws$ draws per cell; larger
+concentration $\kappa=200$ and $\ndraws$ draws per cell; $\kappa=50$
+serves as a robustness check for Proposition~\ref{prop:p1:stmt} and for
+the follow-up intervention (Section~\ref{sec:e1}), and those results
+are reported in the Supplementary Material.
+The main factorial (Table~\ref{tab:factorial}) and all contrasts use
+$\kappa=200$ throughout.
 $\kappa$ concentrates the draws around $\wahp$.
 Throughout, $\kappa$ denotes only this concentration parameter; the
 separation threshold is always written $d_{\min}=\dmin$~km.
@@ -2769,6 +2774,11 @@ objective~3, ties elsewhere), yet $\mathrm{gap}(t)=\min(0,0,1)=0$.
 $Q_2$, computed from the full Pareto dominance algorithm, is therefore
 the primary efficiency measure; $Q_3$ is a complementary severity
 indicator, not an equivalent restatement of $Q_2$.
+The four $Q_3$ values for the informative cells (SAW/mm/grdy:
+$\QthreeSAWmmGrd$; SAW/mm/opt: $\QthreeSAWmmOpt$; SAW/vec/opt:
+$\QthreeSAWvecOpt$; TOPSIS/vec/opt: $\QthreeTOPSISvecOpt$) are
+consistent with the $Q_2$ ordering and are reported in the
+Supplementary Material.
 
 \emph{Regulatory grounding.}
 The exclusion of the $\Nexcl$ overlapping sites is treated as a
