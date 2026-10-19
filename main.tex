@@ -122,7 +122,7 @@ A criterion encoded inconsistently between score and objective reduces
 $Q_2$ from $100\%$ to $\RaspOptimal\%$ through the coding effect alone;
 with consistent encoding, normalising over inadmissible sites costs
 nothing under optimal assembly and improves greedy assembly by
-$\RefSetGreedyGain$~pp (post hoc exploratory, rule R1-2,
+$\RefSetGreedyGain$~pp (post hoc exploratory,
 $95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
 \end{abstract}
 
@@ -677,8 +677,8 @@ giving $A_j^{\rm vec}=1/\sqrt{94}=0.103$.
 Under vector normalisation the two encodings differ in amplitude by
 $\sqrt{n_0/n_1}=1.77$ (Corollary~\ref{cor:order}); the score and
 objective functions use the decision-matrix encoding throughout
-(a pipeline inconsistency in an earlier version that used a continuous
-azimuth encoding is documented in Section~\ref{sec:refset}).
+(a score--evaluator coding mismatch arising from non-monotone encodings
+is analysed in Section~\ref{sec:refset}).
 Amplitudes in Table~\ref{tab:amplitude} are measured on the decision
 matrix, with $n_1=94$ leeward sites among the $\Nvia$ admissible sites.
 Criteria in $G_3$ are built so that $c_j(i)=1$ is most favourable
@@ -2083,12 +2083,11 @@ Exact assembly can amplify such mismatches; this is not implicit
 re-weighting in the sense of the theorem, but a distinct failure mode.
 
 The cost on Fogo is large.
-An earlier version of our pipeline scored \textit{aspect}
-(the terrain orientation criterion, weight~$0.075$) as a continuous
-azimuth in degrees, min--max normalised over all $\Ncand$ candidates,
-while the objectives used a binary leeward indicator
+Scoring \textit{aspect} (the terrain orientation criterion, weight~$0.075$)
+as a continuous azimuth in degrees, min--max normalised over all
+$\Ncand$ candidates, while the objectives use a binary leeward indicator
 ($c=1$ for azimuth $\in[90^\circ,180^\circ]$, zero otherwise),
-following \citet{AzancortNeto2026}.
+following \citet{AzancortNeto2026}, produces a score--evaluator mismatch.
 
 For completeness, we recall the reference-set amplitude ratio.
 Min--max normalisation satisfies $A_j\equiv1$ over the set on which its
@@ -2158,13 +2157,11 @@ The reference-set effect is therefore not a fixed cost: its sign depends
 on whether the score and the evaluator agree on the criterion encoding,
 and on this instance it is harmless or beneficial under consistent coding.
 All cells reported in this paragraph are post hoc exploratory
-(Supplementary Material, rules R1-1 to R1-6).
+(Supplementary Material).
 
 The directional asymmetry between the $r_j$ and $1/r_j$ amplitude
-patterns reported in an earlier version was computed with the pipeline
-later found to encode \textit{aspect} inconsistently (DEV-E4-007) and
-has not been recomputed with consistent coding; it is withdrawn from
-the main text.
+patterns has not been re-examined with consistent aspect coding and is
+not reported here.
 
 \begin{table}[!t]
 \centering
@@ -2192,10 +2189,10 @@ Table~\ref{tab:coding2x2} holds the evaluator fixed at $\mathcal{A}'$
 
 \begin{remark}[A non-monotone recoding is outside the theorem]
 \label{rem:nonmonotone}
-An earlier version of our pipeline scored \textit{aspect} as a
-continuous azimuth in degrees (min--max normalised over all
-$\Ncand$ candidates), while the objectives used the leeward indicator
-($c=1$ for azimuth $\in[90^\circ,180^\circ]$).
+Scoring \textit{aspect} as a continuous azimuth in degrees (min--max
+normalised over all $\Ncand$ candidates), while the objectives use the
+leeward indicator ($c=1$ for azimuth $\in[90^\circ,180^\circ]$),
+introduces a non-monotone mismatch.
 These are not monotonically related: Spearman $\rho = \AspSpearman$
 ($p = \AspSpearmanP$), and all $\AspTopQuartile$ sites in the top
 quartile of the continuous column carry indicator value zero
@@ -2206,9 +2203,8 @@ Because the recoding is not monotone in the evaluator's partial value,
 Theorem~\ref{thm:groupconst} does not apply; the result instead
 illustrates that exact assembly can amplify mismatches between the
 score's criterion definition and the evaluator's.
-The provenance of this result is documented in
-\texttt{corpus/PRESPEC\_E4.md} (DEV-E4-007); the pipeline version
-history is in the Supplementary Material.
+The provenance of this result is documented in the Supplementary
+Material.
 \end{remark}
 
 
@@ -2254,7 +2250,7 @@ We test this by intervening on the amplitudes directly.
 The intervention was not part of the original pre-registered factorial
 design but was specified as a follow-up analysis before any experimental
 run; three quantitative predictions (P1--P3 below) were committed to the
-repository at commit \texttt{f6042f8} (2026-09-30) before the first run.
+repository before the first run (Supplementary Material).
 We therefore classify E1 as a \emph{follow-up analysis with
 pre-specified predictions}, not as confirmatory evidence for the theorem
 nor as fully post hoc exploratory.
@@ -2362,7 +2358,7 @@ maximisation on every instance if and only if the score's amplitudes,
 in the units of the objectives, are constant within each objective group.
 Its premise fails when a criterion is encoded in the score by a function
 that is not affine, or not even monotone, in the evaluator's partial value.
-On Fogo, an earlier version of the pipeline scored \textit{aspect} as a
+On Fogo, the coding inconsistency arose when aspect was scored as a
 continuous azimuth while the objectives used the binary leeward indicator.
 Crossing the two codings with the two reference sets
 (Table~\ref{tab:coding2x2}) separates three effects.
@@ -2380,7 +2376,7 @@ The reference-set effect is therefore not a fixed cost: its sign depends
 on whether the score and the evaluator agree on the criterion encoding,
 and on this instance it is harmless or beneficial under consistent coding.
 All cells in this paragraph are post hoc exploratory
-(Supplementary Material, rules R1-1 to R1-6).
+(Supplementary Material).
 
 The practical consequences differ.
 Distributional re-weighting is a property of the data under a given
@@ -2656,7 +2652,7 @@ and greedy loss in the model as fitted
 $95\%$ CI $[-5.1,\,+2.4]$), while instance size and spatial geometry
 dominate (Supplementary Material, Experiment~E5).
 E5 departs from its pre-specification in seven declared respects,
-including the omission of the $N=389$ level (DEV-E5-001 to DEV-E5-007).
+including the omission of the $N=389$ level (Supplementary Material).
 
 \emph{Weight perturbation model.}
 Dirichlet perturbation around $\wahp$ represents symmetric uncertainty in
@@ -2758,13 +2754,13 @@ further instances remains open.
 
 The reference-set analyses in Section~\ref{sec:refset} and
 Remark~\ref{rem:nonmonotone} are based on post hoc exploratory cells
-(declared in \texttt{corpus/PRESPEC\allowbreak\_E4.md}, DEV-E4-007) and should be
+(Supplementary Material) and should be
 treated as descriptive rather than confirmatory.
-The post hoc exploratory decision rule (PRESPEC\_R1, rule R1-2) found that
+A post hoc analysis found that
 greedy assembly improves by $+\RefSetGreedyGain$~pp under consistent
 coding ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$); under optimal
 assembly both cells reach $100\%$ on the sampled draws, so the estimated
-contrast was zero on this instance (rule R1-1: observation, not a
+contrast was zero on this instance (an observation on Fogo, not a
 general zero-cost guarantee for mismatched reference sets).
 
 The broader implication is methodological.
