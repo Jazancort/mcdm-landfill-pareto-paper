@@ -524,7 +524,7 @@ goal-programming formulations.
 These formulations treat demand allocation and capacity explicitly;
 the present problem is deterministic, capacitatively unconstrained, and
 includes instead a hard pairwise separation constraint that reduces the
-feasible set from all $\binom{\Ncand}{\kk}$ triples to $\Ntrios$.
+feasible set from all $\binom{\Nvia}{\kk}$ triples to $\Ntrios$.
 \citet{Kuby1987} studied the related p-dispersion problem (maximise the
 minimum inter-facility distance); \citet{Church2022} reviewed the
 broader class of dispersion and diversity maximisation models.
@@ -1313,8 +1313,8 @@ Consider an instance containing, besides sites $a$ and $a'$, sites that
 attain the minimum and maximum of every criterion, so that the min--max
 ranges, and hence $A$, are fixed independently of $a$ and $a'$.
 Let $a$ and $a'$ coincide on every criterion except $j$ and $k$, and let
-$T=\{a\}\cup R$ and $T'=\{a'\}\cup R$ for a common set $R$ of $\kk-1$
-other sites.
+$T=\{a\}\cup R$ and $T'=\{a'\}\cup R$ for a common set $R$ of
+$(\kk-1)=2$ other sites.
 Assign oriented differences
 $w_j[\tilde c_j(a')-\tilde c_j(a)]=x$ and
 $w_k[\tilde c_k(a')-\tilde c_k(a)]=y$, where $y=-\eta<0$ and
