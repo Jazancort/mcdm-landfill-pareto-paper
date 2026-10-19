@@ -1140,7 +1140,7 @@ objective functions.
 
 The central analytical result of the paper is stated and derived in this section.
 It takes the form of a lemma that expresses effective weights in closed form,
-followed by a theorem, three propositions and two corollaries that characterise the specific distortions
+followed by a theorem, three propositions and one corollary that characterise the specific distortions
 produced by min--max, vector, and rank normalisation.
 
 % ----------------------------------------------------------
@@ -1185,8 +1185,11 @@ $A_j$ equal the same constant.\hfill$\square$
 
 \paragraph{Scope and empirical confirmation.}
 \label{rem:scope}
-The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
-Within that scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $100.0\%$,
+The amplitude identity~\eqref{eq:weff} is exact for additive aggregation
+under affine normalisation (including min--max and vector);
+for rank normalisation, midranks are not affine in the original values
+and $A_j$ approximates the column amplitude rather than determining it exactly.
+Within this scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $100.0\%$,
 $88.2\%$ and $56.8\%$ for min--max, ranks and vector normalisation
 respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $0.315$,
 a strictly monotone ordering on this instance (Table~\ref{tab:tvorder}).
@@ -1201,7 +1204,7 @@ vector normalisation are both affine, so the VIKOR$\times$vector cell
 is identical to VIKOR$\times$min--max and is excluded from the design.
 Second, TOPSIS inherits the amplitude at a higher exponent, so
 min--max is not amplitude-neutral for it
-(Corollary~\ref{cor:mm_not_neutral}).
+(Remark~\ref{rem:mm_not_neutral}).
 
 \subsection{Amplitude under the three standard normalisations}
 \label{sec:three_norms}
@@ -1439,7 +1442,8 @@ gives $\mathrm{TV}_B=\TVBvec$ and $\mathrm{TV}_W=\TVWvec$.
 \subsection{The amplitude exponent: extension beyond additive aggregation}
 \label{sec:exponent}
 
-The amplitude identity~\eqref{eq:weff} is exact for additive aggregation.
+The amplitude identity~\eqref{eq:weff} is exact for additive aggregation
+under affine normalisation.
 The families evaluated here differ in how the normalised column enters the
 score, and the difference is captured by a single exponent.
 
@@ -1496,8 +1500,9 @@ The three families stand as follows.
 \end{itemize}
 \end{remark}
 
-\begin{corollary}[Min--max is not amplitude-neutral for TOPSIS]
-\label{cor:mm_not_neutral}
+\begin{remark}[Min--max is not amplitude-neutral for TOPSIS]
+\label{rem:mm_not_neutral}
+By analogy with the quadratic exponent (Remark~\ref{prop:exponent}):
 Under $\alpha=2$ and $A_j\equiv1$, \eqref{eq:weff_alpha} gives
 $w_j^{\mathrm{eff}}\propto w_j^{2}$, so the total variation
 $\mathrm{TV}(2)=0.160$ on the Fogo weights.
@@ -1507,7 +1512,7 @@ weighted Euclidean distance $d_i^\pm = \sqrt{\sum_j (w_j v_{ij} \mp
 v_j^\pm)^2}$; the effect on the proximity index $C_i = d_i^- / (d_i^+
 + d_i^-)$ is not a simple linear re-weighting and depends on the
 geometry of the ideal and anti-ideal points.
-\end{corollary}
+\end{remark}
 
 Table~\ref{tab:exponent} reports $\mathrm{TV}(\alpha)$ for both
 $\alpha\in\{1,2\}$ and all three normalisations.
@@ -2567,7 +2572,7 @@ TOPSIS, by contrast, inherits the amplitude at exponent $\alpha=2$
 (Remark~\ref{prop:exponent}), and SAW at $\alpha=1$.
 The three aggregation families therefore span the full range of exposure
 to the distortion: immunity (VIKOR), linear amplification (SAW), and
-quadratic amplification (TOPSIS).
+quadratic-like amplification (TOPSIS, by analogy; Remark~\ref{rem:mm_not_neutral}).
 Three observations previously treated separately become corollaries of
 one identity: the vector-normalisation distortion
 (Section~\ref{sec:three_norms}), the rank-space contraction
@@ -2711,7 +2716,8 @@ would be suboptimal under a different specification of the objectives.
 
 \emph{Scope of the closed form.}
 The amplitude identity~\eqref{eq:weff} is exact for additive
-aggregation.
+aggregation under affine normalisation (min-max and vector);
+for rank normalisation the identity is approximate.
 Remark~\ref{prop:exponent} extends it to distance-based and
 ordinal families through the amplitude exponent, but the extension is
 exact for the squared TOPSIS distance rather than the distance itself,
@@ -2859,7 +2865,7 @@ Where weights encode stakeholder judgements, as AHP weights do, a
 normalisation that silently multiplies one criterion by $2.88\times$ and
 divides another by $0.53\times$ is difficult to defend.
 
-The closed form is exact for additive aggregation; TOPSIS and VIKOR
+The closed form is exact for additive aggregation under affine normalisation; for ranks the identity is approximate. TOPSIS and VIKOR
 combine distances to ideal points, where amplitudes enter quadratically
 or in ratio form, and extending the characterisation to those families
 remains open.
