@@ -1,10 +1,11 @@
-# LaTeX build artefacts
+# LaTeX build artefacts (compiled output only)
+main.pdf
+supplementary.pdf
 *.aux
 *.bbl
 *.blg
 *.log
 *.out
-*.pdf
 *.abs
 *.toc
 *.lof
@@ -15,19 +16,17 @@
 *.bcf
 *.run.xml
 
-# Data — never commit raw data or cached datasets
+# Figures and scripts use PDFs — do NOT exclude
+# figures/**/*.pdf  <-- intentionally kept
+# scripts/**/*.pdf  <-- intentionally kept
+
+# Temporary / diagnostic scripts and outputs
 scripts/results/*.csv
 scripts/results/*.json
 scripts/results/*.txt
 scripts/downloads/
-
-# Diagnostic/temp outputs
 scripts/*.txt
-scripts/diag_out.txt
-scripts/assert_out.txt
-scripts/p1_out.txt
-scripts/fronteiras_out.txt
-scripts/vikor_out.txt
+fix_barbati.py
 
 # Python cache
 __pycache__/
@@ -36,11 +35,19 @@ __pycache__/
 .venv/
 .uv/
 
-# Session logs — runtime noise, not part of the paper
+# Root-level duplicate CSV files (canonical versions are in results/subdirs/)
+results/all_contrasts.csv
+results/bootstrap_paired.csv
+results/e3_grid_results.csv
+results/e4_results.csv
+results/fourthcell_consistent.csv
+results/wp3_mc_fixed_raw.csv
+new_refs_draft.bib
+
+# Editor / OS
 docs/session-log.md
+docs/estado-atual.md
 .DS_Store
 Thumbs.db
-
-# Editor
 .vscode/
 *.swp

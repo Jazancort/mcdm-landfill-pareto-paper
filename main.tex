@@ -261,8 +261,8 @@ Our contributions are as follows.
 \begin{enumerate}[label=(\roman*)]
   \item A closed-form characterisation of normalisation as implicit
     re-weighting (the amplitude identity~\eqref{eq:weff}), formalising a relation
-    established qualitatively by \citet{Choo1999} and supported by
-    behavioural evidence in \citet{vonNitzsch1993} and \citet{Fischer1995},
+    established qualitatively by \citet{Choo1999} and related to
+    behavioural evidence on range sensitivity in \citet{vonNitzsch1993} and \citet{Fischer1995},
     with the amplitude $A_j$ identified in closed form for min--max, vector
     and rank normalisation (Section~\ref{sec:three_norms}).
     Three effects previously reported separately, namely vector-normalisation
@@ -274,7 +274,7 @@ Our contributions are as follows.
     enumerated frontier of $\Ntrios$ portfolios under a hard separation
     constraint.
   \item A factorial decomposition showing that normalisation dominates the
-    choice of aggregation operator, and that the value of exact assembly is conditional on the normalisation, reversing sign between min--max and vector.
+    choice of aggregation operator, and that the value of exact assembly is conditional on the normalisation, reversing sign between min--max and vector, on this instance.
   \item A necessary and sufficient condition for exact assembly to remain
     Pareto-efficient under normalisation: amplitudes must be constant
     within each objective group (Theorem~\ref{thm:groupconst}),
@@ -1095,13 +1095,14 @@ SAW with min--max normalisation attained only $\FEightMMOptQ\%$
 ($\mathrm{SE}=\FEightMMOptSE$~pp), a drop of ${\approx}5.6$~pp.
 Under greedy assembly the pattern was similar:
 $\FEightVecGrdQ\%$ (vec) versus $\FEightMMGrdQ\%$ (mm).
-The $100\%$ under vec/greedy is interpretable as a near-lexicographic
-effect: vector normalisation inflates the total weight of \texttt{perm}
-by $\approx 2.88\times$ relative to its nominal value (a within-$G_1$ amplification of $\approx\IntraGperm\times$);
-the greedy algorithm
-commits to the highest-scoring site first, and when scoring is dominated
-by one criterion, the greedy selection coincides with the dominant
-criterion's frontier as often as the vector optimal does.
+The $100\%$ under vec/greedy is explained by the same effect:
+on every draw in this experiment, the greedy algorithm selected the
+same portfolio as the optimal solver ($Q_2 = \FEightVecGrdQ\%$,
+$\mathrm{SE}=0$).
+When vector normalisation inflates the weight of \texttt{perm} to
+$\approx 2.88\times$ its nominal value, scoring is dominated by a
+single criterion; greedy commits to the highest-scoring site first and
+the subsequent choices coincide with the optimal solution on every draw.
 Two observations follow.
 First, the direction of the advantage reverses relative to the main
 factorial: vector normalisation now dominates, confirming that the
@@ -1692,7 +1693,7 @@ $\mathrm{TV}$ & & & 0.000 & 0.315 & 0.091 & & \\
   deflated ($0.62\times$) while the seven fully continuous criteria gain
   $\approx 12\%$.
   Grey lines show the eight remaining criteria; ratios in parentheses
-  are relative to vector normalisation.}
+  are the effective weight divided by the nominal weight.}
 \label{fig:slope_weights}
 \end{figure*}
 
@@ -1915,8 +1916,7 @@ Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.0
 
 A first indication that the reference set is itself implicated: when
 normalisation constants are recomputed over the $\Nvia$ admissible sites
-(space~$A'$), the Pareto membership of method portfolios improves
-(confirmed in Section~\ref{sec:refset}).
+(space~$A'$), the Pareto membership of method portfolios improves.
 The failures in space~$A$ are not solely attributable to the methods;
 they are partly induced by computing the value scale over sites that
 cannot be selected.
@@ -2932,6 +2932,13 @@ Writing -- Review \& Editing.
 The author declares no known competing financial interests or personal
 relationships that could have appeared to influence the work reported in
 this article.
+
+\section*{Declaration of generative AI and AI-assisted technologies in the writing process}
+
+During the preparation of this work the author used AI-assisted writing
+tools for language editing and code review.
+After using these tools, the author reviewed and edited all content and
+takes full responsibility for the content of the published article.
 
 \section*{Funding}
 
