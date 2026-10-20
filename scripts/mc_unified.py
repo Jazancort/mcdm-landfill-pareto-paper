@@ -229,8 +229,8 @@ d_agg_3cell = (1/3) * (
 agg_strata = {}
 for (norm, mont), g in df.groupby(["norm","mont"]):
     key = (norm, mont)
-    saw_v = g[g.agg=="saw"]["nd_Q2Ap"].values.astype(float)
-    top_v = g[g.agg=="topsis"]["nd_Q2Ap"].values.astype(float)
+    saw_v = g.loc[g["agg"]=="saw",    "nd_Q2Ap"].values.astype(float)
+    top_v = g.loc[g["agg"]=="topsis", "nd_Q2Ap"].values.astype(float)
     mn, lo, hi, p = bstrap(saw_v - top_v)
     agg_strata[key] = (mn, lo, hi, p)
 

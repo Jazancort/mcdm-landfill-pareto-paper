@@ -2067,13 +2067,13 @@ reported because the effect reverses sign with the normalisation
 \toprule
 Contrast & Effect & $95\%$ CI \\
 \midrule
-Normalisation, greedy (mm $-$ vec)            & $+25.4$ & $[+21.2,\,+29.8]$ \\
-Normalisation, informative cells$^\dagger$    & $+31.7$ & $[+28.9,\,+34.3]$ \\
+Normalisation, greedy (mm $-$ vec)            & $+\NormGreedyContrast$ & $[+21.2,\,+29.7]$ \\
+Normalisation, informative cells$^\dagger$    & $+\NormInfoEffect$ & $[+\NormInfoLo,\,+\NormInfoHi]$ \\
 Aggregation (SAW $-$ TOPSIS)$^\dagger$        & $\AggContrast$  & $[\AggLo,\,\AggHi]$ \\
 \midrule
 Assembly within min--max (TOPSIS)             & $+\AsmMMtopsis$ & $[+\AsmMMtopsisLo,\,+\AsmMMtopsisHi]$ \\
-Assembly within vector (mean of SAW, TOPSIS)  & $-10.2$ & $[-13.1,\,-7.4]$ \\
-Assembly $\times$ normalisation (TOPSIS)      & $+13.2$ & $[+9.4,\,+17.0]$ \\
+Assembly within vector (mean of SAW, TOPSIS)  & $-\AsmVec$ & $[-\AsmVecLo,\,-\AsmVecHi]$ \\
+Assembly $\times$ normalisation (TOPSIS)      & $+\InteractionTOPSIS$ & $[+\InteractionTOPSISLo,\,+\InteractionTOPSISHi]$ \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -2123,8 +2123,8 @@ the full factorial as a description of practice.
 Tables~\ref{tab:factorial} and~\ref{tab:contrasts} show the per-cell $Q_2$ values and contrasts. We do not report a contrast pooled over all cells: the effect changes
 sign with the normalisation, and any average would describe neither regime.
 Pooled over the three informative cells (excluding SAW/min--max/optimal, fixed
-at $100\%$ by Proposition~\ref{prop:p1:stmt}), it is $-6.1$~pp
-($95\%$ CI $[-7.7,\,-4.5]$); including that cell, it is $-1.1$~pp. The
+at $100\%$ by Proposition~\ref{prop:p1:stmt}), it is $\AsmThreecell$~pp
+($95\%$ CI $[\AsmThreecellLo,\,\AsmThreecellHi]$); including that cell, it is $-1.1$~pp. The
 difference between the two figures is itself an artefact of the constructed cell.
 
 Under min--max normalisation, exact assembly is guaranteed to reach the
@@ -2135,9 +2135,10 @@ the objectives, exact assembly adds $+\AsmMMtopsis$~pp
 ($95\%$ CI $[+\AsmMMtopsisLo,\,+\AsmMMtopsisHi]$), a gain whose lower bound
 is close to zero. Under vector normalisation, exact assembly is worse than
 reading the ranking top-down for both aggregations: $-\AsmVecSAW$~pp for SAW
-($[-12.4,\,-6.4]$) and $-\AsmVecTOPSIS$~pp for TOPSIS ($[-14.2,\,-7.8]$). For
-TOPSIS the assembly-by-normalisation interaction is $+13.2$~pp ($95\%$ CI
-$[+9.4,\,+17.0]$).
+($[-\AsmVecSAWLo,\,-\AsmVecSAWHi]$) and $-\AsmVecTOPSIS$~pp for TOPSIS
+($[-\AsmVecTOPSISLo,\,-\AsmVecTOPSISHi]$). For
+TOPSIS the assembly-by-normalisation interaction is $+\InteractionTOPSIS$~pp ($95\%$ CI
+$[+\InteractionTOPSISLo,\,+\InteractionTOPSISHi]$).
 
 The reversal has a direct reading. Optimal assembly maximises
 $\sum_{i\in t} s(i)$ exactly and, by Proposition~\ref{prop:p1:stmt}, reaches
