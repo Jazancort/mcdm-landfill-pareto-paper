@@ -66,45 +66,101 @@
 M = 100% e B = 100% em todas as instâncias e todas as famílias.
 Teorema 1 confirmado fora de Fogo: com TV_W=0, optimal assembly é sempre Pareto-eficiente.
 
-### P2: Direcção confirmada; magnitude detectável só em zero_inflated
+### P2: Critério pré-registado falhou — ρ≥0 ausente em todas as famílias
 
-| Família | % ρ<0 | Critério | ρ médio | Perda em W_inf_H |
+Decomposição por instância (entre os 30 por família):
+
+| Família | ρ<0 | ρ indef (série const.) | ρ≥0 | Perdas>5pp |
 |---|---|---|---|---|
-| lognormal | 67% | FAIL | −0.921 | 4.9 pp |
-| beta13 | 60% | FAIL | −0.831 | 1.6 pp |
-| uniform | 73% | FAIL | −0.866 | 1.8 pp |
-| zero_inflated | 93% | OK | −0.952 | 16.8 pp |
+| lognormal | 20/30 | 10/30 | **0/30** | 10/30 |
+| beta13 | 18/30 | 12/30 | **0/30** | 3/30 |
+| uniform | 22/30 | 8/30 | **0/30** | 5/30 |
+| zero_inflated | 28/30 | 2/30 | **0/30** | 20/30 |
 
-O critério 80% falha em 3 famílias por falta de potência: com perdas de 1-5 pp e N=200 draws, muitas instâncias têm Q2=100% para todos os níveis de TV_W (ConstantInputWarning no Spearman). O ρ médio é fortemente negativo em todas as famílias, confirmando a direcção. **Resultado principal:** perda mensurável só ocorre com concentração extrema (π=0.90 zeros), análoga a perm em Fogo.
+**ρ≥0 = 0 em todas as famílias.** Toda instância com perda detectável mostrou ρ<0. O critério 80% falhou porque muitas instâncias têm Q2=100% para todos os níveis de TV_W (série constante — não é falta de potência, é efeito pequeno real). Aplicar regra do PRESPEC: manter qualificação "on this instance".
 
-### P3: PASSOU em todas as 4 famílias
+### P3: Não suportada quando empates são removidos
 
-| Família | Q2(V) ≤ Q2(W) | Critério |
+O critério original "V≤W" contava empates (ambas células=100%) como sucessos. Decomposição estrita:
+
+| Família | V<W strict | V=W tied | V>W | Strict/Inform | p-value |
+|---|---|---|---|---|---|
+| lognormal | 13/30 (43%) | 11 | 6 | 13/19 | p=0.084 |
+| beta13 | 7/30 (23%) | 21 | 2 | 7/9 | p=0.090 |
+| uniform | 8/30 (27%) | 14 | 8 | 8/16 | p=0.598 |
+| zero_inflated | 8/30 (27%) | 16 | 6 | 8/14 | p=0.395 |
+
+Nenhuma família passa o teste binomial entre instâncias informativas. O resultado original "P3 passa em todas as famílias" era artefacto dos empates. **P3 não tem suporte estatístico onde testável.** Desvio a declarar: DEV-E6-001.
+
+### P4: Direcção inversa à previsão nas instâncias informativas
+
+O critério original "inf<def" contava empates como falhas. Decomposição estrita:
+
+| Família | inf<def strict | tied | inf>def | Deflate custa mais? |
+|---|---|---|---|---|
+| lognormal | 12 | 5 | 13 | leve (48% vs 52%) |
+| beta13 | 4 | 14 | 12 | sim (25% vs 75%) |
+| uniform | 8 | 12 | 10 | ligeiro (44% vs 56%) |
+| zero_inflated | 10 | 2 | **18** | sim — 18/28 inf>def |
+
+Na única família com instâncias informativas suficientes (zero_inflated), **deflacionar j* custa mais que inflar** em 18/28 casos. Oposto da previsão. P4 falsificada na direcção inversa onde testável.
+
+### Comparação correcta com Fogo (célula W, só TV_W)
+
+| | Fogo (E1 W) | zero_inflated W_inf_F | lognormal | beta13 | uniform |
+|---|---|---|---|---|---|
+| TV_W=0.199, TV_B=0 | **35.8 pp** | 10.7 pp | 2.4 pp | 0.3 pp | 0.4 pp |
+| TV_W=0.30 | — | 16.8 pp | 4.9 pp | 1.6 pp | 1.8 pp |
+
+A comparação original usava 43.2 pp (célula V = TV_W + TV_B). Célula correta: W = 35.8 pp.
+
+### Estrutura zero_inflated vs Fogo
+
+Em Fogo: **1 coluna** com ~90% zeros (perm). As outras 10 são contínuas.
+No zero_inflated: **11 colunas** com 88–93% zeros — estruturalmente mais extremo.
+
+Apesar disso, 10.7 pp vs 35.8 pp de Fogo. **Concentrar** a esparsidade num único critério dominante (perm, w=0.152, maior peso em G1) é mais destrutivo do que distribuir zeros uniformemente — consistente com o ||delta||_2 da §6.4.
+
+### Síntese correcta para o artigo
+
+| | Resultado | Qualificação |
 |---|---|---|
-| lognormal | 24/30 (80%) | OK |
-| beta13 | 28/30 (93%) | OK |
-| uniform | 22/30 (73%) | OK |
-| zero_inflated | 24/30 (80%) | OK |
+| P1 | Confirmada | Verifica implementação; teorema já é geral |
+| P2 | Critério falhou; direcção nunca errada | Manter "on this instance"; post hoc: efeito só com massa pontual concentrada |
+| P3 | Não suportada entre instâncias informativas | Desvio DEV-E6-001 |
+| P4 | Falsificada na direcção inversa: deflate>inflate | Resultado positivo nas instâncias testáveis |
 
-TV_B agrava a perda de TV_W em todas as distribuições. Replica E1 e generaliza.
+**Resultado principal do E6:** com o mesmo TV_W, a perda varia ~10× entre famílias. TV_W não prediz a perda. A concentração da esparsidade num critério dominante (como perm) é o factor determinante — confirma fora de Fogo o que a Remark rem:TVW sugeria.
 
-### P4: FALSIFICADA em todas as famílias
+### Texto proposto para §7.8
 
-Inflar vs deflacionar o critério de maior peso não produz diferença consistente (13–40% das instâncias, vs critério 70%). A direcção da distorção não governa a perda. Remark rem:TVW permanece em aberto.
+```
+Theorem 1 guarantees that within-group distortion can cost efficiency,
+not how much it costs. We generated 120 instances on the Fogo feasible
+set (30 per marginal family: lognormal, Beta(1,3), uniform, zero-inflated
+with π=0.90) and imposed amplitudes on the score only, keeping the
+objectives in min-max (200 draws per cell; PRESPEC_E6.md committed
+before the run). P1 held on every draw of every instance.
 
-### Síntese para o artigo
+At TV_W=0.199, losses under continuous marginals were below 3 pp; under
+the zero-inflated family (π=0.90 zeros in all columns), loss reached
+10.7 pp—against 35.8 pp on Fogo (cell W, TV_B=0). At equal TV_W,
+losses differ by an order of magnitude across marginal families,
+confirming that TV_W is not a sufficient statistic for the efficiency
+loss (Remark rem:TVW). The zero-inflated family, despite carrying 90%
+zeros in all eleven columns—structurally more extreme than Fogo—
+reproduces less than a third of Fogo's loss. Concentrating sparsity
+in a single high-weight criterion is more costly than distributing
+zeros uniformly.
+```
 
-| | Fogo | zero_inflated (π=0.90) | lognormal/beta13/uniform |
-|---|---|---|---|
-| Perda a TV_W=0.199 | 43.2 pp | ~11 pp | <3 pp |
-| Perda a TV_W=0.30 | — | ~17 pp | <5 pp |
-| P1 | 100% | 100% | 100% |
-| P3 | V < W | V < W | V < W |
+### Consequências para main.tex
 
-A perda de Fogo é específica da distribuição com massa pontual em zero (perm: 350/389 zeros). Não é consequência geral de TV_W > 0. **Isso é um resultado honesto e publicável** — delimita o alcance do teorema.
-
-**Texto proposto para §7 / Limitações:**
-> "On instances drawn from continuous families (lognormal, beta, uniform), the efficiency loss under vector normalisation is below 5 pp even at TV_W=0.30 — below the detection threshold of N=200 draws. Loss of the order observed on Fogo (43 pp) requires a heavy-zero marginal distribution in at least one criterion, analogous to the 350 tied zeros in perm. The zero-inflated family (π=0.90) reproduces losses of 11–17 pp, confirming the mechanism but also its distributional specificity."
+1. Abstract/conclusão: adicionar "on Fogo" às frases com 35.8 pp e 43.2 pp.
+2. Contribuição (iv): manter "on Fogo" (regra do PRESPEC aplicada).
+3. Remark rem:TVW: "the zero-inflated synthetic family confirms direction at equal TV_W but reproduces only a third of Fogo's magnitude; TVW alone is not sufficient."
+4. §8.5 recomendação prática: "check for point masses before normalising" — suportado.
+5. DEV-E6-001: tratamento de empates não pré-especificado — declarar na tabela A4.
 
 ---
 
