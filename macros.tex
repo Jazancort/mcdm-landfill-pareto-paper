@@ -108,17 +108,20 @@
 \newcommand{\RaspOptimal}{24.0}        % R-asp opt: aspect continuous cell (%)
 
 
-% ── F3: Q3 results (compute_q3.py, 2026-10-02) ───────────────────────────────
+% ── F3: Q3 results (q3_perdraw.py v2, 2026-10-19) ───────────────────────────
+% Corrected: script now uses verbatim saw_sc/topsis_sc from mc_2cube_fixed.py.
+% Assertions: q2==1=>gap==0 passes in all 8 cells (0 violations, N=500).
+% Coincidence SAW/vec == TOP/vec: 47.2% (greedy), 70.4% (optimal) -- below 90%.
 \newcommand{\QthreeSAWmmOpt}{0.000}       % Q3 SAW/mm/opt (=0, Q2=100%)
-\newcommand{\QthreeSAWmmGrd}{0.0018}      % Q3 SAW/mm/grdy
-\newcommand{\QthreeSAWvecGrd}{0.0216}     % Q3 SAW/vec/grdy
-\newcommand{\QthreeSAWvecOpt}{0.0212}     % Q3 SAW/vec/opt (overwrite old)
-\newcommand{\QthreeTOPSISmmGrd}{0.0009}   % Q3 TOPSIS/mm/grdy (corrected)
-\newcommand{\QthreeTOPSISmmOpt}{0.0005}   % Q3 TOPSIS/mm/opt (corrected)
-\newcommand{\QthreeTOPSISvecGrd}{0.447}   % Q3 TOPSIS/vec/grdy (vs min-max frontier)
-\newcommand{\QthreeTOPSISvecOpt}{0.447}   % Q3 TOPSIS/vec/opt (vs min-max frontier)
-% All 8 Q3 values above (computed vs min-max reference frontier)
-% Q3=0 iff Q2=1 holds empirically: SAW/mm/opt is the only cell with Q3=0 and Q2=100%
+\newcommand{\QthreeSAWmmGrd}{0.0018}      % Q3 SAW/mm/grdy  (unchanged)
+\newcommand{\QthreeSAWvecGrd}{0.0086}     % Q3 SAW/vec/grdy  (was 0.0216, bug fixed)
+\newcommand{\QthreeSAWvecOpt}{0.0087}     % Q3 SAW/vec/opt   (was 0.0212, bug fixed)
+\newcommand{\QthreeTOPSISmmGrd}{0.0009}   % Q3 TOPSIS/mm/grdy  (0.000879, unchanged at 4dp)
+\newcommand{\QthreeTOPSISmmOpt}{0.0005}   % Q3 TOPSIS/mm/opt   (0.000478, unchanged at 4dp)
+\newcommand{\QthreeTOPSISvecGrd}{0.0114}  % Q3 TOPSIS/vec/grdy (was 0.447, bug fixed)
+\newcommand{\QthreeTOPSISvecOpt}{0.0111}  % Q3 TOPSIS/vec/opt  (was 0.447, bug fixed)
+% All 8 Q3 values computed vs min-max reference frontier.
+% Q3=0 iff Q2=1 holds in all cells: frac_gap0 == Q2_pct in every cell.
 
 
 % ── Structural macros (from main.tex preamble, duplicated here for supplementary) ─
