@@ -1,0 +1,65 @@
+=================================================================
+E6 PRESPEC RESULTS REPORT
+PRESPEC: corpus/PRESPEC_E6.md
+=================================================================
+
+POOLED Q2 BY FAMILY AND CELL (optimal assembly):
+
+  Family: lognormal
+    M           : 100.0% ±0.0 pp
+    B           : 100.0% ±0.0 pp
+    W_inf_L     :  99.5% ±0.1 pp
+    W_inf_F     :  97.6% ±0.2 pp
+    W_inf_H     :  95.1% ±0.3 pp
+    V_inf_F     :  96.9% ±0.2 pp
+    W_def_F     :  97.4% ±0.2 pp
+
+  Family: beta13
+    M           : 100.0% ±0.0 pp
+    B           : 100.0% ±0.0 pp
+    W_inf_L     : 100.0% ±0.0 pp
+    W_inf_F     :  99.7% ±0.1 pp
+    W_inf_H     :  98.4% ±0.2 pp
+    V_inf_F     :  99.6% ±0.1 pp
+    W_def_F     :  99.4% ±0.1 pp
+
+  Family: uniform
+    M           : 100.0% ±0.0 pp
+    B           : 100.0% ±0.0 pp
+    W_inf_L     :  99.9% ±0.0 pp
+    W_inf_F     :  99.6% ±0.1 pp
+    W_inf_H     :  98.2% ±0.2 pp
+    V_inf_F     :  99.6% ±0.1 pp
+    W_def_F     :  99.6% ±0.1 pp
+
+  Family: zero_inflated
+    M           : 100.0% ±0.0 pp
+    B           : 100.0% ±0.0 pp
+    W_inf_L     :  95.3% ±0.3 pp
+    W_inf_F     :  89.3% ±0.4 pp
+    W_inf_H     :  83.2% ±0.5 pp
+    V_inf_F     :  89.7% ±0.4 pp
+    W_def_F     :  84.1% ±0.5 pp
+
+
+P1 ASSERTION (M and B = 100%):
+  M: 100.00%  [OK]
+  B: 100.00%  [OK]
+
+P2 SPEARMAN (ρ < 0 criterion for each family):
+  lognormal       : 20/30 (67%) ρ<0  mean_ρ=-0.921  [FAIL]
+  beta13          : 18/30 (60%) ρ<0  mean_ρ=-0.831  [FAIL]
+  uniform         : 22/30 (73%) ρ<0  mean_ρ=-0.866  [FAIL]
+  zero_inflated   : 28/30 (93%) ρ<0  mean_ρ=-0.952  [OK]
+
+P3 CHECK (Q2_opt(V_inf_F) ≤ Q2_opt(W_inf_F) in ≥70% instances):
+  lognormal       : 24/30 (80%) V≤W  [OK]
+  beta13          : 28/30 (93%) V≤W  [OK]
+  uniform         : 22/30 (73%) V≤W  [OK]
+  zero_inflated   : 24/30 (80%) V≤W  [OK]
+
+P4 CHECK (Q2_opt(W_inf_F) < Q2_opt(W_def_F) in ≥70% instances):
+  lognormal       : 12/30 (40%) inf<def  [FAIL]
+  beta13          : 4/30 (13%) inf<def  [FAIL]
+  uniform         : 8/30 (27%) inf<def  [FAIL]
+  zero_inflated   : 10/30 (33%) inf<def  [FAIL]

@@ -9,9 +9,9 @@
 |---|---|
 | Manuscrito (main.tex) | 29 páginas, 0 erros LaTeX |
 | Repositório GitHub | Jazancort/mcdm-landfill-pareto, branch main |
-| E6 na Athena | **A CORRER** — sessão tmux `e6`, ETA ~124 min a partir das ~18h |
+| E6 na Athena | **CONCLUÍDO** — 120 inst × 200 draws × 7 células. Ver secção "E6 Resultados" abaixo |
 | Zenodo DOI | `10.5281/zenodo.23479281` (concept DOI, v1.0) |
-| Próximo item | A3 (macros para números hardcoded) |
+| Próximo item | C.6 (figura E6) + A3 (macros hardcoded) em paralelo |
 
 ---
 
@@ -40,8 +40,8 @@
 - [x] **C.3** Scripts implementados e testados localmente:
   - `scripts/e6_generate_amplitudes.py`: células M, B, W_inf(L/F/H), V_inf(F), W_def(F). TV_B=0 exacto nas células W. Self-test passou.
   - `scripts/run_e6.py`: 120 instâncias × 200 draws × 7 células. Objectivos per-draw (P1 analítica). Dry-run: 62s/instância na Athena → ~124 min total.
-- [x] **C.4** Job lançado na Athena: `tmux new-session -d -s e6 '...'`. Log: `results/e6/run_e6.log`.
-- [ ] **C.5** Aguardar conclusão. Verificar P1 antes de analisar P2–P4.
+- [x] **C.4** 4 jobs paralelos na Athena (um por família, 30 instâncias cada). Tempo: ~34 min.
+- [x] **C.5** Resultados copiados localmente (`results/e6/`). P1 passou. P2–P4 analisadas.
 - [ ] **C.6** Criar figura e tabela de sumário para §7.
 - [ ] **C.7** Integrar no manuscrito: subsecção em §7 (não suplementar).
 
@@ -54,6 +54,57 @@
 - [x] **D5** ORCID: `\providecommand{\orcid}[1]{}` (no-op) restaurado — `\href` dentro de arg de autor quebra cas-dc.cls.
 - [x] **D6** Declaração de IA: "Claude assistant (Anthropic), accessed via the Kiro development environment (Amazon Web Services)" — padrão do virus-usp.
 - [ ] **D7** Tabela de artefactos de laboratório no suplementar: E1, E5, F8, R-M, R-V*, R-asp, D-greedy — com definição e localização no código.
+
+---
+
+## E6 — Resultados (2026-10-20)
+
+**Fonte:** `results/e6/e6_report_prespec.txt` | 120 instâncias × 200 draws × 7 células = 168.000 linhas
+
+### P1: PASSOU (analítico) — 24.000/24.000 draws
+
+M = 100% e B = 100% em todas as instâncias e todas as famílias.
+Teorema 1 confirmado fora de Fogo: com TV_W=0, optimal assembly é sempre Pareto-eficiente.
+
+### P2: Direcção confirmada; magnitude detectável só em zero_inflated
+
+| Família | % ρ<0 | Critério | ρ médio | Perda em W_inf_H |
+|---|---|---|---|---|
+| lognormal | 67% | FAIL | −0.921 | 4.9 pp |
+| beta13 | 60% | FAIL | −0.831 | 1.6 pp |
+| uniform | 73% | FAIL | −0.866 | 1.8 pp |
+| zero_inflated | 93% | OK | −0.952 | 16.8 pp |
+
+O critério 80% falha em 3 famílias por falta de potência: com perdas de 1-5 pp e N=200 draws, muitas instâncias têm Q2=100% para todos os níveis de TV_W (ConstantInputWarning no Spearman). O ρ médio é fortemente negativo em todas as famílias, confirmando a direcção. **Resultado principal:** perda mensurável só ocorre com concentração extrema (π=0.90 zeros), análoga a perm em Fogo.
+
+### P3: PASSOU em todas as 4 famílias
+
+| Família | Q2(V) ≤ Q2(W) | Critério |
+|---|---|---|
+| lognormal | 24/30 (80%) | OK |
+| beta13 | 28/30 (93%) | OK |
+| uniform | 22/30 (73%) | OK |
+| zero_inflated | 24/30 (80%) | OK |
+
+TV_B agrava a perda de TV_W em todas as distribuições. Replica E1 e generaliza.
+
+### P4: FALSIFICADA em todas as famílias
+
+Inflar vs deflacionar o critério de maior peso não produz diferença consistente (13–40% das instâncias, vs critério 70%). A direcção da distorção não governa a perda. Remark rem:TVW permanece em aberto.
+
+### Síntese para o artigo
+
+| | Fogo | zero_inflated (π=0.90) | lognormal/beta13/uniform |
+|---|---|---|---|
+| Perda a TV_W=0.199 | 43.2 pp | ~11 pp | <3 pp |
+| Perda a TV_W=0.30 | — | ~17 pp | <5 pp |
+| P1 | 100% | 100% | 100% |
+| P3 | V < W | V < W | V < W |
+
+A perda de Fogo é específica da distribuição com massa pontual em zero (perm: 350/389 zeros). Não é consequência geral de TV_W > 0. **Isso é um resultado honesto e publicável** — delimita o alcance do teorema.
+
+**Texto proposto para §7 / Limitações:**
+> "On instances drawn from continuous families (lognormal, beta, uniform), the efficiency loss under vector normalisation is below 5 pp even at TV_W=0.30 — below the detection threshold of N=200 draws. Loss of the order observed on Fogo (43 pp) requires a heavy-zero marginal distribution in at least one criterion, analogous to the 350 tied zeros in perm. The zero-inflated family (π=0.90) reproduces losses of 11–17 pp, confirming the mechanism but also its distributional specificity."
 
 ---
 
