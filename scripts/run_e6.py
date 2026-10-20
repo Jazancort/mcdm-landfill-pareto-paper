@@ -216,14 +216,32 @@ def argmax_trio(score):
 
 
 # ── MAIN EXPERIMENT LOOP ──────────────────────────────────────────────────────
-def run_experiment(dry_run=False):
-    raw_path = OUT / "e6_raw_prespec.csv"
+def run_experiment(dry_run=False, family=None):
+    """
+    Run E6 experiment.
 
-    # Build instance list (120 instances)
+    Parameters
+    ----------
+    dry_run : bool   Time one instance and extrapolate.
+    family  : str or None
+        If None, run all 120 instances sequentially (original mode).
+        If a family name, run only that family (30 instances) and save to
+        results/e6/e6_raw_{family}.csv. Use --merge to combine afterwards.
+    """
+    # Select output file
+    if family is not None:
+        raw_path = OUT / f"e6_raw_{family}.csv"
+        family_filter = [family]
+        print(f"\n[FAMILY MODE] Running family: {family} → {raw_path}")
+    else:
+        raw_path = OUT / "e6_raw_prespec.csv"
+        family_filter = FAMILIES
+
+    # Build instance list
     instances = []
-    for fam in FAMILIES:
+    for fam in family_filter:
         for rep in range(N_REP):
-            inst_idx = len(instances)
+            inst_idx = FAMILIES.index(fam) * N_REP + rep
             seed = SEED_BASE + inst_idx
             instances.append({
                 'inst_id': f"{fam}_r{rep:02d}",
@@ -233,8 +251,9 @@ def run_experiment(dry_run=False):
             })
 
     N_INST = len(instances)
-    assert N_INST == 120, f"Expected 120 instances, got {N_INST}"
-    print(f"\n[INSTANCES] {N_INST} = {len(FAMILIES)} families × {N_REP} replicates")
+    expected = 30 if family is not None else 120
+    assert N_INST == expected, f"Expected {expected} instances, got {N_INST}"
+    print(f"\n[INSTANCES] {N_INST} = {len(family_filter)} families × {N_REP} replicates")
 
     if dry_run:
         print("\n[DRY RUN] Timing 1 instance × 200 draws × 7 cells...")
@@ -478,6 +497,51 @@ def generate_summaries(df_raw, instances):
     print(report_text)
 
 
+def merge_family_results():
+    """Merge e6_raw_{family}.csv files into e6_raw_prespec.csv, run P1 + summaries."""
+    print("\n[MERGE] Combining family results...")
+    frames = []
+    for fam in FAMILIES:
+        path = OUT / f"e6_raw_{fam}.csv"
+        if not path.exists():
+            print(f"  MISSING: {path}")
+            sys.exit(1)
+        df_fam = pd.read_csv(path)
+        print(f"  {fam}: {len(df_fam)} rows")
+        frames.append(df_fam)
+
+    df_raw = pd.concat(frames, ignore_index=True)
+    raw_path = OUT / "e6_raw_prespec.csv"
+    df_raw.to_csv(raw_path, index=False)
+    print(f"\n[SAVED] {raw_path}  ({len(df_raw)} rows)")
+
+    # P1 assertion
+    print("\n[P1 ASSERTION] Cells M and B must have Q2_optimal = 1.0 on ALL draws.")
+    p1_ok = True
+    for cell_name in ('M', 'B'):
+        sub = df_raw[df_raw['cell'] == cell_name]
+        failures = sub[sub['q2'] < 1]
+        if len(failures) > 0:
+            print(f"  FAIL: {cell_name}: {len(failures)} draws with Q2=0")
+            p1_ok = False
+        else:
+            print(f"  OK:   {cell_name}: 100% on all {len(sub)} draw-instance combinations")
+    if not p1_ok:
+        print("\nP1 VIOLATED. Check pipeline.")
+        sys.exit(1)
+    print("[P1 PASSED]")
+
+    # Build instance list for summaries
+    instances = []
+    for fam in FAMILIES:
+        for rep in range(N_REP):
+            inst_idx = FAMILIES.index(fam) * N_REP + rep
+            instances.append({'inst_id': f"{fam}_r{rep:02d}", 'family': fam,
+                               'replicate': rep, 'seed': SEED_BASE + inst_idx})
+
+    generate_summaries(df_raw, instances)
+
+
 def _dry_run_timing(inst):
     """Run one instance for timing estimate, then extrapolate."""
     fam  = inst['family']
@@ -519,5 +583,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--dry-run', action='store_true',
                         help='Time 1 instance and extrapolate; do not run full experiment')
+    parser.add_argument('--family', type=str, default=None,
+                        choices=FAMILIES,
+                        help='Run only one family (30 instances). '
+                             'Results saved to e6_raw_FAMILY.csv. '
+                             'Use --merge after all families finish.')
+    parser.add_argument('--merge', action='store_true',
+                        help='Merge e6_raw_FAMILY.csv files into e6_raw_prespec.csv '
+                             'and generate summaries + P1 assertion.')
     args = parser.parse_args()
-    run_experiment(dry_run=args.dry_run)
+
+    if args.merge:
+        merge_family_results()
+    else:
+        run_experiment(dry_run=args.dry_run, family=args.family)
