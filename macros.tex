@@ -121,7 +121,28 @@
 \newcommand{\QthreeTOPSISvecGrd}{0.0114}  % Q3 TOPSIS/vec/grdy (was 0.447, bug fixed)
 \newcommand{\QthreeTOPSISvecOpt}{0.0111}  % Q3 TOPSIS/vec/opt  (was 0.447, bug fixed)
 % All 8 Q3 values computed vs min-max reference frontier.
-% Q3=0 iff Q2=1 holds in all cells: frac_gap0 == Q2_pct in every cell.
+% Empirically: gap==0 iff q2==1 on every draw in every cell (N=500).
+% This is an observed regularity; weak dominance remains theoretically
+% possible when two non-dominated portfolios differ in only one criterion.
+
+% Q3 in percent of attainable range (Q3_mean * 100, 2dp)
+\newcommand{\QthreeSAWmmGrdPct}{0.18}
+\newcommand{\QthreeSAWmmOptPct}{0.00}
+\newcommand{\QthreeSAWvecGrdPct}{0.86}
+\newcommand{\QthreeSAWvecOptPct}{0.87}
+\newcommand{\QthreeTOPSISmmGrdPct}{0.09}
+\newcommand{\QthreeTOPSISmmOptPct}{0.05}
+\newcommand{\QthreeTOPSISvecGrdPct}{1.14}
+\newcommand{\QthreeTOPSISvecOptPct}{1.11}
+
+% Conditional gap = Q3 / (1-Q2), mean shortfall when portfolio misses frontier (%)
+\newcommand{\CondGapSAWmmGrd}{1.29}
+\newcommand{\CondGapSAWvecGrd}{2.54}
+\newcommand{\CondGapSAWvecOpt}{2.01}
+\newcommand{\CondGapTOPSISmmGrd}{1.57}
+\newcommand{\CondGapTOPSISmmOpt}{1.40}
+\newcommand{\CondGapTOPSISvecGrd}{3.11}
+\newcommand{\CondGapTOPSISvecOpt}{2.34}
 
 
 % ── Structural macros (from main.tex preamble, duplicated here for supplementary) ─

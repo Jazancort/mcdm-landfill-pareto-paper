@@ -2017,30 +2017,51 @@ Table~\ref{tab:factorial} reports the balanced $2^3$ design and
 Table~\ref{tab:contrasts} the contrasts, with $\nboot$-replicate bootstrap
 intervals paired by draw.
 
+\textbf{Severity.}
+The secondary measure $Q_3$ orders the cells as $Q_2$ does: it is below
+$0.2\%$ of the attainable range in every min--max cell and between $0.86\%$
+and $1.14\%$ in every vector cell.
+Losses of Pareto attainment are therefore frequent but shallow on this
+instance.
+A portfolio that misses the frontier falls on average $1$--$3\%$ of the
+attainable range below it (Table~\ref{tab:factorial}, conditional gap column).
+Under vector normalisation, exact assembly misses the frontier more often
+than greedy assembly but by a smaller margin (conditional gap $\CondGapSAWvecOpt\%$
+against $\CondGapSAWvecGrd\%$ for SAW; $\CondGapTOPSISvecOpt\%$ against
+$\CondGapTOPSISvecGrd\%$ for TOPSIS).
+This is consistent with exact assembly reaching the frontier of
+$w^{\mathrm{eff}}$, which lies close to, but not on, the frontier of $w$.
+According to the pre-specified equivalence criterion ($\delta=2.5$~pp),
+all differences in $Q_3$ scaled to percentage points are below $\delta$;
+severity differences are not practically relevant on this instance.
+
 \begin{table}[!t]
 \centering
 \caption{$Q_2[A']$ and $Q_3$ for the balanced $2^3$ design ($\kappa=200$,
-  $\ndraws$ draws). The SAW/min--max/optimal cell is fixed at $100\%$ by
-  Proposition~\ref{prop:p1:stmt}. $^\star Q_3$ is computed against the min--max
+  $\ndraws$ draws). $Q_3$ is the expected gap~\eqref{eq:Q3} as a percentage of
+  the attainable range; the conditional gap is $Q_3/(1-Q_2)$, the mean
+  shortfall over draws in which the portfolio misses the frontier.
+  The SAW/min--max/optimal cell is fixed at $100\%$ by
+  Proposition~\ref{prop:p1:stmt}. $^\star Q_3$ computed against the min--max
   reference frontier; see Section~\ref{sec:e1q3}.}
 \label{tab:factorial}
-\begin{tabular}{llcc}
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}llrrr@{}}
 \toprule
-Aggregation & Normalisation, assembly & $Q_2[A']$ & $Q_3$\rlap{$^\star$} \\
+Aggregation & Normalisation, assembly & $Q_2[A']$ & $Q_3$\rlap{$^\star$}~(\%) & Cond.\ gap~(\%) \\
 \midrule
 \multirow{4}{*}{SAW}
- & min--max, greedy  & 86.0\% & $\QthreeSAWmmGrd$ \\
- & min--max, optimal & \textbf{100.0\%} & $\QthreeSAWmmOpt$ \\
- & vector, greedy    & 66.2\% & $\QthreeSAWvecGrd$ \\
- & vector, optimal   & 56.8\% & $\QthreeSAWvecOpt$ \\
+ & min--max, greedy  & 86.0\% & $\QthreeSAWmmGrdPct$ & $\CondGapSAWmmGrd$ \\
+ & min--max, optimal & \textbf{100.0\%} & $\QthreeSAWmmOptPct$ & {---} \\
+ & vector, greedy    & 66.2\% & $\QthreeSAWvecGrdPct$ & $\CondGapSAWvecGrd$ \\
+ & vector, optimal   & 56.8\% & $\QthreeSAWvecOptPct$ & $\CondGapSAWvecOpt$ \\
 \midrule
 \multirow{4}{*}{TOPSIS}
- & min--max, greedy  & 94.4\% & $\QthreeTOPSISmmGrd$ \\
- & min--max, optimal & 96.6\% & $\QthreeTOPSISmmOpt$ \\
- & vector, greedy    & 63.4\% & $\QthreeTOPSISvecGrd$ \\
- & vector, optimal   & 52.4\% & $\QthreeTOPSISvecOpt$ \\
+ & min--max, greedy  & 94.4\% & $\QthreeTOPSISmmGrdPct$ & $\CondGapTOPSISmmGrd$ \\
+ & min--max, optimal & 96.6\% & $\QthreeTOPSISmmOptPct$ & $\CondGapTOPSISmmOpt$ \\
+ & vector, greedy    & 63.4\% & $\QthreeTOPSISvecGrdPct$ & $\CondGapTOPSISvecGrd$ \\
+ & vector, optimal   & 52.4\% & $\QthreeTOPSISvecOptPct$ & $\CondGapTOPSISvecOpt$ \\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 
 \begin{table*}[!t]

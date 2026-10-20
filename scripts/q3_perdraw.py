@@ -48,6 +48,7 @@ from mcdm_experiment import (
     greedy_trio,
 )
 from pareto_utils import build_pareto_utils
+from scoring import make_scorers
 
 KAPPA   = 200
 N_DRAWS = 500
@@ -83,26 +84,11 @@ for j, b in enumerate(benefit):
     if not b:
         X_adj[:, j] = 1.0 - X_via[:, j]
 
-# VERBATIM de mc_2cube_fixed.py linha 84: norms_via = ...
 norms_via = np.maximum(np.sqrt((X_via**2).sum(0)), 1e-12)
 
-# VERBATIM de mc_2cube_fixed.py linhas 86-97: saw_sc, topsis_sc
-# Qualquer alteracao aqui TEM de ser espelhada em mc_2cube_fixed.py.
-def saw_sc(w, norm="minmax"):
-    if norm == "minmax":
-        return (X_adj * w).sum(1)
-    else:  # vector: X_adj/norms (benefit-adjusted), consistent with wp3_mc_fixed
-        return ((X_adj / norms_via) * w).sum(1)
-
-def topsis_sc(w, norm="minmax"):
-    Xb  = X_via if norm == "minmax" else X_via / norms_via
-    V   = Xb * w
-    PIS = np.where(benefit, V.max(0), V.min(0))
-    NIS = np.where(benefit, V.min(0), V.max(0))
-    dp  = np.sqrt(((V - PIS)**2).sum(1))
-    dn  = np.sqrt(((V - NIS)**2).sum(1))
-    return np.where(dp + dn == 0, 0.5, dn / (dp + dn))
-# FIM VERBATIM
+# IMPORTADO de scoring.py (fonte unica de verdade).
+# saw_sc e topsis_sc sao identicos ao mc_2cube_fixed.py.
+saw_sc, topsis_sc = make_scorers(X_via, X_adj, norms_via, benefit)
 
 def sel_trio(sc, mont):
     if mont == "greedy":
