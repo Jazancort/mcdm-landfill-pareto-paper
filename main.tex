@@ -188,10 +188,10 @@ Choosing between SAW and TOPSIS has no consistent pooled direction
 ($\AggContrast$~pp, $95\%$ CI $[\AggLo,\,\AggHi]$, TOST $p=\TOSTp$
 within $\pm2.5$~pp), but this pooled mean masks a strong interaction:
 SAW performs significantly worse than TOPSIS under min--max$\times$greedy
-($\AggStratumMMgrd$~pp) and slightly better in the remaining cells.
+($\AggStratumMMgrd$~pp) and better under vector normalisation
+($+\AggStratumVecgrd$ and $+\AggStratumVecopt$~pp).
 Normalisation is worth $+\NormGreedyContrast$~pp under greedy assembly,
-and $+\NormMainEffect$~pp across the full $2^3$ factorial, which includes
-a cell fixed at $100\%$ by construction.
+and $+31.7$~pp over the three informative cells.
 Exact assembly, the established upgrade over reading a ranking top-down,
 has an effect whose sign depends on the normalisation: positive under min--max (TOPSIS: $+\AsmMMtopsis$~pp), negative under vector ($-\AsmVecSAW$ to $-\AsmVecTOPSIS$~pp).
 
@@ -224,8 +224,8 @@ Pareto-efficient portfolio under the weights that score encodes.
 When $w^{\mathrm{eff}}$ departs from $w$ within an objective group,
 exact optimisation solves the wrong problem exactly: on Fogo, under min--max
 normalisation SAW assembly is guaranteed at $100\%$ by Proposition~\ref{prop:p1:stmt}
-and TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation both methods
-lose $\AsmVec$~pp.
+and TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation exact assembly
+loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy ranking.
 Exact assembly remains Pareto-efficient for every instance if and only
 if the normalised amplitudes are constant within each objective group
 (Theorem~\ref{thm:groupconst}): distortion between groups only relocates
@@ -1016,7 +1016,7 @@ We pre-specify the following before examining results.
     practically relevant for site-selection decisions.
     The aggregation contrast is declared \emph{equivalent} if the
     $90\%$ bootstrap CI lies entirely within $(-\delta,+\delta)$
-    (corresponding to TOST at $\alpha=0.05$, one-sided $\alpha=0.025$).
+    (two one-sided tests at $\alpha=0.05$ each, TOST).
   \item \textbf{Equivalence test}: TOST with $\delta=2.5$~pp tests whether the pooled mean is
     \emph{equivalent to zero} within the margin, not whether it is non-zero.
   \item \textbf{Bootstrap pairing}: replicates are paired by draw within
@@ -1531,25 +1531,18 @@ Vector   & 0.315 & 0.675 & $+0.360$ \\
 \end{table}
 
 \paragraph{Empirical comparison of SAW and TOPSIS distortions.}
-On Fogo, the metric $\Delta\mathrm{TV}=\mathrm{TV}(2)-\mathrm{TV}(1)$
-is positive under both normalisations, and the same ordering is observed
-empirically.
-Restricting to optimal assembly, where no combinatorial loss from the
-greedy heuristic confounds the contrast (Section~\ref{sec:greedy}),
 Under optimal assembly with vector normalisation, where no combinatorial
-loss from the greedy heuristic confounds the contrast,
+loss from the greedy heuristic confounds the contrast
+(Section~\ref{sec:greedy}),
 $Q_2[\mathcal{A}']$ falls from SAW to TOPSIS by $4.4$~pp
-($\Delta\mathrm{TV}=0.360$). The corresponding min--max contrast is not
-informative, because the SAW cell is fixed at $100\%$ by
-Proposition~\ref{prop:p1:stmt}.
-This is an empirical observation on one instance; whether the
-exponent~($\alpha=2$) analogy extends to a general prediction of
-monotone loss in TV depends on the geometry of the specific instance and
-is not guaranteed by the formula.
-Under greedy assembly the contrast reverses under min--max ($+8.4$~pp),
-which we attribute to the foreclosure loss of Section~\ref{sec:greedy}
-dominating a distortion of~$0.160$; the greedy cells are therefore
-reported as a description of practice, not as a test of the analogy.
+($\Delta\mathrm{TV}=0.360$).
+The min--max contrast is not informative because the SAW cell is fixed at
+$100\%$ by Proposition~\ref{prop:p1:stmt}.
+A single contrast cannot test the exponent analogy; we report it as
+consistent with, not evidence for, Remark~\ref{prop:exponent}.
+Under greedy assembly with min--max, TOPSIS exceeds SAW by
+$8.4$~pp, which we attribute to the foreclosure loss of
+Section~\ref{sec:greedy}.
 
 % ---
 
@@ -2018,17 +2011,17 @@ Table~\ref{tab:contrasts} the contrasts, with $\nboot$-replicate bootstrap
 intervals paired by draw.
 
 \textbf{Severity.}
-The secondary measure $Q_3$ orders the cells as $Q_2$ does: it is below
-$0.2\%$ of the attainable range in every min--max cell and between $0.86\%$
-and $1.14\%$ in every vector cell.
-Losses of Pareto attainment are therefore frequent but shallow on this
-instance.
+The secondary measure $Q_3$ separates the min--max cells from the vector
+cells as $Q_2$ does: it is below $0.2\%$ of the attainable range in
+every min--max cell and between $0.86\%$ and $1.14\%$ in every vector cell.
+Within the vector cells the two measures order the cells differently,
+because $Q_3$ combines how often and how far a cell misses the frontier.
 A portfolio that misses the frontier falls on average $1$--$3\%$ of the
 attainable range below it (Table~\ref{tab:factorial}, conditional gap column).
 Under vector normalisation, exact assembly misses the frontier more often
-than greedy assembly but by a smaller margin (conditional gap $\CondGapSAWvecOpt\%$
-against $\CondGapSAWvecGrd\%$ for SAW; $\CondGapTOPSISvecOpt\%$ against
-$\CondGapTOPSISvecGrd\%$ for TOPSIS).
+than greedy assembly but by a smaller margin (conditional gap
+$\CondGapSAWvecOpt\%$ against $\CondGapSAWvecGrd\%$ for SAW;
+$\CondGapTOPSISvecOpt\%$ against $\CondGapTOPSISvecGrd\%$ for TOPSIS).
 This is consistent with exact assembly reaching the frontier of
 $w^{\mathrm{eff}}$, which lies close to, but not on, the frontier of $w$.
 According to the pre-specified equivalence criterion ($\delta=2.5$~pp),
@@ -2036,32 +2029,29 @@ all differences in $Q_3$ scaled to percentage points are below $\delta$;
 severity differences are not practically relevant on this instance.
 
 \begin{table}[!t]
-\centering
-\caption{$Q_2[A']$ and $Q_3$ for the balanced $2^3$ design ($\kappa=200$,
-  $\ndraws$ draws). $Q_3$ is the expected gap~\eqref{eq:Q3} as a percentage of
-  the attainable range; the conditional gap is $Q_3/(1-Q_2)$, the mean
-  shortfall over draws in which the portfolio misses the frontier.
-  The SAW/min--max/optimal cell is fixed at $100\%$ by
-  Proposition~\ref{prop:p1:stmt}. $^\star Q_3$ computed against the min--max
-  reference frontier; see Section~\ref{sec:e1q3}.}
+\centering\small
+\caption{$Q_2[A']$, $Q_3$ and conditional gap (CG) for the balanced $2^3$ design
+($\kappa=200$, $\ndraws$ draws). $Q_3$ is the expected gap~\eqref{eq:Q3} in
+percent of the attainable range; CG $= Q_3/(1-Q_2)$ is the mean shortfall
+over draws in which the portfolio misses the frontier. Both are computed
+against the same reference set as $Q_2$. SAW/min--max/optimal is fixed at
+$100\%$ by Proposition~\ref{prop:p1:stmt}.}
 \label{tab:factorial}
-\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}llrrr@{}}
+\begin{tabular}{@{}llrrr@{}}
 \toprule
-Aggregation & Normalisation, assembly & $Q_2[A']$ & $Q_3$\rlap{$^\star$}~(\%) & Cond.\ gap~(\%) \\
+Agg. & Norm., assembly & $Q_2$ & $Q_3$~(\%) & CG~(\%) \\
 \midrule
-\multirow{4}{*}{SAW}
- & min--max, greedy  & 86.0\% & $\QthreeSAWmmGrdPct$ & $\CondGapSAWmmGrd$ \\
- & min--max, optimal & \textbf{100.0\%} & $\QthreeSAWmmOptPct$ & {---} \\
- & vector, greedy    & 66.2\% & $\QthreeSAWvecGrdPct$ & $\CondGapSAWvecGrd$ \\
- & vector, optimal   & 56.8\% & $\QthreeSAWvecOptPct$ & $\CondGapSAWvecOpt$ \\
+SAW    & mm, greedy   & 86.0\%  & \QthreeSAWmmGrdPct   & \CondGapSAWmmGrd   \\
+       & mm, optimal  & 100.0\% & \QthreeSAWmmOptPct   & {---}              \\
+       & vec, greedy  & 66.2\%  & \QthreeSAWvecGrdPct  & \CondGapSAWvecGrd  \\
+       & vec, optimal & 56.8\%  & \QthreeSAWvecOptPct  & \CondGapSAWvecOpt  \\
 \midrule
-\multirow{4}{*}{TOPSIS}
- & min--max, greedy  & 94.4\% & $\QthreeTOPSISmmGrdPct$ & $\CondGapTOPSISmmGrd$ \\
- & min--max, optimal & 96.6\% & $\QthreeTOPSISmmOptPct$ & $\CondGapTOPSISmmOpt$ \\
- & vector, greedy    & 63.4\% & $\QthreeTOPSISvecGrdPct$ & $\CondGapTOPSISvecGrd$ \\
- & vector, optimal   & 52.4\% & $\QthreeTOPSISvecOptPct$ & $\CondGapTOPSISvecOpt$ \\
+TOPSIS & mm, greedy   & 94.4\%  & \QthreeTOPSISmmGrdPct  & \CondGapTOPSISmmGrd  \\
+       & mm, optimal  & 96.6\%  & \QthreeTOPSISmmOptPct  & \CondGapTOPSISmmOpt  \\
+       & vec, greedy  & 63.4\%  & \QthreeTOPSISvecGrdPct & \CondGapTOPSISvecGrd \\
+       & vec, optimal & 52.4\%  & \QthreeTOPSISvecOptPct & \CondGapTOPSISvecOpt \\
 \bottomrule
-\end{tabular*}
+\end{tabular}
 \end{table}
 
 \begin{table*}[!t]
@@ -2691,13 +2681,14 @@ determines which column is normalised and therefore which amplitude
 enters the effective weights.
 
 Comparing aggregation operators, by contrast, is the least consequential
-of the design choices we examine: the pooled contrast is equivalent to zero ($\AggContrast$~pp, TOST $p=\TOSTp$), although its sign depends on the cell ($\AggStratumMMgrd$ to $+\AggStratumVecopt$~pp)
+of the design choices we examine: the pooled contrast is equivalent to zero ($\AggContrast$~pp, TOST $p=\TOSTp$),
+although its sign depends on the cell
 ($\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp, a cell-dependent
 interaction),
 and the mechanism explains why: aggregation acts downstream of the
 distortion.
-The recommendations above apply to SAW and TOPSIS, which inherit the
-amplitude at exponents $\alpha=1$ and $\alpha=2$.
+The recommendations above apply to SAW and TOPSIS: the amplitude enters
+the score linearly for SAW and, by analogy, quadratically for TOPSIS.
 VIKOR is invariant to per-criterion affine transformation by its ratio
 construction, so the choice of normalisation within the affine family
 (min--max, vector, sum) is irrelevant for VIKOR; effective weights
@@ -2815,7 +2806,9 @@ indicator, not an equivalent restatement of $Q_2$.
 $Q_3$ for all eight cells is reported in Table~\ref{tab:factorial}.
 \label{sec:e1q3}
 $Q_3$ and $Q_2$ measure different aspects of efficiency and need not agree: a cell may attain the frontier often ($Q_2$ high) while falling far below it when it misses ($Q_3$ high), and $Q_3$ is blind to weak dominance.
-For cells using vector normalisation, $Q_3$ is computed against the min--max reference frontier; this differs from $Q_2$, which is computed against the cell-specific frontier.
+$Q_2$ and $Q_3$ are computed against the same reference set $\mathcal{F}(w)$ in every cell.
+On Fogo, $\mathrm{gap}=0$ coincided with Pareto membership on every draw in all eight cells, so weak dominance did not affect the reported values.
+$Q_3$ for all cells is reported in Table~\ref{tab:factorial}.
 
 \emph{Regulatory grounding.}
 The exclusion of the $\Nexcl$ overlapping sites is treated as a
@@ -2865,6 +2858,11 @@ with instance size and spatial geometry.
 The Fogo magnitudes are therefore instance-specific, and whether the
 within-group mechanism carries comparable costs on other applied matrices
 remains open.
+
+The magnitudes in percentage points of $Q_2$ measure how often a design
+choice leaves the frontier, not how far: on this instance the shortfall,
+when it occurs, is $1$--$3\%$ of the attainable range
+(Table~\ref{tab:factorial}).
 
 Two consequences bear directly on practice.
 In the Fogo factorial, exact assembly improved Pareto attainment under
