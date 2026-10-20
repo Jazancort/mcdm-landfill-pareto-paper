@@ -16,7 +16,8 @@
 \usepackage{placeins}  % auto FloatBarrier at each \section
 \usepackage{morefloats} % expand float register pool (fixes Float(s) lost)
 \usepackage{url}  % allow line-breaking in URLs (\url{})
-\providecommand{\orcid}[1]{}  % ORCID — displayed via submission system
+% ORCID displayed by submission system; no-op in PDF preprint
+\providecommand{\orcid}[1]{}
 
 % -----------------------------------------------------------------------
 % Macros --- centralise every number that appears more than once
@@ -124,7 +125,7 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
 \item Exact assembly is Pareto-safe iff amplitudes are constant within objective groups
 \item On Fogo, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp;
-  aggregation by ${<}1$~pp
+  pooled aggregation by ${<}1$~pp, with a significant cell-level interaction
 \item Under vector normalisation, exact optimisation loses $9$--$11$~pp to greedy ranking
 \item Score--objective coding mismatches can cut Pareto attainment from $100\%$ to $24\%$
 \end{highlights}
@@ -179,14 +180,16 @@ environmental impact and social safety.
 Because the frontier is obtained by exhaustive enumeration rather than by
 a metaheuristic, a portfolio produced by any method can be classified as
 Pareto-efficient or not, with no approximation error.
-We then cross four aggregation methods with three normalisations and two
-assembly rules, and measure how often each cell recovers an efficient
-portfolio under Monte Carlo perturbation of the elicited weights.
+We then cross SAW and TOPSIS with three normalisations and two
+assembly rules in a balanced $2^3$ design, and measure how often each cell recovers an efficient
+portfolio under Monte Carlo perturbation of the elicited weights;
+VIKOR and PROMETHEE~II are included under nominal weights
+(Table~\ref{tab:canonical}) and in the Supplementary Material.
 
 The answer is not about the aggregation methods.
-Choosing between SAW and TOPSIS has no consistent pooled direction
+Choosing between SAW and TOPSIS has a pooled mean equivalent to zero
 ($\AggContrast$~pp, $95\%$ CI $[\AggLo,\,\AggHi]$, TOST $p=\TOSTp$
-within $\pm2.5$~pp), but this pooled mean masks a strong interaction:
+within $\pm2.5$~pp), but a significant cell-level interaction:
 SAW performs significantly worse than TOPSIS under min--max$\times$greedy
 ($\AggStratumMMgrd$~pp) and better under vector normalisation
 ($+\AggStratumVecgrd$ and $+\AggStratumVecopt$~pp).
@@ -614,8 +617,9 @@ optimality benchmark.
 
 The present paper addresses this gap by: (i)~enumerating the exact Pareto
 frontier of $\Ntrios$ portfolios over three group-level partial value
-functions under $r$-separation; (ii)~evaluating four aggregation methods crossed with
-three normalisations and two assembly strategies against that frontier;
+functions under $r$-separation; (ii)~evaluating SAW and TOPSIS in a balanced $2^3$ design (normalisation
+$\times$ assembly) against that frontier; VIKOR and PROMETHEE~II are
+included under nominal weights and in the Supplementary Material;
 and (iii)~providing a closed-form account of the mechanism by which
 normalisation implicitly re-weights criteria, expressed in terms
 established by \citet{Choo1999} and measured in terms of Pareto
@@ -893,8 +897,21 @@ Three normalisations are compared, spanning the standard taxonomies of
   \text{ranks:} \quad &
     c_j(i) = r_j(i). \label{eq:ranks}
 \end{align}
-Cost criteria are complemented in~\eqref{eq:mm}; ranks are midranks with
-ties averaged.
+Cost criteria are complemented in~\eqref{eq:mm} (subtracted from~1 after
+normalisation); ranks are midranks with ties averaged.
+For the \textit{aspect} criterion, the raw azimuth is replaced by a binary
+leeward indicator ($b_j=1$ if the site faces away from the prevailing wind,
+$b_j=0$ otherwise) before any normalisation; the amplitude therefore follows
+the binary formula in~\eqref{eq:Arank_binary}, not the continuous formula for
+$\rho_j$ (Section~\ref{sec:three_norms}).
+In the implementation, vector normalisation~\eqref{eq:vec} is applied to
+the columns output by this construction, which are min-max values for all
+criteria except aspect (binary) and ranks.
+The normalisation constant $\lVert\mathbf{x}_j\rVert_2$ in~\eqref{eq:vec}
+is therefore the norm of the min-max column, not of the raw data; these
+coincide when $\min_j x_j=0$ (true for \texttt{perm}, \texttt{urban},
+\texttt{cult}, and \texttt{rivers}) and differ by at most $6.7\%$
+(\texttt{aspect}) for the remaining criteria.
 Two properties drive our results.
 First, none of the three is invariant to the inclusion or exclusion of
 alternatives: min--max depends on the sample extrema, vector normalisation
@@ -1105,9 +1122,17 @@ single criterion; greedy commits to the highest-scoring site first and
 the subsequent choices coincide with the optimal solution on every draw.
 Two observations follow.
 First, the direction of the advantage reverses relative to the main
-factorial: vector normalisation now dominates, confirming that the
-original result reflects score--objective alignment rather than an
-intrinsic property of min--max.
+factorial: vector normalisation now dominates.
+This is consistent with the alignment interpretation: a score that shares
+the objective normalisation recovers the frontier more reliably.
+The asymmetry is, however, strong: under optimal assembly, the
+misalignment costs ${\approx}43.2$~pp in one direction
+(score vector vs.\ frontier min--max, the main factorial) but only
+${\approx}\FEightMMOptSE$~pp in the other direction
+(score min--max vs.\ frontier vector; $\FEightMMOptQ\%$ attainment).
+This suggests that misalignment under min--max scores is less severe,
+an additional observation on this instance rather than a theoretical
+guarantee.
 Second, the $100\%$ attainment under vec/opt is the value
 Proposition~\ref{prop:p1:stmt} requires, and so checks the
 implementation of the rebuilt frontier.
@@ -1891,10 +1916,14 @@ normalisation, and PROMETHEE~II attain the reference set.
 \begin{table*}[!t]
 \centering
 \caption{Portfolios under nominal weights $\wahp$, space~$A$
-  (normalisation over all $\Ncand$ candidates). The gap is defined
-  in~\eqref{eq:gap}. Pareto membership (blue diamonds in
-  Figure~\ref{fig:pareto}) is determined by a separate dominance test;
-  the gap measures simultaneous improvement and can be zero for a
+  (normalisation over all $\Ncand$ candidates; aspect encoded as
+  binary leeward indicator).
+  The gap is defined in~\eqref{eq:gap} and computed against the
+  space-$A$ Pareto frontier; Figure~\ref{fig:pareto} projects these
+  portfolios onto the space-$A'$ frontier for comparison
+  (portfolios including excluded sites cannot lie on that frontier).
+  Pareto membership (blue diamonds) is determined by a separate dominance
+  test; the gap measures simultaneous improvement and can be zero for a
   dominated portfolio.}
 \label{tab:canonical}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llccccc}
@@ -2079,7 +2108,7 @@ Assembly $\times$ normalisation (TOPSIS)      & $+\InteractionTOPSIS$ & $[+\Inte
 \end{table*}
 
 The aggregation contrast of $\AggContrast$~pp ($95\%$ CI
-$[\AggLo,\,\AggHi]$) has no consistent pooled direction
+$[\AggLo,\,\AggHi]$) has a pooled mean equivalent to zero
 (TOST $p=\TOSTp$, $\delta=2.5$~pp, $90\%$ CI within $\pm\delta$).
 This pooled mean masks a strong interaction: the per-cell
 contrasts range from $\AggStratumMMgrd$~pp
@@ -2569,8 +2598,8 @@ The affine invariance of VIKOR sharpens the contrast that
 VIKOR is not merely less sensitive to normalisation: within the affine
 family it is exactly invariant, because the scale $a_j$ and shift $b_j$
 of each criterion cancel in the ratio $(f^{*}_j-f_{ij})/(f^{*}_j-f^{-}_j)$.
-TOPSIS, by contrast, inherits the amplitude at exponent $\alpha=2$
-(Remark~\ref{prop:exponent}), and SAW at $\alpha=1$.
+TOPSIS, by contrast, inherits the amplitude by analogy with exponent
+$\alpha=2$ (Remark~\ref{prop:exponent}), and SAW by analogy with $\alpha=1$.
 The three aggregation families therefore span the full range of exposure
 to the distortion: immunity (VIKOR), linear amplification (SAW), and
 quadratic-like amplification (TOPSIS, by analogy; Remark~\ref{rem:mm_not_neutral}).
@@ -2805,7 +2834,8 @@ $Q_2$, computed from the full Pareto dominance algorithm, is therefore
 the primary efficiency measure; $Q_3$ is a complementary severity
 indicator, not an equivalent restatement of $Q_2$.
 $Q_3$ for all eight cells is reported in Table~\ref{tab:factorial}.
-\label{sec:e1q3}
+
+\emph{Gap measure and weak dominance.}\;\label{sec:e1q3}
 $Q_3$ and $Q_2$ measure different aspects of efficiency and need not agree: a cell may attain the frontier often ($Q_2$ high) while falling far below it when it misses ($Q_3$ high), and $Q_3$ is blind to weak dominance.
 $Q_2$ and $Q_3$ are computed against the same reference set $\mathcal{F}(w)$ in every cell.
 On Fogo, $\mathrm{gap}=0$ coincided with Pareto membership on every draw in all eight cells, so weak dominance did not affect the reported values.
@@ -2830,7 +2860,7 @@ how often each combination recovers a Pareto-efficient portfolio under
 perturbation of the elicited weights.
 
 The choice of aggregation operator, the variable the applied literature
-compares most, had no consistent pooled direction on Fogo ($\AggContrast$~pp,
+compares most, had a pooled mean equivalent to zero on Fogo ($\AggContrast$~pp,
 $95\%$ CI $[\AggLo,\,\AggHi]$, TOST $p=\TOSTp$);
 the sign ranged from $\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp
 depending on the cell, confirming a cell-dependent interaction rather
@@ -2935,9 +2965,9 @@ this article.
 
 \section*{Declaration of generative AI and AI-assisted technologies in the writing process}
 
-During the preparation of this work the author used AI-assisted writing
-tools for language editing and code review.
-After using these tools, the author reviewed and edited all content and
+During the preparation of this work the author used Kiro (Amazon Web
+Services) for language editing and code review.
+After using this tool, the author reviewed and edited all content and
 takes full responsibility for the content of the published article.
 
 \section*{Funding}
