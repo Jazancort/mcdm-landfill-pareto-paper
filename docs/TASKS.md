@@ -1,119 +1,194 @@
-# TASKS — Plano de melhorias artigo MCDM Fogo/Omega
-Criado: 2026-10-01 | Sequência: Bloco 4 → 1 → 3 → 2 → submissão
+# TASKS — Estado da Submissão (Omega)
+Última actualização: 2026-10-20 | Commit de referência: 7f69acb
 
 ---
 
-## Bloco 4 — Framing analítico vs empírico (Semana 1 — meio dia)
+## Estado instantâneo
 
-- [ ] **4.1** Abstract: adicionar "on this instance" em cada afirmação empírica (25.4pp, 35.8pp, 43.2pp, −10.2pp)
-- [ ] **4.2** Intro §1: separar frases analíticas ("exact assembly is guaranteed…") das empíricas ("in our data, normalisation is worth…")
-- [ ] **4.3** Conclusão §8: auditar parágrafo a parágrafo — analítico vs empírico. Remover qualificadores das frases analíticas (não precisam de "in our data").
-
----
-
-## Bloco 1 — Circularidade do benchmark F8 (Semana 1 — 1 dia)
-
-- [ ] **1.1** Ler compute_f8_circularity.py e confirmar os 4 valores: `FEightVecOptQ=100.0`, `FEightMMOptQ=94.4`, `FEightVecGrdQ=100.0`, `FEightMMGrdQ=72.4`
-- [ ] **1.2** Escrever subsecção `\subsection{Benchmark circularity and robustness}` (~150 palavras) na Discussão com:
-  - Justificação de por que min-max para os objectivos não é uma escolha circular (os objectivos físicos existem antes da normalização)
-  - Tabela ou frase com os 4 valores F8
-  - Frase final: "the ranking of normalisations is preserved under the alternative frontier, consistent with Proposition 1"
-- [ ] **1.3** Adicionar macros F8 ao main.tex preamble (ou confirmar que já estão em macros.tex)
-- [ ] **1.4** Compilar e verificar que a subsecção não cria overfull ou referências quebradas
+| Item | Estado |
+|---|---|
+| Manuscrito (main.tex) | 29 páginas, 0 erros LaTeX |
+| Repositório GitHub | Jazancort/mcdm-landfill-pareto, branch main |
+| E6 na Athena | **A CORRER** — sessão tmux `e6`, ETA ~124 min a partir das ~18h |
+| Zenodo DOI | `10.5281/zenodo.23479281` (concept DOI, v1.0) |
+| Próximo item | A3 (macros para números hardcoded) |
 
 ---
 
-## Bloco 3 — Pacote de reprodução público (Semana 2 — 2-3 dias)
+## Itens da revisão metodológica — sequência A–D
 
-- [x] **3.1** Criar repositório GitHub público `mcdm-landfill-pareto-replication` — https://github.com/Jazancort/mcdm-landfill-pareto-replication (2026-10-19)
-- [x] **3.2** Incluir no repo:
-  - `scripts/run_e1_v3.py` (experimento E1 principal)
-  - `scripts/generate_macros.py` (gera macros_auto.tex)
-  - `scripts/verify_macros_permanent.py` (ALL CHECKS PASSED — hash 813030ffd9520c2d)
-  - `corpus/PRESPEC_E1.md`
-  - `data/e1_v3_rerun_20261002.log`
-  - `results/fourthcell/mc_2cube_fixed_raw.csv`
-  - `README.md` com 3 passos: clone → uv pip install → verify
-- [ ] **3.3** Testar que `uv run python scripts/run_e1_v3.py` reproduz os resultados do artigo a partir de um clone limpo (requer MCDM_DATA_DIR com dados GIS)
-- [x] **3.4** Tag `v1.0` no GitHub → **AGUARDA**: ativar webhook Zenodo em zenodo.org → DOI automático
-- [x] **3.5** Seção "Code availability" adicionada ao main.tex (linha ~2887): `\url{https://github.com/...}` + placeholder `ZENODO-DOI-AQUI` para substituir após webhook
-- [ ] **3.6** Após Zenodo: substituir `ZENODO-DOI-AQUI` em main.tex pelo DOI real; recompilar 4-pass
+### A — Amplitude e normalização
 
----
+- [x] **A1** Verificar amplitudes rho_raw vs rho_mm. Script `check_a1_amplitudes.py`. Max discrepância: 6.7% em aspect (encoding binário). Adicionada §4.3 com clarificação. `perm` e `urban` confirmados (min=0, factores 2.88× e 0.53×).
+- [x] **A2** Captions Tabela 3 e Figura 3 actualizadas.
+- [ ] **A3** Converter números hardcoded em macros + estender `verify_macros_permanent.py` a CIs e p-values. Localização dos hardcoded: Tab.5 Q2 values, Tab.4/7/9, IC Tab.6 first row ([+21.2,+29.7]), §7.4 +14.0, §6.5 4.4 e 8.4, §7.5 (76, 4.0 [+2.2,+6.0], 5.6 [+3.6,+7.6], 57.6/40.2), §7.7 (7.4 [+3.8,+11.0], 62.8, 0.295/0.544), Remark 6 (TV_W≈0.082, TV_B≈0.072), F8 5.6.
+- [ ] **A4** Tabela de desvios (DEVIATIONS) no suplementar: especificação original vs o que foi feito vs justificação. Formato: | DEV | Secção | Original | Actual | Razão |
+- [x] **A5** F8 asymmetry: mm→vec custa 43.2 pp optimal; vec→mm custa 5.6 pp. Adicionado ao manuscrito.
+- [ ] **A6** Figura 1: regenerar PNG/PDF. Remover κ∈{50,200}, actualizar "+8.1pp"→valor actual, "equivalent to zero"→"p=0.010".
 
-## Bloco 2 — Generalização: instâncias externas (Semanas 3-5 — 1-2 semanas)
+### B — Robustez e incerteza
 
-### 2A — Identificar instâncias (Semana 3)
+- [x] **B4** VIKOR e PROMETHEE II qualificados como suplementar ("SAW e TOPSIS num desenho 2³ balanceado; VIKOR e PROMETHEE II no Suplementar").
+- [ ] **B1** Renomear "bootstrap CI" → "Monte Carlo intervals" em todo o manuscrito. Adicionar coluna κ=50 às Tabelas 5 e 6.
+- [ ] **B2** Corrigir descrição da perturbação de Dirichlet nas Limitações ("averages over a neighbourhood" → "Q2 isolates design-choice loss from elicitation error").
+- [ ] **B3** Lema 1 formal: derivação → Lema com prova de 2 linhas; w_eff como consequência; corrigir "w_eff approximates the weight shift".
 
-- [ ] **2.1** Confirmar se Fathalizadeh et al. (2020) publicam coordenadas + critérios + pesos: buscar no PDF/suplementar
-- [ ] **2.2** Confirmar se Yal & Akgün (2014) publicam coordenadas + critérios + pesos: buscar no PDF/suplementar
-- [ ] **2.3** Confirmar se Siddiqui et al. (1996) têm dados reprodutíveis
-- [ ] **2.4** Para cada instância encontrada: verificar se tem ≥ 10 candidatos e ≥ 3 critérios (fronteira exacta computável)
-- [ ] **2.5** Se nenhuma das 3 tiver dados suficientes, identificar 1-2 alternativas na revisão de Rezaeisabzevar2020
+### C — Experimento E6
 
-### 2B — Implementar e correr (Semana 4)
+- [x] **C.1** PRESPEC escrito e commitado: `corpus/PRESPEC_E6.md` (commit 968f507).
+- [x] **C.2** Plano revisto e corrigido: `docs/PLANO_E6_SANTIAGO.md` (commit 968f507). Inclui plano de Santiago como segunda instância real.
+- [x] **C.3** Scripts implementados e testados localmente:
+  - `scripts/e6_generate_amplitudes.py`: células M, B, W_inf(L/F/H), V_inf(F), W_def(F). TV_B=0 exacto nas células W. Self-test passou.
+  - `scripts/run_e6.py`: 120 instâncias × 200 draws × 7 células. Objectivos per-draw (P1 analítica). Dry-run: 62s/instância na Athena → ~124 min total.
+- [x] **C.4** Job lançado na Athena: `tmux new-session -d -s e6 '...'`. Log: `results/e6/run_e6.log`.
+- [ ] **C.5** Aguardar conclusão. Verificar P1 antes de analisar P2–P4.
+- [ ] **C.6** Criar figura e tabela de sumário para §7.
+- [ ] **C.7** Integrar no manuscrito: subsecção em §7 (não suplementar).
 
-- [ ] **2.6** Escrever `scripts/run_external_instances.py` usando pareto_utils.py
-  - Entrada: coordenadas, critérios, pesos em CSV
-  - Saída: TV, Q2_greedy, Q2_optimal para cada combinação método × normalização
-- [ ] **2.7** Correr para cada instância confirmada na Athena
-- [ ] **2.8** Asserção de regressão: SAW/mm/optimal = 100% em cada instância (Proposição 1)
+### D — Texto e estrutura
 
-### 2C — Integrar no artigo (Semana 5)
-
-- [ ] **2.9** Criar tabela de generalização: Fogo + instâncias externas × {TV, Q2_greedy, Q2_optimal}
-- [ ] **2.10** Escrever parágrafo na Discussão: "On two independent instances from the siting literature, the ordering of normalisations by Q2 is consistent with the prediction of the amplitude identity…"
-- [ ] **2.11** Adicionar na Limitações: as instâncias externas são pequenas (≤ 50 candidatos); o efeito de magnitude pode depender do tamanho do conjunto
+- [x] **D1** Highlight 3 actualizado.
+- [x] **D2** "no consistent pooled direction" substituído por "pooled mean equivalent to zero, but a significant cell-level interaction" — 3 locais (intro, §7.3, conclusion).
+- [x] **D3** §8.3 "by analogy" corrigido.
+- [x] **D4** §8.6 label corrigido.
+- [x] **D5** ORCID: `\providecommand{\orcid}[1]{}` (no-op) restaurado — `\href` dentro de arg de autor quebra cas-dc.cls.
+- [x] **D6** Declaração de IA: "Claude assistant (Anthropic), accessed via the Kiro development environment (Amazon Web Services)" — padrão do virus-usp.
+- [ ] **D7** Tabela de artefactos de laboratório no suplementar: E1, E5, F8, R-M, R-V*, R-asp, D-greedy — com definição e localização no código.
 
 ---
 
-## Bloco E6 — Generalização sintética (paralelo às Semanas 3-4)
+## E6 — Design do PRESPEC (referência rápida)
 
-- [ ] **E6.1** Aguardar conclusão do E6 na Athena (45 instâncias × 5 condições M/B/W/C/V)
-- [ ] **E6.2** Verificar P1 (Proposição 1): 100% em M e B em todas as 45 instâncias
-- [ ] **E6.3** Verificar que a decomposição between/within se mantém em instâncias com diferentes amplitudes
-- [ ] **E6.4** Criar tab:e6 ou figura de dispersão TV vs Q2_optimal (45 instâncias)
-- [ ] **E6.5** Integrar na secção de resultados como "external validity: synthetic instances"
+**Diferença crítica em relação ao run_e6_generator.py anterior:**
 
----
-
-## Semana 6 — Revisão final e submissão
-
-- [ ] **Sub.1** Executar `make check` (xelatex ×4 + bibtex): 0 erros, 0 citações indefinidas
-- [ ] **Sub.2** Verificar contagem de palavras do abstract: 150–250 palavras
-- [ ] **Sub.3** Correr `scripts/verify_macros_permanent.py` — confirmar hash esperado
-- [ ] **Sub.4** Verificar todas as tabelas contra CSV: nenhum número escrito à mão sem assert
-- [ ] **Sub.5** Confirmar que o DOI do pacote de reprodução está no artigo
-- [ ] **Sub.6** Confirmar que não há `\MechOnePredAdmiss`, `\MismatchRatioHi` ou outras macros removidas no texto (check_consistency.py)
-- [ ] **Sub.7** Submeter à Omega via Editorial Manager
-
----
-
-## Dependências
-
-```
-4.1-4.3 (independentes, fazer primeiro)
-    ↓
-1.1-1.4 (requer F8 verificado)
-    ↓
-3.1-3.6 (requer macros estáveis)
-    ↓
-2.1-2.5 → 2.6-2.8 → 2.9-2.11
-              ↑
-           E6.1-E6.5 (paralelo)
-                    ↓
-               Sub.1-Sub.7
-```
-
----
-
-## Estado actual dos experimentos
-
-| Experimento | Estado | Resultado chave |
+| | Antigo | PRESPEC_E6 (actual) |
 |---|---|---|
-| E1 (intervenção amplitudes) | Completo | B=100%, W=64.2%, V=56.8% |
-| E3 (grid power-law) | Completo (Q2_opt=100% todas) | Bug: score e obj usam Aj |
-| E4 (ref-set decomposição) | Completo | R-V*=100%, R-asp=24% |
-| E6 (45 instâncias ×5 cond.) | A correr | — |
-| F8 (circularidade benchmark) | Script feito, não no texto | Vec-opt=100%, MM-opt=94.4% |
-| Instâncias externas reais | Por iniciar | — |
+| Geometria | Nova sintética (N=50/100/200) | Fogo trios (data/fogo_trios.npy) |
+| Distribuições | Uniforme apenas | 4 famílias: lognormal, beta(1,3), uniform, zero-inflated (π=0.90) |
+| TV_W targeting | Per-draw, não controlado | Alvo fixo via bissecção, §6.4 formula |
+| Objectivos Pareto | W_CRIT_BASE fixo (P1 empírica) | Per-draw w_d (P1 analítica) |
+| Células | M, B, W, V, C (5) | M, B, W_inf(L/F/H), V_inf(F), W_def(F) (7) |
+| P4 | Não | Inflate vs deflate do j* em cada grupo |
+
+**7 células com TV_B e TV_W medidos (self-test, pesos AHP Fogo):**
+
+| Célula | TV_W | TV_B | Propósito |
+|---|---|---|---|
+| M | 0.000 | 0.000 | P1 assertion |
+| B | 0.000 | 0.249 | P1 assertion |
+| W_inf_L | 0.100 | 0.000 | P2 (nível baixo) |
+| W_inf_F | 0.199 | 0.000 | P2 (nível Fogo), P3, P4 |
+| W_inf_H | 0.300 | 0.000 | P2 (nível alto) |
+| V_inf_F | 0.199 | 0.249 | P3 (efeito TV_B) |
+| W_def_F | 0.199 | 0.000 | P4 (direcção) |
+
+**Previsões:**
+- P1: TV_W=0 (M e B) → Q2_opt=100% em todas as 120 instâncias (assertion analítica)
+- P2: ρ_s(TV_W, Q2_opt) < 0 em ≥80% instâncias por família; Mean(H) < Mean(0) − 5 pp
+- P3: Q2_opt(V_inf_F) ≤ Q2_opt(W_inf_F) em ≥70% instâncias (TV_B agrava perda)
+- P4: Q2_opt(W_inf_F) < Q2_opt(W_def_F) em ≥70% instâncias (inflacionar j* custa mais)
+
+**Para monitorizar E6:**
+```bash
+ssh -i C:\Users\julio\.ssh\id_ed25519_mcp julioazancort@172.20.39.50 \
+  "tail -5 ~/scratch/mcdm-landfill-pareto/results/e6/run_e6.log"
+```
+
+---
+
+## Santiago — segunda instância real (bloqueada por E6)
+
+Detalhes completos em `docs/PLANO_E6_SANTIAGO.md`, Parte 2.
+
+Decisões pré-declaradas (a commitar em PRESPEC_SANTIAGO.md antes de qualquer run):
+- Grelha: ~1 km (espaçamento de Fogo, a confirmar no estudo de origem) → ~900 candidatos brutos
+- Exclusões: só dist_protected=0 (mesmas de Fogo)
+- perm: tentar distância à zona desfavorável (geologia/INGRH); clay fraction só como último recurso com declaração de critério diferente
+- wells: omitir desde o início; renormalizar 10 pesos proporcionalmente
+- Pesos AHP: transferidos de Fogo, declarar como "transfer instance"
+
+Posição no artigo: tabela compacta Fogo/Santiago em §7.7; detalhes no suplementar.
+
+---
+
+## Remark 6 — TV_W e TV_B (pendente Athena)
+
+Script `scripts/tvw_e4.py` precisa de correr na Athena para calcular TV_W≈0.082 e TV_B≈0.072 referenciados no Remark 6. Valores actualmente hardcoded em macros.tex.
+
+Commitar com o E6 depois de confirmar que a sessão `e6` chegou ao fim.
+
+---
+
+## Macros actuais (valores canónicos — mc_unified.py, seed=42)
+
+| Macro | Valor | Secção |
+|---|---|---|
+| `\TOSTp` | 0.010 | §7.3 |
+| `\AggContrast` | -0.4 | §7.3 |
+| `\AggLo` | -2.1 | §7.3 |
+| `\AggHi` | +1.3 | §7.3 |
+| `\NormInfoEffect` | 31.7 | §7.5 |
+| `\NormInfoLo` | 27.7 | §7.5 |
+| `\NormInfoHi` | 35.7 | §7.5 |
+| `\AsmThreecell` | -6.1 | §7.5 |
+| `\AsmThreecellLo` | -8.1 | §7.5 |
+| `\AsmThreecellHi` | -4.1 | §7.5 |
+| `\InteractionTOPSIS` | 13.2 | §7.5 |
+| `\InteractionTOPSISLo` | 9.6 | §7.5 |
+| `\InteractionTOPSISHi` | 17.0 | §7.5 |
+| `\QthreeSAWvecGrdPct` | 0.86 | §7.7 |
+| `\QthreeTOPSISvecGrdPct` | 1.14 | §7.7 |
+| `\CondGapTOPSISvecGrd` | 3.11 | §7.7 |
+| `\TVBvec` | 0.249 | §6.4 |
+| `\TVWvec` | 0.199 | §6.4 |
+| `\TVWrw` | 0.082 | Remark 6 |
+| `\TVWrj` | 0.082 | §8.x |
+| `\TVWinvrj` | 0.085 | §8.x |
+| `\RVstarOptimal` | 100.0 | §8.1 |
+
+---
+
+## Git — commits desta sessão
+
+| Commit | Descrição |
+|---|---|
+| 67ca9fc | Baseline — D6 AI declaration (Claude/Anthropic) |
+| 2b35d8b | docs: add E6+Santiago+Alkaradaghi planning document (v1, depois revisto) |
+| 968f507 | docs: revise E6 plan + add PRESPEC_E6 (P1-P4, score-only amplitudes, 4 families) |
+| 7f69acb | feat: add E6 amplitude generator + run_e6 (PRESPEC_E6 implementation) |
+
+---
+
+## Sequência recomendada após E6
+
+```
+Agora (E6 a correr em paralelo):
+  1. A3 — macros para números hardcoded
+  2. B1 — MC intervals + κ=50 column
+  3. B2 — Dirichlet perturbation description
+  4. B3 — Lemma 1 formal
+  5. D7 — tabela artefactos laboratório
+
+Quando E6 terminar (~2h):
+  6. C.5 — verificar P1; analisar P2–P4
+  7. C.6/C.7 — figura + integração no manuscrito
+
+Depois:
+  8. A4 — tabela DEVIATIONS
+  9. A6 — regenerar Figura 1
+  10. Remark 6 TV_W/TV_B (tvw_e4.py)
+  11. Santiago (opcional, após E6)
+  12. Submissão — checklist Sub.1–Sub.7
+```
+
+---
+
+## Checklist de submissão (Sub.1–Sub.7)
+
+- [ ] **Sub.1** `make check` (xelatex ×4 + bibtex): 0 erros, 0 citações indefinidas
+- [ ] **Sub.2** Abstract: 150–250 palavras
+- [ ] **Sub.3** `scripts/verify_macros_permanent.py`: ALL CHECKS PASSED
+- [ ] **Sub.4** Todas as tabelas verificadas contra CSV — nenhum número à mão sem assert
+- [ ] **Sub.5** DOI do pacote de reprodução no artigo (substituir ZENODO-DOI-AQUI)
+- [ ] **Sub.6** Nenhuma macro removida no texto (`check_consistency.py`)
+- [ ] **Sub.7** Submeter via Editorial Manager (Omega)
