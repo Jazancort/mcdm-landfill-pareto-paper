@@ -459,6 +459,9 @@ FORBIDDEN_MACROS = [
     # TVvecNumerical removed 2026-10-xx: TVvec (0.311) now equals TVvecNumerical.
     # If \TVvecNumerical appears, the old duality is being recreated.
     r"\TVvecNumerical",
+    # EoneVloss and EoneWloss must come from generate_macros_e1.py (e1_macros.tex).
+    # If they appear as \newcommand in macros.tex, they are hardcoded orphans.
+    # The A9 duplicate check will also catch them if both are defined.
 ]
 if main_tex.exists():
     for macro in FORBIDDEN_MACROS:
@@ -772,6 +775,18 @@ else:
         print("  [INFO] EoneVloss not found in macros files")
     if _qvec is None:
         print("  [INFO] QtwovecOptimal not found in macros files")
+
+# Also validate EoneVloss against e1_stats.json
+_e1_json = RESULTS / "e1" / "e1_stats.json"
+if _e1_json.exists():
+    import json as _json2
+    _e1 = _json2.loads(_e1_json.read_text(encoding="utf-8"))
+    if _eloss is not None:
+        check("EoneVloss vs e1_stats.json", _eloss, _e1.get("EoneVloss", float("nan")), tol=0.05)
+    if _macros_all.get("EoneWloss") is not None:
+        check("EoneWloss vs e1_stats.json", _macros_all["EoneWloss"], _e1.get("EoneWloss", float("nan")), tol=0.05)
+else:
+    print("  [INFO] e1_stats.json not found — run generate_macros_e1.py")
 
 
 if FAIL:

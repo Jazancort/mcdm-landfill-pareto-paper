@@ -1,3 +1,9 @@
+# DEPRECATED (2026-10-21): This script writes macros_auto.tex which is not
+# included by any document (main.tex uses macros.tex + macros_e6.tex + macros_amplitudes.tex).
+# The E1 macros are now produced by generate_macros_e1.py (reads the verified log).
+# The mc_unified contrasts in macros.tex are manually maintained with documented sources.
+# Moved here to avoid accidental execution; kept for reference.
+# DO NOT ADD TO build_check.py.
 # -*- coding: utf-8 -*-
 """
 generate_macros.py — Gera macros LaTeX a partir dos CSV *_fixed.

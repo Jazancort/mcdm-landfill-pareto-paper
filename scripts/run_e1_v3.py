@@ -300,12 +300,38 @@ p3 = get("E1-B","greedy") < 99.0
 print(f"P3 E1-B greedy  = {get('E1-B','greedy'):.2f}% (must be <100%): {'CONFIRMED' if p3 else 'UNEXPECTED'}")
 
 # ── Save ──────────────────────────────────────────────────────────────────────
+# -- Save: archive path with metadata, plus legacy path --
+import subprocess as _sp
+def _git_short():
+    try:
+        return _sp.check_output(
+            ['git', '-C', str(Path(__file__).parent), 'rev-parse', '--short', 'HEAD'],
+            stderr=_sp.DEVNULL).decode().strip()
+    except Exception:
+        return 'unknown'
+
+code_commit = _git_short()
+_archive_dir = Path(RESULTS_DIR).parent / 'results' / 'archive' / code_commit / 'e1'
+_archive_dir.mkdir(parents=True, exist_ok=True)
+
 df_out = pd.DataFrame(rows)
-out = os.path.join(RESULTS_DIR, "e1_v3_results.csv")
+df_out['n_draws']       = N_DRAWS
+df_out['seed']          = SEED_BASE
+df_out['code_commit']   = code_commit
+df_out['prereg_commit'] = 'fdf078a'  # commit where Athena predictions were written
+
+out_archive = _archive_dir / f'e1_v3_perdraw_N{N_DRAWS}.csv'
+df_out.to_csv(out_archive, index=False)
+
+# Legacy path (for backwards compat; DO NOT use for provenance)
+out = os.path.join(RESULTS_DIR, 'e1_v3_results.csv')
 df_out.to_csv(out, index=False)
 
 print(f"\n{'='*70}")
 print("RESULTS:")
 print(df_out.to_string(index=False))
 print(f"\nTotal elapsed: {(time.time()-t_total)/60:.1f} min")
-print(f"Saved to {out}")
+print(f"Archive: {out_archive}")
+print(f"Legacy:  {out}")
+import hashlib as _hl
+print(f"SHA-256: {_hl.sha256(out_archive.read_bytes()).hexdigest()[:16]} ({out_archive.name})")
