@@ -522,3 +522,63 @@ Depois:
 - [ ] **Sub.5** DOI do pacote de reprodução no artigo (substituir ZENODO-DOI-AQUI)
 - [ ] **Sub.6** Nenhuma macro removida no texto (`check_consistency.py`)
 - [ ] **Sub.7** Submeter via Editorial Manager (Omega)
+
+---
+
+## Previsões para a ida à Athena (escritas antes de lançar)
+
+Data: 2026-10-21 | Commit: 7e9c79a
+
+### E1 — por draw (corrida nova, output por draw)
+
+| Verificação | Previsão |
+|---|---|
+| E1-V Q2_optimal | 56,8% |
+| E1-V portfolios vs SAW/vec/opt, por draw, mesma seed | 500/500 idênticos |
+| E1-W Q2_optimal | 64,2% (perda 35,8 pp) |
+| Precisão | float64, eps=1e-9, N_DRAWS=500, seed=42 |
+
+Se 500/500 bater: generate_macros_e1.py passa a ler o CSV por draw; log fica no arquivo.
+Se E1-V < 500/500 ou Q2 diferir > 0,1 pp: re-examinar scoring path antes de publicar.
+
+Nota: EoneWloss=35,8 não tem cruzamento independente (ao contrário de EoneVloss=43,2 que bate com o factorial). Esta é a única previsão unilateral — confirmada só pela corrida.
+
+### E6 — corrida de sensibilidade
+
+Parâmetros: E6_TARGET_TVW=0.1954, L=0.10, H=0.30, seeds iguais.
+
+Regra de decisão (pré-registada):
+
+| Critério | "Veredicto igual" |
+|---|---|
+| P1 | passa em ambas as corridas |
+| P2 | mesmo resultado passa/falha; p do mesmo lado de 0,05; contagens ±2 por família |
+| P3 | mesmo resultado passes/falha |
+| P4 | mesmo resultado passa/falha; p do mesmo lado de 0,05 |
+
+Se igual: uma frase na §7.8 + tabela suplementar com as duas corridas. Macros com prefixo \EsixSens.
+Se diferente: discussão na §7.8; corrida principal continua a ser a pré-registada.
+
+### F8 — passo 5
+
+1. Tamanho da fronteira: verificar não-dominância e completude exacta (chunks).
+2. Sweep de ε nos A' (1e-7 e 1e-5): 0 escaped em ambos.
+3. Coincidência greedy = óptimo por draw: medida, não assumida.
+   Previsão dedutiva: em vec/mm, draws com greedy ≠ óptimo tem de ser ≥ 110
+   (derivação: mm tem 138 Q2=0 e vec tem 28 Q2=0; se fossem os mesmos 28, o mínimo seria 138-28=110).
+   Se der menos, há bug.
+   Em vec/vec: 100% em ambos (Proposição 1), coincidência trivial; não tem implicação.
+
+### Sensibilidade raw
+
+Método: células vec com pesos multiplicados por rho_shift/rho_raw para slope, coast, wells, aero (factor 1,02 a 1,04). Perm, aspect, rivers, protected, urban, aero, cult: factor 1 (min=0).
+Previsão: Q2 muda poucos pp. Fronteira recalculada com pesos raw antes de comparar.
+
+---
+
+## Correcções ao diagnóstico do E1
+
+- O E1 scoring usa `build_N` com `X_adj` (leeward=1 para aspect, benefício orientado).
+  O `c_site` (leeward=0) é só para os objectivos F1/F2/F3, não para o score SAW.
+  Diagnóstico anterior de "inconsistência de c_site" estava errado. Retirada a referência a DEV-E4-007 no contexto do E1.
+- CSV e1_v3_results_DRYRUN_N10_DEV-E1-004.csv: dry-run de 10 draws, SE=15,8% confirma exactamente. Não é bug. Não é corrida inválida. É um ensaio curto compatível com 56,8% (P(X<=5, n=10, p=0.568) ≈ 22%).

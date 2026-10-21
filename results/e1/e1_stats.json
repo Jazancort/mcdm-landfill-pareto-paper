@@ -1,6 +1,9 @@
 {
   "source_log": "e1_v3_rerun_20261002.log",
   "sha256": "e05cd8a4befdd8c5b4357c79a89137320373a8b79597c90611b92a8ca8ce342c",
+  "n_draws": 500,
+  "precision": "float64",
+  "eps": "1e-9",
   "EoneVloss": 43.2,
   "EoneWloss": 35.8,
   "results": {
