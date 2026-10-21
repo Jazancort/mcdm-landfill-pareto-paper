@@ -261,7 +261,44 @@ Posição no artigo: tabela compacta Fogo/Santiago em §7.7; detalhes no supleme
 
 ---
 
-## Remark 6 — TV_W e TV_B (pendente Athena)
+## F8 — circularity benchmark
+
+**Script:** `scripts/compute_f8_circularity.py`  
+**Resultados existentes:** `results/f8/f8_circularity.csv` (commit 43b8427, 02/10/2026)
+
+### Resultados confirmados (N=500, KAPPA=200, SEED=42)
+
+| obj_norm | score_norm | assembly | Q2 | SE |
+|---|---|---|---|---|
+| vec | vec | optimal | **100.0** | 0.00 |
+| vec | mm | optimal | **94.4** | 1.03 |
+| vec | vec | greedy | **100.0** | 0.00 |
+| vec | mm | greedy | **72.4** | 2.00 |
+
+**Theorem 1 verificado**: Q2=100.0%, SE=0.00 para vec/vec/opt. O log confirma Q2=100.0% em todos os 50 checkpoints (0/500 a 450/500). 500/500 draws passam o invariante.
+
+**Macros exactamente iguais ao CSV**: `\FEightVecOptQ{100.0}`, `\FEightMMOptQ{94.4}`, `\FEightVecGrdQ{100.0}`, `\FEightMMGrdQ{72.4}`.
+
+### Arqueologia (2026-10-21)
+
+- Commit `9cdceb4` (2026-10-02): versão buggy com injection approach → 89.4% para vec/opt (double-normalisation + aspect misclassification)
+- Commit `4d0a98d`: fix para direct vec objectives; mini-run: 100%
+- Commit `43b8427`: full run N=500 → 100.0% confirmado; macros corrigidos
+
+### Scorer (passo 2)
+
+`compute_f8_circularity.py` usa `_build_decision_matrix` de mcdm_experiment.py (canonical). Aspect encoding: binário leeward=[90,180]→c=0, igual ao canonical. Sem cópia local do scorer. O alinhamento é verificado automaticamente antes do Monte Carlo (`score_sign` check).
+
+### Pendente (passo 5)
+
+- Validar a **fronteira vectorial** (tamanho, não-dominância, completude exacta): o script usa `build_pareto_utils` internamente mas o resultado não foi verificado com um bloco independente ao estilo do validate_core.
+- TV_W plausibility para 94.4% (mm/opt loss = 5.6 pp): calcular TV_W da razão de amplitudes mm/vec e comparar com E4 reference (\TVWrj = 0.082, loss = 0 pp; \TVWinvrj = 0.085, loss = 11.6 pp). Se TV_W(mm/vec) < 0.082, 5.6 pp é plausível.
+- Script agora grava `results/f8/f8_per_draw.csv` (per-draw), necessário para a próxima corrida na Athena.
+- Correr o script actualizado na Athena com `tmux new -s f8` para regenerar f8_per_draw.csv com o código corrigido.
+
+### Pré-existente em main.tex
+
+L1102: `— that the` (em-dash como separador em prosa). Pré-existente, não da sessão actual. Corrigir com a §7.8.
 
 Script `scripts/tvw_e4.py` precisa de correr na Athena para calcular TV_W≈0.082 e TV_B≈0.072 referenciados no Remark 6. Valores actualmente hardcoded em macros.tex.
 
