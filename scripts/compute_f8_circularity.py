@@ -209,18 +209,32 @@ for j, k in enumerate(col_names):
     L2_raw[j] = max(np.sqrt((c**2).sum()), 1e-12)
     C_vec_raw[:, j] = c / L2_raw[j]  # vec-normalised
 
-# Confirm L2_raw ≈ L2_via for all non-aspect columns.
-# For COST/INV/benefit: c = _mm_norm(x,x) = X_via_raw[:,j], so L2_raw[j] = L2_via[j].
-# aspect uses binary encoding {0,1}: L2 differs from X_via_raw[:,aspect] by design.
-# This assertion guarantees C_vec_raw uses the article formula ρ_j=1/||X_via_raw[:,j]||.
-_asp_idx = col_names.index("aspect")
-_L2_raw_noasp = np.delete(L2_raw, _asp_idx)
-_L2_via_noasp = np.delete(L2_via, _asp_idx)
-assert np.allclose(_L2_raw_noasp, _L2_via_noasp, rtol=1e-8), (
-    f"L2_raw ≠ L2_via for non-aspect cols: "
-    f"max_rel_diff={np.max(np.abs(_L2_raw_noasp-_L2_via_noasp)/_L2_via_noasp):.2e}"
-)
-print("  L2_raw ~= L2_via (10/11 non-aspect cols): OK  C_vec_raw uses article rho_j formula")
+# Confirm C_vec_raw uses article formula: rho_j = 1/L2(mm_norm(x_j)) for all non-aspect cols.
+# The previous assertion np.allclose(L2_raw, L2_via) was a tautology:
+# both compute L2(_norm(x,x)) from the same data, so they can never differ.
+# This assertion compares the LIVE rho_j against fogo_constants.AJ_VEC (Tabela 2)
+# to within 5e-3 (slightly above 3dp, because Tabela 2 rounds some values).
+# The 4 criteria that diverge by 2-5e-3 (slope, coast, wells, aero) are documented
+# in DATA_DICTIONARY Fase 1.3: Tabela 2 used range/L2(x_raw) while the pipeline
+# uses 1/L2(mm_norm(x)) = range/L2(x-min); for criteria with min>0 these differ.
+# The F8 is INTERNALLY CONSISTENT with scoring.py: both use the same norms_via.
+_asp_idx    = col_names.index("aspect")
+_rho_live   = 1.0 / L2_via  # = 1/L2_raw for non-aspect (same tautology-free computation)
+from fogo_constants import AJ_VEC as _AJ_VEC, CRITERION_NAMES as _CRIT_NAMES
+_TAB2 = dict(zip(_CRIT_NAMES, _AJ_VEC))
+_rho_issues = {}
+for _j, _k in enumerate(col_names):
+    if _k == "aspect":
+        continue
+    _diff = abs(_rho_live[_j] - _TAB2[_k])
+    if _diff > 5e-3:  # larger than documented Fase 1.3 discrepancy
+        _rho_issues[_k] = (_rho_live[_j], _TAB2[_k], _diff)
+if _rho_issues:
+    raise AssertionError(
+        f"rho_j diverges from Tabela 2 beyond 5e-3 for: {_rho_issues}. "
+        f"F8 may be using a different normalisation than scoring.py."
+    )
+print("  rho_j vs Tabela 2 (non-aspect): all within 5e-3 (Fase 1.3 known diffs OK)")
 
 # Now C_vec_raw[:,j] is vec-normalised raw (before benefit flip).
 # For score saw_vec: X_adj_mm[:,j] = raw or (1-raw), then /L2_mm.

@@ -28,7 +28,10 @@ Loaded: 473 rows x 13 columns
 
 ÔöÇÔöÇ TRIOS ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
   [PASS] n_trios (from fogo_trios.npy): 1944653
-  [PASS] distance constraint violations in 1000 random trios: 0
+  [PASS] trio indices out of [0, N): 0
+  [PASS] trios with repeated site: 0
+  [PASS] n_unique trios (sorted rows all distinct): 1944653
+  [PASS] distance constraint violations in ALL 1.9M trios: 0
   [PASS] n_trios (trace method, independent): 1944653
 
 ÔöÇÔöÇ PARETO FRONTIER A' ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
@@ -42,6 +45,7 @@ Loaded: 473 rows x 13 columns
   after remap all >=0:       181/181
   after remap, found in trios_arr: 181/181
   F-value comparison (A' norm, found trios): max_diff = 9.71e-17
+  [PASS] F-values A' vs CSV (max |diff|): 9.71445146547012e-17
 
   [PASS] Pareto non-dominated within remapped set: 0
 
@@ -54,6 +58,8 @@ Loaded: 473 rows x 13 columns
   remapped to A' indices: 213/213 valid
   found in trios_arr after remap: 213/213
   F-value comparison (A norm, found trios): max_diff F1=9.71e-17 F3=5.55e-17
+  [PASS] F-values A vs CSV (F1, max|diff|): 9.71445146547012e-17
+  [PASS] F-values A vs CSV (F3, max|diff|): 5.551115123125783e-17
   NOTE: intersection uses remapped subsets (213 and 181 trios found)
   NOTE: if remapping is partial, |A cap A'| = 132 is a lower bound
 
@@ -69,7 +75,12 @@ Loaded: 473 rows x 13 columns
   NOTE: TBD ÔÇö update EXPECTED after Phase 1.7 canonical run
 
 ====================================================================
-GATE 1 RESULT: 15/15 checks PASS  |  0 FAIL  |  0 NOT RUN
+GATE 1 RESULT: 21/21 checks PASS  |  0 FAIL  |  0 NOT RUN
 
 Status: ALL CHECKS PASS ÔÇö Phase 1 gate cleared.
 CSV SHA-256: 234f6e1c2697ea540ed0e0674018e6446e9255b25009167cbb0c19c51311722a
+SHA-256 data/fogo_trios.npy: d2b250ef11e88dea23f364c00ca7cbd79fea3a250334a1abf8f3b2c889b80f4b
+SHA-256 scripts/results/pareto_front_Aprime.csv: 619a80fa83adf841124aac71de258c76ca95b9fbe746e187950099c383882388
+SHA-256 scripts/results/pareto_front_A.csv: ae4efe96d02ee50c6721dcfeaa59963002262c08c21ea59a30f9e4b582a9c311
+paretoset version: 1.2.5
+pandas version: 3.0.6  numpy version: 2.5.3

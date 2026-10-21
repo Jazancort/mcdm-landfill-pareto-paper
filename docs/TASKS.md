@@ -307,7 +307,7 @@ Diferença F8 vs artigo era APENAS em critérios COST (perm, slope, roads). INV,
 - vec/opt: 100.0% (500/500) ← Theorem 1 confirmado
 - vec/grd: 100.0% (500/500)
 
-A robustez do 94.4% ao vec é explicável: a mudança afecta só os critérios G1 (COST), que têm influência limitada na fronteira 3D. A conclusão qualitativa da §5.4 não muda. Os macros \FEightMMOptQ{94.4} etc. estão correctos para AMBAS as versões.
+Cenário D (confirmado): os resultados idênticos são esperados e corretos. A "correcção" mudou `X_adj_vec` que era código morto desde o início; o scoring real usava `C_vec_raw` que já calculava a fórmula correta. Não houve fronteira diferente (cenário B seria errado). Ver diagnóstico v2 abaixo.
 
 **Diagnóstico v2 (sessão 2026-10-21):** os resultados idênticos eram suspeitos. Investigação confirmou
 que `X_adj_vec = X_adj_mm / L2_via` (a linha "corrigida" em 4d01e06) era **código morto** — nunca usada

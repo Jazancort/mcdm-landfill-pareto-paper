@@ -351,14 +351,24 @@ else:
     if trios_npy.exists():
         trios_arr = np.load(trios_npy)
         check("n_trios (from fogo_trios.npy)", len(trios_arr), EXPECTED["n_trios"])
-        # Spot-check distance constraint (1000 random; check() not assert)
-        rng_c = np.random.default_rng(42)
-        spot  = rng_c.integers(0, len(trios_arr), 1000)
-        bad   = sum(1 for s in spot if (D[trios_arr[s,0], trios_arr[s,1]] < MIN_DIST_KM - EPS
-                                         or D[trios_arr[s,0], trios_arr[s,2]] < MIN_DIST_KM - EPS
-                                         or D[trios_arr[s,1], trios_arr[s,2]] < MIN_DIST_KM - EPS))
-        check("distance constraint violations in 1000 random trios", bad, 0)
         T0 = trios_arr[:, 0]; T1 = trios_arr[:, 1]; T2 = trios_arr[:, 2]
+
+        # Trio integrity checks (vectorized — each O(M) with pre-computed D)
+        check("trio indices out of [0, N)",
+              int(((trios_arr < 0) | (trios_arr >= N)).sum()), 0)
+        srt_trios = np.sort(trios_arr, axis=1)
+        check("trios with repeated site",
+              int(((srt_trios[:,0]==srt_trios[:,1])|(srt_trios[:,1]==srt_trios[:,2])).sum()), 0)
+
+        # Uniqueness: all 1.9M sorted rows must be distinct
+        n_unique = len(np.unique(srt_trios, axis=0))
+        check("n_unique trios (sorted rows all distinct)", n_unique, EXPECTED["n_trios"])
+
+        # Distance constraint: ALL 1.9M trios (vectorized, ~3 lookups into D)
+        ok_all = ((D[T0, T1] >= MIN_DIST_KM - EPS) &
+                  (D[T0, T2] >= MIN_DIST_KM - EPS) &
+                  (D[T1, T2] >= MIN_DIST_KM - EPS))
+        check("distance constraint violations in ALL 1.9M trios", int((~ok_all).sum()), 0)
     else:
         not_run("n_trios (from fogo_trios.npy)", "fogo_trios.npy not found")
         trios_arr = None
@@ -473,6 +483,7 @@ else:
                                    np.abs(f2_comp - f2_csv_f).max(),
                                    np.abs(f3_comp - f3_csv_f).max())
                     print(f"  F-value comparison (A' norm, found trios): max_diff = {max_diff:.2e}")
+                    check("F-values A' vs CSV (max |diff|)", float(max_diff), 0.0, tol=1e-12)
                     if max_diff > 1e-4:
                         print(f"    NOTE: large diff suggests different normalisation (A vs A')")
                         # Try with A normalisation
@@ -621,6 +632,8 @@ else:
                         md1 = np.abs(F1_A[f_idxA] - f1_csvA).max()
                         md3 = np.abs(F3_A[f_idxA] - f3_csvA).max()
                         print(f"  F-value comparison (A norm, found trios): max_diff F1={md1:.2e} F3={md3:.2e}")
+                        check("F-values A vs CSV (F1, max|diff|)", float(md1), 0.0, tol=1e-12)
+                        check("F-values A vs CSV (F3, max|diff|)", float(md3), 0.0, tol=1e-12)
                 PF_A_idx = [trios_key_set[k] for k,m in zip(key_Ar.tolist(), found_A_mask) if m]
             else:
                 PF_A_idx = []
@@ -691,6 +704,27 @@ if NOT_RUN_LIST:
 if FAIL_COUNT == 0 and NOT_RUN_COUNT == 0:
     print("Status: ALL CHECKS PASS — Phase 1 gate cleared.")
     print(f"CSV SHA-256: {csv_hash}")
+    # Hashes of generated artefacts (for reproducibility)
+    import hashlib
+    _artefacts = {
+        "data/fogo_trios.npy":               _root / "data" / "fogo_trios.npy",
+        "scripts/results/pareto_front_Aprime.csv": _root / "scripts" / "results" / "pareto_front_Aprime.csv",
+        "scripts/results/pareto_front_A.csv":      _root / "scripts" / "results" / "pareto_front_A.csv",
+    }
+    for label, p in _artefacts.items():
+        if p.exists():
+            h = hashlib.sha256(p.read_bytes()).hexdigest()
+            print(f"SHA-256 {label}: {h}")
+        else:
+            print(f"SHA-256 {label}: NOT FOUND")
+    # Script versions
+    try:
+        import paretoset as _ps
+        print(f"paretoset version: {_ps.__version__}")
+    except Exception:
+        print("paretoset version: not installed in this env")
+    import pandas as pd
+    print(f"pandas version: {pd.__version__}  numpy version: {np.__version__}")
 elif FAIL_COUNT > 0:
     print("Status: BLOCKED — fix failures before proceeding.")
     sys.exit(1)

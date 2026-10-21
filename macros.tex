@@ -69,9 +69,16 @@
 \newcommand{\QtwoRanksOptimal}{88.2}
 
 % ── TV values (retained) ────────────────────────────────────────────────
+% \TVvec = 0.315: from Tab2 Aj_vec values (fogo_constants.AJ_VEC). Four criteria
+%   (slope, coast, wells, aero) use range/L2(x_raw) in the table derivation.
+% \TVvecNumerical = 0.311: from the live pipeline (scoring.py / compute_f8).
+%   Uses 1/L2(mm_norm(x)) = range/L2(x-min) for all criteria. When min>0 this
+%   gives slightly larger rho_j for slope, coast, wells, aero (Fase 1.3).
+%   These two quantities measure the same TV but with slightly different rho_j
+%   formulas. Decision on which Tabela 2 reports is pending (see TASKS.md).
 \newcommand{\TVvec}{0.315}
 \newcommand{\TVrnk}{0.091}
-\newcommand{\TVvecNumerical}{0.311}
+\newcommand{\TVvecNumerical}{0.311}  % live pipeline; see comment above
 
 % ── LossTabTVorder (used in supplementary) ──────────────────────────────
 \newcommand{\LossTabTVorder}{19.8}       % mm_greedy - vec_greedy = 86.0 - 66.2

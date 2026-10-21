@@ -298,4 +298,13 @@ assert p2_pb_p < p2_binom_combined, (
     f"PB null expects ~20 successes vs binom(0.5) ~44; 85 observed should give p_PB << p_binom."
 )
 print(f"  Null model guard: p_PB={p2_pb_p:.2e} < p_binom(0.5)={p2_binom_combined:.2e} OK")
+
+# Consistency guard: direct call to p2_stats must give same p as compute_all_stats
+from e6_stats import p2_stats as _p2_stats_check
+_p2_direct = _p2_stats_check(df_cs)["P"]
+assert abs(_p2_direct - p2_pb_p) <= 1e-12 * max(abs(p2_pb_p), 1e-100), (
+    f"e6_stats.p2_stats(df) gave p={_p2_direct:.2e} but compute_all_stats gave p={p2_pb_p:.2e}. "
+    f"Divergence inside e6_stats wrapper."
+)
+print(f"  Consistency guard: p2_stats(df) == compute_all_stats(df) p={_p2_direct:.2e} OK")
 print("Cross-check PASSED.")
