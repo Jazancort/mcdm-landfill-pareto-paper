@@ -12,6 +12,10 @@ Correccoes em relacao a e6_decompose_ties.py:
   P3/P4: desvios DEV-E6-001 a DEV-E6-004
 
 Fonte: results/e6/e6_raw_prespec.csv
+
+NOTA: as funcoes canonicas (p2_stats, p4_stats) estao em e6_stats.py.
+Este script reporta o mesmo calculo com mais detalhe por familia.
+O bloco de cross-check no final garante que as contagens coincidem.
 """
 
 import sys
@@ -19,6 +23,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from scipy.stats import binomtest
+from e6_stats import compute_all_stats, check_invariants
 
 ROOT = Path(__file__).parent.parent
 df = pd.read_csv(ROOT / "results" / "e6" / "e6_raw_prespec.csv")
@@ -238,3 +243,41 @@ P4 (criterio pre-reg falhou em 4/4 familias):
   Combinado post hoc: deflate>inflate em 53/87 (61%), p bilateral=0.053.
   Conclusao: sem suporte para a previsao; tendencia oposta nao conclusiva.
 """)
+
+# ── Cross-check com e6_stats.py (fonte canonica) ─────────────────────────────
+print("=" * 70)
+print("CROSS-CHECK com e6_stats.py (Poisson-binomial para P2)")
+print("=" * 70)
+
+FAMILIES_E6 = ['lognormal', 'beta13', 'uniform', 'zero_inflated']
+ROOT_CS = Path(__file__).parent.parent
+df_cs = pd.read_csv(ROOT_CS / "results" / "e6" / "e6_raw_prespec.csv")
+S_canon = compute_all_stats(df_cs, FAMILIES_E6)
+check_invariants(S_canon)
+
+# Compare P2 Strict count (L>=F>=H AND H<L) with this script's n_HL_strict
+p2_combined = S_canon["All"]["P2"]
+p2_strict_canon = p2_combined["Strict"]
+# Sum n_HL_strict from p2_rows
+n_HL_strict_sum = sum(r["n_HL_strict"] for r in p2_rows)
+print(f"  P2 Strict (e6_stats):   {p2_strict_canon}")
+print(f"  n_HL_strict (this script): {n_HL_strict_sum}")
+if p2_strict_canon == n_HL_strict_sum:
+    print("  P2 Strict count: MATCH")
+else:
+    print(f"  WARNING: P2 Strict count MISMATCH: {p2_strict_canon} vs {n_HL_strict_sum}")
+
+# Compare P4 combined Defl
+p4_combined = S_canon["All"]["P4"]
+p4_defl_canon = p4_combined["Defl"]
+p4_defl_script = total_rev   # from P4 section above
+print(f"  P4 Defl (e6_stats):   {p4_defl_canon}")
+print(f"  P4 Defl (this script): {p4_defl_script}")
+if p4_defl_canon == p4_defl_script:
+    print("  P4 Defl count: MATCH")
+else:
+    print(f"  WARNING: P4 Defl count MISMATCH: {p4_defl_canon} vs {p4_defl_script}")
+
+print(f"\n  P2 Poisson-binomial p (e6_stats): {p2_combined['P']:.2e}  [vs binomial(0.5) in print above]")
+print(f"  P4 two-sided p (e6_stats):        {p4_combined['P']:.6f}")
+print("Cross-check DONE. If no WARNING above, counts are consistent.")

@@ -275,7 +275,7 @@ Posição no artigo: tabela compacta Fogo/Santiago em §7.7; detalhes no supleme
 | vec | vec | greedy | **100.0** | 0.00 |
 | vec | mm | greedy | **72.4** | 2.00 |
 
-**Theorem 1 verificado**: Q2=100.0%, SE=0.00 para vec/vec/opt. O log confirma Q2=100.0% em todos os 50 checkpoints (0/500 a 450/500). 500/500 draws passam o invariante.
+**Theorem 1**: macros consistentes com o log de `43b8427`; nova corrida com código actual pendente (passo 3 do plano F8). Até haver `n_draws(Q2 < 100) == 0` a partir do `f8_per_draw.csv` gerado com o código actual, não usar a frase "verificado 500/500".
 
 **Macros exactamente iguais ao CSV**: `\FEightVecOptQ{100.0}`, `\FEightMMOptQ{94.4}`, `\FEightVecGrdQ{100.0}`, `\FEightMMGrdQ{72.4}`.
 
