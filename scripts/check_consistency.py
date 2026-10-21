@@ -53,21 +53,17 @@ def run_all_checks(tex: str) -> list:
     for phrase in ASPECT_INCONSISTENCY_PHRASES:
         if _re.search(phrase, tex_lower):
             failures.append(f"ASPECT_INCONSISTENCY matched: '{phrase}'")
-    # Order-independent sentence-level aspect check (catches any word order)
-    # Strip remark/proof/lemma environments first (legitimate discussion context)
-    import re as _re3
-    _exempt_envs = r"\\begin\{(remark|theorem|lemma|proof|proposition)(\[.*?\])?\}.*?\\end\{\1\}"
-    tex_no_remarks = _re3.sub(_exempt_envs, "", tex, flags=_re3.DOTALL)
-    sentences = _re.split(r"(?<=[.;])\s+|\n", tex_no_remarks)
-    for sent in sentences:
-        if sent.strip().startswith("%"):
-            continue
+    # Order-independent sentence-level aspect check; only rem:nonmonotone is exempt.
+    _ALLOWED_REM = {"rem:nonmonotone"}
+    def _strip_lbl(t):
+        def _r(m):
+            return "" if any("\\label{" + l + "}" in m.group(0) for l in _ALLOWED_REM) else m.group(0)
+        return _re.sub(r"\\begin{remark}(\[[^\]]*\])?\s*.*?\\end{remark}", _r, t, flags=_re.DOTALL)
+    for sent in _re.split(r"(?<=[.;])\s+|\n", _strip_lbl(tex)):
+        if sent.strip().startswith("%"): continue
         s = sent.lower()
-        if (_re.search(r"\baspect\b", s) and
-                _re.search(r"continuous|azimuth|degrees", s) and
-                _re.search(r"score|scor", s) and
-                "rem:nonmonotone" not in sent and
-                "nonmonotone" not in s):
+        if (_re.search(r"\baspect\b", s) and _re.search(r"continuous|azimuth|degrees", s)
+                and _re.search(r"score|scor", s)):
             failures.append(f"ASPECT sentence inconsistency: {sent[:80]}")
     # Em-dash in prose (same logic as the dedicated check)
     for line in tex.splitlines():
@@ -627,21 +623,18 @@ if main_tex.exists():
             FAIL.append(f"Potential aspect coding inconsistency in main.tex: pattern '{phrase}' found")
             print(f"  [FAIL] Aspect coding inconsistency: '{phrase}'")
 
-    # Order-independent sentence-level aspect check (catches any word order)
-    # Strip remark/proof/lemma environments before checking (legitimate discussion context)
-    import re as _re3
-    _exempt_envs_p = r"\\begin\{(remark|theorem|lemma|proof|proposition)(\[.*?\])?\}.*?\\end\{\1\}"
-    tex_no_remarks = _re3.sub(_exempt_envs_p, "", tex, flags=_re3.DOTALL)
-    sentences = _re2.split(r"(?<=[.;])\s+|\n", tex_no_remarks)
-    for sent in sentences:
-        if sent.strip().startswith("%"):
-            continue
+    # Order-independent sentence-level aspect check; only rem:nonmonotone is exempt.
+    # All other remarks (other labels, unlabelled) are checked.
+    _ALLOWED_REM_MAIN = {"rem:nonmonotone"}
+    def _strip_allowed(t):
+        def _r(m):
+            return "" if any("\\label{" + l + "}" in m.group(0) for l in _ALLOWED_REM_MAIN) else m.group(0)
+        return _re2.sub(r"\\begin{remark}(\[[^\]]*\])?\s*.*?\\end{remark}", _r, t, flags=_re2.DOTALL)
+    for sent in _re2.split(r"(?<=[.;])\s+|\n", _strip_allowed(tex)):
+        if sent.strip().startswith("%"): continue
         s = sent.lower()
-        if (_re2.search(r"\baspect\b", s) and
-                _re2.search(r"continuous|azimuth|degrees", s) and
-                _re2.search(r"score|scor", s) and
-                "rem:nonmonotone" not in sent and
-                "nonmonotone" not in s):
+        if (_re2.search(r"\baspect\b", s) and _re2.search(r"continuous|azimuth|degrees", s)
+                and _re2.search(r"score|scor", s)):
             FAIL.append(f"Aspect coding inconsistency (sentence-level): {sent[:80]}")
             print(f"  [FAIL] Aspect sentence inconsistency: {sent[:80]}")
     # Positive check: manuscript should note that aspect is binary
@@ -808,9 +801,12 @@ _MUST_FAIL = [
     ("89.4",                     "F8 stale buggy value"),
     ("affine function of the objectives", "score not affine in objectives"),
     ("re-weighting alone predicts",       "removed in B2"),
-    # Aspect inconsistency (sentence-level: aspect + continuous/azimuth + score in ANY order)
+    # Aspect inconsistency (sentence-level: original snippet, any word order)
     ("the score uses the continuous aspect azimuth, giving 80 pp loss",
      "aspect continuous score target (sentence-level: aspect+azimuth+score any order)"),
+    # Aspect inside a remark with a DIFFERENT label still fails
+    (r"\begin{remark}\label{rem:other}Scoring aspect as continuous azimuth gives high score.\end{remark}",
+     "aspect continuous score in non-exempt remark (rem:other)"),
     # Em-dash in prose (prose em-dash rule)
     ("Prose with an em---dash as separator",
      "em-dash in running prose"),
