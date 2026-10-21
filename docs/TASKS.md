@@ -129,46 +129,58 @@ Em Fogo: **1 coluna** com ~90% zeros (perm). No zero_inflated: **11 colunas** co
 
 Apesar disso, 10.7 pp vs 35.8 pp de Fogo. **Concentrar** a esparsidade num único critério dominante (perm, w=0.152, maior peso em G1) é mais destrutivo do que distribuir zeros uniformemente — consistente com o ||delta||_2 da §6.4.
 
-### Síntese correcta para o artigo
+### Síntese final (números definitivos)
 
 | | Resultado | Qualificação |
 |---|---|---|
-| P1 | Confirmada | Verifica implementação; teorema já é geral |
-| P2 | Critério falhou; direcção nunca errada | Manter "on this instance"; post hoc: efeito só com massa pontual concentrada |
-| P3 | Não suportada entre instâncias informativas | Desvio DEV-E6-001 |
-| P4 | Falsificada na direcção inversa: deflate>inflate | Resultado positivo nas instâncias testáveis |
+| P1 | Confirmada | Verifica implementação |
+| P2 | Critério falhou; monotonia 87/88 onde testável (p=0.000) | Manter "on this instance"; DEV-E6-002 |
+| P3 | Passa pelo critério pré-reg; sem suporte entre informativas | Reportar ambos; DEV-E6-001 |
+| P4 | Sem suporte; tendência oposta borderline (53/87, p=0.053) | Não conclusivo; DEV-E6-003 |
 
-**Resultado principal do E6:** com o mesmo TV_W, a perda varia ~10× entre famílias. TV_W não prediz a perda. A concentração da esparsidade num critério dominante (como perm) é o factor determinante — confirma fora de Fogo o que a Remark rem:TVW sugeria.
+**Resultado principal:** TV_W não prediz a magnitude da perda. A direcção é correcta onde há efeito (P2 corrigido: 87/88). A concentração da esparsidade importa, mas o E6 não isola esse factor.
 
-### Texto proposto para §7.8
+### Desvios DEV-E6-001 a 004
+
+| DEV | Previsão | Original | Actual | Razão |
+|---|---|---|---|---|
+| E6-001 | P3, P4 | Proporção sobre todas (empates contam) | Também reportar instâncias informativas + binomial | Empates a 100% enviesam os dois lados |
+| E6-002 | P2 | Spearman sobre {0, L, F, H} | Também reportar Q2(H)<Q2(L) sem nível 0 | Nível 0 fixado a 100% pela P1 |
+| E6-003 | P4 | Teste 1-lado (direcção prevista) | Teste 2-lados | Direcção observada oposta |
+| E6-004 | Todas | — | 200 draws no E6 vs 500 no E1 | Custo computacional |
+
+### Texto proposto para §7.8 (números finais confirmados)
 
 ```
-Theorem 1 guarantees that within-group distortion can cost efficiency,
-not how much it costs. We generated 120 instances on the Fogo feasible
-set (30 per marginal family: lognormal, Beta(1,3), uniform, zero-inflated
-with π=0.90) and imposed amplitudes on the score only, keeping the
-objectives in min-max (200 draws per cell; PRESPEC_E6.md committed
-before the run). P1 held on every draw of every instance.
+P1 held on every draw of every instance. P2 failed its pre-specified
+criterion in three of four families: 27–40% of instances under
+continuous marginals showed no loss at any TV_W level. Among instances
+with detectable loss, however, the monotone relationship L>=F>=H held
+in 87 of 88 cases (p < 0.001, one-sided binomial; DEV-E6-002). P3 met
+its pre-specified criterion in all four families, but most successes
+were ties at 100%; among informative instances no family was significant
+(one-sided binomial p >= 0.08; DEV-E6-001). P4 was not supported; among
+informative instances, deflating the most heavily weighted criterion cost
+as much or more than inflating it in 53 of 87 cases (p = 0.053,
+two-sided, post hoc; DEV-E6-003).
 
-At TV_W=0.199, losses under continuous marginals were below 3 pp; under
-the zero-inflated family (π=0.90 zeros in all columns), loss reached
-10.7 pp—against 35.8 pp on Fogo (cell W, TV_B=0). At equal TV_W,
-losses differ by an order of magnitude across marginal families,
-confirming that TV_W is not a sufficient statistic for the efficiency
-loss (Remark rem:TVW). The zero-inflated family, despite carrying 90%
-zeros in all eleven columns—structurally more extreme than Fogo—
-reproduces less than a third of Fogo's loss. Concentrating sparsity
-in a single high-weight criterion is more costly than distributing
-zeros uniformly.
+At TV_W = 0.199, the loss was 10.7 pp in the zero-inflated family and
+below 3 pp otherwise, against 35.8 pp on Fogo. At equal TV_W, losses
+differ by an order of magnitude across marginal families, confirming
+that TV_W alone does not determine the cost (Remark rem:TVW). Point
+masses are associated with larger losses. Whether concentrating sparsity
+in a single high-weight criterion is more harmful than distributing it
+uniformly is not tested here.
 ```
 
 ### Consequências para main.tex
 
-1. Abstract/conclusão: adicionar "on Fogo" às frases com 35.8 pp e 43.2 pp.
+1. Abstract: substituir frase dos 35.8 pp (ver proposta da análise do revisor).
 2. Contribuição (iv): manter "on Fogo" (regra do PRESPEC aplicada).
-3. Remark rem:TVW: "the zero-inflated synthetic family confirms direction at equal TV_W but reproduces only a third of Fogo's magnitude; TVW alone is not sufficient."
-4. §8.5 recomendação prática: "check for point masses before normalising" — suportado.
-5. DEV-E6-001: tratamento de empates não pré-especificado — declarar na tabela A4.
+3. Remark rem:TVW: actualizar com resultado do E6 — direcção suportada, magnitude específica.
+4. §7.7: adicionar "on Fogo; the synthetic test of §7.8 does not reproduce this amplification reliably."
+5. §8.5 recomendação: "check for point masses before normalising."
+6. Limitações: "The synthetic test draws criteria independently, without spatial correlation, and applies the zero-inflation to every criterion."
 
 ---
 
