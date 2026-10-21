@@ -215,7 +215,7 @@ Min--max normalisation has $A_j \equiv 1$ and is the unique
 weight-preserving choice among the three standard families.
 Vector normalisation has $A_j = \rho_j$, determined by the distributional
 shape of the criterion, which in our data multiplies one criterion's
-weight by $2.88\times$ and divides another by $0.53\times$
+weight by $\PermInflation\times$ and divides another by $0.53\times$
 (\textit{urban}) without any of this appearing in the
 analyst's report.
 Midranks rescaled to the unit interval contract with tie mass, and every
@@ -1121,7 +1121,7 @@ on every draw in this experiment, the greedy algorithm selected the
 same portfolio as the optimal solver ($Q_2 = \FEightVecGrdQ\%$,
 $\mathrm{SE}=0$).
 When vector normalisation inflates the weight of \texttt{perm} to
-$\approx 2.88\times$ its nominal value, scoring is dominated by a
+$\approx \PermInflation\times$ its nominal value, scoring is dominated by a
 single criterion; greedy commits to the highest-scoring site first and
 the subsequent choices coincide with the optimal solution on every draw.
 Two observations follow.
@@ -1279,7 +1279,7 @@ summary statistic of aggregate distortion.
 Min--max gives $\mathrm{TV} = 0$ by construction.
 The vector normalisation gives $\mathrm{TV} = 0.315$: criterion
 \textit{perm} dominates, with $\rho_j = 0.583$ (factor
-$\mathbf{2.88\times}$ relative to nominal weight) because its raw
+$\mathbf{\PermInflation\times}$ relative to nominal weight) because its raw
 distribution has 350 exact zeros and a maximum of~532~m, giving a
 long-tailed norm.
 The rank normalisation gives $\mathrm{TV} = 0.091$: \textit{perm} is
@@ -1620,7 +1620,7 @@ whether the final divisor is $N+1$, $N$, or any other constant.
 This is the rank-space counterpart of the vector-normalisation
 distortion of Section~\ref{sec:three_norms}, item~2, with the notable
 difference that \texttt{perm} is \emph{deflated} ($\times 0.616$) in
-rank space but \emph{inflated} ($\times 2.88$) in vector space: the
+rank space but \emph{inflated} ($\times \PermInflation$) in vector space: the
 same heavy-zero distribution distorts in opposite directions under the
 two normalisations.
 
@@ -1663,7 +1663,7 @@ $\max - \min = 1$, giving $\rho_j = 1/\sqrt{n_1}$.\hfill$\square$
 Table~\ref{tab:amplitude} lists $\rho_j$ and $w_j^{\mathrm{eff}}/w_j$
 for all eleven criteria.
 \textit{Perm} ($w_j = 0.152$): $\rho_j = 0.583$, effective-weight
-factor $\mathbf{2.88\times}$.
+factor $\mathbf{\PermInflation\times}$.
 \textit{Urban} ($w_j = 0.166$): factor $\mathbf{0.53\times}$.
 \textit{Aspect} (binary, $n_1 = 94$): $\rho_j = 1/\sqrt{94} = 0.103$,
 factor $0.51\times$.
@@ -1688,19 +1688,19 @@ Criterion & Group & $w_j$ & $A_j^{\text{mm}}$ & $A_j^{\text{vec}}$ &
   $A_j^{\text{rank}}$ &
   $\frac{w^{\mathrm{eff}}}{w}$ (vec) & $\frac{w^{\mathrm{eff}}}{w}$ (rank) \\
 \midrule
-\textit{perm}      & $G_1$ & 0.152 & 1.000 & 0.583 & 0.547 & \textbf{2.88} & 0.62 \\
-\textit{slope}     & $G_1$ & 0.113 & 1.000 & 0.135 & 0.995 & 0.67 & 1.12 \\
+\textit{perm}      & $G_1$ & 0.152 & 1.000 & 0.583 & 0.547 & \textbf{\PermInflation} & 0.62 \\
+\textit{slope}     & $G_1$ & 0.113 & 1.000 & 0.139 & 0.995 & 0.68 & 1.12 \\
 \textit{roads}     & $G_1$ & 0.030 & 1.000 & 0.206 & 0.995 & 1.02 & 1.12 \\
 \textit{rivers}    & $G_2$ & 0.091 & 1.000 & 0.265 & 0.995 & 1.31 & 1.12 \\
 \textit{aspect}    & $G_2$ & 0.075 & 1.000 & 0.103 & 0.499 & \textbf{0.51} & \textbf{0.56} \\
-\textit{coast}     & $G_2$ & 0.069 & 1.000 & 0.126 & 0.995 & 0.63 & 1.12 \\
+\textit{coast}     & $G_2$ & 0.069 & 1.000 & 0.131 & 0.995 & 0.64 & 1.12 \\
 \textit{protected} & $G_2$ & 0.066 & 1.000 & 0.105 & 0.995 & 0.52 & 1.12 \\
-\textit{wells}     & $G_2$ & 0.055 & 1.000 & 0.081 & 0.995 & 0.40 & 1.12 \\
+\textit{wells}     & $G_2$ & 0.055 & 1.000 & 0.084 & 0.995 & 0.41 & 1.12 \\
 \textit{urban}     & $G_3$ & 0.166 & 1.000 & 0.107 & 0.989 & \textbf{0.53} & 1.11 \\
-\textit{aero}      & $G_3$ & 0.102 & 1.000 & 0.086 & 0.995 & 0.43 & 1.12 \\
+\textit{aero}      & $G_3$ & 0.102 & 1.000 & 0.088 & 0.995 & 0.43 & 1.12 \\
 \textit{cult}      & $G_3$ & 0.081 & 1.000 & 0.171 & 0.981 & 0.85 & 1.11 \\
 \midrule
-$\mathrm{TV}$ & & & 0.000 & 0.315 & 0.091 & & \\
+$\mathrm{TV}$ & & & 0.000 & 0.311 & 0.091 & & \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -1715,7 +1715,7 @@ $\mathrm{TV}$ & & & 0.000 & 0.315 & 0.091 & & \\
   construction: all lines are horizontal at their nominal level (dashed
   reference lines).
   Under vector normalisation (centre), \textit{perm} is inflated to
-  $2.88\times$ its nominal weight because its heavy-zero distribution
+  $\PermInflation\times$ its nominal weight because its heavy-zero distribution
   concentrates the Euclidean norm; \textit{urban} and \textit{aspect}
   are correspondingly deflated ($0.53\times$ and $0.51\times$).
   Under midranks (right), the pattern reverses: \textit{perm} is
@@ -2178,7 +2178,7 @@ $\sum_{i\in t} s(i)$ exactly and, by Proposition~\ref{prop:p1:stmt}, reaches
 the frontier defined by the weights the score encodes. Under vector
 normalisation those weights are $w^{\mathrm{eff}}$, which raise
 \textit{perm}'s share of $G_1$ by $\approx\IntraGperm\times$ (and its overall
-weight by $\approx 2.88\times$); exact assembly therefore pursues the trade-offs
+weight by $\approx \PermInflation\times$); exact assembly therefore pursues the trade-offs
 of $w^{\mathrm{eff}}$ precisely, and departs from the frontier defined by $w$.
 Greedy assembly is myopic and, on this evidence, less exposed to a distortion
 it does not optimise. This last statement is an interpretation;
@@ -2555,7 +2555,7 @@ between-group distortion alone costs nothing, and within-group
 distortion carries the loss on this instance
 (Remark~\ref{rem:TVW} qualifies the generality of this claim).
 It is also invisible: nothing in a standard TOPSIS or SAW report reveals
-that \texttt{perm} entered at $2.88$ times its nominal weight.
+that \texttt{perm} entered at $\PermInflation$ times its nominal weight.
 
 The caveat concerns \emph{score--evaluator coding mismatch}.
 Theorem~\ref{thm:groupconst} guarantees Pareto efficiency of exact
@@ -2689,7 +2689,7 @@ shape of each criterion determine its amplitude, and hence its effective
 weight.
 Where weights carry no normative content the trade may be acceptable.
 Where they encode elicited stakeholder judgements, as AHP weights do, a
-normalisation that silently multiplies one criterion by $2.88\times$ and
+normalisation that silently multiplies one criterion by $\PermInflation\times$ and
 divides another by $0.53\times$ is difficult to defend, and min--max
 on the admissible set is preferable on precisely the grounds
 \citet{Choo1999} articulate.
@@ -2835,7 +2835,7 @@ marginal distributions are reported in the Supplementary Material.
 The analytic results hold for any instance; the magnitudes do not.
 Fogo's deviation vector is two-sided and concentrated
 ($m_{\mathrm{eff}}=4.05$ on $[2,11]$), with one criterion inflated
-$2.88\times$, and the joint distribution of
+$\PermInflation\times$, and the joint distribution of
 $(\mathrm{TV}_B,\mathrm{TV}_W)$ in applied decision matrices is unknown;
 establishing it would require a corpus of published matrices.
 Two synthetic exercises bear on this only partially
@@ -2970,7 +2970,7 @@ alongside elicited ones.
 Given the normalised decision matrix the computation is a single line,
 and it exposes distortions that no rank-agreement diagnostic reveals.
 Where weights encode stakeholder judgements, as AHP weights do, a
-normalisation that silently multiplies one criterion by $2.88\times$ and
+normalisation that silently multiplies one criterion by $\PermInflation\times$ and
 divides another by $0.53\times$ is difficult to defend.
 
 The closed form is exact for additive aggregation under affine normalisation; for ranks the identity is approximate. TOPSIS and VIKOR

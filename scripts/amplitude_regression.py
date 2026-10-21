@@ -24,17 +24,23 @@ N = len(df_via)
 # min-max: X_via (benefício já alinhado pelo _build_decision_matrix)
 A_mm = np.ones(len(w_ahp))  # por construção
 
-# vector: x_raw / norm
+# vector: rho_shift = 1/L2(mm_norm(x)) -- same as scoring.py / run_e1.py
 Avec = np.zeros(len(w_ahp))
 for j, k in enumerate(col_names):
     if k == 'aspect':
-        raw = np.where((df_via[COL[k]].values >= 90) & (df_via[COL[k]].values <= 180), 0., 1.).astype(float)
+        # leeward [90,180] = 1 (beneficial, same as _build_decision_matrix)
+        raw = np.where((df_via[COL[k]].values >= 90) & (df_via[COL[k]].values <= 180), 1., 0.).astype(float)
     else:
         raw = df_via[COL[k]].values.astype(float)
-    nv = np.sqrt((raw**2).sum()); nv = nv if nv > 0 else 1.
-    v = raw / nv
-    if not benefit[j]: v = -v
-    Avec[j] = v.max() - v.min()
+    # mm-norm (same as _build_decision_matrix)
+    lo, hi = raw.min(), raw.max()
+    mm = (raw - lo) / (hi - lo) if hi > lo else np.full(len(raw), 0.5)
+    nv = np.sqrt((mm**2).sum())
+    if nv < 1e-12:
+        Avec[j] = 0.0
+    else:
+        Avec[j] = mm.max() - mm.min()   # = 1 always for mm-norm
+        Avec[j] = 1.0 / nv              # rho_shift
 
 # ranks: midranks / (N+1)
 # X_adj = benefício alinhado
@@ -56,11 +62,12 @@ from numpy.linalg import lstsq
 from scipy.stats import t as t_dist
 
 # TV (total variation) = (1/2) * sum_j |w_eff_j - w_j|
-# Invariant to common scale factors (unlike D = sum w_j |A_j - 1|)
+# Requires normalised weights (sum = 1).
 def tv(A, w):
-    denom = np.sum(w * A)
-    weff = (w * A) / denom
-    return 0.5 * np.sum(np.abs(weff - w))
+    w_norm = w / w.sum()                       # normalise to avoid wrong TV
+    denom = np.sum(w_norm * A)
+    weff = (w_norm * A) / denom
+    return 0.5 * np.sum(np.abs(weff - w_norm))
 
 TV_mm   = tv(A_mm,   w_ahp)
 TV_vec  = tv(Avec,   w_ahp)

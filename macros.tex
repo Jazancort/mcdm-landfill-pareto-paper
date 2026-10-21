@@ -42,12 +42,16 @@
 \newcommand{\EoneWloss}{35.8}            % e1_v3_results: within-group loss
 \newcommand{\EoneVloss}{43.2}            % e1_v3_results: full vector loss
 
-% ── Marco A: TV decomposition (corpus_amplitudes, perm in G1) ───────────
-\newcommand{\TVBvec}{0.249}              % between-group TV
-\newcommand{\TVWvec}{0.199}              % within-group TV
+% ── Marco A: TV decomposition (corrected 2026-10-xx, rho_shift) ─────────
+% Source: results/amplitudes/amplitudes.json (generate_macros_amplitudes.py)
+% rho_j = 1/L2(mm_norm(x_j)) for all criteria. TV_W = E1-W formula (§6.4).
+\newcommand{\TVBvec}{0.248}              % between-group TV (was 0.249)
+\newcommand{\TVWvec}{0.195}              % within-group TV (was 0.199)
 
 % ── Marco A: slope for optimal-assembly ordering ────────────────────────
-\newcommand{\slopeOpt}{137.7}            % slope through 3 optimal levels
+% Recomputed 2026-10-xx with corrected TV_vec=0.311 (was 0.315). OLS on
+% (TV_mm=0, TV_rnk=0.091, TV_vec=0.311) vs Q2_optimal=(100, 88.2, 56.8).
+\newcommand{\slopeOpt}{139.4}            % slope through 3 optimal levels (was 137.7)
 
 % ── Marco A: Mechanism 1 prediction for admissible-only cell ────────────
 % REMOVED 2026-10-01: MechOnePredAdmiss, MechOneShare, MismatchRatioHi,
@@ -68,17 +72,18 @@
 \newcommand{\QtwoRanksGreedy}{86.0}
 \newcommand{\QtwoRanksOptimal}{88.2}
 
-% ── TV values (retained) ────────────────────────────────────────────────
-% \TVvec = 0.315: from Tab2 Aj_vec values (fogo_constants.AJ_VEC). Four criteria
-%   (slope, coast, wells, aero) use range/L2(x_raw) in the table derivation.
-% \TVvecNumerical = 0.311: from the live pipeline (scoring.py / compute_f8).
-%   Uses 1/L2(mm_norm(x)) = range/L2(x-min) for all criteria. When min>0 this
-%   gives slightly larger rho_j for slope, coast, wells, aero (Fase 1.3).
-%   These two quantities measure the same TV but with slightly different rho_j
-%   formulas. Decision on which Tabela 2 reports is pending (see TASKS.md).
-\newcommand{\TVvec}{0.315}
+% ── TV values (corrected 2026-10-xx, rho_shift formula) ────────────────
+% All from results/amplitudes/amplitudes.json. rho_j = 1/L2(mm_norm(x_j)).
+% TVvec = TVvecNumerical (duality resolved; old Tab2 used rho_raw giving 0.315).
+\newcommand{\TVvec}{0.311}               % TV_vec (was 0.315, now correct)
 \newcommand{\TVrnk}{0.091}
-\newcommand{\TVvecNumerical}{0.311}  % live pipeline; see comment above
+% \TVvecNumerical is PROHIBITED (check_consistency): same as \TVvec now.
+% ── Perm inflation (corrected) ──────────────────────────────────────────
+% \PermInflation = w_eff(perm)/w(perm) = 2.865; use this macro in prose.
+\newcommand{\PermInflation}{2.86}        % perm effective weight inflation (was 2.88)
+% ── Max shift between rho_raw and rho_shift (for eq:vec footnote) ───────
+\newcommand{\RhoShiftMaxPct}{4.1}        % max % diff rho_raw vs rho_shift (coast)
+\newcommand{\RhoShiftMaxCrit}{coast}     % criterion with max diff
 
 % ── LossTabTVorder (used in supplementary) ──────────────────────────────
 \newcommand{\LossTabTVorder}{19.8}       % mm_greedy - vec_greedy = 86.0 - 66.2
@@ -98,7 +103,7 @@
 
 
 % ── Marco B: E4 preparation values (from tvw_e4.py, commit d4e970b) ─────
-\newcommand{\IntraGperm}{1.56}   % perm within-G1 inflation in E1-W: rho_perm/Abar_G1 = 0.583/0.373
+\newcommand{\IntraGperm}{1.56}   % perm within-G1 inflation E1-W: rho_perm/Abar_G1 = 0.5827/0.3744
 \newcommand{\TVWrw}{0.082}       % TV_W for E4 R-W cell (0.0815 rounded to 3 s.f.)
 
 % ── Marco B/E2: TV_W for directional patterns (computed 2026-10-01) ─────

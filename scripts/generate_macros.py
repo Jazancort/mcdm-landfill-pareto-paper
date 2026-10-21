@@ -183,16 +183,12 @@ from scipy.stats import ttest_rel
 p_tost_val = 0.003  # verified: 0.00348 from tost_25pp.log
 
 # ── 7. TVB and TVW for vector normalisation ───────────────────────────────────
-# These require the Fogo data pipeline. Use values verified in wp3_summary_fixed.
-# TV_B and TV_W are computed via pareto_utils when the data pipeline is available.
-# Hard-coded values from tab:amplitude + groups:
-#   TV_B(vector) = 0.249  (between-group component)
-#   TV_W(vector) = 0.199  (within-group component)
-# These are PLACEHOLDER values until computed from data.
-# TODO: compute from df_via via pareto_utils in production run.
-TVBvec_val = "0.249"
-TVWvec_val = "0.199"
-print("NOTE: TVBvec and TVWvec use placeholder values (0.249, 0.199). Compute from data.")
+# Computed from live data via generate_macros_amplitudes.py -> amplitudes.json
+# Formula: TV_W = sum_g W_g * 0.5 * sum_{j in g} (w_j/W_g) * |rho_j/Abar_g - 1|
+from fogo_constants import TV_B_VEC, TV_W_VEC
+TVBvec_val = f"{TV_B_VEC:.3f}"
+TVWvec_val = f"{TV_W_VEC:.3f}"
+print(f"TVBvec = {TVBvec_val}  TVWvec = {TVWvec_val}  (from amplitudes.json)")
 
 # ── Write macros_auto.tex ─────────────────────────────────────────────────────
 macros = []

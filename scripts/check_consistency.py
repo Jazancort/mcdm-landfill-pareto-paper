@@ -381,6 +381,9 @@ FORBIDDEN_MACROS = [
     # generate_macros_e6.py was not re-run after the rename.
     r"\EsixPtwoStrictLogn", r"\EsixPtwoStrictBeta",
     r"\EsixPtwoStrictUnif", r"\EsixPtwoStrictZinf", r"\EsixPtwoStrictAll",
+    # TVvecNumerical removed 2026-10-xx: TVvec (0.311) now equals TVvecNumerical.
+    # If \TVvecNumerical appears, the old duality is being recreated.
+    r"\TVvecNumerical",
 ]
 if main_tex.exists():
     for macro in FORBIDDEN_MACROS:
@@ -448,6 +451,17 @@ BAD_PHRASES = [
     # Corrected value: 100.0 (commit 43b8427). If 89.4 appears in text, a stale paste happened.
     ("89.4",
      "F8 stale value: 89.4% was from buggy injection approach (9cdceb4); correct is 100.0 (43b8427)"),
+    # Tab2 stale values (rho_raw formula, corrected 2026-10-xx to rho_shift).
+    # Each check: old value 3dp, applied only to the tabular column; prose context is "0.135 pp" etc.
+    # Use narrow regex to avoid false positives.
+    ("& 0.135 & 0.995",
+     "Tab2 stale rho_j for slope: 0.135 -> 0.139 (rho_shift correction)"),
+    ("& 0.126 & 0.995",
+     "Tab2 stale rho_j for coast: 0.126 -> 0.131 (rho_shift correction)"),
+    ("& 0.081 & 0.995",
+     "Tab2 stale rho_j for wells: 0.081 -> 0.084 (rho_shift correction)"),
+    ("& 0.086 & 0.995",
+     "Tab2 stale rho_j for aero:  0.086 -> 0.088 (rho_shift correction)"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:

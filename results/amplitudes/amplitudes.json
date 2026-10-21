@@ -1,0 +1,28 @@
+{
+  "source_sha256": "234f6e1c2697ea540ed0e0674018e6446e9255b25009167cbb0c19c51311722a",
+  "rho_j": {
+    "perm": 0.582735,
+    "slope": 0.138818,
+    "roads": 0.205836,
+    "rivers": 0.26492,
+    "aspect": 0.103142,
+    "coast": 0.131205,
+    "protected": 0.105055,
+    "wells": 0.083795,
+    "urban": 0.106889,
+    "aero": 0.087798,
+    "cult": 0.170755
+  },
+  "TV_vec": 0.311341,
+  "TV_B": 0.24794,
+  "TV_W": 0.195366,
+  "m_eff": 4.0321,
+  "L2_vec": 0.310099,
+  "S": 0.203406,
+  "perm_inflation": 2.8649,
+  "urban_inflation": 0.5255,
+  "aspect_inflation": 0.5071,
+  "IntraGperm": 1.5566,
+  "RhoShiftMaxPct": 4.13,
+  "RhoShiftMaxCrit": "coast"
+}

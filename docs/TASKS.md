@@ -140,7 +140,26 @@ Apesar disso, 10.7 pp vs 35.8 pp de Fogo. **Concentrar** a esparsidade num únic
 
 **Resultado principal:** TV_W não prediz a magnitude da perda. A direcção é correcta onde há efeito (P2 corrigido: 87/88). A concentração da esparsidade importa, mas o E6 não isola esse factor.
 
-### Desvios DEV-E6-001 a 004
+### DEV-E6-005 — E6 cell F targeted TV_W = 0.199 (rho_raw) instead of 0.195 (rho_shift)
+
+**Descoberta:** A corrida do E6 usou `TW_F = TV_W_VEC = 0.1986` como alvo de bissecção para a
+célula W_inf_F. O valor correcto com rho_shift (a fórmula do código) é `TV_W = 0.1954`.
+
+**Impacto:** As instâncias de W_inf_F foram bissectadas para TV_W ≈ 0.199 em vez de 0.195.
+Diferença absoluta = 0.003 (1.6% relativo). L e H são fixos (0.10 e 0.30); só F muda.
+
+**Corrida de sensibilidade (pendente):**
+
+  - Alvo: `TW_F = 0.1954` (correcto)
+  - Variável de ambiente: `E6_TARGET_TVW=0.1954 uv run python run_e6.py`
+  - Output para: `results/e6/e6_raw_sensit_tvwF.csv`
+  - Regra de decisão (a anotar antes de lançar):
+    "Veredicto igual se P1-P4 derem a mesma conclusão (passa/falha) e o mesmo lado de p=0.05
+    em todas as famílias e no All. Contagens podem diferir em ±2 por família."
+
+**Nota:** A corrida principal (TW_F=0.199, e6_raw_prespec.csv) mantém o papel de resultado
+pré-registado. A corrida de sensibilidade é reportada numa frase na §7.8 e numa tabela
+no suplemento.
 
 | DEV | Previsão | Original | Actual | Razão |
 |---|---|---|---|---|

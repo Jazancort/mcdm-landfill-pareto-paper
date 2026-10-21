@@ -82,7 +82,7 @@ W_G = np.array([W_AHP[g].sum() for g in OBJ_GROUPS])
 
 # TV_W targets for the 4 non-trivial cells
 TW_L = 0.10
-TW_F = TV_W_VEC   # 0.199 (Fogo reference)
+TW_F = float(os.environ.get("E6_TARGET_TVW", TV_W_VEC))  # DEV-E6-005: default=original run; --target-tvw sets env var
 TW_H = 0.30
 TB   = TV_B_VEC   # 0.249 (Fogo reference)
 
