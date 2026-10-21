@@ -545,6 +545,8 @@ else:
                              "New code", "results", "results-2026-04-07_18-40-54")
         pareto_A_csv = Path(_ieee) / "exhaustive_search_pareto.csv"
         if not pareto_A_csv.exists():
+            pareto_A_csv = _root / "results" / "pareto_front_A.csv"
+        if not pareto_A_csv.exists():
             pareto_A_csv = _root / "scripts" / "results" / "pareto_front_A.csv"
 
         if not pareto_A_csv.exists():
