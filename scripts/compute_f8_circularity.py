@@ -68,9 +68,13 @@ X_adj_mm = X_via_raw.copy()
 for j, b in enumerate(benefit_flags):
     if not b:
         X_adj_mm[:, j] = 1.0 - X_via_raw[:, j]
-# X_adj_vec: vector-normalised benefit score (normalise X_adj_mm columns by L2)
-L2_mm = np.maximum(np.sqrt((X_adj_mm**2).sum(0)), 1e-12)
-X_adj_vec = X_adj_mm / L2_mm
+# X_adj_vec: vector-normalised benefit score.
+# FIX (2026-10-21): use L2 of the COST-ORIENTED column X_via_raw (same as scoring.py
+# and the article's formula rho_j = range/||x_j||_2 with x_j cost-oriented).
+# Previous version used L2(X_adj_mm), which diverges for COST criteria (perm 11x).
+# Using L2(X_via_raw): TV_vec = 0.311 matches article macro TVvec=0.315; rho_perm=0.583.
+L2_via = np.maximum(np.sqrt((X_via_raw**2).sum(0)), 1e-12)   # = norms_via in scoring.py
+X_adj_vec = X_adj_mm / L2_via
 print(f"Score matrices ready  t={time.time()-t0:.1f}s", flush=True)
 
 # ── Vector objectives — direct computation (no injection) ────────────────────
