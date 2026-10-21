@@ -270,12 +270,20 @@ Posição no artigo: tabela compacta Fogo/Santiago em §7.7; detalhes no supleme
 
 | obj_norm | score_norm | assembly | Q2 | SE |
 |---|---|---|---|---|
-| vec | vec | optimal | **100.0** | 0.00 |
-| vec | mm | optimal | **94.4** | 1.03 |
-| vec | vec | greedy | **100.0** | 0.00 |
-| vec | mm | greedy | **72.4** | 2.00 |
+### Resultados confirmados com código actual (N=500, KAPPA=200, SEED=42)
 
-**Theorem 1**: macros consistentes com o log de `43b8427`; nova corrida com código actual pendente (passo 3 do plano F8). Até haver `n_draws(Q2 < 100) == 0` a partir do `f8_per_draw.csv` gerado com o código actual, não usar a frase "verificado 500/500".
+**Nova corrida: Athena, commit e678d32, `tmux f8`, 2026-10-21 09:07–09:25**
+
+| obj_norm | score_norm | assembly | Q2 | SE | per-draw violations |
+|---|---|---|---|---|---|
+| vec | vec | optimal | **100.0** | 0.000 | **0/500** |
+| vec | mm | optimal | **94.4** | 1.028 | 28/500 |
+| vec | vec | greedy | **100.0** | 0.000 | **0/500** |
+| vec | mm | greedy | **72.4** | 1.999 | 138/500 |
+
+**Theorem 1: 500/500 draws on frontier (0 violations)** — confirmado por `f8_per_draw.csv`, `n_draws(Q2 < 100) == 0` para vec/vec/opt. Idêntico ao log de `43b8427`.
+
+Resultados guardados em `results/f8/f8_per_draw.csv` e `results/f8/f8_run_current.log`.
 
 **Macros exactamente iguais ao CSV**: `\FEightVecOptQ{100.0}`, `\FEightMMOptQ{94.4}`, `\FEightVecGrdQ{100.0}`, `\FEightMMGrdQ{72.4}`.
 
