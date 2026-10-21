@@ -43,14 +43,18 @@ if __name__ == "__main__":
     run(["uv", "run", "python", "scripts/generate_macros_e6.py"],
         "Regenerate macros_e6.tex")
 
+    # Step 2b: Regenerate E1 macros
+    run(["uv", "run", "python", "scripts/generate_macros_e1.py"],
+        "Regenerate results/e1/e1_macros.tex")
+
     # Step 3: Verify no uncommitted changes in generated amplitude files
-    # Note: macros_e6.tex is excluded because its header contains the current git
-    # commit hash, which changes on every run. The values are checked by
-    # check_consistency.py (block 0: macros_amplitudes.tex vs amplitudes.json).
+    # macros_e6.tex is now deterministic (commit hash removed from header).
     run(["git", "diff", "--exit-code",
          "macros_amplitudes.tex",
-         "results/amplitudes/amplitudes.json"],
-        "git diff --exit-code (macros_amplitudes.tex + amplitudes.json)")
+         "macros_e6.tex",
+         "results/amplitudes/amplitudes.json",
+         "results/e1/e1_macros.tex"],
+        "git diff --exit-code (generated files)")
 
     # Step 4: Consistency checks
     run(["uv", "run", "python", "scripts/check_consistency.py"],

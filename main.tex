@@ -22,23 +22,11 @@
 % -----------------------------------------------------------------------
 % Macros --- centralise every number that appears more than once
 % -----------------------------------------------------------------------
-% Counts
-\newcommand{\Ncand}{473}
-\newcommand{\Nexcl}{84}
-\newcommand{\Nvia}{389}
-\newcommand{\Ntrios}{1{,}944{,}653}
-\newcommand{\dmin}{10}
-\newcommand{\kk}{3}
-% Frontier sizes
-\newcommand{\Fmmsize}{181}
-% \Fvecsize and \Ffixsize removed -- unused
+% Structural constants (shared with supplementary)
+\input{macros_structural}
+% Frontier sizes (not structural; not in supplementary)
 \newcommand{\Ncells}{24}        % 3 norm x 4 aggr x 2 assembly
 \newcommand{\Ncellsnet}{18}     % 24 minus 2 (VIKOR x vector, affine-invariant = mm) minus 4 (PROMETHEE invariant to norm)
-\newcommand{\FAsize}{213}
-\newcommand{\FAinter}{132}
-% Monte Carlo
-\newcommand{\ndraws}{500}
-\newcommand{\nboot}{2{,}000}
 % AHP
 \newcommand{\CR}{0.056}
 \newcommand{\lmax}{11.8525}
@@ -47,8 +35,8 @@
 \newcommand{\wsc}{w^{\mathrm{sc}}}
 \newcommand{\wob}{w^{\mathrm{ob}}}
 \newcommand{\wfr}{w^{\mathrm{fr}}}
-\newcommand{\Tset}{\mathcal{T}}
-\newcommand{\Fset}{\mathcal{F}}
+% [see macros_structural.tex] Tset
+% [see macros_structural.tex] Fset
 % Theorems
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}

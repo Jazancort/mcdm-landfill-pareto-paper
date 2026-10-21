@@ -79,7 +79,7 @@
 
 % ── TV values — MOVED to macros_amplitudes.tex (see that file) ─────────
 % TVvec, PermInflation, RhoShiftMaxPct, RhoShiftMaxCrit now in macros_amplitudes.tex
-\newcommand{\TVrnk}{0.091}              % TV under midranks (orphan: midrank amplitude run)
+% [MOVED to macros_amplitudes.tex] TVrnk (now generated from canonical scorer)
 % \TVvecNumerical is PROHIBITED (check_consistency): same as \TVvec now.
 
 % ── LossTabTVorder (used in supplementary) ──────────────────────────────
@@ -173,20 +173,9 @@
 \newcommand{\CondGapTOPSISvecOpt}{2.34}
 
 
-% ── Structural macros (from main.tex preamble, duplicated here for supplementary) ─
-\providecommand{\Ncand}{473}
-\providecommand{\Nexcl}{84}
-\providecommand{\Nvia}{389}
-\providecommand{\Ntrios}{1{,}944{,}653}
-\providecommand{\dmin}{10}
-\providecommand{\kk}{3}
-\providecommand{\Fmmsize}{181}
-\providecommand{\FAsize}{213}
-\providecommand{\FAinter}{132}
-\providecommand{\ndraws}{500}
-\providecommand{\nboot}{2{,}000}
-\providecommand{\Tset}{\mathcal{T}}
-\providecommand{\Fset}{\mathcal{F}}
+% ── Structural macros (shared with main.tex preamble via macros_structural.tex) ─
+% One definition per name; providecommand is idempotent so \input is safe twice.
+\input{macros_structural}
 
 % ── F1 per-cell aggregation contrasts (SAW-TOPSIS, aggregation_strata.csv) ───
 \newcommand{\AggMMgrdCIlo}{-11.6}

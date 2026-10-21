@@ -48,11 +48,27 @@ def run_all_checks(tex: str) -> list:
     for phrase, reason in BAD_PHRASES:
         if phrase in non_comment:
             failures.append(f"BAD_PHRASE matched: '{phrase}' ({reason})")
-    # ASPECT_INCONSISTENCY_PHRASES (regex match)
+    # ASPECT_INCONSISTENCY_PHRASES (regex match, order-dependent legacy)
     tex_lower = tex.lower()
     for phrase in ASPECT_INCONSISTENCY_PHRASES:
         if _re.search(phrase, tex_lower):
             failures.append(f"ASPECT_INCONSISTENCY matched: '{phrase}'")
+    # Order-independent sentence-level aspect check (catches any word order)
+    # Strip remark/proof/lemma environments first (legitimate discussion context)
+    import re as _re3
+    _exempt_envs = r"\\begin\{(remark|theorem|lemma|proof|proposition)(\[.*?\])?\}.*?\\end\{\1\}"
+    tex_no_remarks = _re3.sub(_exempt_envs, "", tex, flags=_re3.DOTALL)
+    sentences = _re.split(r"(?<=[.;])\s+|\n", tex_no_remarks)
+    for sent in sentences:
+        if sent.strip().startswith("%"):
+            continue
+        s = sent.lower()
+        if (_re.search(r"\baspect\b", s) and
+                _re.search(r"continuous|azimuth|degrees", s) and
+                _re.search(r"score|scor", s) and
+                "rem:nonmonotone" not in sent and
+                "nonmonotone" not in s):
+            failures.append(f"ASPECT sentence inconsistency: {sent[:80]}")
     # Em-dash in prose (same logic as the dedicated check)
     for line in tex.splitlines():
         s = line.strip()
@@ -93,6 +109,7 @@ if amp_json_path.exists() and macros_amp_path.exists():
         ("TValphaTwoMM",   amp["TV_alpha2_mm"],     0.001),
         ("PermInflation",  amp["perm_inflation"],   0.01),
         ("IntraGperm",     amp["IntraGperm"],       0.01),
+        ("TVrnk",         amp["TV_rnk"],            0.001),
         ("slopeOpt",       abs(amp["slope_opt"]),   0.1),
         ("RhoPerm",        amp["rho_perm"],         0.001),
         ("RhoPermInverted", amp["rho_perm_inv"],    0.001),
@@ -116,26 +133,8 @@ else:
 
 
 
-# -- 0b. macros.tex: TVrnk (orphan macro, stays in macros.tex) --
-# Note: TVBvec, TVWvec, TValphaTwo, DeltaTValphaTwo are now in macros_amplitudes.tex
-# and validated by block 0 above against amplitudes.json.
-print()
-print("=== macros.tex: TVrnk (orphan macro) ===")
-macros_path = ROOT / "macros.tex"
-if macros_path.exists():
-    macros_text_local = macros_path.read_text(encoding="utf-8")
-    def read_macro_local(name):
-        m = re.search(rf'\\newcommand{{\\{name}}}{{([0-9.]+)}}', macros_text_local)
-        return float(m.group(1)) if m else None
-    TVrnk_val = read_macro_local("TVrnk")
-    if TVrnk_val is not None:
-        check("TVrnk (macros.tex)", TVrnk_val, 0.091, tol=0.001)
-    else:
-        FAIL.append("TVrnk not found in macros.tex")
-        print("  [FAIL] TVrnk not found in macros.tex")
-else:
-    FAIL.append("macros.tex not found")
-    print("  [FAIL] macros.tex not found")
+# -- 0b removed: TVrnk now auto-generated into macros_amplitudes.tex.
+# Validated by block 0 (AMP_CHECKS against amplitudes.json).
 
 # ── 1. tab:tvorder — Marco A values ─────────────────────────────────────────
 print()
@@ -610,22 +609,44 @@ else:
 # that the manuscript does not contain 'aspect' alongside 'continuous' or 'degrees'
 # in the context of the fourth cell or the score computation.
 ASPECT_INCONSISTENCY_PHRASES = [
-    "aspect.*continuous.*score",    # continuous scoring of aspect (not just discussing it)
+    "aspect.*continuous.*score",    # legacy order-dependent patterns (kept for BAD_PHRASES compatibility)
     "aspect.*degrees.*score",
     "aspect.*azimuth.*score",
     # Note: "aspect as a continuous azimuth" is ALLOWED in Remarks that explain
     # the non-monotone sensitivity (DEV-E4-007, rem:nonmonotone). Avoid broad patterns.
 ]
+# Order-independent aspect scoring check (sentence-level):
+# A sentence containing aspect + (continuous|azimuth|degrees) + (score|scor)
+# outside a remark/theorem environment is a potential inconsistency.
 if main_tex.exists():
     import re as _re2
     tex_lower = tex.lower()
+    # Order-dependent legacy patterns (subset of bad_phrases)
     for phrase in ASPECT_INCONSISTENCY_PHRASES:
         if _re2.search(phrase, tex_lower):
             FAIL.append(f"Potential aspect coding inconsistency in main.tex: pattern '{phrase}' found")
             print(f"  [FAIL] Aspect coding inconsistency: '{phrase}'")
+
+    # Order-independent sentence-level aspect check (catches any word order)
+    # Strip remark/proof/lemma environments before checking (legitimate discussion context)
+    import re as _re3
+    _exempt_envs_p = r"\\begin\{(remark|theorem|lemma|proof|proposition)(\[.*?\])?\}.*?\\end\{\1\}"
+    tex_no_remarks = _re3.sub(_exempt_envs_p, "", tex, flags=_re3.DOTALL)
+    sentences = _re2.split(r"(?<=[.;])\s+|\n", tex_no_remarks)
+    for sent in sentences:
+        if sent.strip().startswith("%"):
+            continue
+        s = sent.lower()
+        if (_re2.search(r"\baspect\b", s) and
+                _re2.search(r"continuous|azimuth|degrees", s) and
+                _re2.search(r"score|scor", s) and
+                "rem:nonmonotone" not in sent and
+                "nonmonotone" not in s):
+            FAIL.append(f"Aspect coding inconsistency (sentence-level): {sent[:80]}")
+            print(f"  [FAIL] Aspect sentence inconsistency: {sent[:80]}")
     # Positive check: manuscript should note that aspect is binary
     if "aspect" in tex and "binary" not in tex.lower() and "leeward" not in tex.lower():
-        print("  [WARN] 'aspect' in main.tex but 'binary' and 'leeward' not found — verify coding is documented")
+        print("  [WARN] 'aspect' in main.tex but 'binary' and 'leeward' not found -- verify coding is documented")
     else:
         print("  [OK  ] aspect coding (binary/leeward) documented or aspect not in text")
 
@@ -719,18 +740,20 @@ print()
 print("=== A9: No duplicate macro definitions ===")
 import collections as _col
 _defs = _col.defaultdict(list)
-for _fname in ["main.tex", "macros.tex", "macros_amplitudes.tex", "macros_e6.tex"]:
+for _fname in ["main.tex", "macros.tex", "macros_amplitudes.tex", "macros_e6.tex", "macros_structural.tex"]:
     _fpath = ROOT / _fname
     if not _fpath.exists():
         continue
     for _lineno, _line in enumerate(_fpath.read_text(encoding="utf-8").splitlines(), 1):
         if _line.lstrip().startswith("%"):
             continue
-        # Only track \newcommand — \providecommand in macros.tex is intentional
-        # (supplementary wrapper includes macros.tex standalone without main.tex preamble)
-        for _m in re.finditer(r"\\newcommand\{\\(\w+)\}", _line):
-            _defs[_m.group(1)].append(f"{_fname}:{_lineno}")
-_dups = {k: v for k, v in _defs.items() if len(v) > 1}
+        # Track ALL definition types: newcommand and providecommand
+        # One name = one definition source file (idempotent \input is OK)
+        for _m in re.finditer(r"\\(new|provide|renew)command\{\\(\w+)\}", _line):
+            _defs[_m.group(2)].append(f"{_fname}:{_lineno} ({_m.group(1)}command)")
+# Flag only cross-file duplicates (same name in 2+ distinct files)
+_dups = {k: v for k, v in _defs.items()
+         if len(set(l.split(":")[0] for l in v)) > 1}
 if _dups:
     for k, locs in _dups.items():
         FAIL.append(f"Macro \\{k} defined {len(locs)}x: {', '.join(locs)}")
@@ -785,9 +808,9 @@ _MUST_FAIL = [
     ("89.4",                     "F8 stale buggy value"),
     ("affine function of the objectives", "score not affine in objectives"),
     ("re-weighting alone predicts",       "removed in B2"),
-    # Aspect inconsistency (regex rule: aspect.*continuous.*score)
-    ("aspect continuous score computation uses azimuth as continuous variable",
-     "aspect continuous score target (ASPECT_INCONSISTENCY_PHRASES: aspect.*continuous.*score)"),
+    # Aspect inconsistency (sentence-level: aspect + continuous/azimuth + score in ANY order)
+    ("the score uses the continuous aspect azimuth, giving 80 pp loss",
+     "aspect continuous score target (sentence-level: aspect+azimuth+score any order)"),
     # Em-dash in prose (prose em-dash rule)
     ("Prose with an em---dash as separator",
      "em-dash in running prose"),

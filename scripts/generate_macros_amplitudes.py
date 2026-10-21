@@ -79,6 +79,27 @@ def compute_amplitudes():
     l2_check = 2.0 * TV_vec / np.sqrt(m_eff) if m_eff > 0 else 0.0
     assert abs(l2_check - L2_vec) < 1e-10, f"L2 formula mismatch: {l2_check:.8f} vs {L2_vec:.8f}"
 
+    # ── TV_rnk (TV under midranks normalization) ─────────────────────────────
+    # Canonical ranks scorer (same as wp3_mc_fixed.py):
+    #   X_ranks[:, j] = rank(X_adj[:, j], method='average') / (N+1)
+    # Amplitude = range(X_ranks[:, j])  (same principle as vec: range of score column).
+    # X_adj is benefit-adjusted (leeward=1 for aspect, cost flipped for COST criteria).
+    import pandas as _pd
+    X_adj_rnk = X_via.copy()
+    for j_, is_ben in enumerate(benefit):
+        if not is_ben:
+            X_adj_rnk[:, j_] = 1.0 - X_via[:, j_]
+    X_ranks = np.apply_along_axis(
+        lambda c: _pd.Series(c).rank(method="average").values / (len(c) + 1),
+        0, X_adj_rnk
+    )
+    rho_rnk = X_ranks.max(0) - X_ranks.min(0)   # amplitude = range
+    S_rnk = float(np.dot(W, rho_rnk))
+    w_eff_rnk = W * rho_rnk / S_rnk
+    TV_rnk = float(0.5 * np.abs(w_eff_rnk - W).sum())
+    # Sanity: must reproduce published 0.091
+    assert abs(TV_rnk - 0.091) < 0.001, f"TV_rnk sanity failed: {TV_rnk:.4f} != 0.091"
+
     # ── TV_B (between-group TV) ───────────────────────────────────────────────
     group_avg_rho = np.zeros(len(col_names))
     for g in OBJ_GROUPS:
@@ -145,7 +166,7 @@ def compute_amplitudes():
         q2_vec = float(df_wp3[df_wp3["norm"] == "vector"]["nd_optimal"].mean()) * 100
     else:
         q2_mm, q2_rnk, q2_vec = 100.0, 88.2, 56.8   # fallback if CSV not available
-    TV_RNK_ORPHAN = 0.091   # TV for ranks normalization (orphan; see MACRO_PROVENANCE.md)
+    TV_RNK_ORPHAN = float(TV_rnk)  # now computed from canonical scorer (was orphan 0.091)
     tvs  = np.array([0.0, TV_RNK_ORPHAN, TV_vec])
     q2s  = np.array([q2_mm, q2_rnk, q2_vec])
     X_ols = np.column_stack([np.ones(3), tvs])
@@ -194,6 +215,7 @@ def compute_amplitudes():
         "TV_alpha2":   float(TV_alpha2),
         "DeltaTV_alpha2": float(DeltaTV_alpha2),
         "TV_alpha2_mm": float(TV_mm2),
+        "TV_rnk":      float(TV_rnk),
         "slope_opt":     slope_opt,
         "rho_perm":      float(rho[perm_idx]),
         "rho_perm_inv":  float(rho_perm_inv),
@@ -221,6 +243,7 @@ def write_macros_amplitudes_tex(res, out_path):
         rf"\newcommand{{\TVvec}}{{{res['TV_vec']:.3f}}}             % TV_vec (rho_shift; was 0.315 rho_raw)",
         rf"\newcommand{{\TVBvec}}{{{res['TV_B']:.3f}}}            % between-group TV",
         rf"\newcommand{{\TVWvec}}{{{res['TV_W']:.3f}}}            % within-group TV (E1-W formula)",
+        rf"\newcommand{{\TVrnk}}{{{res['TV_rnk']:.3f}}}             % TV under midranks normalization",
         "",
         "% --- TV(alpha=2) -- manuscript formula w_j^2*A_j^2 (definition ii) ---",
         rf"\newcommand{{\TValphaTwo}}{{{res['TV_alpha2']:.3f}}}         % TV(2) vector (def-ii; NOT 0.590=def-i)",
