@@ -155,16 +155,16 @@ Apesar disso, 10.7 pp vs 35.8 pp de Fogo. **Concentrar** a esparsidade num únic
 P1 held on every draw of every instance. P2 failed its pre-specified
 criterion in three of four families: 27--40% of instances under
 continuous marginals showed no loss at any TV_W level. Among instances
-with detectable loss, the ordering L >= F >= H held in 87 of 88 cases
-(one-sided binomial with null = 1/6, p < 0.001; DEV-E6-002). P3 met
+with detectable loss, the ordering L >= F >= H held in 87 of 88 cases (85 strict, 2 three-way ties;
+one-sided binomial with null = 1/6, p < 0.001; DEV-E6-002). P3 met
 its pre-specified criterion in all four families, but most successes
 were ties at 100%; among informative instances no family was significant
 (one-sided binomial p >= 0.08; DEV-E6-001). P4 was not supported; the
-observed trend runs counter to the prediction: in 53 of 87 informative
-instances deflating the most heavily weighted criterion produced losses
-as large as or larger than inflating it -- the prediction was that
-inflating would be more costly (p = 0.053, two-sided binomial, post hoc;
-DEV-E6-003).
+observed trend runs counter to the prediction: in 53 of 87 instances with a
+detectable directional difference (the remaining 33 pairs were within tolerance),
+deflating the most heavily weighted criterion produced strictly larger losses
+than inflating it -- the prediction was that inflating would be more costly
+(p = 0.053, two-sided binomial on the 87 non-tied instances, post hoc; DEV-E6-003).
 
 At TV_W = 0.199, the loss was 10.7 pp in the zero-inflated family and
 below 3 pp otherwise, against 35.8 pp on Fogo. At equal TV_W, losses
@@ -177,10 +177,11 @@ uniformly is not tested here.
 
 **Notas sobre os testes reportados no §7.8:**
 - P2 null: 1/6 (L ≥ F ≥ H é 1 de 6 ordenamentos aleatórios possíveis). O script usa null=0.5 para o teste binário H < L; ambos dão p < 0.001. Reportar a versão 87/88 com null=1/6 por ser mais informativa.
-- P2 "strictly monotone" é incorrecto — o teste é L ≥ F ≥ H (não estrito; 87 casos incluem 2 ties H=L). Usar "the ordering L ≥ F ≥ H".
-- P4: direcção oposta deve ser explícita. "53/87 casos deflate≥inflate" só descreve a observação; a frase completa deve dizer que isso é o oposto da previsão.
+- P2 "strictly monotone" é incorrecto — o teste é L ≥ F ≥ H (não estrito). 87 casos incluem 2 empates (L=H em três famílias: 1 em lognormal, 1 em zero_inflated); 85 têm H estritamente abaixo de L. Usar "the ordering L ≥ F ≥ H" e acrescentar "(85 strict, 2 three-way ties)".
+- P4: direcção oposta deve ser explícita. O "53/87" é a contagem ESTRITA (deflate > inflate, excluindo 33 pares empatados). O texto "as large as or larger" incluiria os 33 empates, dando 53+33=86, não 53. Mudar para "strictly larger" ou ajustar a contagem.
 - p=0.000 substituído por p<0.001 em toda a tabela P2.
 - Combinado P4: binomtest(53,87,0.5,two-sided)=0.053003. O SUMARIO hardcoded em e6_final_stats.py tinha "0.043" (erro tipográfico) — corrigido para 0.053.
+- P4 §7.8: acrescentar "the remaining 33 pairs were within tolerance (tied)" para contabilizar os empates excluídos do binomtest.
 
 ### Consequências para main.tex
 
@@ -315,22 +316,55 @@ O commit f5615bb adicionou detecção de colunas idx1/idx2/idx3 depois de um FAI
 
 ### Causa do max_diff = 7.17e-08 em A'
 
-- CSV dtype: float64. Float32 round-trip error = 9e-17. **Não é float32.**
-- Com A-norm (ref=473 sítios): max_diff = 0.112 — completamente diferente.
-- Com A'-norm (ref=389 sítios): max_diff = 7.17e-08 — CSV usa A'-norm.
-- Causa: **não-associatividade de ponto flutuante** entre dois caminhos de computação (validate_core vs pipeline) com a mesma fórmula mas ordem diferente de acumulação. Diferença esperada para ~389 sítios × 11 critérios ≈ 1–100 ULPs.
-- Impacto nos checks de gate: nenhum. Os checks 8b (não-dominância) e 8c (completude) passaram com EPS=1e-9 usando os F-values do validate_core. A completude verificou que nenhum trio fora de F' escapa dominância com EPS=1e-9 — margem 70× maior que o 7e-8.
-- A comparação de F-values é INFORMACIONAL no validate_core, não um critério de gate.
+- CSV dtype: float64. Float32 round-trip error = 9e-17. **Causa: float32 intermediate em space_aprime.py.**
+- `space_aprime.py` casts os F por sítio para float32 antes de somar trios: `f1P = objs_P["f1"].values.astype(np.float32)`. O CSV armazena estes valores float32-precision como float64. validate_core usa float64 do princípio ao fim → 7e-8 = erro de quantização float32 (≈ F × 2^-23 ≈ 0.27 × 1.2e-7 ≈ 3e-8 por sítio).
+- Confirmado: reprodução float32 → CSV: max diff = 9e-17 (match exacto). float64 vs CSV: max diff = 7e-8.
+- **A nota anterior ("não-associatividade de ponto flutuante") estava errada.** O teste de round-trip float32 (resultado 9e-17) CONFIRMAVA a origem float32 — eu tirei a conclusão errada.
+- A-norm (ref=473) vs CSV dá max_diff = 0.11 → CSV usa A'-norm. Não mudou.
+- Impacto nos checks de gate: verificado com sweep completo (ver abaixo).
 
-### DEV-G1-001 — Portfolio em trios de A' em vez de todos os trios de A
+### A/A' — distinção correcta (nota de 2026-10-21)
 
-O check do portfolio em A (check 11) busca o trio óptimo SAW/mm sobre `trios_arr` (que contém trios de A' = 389 sítios), com A-normalisation. O verdadeiro óptimo em A usaria todos os trios de 473 sítios, incluindo possíveis trios com sítios excluídos. Se o pipeline do manuscrito também restringiu a A' ao calcular o portfolio, o check é válido. Declarado como DEV-G1-001 até confirmação na Fase 1.7.
+Tanto o Pareto A como o Pareto A' usam os **mesmos 1.9M trios de A'-sítios (fogo_trios.npy)**. O que difere é apenas a referência de normalização:
+- A' space: A'-sítios com A'-norm (ref=389) → 181 trios
+- A space: A'-sítios com A-norm (ref=473) → 213 trios
+
+A análise errada anterior usou 2.9M trios de 473 sítios (todos os sítios, admissíveis ou não) para verificar o Pareto A — esse conjunto não corresponde ao que o manuscrito calcula. Com o conjunto correcto (1.9M A'-trios), todos os checks passam.
+
+### Sweep de tolerâncias — Pareto A' (todos os 1.9M trios, float64)
+
+```
+EPS      dom_within   escaped    tempo
+0        0            0          1.2s
+1e-9     0            0          1.3s
+1e-8     0            0          1.4s
+1e-7     0            0          1.3s
+1e-6     0            0          1.3s
+```
+
+O Pareto A' float32 e o float64 são **IDÊNTICOS** sobre estes 1.9M trios. Gate definitivamente limpo.
+
+### Completude em A — verificada (2026-10-21)
+
+```
+EPS      dom_within   escaped    tempo
+0        0            0          1.7s
+1e-9     0            0          1.6s
+1e-7     0            0          1.6s
+1e-6     0            0          1.6s
+```
+
+Pareto A (213 trios, A-norm) é a fronteira completa sobre os 1.9M A'-trios. F-values match float64 a 9.71e-17 (CSV foi gerado com float64, ao contrário do A' CSV que usa float32).
+
+### DEV-G1-001 — FECHADO
+
+Portfolio {184, 430, 460} está no Pareto A (confirmado). O pipeline (space_aprime.py) usa A'-trios para ambos A e A'. O check em validate_core está correcto. DEV-G1-001 fechado.
 
 ### Acções abertas para completar o Gate 1 formalmente
 
-- [ ] Confirmar que o pipeline usou A'-trios para o portfolio (fechar DEV-G1-001)
+- [x] ~~Confirmar que o pipeline usou A'-trios para o portfolio (fechar DEV-G1-001)~~ ← FECHADO
 - [ ] Adicionar comparação de F-values do portfolio a 1e-12 com os valores do manuscrito (Tab. 3)
-- [ ] Calcular completude em A (opcional): requer computar todos os trios de 473 sítios com restrição 10km
+- [x] ~~Calcular completude em A (opcional)~~ ← CALCULADA e LIMPA
 
 ---
 
