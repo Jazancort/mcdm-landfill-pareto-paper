@@ -31,6 +31,44 @@ def check(name, computed, expected, tol=TOL):
     print(f"  [{status}] {name}: {computed:.4f} (expected {expected:.4f}, |diff|={diff:.4f})")
 
 
+
+def run_all_checks(tex: str) -> list:
+    """
+    Run all semantic rules (BAD_PHRASES + ASPECT_INCONSISTENCY_PHRASES + em-dash check)
+    over a TEX string. Returns list of failure messages (empty = all pass).
+    Used by regression tests to verify rules still catch their targets.
+    """
+    import re as _re
+    failures = []
+    # BAD_PHRASES (string match)
+    non_comment = "\n".join(
+        l for l in tex.splitlines()
+        if not l.strip().startswith("%")
+    )
+    for phrase, reason in BAD_PHRASES:
+        if phrase in non_comment:
+            failures.append(f"BAD_PHRASE matched: '{phrase}' ({reason})")
+    # ASPECT_INCONSISTENCY_PHRASES (regex match)
+    tex_lower = tex.lower()
+    for phrase in ASPECT_INCONSISTENCY_PHRASES:
+        if _re.search(phrase, tex_lower):
+            failures.append(f"ASPECT_INCONSISTENCY matched: '{phrase}'")
+    # Em-dash in prose (same logic as the dedicated check)
+    for line in tex.splitlines():
+        s = line.strip()
+        if not s or s.startswith("%"):
+            continue
+        if _re.match(r"^[- ]+$", s):
+            continue
+        if "---" in s:
+            if "& ---" in line:
+                continue
+            if "{---}" in line:
+                continue
+            failures.append(f"Em-dash in prose: {line[:80]}")
+    return failures
+
+
 # ── 0. macros_amplitudes.tex vs amplitudes.json ─────────────────────────────
 print("=== macros_amplitudes.tex vs amplitudes.json ===")
 amp_json_path = RESULTS / "amplitudes" / "amplitudes.json"
@@ -675,6 +713,51 @@ else:
         print(f"  [INFO] A8: pdftotext error on supplementary: {_e}")
 
 print()
+
+# ── A9: No macro defined more than once across included files ─────────────────
+print()
+print("=== A9: No duplicate macro definitions ===")
+import collections as _col
+_defs = _col.defaultdict(list)
+for _fname in ["main.tex", "macros.tex", "macros_amplitudes.tex", "macros_e6.tex"]:
+    _fpath = ROOT / _fname
+    if not _fpath.exists():
+        continue
+    for _lineno, _line in enumerate(_fpath.read_text(encoding="utf-8").splitlines(), 1):
+        if _line.lstrip().startswith("%"):
+            continue
+        # Only track \newcommand — \providecommand in macros.tex is intentional
+        # (supplementary wrapper includes macros.tex standalone without main.tex preamble)
+        for _m in re.finditer(r"\\newcommand\{\\(\w+)\}", _line):
+            _defs[_m.group(1)].append(f"{_fname}:{_lineno}")
+_dups = {k: v for k, v in _defs.items() if len(v) > 1}
+if _dups:
+    for k, locs in _dups.items():
+        FAIL.append(f"Macro \\{k} defined {len(locs)}x: {', '.join(locs)}")
+        print(f"  [FAIL] Macro \\{k} defined at: {', '.join(locs)}")
+else:
+    print(f"  [OK  ] No duplicate macro definitions across main.tex+macros*.tex")
+
+# ── A10: EoneVloss + QtwovecOptimal arithmetic identity ─────────────────────
+print()
+print("=== A10: EoneVloss == 100 - QtwovecOptimal ===")
+_macros_all = {}
+for _fname in ["macros.tex", "macros_amplitudes.tex", "macros_e6.tex"]:
+    _fp = ROOT / _fname
+    if _fp.exists():
+        for _m in re.finditer(r"\\newcommand\{\\(\w+)\}\{([0-9.]+)\}", _fp.read_text(encoding="utf-8")):
+            _macros_all[_m.group(1)] = float(_m.group(2))
+_eloss = _macros_all.get("EoneVloss")
+_qvec  = _macros_all.get("QtwovecOptimal")
+if _eloss is not None and _qvec is not None:
+    check("EoneVloss == 100 - QtwovecOptimal", _eloss, 100.0 - _qvec, tol=0.05)
+else:
+    if _eloss is None:
+        print("  [INFO] EoneVloss not found in macros files")
+    if _qvec is None:
+        print("  [INFO] QtwovecOptimal not found in macros files")
+
+
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")
     for msg in FAIL:
@@ -690,32 +773,39 @@ else:
 print()
 print("=== Rule regression tests ===")
 
+# All MUST_FAIL cases run through run_all_checks() (not just BAD_PHRASES substring)
 _MUST_FAIL = [
-    ("& 0.135 & 0.995", "Tab2 stale rho_raw slope"),
-    ("& 0.126 & 0.995", "Tab2 stale rho_raw coast"),
-    ("& 0.081 & 0.995", "Tab2 stale rho_raw wells"),
-    ("& 0.086 & 0.995", "Tab2 stale rho_raw aero"),
-    ("& 0.590 & $+0.279$", "tab:exponent wrong def-(i) values"),
-    ("& 0.675 & $+0.360$", "tab:exponent rho_raw values"),
-    ("89.4", "F8 stale buggy value"),
-    ("affine function of the objectives",
-     "BAD_PHRASES: score is affine in partial values not objectives"),
-    ("re-weighting alone predicts",
-     "removed in B2"),
+    # BAD_PHRASES
+    ("& 0.135 & 0.995",          "Tab2 stale rho_raw slope"),
+    ("& 0.126 & 0.995",          "Tab2 stale rho_raw coast"),
+    ("& 0.081 & 0.995",          "Tab2 stale rho_raw wells"),
+    ("& 0.086 & 0.995",          "Tab2 stale rho_raw aero"),
+    ("& 0.590 & $+0.279$",       "tab:exponent wrong def-(i) values"),
+    ("& 0.675 & $+0.360$",       "tab:exponent rho_raw values"),
+    ("89.4",                     "F8 stale buggy value"),
+    ("affine function of the objectives", "score not affine in objectives"),
+    ("re-weighting alone predicts",       "removed in B2"),
+    # Aspect inconsistency (regex rule: aspect.*continuous.*score)
+    ("aspect continuous score computation uses azimuth as continuous variable",
+     "aspect continuous score target (ASPECT_INCONSISTENCY_PHRASES: aspect.*continuous.*score)"),
+    # Em-dash in prose (prose em-dash rule)
+    ("Prose with an em---dash as separator",
+     "em-dash in running prose"),
 ]
 
 _MUST_PASS = [
     ("continuous aspect coding lies outside Theorem 1",
      "rem:nonmonotone legitimate remark"),
+    (r"\begin{remark} continuous aspect coding lies outside Theorem 1 \end{remark}",
+     "remark env: continuous aspect in remark context"),
     ("Source study & --- & ", "table cell --- notation"),
-    ("rem:nonmonotone. continuous coding also introduces",
-     "remark about nonmonotone is legitimate"),
+    ("{---} in table cell",    "{---} table notation"),
 ]
 
 _reg_fail = []
 
 for snippet, label in _MUST_FAIL:
-    triggered = any(phrase in snippet for phrase, _ in BAD_PHRASES)
+    triggered = bool(run_all_checks(snippet))
     if triggered:
         print(f"  [OK  ] MUST_FAIL: {label}")
     else:
@@ -723,7 +813,7 @@ for snippet, label in _MUST_FAIL:
         print(f"  [FAIL] MUST_FAIL not triggered: {label}")
 
 for snippet, label in _MUST_PASS:
-    triggered = any(phrase in snippet for phrase, _ in BAD_PHRASES)
+    triggered = bool(run_all_checks(snippet))
     if not triggered:
         print(f"  [OK  ] MUST_PASS: {label}")
     else:

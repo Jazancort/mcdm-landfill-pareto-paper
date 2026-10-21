@@ -115,23 +115,39 @@ def compute_amplitudes():
     IntraGperm = float(rho[perm_idx] / Abar_G1)
 
     # ── RhoShiftMaxPct/Crit ───────────────────────────────────────────────────
-    # Original rho_raw values from Tab2 before the rho_shift correction.
-    # These are hardcoded because fogo_constants.AJ_VEC now returns rho_shift.
-    # Values below are range(x)/L2(x) on raw metres (criteria with min>0 differ).
-    RHO_RAW_ORIG = {
-        "perm": 0.583, "slope": 0.135, "roads": 0.206, "rivers": 0.265,
-        "aspect": 0.103, "coast": 0.126, "protected": 0.105, "wells": 0.081,
-        "urban": 0.107, "aero": 0.086, "cult": 0.171,
-    }
-    rho_raw_tab2 = np.array([RHO_RAW_ORIG[k] for k in col_names])
-    diffs = (rho - rho_raw_tab2) / rho_raw_tab2 * 100  # % difference
+    # rho_raw = range(x)/L2(x) on RAW data (not mm-norm).
+    # For aspect: use the binary indicator (same as _build_decision_matrix),
+    # not raw azimuth degrees (which would give a different and meaningless value).
+    # For criteria with min_raw > 0: rho_raw < rho_shift because L2(x) > L2(x-min).
+    rho_raw = np.zeros(len(col_names))
+    for j, k in enumerate(col_names):
+        if k == "aspect":
+            x_val = X_via[:, j].astype(float)   # binary indicator, leeward=1
+        else:
+            x_val = df_via[COL[k]].values.astype(float)
+        rng_r = x_val.max() - x_val.min()
+        nrm_r = float(np.sqrt(np.sum(x_val**2)))
+        rho_raw[j] = rng_r / nrm_r if nrm_r > 0 else 0.0
+    diffs = (rho - rho_raw) / rho_raw * 100  # % difference rho_shift vs rho_raw
     max_pct_idx = int(np.argmax(np.abs(diffs)))
     max_pct = float(abs(diffs[max_pct_idx]))
     max_crit = col_names[max_pct_idx]
 
     # ── slopeOpt (OLS on 3 normalisations) ──────────────────────────────────
-    tvs  = np.array([0.0, 0.091, TV_vec])
-    q2s  = np.array([100.0, 88.2, 56.8])
+    # Q2 values read from wp3_mc_fixed_raw.csv (SAW optimal assembly, same pipeline).
+    # TV values: TV=0 for min-max, TV=TVrnk for ranks (orphan 0.091), TV=TV_vec for vector.
+    wp3_csv = REPO / "results" / "wp3_mc_fixed_raw.csv"
+    if wp3_csv.exists():
+        import pandas as _pd
+        df_wp3 = _pd.read_csv(wp3_csv)
+        q2_mm  = float(df_wp3[df_wp3["norm"] == "min-max"]["nd_optimal"].mean()) * 100
+        q2_rnk = float(df_wp3[df_wp3["norm"] == "ranks"]["nd_optimal"].mean()) * 100
+        q2_vec = float(df_wp3[df_wp3["norm"] == "vector"]["nd_optimal"].mean()) * 100
+    else:
+        q2_mm, q2_rnk, q2_vec = 100.0, 88.2, 56.8   # fallback if CSV not available
+    TV_RNK_ORPHAN = 0.091   # TV for ranks normalization (orphan; see MACRO_PROVENANCE.md)
+    tvs  = np.array([0.0, TV_RNK_ORPHAN, TV_vec])
+    q2s  = np.array([q2_mm, q2_rnk, q2_vec])
     X_ols = np.column_stack([np.ones(3), tvs])
     coef = np.linalg.lstsq(X_ols, q2s, rcond=None)[0]
     slope_opt = round(float(coef[1]), 1)
@@ -158,29 +174,34 @@ def compute_amplitudes():
     assert abs(TV_mm2 - 0.160) < 0.005, f"Min-max TV(2) sanity check failed: {TV_mm2:.4f} != 0.160"
 
     # ── Collect ───────────────────────────────────────────────────────────────
+    # NOTE: rho_j and TV values stored WITHOUT rounding so that test_coding_consistency
+    # can verify at 1e-12 (not just 1e-5). The .tex file uses 3dp for display.
     result = {
         "source_sha256": sha256,
-        "rho_j": {k: round(float(rho[j]), 6) for j, k in enumerate(col_names)},
-        "TV_vec": round(TV_vec, 6),
-        "TV_B":   round(TV_B,   6),
-        "TV_W":   round(TV_W,   6),
-        "m_eff":  round(m_eff,  4),
-        "L2_vec": round(L2_vec, 6),
-        "S":      round(S,      6),
-        "perm_inflation":   round(perm_inflation,   4),
-        "urban_inflation":  round(urban_inflation,  4),
-        "aspect_inflation": round(aspect_inflation, 4),
-        "IntraGperm":  round(IntraGperm,  4),
-        "RhoShiftMaxPct":  round(max_pct, 2),
+        "rho_j": {k: float(rho[j]) for j, k in enumerate(col_names)},
+        "TV_vec": float(TV_vec),
+        "TV_B":   float(TV_B),
+        "TV_W":   float(TV_W),
+        "m_eff":  float(m_eff),
+        "L2_vec": float(L2_vec),
+        "S":      float(S),
+        "perm_inflation":   float(perm_inflation),
+        "urban_inflation":  float(urban_inflation),
+        "aspect_inflation": float(aspect_inflation),
+        "IntraGperm":  float(IntraGperm),
+        "RhoShiftMaxPct":  round(max_pct, 2),   # always 2dp (display value)
         "RhoShiftMaxCrit": max_crit,
-        "TV_alpha2":   round(TV_alpha2,    6),
-        "DeltaTV_alpha2": round(DeltaTV_alpha2, 6),
-        "TV_alpha2_mm": round(TV_mm2, 6),
+        "TV_alpha2":   float(TV_alpha2),
+        "DeltaTV_alpha2": float(DeltaTV_alpha2),
+        "TV_alpha2_mm": float(TV_mm2),
         "slope_opt":     slope_opt,
-        "rho_perm":      round(float(rho[perm_idx]),   6),
-        "rho_perm_inv":  round(rho_perm_inv,            6),
-        "rho_aspect":    round(float(rho[aspect_idx]), 6),
-        "rho_asp_flip":  round(rho_asp_flip,            6),
+        "rho_perm":      float(rho[perm_idx]),
+        "rho_perm_inv":  float(rho_perm_inv),
+        "rho_aspect":    float(rho[aspect_idx]),
+        "rho_asp_flip":  float(rho_asp_flip),
+        "q2_mm_opt":     float(q2_mm),
+        "q2_rnk_opt":    float(q2_rnk),
+        "q2_vec_opt":    float(q2_vec),
     }
 
     return result
