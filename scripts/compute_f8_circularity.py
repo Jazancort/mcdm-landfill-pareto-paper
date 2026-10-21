@@ -365,6 +365,7 @@ W_draws = sp_dirichlet.rvs(KAPPA * w_ahp, size=N_DRAWS,
 
 cells = [("vec", "optimal"), ("mm", "optimal"), ("vec", "greedy"), ("mm", "greedy")]
 rows = []
+per_draw_rows = []   # per-draw results for Theorem 1 verification
 
 for norm_lbl, asm in cells:
     print(f"\n=== {norm_lbl}/{asm} (obj=vec) ===", flush=True)
@@ -383,8 +384,16 @@ for norm_lbl, asm in cells:
         # Assembly
         t = top_opt(sc) if asm == "optimal" else top_greedy(sc)
 
-        if t is not None and not is_dominated_vec_direct(t, F1, F2, F3):
+        on_frontier = (t is not None and
+                       not is_dominated_vec_direct(t, F1, F2, F3))
+        if on_frontier:
             nd_cnt += 1
+
+        # Per-draw record (for Theorem 1 per-draw verification)
+        per_draw_rows.append({
+            "obj_norm": "vec", "score_norm": norm_lbl, "assembly": asm,
+            "draw": di, "on_frontier": int(on_frontier)
+        })
 
         if di % 50 == 0:
             eta = (time.time()-t_cell) / (di+1) * (N_DRAWS-di-1)
@@ -405,4 +414,15 @@ out.mkdir(exist_ok=True)
 df = pd.DataFrame(rows)
 df.to_csv(out / "f8_circularity.csv", index=False)
 print(f"\n=== F8 RESULTS ===\n{df.to_string(index=False)}")
+
+# Save per-draw results for Theorem 1 per-draw verification
+df_pd = pd.DataFrame(per_draw_rows)
+df_pd.to_csv(out / "f8_per_draw.csv", index=False)
+# Verify Theorem 1: vec/opt must be 100% on every draw
+vec_opt_draws = df_pd[(df_pd["score_norm"]=="vec") & (df_pd["assembly"]=="optimal")]["on_frontier"]
+n_fail = int((vec_opt_draws == 0).sum())
+if n_fail > 0:
+    print(f"\n  THEOREM 1 VIOLATION: {n_fail} draws failed for vec/opt!")
+else:
+    print(f"\n  Theorem 1: {len(vec_opt_draws)}/{ len(vec_opt_draws)} draws on frontier (0 violations)")
 print(f"\nTotal: {time.time()-t0:.1f}s")
