@@ -60,6 +60,8 @@
 % -----------------------------------------------------------------------
 % Auto-generated numerical macros (scripts/generate_macros.py)
 \input{macros}
+% Auto-generated E6 macros (scripts/generate_macros_e6.py) -- DO NOT EDIT BY HAND
+\input{macros_e6}
 \begin{document}
 \let\WriteBookmarks\relax
 \def\floatpagepagefraction{1}
@@ -2459,6 +2461,63 @@ weighted criterion of $G_1$ (within-group share $\approx\IntraGperm\times$),
 whereas R-V$^*$ deflates it (amplitude $0.482$ against $0.683$ and $1.0$
 for the other $G_1$ criteria).
 \end{remark}
+
+% -----------------------------------------------------------------------
+% S7.8  Pre-specified synthetic test (E6)
+% -----------------------------------------------------------------------
+\subsection{A pre-specified synthetic test of the TV\textsubscript{W} prediction}
+\label{sec:e6}
+
+Experiment~E1 establishes the cost of within-group distortion on
+the Fogo instance (Section~\ref{sec:e1}).
+A natural follow-up is whether the same quantity, $\mathrm{TV}_W$,
+predicts portfolio loss under different marginal distributions of the
+criteria.
+We test this with a fully pre-specified experiment on \EsixNinst{}
+synthetic instances (\EsixNfam{} marginal families, 30 replicates each)
+using the Fogo trio geometry and weight vector.
+Families are: lognormal, $\mathrm{Beta}(1,3)$, uniform, and zero-inflated
+(marginal zero-inflation rate $\EsixPiZinf$).
+Each instance varies $\mathrm{TV}_W$ across three levels
+($\mathrm{TV}_W\in\{0.10,\,0.20,\,0.30\}$) plus two baseline cells
+with $\mathrm{TV}_W=0$.
+Seven cells yield \EsixNdraws{} total draws.
+Full pre-specification and all deviations are in the Supplementary
+Material.
+
+P1 (no loss when $\mathrm{TV}_W=0$) held on every draw:
+\EsixPoneHits{} of \EsixPoneTotal{} draws reached the frontier
+under optimal assembly in the baseline cells.
+
+P2 (monotone ordering $L\ge F\ge H$ with $H<L$, one-sided
+Poisson-binomial) was a mixed result.
+Among instances with no detectable loss at any $\mathrm{TV}_W$
+level~--- 27--40\% of instances under continuous marginals~---
+the comparison is uninformative.
+Among the \EsixPtwoLossyNAll{} informative instances, \EsixPtwoMonoAll{}
+satisfied the ordering (two three-way ties and one reversal excluded;
+\EsixPtwoPAll; Supplementary Material, DEV-E6-002).
+
+P3 (TV\textsubscript{B} aggravates loss) met the pre-registered criterion
+in all four families, but most successes were ties at $Q_2=100\%$;
+no family reached significance among informative instances
+(one-sided binomial $p\ge0.08$; DEV-E6-001).
+
+P4 (inflating the most-weighted criterion in each group costs more than
+deflating it) was not supported.
+The observed direction was reversed: in \EsixPfourDeflAll{} of
+\EsixPfourNonTiedAll{} informative instances, deflation produced larger
+losses (\EsixPfourPAll, two-sided binomial; DEV-E6-003).
+
+At $\mathrm{TV}_W=0.199$ the loss was approximately $10.7$~pp in
+the zero-inflated family and below $3$~pp under continuous marginals,
+against $\EoneWloss$~pp on Fogo.
+At equal $\mathrm{TV}_W$, losses differ by an order of magnitude
+across marginal families, confirming that $\mathrm{TV}_W$ alone
+does not determine the cost (Remark~\ref{rem:TVW}).
+Point masses are associated with larger losses; whether concentrating
+sparsity in a single high-weight criterion is more harmful than
+distributing it uniformly across all criteria is not tested here.
 
 
 % =======================================================================
