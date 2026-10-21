@@ -11,7 +11,7 @@
 | Repositório GitHub | Jazancort/mcdm-landfill-pareto, branch main |
 | E6 na Athena | **CONCLUÍDO** — 120 inst × 200 draws × 7 células. Ver secção "E6 Resultados" abaixo |
 | Zenodo DOI | `10.5281/zenodo.23479281` (concept DOI, v1.0) |
-| Próximo item | C.6 (figura E6) + A3 (macros hardcoded) em paralelo |
+| Próximo item | Gate 1 full (unicidade dos trios, portfolio a 1e-12) + F8 passo 5 |
 
 ---
 
@@ -43,7 +43,7 @@
 - [x] **C.4** 4 jobs paralelos na Athena (um por família, 30 instâncias cada). Tempo: ~34 min.
 - [x] **C.5** Resultados copiados localmente (`results/e6/`). P1 passou. P2–P4 analisadas.
 - [ ] **C.6** Criar figura e tabela de sumário para §7.
-- [ ] **C.7** Integrar no manuscrito: subsecção em §7 (não suplementar).
+- [x] **C.7** Integrar no manuscrito: §7.8 adicionada com macros \\EsixPtwoMono, \\EsixPtwoLossyN, \\EsixPtwoPAll, etc. PDF: 30 páginas, exit 0.
 
 ### D — Texto e estrutura
 
