@@ -6,7 +6,7 @@ Source: data/e1_v3_rerun_20261002.log  (commit 44f7ff5, Athena, 500 draws, float
   The log is parsed directly. The hash certifies the log, not a transcription.
   results/e1/e1_v3_verified.csv is a DERIVED file (kept for reference only).
 
-Archive: results/e1/archive/e1_v3_results_INVALID_DEV-E1-004.csv
+Archive: results/e1/archive/e1_v3_results_DRYRUN_N10_DEV-E1-004.csv
   This was a 10-draw dry-run (N_DRAWS=10, SE=15.8% confirms it).
   Cause: test run committed alongside session documentation (ddb584d).
   The published values (56.8%/64.2%) are from the 500-draw log.
