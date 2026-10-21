@@ -315,9 +315,10 @@ else:
 
   EPS = 1e-9
 
-  # Load pre-computed Pareto set (results/pareto_front_Aprime.csv)
-  # Goal: independently verify that these 181 trios are non-dominated
+  # Load pre-computed Pareto set — check both results/ and scripts/results/
   pareto_csv = _root / "results" / "pareto_front_Aprime.csv"
+  if not pareto_csv.exists():
+      pareto_csv = _root / "scripts" / "results" / "pareto_front_Aprime.csv"
   if not pareto_csv.exists():
       print(f"  [SKIP] {pareto_csv} not found — copy from results/")
   else:
@@ -331,8 +332,13 @@ else:
       # Independently verify non-dominance of each claimed Pareto trio
       # by checking no other claimed trio dominates it: O(181^2) — fast
       pareto_ids = []
-      id_cols = [c for c in pf.columns if c.lower() in ('id0', 'i0', 'site0', 'site_0',
-                                                          'id_0', 's0', 'idx0')]
+      id_cols = [c for c in pf.columns if c.lower() in (
+          'id0', 'i0', 'site0', 'site_0', 'id_0', 's0', 'idx0',
+          'idx1', 'idx2', 'idx3', 'id1', 'id2', 'id3',
+          'site1', 'site2', 'site3',
+      )]
+      # Sort so index columns are in order (idx1 before idx2 before idx3)
+      id_cols = sorted(id_cols)[:3]
       if len(id_cols) < 3:
           # Fallback: assume first 3 numeric columns are the trio indices
           num_cols = pf.select_dtypes(include=[np.number]).columns[:3].tolist()
