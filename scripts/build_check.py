@@ -43,11 +43,14 @@ if __name__ == "__main__":
     run(["uv", "run", "python", "scripts/generate_macros_e6.py"],
         "Regenerate macros_e6.tex")
 
-    # Step 3: Verify no uncommitted changes in generated files
+    # Step 3: Verify no uncommitted changes in generated amplitude files
+    # Note: macros_e6.tex is excluded because its header contains the current git
+    # commit hash, which changes on every run. The values are checked by
+    # check_consistency.py (block 0: macros_amplitudes.tex vs amplitudes.json).
     run(["git", "diff", "--exit-code",
-         "macros_amplitudes.tex", "macros_e6.tex",
+         "macros_amplitudes.tex",
          "results/amplitudes/amplitudes.json"],
-        "git diff --exit-code (generated files)")
+        "git diff --exit-code (macros_amplitudes.tex + amplitudes.json)")
 
     # Step 4: Consistency checks
     run(["uv", "run", "python", "scripts/check_consistency.py"],
@@ -60,7 +63,13 @@ if __name__ == "__main__":
     # Step 6: validate_core (if available)
     vc = ROOT / "scripts" / "validate_core.py"
     if vc.exists():
-        run(["uv", "run", "python", str(vc)], "validate_core.py")
+        import os
+        env = {**__import__("os").environ, "PYTHONIOENCODING": "utf-8"}
+        print("\n>> validate_core.py")
+        result = subprocess.run(["uv", "run", "python", str(vc)], cwd=ROOT, env=env)
+        if result.returncode != 0:
+            print("\nFAIL at: validate_core.py")
+            sys.exit(1)
     else:
         print("\n[SKIP] validate_core.py not found")
 
