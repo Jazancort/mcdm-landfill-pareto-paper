@@ -198,5 +198,6 @@
 \newcommand{\FEightMMOptSE}{1.0}
 \newcommand{\FEightVecGrdQ}{100.0}  % SAW/vec/greedy with vec frontier (Prop1 ✓)
 \newcommand{\FEightMMGrdQ}{72.4}    % SAW/mm/greedy with vec frontier
-% Interpretation: when score-norm ≠ obj-norm, Q2 drops from 89→6 (opt) and 98→35 (grd)
-% The previsão vec/opt=100% was not confirmed (89.4%) — discussed in §5.4
+% Interpretation: vec/opt=100% confirmed with Prop1 (Theorem 1) in commit 43b8427.
+% Previous commit 9cdceb4 gave 89.4% due to double-normalisation bug (injection approach
+% caused aspect misclassification); replaced with direct vec objectives in commit 4d0a98d.

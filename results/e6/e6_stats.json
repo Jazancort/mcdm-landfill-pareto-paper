@@ -1,6 +1,6 @@
 {
   "sha256": "0852bf93e8fc6383b2d1a6cb82195e9643048c90bbeb363c5b524691b81908fe",
-  "commit": "b0fbe7e",
+  "commit": "5003942",
   "stats": {
     "All": {
       "P1": {
@@ -12,7 +12,11 @@
         "Strict": 85,
         "Ties": 2,
         "Reversal": 1,
-        "P": 4.602379337112832e-62
+        "NDistinct3": 52,
+        "NDistinct2": 34,
+        "StrictOnly": 52,
+        "ExpNull": 20.0,
+        "P": 6.779664729906296e-55
       },
       "P3": {
         "PreregN": 98,
@@ -39,7 +43,11 @@
         "Strict": 19,
         "Ties": 1,
         "Reversal": 0,
-        "P": 2.7624623400691636e-14
+        "NDistinct3": 15,
+        "NDistinct2": 4,
+        "StrictOnly": 15,
+        "ExpNull": 3.833333333333333,
+        "P": 2.625706778679601e-14
       },
       "P3": {
         "PreregN": 24,
@@ -66,7 +74,11 @@
         "Strict": 17,
         "Ties": 0,
         "Reversal": 1,
-        "P": 8.960224382244137e-13
+        "NDistinct3": 6,
+        "NDistinct2": 12,
+        "StrictOnly": 6,
+        "ExpNull": 5.0,
+        "P": 2.2181970866285265e-09
       },
       "P3": {
         "PreregN": 28,
@@ -93,7 +105,11 @@
         "Strict": 22,
         "Ties": 0,
         "Reversal": 0,
-        "P": 7.597531188309028e-18
+        "NDistinct3": 9,
+        "NDistinct2": 13,
+        "StrictOnly": 9,
+        "ExpNull": 5.833333333333333,
+        "P": 6.223897549462757e-14
       },
       "P3": {
         "PreregN": 22,
@@ -120,7 +136,11 @@
         "Strict": 27,
         "Ties": 1,
         "Reversal": 0,
-        "P": 2.296064595232281e-20
+        "NDistinct3": 22,
+        "NDistinct2": 5,
+        "StrictOnly": 22,
+        "ExpNull": 5.333333333333333,
+        "P": 3.1265560445716166e-20
       },
       "P3": {
         "PreregN": 24,

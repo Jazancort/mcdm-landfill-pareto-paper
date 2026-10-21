@@ -109,15 +109,38 @@ def p2_stats(df):
     reversal  = ~monotone
 
     n = len(lossy)
-    k = int(mono_hl.sum())   # 85 in TASKS.md
-    pval = binomtest(k, n, 1/6, alternative="greater").pvalue
+    k = int(mono_hl.sum())   # 85 in combined dataset
+
+    # n_distinct per instance (for Poisson-binomial)
+    # tie in pair (L,F), (F,H), or (L,H)
+    n_tie_pairs = ((np.abs(L-F) <= TOL).astype(int) +
+                   (np.abs(F-H) <= TOL).astype(int) +
+                   (np.abs(L-H) <= TOL).astype(int))
+    n_distinct = np.clip(3 - n_tie_pairs, 1, 3)
+
+    # Poisson-binomial: correct null for mixed tie patterns
+    # p_i = 1/6 (3 distinct), 1/3 (1 pair tied, since P(L>=F>=H AND H<L | {a,a,b}) = 1/3),
+    # 0 (three-way tie: H=L so H<L impossible)
+    pi = np.where(n_distinct == 3, 1/6, np.where(n_distinct == 2, 1/3, 0.0))
+    pmf = np.array([1.0])
+    for p_i in pi:
+        pmf = np.convolve(pmf, [1 - p_i, p_i])
+    p_poisson = float(pmf[k:].sum())
+    e_null = float(pi.sum())
+
+    # Sensitivity: strictly distinct only (n_distinct=3) vs null=1/6
+    k_strict3 = int(((n_distinct == 3) & mono_hl).sum())
 
     return {
         "LossyN": n,
-        "Strict": k,        # L≥F≥H AND H<L (conservative primary count)
-        "Ties": int(tie3.sum()),          # three-way ties (excluded from Strict)
-        "Reversal": int(reversal.sum()),  # L≥F≥H fails
-        "P": pval,
+        "Strict": k,                         # L>=F>=H AND H<L (conservative primary, 85)
+        "Ties": int(tie3.sum()),              # three-way ties
+        "Reversal": int(reversal.sum()),      # L>=F>=H fails
+        "NDistinct3": int((n_distinct==3).sum()),
+        "NDistinct2": int((n_distinct==2).sum()),
+        "StrictOnly": k_strict3,             # sensitivity: n_distinct=3 AND success
+        "ExpNull": e_null,                   # E[successes] under Poisson-binomial null
+        "P": p_poisson,                      # Poisson-binomial p-value (one-sided)
     }
 
 
@@ -211,6 +234,11 @@ def check_invariants(S):
     p2 = A["P2"]
     assert (p2["Strict"], p2["Ties"], p2["Reversal"], p2["LossyN"]) == (85, 2, 1, 88), \
         f"P2 regression: {p2}"
+    assert (p2["NDistinct3"], p2["NDistinct2"]) == (52, 34), \
+        f"P2 n_distinct regression: {p2}"
+    assert p2["StrictOnly"] == 52, f"P2 StrictOnly: {p2['StrictOnly']}"
+    assert abs(p2["ExpNull"] - 20.0) < 0.1, f"P2 ExpNull: {p2['ExpNull']}"
+    assert p2["P"] < 0.001, f"P2 Poisson-binomial p-value too large: {p2['P']}"
     # P4
     p4 = A["P4"]
     assert (p4["Defl"], p4["NonTied"], p4["Tied"]) == (53, 87, 33), \
@@ -269,7 +297,8 @@ def write_macros(S, sha, commit):
         m(f"EsixPtwoStrict{sfx}",   str(p2["Strict"]),   "L>=F>=H AND H<L (monotone excl. 3-way ties)")
         m(f"EsixPtwoTies{sfx}",     str(p2["Ties"]),     "3-way ties L=F=H (counted as failures)")
         m(f"EsixPtwoReversal{sfx}", str(p2["Reversal"]), "L>=F>=H fails")
-        m(f"EsixPtwoP{sfx}",        fmt_p(p2["P"]),      "one-sided binomial null=1/6")
+        m(f"EsixPtwoStrictOnly{sfx}", str(p2["StrictOnly"]), "sensitivity: n_distinct=3 AND L>=F>=H AND H<L")
+        m(f"EsixPtwoP{sfx}",        fmt_p(p2["P"]),      "Poisson-binomial one-sided (mixed p_i=1/6 or 1/3)")
         lines.append("")
 
     # ── P3 ──────────────────────────────────────────────────────────────────

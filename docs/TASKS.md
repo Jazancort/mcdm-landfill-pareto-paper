@@ -177,12 +177,24 @@ uniformly is not tested here.
 ```
 
 **Notas sobre os testes reportados no §7.8:**
-- P2 null: 1/6 (L ≥ F ≥ H é 1 de 6 ordenamentos aleatórios possíveis). O script usa null=0.5 para o teste binário H < L; ambos dão p < 0.001. Reportar a versão 87/88 com null=1/6 por ser mais informativa.
-- P2 "strictly monotone" é incorrecto — o teste é L ≥ F ≥ H (não estrito). 87 casos incluem 2 empates (L=H em três famílias: 1 em lognormal, 1 em zero_inflated); 85 têm H estritamente abaixo de L. Usar "the ordering L ≥ F ≥ H" e acrescentar "(85 strict, 2 three-way ties)".
-- P4: direcção oposta deve ser explícita. O "53/87" é a contagem ESTRITA (deflate > inflate, excluindo 33 pares empatados). O texto "as large as or larger" incluiria os 33 empates, dando 53+33=86, não 53. Mudar para "strictly larger" ou ajustar a contagem.
-- p=0.000 substituído por p<0.001 em toda a tabela P2.
-- Combinado P4: binomtest(53,87,0.5,two-sided)=0.053003. O SUMARIO hardcoded em e6_final_stats.py tinha "0.043" (erro tipográfico) — corrigido para 0.053.
-- P4 §7.8: acrescentar "the remaining 33 pairs were within tolerance (tied)" para contabilizar os empates excluídos do binomtest.
+### P2 — nula correcta (Poisson-binomial)
+
+A contagem de 85 inclui três padrões:
+- 52 com ordem estrita L > F > H (n_distinct=3, p_i=1/6)
+- 33 com um empate (L=F ou F=H, n_distinct=2, p_i=1/3)
+- 2 empates triplos (contados como falhas, p_i=0)
+
+Usar null=1/6 uniformemente para os 88 seria anti-conservador (subestima sucessos esperados: 14.7 vs 20.0 correcto). O teste correcto é Poisson-binomial com p_i por instância.
+
+Resultados (compute_e6_macro_stats, Poisson-binomial confirmado 2026-10-21):
+- E[sucessos sob nula] = 20.00
+- p (Poisson-binomial, one-sided) = 6.78e-55 → p < 0.001
+- p (binomial null=1/6, anti-conservador) = 4.60e-62 (mais pequeno, anti-conservador confirmado)
+- Sensitivity: 52/88 strictly distinct → p = 3.46e-19 → p < 0.001
+
+Ambos p < 0.001. A conclusão não muda; a nula declarada passa a ser correcta.
+
+Macros adicionados: `\EsixPtwoStrictOnly{fam}` (52 all) e `\EsixPtwoPAll` (Poisson-binomial).
 
 ### Consequências para main.tex
 
@@ -338,16 +350,20 @@ Acção pendente: confirmar no main.tex que os 213 e 132 estão correctamente de
 
 **Argumento principal (igualdade de conjuntos):** os checks 8b (não-dominância) e 8c (completude exata) passaram em float64. O CSV foi gerado com float32. O facto de o mesmo conjunto de 181 trios ser tanto não-dominado como completo em float64 significa que o float32 e o float64 produziram a **mesma fronteira**. Não há margem a invocar — é uma igualdade directa.
 
+### Sweep de tolerâncias — Pareto A' (todos os 1.9M trios, float64)
+
+**Argumento principal (igualdade de conjuntos):** os checks 8b (não-dominância) e 8c (completude exata) passaram em float64. O CSV foi gerado com float32. O facto de o mesmo conjunto de 181 trios ser tanto não-dominado como completo em float64 significa que o float32 e o float64 produziram a **mesma fronteira**. Não há margem a invocar — é uma igualdade directa.
+
 **Argumento secundário (ε-dominância):** o sweep abaixo confirma que a fronteira é estável sob ε-dominância para ε ≤ 1e-5. "ε-dominância" aqui: o dominador pode ser até ε pior num objectivo desde que seja mais de ε melhor noutro (ge relaxado, gt apertado). Não implica "margem > ε em todos os objectivos".
 
 ```
-EPS      dom_within   escaped    tempo
+EPS      dom_within   escaped    tempo  (TODOS os 1.9M trios — confirmado 2026-10-21)
 0        0            0          1.2s
 1e-9     0            0          1.3s
 1e-8     0            0          1.4s
 1e-7     0            0          1.3s
 1e-6     0            0          1.3s
-1e-5     0            0          1.3s
+1e-5     0            0          1.4s   ← confirmado em 2026-10-21 (não apenas 50k)
 ```
 
 O Pareto A' float32 e o float64 são **IDÊNTICOS** sobre estes 1.9M trios. Gate definitivamente limpo.
@@ -363,7 +379,12 @@ EPS      dom_within   escaped    tempo
 1e-5     2            0          1.6s   ← 2 pares ε-dominados mutuamente; escaped=0
 ```
 
-Pareto A (213 trios, A-norm, sobre 1.9M A'-trios) está verificado. Completude (escaped=0) mantém-se a ε=1e-5. Não-dominância interna (8a) falha a ε=1e-5: 2 pares tornam-se ε-dominados mutuamente — fronteira A estável sob ε-dominância para **ε ≤ 1e-6** (não 1e-5). A' aguenta 1e-5.
+Pareto A (213 trios, A-norm, sobre 1.9M A'-trios) está verificado. Completude (escaped=0) mantém-se a ε=1e-5. Não-dominância interna (8a) falha a ε=1e-5: 2 trios tornam-se ε-dominados, confirmados como não sendo o portfolio.
+
+**Dois trios ε-dominados a eps=1e-5 em A (gap mínimo):**
+- {42, 288, 376}: gap = 2.24e-06 (dominator: {203, 366, 376})
+- {49, 237, 386}: gap = 6.99e-06 (dominator: {35, 260, 386})
+- Portfolio {180, 346, 376}: NÃO está na lista — confirmado seguro.
 
 F-values match float64 a 9.71e-17 (CSV foi gerado com float64, ao contrário do A' CSV que usa float32).
 
