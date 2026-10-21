@@ -547,6 +547,25 @@ else:
                 n_outside_not_dominated = int((~dominated & ~in_F).sum())
                 check("exact completeness: trios outside F' not dominated by F'",
                       n_outside_not_dominated, 0)
+
+                # ── Tolerance sweep (eps robustness) ─────────────────────
+                # A' frontier was confirmed 0 escaped for eps = 0 to 1e-5 (diagnostic 2026-10-21).
+                # Run two extra eps values as checks.
+                for _eps_s in [1e-7, 1e-5]:
+                    _dominated_s = np.zeros(T, dtype=bool)
+                    _in_F_s = in_F.copy()
+                    for _cs in range(0, T, BLOCK):
+                        _sl = slice(_cs, min(_cs + BLOCK, T))
+                        _ge_s = ((PF1[:, None] <= F1_Ap[_sl][None, :] + _eps_s) &
+                                 (PF2[:, None] <= F2_Ap[_sl][None, :] + _eps_s) &
+                                 (PF3[:, None] >= F3_Ap[_sl][None, :] - _eps_s))
+                        _gt_s = ((PF1[:, None] < F1_Ap[_sl][None, :] - _eps_s) |
+                                 (PF2[:, None] < F2_Ap[_sl][None, :] - _eps_s) |
+                                 (PF3[:, None] > F3_Ap[_sl][None, :] + _eps_s))
+                        _dominated_s[_sl] = (_ge_s & _gt_s).any(axis=0)
+                    _esc = int((~_dominated_s & ~_in_F_s).sum())
+                    check(f"A' completeness sweep eps={_eps_s:.0e} (escaped)",
+                          _esc, 0)
             else:
                 not_run("Pareto A' exact completeness",
                         f"only {len(PF_idx)} trios in remapped set")

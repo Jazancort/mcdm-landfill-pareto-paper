@@ -895,7 +895,10 @@ Three normalisations are compared, spanning the standard taxonomies of
   \text{min--max:} \quad &
     c_j(i) = \frac{x_{ij}-\min_j}{\max_j-\min_j}, \label{eq:mm} \\
   \text{vector:} \quad &
-    c_j(i) = x_{ij} \big/ \lVert\mathbf{x}_j\rVert_2, \label{eq:vec} \\
+    c_j(i) = \frac{\tilde{x}_{ij}}{\lVert\tilde{\mathbf{x}}_j\rVert_2},
+    \quad
+    \tilde{x}_{ij} = \frac{x_{ij}-\min_k x_{kj}}{\max_k x_{kj}-\min_k x_{kj}},
+    \label{eq:vec} \\
   \text{ranks:} \quad &
     c_j(i) = r_j(i). \label{eq:ranks}
 \end{align}
@@ -906,14 +909,18 @@ leeward indicator ($b_j=1$ if the site faces away from the prevailing wind,
 $b_j=0$ otherwise) before any normalisation; the amplitude therefore follows
 the binary formula in~\eqref{eq:Arank_binary}, not the continuous formula for
 $\rho_j$ (Section~\ref{sec:three_norms}).
-In the implementation, vector normalisation~\eqref{eq:vec} is applied to
-the columns output by this construction, which are min-max values for all
-criteria except aspect (binary) and ranks.
-The normalisation constant $\lVert\mathbf{x}_j\rVert_2$ in~\eqref{eq:vec}
-is therefore the norm of the min-max column, not of the raw data; these
-coincide when $\min_j x_j=0$ (true for \texttt{perm}, \texttt{urban},
-\texttt{cult}, and \texttt{rivers}) and differ by at most $6.7\%$
-(\texttt{aspect}) for the remaining criteria.
+The vector form in~\eqref{eq:vec} normalises the min-max column~$\tilde{x}_j$,
+not the raw data.
+The amplitude is therefore $A_j = \rho_j = 1/\lVert\tilde{\mathbf{x}}_j\rVert_2$,
+and the orientation (cost vs.\ benefit) is applied after normalisation via the
+sign of the SAW contribution, leaving the amplitude unchanged.
+Normalising instead the cost-inverted column $1-\tilde{x}_j$ would change
+$\rho_{\texttt{perm}}$ from $0.583$ to $0.052$; the central result of this paper
+depends on the normalisation being applied before the cost orientation.
+This formulation coincides with the classical textbook form $x_{ij}/\lVert\mathbf{x}_j\rVert_2$
+when $\min_j x_j=0$ (true for \texttt{perm}, \texttt{urban}, \texttt{cult},
+\texttt{aero} and \texttt{rivers}) and differs by at most $\RhoShiftMaxPct\,\%$
+(\texttt{\RhoShiftMaxCrit}) for the remaining four criteria.
 Two properties drive our results.
 First, none of the three is invariant to the inclusion or exclusion of
 alternatives: min--max depends on the sample extrema, vector normalisation
@@ -1214,7 +1221,7 @@ so the effective weight $w_j^{\mathrm{eff}}$ approximates the weight shift
 rather than determining it exactly.
 Within this scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $100.0\%$,
 $88.2\%$ and $56.8\%$ for min--max, ranks and vector normalisation
-respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $0.315$,
+respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $\TVvec$,
 a strictly monotone ordering on this instance (Table~\ref{tab:tvorder}).
 
 TOPSIS and VIKOR aggregate distances to ideal points rather than
@@ -1277,7 +1284,7 @@ the $\Nvia$ Fogo Island sites, along with the total variation
 $\mathrm{TV} = \frac{1}{2}\sum_j |w_j^{\mathrm{eff}} - w_j|$ as a
 summary statistic of aggregate distortion.
 Min--max gives $\mathrm{TV} = 0$ by construction.
-The vector normalisation gives $\mathrm{TV} = 0.315$: criterion
+The vector normalisation gives $\mathrm{TV} = \TVvec$: criterion
 \textit{perm} dominates, with $\rho_j = 0.583$ (factor
 $\mathbf{\PermInflation\times}$ relative to nominal weight) because its raw
 distribution has 350 exact zeros and a maximum of~532~m, giving a
@@ -1555,7 +1562,7 @@ Normalisation & $\mathrm{TV}(\alpha{=}1)$ & $\mathrm{TV}(\alpha{=}2)$
 \midrule
 Min--max & 0.000 & 0.160 & $+0.160$ \\
 Ranks    & 0.091 & 0.206 & $+0.115$ \\
-Vector   & 0.315 & 0.675 & $+0.360$ \\
+Vector   & \TVvec & 0.590 & $+0.279$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2015,7 +2022,7 @@ Normalisation & $A_j$ & $\mathrm{TV}$ & greedy & optimal \\
 \midrule
 min--max & $\equiv 1$                        & 0.000 & 86.0\% & 100.0\% \\
 midranks & ${\scriptstyle(r_j^{\max}{-}r_j^{\min})/(N{+}1)}$ & 0.091 & 86.0\% &  88.2\% \\
-vector   & $\rho_j$                          & 0.315 & 66.2\% &  56.8\% \\
+vector   & $\rho_j$                          & \TVvec & 66.2\% &  56.8\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2492,7 +2499,7 @@ under optimal assembly in the baseline cells.
 P2 (monotone ordering $L\ge F\ge H$ with $H<L$, one-sided
 Poisson-binomial) was a mixed result.
 Among instances with no detectable loss at any $\mathrm{TV}_W$
-level~--- 27--40\% of instances under continuous marginals~---
+level (27--40\% of instances under continuous marginals)
 the comparison is uninformative.
 Among the \EsixPtwoLossyNAll{} informative instances, \EsixPtwoMonoAll{}
 satisfied the ordering (two three-way ties and one reversal excluded;
