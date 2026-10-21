@@ -79,45 +79,53 @@ Decomposição por instância (entre os 30 por família):
 
 **ρ≥0 = 0 em todas as famílias.** Toda instância com perda detectável mostrou ρ<0. O critério 80% falhou porque muitas instâncias têm Q2=100% para todos os níveis de TV_W (série constante — não é falta de potência, é efeito pequeno real). Aplicar regra do PRESPEC: manter qualificação "on this instance".
 
-### P3: Não suportada quando empates são removidos
+### P2: Critério pré-registado falhou — monotonia 87/88 onde testável
 
-O critério original "V≤W" contava empates (ambas células=100%) como sucessos. Decomposição estrita:
+Decomposição, excluindo nível 0 (fixado a 100% pela P1, não devia estar no Spearman — DEV-E6-002):
 
-| Família | V<W strict | V=W tied | V>W | Strict/Inform | p-value |
-|---|---|---|---|---|---|
-| lognormal | 13/30 (43%) | 11 | 6 | 13/19 | p=0.084 |
-| beta13 | 7/30 (23%) | 21 | 2 | 7/9 | p=0.090 |
-| uniform | 8/30 (27%) | 14 | 8 | 8/16 | p=0.598 |
-| zero_inflated | 8/30 (27%) | 16 | 6 | 8/14 | p=0.395 |
-
-Nenhuma família passa o teste binomial entre instâncias informativas. O resultado original "P3 passa em todas as famílias" era artefacto dos empates. **P3 não tem suporte estatístico onde testável.** Desvio a declarar: DEV-E6-001.
-
-### P4: Direcção inversa à previsão nas instâncias informativas
-
-O critério original "inf<def" contava empates como falhas. Decomposição estrita:
-
-| Família | inf<def strict | tied | inf>def | Deflate custa mais? |
+| Família | Série const L=F=H=100% | H<L strict / inform | Monotone L≥F≥H / inform | p (1-lado) |
 |---|---|---|---|---|
-| lognormal | 12 | 5 | 13 | leve (48% vs 52%) |
-| beta13 | 4 | 14 | 12 | sim (25% vs 75%) |
-| uniform | 8 | 12 | 10 | ligeiro (44% vs 56%) |
-| zero_inflated | 10 | 2 | **18** | sim — 18/28 inf>def |
+| lognormal | 10/30 | 19/20 | **20/20** | p=0.000 |
+| beta13 | 12/30 | 17/18 | **17/18** | p=0.000 |
+| uniform | 8/30 | 22/22 | **22/22** | p=0.000 |
+| zero_inflated | 2/30 | 27/28 | **28/28** | p=0.000 |
 
-Na única família com instâncias informativas suficientes (zero_inflated), **deflacionar j* custa mais que inflar** em 18/28 casos. Oposto da previsão. P4 falsificada na direcção inversa onde testável.
+Entre as instâncias com perda detectável, a monotonia L≥F≥H é quase perfeita: **87/88** (p=0.000). O critério pré-registado (80% com ρ<0) falhou porque incluía o nível 0 no Spearman e porque 27–40% das instâncias das famílias contínuas não produziram perda. A direcção é fortemente suportada onde existe efeito. Manter qualificação "on this instance" pelo critério pré-reg.
 
-### Comparação correcta com Fogo (célula W, só TV_W)
+### P3: Passa pelo critério pré-registado; sem suporte entre instâncias informativas
 
-| | Fogo (E1 W) | zero_inflated W_inf_F | lognormal | beta13 | uniform |
+| Família | Pré-reg V≤W | Strict V<W | Tied | V>W | Strict/Inform | p (1-lado) |
+|---|---|---|---|---|---|---|
+| lognormal | 24/30 (80%) | 13/30 (43%) | 11 | 6 | 13/19 | p=0.084 |
+| beta13 | 28/30 (93%) | 7/30 (23%) | 21 | 2 | 7/9 | p=0.090 |
+| uniform | 22/30 (73%) | 8/30 (27%) | 14 | 8 | 8/16 | p=0.598 |
+| zero_inflated | 24/30 (80%) | 8/30 (27%) | 16 | 6 | 8/14 | p=0.395 |
+
+Pelo critério pré-registado (V≤W, conta empates), P3 passa nas 4 famílias. Entre instâncias informativas, nenhuma família é significativa (p≥0.08). Reportar os dois resultados. **DEV-E6-001**.
+
+### P4: Sem suporte; tendência oposta borderline
+
+Teste bilateral — direcção observada oposta à prevista (**DEV-E6-003**):
+
+| Família | inf<def strict | tied | inf>def | Inform | p 1-lado | p 2-lados |
+|---|---|---|---|---|---|---|
+| lognormal | 12/25 (48%) | 5 | 13/25 (52%) | 25 | p=0.655 | p=1.000 |
+| beta13 | 4/16 (25%) | 14 | 12/16 (75%) | 16 | p=0.989 | p=0.077 |
+| uniform | 8/18 (44%) | 12 | 10/18 (56%) | 18 | p=0.760 | p=0.815 |
+| zero_inflated | 10/28 (36%) | 2 | 18/28 (64%) | 28 | p=0.956 | p=0.185 |
+
+Combinado post hoc: deflate>inflate em 53/87 (61%), p bilateral = 0.053 — borderline, não conclusivo.
+
+### Comparação correcta com Fogo (célula W, TV_B=0)
+
+| | Fogo (E1 W) | zero_inflated | lognormal | beta13 | uniform |
 |---|---|---|---|---|---|
 | TV_W=0.199, TV_B=0 | **35.8 pp** | 10.7 pp | 2.4 pp | 0.3 pp | 0.4 pp |
 | TV_W=0.30 | — | 16.8 pp | 4.9 pp | 1.6 pp | 1.8 pp |
 
-A comparação original usava 43.2 pp (célula V = TV_W + TV_B). Célula correta: W = 35.8 pp.
-
 ### Estrutura zero_inflated vs Fogo
 
-Em Fogo: **1 coluna** com ~90% zeros (perm). As outras 10 são contínuas.
-No zero_inflated: **11 colunas** com 88–93% zeros — estruturalmente mais extremo.
+Em Fogo: **1 coluna** com ~90% zeros (perm). No zero_inflated: **11 colunas** com 88–93% zeros.
 
 Apesar disso, 10.7 pp vs 35.8 pp de Fogo. **Concentrar** a esparsidade num único critério dominante (perm, w=0.152, maior peso em G1) é mais destrutivo do que distribuir zeros uniformemente — consistente com o ||delta||_2 da §6.4.
 
