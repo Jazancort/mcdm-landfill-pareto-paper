@@ -12,23 +12,27 @@ Naming convention (aligns with macros.tex):
   - Prefix: Esix (block), then P[one/two/three/four], then Descriptor, then Suffix
   - Family suffixes: Logn / Beta / Unif / Zinf / All
   - p-values stored as full expression: p<0.001 or p=0.053 (no bare number)
-  - Lo/Hi or Pct suffixes as needed
+
+All statistics computed by e6_stats.py (single source of truth).
 """
 
-import hashlib, json, subprocess, sys
+import hashlib, json, subprocess
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
-from scipy.stats import binomtest
+
+# ── Statistics: single source of truth ───────────────────────────────────────
+from e6_stats import (
+    TOL,
+    compute_all_stats as _compute_all_stats,
+    check_invariants,
+)
 
 REPO = Path(__file__).parent.parent
 SRC_CSV = REPO / "results" / "e6" / "e6_raw_prespec.csv"
 OUT_TEX = REPO / "macros_e6.tex"
 OUT_JSON = REPO / "results" / "e6" / "e6_stats.json"
-
-TOL = 1e-4   # tolerance for equality tests (same as e6_final_stats.py)
 
 FAMILIES = ["lognormal", "beta13", "uniform", "zero_inflated"]
 FAM_SUFFIX = {
@@ -36,11 +40,20 @@ FAM_SUFFIX = {
     "beta13":       "Beta",
     "uniform":      "Unif",
     "zero_inflated":"Zinf",
-    None:           "All",   # combined across families
 }
-N_REP = 30  # replicates per family
+N_REP = 30
 
-# ── Rounding ─────────────────────────────────────────────────────────────────
+
+def compute_all_stats(df):
+    """Wrapper: remaps family-name keys to LaTeX suffix keys for write_macros."""
+    raw = _compute_all_stats(df, FAMILIES)
+    S = {"All": raw["All"]}
+    for fam in FAMILIES:
+        S[FAM_SUFFIX[fam]] = raw[fam]
+    return S
+
+
+# ── Formatting helpers ────────────────────────────────────────────────────────
 
 def rnd(x, nd):
     """Half-up rounding on the true decimal representation (avoids float bias)."""
@@ -55,203 +68,6 @@ def fmt_p(p):
 def fmt_int(n):
     """Format integer with LaTeX thousands separator."""
     return f"{int(n):,}".replace(",", "{,}")
-
-
-# ── Statistics per block ──────────────────────────────────────────────────────
-
-def p1_stats(df):
-    """P1: M and B cells must have Q2 = 100% on every draw."""
-    total = 0; hits = 0
-    for cell in ("M", "B"):
-        sub = df[df["cell"] == cell]
-        total += len(sub)
-        hits  += int((sub["q2"] >= 1 - TOL).sum())
-    return {"Hits": hits, "Total": total}
-
-
-def p2_stats(df):
-    """
-    P2 (conservative): L≥F≥H AND H < L strictly per instance.
-    - Primary count: monotone AND H strictly below L (excludes 3-way ties).
-    - Three-way ties (L≈F≈H, counted as monotone by the weak criterion but
-      degenerate under null=1/6) are identified and excluded from the main count.
-    - Denominator = instances with any loss at levels L, F, or H.
-    - Null = 1/6: under random ordering of 3 distinct values, P(L≥F≥H) = 1/6.
-    """
-    TW_CELLS = ["W_inf_L", "W_inf_F", "W_inf_H"]
-    results = []
-    for rep in df["inst_id"].unique():
-        sub = df[(df["inst_id"] == rep) & (df["cell"].isin(TW_CELLS))]
-        if sub.empty:
-            continue
-        agg = sub.groupby("cell")["q2"].mean()
-        qL = agg.get("W_inf_L", 1.0)
-        qF = agg.get("W_inf_F", 1.0)
-        qH = agg.get("W_inf_H", 1.0)
-        results.append({"qL": qL, "qF": qF, "qH": qH})
-    results = pd.DataFrame(results)
-
-    # Constant series (all levels ≈ 100%) → not informative
-    mask_lossy = ~((results["qL"] > 1 - TOL) &
-                   (results["qF"] > 1 - TOL) &
-                   (results["qH"] > 1 - TOL))
-    lossy = results[mask_lossy]
-
-    L, F, H = lossy["qL"].values, lossy["qF"].values, lossy["qH"].values
-
-    # Monotone (non-strict): L >= F >= H
-    monotone  = (L >= F - TOL) & (F >= H - TOL)
-    # Three-way tie: L ≈ F ≈ H (degenerate case — excluded from primary count)
-    tie3      = (np.abs(L - F) <= TOL) & (np.abs(F - H) <= TOL)
-    # Primary count: monotone AND H strictly below L (= monotone AND NOT tie3)
-    mono_hl   = monotone & (L > H + TOL)   # L≥F≥H AND H<L strictly
-    # Full reversal: L>=F>=H fails
-    reversal  = ~monotone
-
-    n = len(lossy)
-    k = int(mono_hl.sum())   # 85 in combined dataset
-
-    # n_distinct per instance (for Poisson-binomial)
-    # tie in pair (L,F), (F,H), or (L,H)
-    n_tie_pairs = ((np.abs(L-F) <= TOL).astype(int) +
-                   (np.abs(F-H) <= TOL).astype(int) +
-                   (np.abs(L-H) <= TOL).astype(int))
-    n_distinct = np.clip(3 - n_tie_pairs, 1, 3)
-
-    # Poisson-binomial: correct null for mixed tie patterns
-    # p_i = 1/6 (3 distinct), 1/3 (1 pair tied, since P(L>=F>=H AND H<L | {a,a,b}) = 1/3),
-    # 0 (three-way tie: H=L so H<L impossible)
-    pi = np.where(n_distinct == 3, 1/6, np.where(n_distinct == 2, 1/3, 0.0))
-    pmf = np.array([1.0])
-    for p_i in pi:
-        pmf = np.convolve(pmf, [1 - p_i, p_i])
-    p_poisson = float(pmf[k:].sum())
-    e_null = float(pi.sum())
-
-    # Sensitivity: strictly distinct only (n_distinct=3) vs null=1/6
-    k_strict3 = int(((n_distinct == 3) & mono_hl).sum())
-
-    return {
-        "LossyN": n,
-        "Strict": k,                         # L>=F>=H AND H<L (conservative primary, 85)
-        "Ties": int(tie3.sum()),              # three-way ties
-        "Reversal": int(reversal.sum()),      # L>=F>=H fails
-        "NDistinct3": int((n_distinct==3).sum()),
-        "NDistinct2": int((n_distinct==2).sum()),
-        "StrictOnly": k_strict3,             # sensitivity: n_distinct=3 AND success
-        "ExpNull": e_null,                   # E[successes] under Poisson-binomial null
-        "P": p_poisson,                      # Poisson-binomial p-value (one-sided)
-    }
-
-
-def p3_stats(df):
-    """P3: Q2(V_inf_F) <= Q2(W_inf_F) (pre-registered criterion)."""
-    results = []
-    for rep in df["inst_id"].unique():
-        v = df[(df["inst_id"] == rep) & (df["cell"] == "V_inf_F")]["q2"].mean()
-        w = df[(df["inst_id"] == rep) & (df["cell"] == "W_inf_F")]["q2"].mean()
-        diff = v - w
-        results.append({
-            "prereg": diff <= TOL,
-            "strict": diff < -TOL,
-            "rev":    diff >  TOL,
-        })
-    results = pd.DataFrame(results)
-    n_prereg = int(results["prereg"].sum())
-    n_denom  = len(results)
-    n_inf = int((results["strict"] | results["rev"]).sum())
-    n_strict_inf = int(results["strict"].sum())
-    pval = binomtest(n_strict_inf, n_inf, 0.5, alternative="greater").pvalue if n_inf > 0 else float("nan")
-    return {
-        "PreregN": n_prereg,
-        "PreregDenom": n_denom,
-        "InfStrict": n_strict_inf,
-        "InfDenom": n_inf,
-        "P": pval,
-    }
-
-
-def p4_stats(df):
-    """P4: Q2(W_inf_F) vs Q2(W_def_F) — two-sided binomial."""
-    results = []
-    for rep in df["inst_id"].unique():
-        inf_q = df[(df["inst_id"] == rep) & (df["cell"] == "W_inf_F")]["q2"].mean()
-        def_q = df[(df["inst_id"] == rep) & (df["cell"] == "W_def_F")]["q2"].mean()
-        diff = inf_q - def_q
-        results.append({
-            "strict_inf_lt_def": diff < -TOL,   # inf < def: prediction direction
-            "strict_def_lt_inf": diff >  TOL,   # deflate costs more: opposite direction
-            "tied": abs(diff) <= TOL,
-        })
-    results = pd.DataFrame(results)
-    n_defl = int(results["strict_def_lt_inf"].sum())   # deflate > inflate
-    n_infl = int(results["strict_inf_lt_def"].sum())   # inflate > deflate (prediction)
-    n_tied = int(results["tied"].sum())
-    n_nontied = n_defl + n_infl
-    pval = binomtest(n_defl, n_nontied, 0.5, alternative="two-sided").pvalue
-    return {
-        "Defl": n_defl,
-        "Infl": n_infl,
-        "NonTied": n_nontied,
-        "Tied": n_tied,
-        "P": pval,
-    }
-
-
-# ── Compute all stats ─────────────────────────────────────────────────────────
-
-def compute_all_stats(df):
-    """Compute P1-P4 stats per family and combined (All)."""
-    S = {}
-    # Combined first
-    S["All"] = {
-        "P1": p1_stats(df),
-        "P2": p2_stats(df),
-        "P3": p3_stats(df),
-        "P4": p4_stats(df),
-    }
-    # Per family
-    for fam in FAMILIES:
-        suf = FAM_SUFFIX[fam]
-        sub = df[df["family"] == fam]
-        S[suf] = {
-            "P1": p1_stats(sub),
-            "P2": p2_stats(sub),
-            "P3": p3_stats(sub),
-            "P4": p4_stats(sub),
-        }
-    return S
-
-
-# ── Regression invariants ─────────────────────────────────────────────────────
-
-def check_invariants(S):
-    """Assertions against previously computed values (TASKS.md / corpus)."""
-    A = S["All"]
-    # P1
-    assert A["P1"]["Hits"] == A["P1"]["Total"], "P1: some draws failed"
-    # P2 conservative
-    p2 = A["P2"]
-    assert (p2["Strict"], p2["Ties"], p2["Reversal"], p2["LossyN"]) == (85, 2, 1, 88), \
-        f"P2 regression: {p2}"
-    assert (p2["NDistinct3"], p2["NDistinct2"]) == (52, 34), \
-        f"P2 n_distinct regression: {p2}"
-    assert p2["StrictOnly"] == 52, f"P2 StrictOnly: {p2['StrictOnly']}"
-    assert abs(p2["ExpNull"] - 20.0) < 0.1, f"P2 ExpNull: {p2['ExpNull']}"
-    assert p2["P"] < 0.001, f"P2 Poisson-binomial p-value too large: {p2['P']}"
-    # P4
-    p4 = A["P4"]
-    assert (p4["Defl"], p4["NonTied"], p4["Tied"]) == (53, 87, 33), \
-        f"P4 regression: {p4}"
-    assert abs(p4["P"] - 0.053003) < 5e-6, f"P4 p-value: {p4['P']}"
-    # Family sums must equal All
-    for blk in ("P2", "P4"):
-        for key in ["Strict", "Ties", "Reversal", "LossyN"] if blk == "P2" \
-                   else ["Defl", "Infl", "NonTied", "Tied"]:
-            total_fam = sum(S[FAM_SUFFIX[f]][blk][key] for f in FAMILIES)
-            assert total_fam == A[blk][key], \
-                f"Family sum mismatch {blk}.{key}: {total_fam} vs {A[blk][key]}"
-    print("  Invariants: OK")
 
 
 # ── Write macros_e6.tex ──────────────────────────────────────────────────────
@@ -286,19 +102,20 @@ def write_macros(S, sha, commit):
     lines.append("")
 
     # ── P2 ──────────────────────────────────────────────────────────────────
-    lines.append("% ── P2 (conservative: 3-way ties counted as failures) ───────────────")
+    lines.append("% ── P2 (conservative; Poisson-binomial null) ───────────────────────")
     lines.append("% denominator = instances with loss>0 at some TV_W level (L/F/H)")
-    lines.append("% primary count = L>=F>=H AND H<L strictly (= monotone excl. 3-way ties)")
-    lines.append("% null = 1/6: random ordering of 3 distinct values")
+    lines.append("% primary count = L>=F>=H AND H<L (= monotone excl. 3-way ties)")
+    lines.append("% null: p_i=1/6 (n_distinct=3), 1/3 (n_distinct=2), 0 (n_distinct=1)")
     for suf in [FAM_SUFFIX[f] for f in FAMILIES] + ["All"]:
         p2 = S[suf]["P2"]
-        sfx = suf
-        m(f"EsixPtwoLossyN{sfx}",   str(p2["LossyN"]),   "instances with any loss")
-        m(f"EsixPtwoStrict{sfx}",   str(p2["Strict"]),   "L>=F>=H AND H<L (monotone excl. 3-way ties)")
-        m(f"EsixPtwoTies{sfx}",     str(p2["Ties"]),     "3-way ties L=F=H (counted as failures)")
-        m(f"EsixPtwoReversal{sfx}", str(p2["Reversal"]), "L>=F>=H fails")
-        m(f"EsixPtwoStrictOnly{sfx}", str(p2["StrictOnly"]), "sensitivity: n_distinct=3 AND L>=F>=H AND H<L")
-        m(f"EsixPtwoP{sfx}",        fmt_p(p2["P"]),      "Poisson-binomial one-sided (mixed p_i=1/6 or 1/3)")
+        m(f"EsixPtwoLossyN{suf}",   str(p2["LossyN"]),    "instances with any loss")
+        m(f"EsixPtwoStrict{suf}",   str(p2["Strict"]),    "L>=F>=H AND H<L (monotone excl. 3-way ties)")
+        m(f"EsixPtwoTies{suf}",     str(p2["Ties"]),      "3-way ties L=F=H (counted as failures)")
+        m(f"EsixPtwoReversal{suf}", str(p2["Reversal"]),  "L>=F>=H fails")
+        m(f"EsixPtwoStrictOnly{suf}", str(p2["StrictOnly"]),
+          "sensitivity: n_distinct=3 AND L>=F>=H AND H<L")
+        m(f"EsixPtwoP{suf}",        fmt_p(p2["P"]),
+          "Poisson-binomial one-sided (mixed p_i=1/6 or 1/3)")
         lines.append("")
 
     # ── P3 ──────────────────────────────────────────────────────────────────
@@ -306,12 +123,11 @@ def write_macros(S, sha, commit):
     lines.append("% pre-registered: V_inf_F <= W_inf_F (TV_B agrava perda)")
     for suf in [FAM_SUFFIX[f] for f in FAMILIES] + ["All"]:
         p3 = S[suf]["P3"]
-        sfx = suf
-        m(f"EsixPthreePreregN{sfx}",    str(p3["PreregN"]),    "instances meeting pre-registered criterion V<=W")
-        m(f"EsixPthreeDenom{sfx}",      str(p3["PreregDenom"]), "total instances tested (30 or 120)")
-        m(f"EsixPthreeInfStrict{sfx}",  str(p3["InfStrict"]),  "informative strict V<W")
-        m(f"EsixPthreeInfDenom{sfx}",   str(p3["InfDenom"]),   "informative denominator")
-        m(f"EsixPthreeP{sfx}",          fmt_p(p3["P"]),         "one-sided binomial p (informative)")
+        m(f"EsixPthreePreregN{suf}",    str(p3["PreregN"]),     "instances meeting pre-registered criterion V<=W")
+        m(f"EsixPthreeDenom{suf}",      str(p3["PreregDenom"]), "total instances tested (30 or 120)")
+        m(f"EsixPthreeInfStrict{suf}",  str(p3["InfStrict"]),   "informative strict V<W")
+        m(f"EsixPthreeInfDenom{suf}",   str(p3["InfDenom"]),    "informative denominator")
+        m(f"EsixPthreeP{suf}",          fmt_p(p3["P"]),          "one-sided binomial p (informative)")
         lines.append("")
 
     # ── P4 ──────────────────────────────────────────────────────────────────
@@ -319,13 +135,12 @@ def write_macros(S, sha, commit):
     lines.append("% deflate > inflate is the OPPOSITE of the prediction (DEV-E6-003)")
     for suf in [FAM_SUFFIX[f] for f in FAMILIES] + ["All"]:
         p4 = S[suf]["P4"]
-        sfx = suf
         note_p = "two-sided binomial" + (", post hoc pooling (DEV-E6-003)" if suf == "All" else "")
-        m(f"EsixPfourDefl{sfx}",     str(p4["Defl"]),     "deflate>inflate strictly (OPPOSITE of prediction)")
-        m(f"EsixPfourInfl{sfx}",     str(p4["Infl"]),     "inflate>deflate strictly (prediction direction)")
-        m(f"EsixPfourNonTied{sfx}",  str(p4["NonTied"]),  "non-tied pairs (denominator for binomtest)")
-        m(f"EsixPfourTied{sfx}",     str(p4["Tied"]),     "tied pairs (excluded from binomtest)")
-        m(f"EsixPfourP{sfx}",        fmt_p(p4["P"]),      note_p)
+        m(f"EsixPfourDefl{suf}",    str(p4["Defl"]),    "deflate>inflate strictly (OPPOSITE of prediction)")
+        m(f"EsixPfourInfl{suf}",    str(p4["Infl"]),    "inflate>deflate strictly (prediction direction)")
+        m(f"EsixPfourNonTied{suf}", str(p4["NonTied"]), "non-tied pairs (denominator for binomtest)")
+        m(f"EsixPfourTied{suf}",    str(p4["Tied"]),    "tied pairs (excluded from binomtest)")
+        m(f"EsixPfourP{suf}",       fmt_p(p4["P"]),     note_p)
         lines.append("")
 
     OUT_TEX.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -348,7 +163,6 @@ def main():
     check_invariants(S)
     write_macros(S, sha, commit)
 
-    # Write JSON for verify_macros_permanent.py
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     json.dump({"sha256": sha, "commit": commit,
                "stats": {k: {kk: {kkk: float(vvv) if isinstance(vvv, float) else vvv
@@ -358,15 +172,14 @@ def main():
               open(OUT_JSON, "w"), indent=2)
     print(f"  Written: {OUT_JSON}")
 
-    # Print summary (from data, not hardcoded)
     A = S["All"]
     print()
     print("SUMMARY:")
     print(f"  P1: {A['P1']['Hits']}/{A['P1']['Total']} draws ({A['P1']['Hits']/A['P1']['Total']:.0%})")
     p2 = A["P2"]
-    print(f"  P2: {p2['Strict']}/{p2['LossyN']} strict L>F>H "
+    print(f"  P2: {p2['Strict']}/{p2['LossyN']} L>=F>=H AND H<L "
           f"({p2['Ties']} 3-way ties, {p2['Reversal']} reversal)  "
-          f"{fmt_p(p2['P'])} (null=1/6)")
+          f"{fmt_p(p2['P'])} (Poisson-binomial)")
     p4 = A["P4"]
     print(f"  P4: {p4['Defl']}/{p4['NonTied']} deflate>inflate "
           f"({p4['Tied']} tied)  {fmt_p(p4['P'])} two-sided")

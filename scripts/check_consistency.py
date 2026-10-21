@@ -439,6 +439,10 @@ BAD_PHRASES = [
      "DEV-E4-009: directional asymmetry not recomputed — cannot claim it survives"),
     ("P\\_E4\\_5 being falsified",
      "DEV-E4-009: P_E4_5 result was from inconsistent pipeline — remove"),
+    # F8 forbidden value: 89.4 was the buggy result (double-normalisation, commit 9cdceb4).
+    # Corrected value: 100.0 (commit 43b8427). If 89.4 appears in text, a stale paste happened.
+    ("89.4",
+     "F8 stale value: 89.4% was from buggy injection approach (9cdceb4); correct is 100.0 (43b8427)"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
