@@ -293,9 +293,21 @@ Resultados guardados em `results/f8/f8_per_draw.csv` e `results/f8/f8_run_curren
 - Commit `4d0a98d`: fix para direct vec objectives; mini-run: 100%
 - Commit `43b8427`: full run N=500 → 100.0% confirmado; macros corrigidos
 
-### Scorer (passo 2)
+### Scorer equivalence (passo 2, 2026-10-21)
 
-`compute_f8_circularity.py` usa `_build_decision_matrix` de mcdm_experiment.py (canonical). Aspect encoding: binário leeward=[90,180]→c=0, igual ao canonical. Sem cópia local do scorer. O alinhamento é verificado automaticamente antes do Monte Carlo (`score_sign` check).
+`mm_saw`: diff = 0.00e+00 — IDÊNTICO entre F8 e scoring.py. `vec_saw`: divergência de 9.23e-02 esperada por design inicial (F8 usava L2(X_adj) vs scoring.py usa L2(X_via)).
+
+**Fix (commit 4d01e06):** F8 corrigido para usar L2(X_via) = convenção do artigo (rho_j = 1/||X_via||, confirmado: perm=0.583, aspect=0.103, urban=0.107). TV_vec = 0.311 ≈ macro TVvec=0.315.
+
+Diferença F8 vs artigo era APENAS em critérios COST (perm, slope, roads). INV, BENEFIT e aspect: idênticos. A versão anterior tinha rho_perm=0.052 vs artigo 0.583 (factor 11×). TV_vec(F8 antigo) = 0.184 vs artigo 0.311.
+
+**Nova corrida com vec corrigido (v2, Athena, commit 4d01e06):** resultados IDÊNTICOS à corrida anterior:
+- mm/opt: 94.4% SE=1.03 (472/500 on frontier)
+- mm/grd: 72.4% SE=2.00 (362/500)
+- vec/opt: 100.0% (500/500) ← Theorem 1 confirmado
+- vec/grd: 100.0% (500/500)
+
+A robustez do 94.4% ao vec é explicável: a mudança afecta só os critérios G1 (COST), que têm influência limitada na fronteira 3D. A conclusão qualitativa da §5.4 não muda. Os macros \FEightMMOptQ{94.4} etc. estão correctos para AMBAS as versões.
 
 ### Pendente (passo 5)
 
