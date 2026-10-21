@@ -31,47 +31,73 @@ def check(name, computed, expected, tol=TOL):
     print(f"  [{status}] {name}: {computed:.4f} (expected {expected:.4f}, |diff|={diff:.4f})")
 
 
-# ── 0. macros.tex: TVBvec and TVWvec ────────────────────────────────────────
-print("=== macros.tex: TV decomposition ===")
-macros_path = ROOT / "macros.tex"
-if macros_path.exists():
-    macros_text = macros_path.read_text(encoding="utf-8")
-    def read_macro(name):
-        m = re.search(rf'\\newcommand{{\\{name}}}{{([0-9.]+)}}', macros_text)
+# ── 0. macros_amplitudes.tex vs amplitudes.json ─────────────────────────────
+print("=== macros_amplitudes.tex vs amplitudes.json ===")
+amp_json_path = RESULTS / "amplitudes" / "amplitudes.json"
+macros_amp_path = ROOT / "macros_amplitudes.tex"
+
+if amp_json_path.exists() and macros_amp_path.exists():
+    import json as _json
+    amp = _json.loads(amp_json_path.read_text(encoding="utf-8"))
+    amp_tex = macros_amp_path.read_text(encoding="utf-8")
+
+    def read_amp_macro(name):
+        m = re.search(rf'\\newcommand\{{\\{name}\}}\{{([0-9.]+)\}}', amp_tex)
         return float(m.group(1)) if m else None
 
-    TVBvec = read_macro("TVBvec")
-    TVWvec = read_macro("TVWvec")
-    TValphaTwo = read_macro("TValphaTwo")
-    DeltaTValphaTwo = read_macro("DeltaTValphaTwo")
+    # Validate key macros against amplitudes.json (tolerances account for rounding)
+    AMP_CHECKS = [
+        ("TVvec",          amp["TV_vec"],         0.001),
+        ("TVBvec",         amp["TV_B"],            0.001),
+        ("TVWvec",         amp["TV_W"],            0.001),
+        ("TValphaTwo",     amp["TV_alpha2"],        0.001),
+        ("DeltaTValphaTwo", amp["DeltaTV_alpha2"],  0.001),
+        ("TValphaTwoMM",   amp["TV_alpha2_mm"],     0.001),
+        ("PermInflation",  amp["perm_inflation"],   0.01),
+        ("IntraGperm",     amp["IntraGperm"],       0.01),
+        ("slopeOpt",       abs(amp["slope_opt"]),   0.1),
+        ("RhoPerm",        amp["rho_perm"],         0.001),
+        ("RhoPermInverted", amp["rho_perm_inv"],    0.001),
+        ("RhoAspect",      amp["rho_aspect"],       0.001),
+        ("RhoAspectFlipped", amp["rho_asp_flip"],   0.001),
+    ]
+    for macro_name, expected, tol in AMP_CHECKS:
+        val = read_amp_macro(macro_name)
+        if val is None:
+            FAIL.append(f"{macro_name} not found in macros_amplitudes.tex")
+            print(f"  [FAIL] {macro_name} not found in macros_amplitudes.tex")
+        else:
+            check(f"{macro_name} vs amplitudes.json", val, expected, tol=tol)
+else:
+    if not amp_json_path.exists():
+        FAIL.append("amplitudes.json not found")
+        print("  [FAIL] amplitudes.json not found")
+    if not macros_amp_path.exists():
+        FAIL.append("macros_amplitudes.tex not found")
+        print("  [FAIL] macros_amplitudes.tex not found")
 
-    if TVBvec is not None:
-        check("TVBvec (macros.tex)", TVBvec, 0.248, tol=0.001)
-    else:
-        FAIL.append("TVBvec not found in macros.tex")
-        print("  [FAIL] TVBvec not found in macros.tex")
 
-    if TVWvec is not None:
-        check("TVWvec (macros.tex)", TVWvec, 0.195, tol=0.001)
-    else:
-        FAIL.append("TVWvec not found in macros.tex")
-        print("  [FAIL] TVWvec not found in macros.tex")
 
-    if TValphaTwo is not None:
-        check("TValphaTwo (macros.tex)", TValphaTwo, 0.673, tol=0.001)
+# -- 0b. macros.tex: TVrnk (orphan macro, stays in macros.tex) --
+# Note: TVBvec, TVWvec, TValphaTwo, DeltaTValphaTwo are now in macros_amplitudes.tex
+# and validated by block 0 above against amplitudes.json.
+print()
+print("=== macros.tex: TVrnk (orphan macro) ===")
+macros_path = ROOT / "macros.tex"
+if macros_path.exists():
+    macros_text_local = macros_path.read_text(encoding="utf-8")
+    def read_macro_local(name):
+        m = re.search(rf'\\newcommand{{\\{name}}}{{([0-9.]+)}}', macros_text_local)
+        return float(m.group(1)) if m else None
+    TVrnk_val = read_macro_local("TVrnk")
+    if TVrnk_val is not None:
+        check("TVrnk (macros.tex)", TVrnk_val, 0.091, tol=0.001)
     else:
-        FAIL.append("TValphaTwo not found in macros.tex")
-        print("  [FAIL] TValphaTwo not found in macros.tex")
-
-    if DeltaTValphaTwo is not None:
-        check("DeltaTValphaTwo (macros.tex)", DeltaTValphaTwo, 0.362, tol=0.001)
-    else:
-        FAIL.append("DeltaTValphaTwo not found in macros.tex")
-        print("  [FAIL] DeltaTValphaTwo not found in macros.tex")
+        FAIL.append("TVrnk not found in macros.tex")
+        print("  [FAIL] TVrnk not found in macros.tex")
 else:
     FAIL.append("macros.tex not found")
     print("  [FAIL] macros.tex not found")
-
 
 # ── 1. tab:tvorder — Marco A values ─────────────────────────────────────────
 print()
@@ -656,3 +682,58 @@ if FAIL:
     sys.exit(1)
 else:
     print(f"ALL CHECKS PASSED (0 failures)")
+
+
+# ── Regression tests for rules that were relaxed ────────────────────────────
+# Verify that narrowed rules still catch their original targets (MUST_FAIL)
+# and do not flag legitimate cases (MUST_PASS).
+print()
+print("=== Rule regression tests ===")
+
+_MUST_FAIL = [
+    ("& 0.135 & 0.995", "Tab2 stale rho_raw slope"),
+    ("& 0.126 & 0.995", "Tab2 stale rho_raw coast"),
+    ("& 0.081 & 0.995", "Tab2 stale rho_raw wells"),
+    ("& 0.086 & 0.995", "Tab2 stale rho_raw aero"),
+    ("& 0.590 & $+0.279$", "tab:exponent wrong def-(i) values"),
+    ("& 0.675 & $+0.360$", "tab:exponent rho_raw values"),
+    ("89.4", "F8 stale buggy value"),
+    ("affine function of the objectives",
+     "BAD_PHRASES: score is affine in partial values not objectives"),
+    ("re-weighting alone predicts",
+     "removed in B2"),
+]
+
+_MUST_PASS = [
+    ("continuous aspect coding lies outside Theorem 1",
+     "rem:nonmonotone legitimate remark"),
+    ("Source study & --- & ", "table cell --- notation"),
+    ("rem:nonmonotone. continuous coding also introduces",
+     "remark about nonmonotone is legitimate"),
+]
+
+_reg_fail = []
+
+for snippet, label in _MUST_FAIL:
+    triggered = any(phrase in snippet for phrase, _ in BAD_PHRASES)
+    if triggered:
+        print(f"  [OK  ] MUST_FAIL: {label}")
+    else:
+        _reg_fail.append(f"MUST_FAIL not triggered: {label}")
+        print(f"  [FAIL] MUST_FAIL not triggered: {label}")
+
+for snippet, label in _MUST_PASS:
+    triggered = any(phrase in snippet for phrase, _ in BAD_PHRASES)
+    if not triggered:
+        print(f"  [OK  ] MUST_PASS: {label}")
+    else:
+        _reg_fail.append(f"MUST_PASS incorrectly triggered: {label}")
+        print(f"  [FAIL] MUST_PASS incorrectly triggered: {label}")
+
+if _reg_fail:
+    print(f"\nRule regression failures: {len(_reg_fail)}")
+    for f in _reg_fail:
+        print(f"  x {f}")
+    sys.exit(1)
+else:
+    print(f"  All {len(_MUST_FAIL)+len(_MUST_PASS)} regression cases correct")

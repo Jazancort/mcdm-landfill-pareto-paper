@@ -23,8 +23,14 @@
   "urban_inflation": 0.5255,
   "aspect_inflation": 0.5071,
   "IntraGperm": 1.5566,
-  "RhoShiftMaxPct": 0.0,
-  "RhoShiftMaxCrit": "wells",
+  "RhoShiftMaxPct": 4.13,
+  "RhoShiftMaxCrit": "coast",
   "TV_alpha2": 0.673122,
-  "DeltaTV_alpha2": 0.361781
+  "DeltaTV_alpha2": 0.361781,
+  "TV_alpha2_mm": 0.159906,
+  "slope_opt": -139.5,
+  "rho_perm": 0.582735,
+  "rho_perm_inv": 0.05153,
+  "rho_aspect": 0.103142,
+  "rho_asp_flip": 0.058222
 }
