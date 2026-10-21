@@ -376,6 +376,11 @@ FORBIDDEN_MACROS = [
     # which was an artefact of inconsistent aspect coding (DEV-E4-007).
     r"\MismatchRatioHi", r"\MismatchRatioLo",
     r"\MechOnePredAdmiss", r"\MechOneShare",
+    # Renamed 2026-10-xx: EsixPtwoStrict → EsixPtwoMono (key "Strict" → "Mono" in e6_stats.py).
+    # If \EsixPtwoStrict appears, a stale version of macros_e6.tex was pasted or
+    # generate_macros_e6.py was not re-run after the rename.
+    r"\EsixPtwoStrictLogn", r"\EsixPtwoStrictBeta",
+    r"\EsixPtwoStrictUnif", r"\EsixPtwoStrictZinf", r"\EsixPtwoStrictAll",
 ]
 if main_tex.exists():
     for macro in FORBIDDEN_MACROS:

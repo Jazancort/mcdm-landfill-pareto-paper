@@ -4,7 +4,7 @@ compute_f8_circularity.py  (F8 — circularidade do benchmark)
 Design (PRESPEC F8):
 
   Questão: a fronteira Pareto é circular relativamente à normalização min-max?
-  
+
   Teste: reconstruir a fronteira com OBJECTIVOS em normalização VECTORIAL.
   Repetir as 4 células SAW × {mm, vec} × {greedy, opt}.
 
@@ -12,10 +12,17 @@ Design (PRESPEC F8):
     SAW/vec/opt com objs vec  → Q2 = 100% (score e objs mesma norm)
     SAW/mm/opt  com objs vec  → Q2 < 100% (score e objs divergem)
 
-  Abordagem: criar df_via_vec com colunas vectorialmente normalizadas,
-  passar ao build_pareto_utils. O compute_objs_f64_vec resultante usa
-  _norm sobre colunas já normalizadas → objectivos consistentes com
-  saw_vec = X_adj_vec @ w.
+  Implementação — normalização vectorial:
+    Objectivos vec usam C_vec_raw[:,j] = mm_norm(x_j) / L2(mm_norm(x_j)).
+    Para colunas COST: mm_norm(x_j) = X_via_raw[:,j], logo
+      C_vec_raw[:,j] = X_via_raw[:,j] / ||X_via_raw[:,j]||_2
+    que é exactamente ρ_j * x_j com ρ_j = 1/||X_via_raw[:,j]||_2 (Tabela 2).
+    Score saw_vec_aligned = -(F1+F2)+F3 usando os mesmos c_j → consistente
+    com os objectivos por construção → Proposição 1 garante vec/opt = 100%.
+
+    Nota: X_adj_vec abaixo (linha "DIAGNOSTIC ONLY") é calculado para
+    documentação mas não é usado no scoring nem nos objectivos.
+    L2_raw ≈ L2_via por construção; a assertiva abaixo confirma isso.
 
 Output: results/f8/f8_circularity.csv
 """
@@ -68,13 +75,12 @@ X_adj_mm = X_via_raw.copy()
 for j, b in enumerate(benefit_flags):
     if not b:
         X_adj_mm[:, j] = 1.0 - X_via_raw[:, j]
-# X_adj_vec: vector-normalised benefit score.
-# FIX (2026-10-21): use L2 of the COST-ORIENTED column X_via_raw (same as scoring.py
-# and the article's formula rho_j = range/||x_j||_2 with x_j cost-oriented).
-# Previous version used L2(X_adj_mm), which diverges for COST criteria (perm 11x).
-# Using L2(X_via_raw): TV_vec = 0.311 matches article macro TVvec=0.315; rho_perm=0.583.
+# X_adj_vec: benefit-oriented vec score — DIAGNOSTIC ONLY, not used in scoring or objectives.
+# The scoring uses C_score_vec (below), which is built from C_vec_raw with L2_raw.
+# For COST columns: L2_raw[j] = L2(X_via_raw[:,j]) = L2_via[j], so the score
+# is rank-equivalent to X_adj_mm / L2_via (benefit orientation, same ranking).
 L2_via = np.maximum(np.sqrt((X_via_raw**2).sum(0)), 1e-12)   # = norms_via in scoring.py
-X_adj_vec = X_adj_mm / L2_via
+X_adj_vec = X_adj_mm / L2_via   # diagnostic only
 print(f"Score matrices ready  t={time.time()-t0:.1f}s", flush=True)
 
 # ── Vector objectives — direct computation (no injection) ────────────────────
@@ -202,6 +208,19 @@ for j, k in enumerate(col_names):
         c = _mm_norm(x, x)
     L2_raw[j] = max(np.sqrt((c**2).sum()), 1e-12)
     C_vec_raw[:, j] = c / L2_raw[j]  # vec-normalised
+
+# Confirm L2_raw ≈ L2_via for all non-aspect columns.
+# For COST/INV/benefit: c = _mm_norm(x,x) = X_via_raw[:,j], so L2_raw[j] = L2_via[j].
+# aspect uses binary encoding {0,1}: L2 differs from X_via_raw[:,aspect] by design.
+# This assertion guarantees C_vec_raw uses the article formula ρ_j=1/||X_via_raw[:,j]||.
+_asp_idx = col_names.index("aspect")
+_L2_raw_noasp = np.delete(L2_raw, _asp_idx)
+_L2_via_noasp = np.delete(L2_via, _asp_idx)
+assert np.allclose(_L2_raw_noasp, _L2_via_noasp, rtol=1e-8), (
+    f"L2_raw ≠ L2_via for non-aspect cols: "
+    f"max_rel_diff={np.max(np.abs(_L2_raw_noasp-_L2_via_noasp)/_L2_via_noasp):.2e}"
+)
+print("  L2_raw ~= L2_via (10/11 non-aspect cols): OK  C_vec_raw uses article rho_j formula")
 
 # Now C_vec_raw[:,j] is vec-normalised raw (before benefit flip).
 # For score saw_vec: X_adj_mm[:,j] = raw or (1-raw), then /L2_mm.

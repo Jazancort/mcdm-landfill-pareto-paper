@@ -109,7 +109,7 @@ def write_macros(S, sha, commit):
     for suf in [FAM_SUFFIX[f] for f in FAMILIES] + ["All"]:
         p2 = S[suf]["P2"]
         m(f"EsixPtwoLossyN{suf}",   str(p2["LossyN"]),    "instances with any loss")
-        m(f"EsixPtwoStrict{suf}",   str(p2["Strict"]),    "L>=F>=H AND H<L (monotone excl. 3-way ties)")
+        m(f"EsixPtwoMono{suf}",     str(p2["Mono"]),      "L>=F>=H AND H<L (monotone excl. 3-way ties)")
         m(f"EsixPtwoTies{suf}",     str(p2["Ties"]),      "3-way ties L=F=H (counted as failures)")
         m(f"EsixPtwoReversal{suf}", str(p2["Reversal"]),  "L>=F>=H fails")
         m(f"EsixPtwoStrictOnly{suf}", str(p2["StrictOnly"]),
@@ -177,7 +177,7 @@ def main():
     print("SUMMARY:")
     print(f"  P1: {A['P1']['Hits']}/{A['P1']['Total']} draws ({A['P1']['Hits']/A['P1']['Total']:.0%})")
     p2 = A["P2"]
-    print(f"  P2: {p2['Strict']}/{p2['LossyN']} L>=F>=H AND H<L "
+    print(f"  P2: {p2['Mono']}/{p2['LossyN']} L>=F>=H AND H<L "
           f"({p2['Ties']} 3-way ties, {p2['Reversal']} reversal)  "
           f"{fmt_p(p2['P'])} (Poisson-binomial)")
     p4 = A["P4"]

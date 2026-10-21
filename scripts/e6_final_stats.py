@@ -255,29 +255,47 @@ df_cs = pd.read_csv(ROOT_CS / "results" / "e6" / "e6_raw_prespec.csv")
 S_canon = compute_all_stats(df_cs, FAMILIES_E6)
 check_invariants(S_canon)
 
-# Compare P2 Strict count (L>=F>=H AND H<L) with this script's n_HL_strict
+# ── Count check: Mono (L>=F>=H AND H<L) ─────────────────────────────────────
 p2_combined = S_canon["All"]["P2"]
-p2_strict_canon = p2_combined["Strict"]
-# Sum n_HL_strict from p2_rows
+p2_mono_canon = p2_combined["Mono"]          # canonical key (renamed from "Strict")
 n_HL_strict_sum = sum(r["n_HL_strict"] for r in p2_rows)
-print(f"  P2 Strict (e6_stats):   {p2_strict_canon}")
+print(f"  P2 Mono  (e6_stats):      {p2_mono_canon}")
 print(f"  n_HL_strict (this script): {n_HL_strict_sum}")
-if p2_strict_canon == n_HL_strict_sum:
-    print("  P2 Strict count: MATCH")
-else:
-    print(f"  WARNING: P2 Strict count MISMATCH: {p2_strict_canon} vs {n_HL_strict_sum}")
+if p2_mono_canon != n_HL_strict_sum:
+    raise AssertionError(f"P2 Mono count MISMATCH: {p2_mono_canon} vs {n_HL_strict_sum}")
+print("  P2 Mono count: MATCH")
 
-# Compare P4 combined Defl
+# ── Count check: P4 Defl ─────────────────────────────────────────────────────
 p4_combined = S_canon["All"]["P4"]
 p4_defl_canon = p4_combined["Defl"]
-p4_defl_script = total_rev   # from P4 section above
-print(f"  P4 Defl (e6_stats):   {p4_defl_canon}")
+p4_defl_script = total_rev
+print(f"  P4 Defl (e6_stats):    {p4_defl_canon}")
 print(f"  P4 Defl (this script): {p4_defl_script}")
-if p4_defl_canon == p4_defl_script:
-    print("  P4 Defl count: MATCH")
-else:
-    print(f"  WARNING: P4 Defl count MISMATCH: {p4_defl_canon} vs {p4_defl_script}")
+if p4_defl_canon != p4_defl_script:
+    raise AssertionError(f"P4 Defl count MISMATCH: {p4_defl_canon} vs {p4_defl_script}")
+print("  P4 Defl count: MATCH")
 
-print(f"\n  P2 Poisson-binomial p (e6_stats): {p2_combined['P']:.2e}  [vs binomial(0.5) in print above]")
-print(f"  P4 two-sided p (e6_stats):        {p4_combined['P']:.6f}")
-print("Cross-check DONE. If no WARNING above, counts are consistent.")
+# ── p-value check: canonical values must be used for manuscript ──────────────
+# IMPORTANT: the per-family P2 loop above uses binomial(0.5) which is anti-conservative
+# (E[successes]=14.7 vs correct 20.0 under Poisson-binomial).
+# The canonical Poisson-binomial p-value is in e6_stats; it MUST be used in §7.8.
+# The local binomtest values are for per-family breakdown ONLY.
+p2_pb_p  = p2_combined["P"]
+p4_bs_p  = p4_combined["P"]
+print(f"\n  P2 Poisson-binomial p (CANONICAL, use in §7.8): {p2_pb_p:.2e}")
+print(f"  P4 two-sided binomial p (CANONICAL):             {p4_bs_p:.6f}")
+print(f"  [Per-family P2 p-values above use binomial(0.5) — breakdown only, NOT for manuscript]")
+
+# Guard: Poisson-binomial p must be SMALLER than binomial(0.5) p for P2.
+# Reason: PB null expects ~20 successes; binom(0.5) expects 44. Observing 85
+# is far more surprising under PB → p_PB << p_binom. If this inverts, the
+# null model or counts changed in an unexpected way.
+p2_binom_combined = binomtest(n_HL_strict_sum,
+                              p2_combined["LossyN"], 0.5,
+                              alternative="greater").pvalue
+assert p2_pb_p < p2_binom_combined, (
+    f"Unexpected: Poisson-binomial p={p2_pb_p:.2e} >= binomial(0.5) p={p2_binom_combined:.2e}. "
+    f"PB null expects ~20 successes vs binom(0.5) ~44; 85 observed should give p_PB << p_binom."
+)
+print(f"  Null model guard: p_PB={p2_pb_p:.2e} < p_binom(0.5)={p2_binom_combined:.2e} OK")
+print("Cross-check PASSED.")

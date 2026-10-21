@@ -194,7 +194,7 @@ Resultados (compute_e6_macro_stats, Poisson-binomial confirmado 2026-10-21):
 
 Ambos p < 0.001. A conclusão não muda; a nula declarada passa a ser correcta.
 
-Macros adicionados: `\EsixPtwoStrictOnly{fam}` (52 all) e `\EsixPtwoPAll` (Poisson-binomial).
+Macros adicionados: `\EsixPtwoMono{fam}` (85 all, renomeado de Strict), `\EsixPtwoStrictOnly{fam}` (52 all) e `\EsixPtwoPAll` (Poisson-binomial). `\EsixPtwoStrict` é proibido em check_consistency.py.
 
 ### Consequências para main.tex
 
@@ -308,6 +308,17 @@ Diferença F8 vs artigo era APENAS em critérios COST (perm, slope, roads). INV,
 - vec/grd: 100.0% (500/500)
 
 A robustez do 94.4% ao vec é explicável: a mudança afecta só os critérios G1 (COST), que têm influência limitada na fronteira 3D. A conclusão qualitativa da §5.4 não muda. Os macros \FEightMMOptQ{94.4} etc. estão correctos para AMBAS as versões.
+
+**Diagnóstico v2 (sessão 2026-10-21):** os resultados idênticos eram suspeitos. Investigação confirmou
+que `X_adj_vec = X_adj_mm / L2_via` (a linha "corrigida" em 4d01e06) era **código morto** — nunca usada
+no scoring nem nos objectivos. O scoring usa `C_score_vec` construído de `C_vec_raw`, onde:
+`C_vec_raw[:,j] = _mm_norm(x_j) / L2(_mm_norm(x_j)) = X_via_raw[:,j] / L2_via[j]` para colunas
+não-aspect. Logo a fórmula correcta (ρ_j = 1/L2_via) estava no código desde o início.
+Assertiva `np.allclose(L2_raw, L2_via)` adicionada ao script para confirmar em tempo de execução.
+`X_adj_vec` marcado como "DIAGNOSTIC ONLY" no docstring. Resultados são genuínos, não de cache.
+
+O TV=0.311 (F8) vs 0.315 (artigo) deve-se à coluna aspect: F8 usa encoding binário {0,1};
+o artigo calcula ρ_j sobre os graus brutos (Fase 1.3, "6.7% discrepância" no DATA_DICTIONARY).
 
 ### Pendente (passo 5)
 

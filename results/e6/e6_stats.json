@@ -1,6 +1,6 @@
 {
   "sha256": "0852bf93e8fc6383b2d1a6cb82195e9643048c90bbeb363c5b524691b81908fe",
-  "commit": "bf75be2",
+  "commit": "51925a4",
   "stats": {
     "All": {
       "P1": {
@@ -9,7 +9,7 @@
       },
       "P2": {
         "LossyN": 88,
-        "Strict": 85,
+        "Mono": 85,
         "Ties": 2,
         "Reversal": 1,
         "NDistinct3": 52,
@@ -40,7 +40,7 @@
       },
       "P2": {
         "LossyN": 20,
-        "Strict": 19,
+        "Mono": 19,
         "Ties": 1,
         "Reversal": 0,
         "NDistinct3": 15,
@@ -71,7 +71,7 @@
       },
       "P2": {
         "LossyN": 18,
-        "Strict": 17,
+        "Mono": 17,
         "Ties": 0,
         "Reversal": 1,
         "NDistinct3": 6,
@@ -102,7 +102,7 @@
       },
       "P2": {
         "LossyN": 22,
-        "Strict": 22,
+        "Mono": 22,
         "Ties": 0,
         "Reversal": 0,
         "NDistinct3": 9,
@@ -133,7 +133,7 @@
       },
       "P2": {
         "LossyN": 28,
-        "Strict": 27,
+        "Mono": 27,
         "Ties": 1,
         "Reversal": 0,
         "NDistinct3": 22,

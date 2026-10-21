@@ -102,7 +102,7 @@ def p2_stats(df: pd.DataFrame) -> dict:
 
     return {
         "LossyN":    len(lossy),
-        "Strict":    k,
+        "Mono":      k,           # L>=F>=H AND H<L (monotone excl. 3-way ties)
         "Ties":      int(tie3.sum()),
         "Reversal":  int(reversal.sum()),
         "NDistinct3": int((n_distinct == 3).sum()),
@@ -200,7 +200,7 @@ def check_invariants(S: dict, n_per_fam: int = 30) -> None:
     A = S["All"]
     assert A["P1"]["Hits"] == A["P1"]["Total"], "P1: some draws failed"
     p2 = A["P2"]
-    assert (p2["Strict"], p2["Ties"], p2["Reversal"], p2["LossyN"]) == (85, 2, 1, 88), \
+    assert (p2["Mono"], p2["Ties"], p2["Reversal"], p2["LossyN"]) == (85, 2, 1, 88), \
         f"P2 regression: {p2}"
     assert (p2["NDistinct3"], p2["NDistinct2"]) == (52, 34), \
         f"P2 n_distinct regression: {p2}"
