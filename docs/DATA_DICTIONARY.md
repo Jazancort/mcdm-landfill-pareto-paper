@@ -3,6 +3,8 @@
 **Status:** Fase 0 — preencher antes da Fase 3 (pipeline de dados abertos)  
 **Fonte primária:** Azancort Neto et al. (2026, IEEE Access), dataset no Zenodo  
 **Ficheiro de dados:** `df_real_data_cached.csv`  
+**SHA-256 (df_real_data_cached.csv):** `234f6e1c2697ea540ed0e0674018e6446e9255b25009167cbb0c19c51311722a`  
+(verificado por `scripts/validate_core.py`, Gate 1, commit b1bae3c)  
 **N candidatos brutos:** 473  
 **N excluídos (dist_protected = 0):** 84  
 **N admissíveis (A'):** 389  

@@ -5,7 +5,10 @@ e6_final_stats.py  --  Estatisticas finais corrigidas para E6 PRESPEC.
 Correccoes em relacao a e6_decompose_ties.py:
   P2: adicionar teste Q2(H) < Q2(L) entre instancias com alguma perda
       (exclui nivel 0 = M para nao confundir com P1)
-  P4: usar teste bilateral; reportar p correcto para zero_inflated (0.092, nao 0.044)
+  P4: usar teste bilateral; reportar p correcto para zero_inflated (0.185, nao 0.092/0.044)
+      Nota: 0.044 nunca existiu como valor commitado; aparece apenas como referencia
+      de correcao neste comentario. P4 zero_inflated: p1=0.956, p2=0.185.
+      Combinado 53/87: p2=0.053 (binomtest(53,87,0.5,two-sided)).
   P3/P4: desvios DEV-E6-001 a DEV-E6-004
 
 Fonte: results/e6/e6_raw_prespec.csv
@@ -232,6 +235,6 @@ P3 (criterio pre-reg PASSOU em 4/4 familias):
 P4 (criterio pre-reg falhou em 4/4 familias):
   Entre instancias informativas, deflate custa mais que inflate na maioria --
   OPOSTO da previsao. Nao significativo a 5% bilateral em nenhuma familia.
-  Combinado post hoc: deflate>inflate em 53/87 (61%), p bilateral=0.043.
+  Combinado post hoc: deflate>inflate em 53/87 (61%), p bilateral=0.053.
   Conclusao: sem suporte para a previsao; tendencia oposta nao conclusiva.
 """)

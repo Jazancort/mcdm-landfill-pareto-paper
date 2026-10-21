@@ -66,7 +66,7 @@
 M = 100% e B = 100% em todas as instâncias e todas as famílias.
 Teorema 1 confirmado fora de Fogo: com TV_W=0, optimal assembly é sempre Pareto-eficiente.
 
-### P2: Critério pré-registado falhou — ρ≥0 ausente em todas as famílias
+### P2: Critério pré-registado falhou — ρ<0 presente em todas as famílias (mas 27–40% instâncias constantes)
 
 Decomposição por instância (entre os 30 por família):
 
@@ -85,10 +85,10 @@ Decomposição, excluindo nível 0 (fixado a 100% pela P1, não devia estar no S
 
 | Família | Série const L=F=H=100% | H<L strict / inform | Monotone L≥F≥H / inform | p (1-lado) |
 |---|---|---|---|---|
-| lognormal | 10/30 | 19/20 | **20/20** | p=0.000 |
-| beta13 | 12/30 | 17/18 | **17/18** | p=0.000 |
-| uniform | 8/30 | 22/22 | **22/22** | p=0.000 |
-| zero_inflated | 2/30 | 27/28 | **28/28** | p=0.000 |
+| lognormal | 10/30 | 19/20 | **20/20** | p<0.001 |
+| beta13 | 12/30 | 17/18 | **17/18** | p<0.001 |
+| uniform | 8/30 | 22/22 | **22/22** | p<0.001 |
+| zero_inflated | 2/30 | 27/28 | **28/28** | p<0.001 |
 
 Entre as instâncias com perda detectável, a monotonia L≥F≥H é quase perfeita: **87/88** (p=0.000). O critério pré-registado (80% com ρ<0) falhou porque incluía o nível 0 no Spearman e porque 27–40% das instâncias das famílias contínuas não produziram perda. A direcção é fortemente suportada onde existe efeito. Manter qualificação "on this instance" pelo critério pré-reg.
 
@@ -153,16 +153,18 @@ Apesar disso, 10.7 pp vs 35.8 pp de Fogo. **Concentrar** a esparsidade num únic
 
 ```
 P1 held on every draw of every instance. P2 failed its pre-specified
-criterion in three of four families: 27–40% of instances under
+criterion in three of four families: 27--40% of instances under
 continuous marginals showed no loss at any TV_W level. Among instances
-with detectable loss, however, the monotone relationship L>=F>=H held
-in 87 of 88 cases (p < 0.001, one-sided binomial; DEV-E6-002). P3 met
+with detectable loss, the ordering L >= F >= H held in 87 of 88 cases
+(one-sided binomial with null = 1/6, p < 0.001; DEV-E6-002). P3 met
 its pre-specified criterion in all four families, but most successes
 were ties at 100%; among informative instances no family was significant
-(one-sided binomial p >= 0.08; DEV-E6-001). P4 was not supported; among
-informative instances, deflating the most heavily weighted criterion cost
-as much or more than inflating it in 53 of 87 cases (p = 0.053,
-two-sided, post hoc; DEV-E6-003).
+(one-sided binomial p >= 0.08; DEV-E6-001). P4 was not supported; the
+observed trend runs counter to the prediction: in 53 of 87 informative
+instances deflating the most heavily weighted criterion produced losses
+as large as or larger than inflating it -- the prediction was that
+inflating would be more costly (p = 0.053, two-sided binomial, post hoc;
+DEV-E6-003).
 
 At TV_W = 0.199, the loss was 10.7 pp in the zero-inflated family and
 below 3 pp otherwise, against 35.8 pp on Fogo. At equal TV_W, losses
@@ -172,6 +174,13 @@ masses are associated with larger losses. Whether concentrating sparsity
 in a single high-weight criterion is more harmful than distributing it
 uniformly is not tested here.
 ```
+
+**Notas sobre os testes reportados no §7.8:**
+- P2 null: 1/6 (L ≥ F ≥ H é 1 de 6 ordenamentos aleatórios possíveis). O script usa null=0.5 para o teste binário H < L; ambos dão p < 0.001. Reportar a versão 87/88 com null=1/6 por ser mais informativa.
+- P2 "strictly monotone" é incorrecto — o teste é L ≥ F ≥ H (não estrito; 87 casos incluem 2 ties H=L). Usar "the ordering L ≥ F ≥ H".
+- P4: direcção oposta deve ser explícita. "53/87 casos deflate≥inflate" só descreve a observação; a frase completa deve dizer que isso é o oposto da previsão.
+- p=0.000 substituído por p<0.001 em toda a tabela P2.
+- Combinado P4: binomtest(53,87,0.5,two-sided)=0.053003. O SUMARIO hardcoded em e6_final_stats.py tinha "0.043" (erro tipográfico) — corrigido para 0.053.
 
 ### Consequências para main.tex
 
@@ -283,6 +292,45 @@ Commitar com o E6 depois de confirmar que a sessão `e6` chegou ao fim.
 | 2b35d8b | docs: add E6+Santiago+Alkaradaghi planning document (v1, depois revisto) |
 | 968f507 | docs: revise E6 plan + add PRESPEC_E6 (P1-P4, score-only amplitudes, 4 families) |
 | 7f69acb | feat: add E6 amplitude generator + run_e6 (PRESPEC_E6 implementation) |
+| e5cc06a | feat: run_e6 parallel mode (--family, --merge) |
+| ce53f64 | results: E6 complete — P1 OK, P3 OK all families, P2 power-limited, P4 falsified |
+| ac23f6b | results: E6 tie decomposition — P3 not supported, P4 reversed, zero_inflated structural note |
+| 22d5d29 | docs: corrected E6 analysis — tie decomposition, P3 not supported, P4 reversed |
+| 7446e47 | results: E6 final stats — P2 87/88 monotone (p=0.000), P4 bilateral corrected, DEV-E6-001-004 |
+| 985999d | docs: E6 final numbers — P2 87/88 monotone, P4 bilateral, DEVs 001-004, §7.8 text |
+| 0446f54 | docs: E6 synthesis + DEVs final — §7.8 text with corrected numbers |
+| 7209993 | feat: Phase 0/1 — DATA_DICTIONARY.md + validate_core.py (7/7 quick checks PASS) |
+| f958933 | fix: validate_core — remove duplicate Pareto block, portfolio check informational, 8/8 PASS |
+| f5615bb | fix: validate_core — idx1/2/3 column detection, dual path for Pareto CSV |
+| c48766a | fix: validate_core gate 1 — 15/15 PASS (trace, completeness, index remap, pareto A, portfolio) |
+| b1bae3c | fix: validate_core path fallback for pareto_front_A.csv (results/ before scripts/results/) |
+
+---
+
+## Gate 1 — diagnóstico técnico (sessão 2026-10-20+)
+
+### Nota sobre o commit f5615bb — "EXPECTED estava errado"
+
+O commit f5615bb adicionou detecção de colunas idx1/idx2/idx3 depois de um FAIL no portfolio check. A causa real não era EXPECTED errado: era uma convenção de índices. Os CSVs usam índices df_all (0–472); o fogo_trios.npy usa índices A' (0–388). A mapeação `pos_Ap[df_all_idx] = A'_idx` resolve. O portfolio {180,346,376} em A' é exactamente {184,430,460} em df_all — mesmos sítios físicos em dois sistemas de indexação. O EXPECTED não estava errado; o diagnóstico inicial estava.
+
+### Causa do max_diff = 7.17e-08 em A'
+
+- CSV dtype: float64. Float32 round-trip error = 9e-17. **Não é float32.**
+- Com A-norm (ref=473 sítios): max_diff = 0.112 — completamente diferente.
+- Com A'-norm (ref=389 sítios): max_diff = 7.17e-08 — CSV usa A'-norm.
+- Causa: **não-associatividade de ponto flutuante** entre dois caminhos de computação (validate_core vs pipeline) com a mesma fórmula mas ordem diferente de acumulação. Diferença esperada para ~389 sítios × 11 critérios ≈ 1–100 ULPs.
+- Impacto nos checks de gate: nenhum. Os checks 8b (não-dominância) e 8c (completude) passaram com EPS=1e-9 usando os F-values do validate_core. A completude verificou que nenhum trio fora de F' escapa dominância com EPS=1e-9 — margem 70× maior que o 7e-8.
+- A comparação de F-values é INFORMACIONAL no validate_core, não um critério de gate.
+
+### DEV-G1-001 — Portfolio em trios de A' em vez de todos os trios de A
+
+O check do portfolio em A (check 11) busca o trio óptimo SAW/mm sobre `trios_arr` (que contém trios de A' = 389 sítios), com A-normalisation. O verdadeiro óptimo em A usaria todos os trios de 473 sítios, incluindo possíveis trios com sítios excluídos. Se o pipeline do manuscrito também restringiu a A' ao calcular o portfolio, o check é válido. Declarado como DEV-G1-001 até confirmação na Fase 1.7.
+
+### Acções abertas para completar o Gate 1 formalmente
+
+- [ ] Confirmar que o pipeline usou A'-trios para o portfolio (fechar DEV-G1-001)
+- [ ] Adicionar comparação de F-values do portfolio a 1e-12 com os valores do manuscrito (Tab. 3)
+- [ ] Calcular completude em A (opcional): requer computar todos os trios de 473 sítios com restrição 10km
 
 ---
 

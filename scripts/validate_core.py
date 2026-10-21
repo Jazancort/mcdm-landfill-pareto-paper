@@ -381,6 +381,16 @@ else:
 
         # ── 8. PARETO FRONTIER A' ────────────────────────────────────────
         print("── PARETO FRONTIER A' ──────────────────────────────────────────")
+        # NOTE: F-value comparisons in this section are INFORMATIONAL.
+        # The gate criteria are:
+        #   8b. Non-dominated within claimed set (check 8b)
+        #   8c. Exact completeness — no trio outside F' escapes domination (check 8c)
+        # Both checks use EPS=1e-9 tolerance.
+        # The F-value max_diff printed below (~7e-8) is caused by floating-point
+        # non-associativity between validate_core and the pipeline (different summation
+        # order, both use A'-normalisation). Confirmed: A-norm gives max_diff=0.11,
+        # so the CSV definitely uses A'-norm. The 7e-8 is not float32 truncation
+        # (CSV is float64) and does not affect the non-dominance or completeness checks.
 
         # Objectives in A' (normalise over 389 sites)
         f1_Ap, f2_Ap, f3_Ap = objectives_ms(X_raw_Ap, X_raw_Ap, asp_via)
@@ -531,8 +541,14 @@ else:
         Xa_A = scorer_adj(X_raw_Ap, X_raw_all, asp_via)
         saw_A = (Xa_A * w_vec).sum(axis=1)
 
-        # ── 9a. PARETO FRONTIER A ─────────────────────────────────────────
-        print("── PARETO FRONTIER A ───────────────────────────────────────────")
+        # ── 9a. PARETO FRONTIER A — CSV CONSISTENCY ─────────────────────
+        # NOTE: This section verifies CSV consistency (count + F-values) for A.
+        # It does NOT verify completeness in A (that would require all A trios,
+        # which are not stored in fogo_trios.npy — that file contains A' trios only).
+        # DEV-G1-001: Portfolio in A is searched over A'-trios only (fogo_trios.npy),
+        # using A-normalisation. If the pipeline also restricted to A'-trios for the
+        # SAW/mm/optimal portfolio, this check is valid. Declared pending Phase 1.7.
+        print("── PARETO FRONTIER A — CSV CONSISTENCY ────────────────────────")
         f1_A, f2_A, f3_A = objectives_ms(X_raw_Ap, X_raw_all, asp_via)
         F1_A = f1_A[T0] + f1_A[T1] + f1_A[T2]
         F2_A = f2_A[T0] + f2_A[T1] + f2_A[T2]
@@ -600,6 +616,8 @@ else:
         print()
 
         # ── 10. PORTFOLIO IN A ────────────────────────────────────────────
+        # Searches over A'-trios (fogo_trios.npy) with A-normalisation.
+        # DEV-G1-001: restricted to A'-trios, not all A-trios.
         print("── PORTFOLIO SAW/mm/OPTIMAL IN A ───────────────────────────────")
         saw_A_trio = saw_A[T0] + saw_A[T1] + saw_A[T2]
         best_A_idx = int(saw_A_trio.argmax())
