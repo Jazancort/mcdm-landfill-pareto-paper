@@ -155,8 +155,9 @@ Apesar disso, 10.7 pp vs 35.8 pp de Fogo. **Concentrar** a esparsidade num únic
 P1 held on every draw of every instance. P2 failed its pre-specified
 criterion in three of four families: 27--40% of instances under
 continuous marginals showed no loss at any TV_W level. Among instances
-with detectable loss, the ordering L >= F >= H held in 87 of 88 cases (85 strict, 2 three-way ties;
-one-sided binomial with null = 1/6, p < 0.001; DEV-E6-002). P3 met
+with detectable loss, 85 of 88 showed the monotone ordering L $\geq$ F $\geq$ H
+with H strictly below L (two three-way ties and one reversal counted as
+failures; one-sided binomial with null = 1/6, p < 0.001; DEV-E6-002). P3 met
 its pre-specified criterion in all four families, but most successes
 were ties at 100%; among informative instances no family was significant
 (one-sided binomial p >= 0.08; DEV-E6-001). P4 was not supported; the
@@ -329,9 +330,15 @@ Tanto o Pareto A como o Pareto A' usam os **mesmos 1.9M trios de A'-sítios (fog
 - A' space: A'-sítios com A'-norm (ref=389) → 181 trios
 - A space: A'-sítios com A-norm (ref=473) → 213 trios
 
-A análise errada anterior usou 2.9M trios de 473 sítios (todos os sítios, admissíveis ou não) para verificar o Pareto A — esse conjunto não corresponde ao que o manuscrito calcula. Com o conjunto correcto (1.9M A'-trios), todos os checks passam.
+**A distinção "espaço A" não significa "incluir os 84 sítios excluídos".** Os trios são sempre sobre os 389 admissíveis. A análise com 2.9M trios (473 sítios) era uma pergunta diferente — não corresponde ao que o manuscrito calcula.
+
+Acção pendente: confirmar no main.tex que os 213 e 132 estão correctamente descritos como "A'-sítios com normalização A" (ver grep abaixo).
 
 ### Sweep de tolerâncias — Pareto A' (todos os 1.9M trios, float64)
+
+**Argumento principal (igualdade de conjuntos):** os checks 8b (não-dominância) e 8c (completude exata) passaram em float64. O CSV foi gerado com float32. O facto de o mesmo conjunto de 181 trios ser tanto não-dominado como completo em float64 significa que o float32 e o float64 produziram a **mesma fronteira**. Não há margem a invocar — é uma igualdade directa.
+
+**Argumento secundário (ε-dominância):** o sweep abaixo confirma que a fronteira é estável sob ε-dominância para ε ≤ 1e-5. "ε-dominância" aqui: o dominador pode ser até ε pior num objectivo desde que seja mais de ε melhor noutro (ge relaxado, gt apertado). Não implica "margem > ε em todos os objectivos".
 
 ```
 EPS      dom_within   escaped    tempo
@@ -340,6 +347,7 @@ EPS      dom_within   escaped    tempo
 1e-8     0            0          1.4s
 1e-7     0            0          1.3s
 1e-6     0            0          1.3s
+1e-5     0            0          1.3s
 ```
 
 O Pareto A' float32 e o float64 são **IDÊNTICOS** sobre estes 1.9M trios. Gate definitivamente limpo.
@@ -352,9 +360,14 @@ EPS      dom_within   escaped    tempo
 1e-9     0            0          1.6s
 1e-7     0            0          1.6s
 1e-6     0            0          1.6s
+1e-5     2            0          1.6s   ← 2 pares ε-dominados mutuamente; escaped=0
 ```
 
-Pareto A (213 trios, A-norm) é a fronteira completa sobre os 1.9M A'-trios. F-values match float64 a 9.71e-17 (CSV foi gerado com float64, ao contrário do A' CSV que usa float32).
+Pareto A (213 trios, A-norm, sobre 1.9M A'-trios) está verificado. Completude (escaped=0) mantém-se a ε=1e-5. Não-dominância interna (8a) falha a ε=1e-5: 2 pares tornam-se ε-dominados mutuamente — fronteira A estável sob ε-dominância para **ε ≤ 1e-6** (não 1e-5). A' aguenta 1e-5.
+
+F-values match float64 a 9.71e-17 (CSV foi gerado com float64, ao contrário do A' CSV que usa float32).
+
+**Precisão mista:** A' CSV usa float32-precision, A CSV usa float64. A intersecção |A∩A'| = 132 compara fronteiras de precisões diferentes. Hoje as duas são idênticas em float64, mas o cast em space_aprime.py devia ser removido para eliminar a assimetria explicativa. Acção: regenerar pareto_front_Aprime.csv sem cast float32, confirmar 181/213/132 inalterados.
 
 ### DEV-G1-001 — FECHADO
 
