@@ -23,6 +23,8 @@
   "urban_inflation": 0.5255,
   "aspect_inflation": 0.5071,
   "IntraGperm": 1.5566,
-  "RhoShiftMaxPct": 4.13,
-  "RhoShiftMaxCrit": "coast"
+  "RhoShiftMaxPct": 0.0,
+  "RhoShiftMaxCrit": "wells",
+  "TV_alpha2": 0.673122,
+  "DeltaTV_alpha2": 0.361781
 }

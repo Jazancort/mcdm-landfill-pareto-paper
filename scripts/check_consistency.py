@@ -42,6 +42,8 @@ if macros_path.exists():
 
     TVBvec = read_macro("TVBvec")
     TVWvec = read_macro("TVWvec")
+    TValphaTwo = read_macro("TValphaTwo")
+    DeltaTValphaTwo = read_macro("DeltaTValphaTwo")
 
     if TVBvec is not None:
         check("TVBvec (macros.tex)", TVBvec, 0.248, tol=0.001)
@@ -54,6 +56,18 @@ if macros_path.exists():
     else:
         FAIL.append("TVWvec not found in macros.tex")
         print("  [FAIL] TVWvec not found in macros.tex")
+
+    if TValphaTwo is not None:
+        check("TValphaTwo (macros.tex)", TValphaTwo, 0.673, tol=0.001)
+    else:
+        FAIL.append("TValphaTwo not found in macros.tex")
+        print("  [FAIL] TValphaTwo not found in macros.tex")
+
+    if DeltaTValphaTwo is not None:
+        check("DeltaTValphaTwo (macros.tex)", DeltaTValphaTwo, 0.362, tol=0.001)
+    else:
+        FAIL.append("DeltaTValphaTwo not found in macros.tex")
+        print("  [FAIL] DeltaTValphaTwo not found in macros.tex")
 else:
     FAIL.append("macros.tex not found")
     print("  [FAIL] macros.tex not found")
@@ -156,7 +170,7 @@ check("Assembly TOPSIS vec (= -11.0)", asm_TOPSIS_vec,-11.0, tol=0.1)
 
 # Assembly main effect = mean of all four
 asm_main = (asm_SAW_mm + asm_SAW_vec + asm_TOPSIS_mm + asm_TOPSIS_vec) / 4
-check("Assembly main effect (≈ -1.1)", asm_main, -1.1, tol=0.5)
+check("Assembly main effect (~ -1.1)", asm_main, -1.1, tol=0.5)
 
 # AsmMM from macros.tex = mean of two mm cells
 asm_mm_mean = (asm_SAW_mm + asm_TOPSIS_mm) / 2
@@ -246,7 +260,7 @@ if regression_failed:
 
 # Off-diagonal: Ncand score (consistent coding), A' evaluator -> no loss with consistent coding
 loss_hi = TAB_4TH["NcandA_optimal"] - TAB_4TH["NcandAp_optimal"]
-check("4th consistent coding: Ncand/A opt - Ncand/A' opt (≈0 pp)", loss_hi, 0.0, tol=1.0)
+check("4th consistent coding: Ncand/A opt - Ncand/A' opt (~0 pp)", loss_hi, 0.0, tol=1.0)
 
 # tab:fourthcell moved to Supplementary Material (Table S1, P1 item 1)
 # Values 84.6/97.8/58.8 are in supplementary.tex, not in main.tex
@@ -464,6 +478,17 @@ BAD_PHRASES = [
      "Tab2 stale rho_j for wells: 0.081 -> 0.084 (rho_shift correction)"),
     ("& 0.086 & 0.995",
      "Tab2 stale rho_j for aero:  0.086 -> 0.088 (rho_shift correction)"),
+    # tab:exponent Vector row: old TV(alpha=2) values.
+    # 0.675 = def-(ii) rho_raw; 0.590 = def-(i) rho_shift (wrong definition);
+    # +0.360 = Delta with rho_raw; +0.279 = Delta with wrong def-(i).
+    # All superseded by \TValphaTwo=0.673 and \DeltaTValphaTwo=0.362.
+    # Narrow context to avoid false positives (e.g. 0.590 appears in PROMETHEE row).
+    ("& 0.590 & $+0.279$",
+     "tab:exponent Vector row stale: TV(2)=0.590 was def-(i) w*rho^2; correct is 0.673 (def-ii w^2*rho^2)"),
+    ("& 0.675 & $+0.360$",
+     "tab:exponent Vector row stale: TV(2)=0.675 was def-(ii) rho_raw; correct is 0.673 (def-ii rho_shift)"),
+    ("0.675 & $+0.360$",
+     "tab:exponent Vector row stale (variant): TV(2)=0.675 superseded by \\TValphaTwo"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:

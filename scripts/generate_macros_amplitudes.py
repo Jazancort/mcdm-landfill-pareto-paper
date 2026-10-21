@@ -124,6 +124,20 @@ def compute_amplitudes():
     max_pct = float(abs(diffs[max_pct_idx]))
     max_crit = col_names[max_pct_idx]
 
+    # ── TV(α=2) — manuscript formula: w_j^eff(2) = w_j^2 * A_j^2 / Σ w_k^2 * A_k^2 ──
+    # Definition (ii) from eq:weff_alpha in Remark prop:exponent.
+    # This is the TOPSIS analogy: homogeneous of degree α=2 in w_j * A_j.
+    # Do NOT use definition (i) = w_j * A_j^2 — that gives a different number (0.590).
+    num_alpha2 = W**2 * rho**2
+    weff_alpha2 = num_alpha2 / num_alpha2.sum()
+    TV_alpha2   = float(0.5 * np.abs(weff_alpha2 - W).sum())
+    DeltaTV_alpha2 = TV_alpha2 - TV_vec   # TV(2) - TV(1)
+    # Sanity: A_j=1 (min-max reference) should give TV(2)=0.160 with Fogo weights
+    num_mm = W**2
+    weff_mm2 = num_mm / num_mm.sum()
+    TV_mm2 = float(0.5 * np.abs(weff_mm2 - W).sum())
+    assert abs(TV_mm2 - 0.160) < 0.005, f"Min-max TV(2) sanity check failed: {TV_mm2:.4f} != 0.160"
+
     # ── Collect ───────────────────────────────────────────────────────────────
     result = {
         "source_sha256": sha256,
@@ -140,6 +154,8 @@ def compute_amplitudes():
         "IntraGperm":  round(IntraGperm,  4),
         "RhoShiftMaxPct":  round(max_pct, 2),
         "RhoShiftMaxCrit": max_crit,
+        "TV_alpha2":   round(TV_alpha2,    6),
+        "DeltaTV_alpha2": round(DeltaTV_alpha2, 6),
     }
 
     return result
@@ -168,6 +184,10 @@ def main():
     print(f"  aspect inflate  = {res['aspect_inflation']:.4f}x  (was 0.51)")
     print(f"  IntraGperm      = {res['IntraGperm']:.4f}   (was 1.56)")
     print(f"  RhoShiftMaxPct  = {res['RhoShiftMaxPct']:.2f}%  ({res['RhoShiftMaxCrit']})")
+    print()
+    print("=== TV(a=2) -- manuscript formula w_j^2 * A_j^2 (definition ii) ===")
+    print(f"  TValphaTwo      = {res['TV_alpha2']:.4f}   (old 0.675 was def-ii rho_raw; 0.590 was def-i rho_shift)")
+    print(f"  DeltaTValphaTwo = +{res['DeltaTV_alpha2']:.4f}  (TV(2)-TV(1), was +0.360 rho_raw, +0.279 wrong def)")
     print()
     print("=== Tab2 rho_j changes ===")
     from fogo_constants import AJ_VEC as AJ_RAW

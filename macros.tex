@@ -42,7 +42,24 @@
 \newcommand{\EoneWloss}{35.8}            % e1_v3_results: within-group loss
 \newcommand{\EoneVloss}{43.2}            % e1_v3_results: full vector loss
 
-% ── Marco A: TV decomposition (corrected 2026-10-xx, rho_shift) ─────────
+% ── TV(alpha=2) — manuscript formula w_j^eff(2) = w_j^2 * A_j^2 / sum w_k^2*A_k^2 ──
+% Source: results/amplitudes/amplitudes.json (generate_macros_amplitudes.py).
+% Definition (ii): eq:weff_alpha in Remark prop:exponent. Old 0.675 was def-(ii)
+% with rho_raw. 0.590 (commit d3756bf) was def-(i) w_j*A_j^2 -- wrong definition.
+% Correct value with rho_shift: 0.673. DeltaTV = TV(2) - TV(1) = 0.673 - 0.311 = 0.362.
+% PROHIBITED in check_consistency: 0.590, 0.279, 0.675, 0.360 (context: tab:exponent Vector row).
+\newcommand{\TValphaTwo}{0.673}          % TV(alpha=2) vector norm (was 0.675 raw, 0.590 wrong def)
+\newcommand{\DeltaTValphaTwo}{0.362}     % TV(2)-TV(1) (was +0.360 raw, +0.279 wrong def)
+
+% ── E6 pre-registered target TV_W ────────────────────────────────────────────
+% The E6 pre-spec run targeted TV_W_F = 0.1986 (TV_W_VEC computed with rho_raw,
+% before the rho_shift correction). Rounds to 0.199 at 3dp. After the rho_shift
+% correction, TV_W_VEC = 0.195 (\TVWvec), which is the Fogo value, NOT the E6 target.
+% In sec:e6, use \EsixTargetTVW for the target cell and \TVWvec for Fogo's value.
+% In run_e6.py, TW_F_PRESPEC = 0.1986 is hardcoded (not loaded from fogo_constants).
+\newcommand{\EsixTargetTVW}{0.199}       % E6 pre-registered TV_W_F target (rho_raw; DEV-E6-005)
+
+
 % Source: results/amplitudes/amplitudes.json (generate_macros_amplitudes.py)
 % rho_j = 1/L2(mm_norm(x_j)) for all criteria. TV_W = E1-W formula (§6.4).
 \newcommand{\TVBvec}{0.248}              % between-group TV (was 0.249)

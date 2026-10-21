@@ -82,7 +82,13 @@ W_G = np.array([W_AHP[g].sum() for g in OBJ_GROUPS])
 
 # TV_W targets for the 4 non-trivial cells
 TW_L = 0.10
-TW_F = float(os.environ.get("E6_TARGET_TVW", TV_W_VEC))  # DEV-E6-005: default=original run; --target-tvw sets env var
+# TW_F: pre-registered value = 0.1986 (TV_W_VEC computed with rho_raw before the
+# rho_shift correction; DEV-E6-005). Hardcoded here intentionally — DO NOT replace
+# with TV_W_VEC from fogo_constants, which is now 0.1954 (rho_shift / Fogo value).
+# The pre-registered run must reproduce with this exact target.
+# The sensitivity run uses E6_TARGET_TVW=0.1954 (set via env var before calling this script).
+TW_F_PRESPEC = 0.1986   # pre-registered (rho_raw era; frozen)
+TW_F = float(os.environ.get("E6_TARGET_TVW", TW_F_PRESPEC))
 TW_H = 0.30
 TB   = TV_B_VEC   # 0.249 (Fogo reference)
 
@@ -332,6 +338,7 @@ def run_experiment(dry_run=False, family=None):
                     'draw': d,
                     'cell': cell_name,
                     'q2': q2,
+                    'target_tvw': TW_F,  # pre-registered or sensitivity target for W_inf_F
                 })
 
         elapsed = time.time() - t_inst

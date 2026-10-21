@@ -1562,7 +1562,7 @@ Normalisation & $\mathrm{TV}(\alpha{=}1)$ & $\mathrm{TV}(\alpha{=}2)$
 \midrule
 Min--max & 0.000 & 0.160 & $+0.160$ \\
 Ranks    & 0.091 & 0.206 & $+0.115$ \\
-Vector   & \TVvec & 0.590 & $+0.279$ \\
+Vector   & \TVvec & \TValphaTwo & $+\DeltaTValphaTwo$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1572,7 +1572,7 @@ Under optimal assembly with vector normalisation, where no combinatorial
 loss from the greedy heuristic confounds the contrast
 (Section~\ref{sec:greedy}),
 $Q_2[\mathcal{A}']$ falls from SAW to TOPSIS by $4.4$~pp
-($\Delta\mathrm{TV}=0.360$).
+($\Delta\mathrm{TV}=\DeltaTValphaTwo$).
 The min--max contrast is not informative because the SAW cell is fixed at
 $100\%$ by Proposition~\ref{prop:p1:stmt}.
 A single contrast cannot test the exponent analogy; we report it as
@@ -2516,7 +2516,7 @@ The observed direction was reversed: in \EsixPfourDeflAll{} of
 \EsixPfourNonTiedAll{} informative instances, deflation produced larger
 losses (\EsixPfourPAll, two-sided binomial; DEV-E6-003).
 
-At $\mathrm{TV}_W=0.199$ the loss was approximately $10.7$~pp in
+At $\mathrm{TV}_W=\EsixTargetTVW$ the loss was approximately $10.7$~pp in
 the zero-inflated family and below $3$~pp under continuous marginals,
 against $\EoneWloss$~pp on Fogo.
 At equal $\mathrm{TV}_W$, losses differ by an order of magnitude
