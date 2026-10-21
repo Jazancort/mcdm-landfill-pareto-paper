@@ -32,15 +32,15 @@ D_via = haversine_km(df_via["latitude (degrees)"].values,
 
 # Espaço A  (normalização 473, pesos AHP) — referência IEEE
 objs_A = compute_objectives(df_via, df_imp)
-f1A = objs_A["f1"].values.astype(np.float32)
-f2A = objs_A["f2"].values.astype(np.float32)
-f3A = objs_A["f3"].values.astype(np.float32)
+f1A = objs_A["f1"].values  # float64 — sem cast float32 (causava diff 7e-8 no validate_core)
+f2A = objs_A["f2"].values
+f3A = objs_A["f3"].values
 
 # Espaço A' (normalização 389, pesos AHP) — escala justa
 objs_P = compute_objectives(df_via, df_via)
-f1P = objs_P["f1"].values.astype(np.float32)
-f2P = objs_P["f2"].values.astype(np.float32)
-f3P = objs_P["f3"].values.astype(np.float32)
+f1P = objs_P["f1"].values  # float64
+f2P = objs_P["f2"].values
+f3P = objs_P["f3"].values
 
 print(f"Site 184 em A : f1={f1A[list(df_via.index).index(184)]:.4f}  f2={f2A[list(df_via.index).index(184)]:.4f}  f3={f3A[list(df_via.index).index(184)]:.4f}")
 print(f"Site 184 em A': f1={f1P[list(df_via.index).index(184)]:.4f}  f2={f2P[list(df_via.index).index(184)]:.4f}  f3={f3P[list(df_via.index).index(184)]:.4f}")
@@ -62,13 +62,13 @@ print(f"  {M:,} trios")
 i0,i1,i2 = trio_arr[:,0],trio_arr[:,1],trio_arr[:,2]
 
 # Objetivos de todos os trios nos dois espaços
-F1A = (f1A[i0]+f1A[i1]+f1A[i2]).astype(np.float32)
-F2A = (f2A[i0]+f2A[i1]+f2A[i2]).astype(np.float32)
-F3A = (f3A[i0]+f3A[i1]+f3A[i2]).astype(np.float32)
+F1A = f1A[i0]+f1A[i1]+f1A[i2]
+F2A = f2A[i0]+f2A[i1]+f2A[i2]
+F3A = f3A[i0]+f3A[i1]+f3A[i2]
 
-F1P = (f1P[i0]+f1P[i1]+f1P[i2]).astype(np.float32)
-F2P = (f2P[i0]+f2P[i1]+f2P[i2]).astype(np.float32)
-F3P = (f3P[i0]+f3P[i1]+f3P[i2]).astype(np.float32)
+F1P = f1P[i0]+f1P[i1]+f1P[i2]
+F2P = f2P[i0]+f2P[i1]+f2P[i2]
+F3P = f3P[i0]+f3P[i1]+f3P[i2]
 
 # ─── Fronteira Pareto A' ──────────────────────────────────────────────────────
 print("Calculando fronteira A' com paretoset...")
@@ -103,10 +103,10 @@ for idx in np.where(nd_A)[0]:
 
 front_A_213 = set(frozenset([int(r.idx1),int(r.idx2),int(r.idx3)]) for _,r in par.iterrows())
 
-print(f"\nSobreposição fronteiras:")
-print(f"  A' ∩ A(1M): {len(front_P & front_A_1M)}  de {n_P} (A') e {n_A} (A-1M)")
-print(f"  A' ∩ A(213 IEEE): {len(front_P & front_A_213)}  de {n_P} (A') e 213 (A-IEEE)")
-print(f"  Sites únicos A': {len(front_P_sites)}")
+print(f"\nSobreposicao fronteiras:")
+print(f"  A' n A(1M): {len(front_P & front_A_1M)}  de {n_P} (A') e {n_A} (A-1M)")
+print(f"  A' n A(213 IEEE): {len(front_P & front_A_213)}  de {n_P} (A') e 213 (A-IEEE)")
+print(f"  Sites unicos A': {len(front_P_sites)}")
 
 # ─── Avaliação dos trios canônicos em A' ─────────────────────────────────────
 def gap_n(f1t, f2t, f3t, F1, F2, F3):
