@@ -5,15 +5,16 @@ Scale factors: rho_shift/rho_raw for criteria with min_raw > 0 (slope, coast, we
 Control: first 20 draws must give same portfolio (scale is small, ~1.02-1.04).
 """
 import sys, numpy as np, json
-sys.path.insert(0, '/home/julioazancort/scratch/mcdm-landfill-pareto/scripts')
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, '/home/julioazancort/scratch/mcdm-landfill-pareto/scripts')
 import pandas as pd
 from mcdm_experiment import (
     load_data, impute_nan, COL, AHP_WEIGHTS, _build_decision_matrix
 )
 from scipy.stats import dirichlet as sp_dirichlet
 
-ROOT = Path('/home/julioazancort/scratch/mcdm-landfill-pareto')
+ROOT = Path(__file__).parent.parent
 
 # Load data and amplitudes
 df_all, _, _ = load_data()
@@ -97,7 +98,7 @@ print(f'\nControl (first 20 draws): shift==raw in {same_20}/20 draws')
 print(f'Full 500 draws: shift==raw in {same_total}/500 draws')
 
 df = pd.DataFrame(results)
-out = ROOT / 'results/raw_sensitivity.csv'
+out = ROOT / 'results/raw_sensitivity_N500.csv'
 df.to_csv(out, index=False)
 import hashlib
 sha = hashlib.sha256(out.read_bytes()).hexdigest()
