@@ -106,8 +106,9 @@ def write_macros(S, sha, commit, target_tvw=None):
     # ── P1 ──────────────────────────────────────────────────────────────────
     p1 = S["All"]["P1"]
     lines.append("% ── P1 ──────────────────────────────────────────────────────────────")
-    m("EsixPoneHits",  fmt_int(p1["Hits"]),  "draws with TV_W=0 and Q2^opt=100%")
-    m("EsixPoneTotal", fmt_int(p1["Total"]), "total M+B cell draws")
+    m("EsixPoneHits",    fmt_int(p1["Hits"]),        "draws with TV_W=0 and Q2^opt=100%")
+    m("EsixPoneTotal",   fmt_int(p1["Total"]),        "total M+B cell draws (= 2 x EsixNdraws)")
+    m("EsixPoneNDesign", fmt_int(p1["Total"] // 2),  "draws per baseline cell (= 120 inst x 200 draws)")
     lines.append("")
 
     # ── P2 ──────────────────────────────────────────────────────────────────
