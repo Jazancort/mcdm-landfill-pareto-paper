@@ -157,6 +157,36 @@ Diferença absoluta = 0.003 (1.6% relativo). L e H são fixos (0.10 e 0.30); só
     "Veredicto igual se P1-P4 derem a mesma conclusão (passa/falha) e o mesmo lado de p=0.05
     em todas as famílias e no All. Contagens podem diferir em ±2 por família."
 
+**RESULTADO DA CORRIDA DE SENSIBILIDADE (executada 2026-10-xx, Athena):**
+
+  Premissa DEV-E6-005 estava incompleta: TW_F entra em TRÊS células, não só W_inf_F.
+  Células afectadas: W_inf_F (26/24000 draws Q2 diferente), V_inf_F (22/24000),
+  W_def_F (41/24000). Células M, B, W_inf_L, W_inf_H idênticas bit-a-bit.
+  tvw_achieved verificado localmente via bissecção determinística:
+    W_inf_F: prespec=0.198600 sensit=0.195400 delta=+0.003200
+    V_inf_F: prespec=0.198600 sensit=0.195400 delta=+0.003200
+    W_def_F: prespec=0.198600 sensit=0.195400 delta=+0.003200
+
+  CSV: results/e6/sensit/e6_raw_sensit_tvwF01954.csv
+  SHA-256: 0a8dfc528140d8bfb63d85bd1b31c839ea2afc250e2c933e72bcbfa51ebb774a
+  rows=168000, code_commit=14f93c3
+
+  RESULTADO DA REGRA DE DECISÃO:
+  - P1: IGUAL (48000/48000 em ambas)
+  - P2 primário (Mono=85/88): IGUAL. NDistinct mudou 52->50 (2 instâncias passaram
+    de 3 niveis a 2 com a mudança de W_def_F). Conclusão: inalterada.
+  - P3: PreregN mudou 98->99 (+1). InfStrict inalterado (36/58 vs 36/57). p mudou
+    0.043->0.031. Ambos abaixo de 0.05. Veredicto: inalterado.
+  - P4: PREVISÃO FALHOU. p=0.053003 (principal) -> p=0.047525 (sensit).
+    Cruza o limiar de 0.05. Pela regra "mesmo lado de p=0.05", o veredicto DIFERE.
+    NOTA: a estimativa praticamente nao muda (53/87=0.609 vs 51/83=0.614).
+    A proporcao rounded e 0.61 em ambos. So o p atravessa um limiar arbitrario por 0.005.
+    INTERPRETACAO CORRECTA (conforme decisao 2026-10-xx):
+      A corrida principal continua a ser a de referencia. O framing muda:
+      o P4 deixa de ser "borderline nao conclusivo" e passa a ser "fragil":
+      a proporcao e estavel mas o p atravessa 0.05 com a correccao de 0.003 no alvo.
+      Texto §7.8 a usar: ver secao "Texto para §7.8" abaixo.
+
 **Nota:** A corrida principal (TW_F=0.199, e6_raw_prespec.csv) mantém o papel de resultado
 pré-registado. A corrida de sensibilidade é reportada numa frase na §7.8 e numa tabela
 no suplemento.
