@@ -194,8 +194,19 @@
 \newcommand{\FEightVecOptSE}{0.0}
 \newcommand{\FEightMMOptQ}{94.4}    % SAW/mm/opt with vec frontier
 \newcommand{\FEightMMOptSE}{1.0}
-\newcommand{\FEightVecGrdQ}{100.0}  % SAW/vec/greedy with vec frontier (Prop1 ✓)
+\newcommand{\FEightVecGrdQ}{100.0}  % SAW/vec/greedy with vec frontier (empirical; 457/500 same portfolio as optimal)
 \newcommand{\FEightMMGrdQ}{72.4}    % SAW/mm/greedy with vec frontier
 % Interpretation: vec/opt=100% confirmed with Prop1 (Theorem 1) in commit 43b8427.
 % Previous commit 9cdceb4 gave 89.4% due to double-normalisation bug (injection approach
 % caused aspect misclassification); replaced with direct vec objectives in commit 4d0a98d.
+
+% Raw sensitivity: rho_shift vs rho_raw across 4 vec cells (500 draws, seed=42)
+% SAW: algebraic identity (scale = rho_shift/rho_raw acts as weight rescaling)
+% TOPSIS: informative (min-shift changes ideal/anti-ideal geometry)
+% Source: results/raw_sensitivity_4cells.csv  SHA-256: 4e34efeb846866b73442602589b1232c1081c642831f73abc4f8d834dfe54849
+\newcommand{\RawSensSame}{500}        % SAW shift==raw (trivial: algebraic identity)
+\newcommand{\RawSensTotal}{500}       % total draws
+\newcommand{\RawSensTopsisOptSame}{487}  % TOPSIS/optimal shift==raw
+\newcommand{\RawSensTopsisGrdSame}{489}  % TOPSIS/greedy shift==raw
+\newcommand{\RawSensTopsisOptDiff}{13}   % TOPSIS/optimal shift!=raw
+\newcommand{\RawSensTopsisGrdDiff}{11}   % TOPSIS/greedy shift!=raw

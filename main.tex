@@ -919,6 +919,11 @@ This formulation coincides with the classical textbook form $x_{ij}/\lVert\mathb
 when $\min_j x_j=0$ (true for \texttt{perm}, \texttt{urban}, \texttt{cult},
 \texttt{aero} and \texttt{rivers}) and differs by at most $\RhoShiftMaxPct\,\%$
 (\texttt{\RhoShiftMaxCrit}) for the remaining four criteria.
+For SAW this difference is a weight rescaling and affects no portfolio selection
+(\RawSensSame{} of \RawSensTotal{} draws, algebraic identity);
+for TOPSIS the shift alters the ideal and anti-ideal points, changing the selected
+portfolio in at most \RawSensTopsisOptDiff{} of \RawSensTotal{} draws under optimal
+assembly and \RawSensTopsisGrdDiff{} under greedy.
 Two properties drive our results.
 First, none of the three is invariant to the inclusion or exclusion of
 alternatives: min--max depends on the sample extrema, vector normalisation
