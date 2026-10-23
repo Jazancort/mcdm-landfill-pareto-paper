@@ -353,8 +353,9 @@ def run_experiment(dry_run=False, family=None):
     print(f"\n[SAVED] {raw_path}  ({len(df_raw)} rows)")
 
     df_meta = pd.DataFrame(inst_meta)
-    df_meta.to_csv(OUT / "e6_instances_prespec.csv", index=False)
-    print(f"[SAVED] {OUT/'e6_instances_prespec.csv'}")
+    instances_path = OUT / f"e6_instances_{raw_path.stem.replace('e6_raw_', '', 1)}.csv"
+    df_meta.to_csv(instances_path, index=False)
+    print(f"[SAVED] {instances_path}")
 
     # ── P1 assertion ──────────────────────────────────────────────────────────
     print("\n[P1 ASSERTION] Cells M and B must have Q2_optimal = 1.0 on ALL draws.")
@@ -372,20 +373,29 @@ def run_experiment(dry_run=False, family=None):
         sys.exit(1)
     print("[P1 PASSED] All M and B draws are Pareto-efficient.")
 
-    generate_summaries(df_raw, instances)
+    generate_summaries(df_raw, instances, suffix=raw_path.stem)
 
 
-def generate_summaries(df_raw, instances):
-    """Generate aggregated summaries and Spearman report."""
+def generate_summaries(df_raw, instances, suffix="e6_prespec"):
+    """Generate aggregated summaries and Spearman report.
+    
+    suffix: file stem to use for output filenames.
+    For the pre-registered run: 'e6_raw_prespec' (default).
+    For sensitivity runs: e.g. 'e6_raw_sensit_tvwF01954'.
+    Avoids overwriting principal-run summaries when re-running with different targets.
+    """
     print("\n[SUMMARIES]")
+    # Strip 'e6_raw_' prefix from suffix for use in derived filenames
+    # e.g. 'e6_raw_prespec' -> 'prespec', 'e6_raw_sensit_tvwF01954' -> 'sensit_tvwF01954'
+    tag = suffix.replace("e6_raw_", "", 1) if suffix.startswith("e6_raw_") else suffix
 
     # ── Summary by (family, cell) ─────────────────────────────────────────────
     agg = (df_raw.groupby(['family', 'cell'])['q2']
            .agg(['mean', 'std', 'count']).reset_index())
     agg['q2_pct'] = agg['mean'] * 100
     agg['se_pct'] = agg['std'] / np.sqrt(agg['count']) * 100
-    agg.to_csv(OUT / "e6_summary_prespec.csv", index=False)
-    print(f"  Saved: {OUT/'e6_summary_prespec.csv'}")
+    agg.to_csv(OUT / f"e6_summary_{tag}.csv", index=False)
+    print(f"  Saved: {OUT/f'e6_summary_{tag}.csv'}")
 
     # ── Spearman ρ per (family, replicate) for P2 ─────────────────────────────
     # Test: ρ(TV_W_level, Q2_opt) across W_inf cells (L, F, H + M as level 0)
@@ -413,8 +423,8 @@ def generate_summaries(df_raw, instances):
             })
 
     df_sp = pd.DataFrame(spearman_rows)
-    df_sp.to_csv(OUT / "e6_spearman_prespec.csv", index=False)
-    print(f"  Saved: {OUT/'e6_spearman_prespec.csv'}")
+    df_sp.to_csv(OUT / f"e6_spearman_{tag}.csv", index=False)
+    print(f"  Saved: {OUT/f'e6_spearman_{tag}.csv'}")
 
     # ── Report ────────────────────────────────────────────────────────────────
     lines = []
@@ -497,9 +507,9 @@ def generate_summaries(df_raw, instances):
         )
 
     report_text = "\n".join(lines)
-    with open(OUT / "e6_report_prespec.txt", "w") as f:
+    with open(OUT / f"e6_report_{tag}.txt", "w") as f:
         f.write(report_text)
-    print(f"  Saved: {OUT/'e6_report_prespec.txt'}")
+    print(f"  Saved: {OUT/f'e6_report_{tag}.txt'}")
     print()
     print(report_text)
 
@@ -546,7 +556,7 @@ def merge_family_results():
             instances.append({'inst_id': f"{fam}_r{rep:02d}", 'family': fam,
                                'replicate': rep, 'seed': SEED_BASE + inst_idx})
 
-    generate_summaries(df_raw, instances)
+    generate_summaries(df_raw, instances, suffix="e6_raw_prespec")
 
 
 def _dry_run_timing(inst):

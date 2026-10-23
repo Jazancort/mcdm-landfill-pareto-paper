@@ -20,7 +20,9 @@ import hashlib, json, subprocess
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+from scipy.stats import norm as _norm_dist
 
 # ── Statistics: single source of truth ───────────────────────────────────────
 from e6_stats import (
@@ -69,6 +71,19 @@ def fmt_p(p):
 def fmt_int(n):
     """Format integer with LaTeX thousands separator."""
     return f"{int(n):,}".replace(",", "{,}")
+
+
+def wilson_ci(k, n, alpha=0.05):
+    """Wilson score CI. Returns (lo, hi) as Decimal-rounded strings at 2dp."""
+    z = float(_norm_dist.ppf(1 - alpha / 2))
+    if n == 0:
+        return "0.00", "1.00"
+    n_adj   = n + z**2
+    p_tilde = (k + z**2 / 2) / n_adj
+    half    = (z / n_adj) * float(np.sqrt(k * (n - k) / n + z**2 / 4))
+    lo_str  = rnd(max(0.0, p_tilde - half), 2)
+    hi_str  = rnd(min(1.0, p_tilde + half), 2)
+    return lo_str, hi_str
 
 
 # ── Write macros_e6.tex ──────────────────────────────────────────────────────
@@ -131,6 +146,12 @@ def write_macros(S, sha, commit, target_tvw=None):
     # ── P3 ──────────────────────────────────────────────────────────────────
     lines.append("% ── P3 ──────────────────────────────────────────────────────────────")
     lines.append("% pre-registered: V_inf_F <= W_inf_F (TV_B agrava perda)")
+    # Minimum per-family p (for EsixPthreeInfPminFam in text)
+    fam_p3_p_vals = [S[FAM_SUFFIX[f]]["P3"]["P"] for f in FAMILIES]
+    min_fam_p3 = min(fam_p3_p_vals)
+    m("EsixPthreeInfPminFam", rnd(min_fam_p3, 2),
+      "min per-family one-sided binomial p (informative)")
+    lines.append("")
     for suf in [FAM_SUFFIX[f] for f in FAMILIES] + ["All"]:
         p3 = S[suf]["P3"]
         m(f"EsixPthreePreregN{suf}",    str(p3["PreregN"]),     "instances meeting pre-registered criterion V<=W")
@@ -146,11 +167,17 @@ def write_macros(S, sha, commit, target_tvw=None):
     for suf in [FAM_SUFFIX[f] for f in FAMILIES] + ["All"]:
         p4 = S[suf]["P4"]
         note_p = "two-sided binomial" + (", post hoc pooling (DEV-E6-003)" if suf == "All" else "")
-        m(f"EsixPfourDefl{suf}",    str(p4["Defl"]),    "deflate>inflate strictly (OPPOSITE of prediction)")
-        m(f"EsixPfourInfl{suf}",    str(p4["Infl"]),    "inflate>deflate strictly (prediction direction)")
-        m(f"EsixPfourNonTied{suf}", str(p4["NonTied"]), "non-tied pairs (denominator for binomtest)")
-        m(f"EsixPfourTied{suf}",    str(p4["Tied"]),    "tied pairs (excluded from binomtest)")
-        m(f"EsixPfourP{suf}",       fmt_p(p4["P"]),     note_p)
+        prop = float(p4["Defl"]) / p4["NonTied"] if p4["NonTied"] > 0 else 0.0
+        lo_ci, hi_ci = wilson_ci(p4["Defl"], p4["NonTied"])
+        m(f"EsixPfourDefl{suf}",          str(p4["Defl"]),    "deflate>inflate strictly (OPPOSITE of prediction)")
+        m(f"EsixPfourInfl{suf}",          str(p4["Infl"]),    "inflate>deflate strictly (prediction direction)")
+        m(f"EsixPfourNonTied{suf}",       str(p4["NonTied"]), "non-tied pairs (denominator for binomtest)")
+        m(f"EsixPfourTied{suf}",          str(p4["Tied"]),    "tied pairs (excluded from binomtest)")
+        m(f"EsixPfourP{suf}",             fmt_p(p4["P"]),     note_p)
+        m(f"EsixPfourProp{suf}",          rnd(prop, 2),       "proportion Defl/NonTied (2dp)")
+        m(f"EsixPfourPropThree{suf}",     rnd(prop, 3),       "proportion Defl/NonTied (3dp)")
+        m(f"EsixPfourCIlo{suf}",          lo_ci,              "Wilson 95% CI lower (2dp)")
+        m(f"EsixPfourCIhi{suf}",          hi_ci,              "Wilson 95% CI upper (2dp)")
         lines.append("")
 
     OUT_TEX.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -184,12 +211,16 @@ def write_sensitivity_macros(S_sens, sha_sens, target_tvw_sens):
     A = S_sens["All"]
     p4 = A["P4"]
     p4_prop = float(p4["Defl"]) / p4["NonTied"] if p4["NonTied"] > 0 else 0.0
-    m("EsixSensPfourDeflAll",    str(p4["Defl"]),    "sensit: deflate>inflate strictly")
-    m("EsixSensPfourInflAll",    str(p4["Infl"]),    "sensit: inflate>deflate strictly")
-    m("EsixSensPfourNonTiedAll", str(p4["NonTied"]), "sensit: non-tied pairs (denominator)")
-    m("EsixSensPfourTiedAll",    str(p4["Tied"]),    "sensit: tied pairs")
-    m("EsixSensPfourPAll",       fmt_p(p4["P"]),     "sensit: two-sided binomial p-value")
-    m("EsixSensPfourPropAll",    rnd(p4_prop, 2),    "sensit: deflate proportion (Defl/NonTied)")
+    lo_ci, hi_ci = wilson_ci(p4["Defl"], p4["NonTied"])
+    m("EsixSensPfourDeflAll",      str(p4["Defl"]),    "sensit: deflate>inflate strictly")
+    m("EsixSensPfourInflAll",      str(p4["Infl"]),    "sensit: inflate>deflate strictly")
+    m("EsixSensPfourNonTiedAll",   str(p4["NonTied"]), "sensit: non-tied pairs (denominator)")
+    m("EsixSensPfourTiedAll",      str(p4["Tied"]),    "sensit: tied pairs")
+    m("EsixSensPfourPAll",         fmt_p(p4["P"]),     "sensit: two-sided binomial p-value")
+    m("EsixSensPfourPropAll",      rnd(p4_prop, 2),    "sensit: deflate proportion (2dp)")
+    m("EsixSensPfourPropThreeAll", rnd(p4_prop, 3),    "sensit: deflate proportion (3dp)")
+    m("EsixSensPfourCIloAll",      lo_ci,              "sensit: Wilson 95% CI lower (2dp)")
+    m("EsixSensPfourCIhiAll",      hi_ci,              "sensit: Wilson 95% CI upper (2dp)")
     lines.append("")
 
     # P1 (same as principal — include for completeness)
@@ -213,10 +244,6 @@ def write_sensitivity_macros(S_sens, sha_sens, target_tvw_sens):
     m("EsixSensPthreeInfDenomAll", str(p3["InfDenom"]),   "sensit P3: informative denom")
     m("EsixSensPthreePAll",        fmt_p(p3["P"]),        "sensit P3: one-sided binomial p")
     lines.append("")
-
-    # Also generate the proportion macro for the principal run (for side-by-side)
-    # (principal proportion computed separately in main())
-    lines.append("% Principal P4 proportion (for side-by-side comparison in §7.8)")
 
     existing = OUT_TEX.read_text(encoding="utf-8")
     OUT_TEX.write_text(existing + "\n".join(lines) + "\n", encoding="utf-8")
@@ -267,16 +294,7 @@ def main():
     print(f"  P4: {p4['Defl']}/{p4['NonTied']} deflate>inflate "
           f"({p4['Tied']} tied)  {fmt_p(p4['P'])} two-sided")
 
-    # ── Append principal P4 proportion + sensitivity macros ──────────────────
-    # Principal P4 proportion (EsixPfourPropAll): Defl/NonTied
-    p4_prop_prin = float(p4["Defl"]) / p4["NonTied"] if p4["NonTied"] > 0 else 0.0
-    prop_line = (rf"\newcommand{{\EsixPfourPropAll}}{{{rnd(p4_prop_prin, 2)}}}"
-                 "  % principal P4 proportion Defl/NonTied (for §7.8 side-by-side)")
-    existing = OUT_TEX.read_text(encoding="utf-8")
-    OUT_TEX.write_text(existing + "\n" + prop_line + "\n", encoding="utf-8")
-    print(f"  Appended \\EsixPfourPropAll={rnd(p4_prop_prin, 2)}")
-
-    # Sensitivity run
+    # ── Append sensitivity macros (EsixSens... prefix) ──────────────────────
     if SENS_CSV.exists():
         print(f"\n  Reading sensitivity: {SENS_CSV.name}")
         df_sens = pd.read_csv(SENS_CSV)

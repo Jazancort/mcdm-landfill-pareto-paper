@@ -1121,14 +1121,14 @@ SAW with min--max normalisation attained only $\FEightMMOptQ\%$
 ($\mathrm{SE}=\FEightMMOptSE$~pp), a drop of ${\approx}5.6$~pp.
 Under greedy assembly the pattern was similar:
 $\FEightVecGrdQ\%$ (vec) versus $\FEightMMGrdQ\%$ (mm).
-The $100\%$ under vec/greedy is explained by the same effect:
-on every draw in this experiment, the greedy algorithm selected the
-same portfolio as the optimal solver ($Q_2 = \FEightVecGrdQ\%$,
-$\mathrm{SE}=0$).
-When vector normalisation inflates the weight of \texttt{perm} to
-$\approx \PermInflation\times$ its nominal value, scoring is dominated by a
-single criterion; greedy commits to the highest-scoring site first and
-the subsequent choices coincide with the optimal solution on every draw.
+The $100\%$ under vec/greedy is an empirical observation, not a
+consequence of Theorem~\ref{thm:groupconst}.
+In \FEightVecCoinc{} of \ndraws{} draws the greedy rule returned the
+exact SAW optimum; in the remaining \FEightVecSubopt{} draws it
+returned a different, lower-scoring portfolio that nonetheless lay on
+the vector frontier.
+Theorem~\ref{thm:groupconst} covers exact assembly only; the greedy
+result requires no theoretical support beyond this measurement.
 Two observations follow.
 First, the direction of the advantage reverses relative to the main
 factorial: vector normalisation now dominates.
@@ -2490,9 +2490,9 @@ Seven cells yield \EsixNdraws{} total draws.
 Full pre-specification and all deviations are in the Supplementary
 Material.
 
-P1 (no loss when $\mathrm{TV}_W=0$) held on every draw:
-\EsixPoneHits{} of \EsixPoneTotal{} draws reached the frontier
-under optimal assembly in the baseline cells.
+P1 (no loss when $\mathrm{TV}_W=0$) held on every draw: both baseline
+cells (M and B) attained $Q_2=100\%$ on all \EsixPoneNDesign{}
+draws (\EsixPoneHits{} of \EsixPoneTotal{} draw-cell combinations).
 
 P2 (monotone ordering $L\ge F\ge H$ with $H<L$, one-sided
 Poisson-binomial) was a mixed result.
@@ -2505,14 +2505,29 @@ satisfied the ordering (two three-way ties and one reversal excluded;
 
 P3 (TV\textsubscript{B} aggravates loss) met the pre-registered criterion
 in all four families, but most successes were ties at $Q_2=100\%$;
-no family reached significance among informative instances
-(one-sided binomial $p\ge0.08$; DEV-E6-001).
+no single family reached significance among informative instances
+(one-sided binomial $p\ge\EsixPthreeInfPminFam$; DEV-E6-001).
+The post hoc pooled count favours the predicted direction:
+\EsixPthreeInfStrictAll{} of \EsixPthreeInfDenomAll{} informative
+instances with $V_{\inf} < W_{\inf}$ strictly ($\EsixPthreeP{All}$,
+one-sided binomial; \EsixSensPthreePAll{} under the corrected target,
+DEV-E6-005).
 
 P4 (inflating the most-weighted criterion in each group costs more than
 deflating it) was not supported.
-The observed direction was reversed: in \EsixPfourDeflAll{} of
-\EsixPfourNonTiedAll{} informative instances, deflation produced larger
-losses (\EsixPfourPAll, two-sided binomial; DEV-E6-003).
+The observed direction was reversed: deflation produced strictly larger
+losses in \EsixPfourDeflAll{} of \EsixPfourNonTiedAll{} non-tied
+instances (proportion $\EsixPfourPropThreeAll$,
+95\%~CI [$\EsixPfourCIloAll$,\,$\EsixPfourCIhiAll$];
+$\EsixPfourP{All}$, two-sided binomial, post hoc; DEV-E6-003).
+Under the corrected Fogo target (DEV-E6-005), \EsixSensPfourDeflAll{}
+of \EsixSensPfourNonTiedAll{} instances showed the same direction
+(proportion $\EsixSensPfourPropThreeAll$; $\EsixSensPfourPAll$).
+The proportions are essentially stable
+($\EsixPfourPropThreeAll$ vs.\ $\EsixSensPfourPropThreeAll$);
+only the $p$-value moves across $0.05$.
+We regard this post hoc trend as borderline and draw no directional
+conclusion from it.
 
 At $\mathrm{TV}_W=\EsixTargetTVW$ the loss was approximately $10.7$~pp in
 the zero-inflated family and below $3$~pp under continuous marginals,
