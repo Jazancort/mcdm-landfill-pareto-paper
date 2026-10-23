@@ -245,6 +245,27 @@ def write_sensitivity_macros(S_sens, sha_sens, target_tvw_sens):
     m("EsixSensPthreePAll",        fmt_p(p3["P"]),        "sensit P3: one-sided binomial p")
     lines.append("")
 
+    lines.append("% P3 and P4 per family (sensitivity, for tab:e6-sens)")
+    for suf in [FAM_SUFFIX[f] for f in FAMILIES]:
+        p3f = S_sens[suf]["P3"] if suf in S_sens else S_sens.get(suf, {}).get("P3", {})
+        p4f = S_sens[suf]["P4"] if suf in S_sens else S_sens.get(suf, {}).get("P4", {})
+        if not p3f or not p4f:
+            continue
+        m(f"EsixSensPthreePreregN{suf}",    str(p3f["PreregN"]),     f"sensit P3 V<=W {suf}")
+        m(f"EsixSensPthreeDenom{suf}",      str(p3f["PreregDenom"]), f"sensit P3 denom {suf}")
+        m(f"EsixSensPthreeInfStrict{suf}",  str(p3f["InfStrict"]),   f"sensit P3 strict V<W {suf}")
+        m(f"EsixSensPthreeInfDenom{suf}",   str(p3f["InfDenom"]),    f"sensit P3 informative denom {suf}")
+        m(f"EsixSensPthreeP{suf}",          fmt_p(p3f["P"]),         f"sensit P3 p {suf}")
+        m(f"EsixSensPfourDefl{suf}",        str(p4f["Defl"]),        f"sensit P4 Defl {suf}")
+        m(f"EsixSensPfourNonTied{suf}",     str(p4f["NonTied"]),     f"sensit P4 NonTied {suf}")
+        prop4f = float(p4f["Defl"]) / p4f["NonTied"] if p4f["NonTied"] > 0 else 0.0
+        lo4f, hi4f = wilson_ci(p4f["Defl"], p4f["NonTied"])
+        m(f"EsixSensPfourPropThree{suf}",   rnd(prop4f, 3),          f"sensit P4 prop {suf}")
+        m(f"EsixSensPfourCIlo{suf}",        lo4f,                    f"sensit P4 CI lo {suf}")
+        m(f"EsixSensPfourCIhi{suf}",        hi4f,                    f"sensit P4 CI hi {suf}")
+        m(f"EsixSensPfourP{suf}",           fmt_p(p4f["P"]),         f"sensit P4 p {suf}")
+        lines.append("")
+
     existing = OUT_TEX.read_text(encoding="utf-8")
     OUT_TEX.write_text(existing + "\n".join(lines) + "\n", encoding="utf-8")
     print(f"  Appended \\EsixSens... macros to {OUT_TEX}")

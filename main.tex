@@ -1140,7 +1140,7 @@ factorial: vector normalisation now dominates.
 This is consistent with the alignment interpretation: a score that shares
 the objective normalisation recovers the frontier more reliably.
 The asymmetry is, however, strong: under optimal assembly, the
-misalignment costs ${\approx}43.2$~pp in one direction
+misalignment costs ${\approx}\EoneVloss$~pp in one direction
 (score vector vs.\ frontier min--max, the main factorial) but only
 ${\approx}\FEightMMOptSE$~pp in the other direction
 (score min--max vs.\ frontier vector; $\FEightMMOptQ\%$ attainment).
@@ -1222,8 +1222,8 @@ under affine normalisation (including min--max and vector);
 for rank normalisation, midranks are not affine in the original values,
 so the effective weight $w_j^{\mathrm{eff}}$ approximates the weight shift
 rather than determining it exactly.
-Within this scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $100.0\%$,
-$88.2\%$ and $56.8\%$ for min--max, ranks and vector normalisation
+Within this scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $\QtwommOptimal\%$,
+$\QtwoRanksOptimal\%$ and $\QtwovecOptimal\%$ for min--max, ranks and vector normalisation
 respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $\TVvec$,
 a strictly monotone ordering on this instance (Table~\ref{tab:tvorder}).
 
@@ -2023,9 +2023,9 @@ between $\mathrm{TV}$ and Pareto attainment in general.
 \toprule
 Normalisation & $A_j$ & $\mathrm{TV}$ & greedy & optimal \\
 \midrule
-min--max & $\equiv 1$                        & 0.000 & 86.0\% & 100.0\% \\
-midranks & ${\scriptstyle(r_j^{\max}{-}r_j^{\min})/(N{+}1)}$ & 0.091 & 86.0\% &  88.2\% \\
-vector   & $\rho_j$                          & \TVvec & 66.2\% &  56.8\% \\
+min--max & $\equiv 1$                        & 0.000 & $\QtwommGreedy$\% & $\QtwommOptimal$\% \\
+midranks & ${\scriptstyle(r_j^{\max}{-}r_j^{\min})/(N{+}1)}$ & 0.091 & $\QtwoRanksGreedy$\% & $\QtwoRanksOptimal$\% \\
+vector   & $\rho_j$                          & \TVvec & $\QtwovecGreedy$\% &  $\QtwovecOptimal$\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2417,10 +2417,10 @@ assembly; (P3)~cell~B under greedy assembly performs close to min--max.
 \toprule
 Cell & $\mathrm{TV}_B$ & $\mathrm{TV}_W$ & greedy & optimal & loss \\
 \midrule
-M (min--max)     & 0       & 0       & 86.0\%  & 100.0\% & --- \\
-B (between only) & \TVBvec & 0       & 100.0\% & 100.0\% & 0.0 \\
-W (within only)  & 0       & \TVWvec & 64.0\%  & 64.2\%  & 35.8 \\
-V (vector)       & \TVBvec & \TVWvec & 66.2\%  & 56.8\%  & 43.2 \\
+M (min--max)     & 0       & 0       & $\QtwoEoneMGrd$\%  & $\QtwoEoneMOpt$\% & --- \\
+B (between only) & \TVBvec & 0       & $\QtwoEoneBGrd$\% & $\QtwoEoneBOpt$\% & 0.0 \\
+W (within only)  & 0       & \TVWvec & $\QtwoEoneWGrd$\%  & $\QtwoEoneWOpt$\%  & \EoneWloss \\
+V (vector)       & \TVBvec & \TVWvec & $\QtwoEoneVGrd$\%  & $\QtwoEoneVOpt$\%  & \EoneVloss \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2524,7 +2524,8 @@ The observed direction was reversed: deflation produced strictly larger
 losses in \EsixPfourDeflAll{} of \EsixPfourNonTiedAll{} non-tied
 instances (proportion $\EsixPfourPropThreeAll$,
 95\%~CI [$\EsixPfourCIloAll$,\,$\EsixPfourCIhiAll$];
-$\EsixPfourP{All}$, two-sided binomial, post hoc; DEV-E6-003).
+$\EsixPfourP{All}$, two-sided binomial, post hoc; DEV-E6-003;
+see Supplementary Table~\ref{tab:e6-sens} for the per-family breakdown).
 Under the corrected Fogo target (DEV-E6-005), \EsixSensPfourDeflAll{}
 of \EsixSensPfourNonTiedAll{} instances showed the same direction
 (proportion $\EsixSensPfourPropThreeAll$; $\EsixSensPfourPAll$).

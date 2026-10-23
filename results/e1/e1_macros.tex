@@ -5,3 +5,18 @@
 
 \newcommand{\EoneVloss}{43.2}            % 100 - Q2_opt(E1-V) = vector cell loss
 \newcommand{\EoneWloss}{35.8}            % 100 - Q2_opt(E1-W) = within-group loss
+
+% ── E1 cell Q2 values (for tab:e1) ────────────────────────────────────
+% Cell M (min-max): also \QtwommGreedy / \QtwommOptimal in macros.tex
+\newcommand{\QtwoEoneM}{M}                    % cell label (min--max)
+\newcommand{\QtwoEoneMGrd}{86.0}    % E1-M greedy Q2
+\newcommand{\QtwoEoneMOpt}{100.0}   % E1-M optimal Q2
+% Cell B (between only)
+\newcommand{\QtwoEoneBGrd}{100.0}    % E1-B greedy Q2
+\newcommand{\QtwoEoneBOpt}{100.0}   % E1-B optimal Q2
+% Cell W (within only): loss = \EoneWloss
+\newcommand{\QtwoEoneWGrd}{64.0}    % E1-W greedy Q2
+\newcommand{\QtwoEoneWOpt}{64.2}   % E1-W optimal Q2
+% Cell V (vector): also \QtwovecGreedy / \QtwovecOptimal in macros.tex; loss = \EoneVloss
+\newcommand{\QtwoEoneVGrd}{66.2}    % E1-V greedy Q2
+\newcommand{\QtwoEoneVOpt}{56.8}   % E1-V optimal Q2

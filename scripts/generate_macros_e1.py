@@ -145,6 +145,21 @@ def main():
         "",
         rf"\newcommand{{\EoneVloss}}{{{eone_v}}}            % 100 - Q2_opt(E1-V) = vector cell loss",
         rf"\newcommand{{\EoneWloss}}{{{eone_w}}}            % 100 - Q2_opt(E1-W) = within-group loss",
+        "",
+        "% ── E1 cell Q2 values (for tab:e1) ────────────────────────────────────",
+        "% Cell M (min-max): also \\QtwommGreedy / \\QtwommOptimal in macros.tex",
+        rf"\newcommand{{\QtwoEoneM}}{{M}}                    % cell label (min--max)",
+        rf"\newcommand{{\QtwoEoneMGrd}}{{{results['E1-M']['greedy']:.1f}}}    % E1-M greedy Q2",
+        rf"\newcommand{{\QtwoEoneMOpt}}{{{results['E1-M']['optimal']:.1f}}}   % E1-M optimal Q2",
+        "% Cell B (between only)",
+        rf"\newcommand{{\QtwoEoneBGrd}}{{{results['E1-B']['greedy']:.1f}}}    % E1-B greedy Q2",
+        rf"\newcommand{{\QtwoEoneBOpt}}{{{results['E1-B']['optimal']:.1f}}}   % E1-B optimal Q2",
+        "% Cell W (within only): loss = \\EoneWloss",
+        rf"\newcommand{{\QtwoEoneWGrd}}{{{results['E1-W']['greedy']:.1f}}}    % E1-W greedy Q2",
+        rf"\newcommand{{\QtwoEoneWOpt}}{{{results['E1-W']['optimal']:.1f}}}   % E1-W optimal Q2",
+        "% Cell V (vector): also \\QtwovecGreedy / \\QtwovecOptimal in macros.tex; loss = \\EoneVloss",
+        rf"\newcommand{{\QtwoEoneVGrd}}{{{results['E1-V']['greedy']:.1f}}}    % E1-V greedy Q2",
+        rf"\newcommand{{\QtwoEoneVOpt}}{{{results['E1-V']['optimal']:.1f}}}   % E1-V optimal Q2",
     ]
     OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Written: {OUT}")

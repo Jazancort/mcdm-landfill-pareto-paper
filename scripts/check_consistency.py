@@ -167,10 +167,11 @@ if main_tex.exists():
 suppl_tex_path = ROOT / "supplementary.tex"
 suppl_tex = suppl_tex_path.read_text(encoding="utf-8") if suppl_tex_path.exists() else ""
 
-# tab:tvorder rows
-for label, val in [("86.0", 86.0), ("88.2", 88.2), ("66.2", 66.2), ("56.8", 56.8)]:
-    if label in tex:
-        print(f"  [OK  ] tab:tvorder value {label} present in main.tex")
+# tab:tvorder rows — accept hardcoded literal OR macro reference
+for label, macro in [("86.0", r"\QtwommGreedy"), ("88.2", r"\QtwoRanksOptimal"),
+                     ("66.2", r"\QtwovecGreedy"), ("56.8", r"\QtwovecOptimal")]:
+    if label in tex or macro in tex:
+        print(f"  [OK  ] tab:tvorder value {label} present in main.tex (literal or macro)")
     else:
         FAIL.append(f"tab:tvorder value {label} missing from main.tex")
         print(f"  [FAIL] tab:tvorder value {label} missing from main.tex")
@@ -761,7 +762,8 @@ else:
 print()
 print("=== A10: EoneVloss == 100 - QtwovecOptimal ===")
 _macros_all = {}
-for _fname in ["macros.tex", "macros_amplitudes.tex", "macros_e6.tex"]:
+for _fname in ["macros.tex", "macros_amplitudes.tex", "macros_e6.tex",
+               "results/e1/e1_macros.tex"]:
     _fp = ROOT / _fname
     if _fp.exists():
         for _m in re.finditer(r"\\newcommand\{\\(\w+)\}\{([0-9.]+)\}", _fp.read_text(encoding="utf-8")):
