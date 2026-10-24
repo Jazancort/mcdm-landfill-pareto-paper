@@ -304,18 +304,12 @@ Ver D?-4 antes de começar (localizar pesos w por draw).
 - [x] **E2** FEITO (6b83ddb): §7.6 (reference set) convertido para Remark de 4 frases. tab:amprefset e eq:refsetA removidos. tab:coding2x2 mantida (referenciada na Discussion). Referência na Discussion actualizada.
 - [x] **E3** FEITO (commit E3): §6.7 ("Magnitude is not enough: the concentration") fundida em §6.2 ("Pareto consistency"). prop:concentration, eq:meff, eq:l2fact, rem:meff_reading mantidos com labels intactos. Transição: "Proposition~\ref{prop:p1:stmt} handles TV=0; when TV>0..." `\paragraph{Fogo Island.}` convertido para texto corrido ("For Fogo Island, computing..."). Subsecção eliminada; 8 subsecções em §6 em vez de 9. BAD_PHRASE + MUST_FAIL adicionados ao check_consistency.py (26 casos).
 - [x] **E4** FEITO: §7.9 já tem 7 células, \EsixNperdraw, \EsixNdrawsTotal — completo.
-- [ ] **E5** Tabela única de orientação de critérios (substitui as 3 descrições em §3.2, §4.1, §4.3).
+- [x] **E5** FEITO (commit E5): `tab:criteria` criada em §3.2 (após F1/F2/F3). 4 colunas: Criterion, Group, Sense, SAW term (11 linhas). `\paragraph{Mixed senses and the SAW orientation.}` condensado em 4 frases com referência à tabela. `\paragraph{Criterion orientation.}` em §4.1: 9 linhas → 2 frases. §4.3 aspect: 5 linhas → 2 linhas.
 - [ ] **E6** Resolver notação inconsistente (A18) — verificar se ainda necessário.
 - [ ] **E7** Integrar E6 na §8 (Discussão) e na Conclusão.
 - [x] **E8** FEITO (6b83ddb): "no choice of w restores" → "given the score, no reweighting restores".
 - [x] **E9** FEITO (6b83ddb): Intro: "473 sites enumerate 1,944,653" → "$\Nvia$ admissible sites (screened from $\Ncand$)... $\Ntrios$ feasible portfolios of size three".
 - [x] **E10** FEITO (501d011): Declaração de IA actualizada para template Elsevier ("During the preparation... the author reviewed and edited...").
-- [ ] **E5** Tabela única de orientação de critérios (substitui as 3 descrições em §3.2, §4.1, §4.3).
-- [ ] **E6** Resolver notação inconsistente (A18).
-- [ ] **E7** Integrar E6 na §8 (Discussão) e na Conclusão.
-- [ ] **E8** §7.6: "no choice of w restores..." → "given the score, no reweighting restores...".
-- [ ] **E9** Abstract/Intro: "473 sites enumerate 1,944,653" → "389 candidate sites yield 1,944,653 feasible portfolios of size three".
-- [ ] **E10** Declaração de IA: rever segundo política Elsevier.
 
 ---
 

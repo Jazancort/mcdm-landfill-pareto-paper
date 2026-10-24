@@ -696,37 +696,49 @@ The three objectives therefore have mixed senses:
 and we write $\mathbf{F}(t;w)=(F_1,F_2,F_3)$ to make the weight
 dependence explicit, since it is central to Section~\ref{sec:design}.
 
-\paragraph{Mixed senses and the SAW orientation.}
-Criteria in $G_1$ and $G_2$ are built so that $c_j(i)=0$ is the most
-favourable value: for distance-from-hazard criteria the raw distance is
-inverted before normalisation, and for the binary aspect criterion
-the leeward class ($\in[90^\circ,180^\circ]$) is assigned $c_j=0$
-in the objective computation and $c_j=1$ in the SAW/TOPSIS decision matrix
-(where it is treated as a benefit criterion).
-The two representations yield identical \emph{adjusted} scores under
-min--max normalisation: the leeward class carries $c_j=0$ in the
-objective matrix, which the orientation complement turns into $1-0=1$,
-and $c_j=1$ in the decision matrix, where no complement is applied;
-the two versions of the SAW score rank all portfolios identically
-(top-100 rank agreement $=1.000$ on Fogo under min--max).
-Under vector normalisation the equivalence does not hold.
-The decision matrix normalises the column $x \in\{0,1\}$ directly,
-giving $A_j^{\rm vec}=1/\sqrt{94}=0.103$.
-Under vector normalisation the two encodings differ in amplitude by
-$\sqrt{n_0/n_1}=\AspectAmplitudeRatio$ (Corollary~\ref{cor:order}); the score and
-objective functions use the decision-matrix encoding throughout
-(a score--evaluator coding mismatch arising from non-monotone encodings
-is analysed in Section~\ref{sec:refset}).
+\begin{table}[!t]
+\centering
+\caption{Criterion groups, partial-value sense, and SAW score term.
+  Criteria in $G_1$ and $G_2$ are costs ($c_j(i)=0$ is most favourable);
+  the SAW score uses $1-c_j(a)$ to orient them as benefits.
+  \textit{Aspect} ($G_2$, non-monotone) uses the binary leeward indicator
+  $b_\mathrm{asp}=\mathbf{1}[\mathrm{aspect}\in[90^\circ,180^\circ]]$
+  ($n_1=94$) directly in the score; $F_2$ uses $1-b_\mathrm{asp}$.
+  Criteria in $G_3$ are benefits ($c_j(i)=1$ most favourable); score and
+  objective both use $c_j(a)$.}
+\label{tab:criteria}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Criterion & Group & Sense & SAW term \\
+\midrule
+\textit{perm}      & $G_1$ & min & $1-c_j(a)$ \\
+\textit{slope}     & $G_1$ & min & $1-c_j(a)$ \\
+\textit{roads}     & $G_1$ & min & $1-c_j(a)$ \\
+\textit{rivers}    & $G_2$ & min & $1-c_j(a)$ \\
+\textit{aspect}    & $G_2$ & binary & $b_\mathrm{asp}(a)$ \\
+\textit{coast}     & $G_2$ & min & $1-c_j(a)$ \\
+\textit{protected} & $G_2$ & min & $1-c_j(a)$ \\
+\textit{wells}     & $G_2$ & min & $1-c_j(a)$ \\
+\textit{urban}     & $G_3$ & max & $c_j(a)$ \\
+\textit{aero}      & $G_3$ & max & $c_j(a)$ \\
+\textit{cult}      & $G_3$ & max & $c_j(a)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:criteria} records the group, sense, and SAW term for each criterion.
+For \textit{aspect}, the decision-matrix encoding ($b_\mathrm{asp}=1$ for
+leeward) and the objective encoding ($c_\mathrm{asp}=1-b_\mathrm{asp}$)
+are equivalent under min--max normalisation (top-100 rank agreement
+$=1.000$) but differ under vector normalisation by a factor of
+$\sqrt{n_0/n_1}=\AspectAmplitudeRatio$ (Corollary~\ref{cor:order}); score and
+objective use the decision-matrix encoding throughout
+(a score--evaluator coding mismatch is analysed in Section~\ref{sec:refset}).
 Amplitudes in Table~\ref{tab:amplitude} are measured on the decision
 matrix, with $n_1=94$ leeward sites among the $\Nvia$ admissible sites.
-Criteria in $G_3$ are built so that $c_j(i)=1$ is most favourable
-(farther from urban areas, airports, and cultivation).
-The SAW method compensates for the mixed senses by complementing $G_1$
-and $G_2$ before aggregation, producing an oriented score
-$s(a)=\sum_{j\in G_1\cup G_2} w_j(1-c_j(a))+\sum_{j\in G_3} w_j c_j(a)$
-that is uniformly larger-is-better.
-Section~\ref{prop:p1} turns on the relationship between $s$ and the
-three objectives.
+The SAW method produces the oriented score
+$s(a)=\sum_{j\in G_1\cup G_2} w_j(1-c_j(a))+\sum_{j\in G_3} w_j c_j(a)$;
+Section~\ref{prop:p1} uses this relationship.
 
 \paragraph{What the benchmark is, and is not.}
 \label{rem:valuespace}
@@ -859,19 +871,9 @@ be licensed and are removed, leaving $\Nvia=\Ncand-\Nexcl$ admissible
 sites.
 
 
-\paragraph{Criterion orientation.}
-Nine criteria are monotone distances; slope is a monotone cost.
-Slope aspect is circular and non-monotone; following \citet{AzancortNeto2026},
-the leeward indicator $b_{\mathrm{asp}}=\mathbf{1}[\mathrm{aspect}\in[90^\circ,180^\circ]]$
-takes value~$1$ for the favourable orientation (the wind carries emissions away
-from inhabited areas) and~$0$ otherwise.
-The score uses $b_{\mathrm{asp}}$ directly (higher is better), with $n_1=94$
-positives among the $\Nvia$ admissible sites.
-The environmental-impact objective (F2, minimisation) uses the complement
-$c_{\mathrm{asp}}=1-b_{\mathrm{asp}}$: lower is better, so leeward sites ($b_{\mathrm{asp}}=1$,
-$c_{\mathrm{asp}}=0$) have lower cost and are preferred.
-This binarisation matters for Sections~\ref{sec:three_norms} and~\ref{sec:order_ops}
-and is recorded explicitly in Table~\ref{tab:amplitude}.
+Criterion orientation and sense follow Table~\ref{tab:criteria}.
+\textit{Aspect} is the sole non-monotone criterion; its binarisation
+matters for Sections~\ref{sec:three_norms} and~\ref{sec:order_ops}.
 
 \subsection{Criterion weights}
 
@@ -901,9 +903,8 @@ Three normalisations are compared, spanning the standard taxonomies of
 \end{align}
 Cost criteria are complemented in~\eqref{eq:mm} (subtracted from~1 after
 normalisation); ranks are midranks with ties averaged.
-For the \textit{aspect} criterion, the raw azimuth is replaced by a binary
-leeward indicator ($b_j=1$ if the site faces away from the prevailing wind,
-$b_j=0$ otherwise) before any normalisation; the amplitude therefore follows
+For \textit{aspect}, the binarisation follows Table~\ref{tab:criteria};
+the amplitude therefore follows
 the binary formula in~\eqref{eq:Arank_binary}, not the continuous formula for
 $\rho_j$ (Section~\ref{sec:three_norms}).
 The vector form in~\eqref{eq:vec} normalises the min-max column~$\tilde{x}_j$,
