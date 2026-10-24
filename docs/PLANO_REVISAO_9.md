@@ -228,7 +228,7 @@ O `f8_circularity.csv` actual tem só 4 linhas (obj=vec × score=mm/vec). Faltam
 
 Ver D?-6 sobre como obter F_mm.
 
-- [ ] **C1** Estender `compute_f8_circularity.py` para F_mm.
+- [x] **C1** FEITO PARCIAL (2eec80a): `compute_f8_mm_frontier.py` criado. Smoke N=20 verificou: mm/mm/opt=100% (Theorem 1), mm/vec/opt=100%, mm/vec/grd=100%, mm/mm/grd=95% (alta variância). Job N=500 lançado na Athena (tmux f8mm). Aguarda resultados para macros e tabela.
 - [ ] **C2** Criar nova tabela no manuscrito com as 8 células.
 - [ ] **C3** Mover F8 da §5.4 (Métodos) para §7.x (Resultados).
 - [ ] **C4** Reenquadrar o destaque: "custo de desalinhamento" em vez de "efeito da normalização".
