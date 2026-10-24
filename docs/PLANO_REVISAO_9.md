@@ -191,23 +191,13 @@ Os erros 1-7 do PDF correspondem a A1-A7. A3-A7 estão feitos. A1-A2 pendentes.
 
 - [x] **A12** FEITO (8173421): §6.1 — "Within this scope, Q₂ ... for min-max, ranks and vector" agora qualifica ranks como "(heuristic: ranks fall outside the exact scope)". Mantém a informação mas assinala o âmbito.
 
-- [ ] **A13** Tabela 3 + §7.1: legenda menciona "blue diamonds" (estão na Fig. 5, não na tabela). Acrescentar coluna "∈ F" do teste de dominância.
+- [x] **A13** FEITO (b8911a2): Tabela 3 (tab:canonical): (i) removido "blue diamonds" da caption; (ii) removida nota sobre sítios excluídos (nenhum portfolio na tabela inclui sítios excluídos — verificado); (iii) adicionada coluna "∈F" com valores do dominance test: SAW/mm/opt=yes, TOPSIS/mm/grd=yes, PROMETHEE/grd=yes, Source study=yes; restantes=no. Gap=0 ↔ ∈F coincidiu em todos os casos (confirmado via pareto_front_A.csv, df_all indices).
 
-- [x] **A14** FEITO (8173421): §7.5 "For completeness, we recall the reference-set amplitude ratio." → "For completeness, we note that the reference-set amplitude ratio is a separate source of mismatch when the normalisation set differs." Deixa claro que é um ponto separado do mismatch de codificação.
+- [x] **A18** FEITO (b8911a2): (i) §6.10 "N vs. N′" → "A vs. A′"; (ii) §8.6 "$k=3$ minimisation objectives" → "three minimisation objectives" (k=portfolio size, não objectivos); (iii) §5.1: nota adicionada explicando subscripts Q₂, Q₃; (iv) t/T inconsistency verificada — não existe na versão actual.
 
-- [x] **A15** FEITO (8173421): §8.6 — dois parágrafos "Gap measure and weak dominance" fundidos num único; "Regulatory grounding" expandido de 1 frase para 2 (acrescenta que a exclusão não afecta a comparação de métodos).
+- [x] **A19** FEITO: refs.bib já tem diacríticos correctos em Unicode (Kadziński, Słowiński). O Select-String não mostrava Unicode — não havia problema.
 
-- [x] **A16** FEITO (8173421): "slope (dimensionless gradient)" → "slope (degrees)". Confirmado em DATA_DICTIONARY.md L41-48: `gdaldem slope`, unidade graus.
-
-- [x] **A17** FEITO (8f82ce9): "|𝒯| up to several hundred candidates" → "$N$ up to several hundred". 𝒯 é o conjunto de trios (1.94M), N é os candidatos.
-
-### Grupo 3 — Notação e referências
-
-- [ ] **A18** Notação: k=3 ambíguo (tamanho do portfolio vs número de objectivos); t e T inconsistentes; A vs A′ vs N vs N′; Q₁ não definido.
-
-- [ ] **A19** Referências: "Kadziski" → Kadziński; "Sowiski" → Słowiński.
-
-- [ ] **A20** Code availability: afirmação falsa enquanto A1-A3 não fechados. Actualizar por último.
+- [ ] **A20** Code availability: afirmação falsa enquanto A1 não fechado. Actualizar por último.
 
 ---
 
