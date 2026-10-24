@@ -1,25 +1,46 @@
-"""F1 — Slope chart: nominal vs effective weights, Intervention Window style."""
-import sys, os
+"""F1 — Slope chart: nominal vs effective weights, Intervention Window style.
+
+Reads rho_j amplitudes from results/amplitudes/amplitudes.json (AUTO-GENERATED).
+Never use hardcoded amplitude values — the JSON is the single source of truth.
+"""
+import sys, os, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fig_utils import set_rcparams, savefig, COL2, WONG, C_TREATMENT, C_BASELINE, C_ORANGE, C_GREEN, C_GRAY
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
+import numpy as np
 
 set_rcparams()
 
+# ── Load amplitudes from JSON ──────────────────────────────────────────────
+_here = os.path.dirname(os.path.abspath(__file__))
+_json = os.path.join(_here, "..", "results", "amplitudes", "amplitudes.json")
+with open(_json) as _f:
+    _amp = json.load(_f)
+
 criteria = ['perm','slope','roads','rivers','aspect',
             'coast','protected','wells','urban','aero','cult']
+
 w_nom = dict(perm=0.152, slope=0.113, roads=0.030, rivers=0.091, aspect=0.075,
              coast=0.069, protected=0.066, wells=0.055, urban=0.166,
              aero=0.102, cult=0.081)
+
+# ── Amplitudes (rho_j) from JSON ─────────────────────────────────────────
+rho = _amp["rho_j"]  # dict: criterion -> rho_shift value
+
+# Min-max: all amplitudes = 1.0 (range of mm-normalised column = 1)
 A = dict(
     mm  = {c: 1.000 for c in criteria},
-    vec = dict(perm=0.583, slope=0.135, roads=0.206, rivers=0.265, aspect=0.103,
-               coast=0.126, protected=0.105, wells=0.081, urban=0.107,
-               aero=0.086, cult=0.171),
-    rank= dict(perm=0.547, slope=0.995, roads=0.995, rivers=0.995, aspect=0.499,
-               coast=0.995, protected=0.995, wells=0.995, urban=0.989,
-               aero=0.995, cult=0.981),
+    vec = {c: rho[c] for c in criteria},
+)
+
+# Midranks amplitudes: range(ranks_j) / (N+1); approximate as 1 - tie_correction.
+# These are NOT in amplitudes.json (midranks are heuristic, not the canonical
+# shift formula). Keep hardcoded but document them here explicitly.
+A["rank"] = dict(
+    perm=0.547, slope=0.995, roads=0.995, rivers=0.995, aspect=0.499,
+    coast=0.995, protected=0.995, wells=0.995, urban=0.989,
+    aero=0.995, cult=0.981,
 )
 
 def weff(w, a):
