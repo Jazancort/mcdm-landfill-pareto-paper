@@ -99,6 +99,80 @@ lines = [
 OUT_TEX.write_text("\n".join(lines) + "\n", encoding="utf-8")
 print(f"  Written: {OUT_TEX}")
 
+# ── F8 Full 2×2 matrix macros ─────────────────────────────────────────────────
+# Read f8_circularity.csv (obj=vec, N=500) and f8_circularity_mm.csv (obj=mm, N=500)
+CIRC_VEC_CSV = REPO / "results" / "f8" / "f8_circularity.csv"
+CIRC_MM_CSV  = REPO / "results" / "f8" / "f8_circularity_mm.csv"
+
+if CIRC_VEC_CSV.exists() and CIRC_MM_CSV.exists():
+    print("\nGenerating 2×2 matrix macros...")
+    df_vec = pd.read_csv(CIRC_VEC_CSV)
+    df_mm  = pd.read_csv(CIRC_MM_CSV)
+
+    def q2_se(df, score, asm):
+        row = df[(df["score_norm"]==score) & (df["assembly"]==asm)]
+        if row.empty:
+            return None, None
+        return float(row["Q2"].iloc[0]), float(row["SE"].iloc[0])
+
+    # obj=vec cells
+    vv_opt_q, vv_opt_se = q2_se(df_vec, "vec", "optimal")   # 100.0 (Thm1)
+    vm_opt_q, vm_opt_se = q2_se(df_vec, "mm",  "optimal")   # 94.4
+    vv_grd_q, vv_grd_se = q2_se(df_vec, "vec", "greedy")    # 100.0 (empirical)
+    vm_grd_q, vm_grd_se = q2_se(df_vec, "mm",  "greedy")    # 72.4
+
+    # obj=mm cells
+    mv_opt_q, mv_opt_se = q2_se(df_mm, "vec", "optimal")    # 99.8 (NEW)
+    mm_opt_q, mm_opt_se = q2_se(df_mm, "mm",  "optimal")    # 100.0 (Thm1)
+    mv_grd_q, mv_grd_se = q2_se(df_mm, "vec", "greedy")     # 99.6 (NEW)
+    mm_grd_q, mm_grd_se = q2_se(df_mm, "mm",  "greedy")     # 86.0
+
+    if all(v is not None for v in [vv_opt_q, vm_opt_q, vv_grd_q, vm_grd_q,
+                                   mv_opt_q, mm_opt_q, mv_grd_q, mm_grd_q]):
+        # Losses (100 - Q2)
+        vm_opt_loss = round(100 - vm_opt_q, 1)   # 5.6 pp
+        mv_opt_loss = round(100 - mv_opt_q, 1)   # 0.2 pp
+        vm_grd_loss = round(100 - vm_grd_q, 1)   # 27.6 pp
+        mv_grd_loss = round(100 - mv_grd_q, 1)   # 0.4 pp
+
+        matrix_lines = [
+            "",
+            "% ── F8 full 2×2 alignment matrix macros ──────────────────────────────────",
+            "% obj×score: VecVec=100%(Thm1), VecMM=94.4%, MMVec=99.8%(NEW), MMMM=100%(Thm1)",
+            "% Generated from: f8_circularity.csv (obj=vec) + f8_circularity_mm.csv (obj=mm)",
+            "% KEY RESULT: misalignment is strongly asymmetric.",
+            "%   VecMM/opt loss = 5.6 pp;  MMVec/opt loss = 0.2 pp (N=500 each)",
+            "",
+            "% obj=vec frontier cells (existing)",
+            rf"\newcommand{{\FEightVecVecOptQ}}{{{vv_opt_q:.1f}}}  % obj=vec score=vec opt: Thm1 guarantee",
+            rf"\newcommand{{\FEightVecMMOptQ}}{{{vm_opt_q:.1f}}}   % obj=vec score=mm opt: main F8 result",
+            rf"\newcommand{{\FEightVecMMOptSE}}{{{vm_opt_se:.3f}}} % SE of above",
+            rf"\newcommand{{\FEightVecMMOptLoss}}{{{vm_opt_loss:.1f}}} % 100-VecMMOptQ",
+            rf"\newcommand{{\FEightVecVecGrdQ}}{{{vv_grd_q:.1f}}}  % obj=vec score=vec grd: empirical 100%",
+            rf"\newcommand{{\FEightVecMMGrdQ}}{{{vm_grd_q:.1f}}}   % obj=vec score=mm grd",
+            rf"\newcommand{{\FEightVecMMGrdSE}}{{{vm_grd_se:.3f}}} % SE of above",
+            rf"\newcommand{{\FEightVecMMGrdLoss}}{{{vm_grd_loss:.1f}}} % 100-VecMMGrdQ",
+            "",
+            "% obj=mm frontier cells (NEW — from compute_f8_mm_frontier.py)",
+            rf"\newcommand{{\FEightMmMMOptQ}}{{{mm_opt_q:.1f}}}    % obj=mm score=mm opt: Thm1 guarantee",
+            rf"\newcommand{{\FEightMmVecOptQ}}{{{mv_opt_q:.1f}}}   % obj=mm score=vec opt: KEY RESULT",
+            rf"\newcommand{{\FEightMmVecOptSE}}{{{mv_opt_se:.3f}}} % SE of above",
+            rf"\newcommand{{\FEightMmVecOptLoss}}{{{mv_opt_loss:.1f}}} % 100-MmVecOptQ",
+            rf"\newcommand{{\FEightMmMMGrdQ}}{{{mm_grd_q:.1f}}}    % obj=mm score=mm grd: ~factorial SAW/mm/grd",
+            rf"\newcommand{{\FEightMmVecGrdQ}}{{{mv_grd_q:.1f}}}   % obj=mm score=vec grd: KEY RESULT",
+            rf"\newcommand{{\FEightMmVecGrdSE}}{{{mv_grd_se:.3f}}} % SE of above",
+            rf"\newcommand{{\FEightMmVecGrdLoss}}{{{mv_grd_loss:.1f}}} % 100-MmVecGrdQ",
+            "",
+        ]
+        OUT_TEX.write_text("\n".join(lines + matrix_lines) + "\n", encoding="utf-8")
+        print(f"  2×2 matrix macros written.")
+        print(f"  Misalignment opt:   vec->mm={vm_opt_loss:.1f}pp  mm->vec={mv_opt_loss:.1f}pp")
+        print(f"  Misalignment grdy:  vec->mm={vm_grd_loss:.1f}pp  mm->vec={mv_grd_loss:.1f}pp")
+    else:
+        print("  [WARN] Some 2×2 cells missing — skipping matrix macros")
+else:
+    print(f"  [INFO] f8_circularity*.csv not found — skipping 2×2 matrix macros")
+
 # ── Report text proposals ────────────────────────────────────────────────────
 print()
 print("PROPOSED TEXT §5.4 (replace lines 1122-1130 in main.tex):")
