@@ -379,6 +379,19 @@ for norm_lbl, asm in cells:
 
 out = ROOT / "results" / "f8"
 out.mkdir(exist_ok=True)
+
+# Guard: refuse to overwrite validated result files unless explicitly redirected
+_PROTECTED = [out / "f8_circularity.csv", out / "f8_per_draw.csv"]
+for _p in _PROTECTED:
+    if _p.exists():
+        import sys as _sys
+        _sys.exit(
+            f"ERROR: {_p.name} already exists in {out}.\n"
+            "This script may not overwrite validated F8 results.\n"
+            "If this is a re-run for regression testing, rename the output:\n"
+            "  Patch N_DRAWS and output filenames to something like f8_circularity_n20.csv"
+        )
+
 df = pd.DataFrame(rows)
 df.to_csv(out / "f8_circularity.csv", index=False)
 print(f"\n=== F8 RESULTS ===\n{df.to_string(index=False)}")

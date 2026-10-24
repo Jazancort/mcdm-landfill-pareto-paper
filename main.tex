@@ -210,7 +210,7 @@ Min--max normalisation has $A_j \equiv 1$ and is the unique
 weight-preserving choice among the three standard families.
 Vector normalisation has $A_j = \rho_j$, determined by the distributional
 shape of the criterion, which in our data multiplies one criterion's
-weight by $\PermInflation\times$ and divides another by $0.53\times$
+weight by $\PermInflation\times$ and divides another by $\UrbanInflation\times$
 (\textit{urban}) without any of this appearing in the
 analyst's report.
 Midranks rescaled to the unit interval contract with tie mass, and every
@@ -712,7 +712,7 @@ Under vector normalisation the equivalence does not hold.
 The decision matrix normalises the column $x \in\{0,1\}$ directly,
 giving $A_j^{\rm vec}=1/\sqrt{94}=0.103$.
 Under vector normalisation the two encodings differ in amplitude by
-$\sqrt{n_0/n_1}=1.77$ (Corollary~\ref{cor:order}); the score and
+$\sqrt{n_0/n_1}=\AspectAmplitudeRatio$ (Corollary~\ref{cor:order}); the score and
 objective functions use the decision-matrix encoding throughout
 (a score--evaluator coding mismatch arising from non-monotone encodings
 is analysed in Section~\ref{sec:refset}).
@@ -1679,7 +1679,7 @@ Table~\ref{tab:amplitude} lists $\rho_j$ and $w_j^{\mathrm{eff}}/w_j$
 for all eleven criteria.
 \textit{Perm} ($w_j = 0.152$): $\rho_j = 0.583$, effective-weight
 factor $\mathbf{\PermInflation\times}$.
-\textit{Urban} ($w_j = 0.166$): factor $\mathbf{0.53\times}$.
+\textit{Urban} ($w_j = 0.166$): factor $\mathbf{\UrbanInflation\times}$.
 \textit{Aspect} (binary, $n_1 = 94$): $\rho_j = 1/\sqrt{94} = 0.103$,
 factor $0.51\times$.
 
@@ -1732,7 +1732,7 @@ $\mathrm{TV}$ & & & 0.000 & 0.311 & 0.091 & & \\
   Under vector normalisation (centre), \textit{perm} is inflated to
   $\PermInflation\times$ its nominal weight because its heavy-zero distribution
   concentrates the Euclidean norm; \textit{urban} and \textit{aspect}
-  are correspondingly deflated ($0.53\times$ and $0.51\times$).
+  are correspondingly deflated ($\UrbanInflation\times$ and $\AspectInflation\times$).
   Under midranks (right), the pattern reverses: \textit{perm} is
   deflated ($0.62\times$) while the seven fully continuous criteria gain
   $\approx 12\%$.
@@ -1851,13 +1851,13 @@ of the other), and each has a different amplitude $A_j$.
 
 \paragraph{Empirical magnitude on Fogo Island.}
 For \textit{aspect} ($n_1=94$ leeward sites, $n_0=295$), the two orders
-give $A_j\in\{0.058,\,0.103\}$, a factor of $1.77$.
+give $A_j\in\{0.058,\,0.103\}$, a factor of $\AspectAmplitudeRatio$.
 Running TOPSIS with vector normalisation under each order, holding the
 criterion semantics (leeward $=$ favourable), weights, and data fixed,
 yields a Kendall~$\tau_b=0.960$ and top-100 set agreement of $0.960$
 across the $\Nvia$ admissible sites.
 The agreement is high because \textit{aspect} is one of eleven criteria:
-the 1.77$\times$ amplitude difference in one binary column is partly
+the $\AspectAmplitudeRatio\times$ amplitude difference in one binary column is partly
 absorbed by the other ten.
 The divergence between the two orders would widen in proportion to
 $\sqrt{n_0/n_1}$ and would be undetectable in any output that a
@@ -2797,7 +2797,7 @@ normalising first gives $1/\lVert\mathbf{x}\rVert_2$, and the two
 normalised columns are not collinear (neither is a scalar multiple
 of the other) (Corollary~\ref{cor:order}).
 For a binary indicator with $n_1$ ones and $n_0$ zeros the amplitudes
-differ by $\sqrt{n_0/n_1}$; for \textit{aspect} on Fogo this is $1.77$.
+differ by $\sqrt{n_0/n_1}$; for \textit{aspect} on Fogo this is $\AspectAmplitudeRatio$.
 The order of operations is not reported in any study we reviewed, yet it
 determines which column is normalised and therefore which amplitude
 enters the effective weights.

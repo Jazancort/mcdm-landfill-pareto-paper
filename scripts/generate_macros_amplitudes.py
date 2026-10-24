@@ -226,6 +226,7 @@ def compute_amplitudes():
         "rho_perm_inv":  float(rho_perm_inv),
         "rho_aspect":    float(rho[aspect_idx]),
         "rho_asp_flip":  float(rho_asp_flip),
+        "aspect_amp_ratio": round(float(rho[aspect_idx]) / float(rho_asp_flip), 2),  # rho_aspect/rho_asp_flip = sqrt(n_nonleeward/n_leeward)
         "q2_mm_opt":     float(q2_mm),
         "q2_rnk_opt":    float(q2_rnk),
         "q2_vec_opt":    float(q2_vec),
@@ -258,6 +259,9 @@ def write_macros_amplitudes_tex(res, out_path):
         "% --- Perm inflation ---",
         rf"\newcommand{{\PermInflation}}{{{res['perm_inflation']:.2f}}}        % w_eff(perm)/w(perm)",
         rf"\newcommand{{\IntraGperm}}{{{res['IntraGperm']:.2f}}}           % rho_perm/Abar_G1",
+        rf"\newcommand{{\UrbanInflation}}{{{res['urban_inflation']:.2f}}}       % w_eff(urban)/w(urban) under vec",
+        rf"\newcommand{{\AspectInflation}}{{{res['aspect_inflation']:.2f}}}      % w_eff(aspect)/w(aspect) under vec",
+        rf"\newcommand{{\AspectAmplitudeRatio}}{{{res['aspect_amp_ratio']:.2f}}}  % rho_aspect/rho_asp_flip = sqrt(n_nonleeward/n_leeward)",
         "",
         "% --- rho_shift max change from rho_raw ---",
         rf"\newcommand{{\RhoShiftMaxPct}}{{{res['RhoShiftMaxPct']:.1f}}}        % max % diff rho_raw vs rho_shift",

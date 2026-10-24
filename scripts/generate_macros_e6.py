@@ -306,6 +306,17 @@ def main():
         print(f"  target_tvw: {target_tvw:.4f} (3dp: {round(target_tvw,3):.3f})")
     write_macros(S, sha, commit, target_tvw=target_tvw)
 
+    # Append Q2 loss macros derived from the principal run CSV
+    # (EsixLossZinfWinfF: Q2 loss for zero-inflated family at W_inf_F condition)
+    zinf_winf = df[(df["family"] == "zero_inflated") & (df["cell"] == "W_inf_F")]
+    assert len(zinf_winf) > 0, "No rows for family=zero_inflated, cell=W_inf_F"
+    loss_zinf = round(100 * (1 - zinf_winf["q2"].mean()), 1)
+    with open(OUT_TEX, "a", encoding="utf-8") as f:
+        f.write("\n% E6 Q2 loss by family at \\EsixTargetTVW (condition W_inf_F, from principal CSV)\n")
+        f.write(f"% zero_inflated: q2_mean={zinf_winf['q2'].mean():.4f} => loss={loss_zinf} pp\n")
+        f.write(f"\\newcommand{{\\EsixLossZinfWinfF}}{{{loss_zinf}}}  % Q2 loss Zinf at W_inf_F (approx)\n")
+    print(f"  EsixLossZinfWinfF={loss_zinf} pp  (zinf/W_inf_F rows={len(zinf_winf)})")
+
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     json.dump({"sha256": sha, "commit": commit,
                "stats": {k: {kk: {kkk: float(vvv) if isinstance(vvv, float) else vvv
