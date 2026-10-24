@@ -57,6 +57,8 @@
 \input{macros_e6}
 % Auto-generated F8 macros (scripts/generate_macros_f8.py) -- DO NOT EDIT BY HAND
 \input{macros_f8}
+% Auto-generated regret macros (scripts/compute_regret.py) -- DO NOT EDIT BY HAND
+\input{results/regret/regret_macros}
 \begin{document}
 \let\WriteBookmarks\relax
 \def\floatpagepagefraction{1}
@@ -1040,6 +1042,26 @@ Both are averaged over $\ndraws$ draws per cell.
 The cell SAW/min--max/optimal satisfies $Q_2=1$ and $Q_3=0$ by
 Proposition~\ref{prop:p1:stmt}; it serves as a regression test and is
 excluded from substantive comparisons.
+
+A third measure captures the loss in \emph{weighted value} rather than
+frontier membership.
+With $V_{\mathrm{mm}}(t;w)=\sum_{a\in t}\sum_j w_j n_j^{\mathrm{mm}}(a)$
+(the SAW/min--max score under weight draw $w$),
+let $t^*(w)=\argmax_t V_{\mathrm{mm}}(t;w)$ be the SAW/min--max/optimal
+portfolio.
+By Proposition~\ref{prop:p1:stmt}, $t^*\in\Fset(w)$ for every $w$.
+The value regret is
+\begin{equation}
+  R = \mathbb{E}_w\!\left[
+    \frac{V_{\mathrm{mm}}(t^*;w) - V_{\mathrm{mm}}(M(w);w)}
+         {V_{\mathrm{mm}}(t^*;w) - \min_c V_{\mathrm{mm}}(M_c(w);w)}
+  \right],  \label{eq:R}
+\end{equation}
+where $\min_c$ is over the eight cells.
+$R\in[0,1]$ by construction; $R=0$ iff $M(w)=t^*$.
+A cell can have $Q_2=1$ (every portfolio on the frontier) and $R>0$
+(every portfolio is a suboptimal frontier point under $V_{\mathrm{mm}}$);
+the two metrics are not equivalent.
 
 \paragraph{Pre-specification.}
 We pre-specify the following before examining results.
@@ -2048,28 +2070,41 @@ According to the pre-specified equivalence criterion ($\delta=2.5$~pp),
 all differences in $Q_3$ scaled to percentage points are below $\delta$;
 severity differences are not practically relevant on this instance.
 
+\textbf{Value regret.}
+The regret $R$~\eqref{eq:R} shows that $Q_2$ and $R$ measure distinct
+aspects of performance (Table~\ref{tab:factorial}, $R$ column).
+Under min--max normalisation, TOPSIS/mm/optimal reaches the frontier on
+$\QtwoTOPSISmmOpt\%$ of draws ($Q_2$) yet loses $\RegrTOPSISmmOpt$~pp
+of the value range ($R$): a portfolio that is almost always
+Pareto-efficient is not the value-maximising frontier portfolio.
+By construction, $R=0$ only for SAW/min--max/optimal.
+The gap between $Q_2$ and $R$ is largest for TOPSIS under both
+normalisations and for SAW under vector normalisation, confirming that
+scoring distortion shifts which frontier portfolio is selected even when
+it does not push the portfolio off the frontier entirely.
+
 \begin{table}[!t]
 \centering\small
-\caption{$Q_2[A']$ with standard error (SE) in parentheses, $Q_3$ and conditional gap (CG) for the balanced $2^3$ design
+\caption{$Q_2[A']$ with standard error (SE) in parentheses, value regret~$R$~\eqref{eq:R} (pp of $V$-range, SE in parentheses), $Q_3$ and conditional gap (CG) for the balanced $2^3$ design
 ($\kappa=200$, $\ndraws$ draws). $Q_3$ is the expected gap~\eqref{eq:Q3} in
 percent of the attainable range; CG $= Q_3/(1-Q_2)$ is the mean shortfall
 over draws in which the portfolio misses the frontier. Both are computed
 against the same reference set as $Q_2$. SAW/min--max/optimal is fixed at
 $100\%$ by Proposition~\ref{prop:p1:stmt}.}
 \label{tab:factorial}
-\begin{tabular}{@{}llrrr@{}}
+\begin{tabular}{@{}llrrrr@{}}
 \toprule
-Agg. & Norm., assembly & $Q_2$~(SE) & $Q_3$~(\%) & CG~(\%) \\
+Agg. & Norm., assembly & $Q_2$~(SE) & $R$~(SE) & $Q_3$~(\%) & CG~(\%) \\
 \midrule
-SAW    & mm, greedy   & $\QtwommGreedy$\% (\QtwoSEmmGreedy)  & \QthreeSAWmmGrdPct   & \CondGapSAWmmGrd   \\
-       & mm, optimal  & $\QtwommOptimal$\% ({---})            & \QthreeSAWmmOptPct   & {---}              \\
-       & vec, greedy  & $\QtwovecGreedy$\% (\QtwoSEvecGreedy) & \QthreeSAWvecGrdPct  & \CondGapSAWvecGrd  \\
-       & vec, optimal & $\QtwovecOptimal$\% (\QtwoSEvecOptimal) & \QthreeSAWvecOptPct  & \CondGapSAWvecOpt  \\
+SAW    & mm, greedy   & $\QtwommGreedy$\% (\QtwoSEmmGreedy)  & \RegrSAWmmGrd{} (\RegrSAWmmGrdSE) & \QthreeSAWmmGrdPct   & \CondGapSAWmmGrd   \\
+       & mm, optimal  & $\QtwommOptimal$\% ({---})            & \RegrSAWmmOpt{} ({---})           & \QthreeSAWmmOptPct   & {---}              \\
+       & vec, greedy  & $\QtwovecGreedy$\% (\QtwoSEvecGreedy) & \RegrSAWvecGrd{} (\RegrSAWvecGrdSE) & \QthreeSAWvecGrdPct  & \CondGapSAWvecGrd  \\
+       & vec, optimal & $\QtwovecOptimal$\% (\QtwoSEvecOptimal) & \RegrSAWvecOpt{} (\RegrSAWvecOptSE) & \QthreeSAWvecOptPct  & \CondGapSAWvecOpt  \\
 \midrule
-TOPSIS & mm, greedy   & $\QtwoTOPSISmmGrd$\% (\QtwoSETOPSISmmGrd)  & \QthreeTOPSISmmGrdPct  & \CondGapTOPSISmmGrd  \\
-       & mm, optimal  & $\QtwoTOPSISmmOpt$\% (\QtwoSETOPSISmmOpt)  & \QthreeTOPSISmmOptPct  & \CondGapTOPSISmmOpt  \\
-       & vec, greedy  & $\QtwoTOPSISvecGrd$\% (\QtwoSETOPSISvecGrd) & \QthreeTOPSISvecGrdPct & \CondGapTOPSISvecGrd \\
-       & vec, optimal & $\QtwoTOPSISvecOpt$\% (\QtwoSETOPSISvecOpt) & \QthreeTOPSISvecOptPct & \CondGapTOPSISvecOpt \\
+TOPSIS & mm, greedy   & $\QtwoTOPSISmmGrd$\% (\QtwoSETOPSISmmGrd)  & \RegrTOPSISmmGrd{} (\RegrTOPSISmmGrdSE) & \QthreeTOPSISmmGrdPct  & \CondGapTOPSISmmGrd  \\
+       & mm, optimal  & $\QtwoTOPSISmmOpt$\% (\QtwoSETOPSISmmOpt)  & \RegrTOPSISmmOpt{} (\RegrTOPSISmmOptSE) & \QthreeTOPSISmmOptPct  & \CondGapTOPSISmmOpt  \\
+       & vec, greedy  & $\QtwoTOPSISvecGrd$\% (\QtwoSETOPSISvecGrd) & \RegrTOPSISvecGrd{} (\RegrTOPSISvecGrdSE) & \QthreeTOPSISvecGrdPct & \CondGapTOPSISvecGrd \\
+       & vec, optimal & $\QtwoTOPSISvecOpt$\% (\QtwoSETOPSISvecOpt) & \RegrTOPSISvecOpt{} (\RegrTOPSISvecOptSE) & \QthreeTOPSISvecOptPct & \CondGapTOPSISvecOpt \\
 \bottomrule
 \end{tabular}
 \end{table}
