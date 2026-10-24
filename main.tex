@@ -1718,7 +1718,7 @@ Criterion & Group & $w_j$ & $A_j^{\text{mm}}$ & $A_j^{\text{vec}}$ &
 \textit{aero}      & $G_3$ & 0.102 & 1.000 & 0.088 & 0.995 & 0.43 & 1.12 \\
 \textit{cult}      & $G_3$ & 0.081 & 1.000 & 0.171 & 0.981 & 0.85 & 1.11 \\
 \midrule
-$\mathrm{TV}$ & & & 0.000 & 0.311 & 0.091 & & \\
+$\mathrm{TV}$ & & & 0.000 & \TVvec & 0.091 & & \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -1817,8 +1817,8 @@ rather than $\mathrm{TV}$ alone (Section~\ref{sec:practice}).
 \paragraph{Fogo Island.}
 Computing~\eqref{eq:meff} on the deviations implied by
 Table~\ref{tab:amplitude} under vector normalisation gives
-$\mathrm{TV}=0.3146$, $\lVert\delta\rVert_2=0.3127$,
-$\lVert\delta\rVert_\infty=0.2859$ (attained at \textit{perm}), and
+$\mathrm{TV}=\TVvec$, $\lVert\delta\rVert_2=\DeltaLtwoshift$,
+$\lVert\delta\rVert_\infty=\DeltaLinfshift$ (attained at \textit{perm}), and
 $m_{\mathrm{eff}}=\meff$ on the admissible range $[2,\,11]$.
 The distortion is thus not merely large but \emph{concentrated}: a
 single criterion accounts for $\PermAbsDevPct\%$ of the total absolute deviation.
