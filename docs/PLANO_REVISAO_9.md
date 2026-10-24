@@ -71,7 +71,22 @@ As 2 ocorrências restantes (L2737, L3018) corrigidas para "scales another by a 
 **Dúvida D?-8 (nova): "Figura 1 (p. 7)" do revisor — qual figura era?**
 O revisor cita "Figura 1 (p. 7)" com "perm: 2.88×", "Aggregation: +0.5 pp", "Assembly: −1.1 pp", "+34.6 pp full 2³". O main.tex actual tem 5 figuras, nenhuma com estes valores como anotações de texto. A fig_F1_slope_weights.py mostra o rácio de RANK (0.62×) como label de texto, não o rácio vec (2.86×). A fig_F2_interaction.py (lê de mc_18cells_raw.csv) existe mas não está incluída no main.tex. Hipótese mais provável: o revisor viu uma versão mais antiga do paper onde uma figura de interacção tinha estas anotações. A correcção de G1 endereça o problema de fundo (amplitudes hardcoded). Clarificar com o revisor se necessário.
 
-**D?-2 (F475-2, implementado mas incompleto): Tabela 6 ainda diz B=2,000**
+**A10 (§6.9 — "linearly independent when n₀ ≠ n₁"): FEITO (8f82ce9)**
+Condição `n₀ ≠ n₁` removida. x e 1-x são sempre linearmente independentes quando x não é constante (ou seja, quando n₀ > 0 e n₁ > 0). A condição era redundante e matematicamente incorrecta como escrita.
+
+**A11 (§6.9 — τ_b=0.960 = top-100=0.960): FEITO (8f82ce9)**
+Verificação via `compute_aspect_polecoding.py` (TOPSIS/vec, 389 sites, W=AHP normalised):
+- τ_b computado: 0.9191 → arredondado para `\AspectTauB{0.92}`
+- Top-100 agreement: 0.9400 → `\AspectTopKAgree{0.94}`
+- Os dois valores são distintos (delta=0.0209) — confirma que o 0.960/0.960 do paper era um erro de cópia.
+- Script canónico criado em `scripts/compute_aspect_polecoding.py`.
+- Não foi encontrado o script original que gerou 0.960 — indica que os valores foram inseridos manualmente.
+
+**A17 (§2.3 — |𝒯| several hundred candidates): FEITO (8f82ce9)**
+`($|\Tset|$ up to several hundred candidates)` → `($N$ up to several hundred)`. O `\Tset` no manuscrito é o conjunto de trios (1.94M portfolios), não o conjunto de candidatos individuais.
+
+**A19 (referências diacríticos): NÃO ERA PROBLEMA**
+refs.bib já tem os diacríticos correctos em Unicode: `Kadziński, Miłosz` e `Słowiński, Roman`. O Select-String no Windows tinha mostrado sem Unicode, induzindo em erro. Nenhuma alteração necessária.
 Implementou-se `\nbootEone{10,000}` e actualizou-se a frase da §7.7 que reporta o IC do E1. Mas a Tabela 6 e a §5.4 mencionam "\nboot-replicate bootstrap" no contexto geral. Revisar se a tabela caption precisa de nota explicando que E1 usa B=10,000 separado, ou se a declaração geral B=2,000 é aceitável enquanto a E1 tem a sua própria nota.
 
 **D?-3 (F475-5, pendente): Auditoria bidirecional ainda não implementada**
