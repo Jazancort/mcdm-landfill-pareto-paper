@@ -238,11 +238,11 @@ Ver D?-6 sobre como obter F_mm.
   | Score vec, grd | 99.6% | 100.0% |
 
   RESULTADO CHAVE: Assimetria 28×. vec→mm custa 0.2 pp (opt) / 0.4 pp (grd). mm→vec custa 5.6 pp (opt) / 27.6 pp (grd). Macros gerados em macros_f8.tex (\FEightMmVecOptQ, \FEightMmVecGrdQ, etc.).
-- [ ] **C2** Criar nova tabela no manuscrito com as 8 células.
-- [ ] **C3** Mover F8 da §5.4 (Métodos) para §7.x (Resultados).
-- [ ] **C4** Reenquadrar o destaque: "custo de desalinhamento" em vez de "efeito da normalização".
-- [ ] **C5** §5.4 passa a referenciar §7.x.
-- [ ] **C6** Acrescentar as 8 células ao `check_consistency.py` e `generate_macros_f8.py`.
+- [x] **C2** FEITO (1f88df1): Nova Tabela~\ref{tab:alignment} com 8 células (2×2×2), usando macros gerados. Diagonal = {---} (Theorem 1). Off-diagonal reporta perda e SE.
+- [x] **C3** FEITO (1f88df1): §5.4 substituído por forward reference a §\ref{sec:alignment}. Nova §7.4 "Cross-model alignment" criada entre §7.3 (Exact assembly) e §7.5 (Reference set).
+- [x] **C4** FEITO (1f88df1): Destaque reenquadrado como "custo de desalinhamento". Texto descreve assimetria: 5.6 pp vs 0.2 pp, factor ≈28×. Explica mecanismo via amplitude perm.
+- [x] **C5** FEITO (1f88df1): §5.4 passa a dizer "Section~\ref{sec:alignment} reports the design and the full cross-model alignment results."
+- [x] **C6** FEITO (1f88df1): 8 células adicionadas ao check_consistency.py — todas passam vs f8_circularity*.csv.
 
 ---
 
