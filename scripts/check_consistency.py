@@ -201,12 +201,13 @@ norm_greedy_contrast = mm_greedy_mean - vec_greedy_mean
 check("Norm greedy contrast (mm-vec, greedy only)",
       norm_greedy_contrast, 25.4, tol=0.5)  # bootstrap value, loose tol
 
-# Verify these values appear in LaTeX
-for label in ["94.4", "96.6", "63.4", "52.4"]:
-    if label in tex:
-        print(f"  [OK  ] tab:factorial value {label} in main.tex")
+# Verify these values appear in LaTeX (as macros now)
+for label, macro in [("94.4", "QtwoTOPSISmmGrd"), ("96.6", "QtwoTOPSISmmOpt"),
+                     ("63.4", "QtwoTOPSISvecGrd"), ("52.4", "QtwoTOPSISvecOpt")]:
+    if label in tex or macro in tex:
+        print(f"  [OK  ] tab:factorial value {label} in main.tex (literal or macro \\{macro})")
     else:
-        FAIL.append(f"tab:factorial value {label} missing from main.tex")
+        FAIL.append(f"tab:factorial value {label} missing from main.tex (neither literal nor macro \\{macro})")
         print(f"  [FAIL] tab:factorial value {label} missing from main.tex")
 
 

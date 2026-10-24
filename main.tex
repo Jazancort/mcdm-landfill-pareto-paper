@@ -191,7 +191,7 @@ SAW performs significantly worse than TOPSIS under min--max$\times$greedy
 ($\AggStratumMMgrd$~pp) and better under vector normalisation
 ($+\AggStratumVecgrd$ and $+\AggStratumVecopt$~pp).
 Normalisation is worth $+\NormGreedyContrast$~pp under greedy assembly,
-and $+31.7$~pp over the three informative cells.
+and $+\NormInfoEffect$~pp over the three informative cells.
 Exact assembly, the established upgrade over reading a ranking top-down,
 has an effect whose sign depends on the normalisation: positive under min--max (TOPSIS: $+\AsmMMtopsis$~pp), negative under vector ($-\AsmVecSAW$ to $-\AsmVecTOPSIS$~pp).
 
@@ -2096,15 +2096,15 @@ $100\%$ by Proposition~\ref{prop:p1:stmt}.}
 \toprule
 Agg. & Norm., assembly & $Q_2$ & $Q_3$~(\%) & CG~(\%) \\
 \midrule
-SAW    & mm, greedy   & 86.0\%  & \QthreeSAWmmGrdPct   & \CondGapSAWmmGrd   \\
-       & mm, optimal  & 100.0\% & \QthreeSAWmmOptPct   & {---}              \\
-       & vec, greedy  & 66.2\%  & \QthreeSAWvecGrdPct  & \CondGapSAWvecGrd  \\
-       & vec, optimal & 56.8\%  & \QthreeSAWvecOptPct  & \CondGapSAWvecOpt  \\
+SAW    & mm, greedy   & $\QtwommGreedy$\%  & \QthreeSAWmmGrdPct   & \CondGapSAWmmGrd   \\
+       & mm, optimal  & $\QtwommOptimal$\% & \QthreeSAWmmOptPct   & {---}              \\
+       & vec, greedy  & $\QtwovecGreedy$\%  & \QthreeSAWvecGrdPct  & \CondGapSAWvecGrd  \\
+       & vec, optimal & $\QtwovecOptimal$\%  & \QthreeSAWvecOptPct  & \CondGapSAWvecOpt  \\
 \midrule
-TOPSIS & mm, greedy   & 94.4\%  & \QthreeTOPSISmmGrdPct  & \CondGapTOPSISmmGrd  \\
-       & mm, optimal  & 96.6\%  & \QthreeTOPSISmmOptPct  & \CondGapTOPSISmmOpt  \\
-       & vec, greedy  & 63.4\%  & \QthreeTOPSISvecGrdPct & \CondGapTOPSISvecGrd \\
-       & vec, optimal & 52.4\%  & \QthreeTOPSISvecOptPct & \CondGapTOPSISvecOpt \\
+TOPSIS & mm, greedy   & $\QtwoTOPSISmmGrd$\%  & \QthreeTOPSISmmGrdPct  & \CondGapTOPSISmmGrd  \\
+       & mm, optimal  & $\QtwoTOPSISmmOpt$\%  & \QthreeTOPSISmmOptPct  & \CondGapTOPSISmmOpt  \\
+       & vec, greedy  & $\QtwoTOPSISvecGrd$\% & \QthreeTOPSISvecGrdPct & \CondGapTOPSISvecGrd \\
+       & vec, optimal & $\QtwoTOPSISvecOpt$\% & \QthreeTOPSISvecOptPct & \CondGapTOPSISvecOpt \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2122,7 +2122,7 @@ reported because the effect reverses sign with the normalisation
 \toprule
 Contrast & Effect & $95\%$ CI \\
 \midrule
-Normalisation, greedy (mm $-$ vec)            & $+\NormGreedyContrast$ & $[+21.2,\,+29.7]$ \\
+Normalisation, greedy (mm $-$ vec)            & $+\NormGreedyContrast$ & $[+\NormGreedyContrastLo,\,+\NormGreedyContrastHi]$ \\
 Normalisation, informative cells$^\dagger$    & $+\NormInfoEffect$ & $[+\NormInfoLo,\,+\NormInfoHi]$ \\
 Aggregation (SAW $-$ TOPSIS)$^\dagger$        & $\AggContrast$  & $[\AggLo,\,\AggHi]$ \\
 \midrule

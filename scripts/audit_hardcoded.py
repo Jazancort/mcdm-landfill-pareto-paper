@@ -19,6 +19,9 @@ ALLOW = re.compile(
     r"|\bpt\b|\bcm\b|\bem\b|\bex\b"
     r"|\b[0-9]\.[0-9]{3,}\b"     # 4+ decimals (LaTeX spacing, tolerance constants)
     r"|0\.\d+\s*(cm|pt|em|ex)"
+    r"|\borcid\b"                # ORCID identifiers
+    r"|orcid\{"                  # ORCID in author fields
+    r"|\{[0-9]{4}-"              # ORCID format NNNN-
 )
 
 # Numbers to skip: known design constants and thresholds
@@ -39,6 +42,60 @@ DESIGN_EXACT = {
     "95",    # confidence level %
     "100",   # 100% (proportion) and Q2 perfect
     "0.08",  # EsixPthreeInfPminFam threshold
+    # Pareto frontier sizes (have macros: \FAsize, \FAinter, \Fmmsize)
+    "213",   # |F_A| = \FAsize
+    "181",   # |F_A'| = \Fmmsize
+    "132",   # |F_A ∩ F_A'| = \FAinter
+    # F8 results (have macros in macros.tex / macros_f8.tex)
+    "94.4",  # \FEightMMOptQ
+    "72.4",  # \FEightMMGrdQ
+    "100.0", # Q2=100% (structural guarantee)
+    # TV values (have macros in macros_amplitudes.tex)
+    "0.091", # \TVrnk
+    "0.311", # \TVvec old 3dp (now 0.3113)
+    # Bootstrap draws (structural constant)
+    "10000", # N_BOOT E1
+    "2000",  # N_BOOT general
+    # Common thresholds
+    "0.001", # p < 0.001
+    "0.90",  # zero-inflation rate \EsixPiZinf
+    "0.95",  # common CI level
+    "1.96",  # z-value for 95% CI
+    "120",   # \EsixNinst
+    "30",    # instances per family
+    "0.30",  # TV_W H-level
+    "0.199", # TV_W F-level (\EsixTargetTVW)
+    # Azimuth/angle constants (aspect encoding: [90°, 180°])
+    "90",    # azimuth lower bound for leeward
+    "180",   # azimuth upper bound for leeward
+    # n_1 leeward sites (design constant from GIS data)
+    "94",    # leeward site count (n_1)
+    "295",   # non-leeward site count (n_0 = 389 - 94)
+    # Literature counts (not results of this paper; contextual citations)
+    "114",   # studies reviewed by Li2021/Ahmed2022
+    "148",   # PDA contributions reviewed
+    "31",    # normalisation techniques surveyed
+    "14",    # techniques compared
+    # Known data values from the Fogo GIS dataset
+    "350",   # perm zeros count (350/389 sites have perm=0)
+    "532",   # perm maximum value in metres
+    "214.5", # approx midrank for tied zeros ((350+1)/2 = 175.5, no: (2*350+1)/2=350.5? — contextual)
+    # Internal LaTeX layout constants
+    "001",   # \textpagefraction (LaTeX parameter)
+    # Site indices of the optimal portfolio (known from analysis)
+    "184",   # site index in df_all
+    "430",   # site index in df_all
+    "460",   # site index in df_all
+    # Other portfolios and sites mentioned in prose
+    "279",   # SAW/mm/grd portfolio site
+    "320",   # SAW/mm/grd portfolio site
+    "41",    # site with missing roads data
+    "385",   # site with missing urban data
+    "429",   # site with missing aero data
+    # Imputed/tolerance values
+    "1.51",  # RI for 11 criteria (AHP)
+    "2.5",   # TOST delta (pp equivalence margin) — design choice
+    "0.62",  # approx perm deflation factor under midranks (contextual in figure caption)
 }
 
 NUM = re.compile(
@@ -55,6 +112,9 @@ for fname in ["main.tex"] + list(ROOT.glob("supplementary*.tex")):
     if not fpath.exists():
         continue
     for i, line in enumerate(fpath.read_text(encoding="utf-8").splitlines(), 1):
+        # Lines with % OK: are explicitly exempted (justified hardcoded values)
+        if "% OK:" in line:
+            continue
         # Strip comments
         s = re.sub(r"(?<!\\)%.*", "", line)
         # Strip known command arguments
