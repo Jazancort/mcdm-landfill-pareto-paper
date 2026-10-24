@@ -24,6 +24,8 @@ macros:
 	$(PYTHON) scripts/generate_macros.py
 
 check: macros
+	$(PYTHON) scripts/check_tab_amplitude.py
+	$(PYTHON) scripts/generate_macros_r1.py
 	$(PYTHON) scripts/check_consistency.py
 
 paper:
