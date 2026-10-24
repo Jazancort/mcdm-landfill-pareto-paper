@@ -680,8 +680,10 @@ environmental impact ($G_2$), and social safety ($G_3$)
 (Table~\ref{tab:amplitude}).
 Let $c_j(i)\in[0,1]$ be the partial value of site~$i$ on criterion~$j$,
 built so that larger values denote a less desirable outcome for $G_1$ and
-$G_2$ (distance criteria in $G_1$ and $G_2$ enter as $1-\hat{x}_j$
-so that a short distance is a high cost), and a more desirable outcome for
+$G_2$ (in $G_2$, distance criteria enter as $1-\hat{x}_j$
+because proximity to sensitive receptors is a hazard, so a short distance is a high cost;
+$G_1$ criteria are already oriented so that larger values denote greater cost or severity),
+and a more desirable outcome for
 $G_3$, and let $w_j$ be the criterion weight.
 The three objectives therefore have mixed senses:
 \begin{align}
@@ -920,7 +922,7 @@ $1$ under min--max, and rank amplitudes depend only on the distribution of
 ranks, not on which end of the scale is labelled zero.
 This formulation coincides with the classical textbook form $x_{ij}/\lVert\mathbf{x}_j\rVert_2$
 when $\min_j x_j=0$ (true for \texttt{perm}, \texttt{urban}, \texttt{cult},
-\texttt{aero} and \texttt{rivers}) and differs by at most $\RhoShiftMaxPct\,\%$
+\texttt{aspect} and \texttt{rivers}) and differs by at most $\RhoShiftMaxPct\,\%$
 (\texttt{\RhoShiftMaxCrit}) for the remaining four criteria.
 For SAW, switching from shift to raw norms with the same weights leaves the selected
 portfolio unchanged in \RawSensSawOptSame{} of \RawSensTotal{} draws under optimal
@@ -1128,7 +1130,7 @@ Proposition~\ref{prop:p1:stmt} when score and benchmark share the same
 normalisation; this is a regression check
 (Remark~\ref{rem:definitional}), not evidence.
 SAW with min--max normalisation attained only $\FEightMMOptQ\%$
-($\mathrm{SE}=\FEightMMOptSE$~pp), a drop of ${\approx}5.6$~pp.
+($\mathrm{SE}=\FEightMMOptSE$~pp), a drop of ${\approx}\FEightMMOptLoss$~pp.
 Under greedy assembly the pattern was similar:
 $\FEightVecGrdQ\%$ (vec) versus $\FEightMMGrdQ\%$ (mm).
 The $100\%$ under vec/greedy is an empirical observation, not a
@@ -1147,7 +1149,7 @@ the objective normalisation recovers the frontier more reliably.
 The asymmetry is, however, strong: under optimal assembly, the
 misalignment costs ${\approx}\EoneVloss$~pp in one direction
 (score vector vs.\ frontier min--max, the main factorial) but only
-${\approx}\FEightMMOptSE$~pp in the other direction
+${\approx}\FEightMMOptLoss$~pp in the other direction
 (score min--max vs.\ frontier vector; $\FEightMMOptQ\%$ attainment).
 This suggests that misalignment under min--max scores is less severe,
 an additional observation on this instance rather than a theoretical
@@ -1659,8 +1661,8 @@ Section~\ref{sec:amplitude}, and by~\eqref{eq:weff}
   \label{eq:weff_vec}
   w_j^{\mathrm{eff}} = \frac{w_j\,\rho_j}{\sum_k w_k\,\rho_k},
   \qquad
-  \rho_j = \frac{\max_a x_j(a) - \min_a x_j(a)}
-                {\lVert\mathbf{x}_j\rVert_2}.
+  \rho_j = \frac{\max_a \tilde{x}_j(a) - \min_a \tilde{x}_j(a)}
+                {\lVert\tilde{\mathbf{x}}_j\rVert_2}.
 \end{equation}
 For binary criteria, $\rho_j = 1/\sqrt{n_1}$ exactly, where $n_1$ is
 the number of ones.
@@ -2494,10 +2496,20 @@ synthetic instances (\EsixNfam{} marginal families, 30 replicates each)
 using the Fogo trio geometry and weight vector.
 Families are: lognormal, $\mathrm{Beta}(1,3)$, uniform, and zero-inflated
 (marginal zero-inflation rate $\EsixPiZinf$).
-Each instance varies $\mathrm{TV}_W$ across three levels
-($\mathrm{TV}_W\in\{0.10,\,0.20,\,0.30\}$) plus two baseline cells
-with $\mathrm{TV}_W=0$.
-Seven cells yield \EsixNdraws{} total draws.
+Each instance is evaluated across seven cells:
+two baseline cells with $\mathrm{TV}_W=0$ (M: $\mathrm{TV}_B=0$;
+B: $\mathrm{TV}_B>0$, for P1);
+three within-group distortion levels with $\mathrm{TV}_B=0$
+($\mathrm{TV}_W\in\{0.10,\,\EsixTargetTVW,\,0.30\}$, labelled L, F, and H,
+where F matches the Fogo within-group amplitude, for P2);
+one combined cell (V, $\mathrm{TV}_W=\EsixTargetTVW$, $\mathrm{TV}_B>0$)
+to test whether between-group distortion amplifies within-group loss (P3);
+and one direction cell ($\mathrm{W}_{\mathrm{def}}$,
+$\mathrm{TV}_W=\EsixTargetTVW$, $\mathrm{TV}_B=0$,
+the largest within-group contributor deflated rather than inflated) to test
+the direction of loss (P4).
+Seven cells, \EsixNinst{} instances, and \EsixNperdraw{} draws per
+instance-cell pair yield \EsixNdrawsTotal{} total draws.
 Full pre-specification and all deviations are in the Supplementary
 Material.
 
