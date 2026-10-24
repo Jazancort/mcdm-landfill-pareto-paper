@@ -278,8 +278,8 @@ Our contributions are as follows.
   \item A necessary and sufficient condition for exact assembly to remain
     Pareto-efficient under normalisation: amplitudes must be constant
     within each objective group (Theorem~\ref{thm:groupconst}),
-    a decomposition of the weight deviation into between-group and
-    within-group components, and a follow-up intervention with
+    two complementary indices of the weight deviation (between-group
+    $\mathrm{TV}_B$ and within-group $\mathrm{TV}_W$), and a follow-up intervention with
     pre-specified predictions showing that the within-group component
     carries the loss.
   \item An exact identity between PROMETHEE~II under the usual preference
@@ -1425,8 +1425,8 @@ Section~\ref{sec:e1} shows that Fogo is such a configuration.
 
 Vector normalisation has this affine form with $A_j=\rho_j$, so the
 theorem applies to it whenever $\rho_j$ is constant within groups.
-The condition suggests splitting the deviation
-$\delta=w^{\mathrm{eff}}-w$ into two parts.
+The condition suggests characterising the deviation
+$\delta=w^{\mathrm{eff}}-w$ by two complementary indices.
 With group totals $W_g=\sum_{j\in G_g}w_j$ and
 $W_g^{\mathrm{eff}}=\sum_{j\in G_g}w_j^{\mathrm{eff}}$, the
 \emph{between-group} distortion is
@@ -1435,6 +1435,11 @@ $\mathrm{TV}_B=\tfrac12\sum_g|W_g^{\mathrm{eff}}-W_g|$, and the
 $\mathrm{TV}_W=\sum_g W_g\,\mathrm{TV}_{W,g}$ with
 $\mathrm{TV}_{W,g}=\tfrac12\sum_{j\in G_g}
 |w_j^{\mathrm{eff}}/W_g^{\mathrm{eff}}-w_j/W_g|$.
+These indices are not an additive partition of
+$\tfrac12\sum_j|w_j^{\mathrm{eff}}-w_j|$: the group-level effective
+weight satisfies $W_g^{\mathrm{eff}}=W_g\bar{A}_g/S$, where
+$\bar{A}_g=\sum_{j\in G_g}(w_j/W_g)A_j$ and $S=\sum_j w_j A_j$;
+$\mathrm{TV}_B$ captures the full distortion only when $\mathrm{TV}_W=0$.
 Under group-constant amplitudes $\mathrm{TV}_W=0$, whatever the value of
 $\mathrm{TV}_B$.
 The theorem therefore predicts that between-group distortion alone
