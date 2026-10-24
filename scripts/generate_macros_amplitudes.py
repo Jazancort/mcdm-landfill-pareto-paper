@@ -131,8 +131,23 @@ def compute_amplitudes():
     aspect_idx = col_names.index("aspect")
 
     perm_inflation   = float(w_eff[perm_idx]  / W[perm_idx])
-    urban_inflation  = float(w_eff[urban_idx] / W[urban_idx])
-    aspect_inflation = float(w_eff[aspect_idx] / W[aspect_idx])
+    urban_ratio_vec  = float(w_eff[urban_idx] / W[urban_idx])   # < 1: deflation
+    aspect_ratio_vec = float(w_eff[aspect_idx] / W[aspect_idx]) # < 1: deflation
+
+    # L_inf_vec: max absolute weight deviation = ||delta||_inf (for §6.8)
+    L_inf_vec = float(np.max(np.abs(delta)))
+
+    # RnkContinuousGainPct: % gain of fully continuous criteria under midranks.
+    # "Fully continuous" = rho_rnk_j > 0.985 (empirically the 7 criteria without
+    # tie mass beyond the binary/zero-inflated pattern). Gain = rho_rnk_j/S_rnk / 1.
+    # Threshold 0.992: selects the 7 tie-free criteria (slope, roads, rivers, coast,
+    # protected, wells, aero) with rho_rnk ≈ 0.9949. Urban (0.989) and cult (0.981)
+    # are excluded — their gains are 11.4% and 10.5% respectively (Tabela 2 shows 1.11).
+    continuous_mask = rho_rnk > 0.992
+    continuous_gains = (rho_rnk[continuous_mask] / S_rnk)
+    # gain relative to nominal: w_eff_j/w_j = rho_rnk_j/S_rnk  (since w_j cancels)
+    rnk_continuous_gain_pct = round(float((continuous_gains.mean() - 1.0) * 100), 1)
+    n_continuous_criteria   = int(continuous_mask.sum())
 
     # IntraGperm: perm amplitude relative to G1 group mean
     G1 = OBJ_GROUPS[0]
@@ -211,9 +226,12 @@ def compute_amplitudes():
         "L2_vec": float(L2_vec),
         "S":      float(S),
         "perm_abs_dev_pct": float(perm_abs_dev_pct),
-        "perm_inflation":   float(perm_inflation),
-        "urban_inflation":  float(urban_inflation),
-        "aspect_inflation": float(aspect_inflation),
+        "perm_inflation":          float(perm_inflation),
+        "urban_ratio_vec":         float(urban_ratio_vec),    # renamed: was urban_inflation
+        "aspect_ratio_vec":        float(aspect_ratio_vec),   # renamed: was aspect_inflation
+        "L_inf_vec":               float(L_inf_vec),
+        "rnk_continuous_gain_pct": rnk_continuous_gain_pct,
+        "n_continuous_criteria":   n_continuous_criteria,
         "IntraGperm":  float(IntraGperm),
         "RhoShiftMaxPct":  round(max_pct, 2),   # always 2dp (display value)
         "RhoShiftMaxCrit": max_crit,
@@ -259,9 +277,14 @@ def write_macros_amplitudes_tex(res, out_path):
         "% --- Perm inflation ---",
         rf"\newcommand{{\PermInflation}}{{{res['perm_inflation']:.2f}}}        % w_eff(perm)/w(perm)",
         rf"\newcommand{{\IntraGperm}}{{{res['IntraGperm']:.2f}}}           % rho_perm/Abar_G1",
-        rf"\newcommand{{\UrbanInflation}}{{{res['urban_inflation']:.2f}}}       % w_eff(urban)/w(urban) under vec",
-        rf"\newcommand{{\AspectInflation}}{{{res['aspect_inflation']:.2f}}}      % w_eff(aspect)/w(aspect) under vec",
+        rf"\newcommand{{\UrbanRatioVec}}{{{res['urban_ratio_vec']:.2f}}}       % w_eff(urban)/w(urban) under vec (deflation: < 1)",
+        rf"\newcommand{{\AspectRatioVec}}{{{res['aspect_ratio_vec']:.2f}}}      % w_eff(aspect)/w(aspect) under vec (deflation: < 1)",
         rf"\newcommand{{\AspectAmplitudeRatio}}{{{res['aspect_amp_ratio']:.2f}}}  % rho_aspect/rho_asp_flip = sqrt(n_nonleeward/n_leeward)",
+        rf"\newcommand{{\RnkContinuousGainPct}}{{{res['rnk_continuous_gain_pct']:.1f}}}  % % gain of {res['n_continuous_criteria']} fully continuous criteria under midranks",
+        "",
+        "% --- delta norms (for §6.8 using rho_shift) ---",
+        rf"\newcommand{{\DeltaLtwoshift}}{{{res['L2_vec']:.4f}}}       % ||delta||_2 = L2_vec (rho_shift)",
+        rf"\newcommand{{\DeltaLinfshift}}{{{res['L_inf_vec']:.4f}}}       % ||delta||_inf = max|w_eff_j - w_j| (rho_shift)",
         "",
         "% --- rho_shift max change from rho_raw ---",
         rf"\newcommand{{\RhoShiftMaxPct}}{{{res['RhoShiftMaxPct']:.1f}}}        % max % diff rho_raw vs rho_shift",
@@ -309,8 +332,8 @@ def main():
     print(f"  m_eff           = {res['m_eff']:.4f}   (was 4.0486)")
     print(f"  L2_vec          = {res['L2_vec']:.4f}   (was 0.3127)")
     print(f"  perm inflation  = {res['perm_inflation']:.4f}x  (was 2.88)")
-    print(f"  urban inflation = {res['urban_inflation']:.4f}x  (was 0.53)")
-    print(f"  aspect inflate  = {res['aspect_inflation']:.4f}x  (was 0.51)")
+    print(f"  urban ratio vec = {res['urban_ratio_vec']:.4f}x  (was 0.53 UrbanInflation)")
+    print(f"  aspect ratio vec= {res['aspect_ratio_vec']:.4f}x  (was 0.51 AspectInflation)")
     print(f"  IntraGperm      = {res['IntraGperm']:.4f}   (was 1.56)")
     print(f"  RhoShiftMaxPct  = {res['RhoShiftMaxPct']:.2f}%  ({res['RhoShiftMaxCrit']})")
     print()

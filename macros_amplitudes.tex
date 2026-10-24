@@ -19,9 +19,14 @@
 % --- Perm inflation ---
 \newcommand{\PermInflation}{2.86}        % w_eff(perm)/w(perm)
 \newcommand{\IntraGperm}{1.56}           % rho_perm/Abar_G1
-\newcommand{\UrbanInflation}{0.53}       % w_eff(urban)/w(urban) under vec
-\newcommand{\AspectInflation}{0.51}      % w_eff(aspect)/w(aspect) under vec
+\newcommand{\UrbanRatioVec}{0.53}       % w_eff(urban)/w(urban) under vec (deflation: < 1)
+\newcommand{\AspectRatioVec}{0.51}      % w_eff(aspect)/w(aspect) under vec (deflation: < 1)
 \newcommand{\AspectAmplitudeRatio}{1.77}  % rho_aspect/rho_asp_flip = sqrt(n_nonleeward/n_leeward)
+\newcommand{\RnkContinuousGainPct}{12.1}  % % gain of 7 fully continuous criteria under midranks
+
+% --- delta norms (for §6.8 using rho_shift) ---
+\newcommand{\DeltaLtwoshift}{0.3101}       % ||delta||_2 = L2_vec (rho_shift)
+\newcommand{\DeltaLinfshift}{0.2835}       % ||delta||_inf = max|w_eff_j - w_j| (rho_shift)
 
 % --- rho_shift max change from rho_raw ---
 \newcommand{\RhoShiftMaxPct}{4.3}        % max % diff rho_raw vs rho_shift

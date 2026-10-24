@@ -210,7 +210,7 @@ Min--max normalisation has $A_j \equiv 1$ and is the unique
 weight-preserving choice among the three standard families.
 Vector normalisation has $A_j = \rho_j$, determined by the distributional
 shape of the criterion, which in our data multiplies one criterion's
-weight by $\PermInflation\times$ and divides another by $\UrbanInflation\times$
+weight by $\PermInflation\times$ and scales another by a factor of $\UrbanRatioVec$
 (\textit{urban}) without any of this appearing in the
 analyst's report.
 Midranks rescaled to the unit interval contract with tie mass, and every
@@ -1305,8 +1305,9 @@ of~$389$, while \textit{aspect} (binary) gives $A_j = N/[2(N+1)]
 \eqref{eq:Arank_binary}, independent of $n_1$.
 The seven fully continuous criteria are conversely \emph{inflated}
 (factor $\approx 1.12\times$) because the mean amplitude $\bar{A}<1$
-makes each criterion's unit relative weight larger; \textit{perm} and
-\textit{aspect} lose weight, all others gain $12\%$.
+makes each criterion's unit relative weight larger; \textit{perm} and \textit{aspect} lose weight; the seven fully continuous criteria
+gain $\approx\RnkContinuousGainPct\%$, while \textit{urban} and \textit{cult} gain
+slightly less (see Table~\ref{tab:amplitude}).
 The directions are reversed: the same heavy-zero distribution inflates
 \textit{perm} under vector normalisation and deflates it under rank
 scaling.
@@ -1679,9 +1680,9 @@ Table~\ref{tab:amplitude} lists $\rho_j$ and $w_j^{\mathrm{eff}}/w_j$
 for all eleven criteria.
 \textit{Perm} ($w_j = 0.152$): $\rho_j = 0.583$, effective-weight
 factor $\mathbf{\PermInflation\times}$.
-\textit{Urban} ($w_j = 0.166$): factor $\mathbf{\UrbanInflation\times}$.
+\textit{Urban} ($w_j = 0.166$): factor $\mathbf{\UrbanRatioVec\times}$.
 \textit{Aspect} (binary, $n_1 = 94$): $\rho_j = 1/\sqrt{94} = 0.103$,
-factor $0.51\times$.
+factor $\mathbf{\AspectRatioVec\times}$.
 
 
 
@@ -1732,7 +1733,7 @@ $\mathrm{TV}$ & & & 0.000 & 0.311 & 0.091 & & \\
   Under vector normalisation (centre), \textit{perm} is inflated to
   $\PermInflation\times$ its nominal weight because its heavy-zero distribution
   concentrates the Euclidean norm; \textit{urban} and \textit{aspect}
-  are correspondingly deflated ($\UrbanInflation\times$ and $\AspectInflation\times$).
+  are correspondingly deflated ($\UrbanRatioVec\times$ and $\AspectRatioVec\times$).
   Under midranks (right), the pattern reverses: \textit{perm} is
   deflated ($0.62\times$) while the seven fully continuous criteria gain
   $\approx 12\%$.
@@ -2435,7 +2436,7 @@ Within-group distortion alone costs $\EoneWloss$~pp; the full vector
 distortion costs $\EoneVloss$~pp.
 P2 is falsified at the pre-specified margin: W exceeds V by
 $+\EonePtwoDiff$~pp, beyond the declared $<5$~pp threshold
-($95\%$ paired bootstrap CI $[+\EonePtwoBootCILo,\,+\EonePtwoBootCIHi]$;
+($95\%$ paired bootstrap CI, $B = \nbootEone$ replicates, $[+\EonePtwoBootCILo,\,+\EonePtwoBootCIHi]$;
 note that the interval includes values below $5$~pp,
 so the falsification rests on the point estimate exceeding the threshold,
 not on statistical certainty that the true effect exceeds $5$~pp).
