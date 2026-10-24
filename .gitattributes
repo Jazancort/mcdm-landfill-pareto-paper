@@ -1,0 +1,15 @@
+# Preserve line endings in data and binary files
+# Prevents CRLF conversion from invalidating SHA-256 hashes
+# See: docs/PLANO_REVISAO_9.md §F475-3
+*.csv    -text
+*.json   -text
+*.npy    binary
+*.log    -text
+*.txt    -text
+*.bib    text eol=lf
+*.tex    text eol=lf
+*.sty    text eol=lf
+*.cls    text eol=lf
+*.md     text eol=lf
+*.py     text eol=lf
+*.sh     text eol=lf
