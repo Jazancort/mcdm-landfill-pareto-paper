@@ -598,6 +598,30 @@ BAD_PHRASES = [
      "tab:exponent Vector row stale: TV(2)=0.675 was def-(ii) rho_raw; correct is 0.673 (def-ii rho_shift)"),
     ("0.675 & $+0.360$",
      "tab:exponent Vector row stale (variant): TV(2)=0.675 superseded by \\TValphaTwo"),
+    # §6.8 raw TV/delta values — replaced by shift macros (f08f1f7)
+    ("\\mathrm{TV}=0.3146",
+     "§6.8 stale raw TV: 0.3146 replaced by \\TVvec (shift formula, f08f1f7)"),
+    ("\\lVert\\delta\\rVert_2=0.3127",
+     "§6.8 stale raw L2: 0.3127 replaced by \\DeltaLtwoshift (f08f1f7)"),
+    ("\\lVert\\delta\\rVert_\\infty=0.2859",
+     "§6.8 stale raw Linf: 0.2859 replaced by \\DeltaLinfshift (f08f1f7)"),
+    # §6.9 Kendall tau/top-100 copy-pasted value — corrected in 8f82ce9
+    ("\\tau_b=0.960",
+     "§6.9 stale tau_b=0.960: was copy-paste error; correct is \\AspectTauB=0.92 (compute_aspect_polecoding.py)"),
+    ("agreement of $0.960$",
+     "§6.9 stale top-100 agreement=0.960: was copy-paste error; correct is \\AspectTopKAgree=0.94"),
+    # Tab:canonical — blue diamonds removed (b8911a2)
+    ("Pareto membership (blue diamonds)",
+     "tab:canonical: blue diamonds removed from caption (diamonds are in Fig 5, not table); use \\in\\mathcal{F} column"),
+    # §3.2/§8.3/Conclusion — divides by 0.53 corrected (ad3f5a0)
+    ("divides another by $0.53",
+     "divides-by-0.53 error: corrected to 'scales another by a factor of \\UrbanRatioVec'"),
+    # §4.3 aero list — corrected to aspect (6da59ed)
+    ("\\texttt{aero} and \\texttt{rivers}",
+     "§4.3 stale list: aero replaced by aspect (aero has min=252.7m, aspect has min=0)"),
+    # §4.1 slope unit — corrected (8173421)
+    ("slope (dimensionless gradient)",
+     "§4.1 stale unit: slope is in degrees (gdaldem slope), not dimensionless gradient"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
@@ -837,6 +861,35 @@ else:
     print("  [INFO] e1_stats.json not found — run generate_macros_e1.py")
 
 
+
+# ── G2: aspect pole-coding JSON vs macros ────────────────────────────────────
+print()
+print("=== G2: aspect_polecoding.json vs AspectTauB / AspectTopKAgree macros ===")
+_apc_json = RESULTS / "amplitudes" / "aspect_polecoding.json"
+if _apc_json.exists():
+    import json as _json3
+    _apc = _json3.loads(_apc_json.read_text(encoding="utf-8"))
+    _mac_tex = (ROOT / "macros.tex").read_text(encoding="utf-8")
+    def _read_macro(name, tex=_mac_tex):
+        m = re.search(rf'\\newcommand\{{\\{name}\}}\{{([0-9.]+)\}}', tex)
+        return float(m.group(1)) if m else None
+    _tau = _read_macro("AspectTauB")
+    _topk = _read_macro("AspectTopKAgree")
+    if _tau is not None:
+        check("AspectTauB vs aspect_polecoding.json",
+              _tau, round(_apc["tau_b"], 2), tol=0.01)
+    else:
+        FAIL.append("AspectTauB not found in macros.tex")
+        print("  [FAIL] AspectTauB not found in macros.tex")
+    if _topk is not None:
+        check("AspectTopKAgree vs aspect_polecoding.json",
+              _topk, round(_apc["topk_agreement"], 2), tol=0.01)
+    else:
+        FAIL.append("AspectTopKAgree not found in macros.tex")
+        print("  [FAIL] AspectTopKAgree not found in macros.tex")
+else:
+    print("  [INFO] aspect_polecoding.json not found — run compute_aspect_polecoding.py")
+
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")
     for msg in FAIL:
@@ -901,6 +954,24 @@ _MUST_FAIL = [
     # Em-dash in prose (prose em-dash rule)
     ("Prose with an em---dash as separator",
      "em-dash in running prose"),
+    # DEV-A-G2: §6.8 stale raw values (replaced by shift macros, f08f1f7)
+    ("\\mathrm{TV}=0.3146",
+     "§6.8 stale raw TV=0.3146"),
+    ("\\lVert\\delta\\rVert_2=0.3127",
+     "§6.8 stale raw L2=0.3127"),
+    ("\\lVert\\delta\\rVert_\\infty=0.2859",
+     "§6.8 stale raw Linf=0.2859"),
+    # DEV-A-G2: §6.9 Kendall tau copy-paste error (corrected 8f82ce9)
+    ("\\tau_b=0.960",
+     "§6.9 stale tau_b=0.960 (was copy-paste; correct is \\AspectTauB=0.92)"),
+    ("agreement of $0.960$",
+     "§6.9 stale top-100=0.960 (was copy-paste; correct is \\AspectTopKAgree=0.94)"),
+    # DEV-A-G2: blue diamonds in tab:canonical caption (removed b8911a2)
+    ("Pareto membership (blue diamonds)",
+     "tab:canonical: blue diamonds removed — use \\in\\mathcal{F} column"),
+    # DEV-A-G2: divides-by-0.53 corrected (ad3f5a0)
+    ("divides another by $0.53",
+     "§8.3/Conclusion: divides-by-0.53 corrected to scales-by"),
 ]
 
 _MUST_PASS = [
