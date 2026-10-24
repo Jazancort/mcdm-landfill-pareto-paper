@@ -228,7 +228,16 @@ O `f8_circularity.csv` actual tem só 4 linhas (obj=vec × score=mm/vec). Faltam
 
 Ver D?-6 sobre como obter F_mm.
 
-- [x] **C1** FEITO PARCIAL (2eec80a): `compute_f8_mm_frontier.py` criado. Smoke N=20 verificou: mm/mm/opt=100% (Theorem 1), mm/vec/opt=100%, mm/vec/grd=100%, mm/mm/grd=95% (alta variância). Job N=500 lançado na Athena (tmux f8mm). Aguarda resultados para macros e tabela.
+- [x] **C1** FEITO (53392c0): `compute_f8_mm_frontier.py` criado e executado na Athena (N=500, K=200, seed=42). Resultados da matriz 2×2 completa:
+
+  | | F_mm frontier | F_vec frontier |
+  |---|---|---|
+  | Score mm, opt | 100.0% (Theorem 1) | 94.4% ← 5.6 pp |
+  | Score mm, grd | 86.0% | 72.4% |
+  | Score vec, opt | 99.8% ← **0.2 pp** | 100.0% (Theorem 1) |
+  | Score vec, grd | 99.6% | 100.0% |
+
+  RESULTADO CHAVE: Assimetria 28×. vec→mm custa 0.2 pp (opt) / 0.4 pp (grd). mm→vec custa 5.6 pp (opt) / 27.6 pp (grd). Macros gerados em macros_f8.tex (\FEightMmVecOptQ, \FEightMmVecGrdQ, etc.).
 - [ ] **C2** Criar nova tabela no manuscrito com as 8 células.
 - [ ] **C3** Mover F8 da §5.4 (Métodos) para §7.x (Resultados).
 - [ ] **C4** Reenquadrar o destaque: "custo de desalinhamento" em vez de "efeito da normalização".
