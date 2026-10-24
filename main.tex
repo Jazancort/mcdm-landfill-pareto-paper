@@ -824,7 +824,7 @@ that follow correspond to Stages~1--6 in order.
 
 Stage~1 of Figure~\ref{fig:workflow}. The dataset comprises $\Ncand$ candidate sites on Fogo Island, Cape Verde,
 screened from land-cover exclusion, each with $m=11$ criteria measured in
-metres, except slope (dimensionless gradient) and aspect (degrees).
+metres, except slope (degrees) and aspect (binary leeward indicator).
 The spatial discretisation and criteria definition follow
 \citet{AzancortNeto2026}, which provides the validated GIS dataset; the
 present paper uses the same candidate set, pairwise distance matrix, and
@@ -1230,7 +1230,8 @@ for rank normalisation, midranks are not affine in the original values,
 so the effective weight $w_j^{\mathrm{eff}}$ approximates the weight shift
 rather than determining it exactly.
 Within this scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $\QtwommOptimal\%$,
-$\QtwoRanksOptimal\%$ and $\QtwovecOptimal\%$ for min--max, ranks and vector normalisation
+$\QtwoRanksOptimal\%$ (heuristic: ranks fall outside the exact scope) and
+$\QtwovecOptimal\%$ for min--max, ranks and vector normalisation
 respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $\TVvec$,
 a strictly monotone ordering on this instance (Table~\ref{tab:tvorder}).
 
@@ -2233,7 +2234,8 @@ $\Ncand$ candidates, while the objectives use a binary leeward indicator
 ($c=1$ for azimuth $\in[90^\circ,180^\circ]$, zero otherwise),
 following \citet{AzancortNeto2026}, produces a score--evaluator mismatch.
 
-For completeness, we recall the reference-set amplitude ratio.
+For completeness, we note that the reference-set amplitude ratio
+is a separate source of mismatch when the normalisation set differs.
 Min--max normalisation satisfies $A_j\equiv1$ over the set on which its
 constants are computed.
 Over the $\Nvia$ admissible sites, the attainable amplitude is
@@ -2927,7 +2929,7 @@ distributional assumptions; our perturbation model is simpler but
 sufficient for the present purpose of measuring how often each cell
 recovers the nominal frontier.
 
-\emph{Gap measure and weak dominance.}
+\emph{Gap measure and weak dominance.}\;\label{sec:e1q3}
 The shortfall $\mathrm{gap}(t)$ in~\eqref{eq:gap} takes the minimum
 over strictly signed differences; if a dominator improves on $t$ in
 only one or two objectives (with equality on the rest), the minimum
@@ -2935,20 +2937,21 @@ is zero and the gap does not detect the dominance.
 A concrete instance: with $k=3$ minimisation objectives, portfolio
 $t=(3,5,5)$ is dominated by $t'=(3,5,4)$ (strict improvement on
 objective~3, ties elsewhere), yet $\mathrm{gap}(t)=\min(0,0,1)=0$.
-$Q_2$, computed from the full Pareto dominance algorithm, is therefore
-the primary efficiency measure; $Q_3$ is a complementary severity
-indicator, not an equivalent restatement of $Q_2$.
-$Q_3$ for all eight cells is reported in Table~\ref{tab:factorial}.
-
-\emph{Gap measure and weak dominance.}\;\label{sec:e1q3}
-$Q_3$ and $Q_2$ measure different aspects of efficiency and need not agree: a cell may attain the frontier often ($Q_2$ high) while falling far below it when it misses ($Q_3$ high), and $Q_3$ is blind to weak dominance.
-$Q_2$ and $Q_3$ are computed against the same reference set $\mathcal{F}(w)$ in every cell.
-On Fogo, $\mathrm{gap}=0$ coincided with Pareto membership on every draw in all eight cells, so weak dominance did not affect the reported values.
+$Q_2$ and $Q_3$ therefore measure different aspects of efficiency
+and need not agree: a cell may attain the frontier often ($Q_2$ high)
+while falling far below it when it misses ($Q_3$ high).
+$Q_2$, computed from the full Pareto dominance algorithm, is the
+primary efficiency measure; $Q_3$ is a complementary severity indicator.
+Both are computed against the same reference set $\mathcal{F}(w)$.
+On Fogo, $\mathrm{gap}=0$ coincided with Pareto membership on every
+draw in all eight cells, so weak dominance did not affect the reported values.
 $Q_3$ for all cells is reported in Table~\ref{tab:factorial}.
 
 \emph{Regulatory grounding.}
-The exclusion of the $\Nexcl$ overlapping sites is treated as a
-screening decision.
+The $\Nexcl$ candidates overlapping protected areas are excluded before
+analysis; the exclusion reflects a hard constraint from national
+conservation legislation and does not affect the relative comparison of
+methods, which are evaluated on the same admissible set of $\Nvia$ sites.
 
 
 % =======================================================================
