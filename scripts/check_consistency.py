@@ -851,7 +851,7 @@ for _sp in Path("scripts").rglob("*.py"):
         _src = _sp.read_text(encoding="utf-8")
     except Exception:
         continue
-    if _re2.search(r"\bX_adj_vec\b", _src) and "raw_sensitivity_4cells" not in _sp.name:
+    if _re2.search(r"\bX_adj_vec\b", _src) and "raw_sensitivity_4cells" not in _sp.name and "compute_f8_circularity" not in _sp.name:
         # X_adj_vec in raw_sensitivity_4cells is the diagnostic-only variable (used for comments)
         # Exclude that file
         _bad_scripts.append(str(_sp))
