@@ -203,7 +203,11 @@ Os erros 1-7 do PDF correspondem a A1-A7. A3-A7 estão feitos. A1-A2 pendentes.
 
 ## Fase G: Build Check Alargado
 
-- [x] **G1** FEITO (ad3f5a0): `fig_F1_slope_weights.py` actualizado para ler `rho_j` de `amplitudes.json`. Perm: 2.88× → 2.86×. Amplitudes de midranks mantêm-se hardcoded (documentadas no script: usam fórmula de rank não disponível no JSON).
+- [x] **G1** FEITO (ad3f5a0): `fig_F1_slope_weights.py` lê `rho_j` de `amplitudes.json`. Perm: 2.88× → 2.86×.
+- [x] **G2** FEITO (f09ad63): 9 novos BAD_PHRASES em `check_consistency.py` (§6.8 raw, tau_b copy-paste, blue-diamonds, divides-by-0.53). `aspect_polecoding.json` verificado. 23 regression cases.
+- [x] **G3** FEITO PARCIAL (9ef2ebc): `audit_hardcoded.py` — suporte `% OK:`, DESIGN_EXACT alargado. main.tex: 90→48 RESULT?. TOPSIS Q₂ e NormGreedyContrastLo/Hi agora como macros. 208 no supplementary deferred.
+- [ ] **G4** Adicionar `check_tab_amplitude.py` e `generate_macros_r1.py` ao Makefile `check`.
+- [ ] **G5** Actualizar Code availability (A20) depois de A1 fechado.o para ler `rho_j` de `amplitudes.json`. Perm: 2.88× → 2.86×. Amplitudes de midranks mantêm-se hardcoded (documentadas no script: usam fórmula de rank não disponível no JSON).
 - [ ] **G2** `check_consistency.py`: verificar os três valores de §6.8 contra macros shift.
 - [ ] **G3** Alargar `audit_hardcoded.py` a supplementary.tex e tab_*.tex. Objectivo: exit 0 com excepções documentadas.
 - [ ] **G4** Adicionar `check_tab_amplitude.py` e `generate_macros_r1.py` ao Makefile `check`.
