@@ -20,9 +20,9 @@ Design (PRESPEC F8):
     Score saw_vec_aligned = -(F1+F2)+F3 usando os mesmos c_j → consistente
     com os objectivos por construção → Proposição 1 garante vec/opt = 100%.
 
-    Nota: X_adj_vec abaixo (linha "DIAGNOSTIC ONLY") é calculado para
-    documentação mas não é usado no scoring nem nos objectivos.
-    L2_raw ≈ L2_via por construção; a assertiva abaixo confirma isso.
+    (The benefit-vec variable was removed; scoring uses C_score_vec only.)
+    L2_raw ~ L2_via por construcao; a assertiva abaixo confirma isso.
+
 
 Output: results/f8/f8_circularity.csv
 """
@@ -80,8 +80,8 @@ for j, b in enumerate(benefit_flags):
 # For COST columns: L2_raw[j] = L2(X_via_raw[:,j]) = L2_via[j], so the score
 # is rank-equivalent to X_adj_mm / L2_via (benefit orientation, same ranking).
 L2_via = np.maximum(np.sqrt((X_via_raw**2).sum(0)), 1e-12)   # = norms_via in scoring.py
-X_adj_vec = X_adj_mm / L2_via   # diagnostic only
-del X_adj_vec  # prevent accidental use in scoring; scoring path is C_score_vec below
+# X_adj_vec (= X_adj_mm / L2_via) documented in comments above; not defined here to keep
+# the anti-X_adj_vec guard effective without exceptions.
 print(f"Score matrices ready  t={time.time()-t0:.1f}s", flush=True)
 
 # ── Vector objectives — direct computation (no injection) ────────────────────
@@ -114,7 +114,7 @@ print(f"Score matrices ready  t={time.time()-t0:.1f}s", flush=True)
 # Simplest correct approach: build vec objectives using the same column values
 # as saw_vec but with the same grouping as build_pareto_utils:
 
-from mcdm_experiment import F1_CRIT, F2_CRIT, F3_CRIT, INV as INV_SET, COST as COST_SET
+from mcdm_experiment import F1_CRIT, F2_CRIT, INV as INV_SET, COST as COST_SET
 f1_set = set(F1_CRIT); f2_set = set(F2_CRIT)
 
 

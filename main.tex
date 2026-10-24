@@ -1575,14 +1575,14 @@ Vector   & \TVvec & \TValphaTwo & $+\DeltaTValphaTwo$ \\
 Under optimal assembly with vector normalisation, where no combinatorial
 loss from the greedy heuristic confounds the contrast
 (Section~\ref{sec:greedy}),
-$Q_2[\mathcal{A}']$ falls from SAW to TOPSIS by $4.4$~pp
+$Q_2[\mathcal{A}']$ falls from SAW to TOPSIS by $\AggStratumVecopt$~pp
 ($\Delta\mathrm{TV}=\DeltaTValphaTwo$).
 The min--max contrast is not informative because the SAW cell is fixed at
 $100\%$ by Proposition~\ref{prop:p1:stmt}.
 A single contrast cannot test the exponent analogy; we report it as
 consistent with, not evidence for, Remark~\ref{prop:exponent}.
 Under greedy assembly with min--max, TOPSIS exceeds SAW by
-$8.4$~pp, which we attribute to the foreclosure loss of
+$\AggStratumMMgrdAbs$~pp, which we attribute to the foreclosure loss of
 Section~\ref{sec:greedy}.
 
 % ---
@@ -2249,7 +2249,7 @@ fixed at $\mathcal{A}'$ (the 389 admissible sites) throughout.
 Replacing the continuous encoding with the binary one at 473-site
 constants (R-V to R-V$^*$) recovers $Q_2=100\%$.
 Introducing the continuous encoding at 389-site constants
-(R-M to R-asp) reduces $Q_2$ to $24.0\%$: $76$~pp through coding alone.
+(R-M to R-asp) reduces $Q_2$ to $\RaspOptimal\%$: $\RaspLoss$~pp through coding alone.
 The remaining $4.0$~pp (R-asp$-$R-V, $95\%$ CI $[+2.2,\,+6.0]$) is
 attributable to the 473-site constants, but only in the presence of the
 coding inconsistency; under consistent coding the same constants cost
@@ -2430,8 +2430,8 @@ P1 is confirmed: cell~B reaches the frontier on every draw.
 Within-group distortion alone costs $\EoneWloss$~pp; the full vector
 distortion costs $\EoneVloss$~pp.
 P2 is falsified at the pre-specified margin: W exceeds V by
-$+7.4$~pp, beyond the declared $<5$~pp threshold
-($95\%$ paired bootstrap CI $[+3.8,\,+11.0]$;
+$+\EonePtwoDiff$~pp, beyond the declared $<5$~pp threshold
+($95\%$ paired bootstrap CI $[+\EonePtwoBootCILo,\,+\EonePtwoBootCIHi]$;
 note that the interval includes values below $5$~pp,
 so the falsification rests on the point estimate exceeding the threshold,
 not on statistical certainty that the true effect exceeds $5$~pp).
@@ -2536,7 +2536,7 @@ only the $p$-value moves across $0.05$.
 We regard this post hoc trend as borderline and draw no directional
 conclusion from it.
 
-At $\mathrm{TV}_W=\EsixTargetTVW$ the loss was approximately $10.7$~pp in
+At $\mathrm{TV}_W=\EsixTargetTVW$ the loss was approximately $\EsixLossZinfWinfF$~pp in
 the zero-inflated family and below $3$~pp under continuous marginals,
 against $\EoneWloss$~pp on Fogo.
 At equal $\mathrm{TV}_W$, losses differ by an order of magnitude
@@ -2594,8 +2594,8 @@ On Fogo, the coding inconsistency arose when aspect was scored as a
 continuous azimuth while the objectives used the binary leeward indicator.
 Crossing the two codings with the two reference sets
 (Table~\ref{tab:coding2x2}) separates three effects.
-The coding inconsistency alone costs $76$~pp under optimal assembly
-($100.0\%$ to $24.0\%$, 389-site constants).
+The coding inconsistency alone costs $\RaspLoss$~pp under optimal assembly
+($100.0\%$ to $\RaspOptimal\%$, 389-site constants).
 Normalising over the $\Ncand$ candidates costs nothing under optimal
 assembly when the coding is consistent ($100.0\%$ in both cells) and
 improves greedy assembly by $\RefSetGreedyGain$~pp

@@ -846,6 +846,11 @@ else:
 print()
 print("=== Anti-X_adj_vec: no script should use wrong vec scoring ===")
 import re as _re2
+
+def _code_only(src):
+    """Strip Python comments so the guard only matches code, not documentation."""
+    return "\n".join(_re2.sub(r"#.*", "", line) for line in src.splitlines())
+
 _bad_scripts = []
 for _sp in Path("scripts").rglob("*.py"):
     if "deprecated" in _sp.parts or "_athena" in _sp.name or "check_consistency" in _sp.name:
@@ -854,11 +859,8 @@ for _sp in Path("scripts").rglob("*.py"):
         _src = _sp.read_text(encoding="utf-8")
     except Exception:
         continue
-    if _re2.search(r"\bX_adj_vec\b", _src) and "raw_sensitivity_4cells" not in _sp.name and "compute_f8_circularity" not in _sp.name:
-        # Allowed exceptions (X_adj_vec does NOT enter the scoring path in these files):
-        # - raw_sensitivity_4cells.py: X_adj_vec appears in comments only
-        # - compute_f8_circularity.py: X_adj_vec is assigned and immediately del'd (line ~84);
-        #   C_vec_obj (which used it) was removed as dead code; scoring uses C_score_vec only
+    # Check code only (not comments): no exceptions needed
+    if _re2.search(r"\bX_adj_vec\b", _code_only(_src)):
         _bad_scripts.append(str(_sp))
 if _bad_scripts:
     FAIL2 = [f"Script uses X_adj_vec (wrong scoring): {s}" for s in _bad_scripts]
@@ -866,7 +868,7 @@ if _bad_scripts:
         print(f"  [FAIL] {msg}")
     sys.exit(1)
 else:
-    print("  [OK  ] No script uses X_adj_vec outside of allowed context")
+    print("  [OK  ] No script uses X_adj_vec in code (comments exempt)")
 
 
 # ── Regression tests for rules that were relaxed ────────────────────────────
