@@ -2767,6 +2767,21 @@ dominate (Supplementary Material, Experiment~E5).
 E5 departs from its pre-specification in seven declared respects,
 including the omission of the $N=389$ level (Supplementary Material).
 External confirmation on other published instances was not obtained.
+
+A fully pre-specified experiment on \EsixNinst{} synthetic instances
+across \EsixNfam{} marginal families (Experiment~E6,
+Section~\ref{sec:e6}) provides the most direct cross-family test of the
+$\mathrm{TV}_W$ prediction.
+At $\mathrm{TV}_W=\EsixTargetTVW$, the loss was below $3$~pp under
+continuous marginals but $\EsixLossZinfWinfF$~pp under zero-inflation,
+an order-of-magnitude difference.
+The monotone ordering (P2: $L\ge F\ge H$) was confirmed among
+informative instances (\EsixPtwoMonoAll{} of \EsixPtwoLossyNAll{},
+\EsixPtwoPAll, pooled across families).
+Together, E5 and E6 confirm that $\mathrm{TV}_W$ is a reliable
+directional predictor but that loss magnitudes depend on the marginal
+distribution of criterion values.
+
 Most landfill-selection studies in the literature apply continuous GIS
 overlay analysis rather than enumerating a finite set of candidate sites
 with numerical criterion scores; extracting a comparable decision matrix
@@ -2859,9 +2874,20 @@ imposed jointly on score and objectives, we found no evidence of linear
 association between the imposed amplitude spread and greedy efficiency
 in the model as fitted; greedy efficiency was more strongly associated
 with instance size and spatial geometry.
-The Fogo magnitudes are therefore instance-specific, and whether the
-within-group mechanism carries comparable costs on other applied matrices
-remains open.
+
+A pre-specified experiment on \EsixNinst{} synthetic instances across
+\EsixNfam{} marginal families (Experiment~E6, Section~\ref{sec:e6})
+confirms the directional prediction: the monotone ordering $L\ge F\ge H$
+held among informative instances (\EsixPtwoMonoAll{} of
+\EsixPtwoLossyNAll{}, \EsixPtwoPAll{}, pooled).
+At equal $\mathrm{TV}_W$, however, losses ranged from below $3$~pp
+under continuous marginals to $\EsixLossZinfWinfF$~pp under
+zero-inflation, confirming that $\mathrm{TV}_W$ alone does not
+calibrate the magnitude of the cost.
+
+The Fogo magnitudes are therefore instance-specific; the within-group
+mechanism is directionally robust but its magnitude depends on the
+marginal distribution of criterion values.
 
 The magnitudes in percentage points of $Q_2$ measure how often a design
 choice leaves the frontier, not how far: on this instance the shortfall,

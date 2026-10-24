@@ -305,8 +305,8 @@ Ver D?-4 antes de começar (localizar pesos w por draw).
 - [x] **E3** FEITO (commit E3): §6.7 ("Magnitude is not enough: the concentration") fundida em §6.2 ("Pareto consistency"). prop:concentration, eq:meff, eq:l2fact, rem:meff_reading mantidos com labels intactos. Transição: "Proposition~\ref{prop:p1:stmt} handles TV=0; when TV>0..." `\paragraph{Fogo Island.}` convertido para texto corrido ("For Fogo Island, computing..."). Subsecção eliminada; 8 subsecções em §6 em vez de 9. BAD_PHRASE + MUST_FAIL adicionados ao check_consistency.py (26 casos).
 - [x] **E4** FEITO: §7.9 já tem 7 células, \EsixNperdraw, \EsixNdrawsTotal — completo.
 - [x] **E5** FEITO (commit E5): `tab:criteria` criada em §3.2 (após F1/F2/F3). 4 colunas: Criterion, Group, Sense, SAW term (11 linhas). `\paragraph{Mixed senses and the SAW orientation.}` condensado em 4 frases com referência à tabela. `\paragraph{Criterion orientation.}` em §4.1: 9 linhas → 2 frases. §4.3 aspect: 5 linhas → 2 linhas.
-- [ ] **E6** Resolver notação inconsistente (A18) — verificar se ainda necessário.
-- [ ] **E7** Integrar E6 na §8 (Discussão) e na Conclusão.
+- [x] **E6** FEITO: A18 (b8911a2) já cobriu todas as inconsistências de notação. Verificado — nenhuma instância de "N vs. N'" ou "k=3 minimisation objectives" remanescente.
+- [x] **E7** FEITO (commit E7): E6 experiment integrado em §8 "Instance dependence" e §9 Conclusão. §8: parágrafo após "External confirmation" — TV_W directional (P2: 85/88, p<0.001), magnitudes 3pp vs 10.7pp (zero-inflation). §9: parágrafo antes de "The Fogo magnitudes" com os mesmos factos; frase final actualizada: "directionally robust but magnitude depends on marginal distribution".
 - [x] **E8** FEITO (6b83ddb): "no choice of w restores" → "given the score, no reweighting restores".
 - [x] **E9** FEITO (6b83ddb): Intro: "473 sites enumerate 1,944,653" → "$\Nvia$ admissible sites (screened from $\Ncand$)... $\Ntrios$ feasible portfolios of size three".
 - [x] **E10** FEITO (501d011): Declaração de IA actualizada para template Elsevier ("During the preparation... the author reviewed and edited...").
