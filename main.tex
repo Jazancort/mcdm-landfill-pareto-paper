@@ -171,9 +171,10 @@ standard against which to judge.
 
 This paper supplies such a standard and uses it to ask which design
 choice in the workflow actually matters.
-For a real candidate set of $\Ncand$ sites on Fogo Island, Cape Verde,
-we enumerate the complete feasible set of $\Ntrios$ three-site portfolios
-satisfying a $d_{\min}=\dmin$~km separation constraint, and compute the
+For a real set of $\Nvia$ admissible sites on Fogo Island, Cape Verde
+(screened from $\Ncand$ initial candidates),
+we enumerate the $\Ntrios$ feasible portfolios of size three
+satisfying a $d_{\min}=\dmin$~km pairwise separation constraint, and compute the
 exact Pareto frontier over three group-level objectives: siting cost,
 environmental impact and social safety.
 Because the frontier is obtained by exhaustive enumeration rather than by
@@ -2282,69 +2283,7 @@ Theorem~\ref{thm:groupconst} covers exact assembly only; the greedy
 result is an additional observation on this instance.
 
 
-\subsection{The reference set: a coding inconsistency outside the theorem}
-\label{sec:refset}
-% ----------------------------------------------------------
-
-The results of Section~\ref{sec:lemmaconf} show that implicit
-re-weighting orders the three normalisations within additive aggregation.
-The choice of reference set can produce a re-weighting of the same kind,
-but the dominant effect on Fogo is different in nature: a criterion
-encoded differently in the score and in the objectives, which falls
-outside the scope of Theorem~\ref{thm:groupconst}.
-
-\paragraph{A coding inconsistency amplified by exact assembly.}
-When the method's score encodes a criterion differently from the
-objective function used to evaluate portfolios, the score is no longer
-an affine function of the objective's partial value for that criterion.
-A non-monotone recoding voids the premise of
-Theorem~\ref{thm:groupconst} for that criterion: the theorem requires the
-score column to be an affine function of the partial value in the
-evaluator's criterion space, and a recoding that is not monotone in the
-partial value breaks that condition.
-Exact assembly can amplify such mismatches; this is not implicit
-re-weighting in the sense of the theorem, but a distinct failure mode.
-
-The cost on Fogo is large.
-Scoring \textit{aspect} (the terrain orientation criterion, weight~$0.075$)
-as a continuous azimuth in degrees, min--max normalised over all
-$\Ncand$ candidates, while the objectives use a binary leeward indicator
-($c=1$ for azimuth $\in[90^\circ,180^\circ]$, zero otherwise),
-following \citet{AzancortNeto2026}, produces a score--evaluator mismatch.
-
-For completeness, we note that the reference-set amplitude ratio
-is a separate source of mismatch when the normalisation set differs.
-Min--max normalisation satisfies $A_j\equiv1$ over the set on which its
-constants are computed.
-Over the $\Nvia$ admissible sites, the attainable amplitude is
-\begin{equation}
-  \label{eq:refsetA}
-  A_j = \frac{\max_{\Nvia}(j)-\min_{\Nvia}(j)}
-             {\max_{\Ncand}(j)-\min_{\Ncand}(j)} \;\le\; 1,
-\end{equation}
-which varies across criteria and within groups (Table~\ref{tab:amprefset}).
-These two encodings are not monotonically related: an azimuth of
-$350^\circ$ has a high score under the continuous encoding
-but is classified as non-leeward ($b_{\mathrm{asp}}=0$, the unfavourable class for the score) by the
-binary objective.
-Under the continuous encoding $Q_2$ drops from $100\%$ to $20\%$
-under optimal assembly, a loss of $80$~pp.
-
-Table~\ref{tab:coding2x2} decomposes the loss by crossing the criterion
-encoding with the normalisation reference set, holding the evaluator
-fixed at $\mathcal{A}'$ (the 389 admissible sites) throughout.
-Replacing the continuous encoding with the binary one at 473-site
-constants (R-V to R-V$^*$) recovers $Q_2=100\%$.
-Introducing the continuous encoding at 389-site constants
-(R-M to R-asp) reduces $Q_2$ to $\RaspOptimal\%$: $\RaspLoss$~pp through coding alone.
-The remaining $\ResidualRefOptDelta$~pp (R-asp$-$R-V, $95\%$ CI $[+\ResidualRefOptCIlo,\,+\ResidualRefOptCIhi]$) is
-attributable to the 473-site constants, but only in the presence of the
-coding inconsistency; under consistent coding the same constants cost
-nothing.
-The $80$~pp total is thus a coding effect plus an interaction, not
-a reference-set effect.
-
-\begin{table}[t]
+\begin{table}[!t]
 \caption{Coding $\times$ reference set, $Q_2[\mathcal{A}']$, SAW min--max,
 $\kappa=200$, 500 draws. Post hoc exploratory cells.
 Rows differ only in the encoding of \textit{aspect} in the score;
@@ -2366,66 +2305,22 @@ Continuous azimuth  & optimal & $24.0\%$ (R-asp) & $20.0\%$ (R-V) \\
 \end{tabular}
 \end{table}
 
-This reflects an aspect-encoding mismatch between the score and the objectives, not an inherent property of
-normalising over inadmissible sites.
+\begin{remark}[Coding inconsistency: a failure mode outside the theorem]
+\label{sec:refset}\label{rem:nonmonotone}
+Scoring \textit{aspect} as a continuous azimuth while the objectives use
+a binary leeward indicator introduces a non-monotone mismatch
+($\rho=\AspSpearman$; all $\AspTopQuartile$ top-quartile sites carry
+indicator zero), reducing $Q_2$ from $100\%$ to $\RaspOptimal\%$ under
+SAW/min--max/optimal: $\RaspLoss$~pp through coding alone
+(Table~\ref{tab:coding2x2}).
 With a consistent encoding, normalising over the $\Ncand$-site set costs
-zero percentage points of Pareto efficiency under optimal assembly
-and improves greedy assembly by $\RefSetGreedyGain$~pp (post hoc cell
-R-V$^*$, Table~\ref{tab:coding2x2}).
-A post hoc exploratory diagnostic (D-greedy) attributes this greedy
-gain to the amplitude structure of R-V$^*$: greedy and optimal assembly
-agree on $57.6\%$ of draws under R-V$^*$ versus $40.2\%$ under R-M,
-indicating that R-V$^*$'s amplitudes are more favourable to the greedy
-heuristic on this instance.
-The reference-set effect is therefore not a fixed cost: its sign depends
-on whether the score and the evaluator agree on the criterion encoding,
-and on this instance it is harmless or beneficial under consistent coding.
-All cells reported in this paragraph are post hoc exploratory
-(Supplementary Material).
-
-
-\begin{table}[!t]
-\centering
-\caption{Amplitude ratio~\eqref{eq:refsetA} by criterion.}
-\label{tab:amprefset}
-\begin{tabular}{lcc}
-\toprule
-Criterion & $A_j$ & $w_j$ \\
-\midrule
-\texttt{perm}      & 0.482 & 0.152 \\
-\texttt{slope}     & 0.683 & 0.113 \\
-\texttt{rivers}    & 0.648 & 0.091 \\
-\texttt{urban}     & 0.755 & 0.166 \\
-\texttt{coast}     & 0.924 & 0.069 \\
-\texttt{protected} & 0.999 & 0.066 \\
-remaining 5        & 1.000 & ---   \\
-\midrule
-$\mathrm{TV}$      & \multicolumn{2}{c}{$0.107$} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Table~\ref{tab:coding2x2} holds the evaluator fixed at $\mathcal{A}'$
-(the 389 admissible sites) throughout, so all four cells are comparable.
-
-\begin{remark}[A non-monotone recoding is outside the theorem]
-\label{rem:nonmonotone}
-Scoring \textit{aspect} as a continuous azimuth in degrees (min--max
-normalised over all $\Ncand$ candidates), while the objectives use the
-leeward indicator ($c=1$ for azimuth $\in[90^\circ,180^\circ]$),
-introduces a non-monotone mismatch.
-These are not monotonically related: Spearman $\rho = \AspSpearman$
-($p = \AspSpearmanP$), and all $\AspTopQuartile$ sites in the top
-quartile of the continuous column carry indicator value zero
-(non-leeward).
-The inconsistency reduced $Q_2$ from $100\%$ to $\RaspOptimal\%$
-under optimal assembly, through the coding effect alone.
-Because the recoding is not monotone in the evaluator's partial value,
-Theorem~\ref{thm:groupconst} does not apply; the result instead
-illustrates that exact assembly can amplify mismatches between the
-score's criterion definition and the evaluator's.
-The provenance of this result is documented in the Supplementary
-Material.
+$0$~pp and improves greedy by $\RefSetGreedyGain$~pp
+($95\%$~CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
+A non-monotone recoding falls outside Theorem~\ref{thm:groupconst}, which
+requires the score column to be an affine function of the evaluator's
+partial value; this is therefore a distinct failure mode, not the
+amplitude mechanism.
+Full details and provenance are in the Supplementary Material.
 \end{remark}
 
 
@@ -2451,9 +2346,8 @@ Greedy commits to the highest-scoring site and then discards every site
 within $d_{\min}$ of it, foreclosing combinations a global search
 retains.
 Because~\eqref{eq:rsep} is a hard constraint rather than an objective
-\citep{Erkut1996,MoonChaudhry1984}, the foreclosure cannot be undone by
-re-weighting: no choice of $w$ restores a site greedy has already
-excluded.
+\citep{Erkut1996,MoonChaudhry1984}, the foreclosure cannot be undone: given the score, no reweighting
+restores a site greedy has already excluded.
 This distinguishes the assembly effect from the normalisation effect:
 the former is a combinatorial loss, the latter a re-parameterisation
 of the value model.
@@ -2795,8 +2689,8 @@ quadratic-like amplification (TOPSIS, by analogy; Remark~\ref{rem:mm_not_neutral
 Three observations previously treated separately become corollaries of
 one identity: the vector-normalisation distortion
 (Section~\ref{sec:three_norms}), the rank-space contraction
-(Eq.~\eqref{eq:Arank_binary}), and the reference-set amplitude loss
-(Eq.~\eqref{eq:refsetA}).
+(Eq.~\eqref{eq:Arank_binary}), and the reference-set amplitude ratio
+(Remark~\ref{rem:nonmonotone}).
 
 The second difference is evidential.
 Existing comparisons measure the consequence of a normalisation choice by
