@@ -71,7 +71,21 @@ As 2 ocorrências restantes (L2737, L3018) corrigidas para "scales another by a 
 **Dúvida D?-8 (nova): "Figura 1 (p. 7)" do revisor — qual figura era?**
 O revisor cita "Figura 1 (p. 7)" com "perm: 2.88×", "Aggregation: +0.5 pp", "Assembly: −1.1 pp", "+34.6 pp full 2³". O main.tex actual tem 5 figuras, nenhuma com estes valores como anotações de texto. A fig_F1_slope_weights.py mostra o rácio de RANK (0.62×) como label de texto, não o rácio vec (2.86×). A fig_F2_interaction.py (lê de mc_18cells_raw.csv) existe mas não está incluída no main.tex. Hipótese mais provável: o revisor viu uma versão mais antiga do paper onde uma figura de interacção tinha estas anotações. A correcção de G1 endereça o problema de fundo (amplitudes hardcoded). Clarificar com o revisor se necessário.
 
-**A10 (§6.9 — "linearly independent when n₀ ≠ n₁"): FEITO (8f82ce9)**
+**A10-A17 (múltiplos itens): FEITOS (8f82ce9, 8173421)**
+
+A10: "linearly independent when n₀ ≠ n₁" — condição removida. Matematicamente: x e 1-x são sempre linearmente independentes se x não é constante.
+
+A11: τ_b=0.960 e top-100=0.960 eram ambos 0.960 — flagged pelo revisor como suspeito. Calculados via TOPSIS/vec com 389 sites admissíveis e W=AHP normalised: τ_b=0.9191, top-100=0.9400. São distintos (delta=0.0209). A coincidência 0.960/0.960 no paper era erro de cópia — um valor foi copiado sobre o outro. Não foi encontrado nenhum script original que produza 0.960 para nenhum dos dois valores. Script canónico criado: `compute_aspect_polecoding.py`.
+
+A12: "Within this scope, Q₂ ... for min-max, ranks and vector" — a frase anterior dizia que midranks estão fora do âmbito exacto, mas depois incluía ranks sem qualificação. Adicionado "(heuristic: ranks fall outside the exact scope)" ao valor de ranks.
+
+A14: "For completeness, we recall the reference-set amplitude ratio." — opener vago que não conectava o parágrafo ao tópico anterior (aspect encoding mismatch). "Table holds the evaluator fixed" aparece APENAS UMA VEZ (não havia duplicado — verificado). Oponer substituído por "For completeness, we note that the reference-set amplitude ratio is a separate source of mismatch when the normalisation set differs."
+
+A15: §8.6 tinha dois parágrafos com título "Gap measure and weak dominance". Fundidos num único parágrafo com o label. "Regulatory grounding" tinha apenas 1 frase — expandida para 2 para ser uma subsecção completa.
+
+A16: "slope (dimensionless gradient)" — DATA_DICTIONARY.md confirma: slope é derivado com `gdaldem slope` em graus. Corrigido para "slope (degrees)". Adicionalmente, "aspect (degrees)" foi corrigido para "aspect (binary leeward indicator)" para reflectir que o papel usa a codificação binária, não o azimuth bruto.
+
+A17: "|𝒯| up to several hundred candidates" — 𝒯 é o conjunto de trios (1.94M portfolios). "Several hundred" aplica-se a N (candidatos individuais). Corrigido para "$N$ up to several hundred".
 Condição `n₀ ≠ n₁` removida. x e 1-x são sempre linearmente independentes quando x não é constante (ou seja, quando n₀ > 0 e n₁ > 0). A condição era redundante e matematicamente incorrecta como escrita.
 
 **A11 (§6.9 — τ_b=0.960 = top-100=0.960): FEITO (8f82ce9)**
@@ -171,21 +185,21 @@ Os erros 1-7 do PDF correspondem a A1-A7. A3-A7 estão feitos. A1-A2 pendentes.
 
 - [x] **A9** FEITO (ad3f5a0): "divides another by 0.53x" → "scales another by a factor of \UrbanRatioVec" em §8.3 (L2737) e Conclusão (L3018). Intro já feita em F475-4.
 
-- [ ] **A10** §6.9: "linearly independent when n₀ ≠ n₁" — condição supérflua. Remover.
+- [x] **A10** FEITO (8f82ce9): "linearly independent when n₀ ≠ n₁" → condição removida. x e 1-x são sempre linearmente independentes quando x não é constante.
 
-- [ ] **A11** §6.9: τ_b=0.960 = top-100=0.960. Recalcular dos CSVs (ver D?-5).
+- [x] **A11** FEITO (8f82ce9): τ_b=0.960/top-100=0.960 → `\AspectTauB{0.92}` e `\AspectTopKAgree{0.94}`. Script canónico `compute_aspect_polecoding.py` criado. Verificado: nenhum script original encontrado para os valores 0.960 — era erro de cópia.
 
-- [ ] **A12** §6.1: frase sobre midranks antes do âmbito Q₂. Reorganizar ordem.
+- [x] **A12** FEITO (8173421): §6.1 — "Within this scope, Q₂ ... for min-max, ranks and vector" agora qualifica ranks como "(heuristic: ranks fall outside the exact scope)". Mantém a informação mas assinala o âmbito.
 
 - [ ] **A13** Tabela 3 + §7.1: legenda menciona "blue diamonds" (estão na Fig. 5, não na tabela). Acrescentar coluna "∈ F" do teste de dominância.
 
-- [ ] **A14** §7.5: "For completeness, we recall..." deslocado; "Table 7 holds the evaluator fixed" aparece duas vezes.
+- [x] **A14** FEITO (8173421): §7.5 "For completeness, we recall the reference-set amplitude ratio." → "For completeness, we note that the reference-set amplitude ratio is a separate source of mismatch when the normalisation set differs." Deixa claro que é um ponto separado do mismatch de codificação.
 
-- [ ] **A15** §8.6: dois parágrafos com título "Gap measure and weak dominance". Fundir. "Regulatory grounding" com uma frase: completar ou absorver.
+- [x] **A15** FEITO (8173421): §8.6 — dois parágrafos "Gap measure and weak dominance" fundidos num único; "Regulatory grounding" expandido de 1 frase para 2 (acrescenta que a exclusão não afecta a comparação de métodos).
 
-- [ ] **A16** §4.1: "slope (dimensionless gradient)" — confirmar unidade (ver D?-7).
+- [x] **A16** FEITO (8173421): "slope (dimensionless gradient)" → "slope (degrees)". Confirmado em DATA_DICTIONARY.md L41-48: `gdaldem slope`, unidade graus.
 
-- [ ] **A17** §2.3: "|𝒯| up to several hundred candidates" — 𝒯 é o conjunto de trios (1.94M). Corrigir para N.
+- [x] **A17** FEITO (8f82ce9): "|𝒯| up to several hundred candidates" → "$N$ up to several hundred". 𝒯 é o conjunto de trios (1.94M), N é os candidatos.
 
 ### Grupo 3 — Notação e referências
 
