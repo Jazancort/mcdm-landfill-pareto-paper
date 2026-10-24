@@ -1120,48 +1120,11 @@ shape rather than by the analyst's value judgement.
 We therefore report the normalisation contrast as the cost of moving
 away from the value model's own scale.
 
-A targeted experiment (F8) addresses the remaining concern: that the
-advantage of min--max reflects alignment rather than an intrinsic
-property.
-We rebuilt the Pareto frontier using vector-normalised objectives
-(replacing min--max group objectives with their vector-normalised
-counterparts) and repeated all four SAW cells.
-Under optimal assembly, SAW with vector normalisation attained
-$Q_2=\FEightVecOptQ\%$ against the vector frontier, as required by
-Proposition~\ref{prop:p1:stmt} when score and benchmark share the same
-normalisation; this is a regression check
-(Remark~\ref{rem:definitional}), not evidence.
-SAW with min--max normalisation attained only $\FEightMMOptQ\%$
-($\mathrm{SE}=\FEightMMOptSE$~pp), a drop of ${\approx}\FEightMMOptLoss$~pp.
-Under greedy assembly the pattern was similar:
-$\FEightVecGrdQ\%$ (vec) versus $\FEightMMGrdQ\%$ (mm).
-The $100\%$ under vec/greedy is an empirical observation, not a
-consequence of Theorem~\ref{thm:groupconst}.
-In \FEightVecCoinc{} of \ndraws{} draws the greedy rule returned the
-exact SAW optimum; in the remaining \FEightVecSubopt{} draws it
-returned a different, lower-scoring portfolio that nonetheless lay on
-the vector frontier.
-Theorem~\ref{thm:groupconst} covers exact assembly only; the greedy
-result requires no theoretical support beyond this measurement.
-Two observations follow.
-First, the direction of the advantage reverses relative to the main
-factorial: vector normalisation now dominates.
-This is consistent with the alignment interpretation: a score that shares
-the objective normalisation recovers the frontier more reliably.
-The asymmetry is, however, strong: under optimal assembly, the
-misalignment costs ${\approx}\EoneVloss$~pp in one direction
-(score vector vs.\ frontier min--max, the main factorial) but only
-${\approx}\FEightMMOptLoss$~pp in the other direction
-(score min--max vs.\ frontier vector; $\FEightMMOptQ\%$ attainment).
-This suggests that misalignment under min--max scores is less severe,
-an additional observation on this instance rather than a theoretical
-guarantee.
-Second, the $100\%$ attainment under vec/opt is the value
-Proposition~\ref{prop:p1:stmt} requires, and so checks the
-implementation of the rebuilt frontier.
-The practical implication: the normalisation of the score should
-coincide with the normalisation implicit in the value model's
-objective functions.
+A separate experiment (F8) tests whether this advantage reflects
+alignment between the frontier normalisation and the scoring model,
+or an intrinsic property of min--max.
+Section~\ref{sec:alignment} reports the design and the full cross-model
+alignment results.
 
 
 
@@ -2205,6 +2168,81 @@ of $w^{\mathrm{eff}}$ precisely, and departs from the frontier defined by $w$.
 Greedy assembly is myopic and, on this evidence, less exposed to a distortion
 it does not optimise. This last statement is an interpretation;
 Section~\ref{sec:e1} isolates the component of the distortion responsible.
+
+
+% ----------------------------------------------------------
+\subsection{Cross-model alignment: cost of scoring and frontier divergence}
+\label{sec:alignment}
+% ----------------------------------------------------------
+
+The factorial evaluates each method's score against the min--max Pareto
+frontier~$\mathcal{F}(\mathrm{mm})$.
+One natural question is whether the measured advantage of min--max normalisation
+reflects an intrinsic property of the method or merely an alignment between
+the scoring function and the frontier against which it is evaluated.
+Experiment~F8 answers this by computing $Q_2$ for all four
+score-by-frontier combinations under each assembly strategy.
+
+Table~\ref{tab:alignment} reports the full $2\times 2\times 2$
+alignment matrix.
+The two diagonal entries (score and frontier share the same normalisation)
+satisfy $Q_2=100\%$ under optimal assembly by
+Theorem~\ref{thm:groupconst}, and are consistent checks of the
+implementation.
+The two off-diagonal entries (score and frontier diverge) reveal a
+strong directional asymmetry.
+
+\begin{table}[!t]
+\centering\small
+\caption{Cross-model alignment matrix:
+  $Q_2[\mathcal{A}']$ (\%) for SAW under each combination of
+  scoring normalisation (rows) and Pareto frontier normalisation
+  (columns), at $\kappa=200$ and $\ndraws$ draws.
+  Standard errors in parentheses.
+  Diagonal entries are structural guarantees of Theorem~\ref{thm:groupconst};
+  off-diagonal entries measure the cost of misalignment.}
+\label{tab:alignment}
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+& & \multicolumn{2}{c}{Frontier: min--max ($\mathcal{F}_{\mathrm{mm}}$)}
+  & \multicolumn{2}{c}{Frontier: vector ($\mathcal{F}_{\mathrm{vec}}$)} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6}
+Score norm. & Assembly & $Q_2$ & SE & $Q_2$ & SE \\
+\midrule
+Min--max & optimal & $\FEightMmMMOptQ$\% & {---} & $\FEightVecMMOptQ$\% & ($\FEightVecMMOptSE$) \\
+         & greedy  & $\FEightMmMMGrdQ$\% & ($\FEightMmMMGrdSE$) & $\FEightVecMMGrdQ$\% & ($\FEightVecMMGrdSE$) \\
+\midrule
+Vector   & optimal & $\FEightMmVecOptQ$\% & ($\FEightMmVecOptSE$) & $\FEightVecVecOptQ$\% & {---} \\
+         & greedy  & $\FEightMmVecGrdQ$\% & ($\FEightMmVecGrdSE$) & $\FEightVecVecGrdQ$\% & {---} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Under optimal assembly, moving the score from min--max to vector while keeping the
+frontier at $\mathcal{F}_{\mathrm{mm}}$ costs $\FEightMmVecOptLoss$~pp;
+moving the frontier to $\mathcal{F}_{\mathrm{vec}}$ while keeping a
+min--max score costs $\FEightVecMMOptLoss$~pp.
+The asymmetry is large: the cost of misalignment is approximately
+$\FEightVecMMOptLoss/\FEightMmVecOptLoss = 28$ times larger in one
+direction than the other.
+Under greedy assembly the ratio is similar
+($\FEightVecMMGrdLoss$~pp versus $\FEightMmVecGrdLoss$~pp).
+The pattern is consistent with the amplitude argument: the vector
+frontier imposes a stricter Pareto criterion because the effective weight
+of \textit{perm} is amplified $\PermInflation\times$ relative to its
+nominal weight, concentrating non-dominated portfolios in a narrow region
+of objective space.
+A min--max score evaluated against this concentrated frontier can
+miss; a vector score evaluated against the min--max frontier rarely misses,
+because the broader frontier accepts most portfolios that are
+near-optimal under a reasonably shaped weighting scheme.
+
+The $100\%$ attainment under vec/vec/greedy is an empirical observation.
+In \FEightVecCoinc{} of \ndraws{} draws the greedy rule returned the
+exact SAW optimum; in the remaining \FEightVecSubopt{} draws it
+returned a different portfolio that nonetheless lay on the vector frontier.
+Theorem~\ref{thm:groupconst} covers exact assembly only; the greedy
+result is an additional observation on this instance.
 
 
 \subsection{The reference set: a coding inconsistency outside the theorem}

@@ -159,6 +159,7 @@ if CIRC_VEC_CSV.exists() and CIRC_MM_CSV.exists():
             rf"\newcommand{{\FEightMmVecOptSE}}{{{mv_opt_se:.3f}}} % SE of above",
             rf"\newcommand{{\FEightMmVecOptLoss}}{{{mv_opt_loss:.1f}}} % 100-MmVecOptQ",
             rf"\newcommand{{\FEightMmMMGrdQ}}{{{mm_grd_q:.1f}}}    % obj=mm score=mm grd: ~factorial SAW/mm/grd",
+            rf"\newcommand{{\FEightMmMMGrdSE}}{{{mm_grd_se:.3f}}}  % SE of above",
             rf"\newcommand{{\FEightMmVecGrdQ}}{{{mv_grd_q:.1f}}}   % obj=mm score=vec grd: KEY RESULT",
             rf"\newcommand{{\FEightMmVecGrdSE}}{{{mv_grd_se:.3f}}} % SE of above",
             rf"\newcommand{{\FEightMmVecGrdLoss}}{{{mv_grd_loss:.1f}}} % 100-MmVecGrdQ",

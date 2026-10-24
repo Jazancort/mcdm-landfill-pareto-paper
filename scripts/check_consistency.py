@@ -891,6 +891,53 @@ if _apc_json.exists():
 else:
     print("  [INFO] aspect_polecoding.json not found — run compute_aspect_polecoding.py")
 
+# ── C6: F8 2×2 alignment matrix — macros vs f8_circularity CSVs ─────────────
+print()
+print("=== C6: F8 alignment matrix — macros vs f8_circularity CSVs ===")
+_f8_vec_csv = RESULTS / "f8" / "f8_circularity.csv"
+_f8_mm_csv  = RESULTS / "f8" / "f8_circularity_mm.csv"
+_f8_tex     = ROOT / "macros_f8.tex"
+if _f8_vec_csv.exists() and _f8_mm_csv.exists() and _f8_tex.exists():
+    import pandas as _pd2
+    import json as _json4
+    _df_v = _pd2.read_csv(_f8_vec_csv)
+    _df_m = _pd2.read_csv(_f8_mm_csv)
+    _f8t  = _f8_tex.read_text(encoding="utf-8")
+    def _f8m(name): 
+        m = re.search(rf'\\newcommand\{{\\{name}\}}\{{([0-9.]+)\}}', _f8t)
+        return float(m.group(1)) if m else None
+    def _f8csv(df, score, asm, col="Q2"):
+        r = df[(df["score_norm"]==score) & (df["assembly"]==asm)]
+        return float(r[col].iloc[0]) if not r.empty else None
+
+    _cells = [
+        ("FEightVecMMOptQ",  _f8csv(_df_v, "mm",  "optimal"),  0.1, "obj=vec score=mm opt"),
+        ("FEightVecMMGrdQ",  _f8csv(_df_v, "mm",  "greedy"),   0.1, "obj=vec score=mm grd"),
+        ("FEightVecVecOptQ", _f8csv(_df_v, "vec", "optimal"),  0.1, "obj=vec score=vec opt"),
+        ("FEightVecVecGrdQ", _f8csv(_df_v, "vec", "greedy"),   0.1, "obj=vec score=vec grd"),
+        ("FEightMmMMOptQ",   _f8csv(_df_m, "mm",  "optimal"),  0.1, "obj=mm score=mm opt"),
+        ("FEightMmMMGrdQ",   _f8csv(_df_m, "mm",  "greedy"),   0.2, "obj=mm score=mm grd"),
+        ("FEightMmVecOptQ",  _f8csv(_df_m, "vec", "optimal"),  0.3, "obj=mm score=vec opt"),
+        ("FEightMmVecGrdQ",  _f8csv(_df_m, "vec", "greedy"),   0.3, "obj=mm score=vec grd"),
+    ]
+    for macro, csv_val, tol, label in _cells:
+        if csv_val is None:
+            print(f"  [INFO] {label}: CSV value not found")
+            continue
+        m_val = _f8m(macro)
+        if m_val is None:
+            FAIL.append(f"Macro \\{macro} not found in macros_f8.tex")
+            print(f"  [FAIL] \\{macro} not found in macros_f8.tex")
+        else:
+            check(f"\\{macro} vs CSV ({label})", m_val, csv_val, tol=tol)
+else:
+    if not _f8_vec_csv.exists():
+        print("  [INFO] f8_circularity.csv not found")
+    if not _f8_mm_csv.exists():
+        print("  [INFO] f8_circularity_mm.csv not found — run compute_f8_mm_frontier.py")
+    if not _f8_tex.exists():
+        print("  [INFO] macros_f8.tex not found — run generate_macros_f8.py")
+
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")
     for msg in FAIL:
