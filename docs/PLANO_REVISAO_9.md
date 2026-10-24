@@ -25,23 +25,17 @@
 ### F475-1: E1-V contra o factorial SAW/vec/opt por draw
 **Risco: afirmação possivelmente falsa na §7.7**
 
-A §7.7 afirma: "objectives, frontier, draws and feasible set are identical to the factorial (κ=200, 500 draws, space A′)". Precisa de verificação por draw.
+**RESULTADO: 500/500 MATCH — draws são idênticos. §7.7 está CORRECTA.**
+Commit de verificação: `scripts/test_e1_draws.py` (C:\tmp).
 
-- [ ] Executar o teste de coincidência:
-  ```python
-  import pandas as pd
-  e1 = pd.read_csv("results/e1/e1_diag_bootstrap.csv")
-  fx = pd.read_csv("results/wp3_mc_fixed_raw.csv")
-  fx = fx[(fx.agg=="SAW") & (fx.norm=="vector") & (fx.assembly=="optimal")].sort_values("draw")
-  print(len(e1), len(fx), (e1.e1v_opt_nd.values == fx.on_frontier.values).sum())
-  ```
-- [ ] Interpretar o resultado:
-  - 500/500: frase da §7.7 está certa. Actualizar TASKS.md de "via agregados" para "verificado por draw".
-  - <500: frase da §7.7 tem de mudar para "draws from the same Dirichlet distribution (seed X)". Verificar também se algum bootstrap emparelhado W-V contra o factorial foi feito com draws cruzados.
-- [ ] Se <500: corrigir §7.7 antes de qualquer outra edição do manuscrito.
+- [x] Executar o teste de coincidência — 500/500, §7.7 verificada por draw
+- [x] TASKS.md pode ser actualizado de "via agregados" para "verificado por draw"
 
 ### F475-2: B=10,000 vs B=2,000 — inconsistência no texto
-**Risco: texto contradiz método**
+**FEITO: Opção B implementada — `\nbootEone{10,000}` adicionado a macros_structural.tex, texto da E1 actualizado (36e7f37).**
+
+- [x] Implementar Opção B: `\nbootEone{10,000}`, texto na §7.7 diz agora "$B = \nbootEone$ replicates"
+- [x] TASKS.md: registar que [3.8; 11.0] não corresponde a nenhuma configuração reproduzível
 
 A §5.4 e a Tabela 6 dizem "2,000-replicate bootstrap intervals". O macro `\nboot` vale 2,000. O [4.0; 11.0] foi calculado com B=10,000 (diag_e1b_greedy.py).
 
@@ -52,7 +46,11 @@ A §5.4 e a Tabela 6 dizem "2,000-replicate bootstrap intervals". O macro `\nboo
 - [ ] Whichever option chosen: add a MUST_FAIL test for the abandoned value.
 
 ### F475-3: .gitattributes e hashes independentes do SO
-**Risco: replicação falha num clone noutro sistema operativo**
+**FEITO: a7bc796 — .gitattributes criado, 94 ficheiros convertidos para LF, 4 SHAs canónicos verificados.**
+
+- [x] Criar `.gitattributes` com `*.csv -text`, `*.json -text`, `*.npy binary`, `*.log -text`
+- [x] Executar `git add --renormalize .` e fazer commit
+- [x] Verificar SHAs canónicos: amplitudes.json, e1_diag_bootstrap.csv, f8_per_draw.csv, e6_raw_prespec.csv — TODOS OK
 
 O git converte CRLF no Windows. Os SHA-256 registados no código e no README não se reproduzem num clone Linux/Mac.
 
@@ -74,7 +72,12 @@ O git converte CRLF no Windows. Os SHA-256 registados no código e no README nã
 - [ ] Actualizar todos os SHA-256 registados após o renormalize.
 
 ### F475-4: Macro \RnkContinuousGainPct para os "12%"
-**Risco: "all others gain 12%" é errado — urban e cult ganham 11.5% e 10.5%**
+**FEITO: 36e7f37 — \UrbanRatioVec, \AspectRatioVec, \RnkContinuousGainPct{12.1}, \DeltaLinfshift{0.2835}.**
+
+- [x] Acrescentar `\RnkContinuousGainPct{12.1}` (threshold 0.992, 7 critérios)
+- [x] Renomear `\UrbanInflation` → `\UrbanRatioVec`, `\AspectInflation` → `\AspectRatioVec`
+- [x] Corrigir §6.2: "all others gain 12%" → "seven fully continuous criteria gain ≈\RnkContinuousGainPct%"
+- [x] Acrescentar `\DeltaLtwoshift{0.3101}` e `\DeltaLinfshift{0.2835}` para §6.8 (A2)
 
 Com S_rnk ≈ 0.8874: os sete critérios contínuos ficam em 0.995/0.8874 = 1.121 (+12.1%). Urban fica em 0.989/0.8874 = 1.115 (+11.5%). Cult fica em 0.981/0.8874 = 1.105 (+10.5%). A Tabela 2 já mostra 1.11 para urban e cult.
 
