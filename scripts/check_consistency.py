@@ -490,6 +490,19 @@ MUST_FAIL_PHRASES = [
     # Prop1 guarantee for greedy
     ("Prop1 ✓",
      "old Prop1 guarantee comment in macros.tex"),
+    # Hardcoded m_eff value (replaced by \meff)
+    ("m_{\\mathrm{eff}}=4.05",
+     "m_eff=4.05 hardcoded (old rho_raw value; must use \\meff)"),
+    # Hardcoded 45.4% (replaced by \PermAbsDevPct)
+    ("45.4\\%",
+     "45.4% hardcoded (old rho_raw value; must use \\PermAbsDevPct)"),
+    # Hardcoded 43.2 pp (replaced by \EoneVloss)
+    ("43.2~pp",
+     "43.2 pp hardcoded (must use \\EoneVloss)"),
+    ("43.2$~pp",
+     "43.2 pp hardcoded variant (must use \\EoneVloss)"),
+    ("{\\approx}43.2",
+     "43.2 pp hardcoded in F8 text (must use \\EoneVloss)"),
 ]
 for phrase, note in MUST_FAIL_PHRASES:
     phrase_clean = phrase.replace("\n", " ")
@@ -825,6 +838,30 @@ if FAIL:
     sys.exit(1)
 else:
     print(f"ALL CHECKS PASSED (0 failures)")
+
+# ── Anti-X_adj_vec: forbid wrong normalisation in new scripts ────────────────
+print()
+print("=== Anti-X_adj_vec: no script should use wrong vec scoring ===")
+import re as _re2
+_bad_scripts = []
+for _sp in Path("scripts").rglob("*.py"):
+    if "deprecated" in _sp.parts or "_athena" in _sp.name or "check_consistency" in _sp.name:
+        continue
+    try:
+        _src = _sp.read_text(encoding="utf-8")
+    except Exception:
+        continue
+    if _re2.search(r"\bX_adj_vec\b", _src) and "raw_sensitivity_4cells" not in _sp.name:
+        # X_adj_vec in raw_sensitivity_4cells is the diagnostic-only variable (used for comments)
+        # Exclude that file
+        _bad_scripts.append(str(_sp))
+if _bad_scripts:
+    FAIL2 = [f"Script uses X_adj_vec (wrong scoring): {s}" for s in _bad_scripts]
+    for msg in FAIL2:
+        print(f"  [FAIL] {msg}")
+    sys.exit(1)
+else:
+    print("  [OK  ] No script uses X_adj_vec outside of allowed context")
 
 
 # ── Regression tests for rules that were relaxed ────────────────────────────

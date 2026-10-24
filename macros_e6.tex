@@ -4,8 +4,14 @@
 % commit hash stored in results/e6/e6_stats.json (not here, to keep output deterministic)
 
 % ── Parametric dispatchers ───────────────────────────────────────────
-\newcommand{\EsixPthreeP}[1]{\csname EsixPthreeP#1\endcsname}  % usage: \EsixPthreeP{Logn} expands to \EsixPthreePLogn
-\newcommand{\EsixPfourP}[1]{\csname EsixPfourP#1\endcsname}  % usage: \EsixPfourP{All} expands to \EsixPfourPAll
+% ── Parametric dispatchers (for use as \EsixPthreeP{Logn}, \EsixPfourP{All}, etc.) ──
+% Guards: undefined suffix -> compile-time error (not silent \relax)
+\newcommand{\EsixPthreeP}[1]{%
+  \ifcsname EsixPthreeP#1\endcsname\csname EsixPthreeP#1\endcsname
+  \else\errmessage{E6 macro EsixPthreeP#1 undefined}\fi}
+\newcommand{\EsixPfourP}[1]{%
+  \ifcsname EsixPfourP#1\endcsname\csname EsixPfourP#1\endcsname
+  \else\errmessage{E6 macro EsixPfourP#1 undefined}\fi}
 
 \newcommand{\EsixTargetTVW}{0.199}  % E6 pre-registered TV_W target (0.1986 rho_raw era; see DEV-E6-005)
 

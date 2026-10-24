@@ -3,27 +3,25 @@
 raw_sensitivity_4cells.py
 =========================
 Compare vec-normalised shift vs raw across 4 cells:
-  SAW  × {greedy, optimal}   -- trivially 500/500 (shown analytically below)
-  TOPSIS × {greedy, optimal} -- informative test
+  SAW    × {greedy, optimal}   -- GENUINE test: same w, raw vs shift norms
+  TOPSIS × {greedy, optimal}   -- GENUINE test: same w, raw vs shift norms
 
 "Shift" = manuscript normalisation: x_j^vec = x_j^mm / L2(x_j^mm)
 "Raw"   = textbook form:            x_j^vec = x_j^mm / (L2(x_j^raw) / range(x_j^raw))
           i.e., same X_via values but norms from the original unshifted data.
 
-For criteria with min_raw = 0:  shift == raw (L2 is scale-invariant up to range).
-For criteria with min_raw > 0 (slope, coast, wells, aero):
-    L2(x_raw)/range != L2(x_mm), hence norms differ.
+Both SAW and TOPSIS use the SAME weight vector w. The only difference is
+which L2 norms are used to scale the columns. For criteria with min_raw > 0
+(slope, coast, wells, aero), the norms differ by up to ~4.3% (coast).
 
-Analytical note (SAW):
-  saw_raw(w) = (X_adj / norms_raw) * (w * scale)
-             = X_adj * scale / norms_raw * w
-             = X_adj * (norms_raw/norms_shift) / norms_raw * w
-             = X_adj / norms_shift * w
-             = saw_shift(w)
-  So SAW/vec/shift == SAW/vec/raw for ANY weight vector -> 500/500 trivially.
+For SAW: s_shift(w) = Σ w_j * X_adj_j / L2(x_j^mm)
+         s_raw(w)   = Σ w_j * X_adj_j / L2(x_j^raw)/range_j  (different norms, NOT identity)
 
-Run:
-    uv run python scripts/raw_sensitivity_4cells.py
+Note: the previous version erroneously used (w * scale) which made saw_raw == saw_shift
+(algebraic identity). This version corrects that error.
+
+Run (on Athena with MCDM_DATA_DIR set):
+    MCDM_DATA_DIR=/home/julioazancort/scratch/mcdm uv run python scripts/raw_sensitivity_4cells.py
 
 Output:
     results/raw_sensitivity_4cells.csv
@@ -102,13 +100,15 @@ def saw_shift_fn(w):
     return (X_adj / norms_shift * w).sum(1)
 
 def saw_raw_fn(w):
-    return (X_adj / norms_raw * (w * scale)).sum(1)
+    """True textbook form: same weights w, raw L2 norms (min not subtracted)."""
+    return (X_adj / norms_raw * w).sum(1)
 
 w_test = W.copy()
-diff_saw = np.max(np.abs(saw_shift_fn(w_test) - saw_raw_fn(w_test)))
-print(f"\nAnalytical check SAW: max|saw_shift - saw_raw| = {diff_saw:.2e}")
-assert diff_saw < 1e-10, "SAW algebraic identity broken!"
-print("SAW identity confirmed: shift == raw trivially (re-weighting equivalence).")
+diff_saw_true = np.max(np.abs(saw_shift_fn(w_test) - saw_raw_fn(w_test)))
+print(f"\nTrue SAW gap (shift vs raw, AHP weights): {diff_saw_true:.4e}")
+print("(Non-zero = genuine sensitivity test, not identity)")
+assert diff_saw_true > 1e-6, "SAW raw_true should NOT be identical to shift!"
+print("Confirmed: saw_raw (true textbook) differs from saw_shift.")
 
 # ── TOPSIS scoring ───────────────────────────────────────────────────────────
 def topsis_sc_fn(w, norms):

@@ -105,10 +105,14 @@ def write_macros(S, sha, commit, target_tvw=None):
 
     # ── Parametric dispatchers (for use as \EsixPthreeP{Logn}, \EsixPfourP{All}, etc.) ──
     lines.append("% ── Parametric dispatchers ───────────────────────────────────────────")
-    lines.append(r"\newcommand{\EsixPthreeP}[1]{\csname EsixPthreeP#1\endcsname}"
-                 "  % usage: \\EsixPthreeP{Logn} expands to \\EsixPthreePLogn")
-    lines.append(r"\newcommand{\EsixPfourP}[1]{\csname EsixPfourP#1\endcsname}"
-                 "  % usage: \\EsixPfourP{All} expands to \\EsixPfourPAll")
+    lines.append("% ── Parametric dispatchers (for use as \\EsixPthreeP{Logn}, \\EsixPfourP{All}, etc.) ──")
+    lines.append("% Guards: undefined suffix -> compile-time error (not silent \\relax)")
+    lines.append(r"\newcommand{\EsixPthreeP}[1]{%" + "\n"
+                 r"  \ifcsname EsixPthreeP#1\endcsname\csname EsixPthreeP#1\endcsname" + "\n"
+                 r"  \else\errmessage{E6 macro EsixPthreeP#1 undefined}\fi}")
+    lines.append(r"\newcommand{\EsixPfourP}[1]{%" + "\n"
+                 r"  \ifcsname EsixPfourP#1\endcsname\csname EsixPfourP#1\endcsname" + "\n"
+                 r"  \else\errmessage{E6 macro EsixPfourP#1 undefined}\fi}")
     lines.append("")
 
     # ── Target TV_W for W_inf_F cell (pre-registered; from CSV target_tvw column) ---

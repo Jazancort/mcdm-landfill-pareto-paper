@@ -76,6 +76,10 @@ def compute_amplitudes():
     m_eff  = float(delta_L1**2 / delta_L2_sq) if delta_L2_sq > 0 else 0.0
     L2_vec = float(np.sqrt(delta_L2_sq))
     # Verify: 2*TV/sqrt(m_eff) == L2_vec
+
+    # Perm absolute deviation as % of total |delta|
+    perm_idx_local = col_names.index("perm")
+    perm_abs_dev_pct = float(abs(delta[perm_idx_local]) / delta_L1 * 100) if delta_L1 > 0 else 0.0
     l2_check = 2.0 * TV_vec / np.sqrt(m_eff) if m_eff > 0 else 0.0
     assert abs(l2_check - L2_vec) < 1e-10, f"L2 formula mismatch: {l2_check:.8f} vs {L2_vec:.8f}"
 
@@ -206,6 +210,7 @@ def compute_amplitudes():
         "m_eff":  float(m_eff),
         "L2_vec": float(L2_vec),
         "S":      float(S),
+        "perm_abs_dev_pct": float(perm_abs_dev_pct),
         "perm_inflation":   float(perm_inflation),
         "urban_inflation":  float(urban_inflation),
         "aspect_inflation": float(aspect_inflation),
@@ -269,6 +274,10 @@ def write_macros_amplitudes_tex(res, out_path):
         rf"\newcommand{{\RhoPermInverted}}{{{res['rho_perm_inv']:.3f}}}   % 1/L2(1-mm_perm) if inverted",
         rf"\newcommand{{\RhoAspect}}{{{res['rho_aspect']:.3f}}}          % 1/sqrt(94)  leeward=1",
         rf"\newcommand{{\RhoAspectFlipped}}{{{res['rho_asp_flip']:.3f}}}  % 1/sqrt(295) if leeward=0",
+        "",
+        "% --- m_eff and concentration (generated, not hardcoded) ---",
+        rf"\newcommand{{\meff}}{{{res['m_eff']:.2f}}}             % effective number of criteria = (L1_delta)^2/(L2_delta)^2",
+        rf"\newcommand{{\PermAbsDevPct}}{{{res['perm_abs_dev_pct']:.1f}}}  % perm share of |w_eff - w| (total absolute deviation)",
     ]
     Path(out_path).write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Written: {out_path}")
