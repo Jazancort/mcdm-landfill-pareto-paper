@@ -1018,6 +1018,8 @@ separation threshold is always written $d_{\min}=\dmin$~km.
 
 The experiment evaluates each method--normalisation--assembly cell by
 two performance measures.
+The subscripts 2 and 3 follow a convention in which $Q_1$ would denote
+a rank-based measure; we do not use $Q_1$ here.
 The \emph{primary} measure is
 \begin{equation}
   Q_2 = \Pr_{w}\bigl[\,M(w)\in\Fset(w)\,\bigr],
@@ -1891,7 +1893,7 @@ sub-optimality in the factorial experiment into four ordered factors:
     The amplitude identity~\eqref{eq:weff} does not apply exactly to them.
     The factorial experiment measures the residual effect after
     controlling for items~1 and~2.
-  \item \emph{Reference-set effect (normalisation over $N$ vs.\ $N'$):}
+  \item \emph{Reference-set effect (normalisation over $A$ vs.\ $A'$):}
     Including inadmissible sites in the normalisation reference shifts
     the scale without those sites being selectable
     (Section~\ref{sec:refset}).
@@ -1943,25 +1945,26 @@ normalisation, and PROMETHEE~II attain the reference set.
   binary leeward indicator).
   The gap is defined in~\eqref{eq:gap} and computed against the
   space-$A$ Pareto frontier; Figure~\ref{fig:pareto} projects these
-  portfolios onto the space-$A'$ frontier for comparison
-  (portfolios including excluded sites cannot lie on that frontier).
-  Pareto membership (blue diamonds) is determined by a separate dominance
-  test; the gap measures simultaneous improvement and can be zero for a
-  dominated portfolio.}
+  portfolios onto the space-$A'$ frontier for comparison.
+  The $\in\mathcal{F}$ column indicates Pareto membership
+  (determined by a separate dominance test);
+  the gap measures simultaneous improvement and can be zero for a
+  dominated portfolio, though on Fogo gap~$=0$ coincided with
+  Pareto membership in every case shown.}
 \label{tab:canonical}
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llccccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llcccccc}
 \toprule
-Method & Assembly & Sites & $F_1$ & $F_2$ & $F_3$ & gap \\
+Method & Assembly & Sites & $F_1$ & $F_2$ & $F_3$ & gap & $\in\mathcal{F}$ \\
 \midrule
-SAW, min--max     & greedy  & $\{184,279,320\}$ & 0.1273 & 0.5963 & 0.6207 & 0.032 \\
-SAW, min--max     & optimal & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.000 \\
-TOPSIS, vector    & greedy  & $\{233,320,355\}$ & 0.1113 & 0.5669 & 0.5358 & 0.048 \\
-TOPSIS, vector    & optimal & $\{227,233,345\}$ & 0.0865 & 0.5955 & 0.5715 & 0.024 \\
-TOPSIS, min--max  & greedy  & $\{184,227,460\}$ & 0.1104 & 0.6712 & 0.6883 & 0.000 \\
-VIKOR             & greedy  & $\{233,279,320\}$ & 0.1190 & 0.5819 & 0.5879 & 0.052 \\
-PROMETHEE~II      & greedy  & $\{51,233,345\}$  & 0.0447 & 0.5900 & 0.4852 & 0.000 \\
+SAW, min--max     & greedy  & $\{184,279,320\}$ & 0.1273 & 0.5963 & 0.6207 & 0.032 & no  \\
+SAW, min--max     & optimal & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.000 & yes \\
+TOPSIS, vector    & greedy  & $\{233,320,355\}$ & 0.1113 & 0.5669 & 0.5358 & 0.048 & no  \\
+TOPSIS, vector    & optimal & $\{227,233,345\}$ & 0.0865 & 0.5955 & 0.5715 & 0.024 & no  \\
+TOPSIS, min--max  & greedy  & $\{184,227,460\}$ & 0.1104 & 0.6712 & 0.6883 & 0.000 & yes \\
+VIKOR             & greedy  & $\{233,279,320\}$ & 0.1190 & 0.5819 & 0.5879 & 0.052 & no  \\
+PROMETHEE~II      & greedy  & $\{51,233,345\}$  & 0.0447 & 0.5900 & 0.4852 & 0.000 & yes \\
 \midrule
-Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.000 \\
+Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.000 & yes \\
 \bottomrule
 \end{tabular*}
 \end{table*}
@@ -2934,7 +2937,7 @@ The shortfall $\mathrm{gap}(t)$ in~\eqref{eq:gap} takes the minimum
 over strictly signed differences; if a dominator improves on $t$ in
 only one or two objectives (with equality on the rest), the minimum
 is zero and the gap does not detect the dominance.
-A concrete instance: with $k=3$ minimisation objectives, portfolio
+A concrete instance: with three minimisation objectives, portfolio
 $t=(3,5,5)$ is dominated by $t'=(3,5,4)$ (strict improvement on
 objective~3, ties elsewhere), yet $\mathrm{gap}(t)=\min(0,0,1)=0$.
 $Q_2$ and $Q_3$ therefore measure different aspects of efficiency
