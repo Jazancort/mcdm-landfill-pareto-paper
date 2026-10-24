@@ -628,6 +628,9 @@ BAD_PHRASES = [
      "D2: P1 follows from Theorem; use 'P1 holds by Theorem~\\ref{thm:groupconst}' (implementation check)"),
     ("P1 (no loss when $\\mathrm{TV}_W=0$) held on every draw:",
      "D2: E6-P1 framing corrected; use 'P1 (..., guaranteed by Theorem~\\ref{thm:groupconst}) confirmed the implementation'"),
+    # E3: §6.7 merged into §6.2 — must not reappear as standalone subsection
+    ("\\subsection{Magnitude is not enough: the concentration",
+     "E3: §6.7 merged into §6.2; prop:concentration now lives inside §6.2 (Pareto consistency)"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
@@ -1030,6 +1033,9 @@ _MUST_FAIL = [
      "D2: P1 follows from Theorem; must use 'holds by Theorem' framing"),
     ("P1 (no loss when $\\mathrm{TV}_W=0$) held on every draw:",
      "D2: E6-P1 framing corrected; must use 'guaranteed by Theorem' framing"),
+    # E3: §6.7 merged into §6.2
+    ("\\subsection{Magnitude is not enough: the concentration",
+     "E3: §6.7 merged into §6.2; must not reappear as standalone subsection"),
 ]
 
 _MUST_PASS = [

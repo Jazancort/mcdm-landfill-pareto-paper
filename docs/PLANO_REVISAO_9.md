@@ -302,7 +302,7 @@ Ver D?-4 antes de começar (localizar pesos w por draw).
 
 - [x] **E1** FEITO (501d011): §6.4 (expoente α) e §6.5 (PROMETHEE) condensados para ~1/3 do tamanho original. Derivações e tabela tab:exponent removidas do main; Labels (prop:exponent, rem:mm_not_neutral, prop:p2) mantidos. Referência ao Supplementary Material adicionada.
 - [x] **E2** FEITO (6b83ddb): §7.6 (reference set) convertido para Remark de 4 frases. tab:amprefset e eq:refsetA removidos. tab:coding2x2 mantida (referenciada na Discussion). Referência na Discussion actualizada.
-- [ ] **E3** Fundir §6.7 com §6.2.
+- [x] **E3** FEITO (commit E3): §6.7 ("Magnitude is not enough: the concentration") fundida em §6.2 ("Pareto consistency"). prop:concentration, eq:meff, eq:l2fact, rem:meff_reading mantidos com labels intactos. Transição: "Proposition~\ref{prop:p1:stmt} handles TV=0; when TV>0..." `\paragraph{Fogo Island.}` convertido para texto corrido ("For Fogo Island, computing..."). Subsecção eliminada; 8 subsecções em §6 em vez de 9. BAD_PHRASE + MUST_FAIL adicionados ao check_consistency.py (26 casos).
 - [x] **E4** FEITO: §7.9 já tem 7 células, \EsixNperdraw, \EsixNdrawsTotal — completo.
 - [ ] **E5** Tabela única de orientação de critérios (substitui as 3 descrições em §3.2, §4.1, §4.3).
 - [ ] **E6** Resolver notação inconsistente (A18) — verificar se ainda necessário.

@@ -1372,6 +1372,80 @@ SAW with min--max normalisation over the $\Nvia$ viable sites:
 $Q_2[\mathcal{A}'] = 100.0\%$ for both $\kappa \in \{50, 200\}$
 ($\ndraws$ draws each).
 
+Proposition~\ref{prop:p1:stmt} handles $\mathrm{TV}=0$; when $\mathrm{TV}>0$, the total variation~\eqref{eq:TV} is the $\ell^1$ norm of the deviation
+vector $\delta_j=w_j^{\mathrm{eff}}-w_j$, and is therefore blind to how
+that deviation is spread across criteria.
+Two distortions of identical $\mathrm{TV}$, one concentrated on a
+single heavily weighted criterion and one spread over several, reorder
+the alternatives very differently, because deviations of opposite sign
+partially cancel in the weighted sum when they are distributed.
+The following identity separates the two dimensions.
+
+\begin{proposition}[Magnitude--concentration factorisation]
+\label{prop:concentration}
+Let $\delta_j = w_j^{\mathrm{eff}} - w_j$ be the deviation induced by a
+normalisation, so that $\sum_j \delta_j = 0$ and
+$\sum_j |\delta_j| = 2\,\mathrm{TV}$ by~\eqref{eq:TV}.
+Define the \emph{effective number of distorted criteria} as the
+participation ratio
+\begin{equation}
+  \label{eq:meff}
+  m_{\mathrm{eff}}
+    = \frac{\bigl(\sum_j |\delta_j|\bigr)^2}{\sum_j \delta_j^2}
+    = \frac{\lVert\delta\rVert_1^2}{\lVert\delta\rVert_2^2}.
+\end{equation}
+Then
+\begin{equation}
+  \label{eq:l2fact}
+  \lVert\delta\rVert_2
+    = \frac{2\,\mathrm{TV}}{\sqrt{m_{\mathrm{eff}}}},
+\end{equation}
+and $m_{\mathrm{eff}} \ge 2$ (lower bound) and $m_{\mathrm{eff}} \le m$ (upper bound).
+\end{proposition}
+
+\begin{proof}
+Equation~\eqref{eq:l2fact} is immediate from~\eqref{eq:meff}:
+$\lVert\delta\rVert_2 = \lVert\delta\rVert_1/\sqrt{m_{\mathrm{eff}}}$
+and $\lVert\delta\rVert_1 = 2\,\mathrm{TV}$.
+For the lower bound, let $S=\sum_{\delta_j>0}\delta_j$.
+Since $\sum_j\delta_j=0$ we have $S=-\sum_{\delta_j<0}\delta_j>0$,
+so $\lVert\delta\rVert_1=2S$.
+Also $\lVert\delta\rVert_2^2\le 2S^2$
+(because the positive and negative parts each contribute at most $S^2$
+to the squared norm, with equality when each part is concentrated on a
+single component).
+Therefore $m_{\mathrm{eff}}=\lVert\delta\rVert_1^2/\lVert\delta\rVert_2^2\ge 4S^2/(2S^2)=2$.
+The upper bound is Cauchy--Schwarz: $\lVert\delta\rVert_1^2\le m\,\lVert\delta\rVert_2^2$,
+so $m_{\mathrm{eff}}\le m$.
+The upper bound is attained when all $|\delta_j|$ coincide; the lower bound
+$m_{\mathrm{eff}}=2$ is attained for $\delta=(c,-c,0,\dots,0)$ with $c\neq0$
+(requires $m\ge2$ and an even-symmetric pattern).
+\end{proof}
+
+\begin{remark}[What the factorisation buys]
+\label{rem:meff_reading}
+$\mathrm{TV}$ answers \emph{how much} the elicited weights were moved;
+$m_{\mathrm{eff}}$ answers \emph{over how many criteria}, on a scale
+whose endpoints are fixed by $m$ alone and therefore comparable across
+instances.
+Neither is redundant: the Euclidean norm~\eqref{eq:l2fact} is their
+ratio, and in a synthetic grid reported in the Supplementary Material it
+tracks efficiency loss better than $\mathrm{TV}$ alone.
+Both are computable from the normalised decision matrix in one line, and
+we recommend reporting the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
+rather than $\mathrm{TV}$ alone (Section~\ref{sec:practice}).
+\end{remark}
+
+For Fogo Island, computing~\eqref{eq:meff} on the deviations implied by
+Table~\ref{tab:amplitude} under vector normalisation gives
+$\mathrm{TV}=\TVvec$, $\lVert\delta\rVert_2=\DeltaLtwoshift$,
+$\lVert\delta\rVert_\infty=\DeltaLinfshift$ (attained at \textit{perm}), and
+$m_{\mathrm{eff}}=\meff$ on the admissible range $[2,\,11]$.
+The distortion is thus not merely large but \emph{concentrated}: a
+single criterion accounts for $\PermAbsDevPct\%$ of the total absolute deviation,
+replacing the qualitative observation that \textit{perm} is an
+adversarial column with a position on a bounded scale.
+
 % ---
 
 \subsection{Which part of the distortion costs efficiency}
@@ -1630,86 +1704,6 @@ $\mathrm{TV}$ & & & 0.000 & \TVvec & 0.091 & & \\
 \end{figure*}
 
 % ----------------------------------------------------------
-% ----------------------------------------------------------
-\subsection{Magnitude is not enough: the concentration of the distortion}
-\label{sec:concentration}
-% ----------------------------------------------------------
-
-The total variation~\eqref{eq:TV} is the $\ell^1$ norm of the deviation
-vector $\delta_j=w_j^{\mathrm{eff}}-w_j$, and is therefore blind to how
-that deviation is spread across criteria.
-Two distortions of identical $\mathrm{TV}$, one concentrated on a
-single heavily weighted criterion and one spread over several, reorder
-the alternatives very differently, because deviations of opposite sign
-partially cancel in the weighted sum when they are distributed.
-The following identity separates the two dimensions.
-
-\begin{proposition}[Magnitude--concentration factorisation]
-\label{prop:concentration}
-Let $\delta_j = w_j^{\mathrm{eff}} - w_j$ be the deviation induced by a
-normalisation, so that $\sum_j \delta_j = 0$ and
-$\sum_j |\delta_j| = 2\,\mathrm{TV}$ by~\eqref{eq:TV}.
-Define the \emph{effective number of distorted criteria} as the
-participation ratio
-\begin{equation}
-  \label{eq:meff}
-  m_{\mathrm{eff}}
-    = \frac{\bigl(\sum_j |\delta_j|\bigr)^2}{\sum_j \delta_j^2}
-    = \frac{\lVert\delta\rVert_1^2}{\lVert\delta\rVert_2^2}.
-\end{equation}
-Then
-\begin{equation}
-  \label{eq:l2fact}
-  \lVert\delta\rVert_2
-    = \frac{2\,\mathrm{TV}}{\sqrt{m_{\mathrm{eff}}}},
-\end{equation}
-and $m_{\mathrm{eff}} \ge 2$ (lower bound) and $m_{\mathrm{eff}} \le m$ (upper bound).
-\end{proposition}
-
-\begin{proof}
-Equation~\eqref{eq:l2fact} is immediate from~\eqref{eq:meff}:
-$\lVert\delta\rVert_2 = \lVert\delta\rVert_1/\sqrt{m_{\mathrm{eff}}}$
-and $\lVert\delta\rVert_1 = 2\,\mathrm{TV}$.
-For the lower bound, let $S=\sum_{\delta_j>0}\delta_j$.
-Since $\sum_j\delta_j=0$ we have $S=-\sum_{\delta_j<0}\delta_j>0$,
-so $\lVert\delta\rVert_1=2S$.
-Also $\lVert\delta\rVert_2^2\le 2S^2$
-(because the positive and negative parts each contribute at most $S^2$
-to the squared norm, with equality when each part is concentrated on a
-single component).
-Therefore $m_{\mathrm{eff}}=\lVert\delta\rVert_1^2/\lVert\delta\rVert_2^2\ge 4S^2/(2S^2)=2$.
-The upper bound is Cauchy--Schwarz: $\lVert\delta\rVert_1^2\le m\,\lVert\delta\rVert_2^2$,
-so $m_{\mathrm{eff}}\le m$.
-The upper bound is attained when all $|\delta_j|$ coincide; the lower bound
-$m_{\mathrm{eff}}=2$ is attained for $\delta=(c,-c,0,\dots,0)$ with $c\neq0$
-(requires $m\ge2$ and an even-symmetric pattern).
-\end{proof}
-
-\begin{remark}[What the factorisation buys]
-\label{rem:meff_reading}
-$\mathrm{TV}$ answers \emph{how much} the elicited weights were moved;
-$m_{\mathrm{eff}}$ answers \emph{over how many criteria}, on a scale
-whose endpoints are fixed by $m$ alone and therefore comparable across
-instances.
-Neither is redundant: the Euclidean norm~\eqref{eq:l2fact} is their
-ratio, and in a synthetic grid reported in the Supplementary Material it
-tracks efficiency loss better than $\mathrm{TV}$ alone.
-Both are computable from the normalised decision matrix in one line, and
-we recommend reporting the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
-rather than $\mathrm{TV}$ alone (Section~\ref{sec:practice}).
-\end{remark}
-
-\paragraph{Fogo Island.}
-Computing~\eqref{eq:meff} on the deviations implied by
-Table~\ref{tab:amplitude} under vector normalisation gives
-$\mathrm{TV}=\TVvec$, $\lVert\delta\rVert_2=\DeltaLtwoshift$,
-$\lVert\delta\rVert_\infty=\DeltaLinfshift$ (attained at \textit{perm}), and
-$m_{\mathrm{eff}}=\meff$ on the admissible range $[2,\,11]$.
-The distortion is thus not merely large but \emph{concentrated}: a
-single criterion accounts for $\PermAbsDevPct\%$ of the total absolute deviation.
-This replaces the qualitative observation that \textit{perm} is an
-adversarial column with a position on a bounded scale.
-
 % ----------------------------------------------------------
 \subsection{Order of operations under vector normalisation}
 \label{sec:order_ops}
