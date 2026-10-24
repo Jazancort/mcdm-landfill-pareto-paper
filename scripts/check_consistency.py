@@ -623,6 +623,11 @@ BAD_PHRASES = [
     # §4.1 slope unit — corrected (8173421)
     ("slope (dimensionless gradient)",
      "§4.1 stale unit: slope is in degrees (gdaldem slope), not dimensionless gradient"),
+    # D2: P1 framing — corrected to implementation check (D2 fix)
+    ("P1 is confirmed:",
+     "D2: P1 follows from Theorem; use 'P1 holds by Theorem~\\ref{thm:groupconst}' (implementation check)"),
+    ("P1 (no loss when $\\mathrm{TV}_W=0$) held on every draw:",
+     "D2: E6-P1 framing corrected; use 'P1 (..., guaranteed by Theorem~\\ref{thm:groupconst}) confirmed the implementation'"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
@@ -1020,6 +1025,11 @@ _MUST_FAIL = [
     # DEV-A-G2: divides-by-0.53 corrected (ad3f5a0)
     ("divides another by $0.53",
      "§8.3/Conclusion: divides-by-0.53 corrected to scales-by"),
+    # D2: P1 framing corrected to implementation check
+    ("P1 is confirmed:",
+     "D2: P1 follows from Theorem; must use 'holds by Theorem' framing"),
+    ("P1 (no loss when $\\mathrm{TV}_W=0$) held on every draw:",
+     "D2: E6-P1 framing corrected; must use 'guaranteed by Theorem' framing"),
 ]
 
 _MUST_PASS = [

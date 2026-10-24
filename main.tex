@@ -2453,7 +2453,8 @@ The four cells form a $2\times2$ design in the presence of each
 component (Table~\ref{tab:e1}).
 Three predictions were committed to the repository before any E1 run
 (Supplementary Material): (P1)~cell~B attains $Q_2=100\%$ under optimal
-assembly; (P2)~cells~W and~V differ by less than $5$~pp under optimal
+assembly (structural consequence of Theorem~\ref{thm:groupconst} for $\mathrm{TV}_W=0$;
+serves as an implementation check); (P2)~cells~W and~V differ by less than $5$~pp under optimal
 assembly; (P3)~cell~B under greedy assembly performs close to min--max.
 
 \begin{table}[!t]
@@ -2476,7 +2477,9 @@ V (vector)       & \TVBvec & \TVWvec & $\QtwoEoneVGrd$\%  & $\QtwoEoneVOpt$\%  &
 \end{tabular}
 \end{table}
 
-P1 is confirmed: cell~B reaches the frontier on every draw.
+P1 holds by Theorem~\ref{thm:groupconst}: $\mathrm{TV}_W=0$ for cell~B
+guarantees $Q_2=100\%$ under optimal assembly, confirming the implementation
+rather than providing new empirical evidence.
 Within-group distortion alone costs $\EoneWloss$~pp; the full vector
 distortion costs $\EoneVloss$~pp.
 P2 is falsified at the pre-specified margin: W exceeds V by
@@ -2556,7 +2559,8 @@ instance-cell pair yield \EsixNdrawsTotal{} total draws.
 Full pre-specification and all deviations are in the Supplementary
 Material.
 
-P1 (no loss when $\mathrm{TV}_W=0$) held on every draw: both baseline
+P1 ($Q_2=100\%$ when $\mathrm{TV}_W=0$, guaranteed by
+Theorem~\ref{thm:groupconst}) confirmed the implementation: both baseline
 cells (M and B) attained $Q_2=100\%$ on all \EsixPoneNDesign{}
 draws (\EsixPoneHits{} of \EsixPoneTotal{} draw-cell combinations).
 
