@@ -846,8 +846,9 @@ Three entries are missing: roads (site~41), urban distance (site~385), and
 aerodromes (site~429).
 Each is imputed by the midpoint of the observed range of its criterion over
 all $\Ncand$ candidates.
-Because the affected sites are three out of $\Ncand$ and none enters any
-reported portfolio, the choice of imputation rule is immaterial.
+Because the affected sites are three out of $\Ncand$ and none enters the
+exact Pareto frontier $\mathcal{F}$ (verified computationally), the
+choice of imputation rule is immaterial.
 
 \paragraph{Regulatory exclusion.}
 Sites overlapping a protected area (\texttt{dist\_protected}$=0$) cannot
@@ -2049,7 +2050,7 @@ severity differences are not practically relevant on this instance.
 
 \begin{table}[!t]
 \centering\small
-\caption{$Q_2[A']$, $Q_3$ and conditional gap (CG) for the balanced $2^3$ design
+\caption{$Q_2[A']$ with standard error (SE) in parentheses, $Q_3$ and conditional gap (CG) for the balanced $2^3$ design
 ($\kappa=200$, $\ndraws$ draws). $Q_3$ is the expected gap~\eqref{eq:Q3} in
 percent of the attainable range; CG $= Q_3/(1-Q_2)$ is the mean shortfall
 over draws in which the portfolio misses the frontier. Both are computed
@@ -2058,17 +2059,17 @@ $100\%$ by Proposition~\ref{prop:p1:stmt}.}
 \label{tab:factorial}
 \begin{tabular}{@{}llrrr@{}}
 \toprule
-Agg. & Norm., assembly & $Q_2$ & $Q_3$~(\%) & CG~(\%) \\
+Agg. & Norm., assembly & $Q_2$~(SE) & $Q_3$~(\%) & CG~(\%) \\
 \midrule
-SAW    & mm, greedy   & $\QtwommGreedy$\%  & \QthreeSAWmmGrdPct   & \CondGapSAWmmGrd   \\
-       & mm, optimal  & $\QtwommOptimal$\% & \QthreeSAWmmOptPct   & {---}              \\
-       & vec, greedy  & $\QtwovecGreedy$\%  & \QthreeSAWvecGrdPct  & \CondGapSAWvecGrd  \\
-       & vec, optimal & $\QtwovecOptimal$\%  & \QthreeSAWvecOptPct  & \CondGapSAWvecOpt  \\
+SAW    & mm, greedy   & $\QtwommGreedy$\% (\QtwoSEmmGreedy)  & \QthreeSAWmmGrdPct   & \CondGapSAWmmGrd   \\
+       & mm, optimal  & $\QtwommOptimal$\% ({---})            & \QthreeSAWmmOptPct   & {---}              \\
+       & vec, greedy  & $\QtwovecGreedy$\% (\QtwoSEvecGreedy) & \QthreeSAWvecGrdPct  & \CondGapSAWvecGrd  \\
+       & vec, optimal & $\QtwovecOptimal$\% (\QtwoSEvecOptimal) & \QthreeSAWvecOptPct  & \CondGapSAWvecOpt  \\
 \midrule
-TOPSIS & mm, greedy   & $\QtwoTOPSISmmGrd$\%  & \QthreeTOPSISmmGrdPct  & \CondGapTOPSISmmGrd  \\
-       & mm, optimal  & $\QtwoTOPSISmmOpt$\%  & \QthreeTOPSISmmOptPct  & \CondGapTOPSISmmOpt  \\
-       & vec, greedy  & $\QtwoTOPSISvecGrd$\% & \QthreeTOPSISvecGrdPct & \CondGapTOPSISvecGrd \\
-       & vec, optimal & $\QtwoTOPSISvecOpt$\% & \QthreeTOPSISvecOptPct & \CondGapTOPSISvecOpt \\
+TOPSIS & mm, greedy   & $\QtwoTOPSISmmGrd$\% (\QtwoSETOPSISmmGrd)  & \QthreeTOPSISmmGrdPct  & \CondGapTOPSISmmGrd  \\
+       & mm, optimal  & $\QtwoTOPSISmmOpt$\% (\QtwoSETOPSISmmOpt)  & \QthreeTOPSISmmOptPct  & \CondGapTOPSISmmOpt  \\
+       & vec, greedy  & $\QtwoTOPSISvecGrd$\% (\QtwoSETOPSISvecGrd) & \QthreeTOPSISvecGrdPct & \CondGapTOPSISvecGrd \\
+       & vec, optimal & $\QtwoTOPSISvecOpt$\% (\QtwoSETOPSISvecOpt) & \QthreeTOPSISvecOptPct & \CondGapTOPSISvecOpt \\
 \bottomrule
 \end{tabular}
 \end{table}
