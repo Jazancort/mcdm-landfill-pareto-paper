@@ -1474,171 +1474,65 @@ gives $\mathrm{TV}_B=\TVBvec$ and $\mathrm{TV}_W=\TVWvec$.
 \subsection{The amplitude exponent: extension beyond additive aggregation}
 \label{sec:exponent}
 
-The amplitude identity~\eqref{eq:weff} is exact for additive aggregation
-under affine normalisation.
-The families evaluated here differ in how the normalised column enters the
-score, and the difference is captured by a single exponent.
+The amplitude identity~\eqref{eq:weff} is exact for SAW ($\alpha=1$).
+For distance-based aggregation, treating the squared Euclidean distance in
+TOPSIS as homogeneous of degree $\alpha=2$ gives
+$w_j^{\mathrm{eff}}(\alpha)\propto w_j^\alpha A_j^\alpha$;
+VIKOR is invariant to per-criterion affine transformations and is
+unaffected by normalisation; PROMETHEE~II with the usual criterion is
+ordinal-invariant (Section~\ref{prop:p2}).
+Full derivations and Table~S1 (TV by normalisation and exponent) are in
+the Supplementary Material.
 
 \begin{remark}[Amplitude structure beyond additive aggregation]
 \label{prop:exponent}
-For SAW ($\alpha=1$), the effective weights satisfy~\eqref{eq:weff}
-exactly.
-The TOPSIS squared distance takes the form
-\begin{equation}
-  \label{eq:weff_alpha}
-  (d_i^\pm)^2=\sum_j w_j^2\bigl(v_{ij}-v_j^\pm\bigr)^2,
-\end{equation}
-where $v_j^\pm$ are the ideal and anti-ideal coordinates in the
-normalised space.
-By analogy with the additive case, treating this as homogeneous of
-degree $\alpha=2$ in $w_j n_j(\cdot)$ gives
-$w_j^{\mathrm{eff}}(\alpha)=w_j^{\alpha}A_j^{\alpha}/\sum_k w_k^{\alpha}A_k^{\alpha}$
-with $\mathrm{TV}(\alpha)=\tfrac{1}{2}\sum_j|w_j^{\mathrm{eff}}(\alpha)-w_j|$.
-\emph{This formula is exact for $\alpha=1$ (SAW). For TOPSIS the
-analogy holds for the squared distance, not the distance itself,
-and does not imply a monotone relationship between
-$\mathrm{TV}(2)-\mathrm{TV}(1)$ and $Q_2$ loss.}
-The three families stand as follows.
-\begin{itemize}[nosep]
-  \item \textbf{SAW}: $\alpha=1$; the amplitude identity~\eqref{eq:weff} is exact.
-  \item \textbf{TOPSIS}: structure as in~\eqref{eq:weff_alpha} with $\alpha=2$
-    for the squared distance; the square root is monotone so rankings are
-    preserved, but $C_i=d_i^-/(d_i^-+d_i^+)$ is not a linear function of
-    the score and is not to be interpreted as a $Q_2$ probability.
-  \item \textbf{VIKOR}: invariant to \emph{per-criterion} affine
-    transformation $f_{ij}\mapsto a_j f_{ij}+b_j$ with $a_j>0$, because
-    both $a_j$ and $b_j$ cancel in the ratio
-    $(f^{*}_j-f_{ij})/(f^{*}_j-f^{-}_j)$.
-    Min--max and vector normalisation are both per-criterion affine
-    within the decision matrix, so VIKOR returns identical $Q$
-    under each; midranks are not affine (they re-order the column),
-    so VIKOR\,$\times$\,ranks is distinct.
-    The exponent formulation does not apply to VIKOR; within the design
-    normalisations $\{$min--max, vector, ranks$\}$, the
-    VIKOR$\,\times\,$vector cells duplicate VIKOR$\,\times\,$min--max
-    and are removed from the design, leaving VIKOR$\,\times\,$ranks
-    as the sole informative VIKOR cell.
-  \item \textbf{PROMETHEE~II (usual criterion)}: ordinal-invariant.
-    The usual preference function $P_j(d)=\mathbf{1}[d>0]$ depends
-    only on the rank order of sites on criterion $j$; any strictly
-    monotone transformation of the normalised column leaves $\phi$
-    unchanged, so all three normalisations produce the same ranking.
-    The amplitude $A_j$ does not enter the score; the weight-flow
-    identity (Section~\ref{prop:p2}) holds with oriented midranks and
-    nominal weights as input, but this does not imply that nominal
-    weights equal effective weights under other definitions of amplitude.
-    The six PROMETHEE cells collapse to two (greedy and optimal),
-    removing four from the design.
-\end{itemize}
+The exponent analogy ($\alpha=2$ for TOPSIS) implies that
+$\mathrm{TV}(2)-\mathrm{TV}(1)>0$ whenever amplitudes are non-constant.
+This does not imply a monotone relationship between
+$\mathrm{TV}(2)-\mathrm{TV}(1)$ and $Q_2$ loss: the analogy holds
+for the squared distance, not for the proximity index
+$C_i=d_i^-/(d_i^-+d_i^+)$, which is not linear.
 \end{remark}
 
 \begin{remark}[Min--max is not amplitude-neutral for TOPSIS]
 \label{rem:mm_not_neutral}
-By analogy with the quadratic exponent (Remark~\ref{prop:exponent}):
-Under $\alpha=2$ and $A_j\equiv1$, \eqref{eq:weff_alpha} gives
-$w_j^{\mathrm{eff}}\propto w_j^{2}$, so the total variation
-$\mathrm{TV}(2)=0.160$ on the Fogo weights.
-Min--max preserves elicited weights only under additive aggregation;
-combining it with TOPSIS re-weights criteria by squaring in the
-weighted Euclidean distance $d_i^\pm = \sqrt{\sum_j w_j^2(v_{ij} -
-v_j^\pm)^2}$; the effect on the proximity index $C_i = d_i^- / (d_i^+
-+ d_i^-)$ is not a simple linear re-weighting and depends on the
-geometry of the ideal and anti-ideal points.
+Under $\alpha=2$ and $A_j\equiv1$ (min--max),
+$w_j^{\mathrm{eff}}\propto w_j^{2}$, giving $\mathrm{TV}(2)=0.160$
+on the Fogo weights.
+Combining min--max with TOPSIS therefore re-weights criteria through
+the quadratic exponent; the effect on $C_i$ is not a simple linear
+re-weighting.
 \end{remark}
-
-Table~\ref{tab:exponent} reports $\mathrm{TV}(\alpha)$ for both
-$\alpha\in\{1,2\}$ and all three normalisations.
-
-\begin{table}[!t]
-\centering
-\caption{%
-  Total variation of effective weights under the additive ($\alpha=1$)
-  and quadratic ($\alpha=2$) exponents, computed on the Fogo
-  AHP weights.
-  Min--max is neutral for SAW ($\alpha=1$) but not for TOPSIS ($\alpha=2$).}
-\label{tab:exponent}
-\begin{tabular}{lrrr}
-\toprule
-Normalisation & $\mathrm{TV}(\alpha{=}1)$ & $\mathrm{TV}(\alpha{=}2)$
-              & $\Delta\mathrm{TV}$ \\
-\midrule
-Min--max & 0.000 & 0.160 & $+0.160$ \\
-Ranks    & 0.091 & 0.206 & $+0.115$ \\
-Vector   & \TVvec & \TValphaTwo & $+\DeltaTValphaTwo$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Empirical comparison of SAW and TOPSIS distortions.}
-Under optimal assembly with vector normalisation, where no combinatorial
-loss from the greedy heuristic confounds the contrast
-(Section~\ref{sec:greedy}),
-$Q_2[\mathcal{A}']$ falls from SAW to TOPSIS by $\AggStratumVecopt$~pp
-($\Delta\mathrm{TV}=\DeltaTValphaTwo$).
-The min--max contrast is not informative because the SAW cell is fixed at
-$100\%$ by Proposition~\ref{prop:p1:stmt}.
-A single contrast cannot test the exponent analogy; we report it as
-consistent with, not evidence for, Remark~\ref{prop:exponent}.
-Under greedy assembly with min--max, TOPSIS exceeds SAW by
-$\AggStratumMMgrdAbs$~pp, which we attribute to the foreclosure loss of
-Section~\ref{sec:greedy}.
 
 % ---
 
 \subsection{PROMETHEE~II with usual criterion equals rank-weighted SAW}
 \label{prop:p2}
-Let $P_j(d) = \mathbf{1}[d > 0]$ (the usual criterion: strict
-preference for any positive difference, indifference at $d=0$, so
-$P_j(0)=0$ and tied sites contribute zero net preference on that
-criterion).
-Denoting by $r_j(a)$ the midrank of site $a$ on criterion $j$, the
+Let $P_j(d) = \mathbf{1}[d > 0]$ (the usual criterion).
+With $r_j(a)$ the midrank of site $a$ on criterion $j$, the
 PROMETHEE~II net flow satisfies
 \begin{equation}
   \label{eq:p2identity}
   \phi(a) = \frac{2}{n-1}\sum_{j=1}^m w_j\, r_j(a) - \frac{n+1}{n-1},
 \end{equation}
-for any tied-value pattern.
-The ranking induced by $\phi$ is therefore identical to that of
-$\tilde{s}(a) = \sum_j w_j r_j(a)$.
+for any tied-value pattern; the ranking induced by $\phi$ is therefore
+identical to that of $\tilde{s}(a) = \sum_j w_j r_j(a)$.
+The derivation (via midrank counting), the rank-scaling caveat for
+heavy-zero criteria, and the empirical verification on Fogo
+($6.7\times10^{-16}$ maximum absolute error) are in the Supplementary
+Material.
 
-\textit{Derivation.}
-For site $a$ and criterion $j$, let $B_j(a)$ count strictly worse sites
-and $T_j(a)$ be the tied-block size.
-The midrank satisfies $2r_j(a) = 2B_j(a) + T_j(a) + 1$.
-The net PROMETHEE flow on criterion $j$ is
-$\phi_j(a) = [B_j(a) - (n - B_j(a) - T_j(a))]/(n-1)
-            = [2r_j(a) - 1 - n]/(n-1)$.
-Summing with weights and simplifying gives~\eqref{eq:p2identity}.\hfill$\square$
-
-\paragraph{Rank scaling is not innocuous.}
+\begin{remark}[Rank-space amplitude and TV invariance]
 \label{rem:p2normalization}
-Dividing midranks by $N+1$, the conventional rescaling to $(0,1)$,
-does not equalise criterion amplitudes when ties are massive.
-With $350$ tied zeros in \texttt{perm} among $\Nvia$ sites, its maximum
-midrank is $\approx 214.5$, so the rescaled column spans
-$[0.003,\,0.550]$ while every other criterion spans $[0.003,\,0.997]$.
-By \eqref{eq:Arank_binary}, the effective weight of
-\texttt{perm} is scaled by $\approx 0.616$.
-The exact identity~\eqref{eq:p2identity} continues to hold (verified
-below at $6.7\times10^{-16}$): dividing all midranks by the same
-constant $N+1$ is a common scale factor, and TV is invariant to common
-rescaling (Eq.~\eqref{eq:TV}).
-The source of the distortion is the tie structure, not the rescaling:
-the $350$ tied zeros compress \texttt{perm}'s column regardless of
-whether the final divisor is $N+1$, $N$, or any other constant.
-This is the rank-space counterpart of the vector-normalisation
-distortion of Section~\ref{sec:three_norms}, item~2, with the notable
-difference that \texttt{perm} is \emph{deflated} ($\times 0.616$) in
-rank space but \emph{inflated} ($\times \PermInflation$) in vector space: the
-same heavy-zero distribution distorts in opposite directions under the
-two normalisations.
-
-\noindent\textbf{Empirical verification.}
-On the Fogo Island dataset ($n = \Nvia$, $m = 11$ criteria), the
-maximum absolute difference between $\phi(a)$ and
-$(2/(n-1))\tilde{s}(a) - (n+1)/(n-1)$ across all sites is $6.7 \times 10^{-16}$
-(machine precision), with Spearman $\rho = 1.000000$ and zero ranking
-inversions.
+Dividing midranks by $N+1$ is a common scale factor; TV is invariant to
+common rescaling (Eq.~\eqref{eq:TV}).
+The distortion arises from the tie structure of individual criteria,
+not from the rescaling constant: the $350$ tied zeros in \texttt{perm}
+compress its column to $[0.003,\,0.550]$ while every other criterion
+spans $[0.003,\,0.997]$, deflating \texttt{perm}'s effective weight by
+$\approx 0.616\times$, the rank-space counterpart of its
+$\PermInflation\times$ inflation under vector normalisation.
+\end{remark}
 
 
 % ---
@@ -3049,14 +2943,18 @@ this article.
 
 \section*{Declaration of generative AI and AI-assisted technologies in the writing process}
 
-The author used the Claude assistant (Anthropic), accessed via the Kiro development
-environment (Amazon Web Services), as a support tool for structural organisation,
-code review, and language editing.
-The formulation of arguments, the design of experiments, the selection and
-interpretation of results, and the final writing are entirely the responsibility of
-the author.
-The use of AI did not include direct text generation for publication nor image
-generation.
+During the preparation of this work the author used the Claude assistant
+(Anthropic), accessed via the Kiro development environment (Amazon Web
+Services), for structural organisation of the manuscript, code review,
+and language editing of individual sentences.
+The formulation of arguments, the design and execution of experiments,
+the selection and interpretation of results, and all final writing are
+the responsibility of the author.
+After using this tool, the author reviewed and edited the content as
+needed and takes full responsibility for the content of the published
+article.
+Generative AI was not used to produce any text published as scientific
+content, nor to generate figures or images.
 
 \section*{Funding}
 
