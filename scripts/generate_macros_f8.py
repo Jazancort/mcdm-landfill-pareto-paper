@@ -64,6 +64,8 @@ vv_coinc   = int(df_coinc['vv_same'].sum())
 vm_coinc   = int(df_coinc['vm_same'].sum())
 vv_subopt  = N - vv_coinc
 vm_subopt  = N - vm_coinc
+assert vv_coinc + vv_subopt == N, f"vv: coinc+subopt={vv_coinc+vv_subopt} != N={N}"
+assert vm_coinc + vm_subopt == N, f"vm: coinc+subopt={vm_coinc+vm_subopt} != N={N}"
 
 print(f"  |F_vec|       = {n_front}")
 print(f"  vv_coinc      = {vv_coinc}/{N}")

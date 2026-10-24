@@ -81,6 +81,7 @@ for j, b in enumerate(benefit_flags):
 # is rank-equivalent to X_adj_mm / L2_via (benefit orientation, same ranking).
 L2_via = np.maximum(np.sqrt((X_via_raw**2).sum(0)), 1e-12)   # = norms_via in scoring.py
 X_adj_vec = X_adj_mm / L2_via   # diagnostic only
+del X_adj_vec  # prevent accidental use in scoring; scoring path is C_score_vec below
 print(f"Score matrices ready  t={time.time()-t0:.1f}s", flush=True)
 
 # ── Vector objectives — direct computation (no injection) ────────────────────
@@ -116,80 +117,10 @@ print(f"Score matrices ready  t={time.time()-t0:.1f}s", flush=True)
 from mcdm_experiment import F1_CRIT, F2_CRIT, F3_CRIT, INV as INV_SET, COST as COST_SET
 f1_set = set(F1_CRIT); f2_set = set(F2_CRIT)
 
-# C_vec_obj[j]: cost/benefit-oriented column for objectives (same as build_pareto_utils)
-# For F1/F2 COST: c_j = normalised cost (lower=better) = 1 - X_adj_vec[:,j]  [since X_adj_vec inverted]
-# For F1/F2 INV:  c_j = 1 - _norm(x, x) where x is the INV column
-#   But X_adj_vec[:,j] for INV = (1 - _norm(raw)) / L2[j]
-#   So 1 - _norm(X_adj_vec[:,j]) != the original objective c_j
-# → The cleanest fix: recompute c_j from raw values with vec normalisation constants
-#   but keep the same orientation as build_pareto_utils.
 
-from mcdm_experiment import _norm as _mm_norm
-
-C_vec_obj = np.zeros((N, len(col_names)), dtype=np.float64)  # same as build_pareto_utils c_j
-for j, k in enumerate(col_names):
-    x = df_via[COL[k]].values.astype(np.float64)
-    if k == "aspect":
-        # Binary encoding — same as standard objectives
-        c = np.where((x >= 90) & (x <= 180), 0.0, 1.0)
-        C_vec_obj[:, j] = c
-    elif k in INV_SET:
-        # Standard: c = 1 - _norm(x) but scaled by vec L2 to get vec objectives
-        # Vec objective: normalise the raw column by its L2 norm
-        # We want the objective to match the score column X_adj_vec[:,j]
-        # X_adj_vec[:,j] = X_adj_mm[:,j] / L2[j]  where X_adj_mm[:,j] = 1-_norm(x)
-        # So C_vec_obj[:,j] for F1/F2 should be X_adj_vec[:,j] itself
-        # (Prop1: score_j = c_j for F3, score_j = (1-c_j) for F1/F2 COST only)
-        # For INV in F1/F2: X_adj_mm[:,j] = 1-_norm (already benefit) — so for objectives
-        # we need 1-X_adj_mm[:,j] = _norm(x) to get cost-orientation.
-        # Vec version: _norm(x_vec, x_vec) where x_vec = X_adj_mm[:,j]/L2[j]
-        # = (X_adj_mm/L2 - min)/(max-min) = linear rescale of X_adj_mm/L2
-        # For Prop1 we need score_j ~ c_j (monotone). X_adj_vec[:,j] = (1-_norm)/L2
-        # and C_vec_obj[:,j] for INV in f1_set = 1 - X_adj_vec[:,j]/L2_renorm
-        # This is getting circular. Simplest: use X_adj_vec[:,j] directly for all
-        # columns and build the scalarisation as -(F1+F2)+F3 manually.
-        C_vec_obj[:, j] = X_adj_vec[:, j]  # benefit-oriented
-    elif k in COST_SET:
-        C_vec_obj[:, j] = X_adj_vec[:, j]  # benefit-oriented (already 1-cost)
-    else:  # pure benefit
-        C_vec_obj[:, j] = X_adj_vec[:, j]
-
-# Scalarisation sign: +1 for F3 (benefit), -1 for F1/F2 (cost, but stored benefit-oriented)
-sign_vec = np.array([1.0 if k not in (f1_set | f2_set) else -1.0
-                     for k in col_names])
-
-# Trio-level objectives for vec frontier:
-#   "F1_vec"[trio] = sum of -sign * C_vec_obj[trio] for F1 criteria
-# Actually, build_pareto_utils accumulates f1v, f2v, f3v.
-# We need F1_vec (lower=better) and F3_vec (higher=better) for dominance test.
-# Since C_vec_obj is benefit-oriented: higher = better always.
-# So for F1/F2 in dominance: F1_trio should be LOWER = better
-#   → use -C_vec_obj for F1/F2 cols so that lower F1_trio = better (less negative = worse)
-# OR: redefine dominance as "higher F1 is better" — but build_pareto_utils is fixed.
-# Simplest: pass C_vec_obj with F1/F2 inverted (1 - c) to build_pareto_utils.
-# Since C_vec_obj for F1/F2 COST = X_adj_vec (benefit=high), cost-oriented = 1 - X_adj_vec.
-# For INV in F1/F2: C_vec_obj[:,j] = X_adj_vec (benefit=high, farther=better)
-#   cost-oriented = 1 - X_adj_vec.
-
-# Build a df with cost-oriented F1/F2 columns and benefit-oriented F3 columns,
-# so that build_pareto_utils (which expects cost-oriented F1/F2) works correctly.
-# Then aspect is handled correctly in build_pareto_utils (binary from raw x).
-# Strategy: pass raw df_via but override L2 normalisation by passing ref_df=df_via_vec
-# where df_via_vec has the L2-scaled raw values.
-# Actually the CLEANEST fix: implement is_dominated_vec as a direct function
-# that uses the score columns for dominance (all benefit-oriented):
-#   trio T dominates T' iff score_j(T) >= score_j(T') for all j (weakly)
-# This is equivalent to: sum_j w_j * X_adj_vec_j(T) >= sum_j w_j * X_adj_vec_j(T') for all w
-# which is NOT the right dominance (we need Pareto in F1/F2/F3 space, not score space).
-#
-# FINAL correct approach: build vec objectives from raw x with vec normalisation,
-# keeping the SAME orientation as build_pareto_utils:
-#   COST: c_j = _norm_vec(x) = x_col_vec (vec-normed raw) → lower=better ✓
-#   INV:  c_j = 1 - _norm_vec(x)                           → lower=better ✓ (closer=worse)
-#   F3 benefit: c_j = _norm_vec(x)                          → higher=better ✓
-# where _norm_vec(x) = x / ||x||_2 (per-column L2 of raw x, not of X_adj_mm)
-# This ensures the RANKING of c_j is preserved from raw x, and score_vec[:,j]
-# is proportional to c_j for all columns.
+from mcdm_experiment import _norm as _mm_norm  # used by C_vec_raw below
+# C_vec_obj was removed as dead code: it tried to build vec objectives from X_adj_vec
+# but was never consumed by saw_vec_aligned. Scoring path: C_vec_raw -> C_score_vec -> saw_vec_aligned.
 
 # L2 of raw columns (before benefit adjustment)
 X_raw_2, benefit_flags_2 = _build_decision_matrix(df_via)  # raw mm-normed

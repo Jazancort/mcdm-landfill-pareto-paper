@@ -503,6 +503,9 @@ MUST_FAIL_PHRASES = [
      "43.2 pp hardcoded variant (must use \\EoneVloss)"),
     ("{\\approx}43.2",
      "43.2 pp hardcoded in F8 text (must use \\EoneVloss)"),
+    # Old SAW raw "algebraic identity" claim (corrected in 89d438e: true form gives 488/500)
+    ("draws, algebraic identity",
+     "old SAW raw = algebraic identity claim (corrected: true form gives \\RawSensSawOptSame draws)"),
 ]
 for phrase, note in MUST_FAIL_PHRASES:
     phrase_clean = phrase.replace("\n", " ")
@@ -852,8 +855,10 @@ for _sp in Path("scripts").rglob("*.py"):
     except Exception:
         continue
     if _re2.search(r"\bX_adj_vec\b", _src) and "raw_sensitivity_4cells" not in _sp.name and "compute_f8_circularity" not in _sp.name:
-        # X_adj_vec in raw_sensitivity_4cells is the diagnostic-only variable (used for comments)
-        # Exclude that file
+        # Allowed exceptions (X_adj_vec does NOT enter the scoring path in these files):
+        # - raw_sensitivity_4cells.py: X_adj_vec appears in comments only
+        # - compute_f8_circularity.py: X_adj_vec is assigned and immediately del'd (line ~84);
+        #   C_vec_obj (which used it) was removed as dead code; scoring uses C_score_vec only
         _bad_scripts.append(str(_sp))
 if _bad_scripts:
     FAIL2 = [f"Script uses X_adj_vec (wrong scoring): {s}" for s in _bad_scripts]
