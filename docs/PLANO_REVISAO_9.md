@@ -11,10 +11,10 @@
 | Fase | Conteúdo | Estado | Nota estimada após |
 |---|---|---|---|
 | F475 | Itens urgentes da revisão de f475928 | 4/6 feitos | 6.5 |
-| A | 20 erros factuais do PDF | 5/20 feitos (A3-A7) | 7.0 depois de tudo |
-| G | Build check alargado + Figura 1 no pipeline | 0/5 | 7.0 (evita -0.5 futuro) |
-| C | F8 matriz 2x2 + reframing para Resultados | 0/6 | 7.5 |
-| D | Correcções científicas pontuais | 0/6 | 7.8 |
+| A | 20 erros factuais do PDF | 19/20 feitos | 7.0 depois de tudo |
+| G | Build check alargado + Figura 1 no pipeline | 4/5 | 7.0 (evita -0.5 futuro) |
+| C | F8 matriz 2x2 + reframing para Resultados | 6/6 FEITO | 7.5 |
+| D | Correcções científicas pontuais | 5/6 (D1 pendente) | 7.8 |
 | B | Métrica de regret de valor | 0/6 | 8.5 |
 | E | Cortes estruturais + integração E6 | 0/10 | 8.5 |
 | F | Segunda instância (Santiago) | 0/6 | 9.0-9.5 |
@@ -49,6 +49,27 @@ Grupos: G1 = {perm, slope, roads} com benefit=False; G2 = {rivers, aspect, coast
 
 **A7: Total de draws estava errado**
 O texto dizia "Seven cells yield 24,000 total draws" mas 24,000 é o número por célula (120 inst × 200 draws). O total real é 7 × 24,000 = 168,000. Adicionados `\EsixNperdraw{200}`, `\EsixNcells{7}`, `\EsixNdrawsTotal{168,000}` ao macros_e6.tex. A descrição das 7 células foi expandida para incluir V_inf_F (P3) e W_def_F (P4), que não estavam descritas. O "TV_W = 0.20" substituído por `\EsixTargetTVW{0.199}`.
+
+### 2026-10-22 — Sessão 2 (Fase D)
+
+**D?-4: Pesos w por draw — RESOLVIDO**
+Os pesos estão em `results/e1/e1_weights_k200.npy`, shape (500, 11), float64. SHA256 = bea05275... (verificado, corresponde ao valor em `mc_unified.py`). Cada linha é um vector de pesos Dirichlet com soma 1.0. Todos > 0. Fase B desbloqueada.
+
+**D2 (474c2bd): E1-P1 e E6-P1 reformulados como consistency checks**
+E1-P1 era "P1 is confirmed: cell B reaches the frontier on every draw." Reformulado para "P1 holds by Theorem 1 (TV_W=0 guarantees Q2=100%), confirming the implementation rather than providing new empirical evidence." E6-P1 similar. §7.4 (F8 alignment) já tinha a linguagem correcta. 2 novos BAD_PHRASES + 2 MUST_FAIL adicionados.
+
+**D3 (4459272): Highlight 3 — TOST removido, range de célula**
+"pooled aggregation by <1 pp, with a significant cell-level interaction" → "aggregation effect cell-dependent (-8.4 to +4.4 pp), no stable sign".
+
+**D4 (9ed87a1): TV_B/TV_W — decomposition → two indices, identidade W_g^eff**
+"splitting the deviation into two parts" → "characterising the deviation by two complementary indices." Adicionado: W_g^eff = W_g * Ā_g / S (identidade exacta) e nota de não-aditividade. "A decomposition of the weight deviation" nas contributions list também corrigido.
+
+**D5 (467d752): Contributions list — 5 → 3 itens**
+PROMETHEE-Borda (item v) removido da lista principal, demovido para nota pós-lista que aponta ao suplemento. Item (iii) "factorial decomposition" fundido com item (ii). Lista reduzida de 5 para 3 contribuições.
+
+**D6 (28b65ed): SE em tab:factorial + sítios imputed ∉ F'**
+(a) SE adicionado em parêntesis após Q2 em tab:factorial. Macros criados: \QtwoSEmmGreedy{1.6}, etc. Caption actualizado. Para SAW/mm/optimal (exacto por Prop1): SE={---}.
+(b) Sítios 41 (roads), 385 (urban), 429 (aerodromes) verificados computacionalmente: via_idx = 40, 303, 344 respectivamente; NENHUM aparece na fronteira vec (f8_vec_frontier.csv, 153 portfolios). Texto actualizado: "none enters the exact Pareto frontier F (verified computationally)".
 
 ---
 
@@ -106,8 +127,8 @@ Implementou-se `\nbootEone{10,000}` e actualizou-se a frase da §7.7 que reporta
 **D?-3 (F475-5, pendente): Auditoria bidirecional ainda não implementada**
 A regra "depois de cada substituição de literal, confirmar o contexto" não foi implementada no `audit_hardcoded.py`. Está na lista mas precisa de código. Impacto: substituições futuras podem colocar macros no lugar errado sem detecção automática.
 
-**D?-4 (Fase B, pré-análise): Onde estão os pesos w por draw?**
-Para a métrica de regret R(t) = [V_w(t*) - V_w(t)] / range, preciso dos pesos w por draw. O `mc_unified_raw.csv` tem os portfolios seleccionados mas não os pesos. O `e1_diag_bootstrap.csv` tem as outcomes mas não os pesos. Os pesos são amostrados de uma Dirichlet — qual CSV guarda w_j para cada draw? Verificar `diag_e1b_greedy.py` e `run_e1.py` para perceber se o output inclui os pesos.
+**D?-4 (Fase B, pré-análise): RESOLVIDO (sessão 2)**
+Pesos w por draw estão em `results/e1/e1_weights_k200.npy`, shape (500, 11), SHA256=bea05275... (confirmado). Cada linha soma 1.0, todos > 0. Carregado por `mc_unified.py` com verificação de SHA antes de qualquer uso. Fase B desbloqueada.
 
 **D?-5 (A11, pendente): τ_b = 0.960 = top-100 = 0.960 — coincidência ou erro?**
 
@@ -249,11 +270,11 @@ Ver D?-6 sobre como obter F_mm.
 ## Fase D: Correcções Científicas Pontuais
 
 - [ ] **D1** Convenção de orientação vec (§4.3): justificar explicitamente a convenção TOPSIS. Sensibilidade: `\RhoPermInverted=0.052` já existe. Tabela no suplemento com as duas convenções.
-- [ ] **D2** E1-P1, E6-P1, F8-vec/opt: reformular como "implementation consistency checks", não como falsificações empíricas.
-- [ ] **D3** Agregação: remover TOST do destaque. "cell-dependent, ranging from -8.4 to +4.4 pp; no stable sign".
-- [ ] **D4** TV_B + TV_W: "decomposition" → "components" ou "indices". Acrescentar inequação com W_g^eff.
-- [ ] **D5** Novidade teórica: reduzir para 3 contribuições. Contribuição (v) PROMETHEE-Borda → suplemento.
-- [ ] **D6** Incerteza no factorial: SE e IC na Tabela 5. Confirmar sítios 41, 385, 429 ∉ F′.
+- [x] **D2** FEITO (474c2bd): E1-P1, E6-P1 reformulados como implementation consistency checks. §7.4 já correcto. 2 BAD_PHRASES + MUST_FAIL adicionados.
+- [x] **D3** FEITO (4459272): Highlight 3 — "pooled aggregation by <1 pp" → "cell-dependent (-8.4 to +4.4 pp), no stable sign". TOST removido dos destaques.
+- [x] **D4** FEITO (9ed87a1): "decomposition" → "two complementary indices". Identidade W_g^eff = W_g * Ā_g/S adicionada. Nota de não-aditividade.
+- [x] **D5** FEITO (467d752): Contributions list reduzida de 5 para 3. PROMETHEE-Borda demovido para nota de suplemento.
+- [x] **D6** FEITO (28b65ed): SE em parêntesis em tab:factorial (8 macros). Sítios 41/385/429 confirmados ∉ F(vec frontier).
 
 ---
 
