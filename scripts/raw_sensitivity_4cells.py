@@ -193,7 +193,7 @@ print(f"{'='*60}")
 for scorer, asm, _, _ in CELLS:
     key = f"{scorer}_{asm}"
     n_same = int(df[f"{key}_same"].sum())
-    trivial = " (trivial: algebraic identity)" if scorer == "SAW" else ""
+    trivial = ""   # no longer trivial: SAW uses true textbook form (saw_raw = X_adj/norms_raw @ w)
     print(f"  {scorer}/{asm:7s} shift==raw: {n_same}/{N_DRAWS}{trivial}")
 print()
 print(f"Saved: {out}")
