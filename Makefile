@@ -31,10 +31,13 @@ paper:
 	xcopy /E /Y /Q "$(SRCDIR)\*" "$(BUILDDIR)\" >nul 2>&1
 	cd "$(BUILDDIR)" && $(XELATEX) main.tex
 	cd "$(BUILDDIR)" && bibtex main
+	cd "$(BUILDDIR)" && $(XELATEX) suppl_wrapper.tex
 	cd "$(BUILDDIR)" && $(XELATEX) main.tex
 	cd "$(BUILDDIR)" && $(XELATEX) main.tex
 	copy /Y "$(BUILDDIR)\main.bbl" "$(SRCDIR)\main.bbl"
 	copy /Y "$(BUILDDIR)\main.pdf" "$(SRCDIR)\main.pdf"
+	copy /Y "$(BUILDDIR)\suppl_wrapper.aux" "$(SRCDIR)\suppl_wrapper.aux"
+	copy /Y "$(BUILDDIR)\suppl_wrapper.pdf" "$(SRCDIR)\suppl_wrapper.pdf"
 
 clean:
 	del /Q *.aux *.log *.out *.toc *.blg *.fls *.fdb_latexmk 2>nul || true
