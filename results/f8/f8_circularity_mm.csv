@@ -1,0 +1,5 @@
+obj_norm,score_norm,assembly,Q2,SE,n_trios
+mm,mm,optimal,100.0,0.0,1944653
+mm,mm,greedy,95.0,4.873,1944653
+mm,vec,optimal,100.0,0.0,1944653
+mm,vec,greedy,100.0,0.0,1944653
