@@ -506,6 +506,9 @@ MUST_FAIL_PHRASES = [
     # Old SAW raw "algebraic identity" claim (corrected in 89d438e: true form gives 488/500)
     ("draws, algebraic identity",
      "old SAW raw = algebraic identity claim (corrected: true form gives \\RawSensSawOptSame draws)"),
+    # Wrong CI upper for greedy residual ref-set effect (was 7.6, corrected to 7.8 from r1_bootstrap.csv)
+    ("+7.6]",
+     "old 7.6 pp CI upper for greedy residual ref-set (must use \\ResidualRefGrdCIhi = 7.8)"),
 ]
 for phrase, note in MUST_FAIL_PHRASES:
     phrase_clean = phrase.replace("\n", " ")

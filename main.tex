@@ -924,7 +924,9 @@ For SAW, switching from shift to raw norms with the same weights leaves the sele
 portfolio unchanged in \RawSensSawOptSame{} of \RawSensTotal{} draws under optimal
 assembly and \RawSensSawGrdSame{} under greedy; for TOPSIS the counts are
 \RawSensTopsisOptSame{} and \RawSensTopsisGrdSame{}, respectively.
-The two methods are thus equally insensitive to this normalisation choice.
+The two methods are thus equally insensitive to this normalisation choice,
+and switching normalisations changes $Q_2$ by at most $\RawSensMaxDeltaQtwo$~pp
+in any cell.
 Two properties drive our results.
 First, none of the three is invariant to the inclusion or exclusion of
 alternatives: min--max depends on the sample extrema, vector normalisation
@@ -2250,7 +2252,7 @@ Replacing the continuous encoding with the binary one at 473-site
 constants (R-V to R-V$^*$) recovers $Q_2=100\%$.
 Introducing the continuous encoding at 389-site constants
 (R-M to R-asp) reduces $Q_2$ to $\RaspOptimal\%$: $\RaspLoss$~pp through coding alone.
-The remaining $4.0$~pp (R-asp$-$R-V, $95\%$ CI $[+2.2,\,+6.0]$) is
+The remaining $\ResidualRefOptDelta$~pp (R-asp$-$R-V, $95\%$ CI $[+\ResidualRefOptCIlo,\,+\ResidualRefOptCIhi]$) is
 attributable to the 473-site constants, but only in the presence of the
 coding inconsistency; under consistent coding the same constants cost
 nothing.
@@ -2601,9 +2603,9 @@ assembly when the coding is consistent ($100.0\%$ in both cells) and
 improves greedy assembly by $\RefSetGreedyGain$~pp
 ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
 When the coding is inconsistent, the same 473-site constants cost a
-further $4.0$~pp under optimal assembly
-($95\%$ CI $[+2.2,\,+6.0]$) and $5.6$~pp under greedy assembly
-($[+3.6,\,+7.6]$).
+further $\ResidualRefOptDelta$~pp under optimal assembly
+($95\%$ CI $[+\ResidualRefOptCIlo,\,+\ResidualRefOptCIhi]$) and $\ResidualRefGrdDelta$~pp under greedy assembly
+($[+\ResidualRefGrdCIlo,\,+\ResidualRefGrdCIhi]$).
 The reference-set effect is therefore not a fixed cost: its sign depends
 on whether the score and the evaluator agree on the criterion encoding,
 and on this instance it is harmless or beneficial under consistent coding.
