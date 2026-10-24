@@ -103,7 +103,15 @@ def write_macros(S, sha, commit, target_tvw=None):
             cmd += f"  % {note}"
         lines.append(cmd)
 
-    # --- Target TV_W for W_inf_F cell (pre-registered; from CSV target_tvw column) ---
+    # ── Parametric dispatchers (for use as \EsixPthreeP{Logn}, \EsixPfourP{All}, etc.) ──
+    lines.append("% ── Parametric dispatchers ───────────────────────────────────────────")
+    lines.append(r"\newcommand{\EsixPthreeP}[1]{\csname EsixPthreeP#1\endcsname}"
+                 "  % usage: \\EsixPthreeP{Logn} expands to \\EsixPthreePLogn")
+    lines.append(r"\newcommand{\EsixPfourP}[1]{\csname EsixPfourP#1\endcsname}"
+                 "  % usage: \\EsixPfourP{All} expands to \\EsixPfourPAll")
+    lines.append("")
+
+    # ── Target TV_W for W_inf_F cell (pre-registered; from CSV target_tvw column) ---
     if target_tvw is not None:
         tvw_3dp = round(float(target_tvw), 3)
         m("EsixTargetTVW", f"{tvw_3dp:.3f}",

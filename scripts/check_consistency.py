@@ -472,6 +472,33 @@ if main_tex.exists():
         else:
             print(f"  [OK  ] Forbidden macro {macro} absent")
 
+# ── 7b. MUST_FAIL phrases: literals that were replaced by macros ─────────────
+# These are phrases that existed in earlier versions as hardcoded results.
+# If any reappears (e.g. from a copy-paste), the check fails.
+print()
+print("=== 7b: MUST_FAIL — literal results that became macros ===")
+MUST_FAIL_PHRASES = [
+    # §F8 greedy claim — replaced by empirical statement with \FEightVecCoinc
+    ("on every draw in this experiment, the greedy algorithm selected the\nsame portfolio",
+     "old F8 greedy 500/500 claim (should use \\FEightVecCoinc{457})"),
+    # §F8 theoretical guarantee for greedy — removed
+    ("Theorem~\\ref{thm:groupconst} applies to exact assembly",
+     "ok: valid reference to theorem for exact assembly"),
+    # Hardcoded P4 claim without proportion or CI — replaced
+    ("two-sided binomial; DEV-E6-003).",
+     "P4 old phrasing without proportion/CI (old version)"),
+    # Prop1 guarantee for greedy
+    ("Prop1 ✓",
+     "old Prop1 guarantee comment in macros.tex"),
+]
+for phrase, note in MUST_FAIL_PHRASES:
+    phrase_clean = phrase.replace("\n", " ")
+    if phrase_clean in tex.replace("\n", " ") or phrase_clean in tex:
+        FAIL.append(f"MUST_FAIL phrase found: {note}")
+        print(f"  [FAIL] Found: {note}")
+    else:
+        print(f"  [OK  ] Absent: {note}")
+
 # ── 7. Semantic correctness rules ───────────────────────────────────────────
 print()
 print("=== Semantic correctness rules ===")

@@ -3,6 +3,10 @@
 % Naming convention: CamelCase, \Esix prefix, family suffix (Logn/Beta/Unif/Zinf/All)
 % commit hash stored in results/e6/e6_stats.json (not here, to keep output deterministic)
 
+% ── Parametric dispatchers ───────────────────────────────────────────
+\newcommand{\EsixPthreeP}[1]{\csname EsixPthreeP#1\endcsname}  % usage: \EsixPthreeP{Logn} expands to \EsixPthreePLogn
+\newcommand{\EsixPfourP}[1]{\csname EsixPfourP#1\endcsname}  % usage: \EsixPfourP{All} expands to \EsixPfourPAll
+
 \newcommand{\EsixTargetTVW}{0.199}  % E6 pre-registered TV_W target (0.1986 rho_raw era; see DEV-E6-005)
 
 % ── Design ───────────────────────────────────────────────────────────
