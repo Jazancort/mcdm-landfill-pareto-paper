@@ -1,0 +1,9 @@
+{
+  "n_sites": 389,
+  "n1_leeward": 94,
+  "n0_nonleeward": 295,
+  "top_k": 100,
+  "tau_b": 0.9191,
+  "topk_agreement": 0.94,
+  "method": "TOPSIS/vector, W=AHP normalised, 389 admissible sites"
+}

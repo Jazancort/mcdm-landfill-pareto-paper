@@ -210,6 +210,10 @@
 \newcommand{\FEightMMOptQ}{94.4}    % SAW/mm/opt with vec frontier
 \newcommand{\FEightMMOptSE}{1.0}
 \newcommand{\FEightMMOptLoss}{5.6}  % 100 - FEightMMOptQ: loss vs vec frontier
+% Aspect pole-coding comparison (compute_aspect_polecoding.py, TOPSIS/vec, 389 sites)
+% Paper had 0.960/0.960 — both were wrong (copy error); correct values below.
+\newcommand{\AspectTauB}{0.92}        % Kendall tau_b between leeward=1 vs leeward=0 orderings
+\newcommand{\AspectTopKAgree}{0.94}   % top-100 set agreement fraction
 \newcommand{\FEightVecGrdQ}{100.0}  % SAW/vec/greedy with vec frontier (empirical; 457/500 same portfolio as optimal)
 \newcommand{\FEightMMGrdQ}{72.4}    % SAW/mm/greedy with vec frontier
 % Interpretation: vec/opt=100% confirmed with Prop1 (Theorem 1) in commit 43b8427.

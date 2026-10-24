@@ -475,7 +475,7 @@ normalisation constants, not through pairwise preference flows.
 
 \citet{Eppe2014} examined the computational scalability of exact
 PROMETHEE ranking for candidate sets of the size used here
-($|\Tset|$ up to several hundred candidates), confirming tractability.
+($N$ up to several hundred), confirming tractability.
 
 % ----------------------------------------------------------
 \subsection{Benchmarking MCDM methods}
@@ -1848,7 +1848,7 @@ For a binary column with $n_1$ ones and $n_0=N-n_1$ zeros:
   \text{ratio} = \sqrt{n_0/n_1}.
 \]
 The two normalised columns are not collinear (they are linearly
-independent when $n_0\neq n_1$, since neither is a scalar multiple
+independent, since neither is a scalar multiple
 of the other), and each has a different amplitude $A_j$.
 \end{corollary}
 
@@ -1857,7 +1857,7 @@ For \textit{aspect} ($n_1=94$ leeward sites, $n_0=295$), the two orders
 give $A_j\in\{0.058,\,0.103\}$, a factor of $\AspectAmplitudeRatio$.
 Running TOPSIS with vector normalisation under each order, holding the
 criterion semantics (leeward $=$ favourable), weights, and data fixed,
-yields a Kendall~$\tau_b=0.960$ and top-100 set agreement of $0.960$
+yields a Kendall~$\tau_b=\AspectTauB$ and top-100 set agreement of $\AspectTopKAgree$
 across the $\Nvia$ admissible sites.
 The agreement is high because \textit{aspect} is one of eleven criteria:
 the $\AspectAmplitudeRatio\times$ amplitude difference in one binary column is partly
