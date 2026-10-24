@@ -56,8 +56,20 @@ O texto dizia "Seven cells yield 24,000 total draws" mas 24,000 é o número por
 
 Questões que surgiram durante a execução e precisam de resposta antes de continuar.
 
-**D?-1 (A2, pendente): §6.8 — onde estão os valores raw hardcoded?**
-Os macros `\DeltaLtwoshift{0.3101}` e `\DeltaLinfshift{0.2835}` foram gerados mas §6.8 ainda tem valores raw (TV=0.3146, ‖δ‖₂=0.3127, ‖δ‖∞=0.2859) hardcoded. Preciso de localizar exactamente as linhas de §6.8 no main.tex e substituir. `\TVvec{0.311}` já cobre o TV.
+**A2 (§6.8 — valores shift): FEITO (f08f1f7)**
+Os três valores raw (`TV=0.3146`, `‖δ‖₂=0.3127`, `‖δ‖∞=0.2859`) foram substituídos por macros shift (`\TVvec`, `\DeltaLtwoshift`, `\DeltaLinfshift`). Ao mesmo tempo, `\TVvec`, `\TVBvec`, `\TVWvec` foram actualizados para 4 dp (eram 3 dp) para manter precisão consistente com os outros macros de delta. A linha hardcoded `0.311` na Tabela amplitude também foi substituída por `\TVvec`.
+
+**A8 (§7.8 P2 — ties/reversals): FEITO (ad3f5a0)**
+"excluded" → "counted as failures". Confirmação: as 3 instâncias (2 ties + 1 reversal) eram contadas como falhas no Poisson-binomial test, daí 85/88. O texto "excluded" era incorrecto.
+
+**A9 (§8.3 e Conclusão — "divides by 0.53x"): FEITO (ad3f5a0)**
+As 2 ocorrências restantes (L2737, L3018) corrigidas para "scales another by a factor of \UrbanRatioVec". A ocorrência da Intro já tinha sido corrigida em F475-4.
+
+**G1 (fig_F1_slope_weights — amplitudes hardcoded): FEITO (ad3f5a0)**
+`fig_F1_slope_weights.py` actualizado para ler `rho_j` de `results/amplitudes/amplitudes.json`. Antes: `A["vec"]["perm"] = 0.583` hardcoded (e outros 10 critérios). Diferença crítica: a razão efectiva de perm era 2.88× com os valores antigos, agora é 2.86× (consistente com `\PermInflation`). A diferença não veio do rho_perm em si (0.583 era igual nos dois casos) mas dos rho_j dos outros critérios, que afectam o denominador S. As amplitudes de midranks continuam hardcoded (justificado: não estão no amplitudes.json pois usam uma fórmula heurística diferente, documentado no script).
+
+**Dúvida D?-8 (nova): "Figura 1 (p. 7)" do revisor — qual figura era?**
+O revisor cita "Figura 1 (p. 7)" com "perm: 2.88×", "Aggregation: +0.5 pp", "Assembly: −1.1 pp", "+34.6 pp full 2³". O main.tex actual tem 5 figuras, nenhuma com estes valores como anotações de texto. A fig_F1_slope_weights.py mostra o rácio de RANK (0.62×) como label de texto, não o rácio vec (2.86×). A fig_F2_interaction.py (lê de mc_18cells_raw.csv) existe mas não está incluída no main.tex. Hipótese mais provável: o revisor viu uma versão mais antiga do paper onde uma figura de interacção tinha estas anotações. A correcção de G1 endereça o problema de fundo (amplitudes hardcoded). Clarificar com o revisor se necessário.
 
 **D?-2 (F475-2, implementado mas incompleto): Tabela 6 ainda diz B=2,000**
 Implementou-se `\nbootEone{10,000}` e actualizou-se a frase da §7.7 que reporta o IC do E1. Mas a Tabela 6 e a §5.4 mencionam "\nboot-replicate bootstrap" no contexto geral. Revisar se a tabela caption precisa de nota explicando que E1 usa B=10,000 separado, ou se a declaração geral B=2,000 é aceitável enquanto a E1 tem a sua própria nota.
@@ -69,7 +81,6 @@ A regra "depois de cada substituição de literal, confirmar o contexto" não fo
 Para a métrica de regret R(t) = [V_w(t*) - V_w(t)] / range, preciso dos pesos w por draw. O `mc_unified_raw.csv` tem os portfolios seleccionados mas não os pesos. O `e1_diag_bootstrap.csv` tem as outcomes mas não os pesos. Os pesos são amostrados de uma Dirichlet — qual CSV guarda w_j para cada draw? Verificar `diag_e1b_greedy.py` e `run_e1.py` para perceber se o output inclui os pesos.
 
 **D?-5 (A11, pendente): τ_b = 0.960 = top-100 = 0.960 — coincidência ou erro?**
-O revisor sinalizou como suspeita a coincidência exacta entre Kendall τ_b e a taxa top-100. Ainda não foi verificado. Pode ser coincidência real (reportar com nota) ou erro de cópia.
 
 **D?-6 (F8 Fase C): A fronteira F_mm existe algures?**
 Para calcular a matriz 2×2 do F8, precisamos de F_mm (fronteira sob normalização min-max). A fronteira F_vec já existe em `results/f8/`. A F_mm pode ser calculada com a mesma pipeline mas usando scoring mm em vez de vec. Confirmar se `compute_f8_circularity.py` já tem infra para calcular F_mm, ou se é necessário novo código em `pareto_utils.py`.
@@ -127,7 +138,7 @@ Os erros 1-7 do PDF correspondem a A1-A7. A3-A7 estão feitos. A1-A2 pendentes.
 
 - [ ] **A1** Figura 1 (p.7): valores 2.88x, +0.5pp, -1.1pp, +34.6pp são antigos. Identificar qual `fig_*.py` gera a Figura 1 (provavelmente `fig_F2_interaction.py` ou `fig_interaction.py`). Regenerar a partir dos JSON. Adicionar ao Makefile target `figures` e ao build_check. Bloqueador: sem isto a afirmação de Code availability é falsa.
 
-- [ ] **A2** §6.8 (p.14): TV=0.3146, ‖δ‖₂=0.3127, ‖δ‖∞=0.2859 são valores raw. Os macros shift já existem (`\TVvec{0.311}`, `\DeltaLtwoshift{0.3101}`, `\DeltaLinfshift{0.2835}`). Resta localizar as linhas exactas de §6.8 e substituir os valores hardcoded pelos macros.
+- [x] **A2** FEITO (f08f1f7): valores raw de §6.8 substituídos por macros (`\TVvec`, `\DeltaLtwoshift`, `\DeltaLinfshift`). `\TVvec`/`\TVBvec`/`\TVWvec` actualizados para 4 dp. Tabela amplitude: `0.311` hardcoded → `\TVvec`.
 
 - [x] **A3** FEITO (6da59ed): `\FEightMMOptLoss{5.6}` criado. "≈1.0 pp in the other direction" → "≈\FEightMMOptLoss pp". Causa raiz: `\FEightMMOptSE` (SE=1.0) estava no lugar errado.
 
@@ -141,9 +152,9 @@ Os erros 1-7 do PDF correspondem a A1-A7. A3-A7 estão feitos. A1-A2 pendentes.
 
 - [x] **A7** FEITO (6da59ed): §7.8 expandido para descrever as 7 células. TV_W=0.20 → `\EsixTargetTVW{0.199}`. "24,000 total draws" → `\EsixNdrawsTotal{168,000}`. Adicionados `\EsixNperdraw{200}`, `\EsixNcells{7}`, `\EsixNdrawsTotal` ao macros_e6.tex.
 
-- [ ] **A8** §7.8 P2: "two three-way ties and one reversal excluded" → "counted as failures" (dão 85/88, não foram excluídos).
+- [x] **A8** FEITO (ad3f5a0): "excluded" → "counted as failures" em §7.8 P2.
 
-- [ ] **A9** Intro/§8.3/Conclusão: "divides another by 0.53x" (= multiplicar por 1.89) — parcialmente corrigido para "scales another by a factor of \UrbanRatioVec" (A9 na Intro foi feito como parte de F475-4). Verificar ocorrências em §8.3 e Conclusão.
+- [x] **A9** FEITO (ad3f5a0): "divides another by 0.53x" → "scales another by a factor of \UrbanRatioVec" em §8.3 (L2737) e Conclusão (L3018). Intro já feita em F475-4.
 
 - [ ] **A10** §6.9: "linearly independent when n₀ ≠ n₁" — condição supérflua. Remover.
 
@@ -173,7 +184,7 @@ Os erros 1-7 do PDF correspondem a A1-A7. A3-A7 estão feitos. A1-A2 pendentes.
 
 ## Fase G: Build Check Alargado
 
-- [ ] **G1** Identificar Figure 1 no main.tex, verificar script, regenerar do JSON, adicionar ao Makefile `figures`.
+- [x] **G1** FEITO (ad3f5a0): `fig_F1_slope_weights.py` actualizado para ler `rho_j` de `amplitudes.json`. Perm: 2.88× → 2.86×. Amplitudes de midranks mantêm-se hardcoded (documentadas no script: usam fórmula de rank não disponível no JSON).
 - [ ] **G2** `check_consistency.py`: verificar os três valores de §6.8 contra macros shift.
 - [ ] **G3** Alargar `audit_hardcoded.py` a supplementary.tex e tab_*.tex. Objectivo: exit 0 com excepções documentadas.
 - [ ] **G4** Adicionar `check_tab_amplitude.py` e `generate_macros_r1.py` ao Makefile `check`.
