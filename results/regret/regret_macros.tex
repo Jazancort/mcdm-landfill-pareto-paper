@@ -18,3 +18,14 @@
 \newcommand{\RegrTOPSISvecGrdSE}{0.42}  % SE of R for topsis/vector/greedy
 \newcommand{\RegrTOPSISvecOpt}{74.78}  % topsis/vector/optimal: SE=1.31
 \newcommand{\RegrTOPSISvecOptSE}{1.31}  % SE of R for topsis/vector/optimal
+
+% ── Regret differences (grd - opt) under vec normalisation ───────────────────
+% Paired bootstrap B=2000, seed=88. R is pp of V_range.
+% Random viable trio baseline: median R ≈ 778 pp (2000 samples, seed=42).
+\newcommand{\RegrDiffSAWvec}{15.96}       % SAW vec: R(grd)-R(opt)
+\newcommand{\RegrDiffSAWvecLo}{12.5}      % CI lower
+\newcommand{\RegrDiffSAWvecHi}{19.6}      % CI upper
+\newcommand{\RegrDiffTOPSISvec}{23.64}    % TOPSIS vec: R(grd)-R(opt)
+\newcommand{\RegrDiffTOPSISvecLo}{21.0}   % CI lower
+\newcommand{\RegrDiffTOPSISvecHi}{26.3}   % CI upper
+\newcommand{\RRegretRandom}{778}           % median R of random valid trio (pp)

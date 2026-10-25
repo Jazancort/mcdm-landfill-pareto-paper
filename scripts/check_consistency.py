@@ -646,6 +646,11 @@ BAD_PHRASES = [
      "§7.4: 1.2x ratio used wrong baseline (33.8pp from 100%, not 19.8pp from 86.0%); use FEightGrdMmLossVecScore=19.8 and FEightGrdVecLossMmScore=27.6"),
     ("$\\FEightMmVecGrdLoss$~pp versus $\\FEightVecMMGrdLoss$~pp, ratio $\\approx 1.2",
      "§7.4: stale greedy ratio; aligned loss is FEightGrdMmLossVecScore=19.8pp vs FEightGrdVecLossMmScore=27.6pp"),
+    # §4 highlight + intro: incomplete (no R counterpart)
+    ("exact optimisation loses $9$--$11$~pp to greedy ranking",
+     "H4: incomplete; must report R counterpart (\\RegrDiffSAWvec--\\RegrDiffTOPSISvec pp less regret)"),
+    ("exact assembly\nloses $\\AsmVecSAW$~pp (SAW) and $\\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy ranking.",
+     "Intro §5: incomplete; must add 'but \\RegrDiffSAWvec pp (SAW) less value regret; effects run opposite'"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:

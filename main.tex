@@ -125,7 +125,9 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 \item Exact assembly is Pareto-safe iff amplitudes are constant within objective groups
 \item On Fogo, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp;
   aggregation effect cell-dependent ($\AggStratumMMgrd$ to $+\AggStratumVecopt$~pp), no stable sign
-\item Under vector normalisation, exact optimisation loses $9$--$11$~pp to greedy ranking
+\item Under vector normalisation, exact optimisation loses $\AsmVecSAW$--$\AsmVecTOPSIS$~pp
+  in frontier attainment ($Q_2$) but achieves $\RegrDiffSAWvec$--$\RegrDiffTOPSISvec$~pp less
+  value regret ($R$); the two effects run opposite
 \item Score--objective coding mismatches can cut Pareto attainment from $100\%$ to $24\%$
 \end{highlights}
 
@@ -228,7 +230,9 @@ When $w^{\mathrm{eff}}$ departs from $w$ within an objective group,
 exact optimisation solves the wrong problem exactly: on Fogo, under min--max
 normalisation SAW assembly is guaranteed at $100\%$ by Proposition~\ref{prop:p1:stmt}
 and TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation exact assembly
-loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy ranking.
+loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy ranking
+in $Q_2$, but achieves $\RegrDiffSAWvec$~pp (SAW) and $\RegrDiffTOPSISvec$~pp (TOPSIS)
+less value regret ($R$); the two effects run opposite under the distorted score.
 Exact assembly remains Pareto-efficient for every instance if and only
 if the normalised amplitudes are constant within each objective group
 (Theorem~\ref{thm:groupconst}): distortion between groups only relocates
@@ -1977,6 +1981,18 @@ The gap between $Q_2$ and $R$ is largest for TOPSIS under both
 normalisations and for SAW under vector normalisation, confirming that
 scoring distortion shifts which frontier portfolio is selected even when
 it does not push the portfolio off the frontier entirely.
+Under vector normalisation the assembly effect also reverses: exact assembly
+reaches the frontier less often than greedy
+($Q_2 = \QtwovecOptimal\%$ against $\QtwovecGreedy\%$; SAW)
+but achieves lower regret ($R = \RegrSAWvecOpt$ against $\RegrSAWvecGrd$~pp,
+difference $\RegrDiffSAWvec$~pp, 95\%~CI
+$[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp).
+The portfolios selected by exact optimisation of the distorted score,
+though they miss the frontier of~$w$ more often, are better portfolios
+under the elicited weights~$w$.
+For context, the median regret of a randomly drawn valid trio on this
+instance is approximately $\RRegretRandom$~pp; all eight cells are far
+into the upper tail of the portfolio-quality distribution.
 
 \begin{table}[!t]
 \centering\small
@@ -2100,6 +2116,13 @@ of $w^{\mathrm{eff}}$ precisely, and departs from the frontier defined by $w$.
 Greedy assembly is myopic and, on this evidence, less exposed to a distortion
 it does not optimise. This last statement is an interpretation;
 Section~\ref{sec:e1} isolates the component of the distortion responsible.
+Value regret ($R$, Table~\ref{tab:factorial}) corroborates it:
+under vector normalisation exact assembly achieves $\RegrSAWvecOpt$~pp regret
+against $\RegrSAWvecGrd$~pp for greedy ($\RegrDiffSAWvec$~pp less,
+95\%~CI $[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp).
+The portfolios exact optimisation selects under the distorted score
+$w^{\mathrm{eff}}$, though they miss the frontier of~$w$ more often,
+carry less value regret under~$w$.
 
 
 % ----------------------------------------------------------
