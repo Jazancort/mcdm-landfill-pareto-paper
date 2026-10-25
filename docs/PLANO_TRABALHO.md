@@ -34,28 +34,9 @@
 
 **Acções pendentes:**
 
-- [ ] **C0-1** Rodar `compute_f8_mm_frontier.py` N=500 na Athena:
-  ```bash
-  cd ~/scratch/mcdm-landfill-pareto
-  git pull
-  tmux new -s f8mm
-  uv run python scripts/compute_f8_mm_frontier.py
-  ```
-  Esperado: mm/vec/opt ≈ 56,8%, mm/vec/grd ≈ 66,2%
-
-- [ ] **C0-2** Após resultados, regenerar `macros_f8.tex`:
-  ```bash
-  uv run python scripts/generate_macros_f8.py
-  ```
-  Os macros `\FEightMmVecOptQ{99.8}` e `\FEightMmVecGrdQ{99.6}` passam a ser os valores correctos.
-
-- [ ] **C0-3** Actualizar o texto C4 em `main.tex`: remover a "assimetria de 28×" (era: mm→vec custa 5,6 pp, vec→mm custa 0,2 pp). Com os valores correctos, a assimetria deixa de existir: ambas as direcções custam ~43 pp.
-
-- [ ] **C0-4** Actualizar §7.4 "Cross-model alignment" com os novos valores.
-
-- [ ] **C0-5** Actualizar `macros_f8.tex` em check_consistency.py com os novos valores canónicos.
-
-- [ ] **C0-6** Commitar tudo + push.
+- [x] **C0-fix APLICADO** (commit f52987c): `scoring.make_scorers()` substituiu a reimplementação bugada. rho_j assertion adicionada. MCDM_DATA_DIR env var necessária na Athena.
+- [ ] **C0-1** RUNNING na Athena (tmux f8mm, `/tmp/f8mm_run.log`). Espera ~45 min.
+- [ ] **C0-2..6** Após resultados da Athena.
 
 **Skill/agent:** `research-coder` agent para Athena run, edição de main.tex directa depois.
 
