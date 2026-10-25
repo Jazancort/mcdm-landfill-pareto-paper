@@ -2154,20 +2154,20 @@ Under optimal assembly, moving the score from min--max to vector while keeping t
 frontier at $\mathcal{F}_{\mathrm{mm}}$ costs $\FEightMmVecOptLoss$~pp;
 moving the frontier to $\mathcal{F}_{\mathrm{vec}}$ while keeping a
 min--max score costs $\FEightVecMMOptLoss$~pp.
-The asymmetry is large: the cost of misalignment is approximately
-$\FEightVecMMOptLoss/\FEightMmVecOptLoss = 28$ times larger in one
-direction than the other.
-Under greedy assembly the ratio is similar
-($\FEightVecMMGrdLoss$~pp versus $\FEightMmVecGrdLoss$~pp).
-The pattern is consistent with the amplitude argument: the vector
-frontier imposes a stricter Pareto criterion because the effective weight
-of \textit{perm} is amplified $\PermInflation\times$ relative to its
-nominal weight, concentrating non-dominated portfolios in a narrow region
-of objective space.
-A min--max score evaluated against this concentrated frontier can
-miss; a vector score evaluated against the min--max frontier rarely misses,
-because the broader frontier accepts most portfolios that are
-near-optimal under a reasonably shaped weighting scheme.
+The asymmetry is large: vector scoring is approximately
+$\FEightMmVecOptLoss/\FEightVecMMOptLoss \approx 7.7$ times more costly
+to misalign than min--max scoring under optimal assembly.
+Under greedy assembly the asymmetry narrows substantially
+($\FEightMmVecGrdLoss$~pp versus $\FEightVecMMGrdLoss$~pp, ratio $\approx 1.2\times$).
+The pattern is consistent with the amplitude argument: the vector score,
+with \textit{perm} inflated $\PermInflation\times$, systematically selects
+portfolios that favour low-permeability sites; these portfolios are
+often dominated under the broader, evenly-amplified min--max criterion.
+A min--max score evaluated against the concentrated vector frontier
+loses $\FEightVecMMOptLoss$~pp because the vec frontier is stricter;
+a vector score evaluated against the min--max frontier loses
+$\FEightMmVecOptLoss$~pp because perm inflation systematically misaligns
+the score from what the objectives, built on equal amplitudes, value.
 
 The $100\%$ attainment under vec/vec/greedy is an empirical observation.
 In \FEightVecCoinc{} of \ndraws{} draws the greedy rule returned the

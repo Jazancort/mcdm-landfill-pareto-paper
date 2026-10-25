@@ -631,6 +631,13 @@ BAD_PHRASES = [
     # E3: §6.7 merged into §6.2 — must not reappear as standalone subsection
     ("\\subsection{Magnitude is not enough: the concentration",
      "E3: §6.7 merged into §6.2; prop:concentration now lives inside §6.2 (Pareto consistency)"),
+    # C0: F8 mm-frontier buggy values — aspect amplitude was 9.7x too large
+    ("= 28$ times",
+     "C0: buggy 28x ratio from aspect amplitude bug; correct is ~7.7x (MmVecOptLoss/VecMMOptLoss=43.2/5.6)"),
+    ("\\FEightMmVecOptLoss$~pp; a vector score evaluated against the min--max frontier rarely misses",
+     "C0: stale claim from buggy run; vec score loses 43.2pp, not rarely misses"),
+    ("$\\FEightVecMMOptLoss/\\FEightMmVecOptLoss = 28$",
+     "C0: literal 28x ratio removed; use \\FEightMmVecOptLoss/\\FEightVecMMOptLoss with correct values"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
@@ -945,6 +952,29 @@ else:
         print("  [INFO] f8_circularity_mm.csv not found — run compute_f8_mm_frontier.py")
     if not _f8_tex.exists():
         print("  [INFO] macros_f8.tex not found — run generate_macros_f8.py")
+
+# ── C0 invariant: FEightMmVecOptQ == QtwovecOptimal (same cell, two scripts) ─
+# Both measure the same thing: SAW/vec score, mm frontier, optimal assembly.
+print()
+print("=== C0 invariant: FEightMmVecOptQ == QtwovecOptimal ===")
+_main_macro_tex = (ROOT / "macros.tex").read_text(encoding="utf-8")
+def _main_macro(name):
+    m = re.search(rf'\\newcommand\{{\\{name}\}}\{{([0-9.]+)\}}', _main_macro_tex)
+    return float(m.group(1)) if m else None
+_qtwo_opt_main = _main_macro("QtwovecOptimal")
+_qtwo_grd_main = _main_macro("QtwovecGreedy")
+_mm_vec_opt_v = _f8m("FEightMmVecOptQ") if _f8_tex.exists() else None
+_mm_vec_grd_v = _f8m("FEightMmVecGrdQ") if _f8_tex.exists() else None
+if _qtwo_opt_main is not None and _mm_vec_opt_v is not None:
+    check("FEightMmVecOptQ == QtwovecOptimal (same cell, two scripts)",
+          _mm_vec_opt_v, _qtwo_opt_main, tol=0.05)
+else:
+    print("  [INFO] C0 invariant: macro not found (run generate_macros_f8.py)")
+if _qtwo_grd_main is not None and _mm_vec_grd_v is not None:
+    check("FEightMmVecGrdQ == QtwovecGreedy (same cell, two scripts)",
+          _mm_vec_grd_v, _qtwo_grd_main, tol=0.05)
+else:
+    print("  [INFO] C0 invariant greedy: macro not found")
 
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")
