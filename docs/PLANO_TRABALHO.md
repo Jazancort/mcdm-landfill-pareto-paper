@@ -73,6 +73,7 @@ Critério "≈" não é aceitável. Qualquer desvio indica um bug remanescente.
 - [x] **C0-1** CONCLUÍDA (ebb74c9). Resultados: mm/mm/opt=100%, mm/mm/grd=86%, mm/vec/opt=**56,8%** (284/500, exacto), mm/vec/grd=**66,2%**. Todos os critérios de aceitação passados. H1 descartada.
 - [x] **C0-2** CONCLUÍDA: macros_f8.tex regenerado na Athena, scp para local. `\FEightMmVecOptQ{56.8}`, `\FEightMmVecGrdQ{66.2}`.
 - [x] **C0-3** CONCLUÍDA: §7.4 actualizada — "assimetria de 28×" removida; nova assimetria 7,7× (vec scoring mais vulnerável); causalidade invertida corrigida.
+  - **Pendente (R-7.4)**: a razão 7,7× é calculada entre 43,2 pp e 5,6 pp. Com SE(5,6 pp)=1,0 pp, o IC a 95% da razão vai de ≈5,7 a ≈12,0. A razão é instável. O texto já menciona que greedy estreita para ≈1,2×, o que contextualiza a assimetria. Mas seria mais robusto reportar os dois valores individualmente com IC: "43,2 pp (95% CI [38,8, 47,6] pp) versus 5,6 pp (95% CI [3,6, 7,6] pp), razão ≈7,7× sob montagem óptima". Decidir ao rever §7.4 final.
 - [x] **C0-4** CONCLUÍDA: BAD_PHRASES adicionados para "= 28$ times", "rarely misses", "VecMMOptLoss/FEightMmVecOptLoss = 28".
 - [x] **C0-5** CONCLUÍDA: invariante `\FEightMmVecOptQ == \QtwovecOptimal` (56,8%) e `\FEightMmVecGrdQ == \QtwovecGreedy` (66,2%) em check_consistency. Secção "C0 invariant" aparece no log.
 - [x] **C0-6** CONCLUÍDO: commit ebb74c9 + push.
@@ -242,7 +243,13 @@ A frase correcta é "the seven fully continuous criteria gain ≈12%" (não "all
 Inspeccionado: esquema, n_features, lista de cod_form. Nenhuma distância, amplitude ou score calculado.
 
 - [x] **PRE-1** RESOLVIDA: 524 = grelha NSGA-II; 473 = paper (shapefile diferente). Declarar desvio se replicação divergir.
-- [x] **PRE-2** RESOLVIDA: regra `permeabili == 'Baixa'` recuperada do script. Santiago equivalente = unidade base.
+  - **Pendente:** correr `scripts/_verify_fogo_grid.py` com shapefile da fronteira de Fogo para confirmar ou registar DEV-S-001. O ficheiro `05-referencia/fogo_boundary.geojson` ainda não existe.
+- [x] **PRE-2** REGRA DE FOGO RECUPERADA (script L257). Nota corrigida:
+  - A regra do Fogo (**P-F**) classifica pela litologia: lava compacta = Baixa. Não é a mesma lógica que a do Cabral.
+  - A regra do Cabral (**P-C**) classifica pela unidade hidrogeológica (Gomes 2007): Base=CA+λρ+λρ1+CBm+B+cb+γ.
+  - **Divergência principal**: PA (Pico da Antónia) é classificado como Baixa por P-F (é uma lava) e como Intermédia por P-C (é o aquífero principal). PA é provavelmente a formação mais extensa de Santiago.
+  - Fonte de B, cb, γ em P-C: `grupo = 'Complexo eruptivo interno, antigo'` no IDECV, que corresponde à Unidade de Base em Cabral (2012) p. 44–46.
+  - **S-T usa P-F como principal; P-C como sensibilidade.** Frase nas Limitações do paper sobre esta divergência.
 
 ---
 
@@ -447,18 +454,28 @@ Com os 11 critérios e pesos de Fogo: viável. Com os critérios e pesos do pró
 
 ---
 
-### PRESPEC — Fase 0 (commitar ANTES de extrair qualquer dado)
+### PRESPEC_SANTIAGO — Fase 0
 
-- [ ] **S-F0-1** Declarar regra de selecção das instâncias (ver acima).
-- [ ] **S-F0-2** Definir fontes, versões e datas de acesso para cada critério (perm IDECV, wells OSM, rivers DEM com limiar fixado aqui, aspect [90°,180°] como convenção herdada).
-- [ ] **S-F0-3** Grelha: 1 km × 1 km, ≥50% terra (regra de Fogo, após resolução da diferença 524/473). Contar trios só com geometria antes de extrair critérios.
-- [ ] **S-F0-4** Pesos: dois ramos S-T e S-L. Mapeamento dos critérios de Cabral declarado aqui; critérios sem correspondência com regra de redistribuição.
-- [ ] **S-F0-5** Regra de contagem mínima de wells do OSM.
-- [ ] **S-F0-6** Commitar o código de análise (freeze do commit hash do scoring).
-- [ ] **S-F0-7** Escrever previsões S0–S6 como regras condicionais em função de (TV_B, TV_W, m_eff, fracção de zeros). Cada previsão: regra + frase para artigo + cenário de falha.
-- [ ] **S-F0-8** Dois controlos em Fogo: (a) Fogo sem wells, pesos renormalizados; (b) Fogo com o substituto do perm de Santiago. Isolam efeito da instância vs critérios.
-- [ ] **S-F0-9** Declarar que resultados serão reportados seja qual for a direcção.
-- [ ] **S-F0-COMMIT** — **IMUTÁVEL após push**.
+**RASCUNHO PRONTO** (`corpus/PRESPEC_SANTIAGO.md`). Não commitado ainda.
+
+Antes do commit, preencher:
+- [ ] **S-F0-PRE-A** Correr `scripts/_verify_fogo_grid.py` (requer `05-referencia/fogo_boundary.geojson`).
+- [ ] **S-F0-PRE-B** Completar Anexo B: queries Overpass copiadas do script Fogo (Zenodo 17704387).
+- [ ] **S-F0-PRE-C** Preencher fontes da fronteira S-T e S-N, versão WDPA, data snapshot OSM.
+- [ ] **S-F0-PRE-D** Verificar presença de camada ZDTI no IDECV GetCapabilities (só abre metadados, não dados).
+- [ ] **S-F0-PRE-E** check_consistency.py exit 0 com qualquer BAD_PHRASE novo do PRESPEC.
+
+Depois do commit da Fase 0:
+- [x] **S-F0-1** Regra de selecção das instâncias: (i) estudo AHP publicado, (ii) geologia aberta, (iii) 300–1000 km². Santiago cumpre.
+- [x] **S-F0-2** Fontes e versões: perm IDECV, wells OSM, rivers DEM com limiar pré-declarado, aspect [90°,180°] ou v(θ) por ramo. SHAs em §0 do PRESPEC.
+- [x] **S-F0-3** Grelha: 1 km × 1 km, ≥50% terra. Contagem de trios antes de extrair critérios.
+- [x] **S-F0-4** Dois ramos S-T e S-N sem mapeamento. S-T: 11 critérios Fogo + pesos Fogo. S-N: 14 critérios Cabral + pesos Cabral.
+- [x] **S-F0-5** Regra wells: se OSM < 20 features → INGRH (DEV-S-002); se indisponível → omitir + controlo Fogo.
+- [x] **S-F0-6** Código congelado em 022931e. Lock file obrigatório para scripts de score.
+- [x] **S-F0-7** Previsões S0–S6 escritas com condições e templates de resultado (Anexo D do PRESPEC).
+- [x] **S-F0-8** Dois controlos em Fogo: (a) sem wells; (b) P-C sensibilidade para perm.
+- [x] **S-F0-9** Reportar resultados independentemente da direcção.
+- [ ] **S-F0-COMMIT** Commitar Fase 0 como imutável após preencher S-F0-PRE-A..E.
 
 ### PRESPEC — Fase 1 (após extracção, antes de qualquer score)
 
