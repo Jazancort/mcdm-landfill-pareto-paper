@@ -313,7 +313,7 @@ before any score or Q2 is computed.
 | S3b | E1-V optimal < E1-W optimal (direction observed in Fogo and E6) | TV_W(vec) ≥ 0.05 | E1 direction replication |
 | S4 | SAW minus TOPSIS per cell: no sign predicted | — | Descriptive |
 | S5 | Q2(SAW, vec, opt) in branch b > 56.8% (Fogo result) | max_{j ∈ non-binary} point-mass share (fraction of A' at modal value, continuous criteria only) < 0.5. Note: binary criteria (aspect in S-T; B1 in S-N after normalization) are excluded from this condition. In Fogo: perm point-mass = 350/389 = 0.90 → S5 would not have been tested; Santiago should have smoother distributions. | Risky: predicts weaker mechanism under smoother distributions (E6 reasoning) |
-| S6 | R(SAW, vec, grd) > R(SAW, vec, opt), 95% CI excludes 0. Fogo reference: R(vec,grd)=77.15 pp, R(vec,opt)=61.19 pp, difference=15.96 pp [95% CI: 12.6, 19.5 pp]. | TV_W(vec) ≥ 0.05 | Greedy has more regret than optimal under vector scoring; consistent with Q2 reversal (S2) |
+| S6 | R(SAW, vec, grd) > R(SAW, vec, opt), 95% CI excludes 0. Fogo reference (new denominator, min over all T): R(vec,grd)=6.63 pp, R(vec,opt)=5.27 pp, difference=1.36 pp [95% CI: 0.95, 1.74 pp]. Note: this difference is below the δ=2.5 pp margin pre-specified for Q2; in the PRESPEC it is treated as a secondary test. | TV_W(vec) ≥ 0.05 | Greedy has more regret than optimal under vector scoring; consistent with Q2 reversal (S2). Effect is small. |
 
 If a condition fails, the prediction is not tested and the cell is reported descriptively
 (see Annex D for templates).
@@ -635,7 +635,7 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 
 ### S6 (R(vec,grd) > R(vec,opt) — greedy has more regret)
 - Confirmed: "R(SAW, vec, grd) exceeded R(SAW, vec, opt) by [X] pp (95% CI: [[a], [b]] pp)
-  under S-[T/N], consistent with Fogo (15.96 pp [12.6, 19.5 pp])."
+  under S-[T/N], consistent with Fogo (1.36 pp [0.95, 1.74 pp]; below δ=2.5 pp)."
 - Not confirmed: "The difference was [X] pp (95% CI: [[a], [b]] pp), inconsistent with Fogo."
 - Not tested: "TV_W = [tw] < 0.05; S6 not tested."
 
@@ -655,9 +655,9 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 ### S2+S6 joint outcome (Q2–R discordance replication)
 - Both confirmed (S2: greedy Q2 > optimal Q2; S6: greedy R > optimal R):
   "Under S-[T/N] with vector normalisation, exact assembly reached the frontier
-  $\QtwovecOptimal$~pp less often than greedy assembly (S2) but achieved
-  $\RegrDiffSAWvec$~pp less value regret (S6), replicating the Q2--R discordance
-  observed in Fogo."
+  less often than greedy assembly (S2) but achieved less value regret (S6),
+  replicating the Q2--R discordance observed in Fogo (Q2 diff: $\AsmVecSAW$~pp;
+  R diff: $\RegrDiffSAWvec$~pp, below δ)."
 - S2 confirmed, S6 not confirmed:
   "Frontier attainment replicated (S2 confirmed); the Q2--R discordance did not replicate
   (S6 not confirmed): exact assembly regret was [X] pp, [above/below] greedy [Y] pp."
@@ -674,7 +674,6 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 - [ ] Run `scripts/_verify_fogo_grid.py`: record N_Fogo, log C-1 if ≠ 473 (see §10)
 - [ ] Note: do NOT choose between boundary sources based on which reproduces 473.
        Use the boundary that the original study was based on (from NSGA-II Zenodo repo); if not accessible, use IDECV island boundary and log the discrepancy as C-1.
-- [ ] Complete Annex B: copy Overpass queries from Fogo script
 - [ ] Complete Annex B: copy Overpass queries from Fogo script
 - [ ] Fill `[HASH_F0]` (this commit's hash — fill after `git commit`, before push)
 - [ ] Fill `[HASH_CODE]` = 022931e (already known; confirm unchanged)

@@ -130,10 +130,8 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 \begin{highlights}
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
 \item Exact assembly is Pareto-safe iff amplitudes are constant within objective groups
-\item On Fogo, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp;
-  aggregation effect cell-dependent ($\AggStratumMMgrd$ to $+\AggStratumVecopt$~pp), no stable sign
-\item Under vector normalisation, exact optimisation loses $\AsmVecSAW$--$\AsmVecTOPSIS$~pp
-  in frontier attainment; its portfolios carry marginally lower value regret ($\RegrDiffSAWvec$--$\RegrDiffTOPSISvec$~pp)
+\item Normalisation effect ($+\NormGreedyContrast$~pp) dominates; aggregation effect sign unstable
+\item Exact assembly loses $\AsmVecSAW$--$\AsmVecTOPSIS$~pp~$Q_2$ under vector; gains $\RegrDiffSAWvec$--$\RegrDiffTOPSISvec$~pp in regret
 \item Score--objective coding mismatches can cut Pareto attainment from $100\%$ to $24\%$
 \end{highlights}
 
@@ -291,15 +289,17 @@ Our contributions are as follows.
     efficiency rather than rank agreement, against an exhaustively
     enumerated frontier of $\Ntrios$ portfolios under a hard separation
     constraint; a factorial design shows that normalisation dominates the
-    choice of aggregation operator, with the value of exact assembly
-    reversing sign between min--max and vector normalisation on this instance.
+    choice of aggregation operator, with frontier attainment reversing sign
+    between min--max and vector normalisation; in value regret, exact assembly
+    is marginally better than greedy under both normalisations.
   \item A necessary and sufficient condition for exact assembly to remain
     Pareto-efficient under normalisation: amplitudes must be constant
     within each objective group (Theorem~\ref{thm:groupconst}),
     two complementary indices of the weight deviation (between-group
     $\mathrm{TV}_B$ and within-group $\mathrm{TV}_W$), and a follow-up intervention with
-    pre-specified predictions showing that the within-group component
-    carries the loss.
+    pre-specified predictions showing that within-group distortion carries
+    the frontier attainment loss, while between-group distortion imposes
+    a smaller but non-zero value regret cost.
 \end{enumerate}
 
 \noindent
@@ -826,7 +826,7 @@ that follow correspond to Stages~1--6 in order.
 
 \begin{figure*}[!t]
 \centering
-\includegraphics[width=\textwidth]{figures/fig_workflow.png}
+\input{figures/fig_workflow}
 \caption{Six-stage MCDM pipeline for landfill site selection on Fogo Island,
   Cape Verde.
   Stage~1: GIS dataset with 389 viable sites and 11 criteria across three
