@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-_compute_e1_regret.py
-=====================
-Compute value regret R for all 8 E1 cells (M, B, W, V × greedy/optimal).
+_compute_e1_regret.py  (v2: new denominator)
+=============================================
+Compute value regret R for all 8 E1 cells (M, B, W, V × greedy/optimal)
+with the CORRECTED denominator: range over ALL feasible trios T.
 
-R(t; w) = [V_mm(t*(w); w) - V_mm(t; w)] / V_range(w)
+R(t; w) = [V_mm(t*(w); w) - V_mm(t; w)] / [V_mm(t*(w); w) - V_mm(t_min(w); w)]
 
-where t*(w) = SAW/minmax/optimal portfolio (from mc_unified_raw.csv).
-V_range(w) = from regret_perdraw.csv (V_range column, saw/minmax/optimal).
+where:
+  t*(w) = argmax V_mm over T (SAW/mm/optimal)
+  t_min(w) = argmin V_mm over T (worst feasible trio)
 
-Outputs mean±SE of R for each cell, with paired-bootstrap 95% CI for
-the difference grd - opt within each E1 cell, and for E1-B vs E1-V (opt).
+R in [0,1] by construction; independent of which cells are compared.
 """
 import sys, os, pathlib
 sys.stdout.reconfigure(encoding='utf-8')
@@ -63,14 +64,29 @@ print("Precomputing trio scores ...", flush=True)
 X_trio = X_adj[trios[:, 0]] + X_adj[trios[:, 1]] + X_adj[trios[:, 2]]  # (n_trios, 11)
 print("Done.", flush=True)
 
-# V_mm(trio; w) = X_trio @ w  for each draw
-# t*(w) = argmax V_mm over all trios
-# V_range from regret_perdraw.csv
-df_regret = pd.read_csv(ROOT / "results" / "regret" / "regret_perdraw.csv")
-saw_opt = df_regret[(df_regret["agg"]=="saw") & (df_regret["norm"]=="minmax") &
-                    (df_regret["mont"]=="optimal")].sort_values("draw")
-V_max   = saw_opt["V_mm"].values       # shape (500,)
-V_range = saw_opt["V_range"].values    # shape (500,)
+# ── Compute V_max (t*) and V_min (t_min) over ALL trios per draw ──────────────
+# V_range = V_max - V_min; R in [0,1] by construction.
+# X_trio already loaded above (all trios).
+print("Computing V_max and V_min over all trios (batched) ...", flush=True)
+BATCH = 50000
+V_max_draws = np.full(N_DRAWS, -np.inf)
+V_min_draws = np.full(N_DRAWS, np.inf)
+for start in range(0, n_trios, BATCH):
+    end = min(start + BATCH, n_trios)
+    V_batch = X_trio[start:end] @ W_draws.T  # (BATCH, N_DRAWS)
+    np.maximum(V_max_draws, V_batch.max(axis=0), out=V_max_draws)
+    np.minimum(V_min_draws, V_batch.min(axis=0), out=V_min_draws)
+    if start % 500000 == 0:
+        print(f"  {start}/{n_trios} ({100*start/n_trios:.0f}%)", flush=True)
+V_range_draws = np.maximum(V_max_draws - V_min_draws, 1e-12)
+print(f"V_range: min={V_range_draws.min():.4f} max={V_range_draws.max():.4f}", flush=True)
+
+# Verify V_max matches regret_perdraw (SAW/mm/opt)
+df_check = pd.read_csv(ROOT / "results" / "regret" / "regret_perdraw.csv")
+saw_opt_check = df_check[(df_check["agg"]=="saw") & (df_check["norm"]=="minmax") &
+                          (df_check["mont"]=="optimal")].sort_values("draw")
+assert np.abs(V_max_draws - saw_opt_check["V_mm"].values).max() < 1e-9, "V_max mismatch"
+print("V_max verified against regret_perdraw: OK")
 
 # E1 amplitude sets
 GROUPS = OBJ_GROUPS
@@ -130,7 +146,6 @@ for cell_name, A_j in CELLS.items():
             V_e1_opt = float(X_trio[opt_idx] @ w)
             if asm == "optimal":
                 V_sel = V_e1_opt
-                # Q2: is opt_trio on frontier? (use diag bootstrap)
                 Q2_vals[d] = np.nan  # filled below
             else:
                 # Greedy
@@ -140,7 +155,7 @@ for cell_name, A_j in CELLS.items():
                 else:
                     i0g, i1g, i2g = sorted(g)
                     V_sel = float((X_adj[i0g] + X_adj[i1g] + X_adj[i2g]) @ w)
-            R_vals[d] = (V_max[d] - V_sel) / V_range[d] * 100
+            R_vals[d] = (V_max_draws[d] - V_sel) / V_range_draws[d] * 100
         
         R_mean = np.nanmean(R_vals)
         R_se   = np.nanstd(R_vals, ddof=0) / np.sqrt(N_DRAWS)

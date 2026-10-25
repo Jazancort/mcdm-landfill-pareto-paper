@@ -1077,14 +1077,12 @@ The value regret is
 \begin{equation}
   R = \mathbb{E}_w\!\left[
     \frac{V_{\mathrm{mm}}(t^*;w) - V_{\mathrm{mm}}(M(w);w)}
-         {V_{\mathrm{mm}}(t^*;w) - \min_c V_{\mathrm{mm}}(M_c(w);w)}
+         {V_{\mathrm{mm}}(t^*;w) - \min_{t'\in\mathcal{T}} V_{\mathrm{mm}}(t';w)}
   \right],  \label{eq:R}
 \end{equation}
-where $\min_c$ is over the eight cells.
-$R\in[0,1]$ by construction; $R=0$ iff $M(w)=t^*$.
-A cell can have $Q_2=1$ (every portfolio on the frontier) and $R>0$
-(every portfolio is a suboptimal frontier point under $V_{\mathrm{mm}}$);
-the two metrics are not equivalent.
+where $\min_{t'\in\mathcal{T}}$ is over all feasible portfolios.
+$R\in[0,1]$ by construction; $R=0$ iff $M(w)=t^*$; $R=1$ iff $M(w)$ is
+the worst feasible portfolio under $V_{\mathrm{mm}}$.
 
 \paragraph{Pre-specification.}
 We pre-specify the following before examining results.
@@ -2012,7 +2010,7 @@ into the upper tail of the portfolio-quality distribution.
 
 \begin{table}[!t]
 \centering\small
-\caption{$Q_2[A']$ with standard error (SE) in parentheses, value regret~$R$~\eqref{eq:R} (pp of $V$-range, SE in parentheses), $Q_3$ and conditional gap (CG) for the balanced $2^3$ design
+\caption{$Q_2[A']$ with standard error (SE) in parentheses, value regret~$R$~\eqref{eq:R} (percentage of achievable $V$-range, SE in parentheses), $Q_3$ and conditional gap (CG) for the balanced $2^3$ design
 ($\kappa=200$, $\ndraws$ draws). $Q_3$ is the expected gap~\eqref{eq:Q3} in
 percent of the attainable range; CG $= Q_3/(1-Q_2)$ is the mean shortfall
 over draws in which the portfolio misses the frontier. Both are computed
@@ -2350,7 +2348,7 @@ W (within only)  & 0       & \TVWvec & $\QtwoEoneWGrd$\%  & $\QtwoEoneWOpt$\%  &
 V (vector)       & \TVBvec & \TVWvec & $\QtwoEoneVGrd$\%  & $\QtwoEoneVOpt$\%  & \EoneVloss & $\RegrSAWvecOpt$ \\
 \bottomrule
 \multicolumn{7}{l}{\footnotesize $^{*}$ Mean; SE~$\RegretEoneBSE$~pp; median~$\RegretEoneBMed$~pp.
-  $\RegretEoneBfracZero\%$ of draws: $R=0$ (reference portfolio selected).}
+  $\RegretEoneBfracZero\%$ of draws: $R=0$ (exact reference portfolio selected).}
 \end{tabular}
 \end{table}
 
@@ -2369,8 +2367,7 @@ Between-group distortion, harmless for frontier attainment on its own
 ($Q_2=100\%$), relocates the portfolio along the frontier at a mean cost
 of $\RegretEoneB$~pp of value regret (median $\RegretEoneBMed$~pp,
 SE~$\RegretEoneBSE$~pp; $\RegretEoneBfracZero\%$ of draws select the
-reference portfolio; $\RegretEoneBfracOverHundred\%$ exceed
-$100$~pp; see Table~\ref{tab:e1}).
+reference portfolio exactly; see Table~\ref{tab:e1}).
 It therefore also amplifies the within-group component in value regret.
 A plausible reading, which we have not tested, is that within-group
 distortion matters in proportion to the weight its group carries in
