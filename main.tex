@@ -205,7 +205,12 @@ SAW performs significantly worse than TOPSIS under min--max$\times$greedy
 Normalisation is worth $+\NormGreedyContrast$~pp under greedy assembly,
 and $+\NormInfoEffect$~pp over the three informative cells.
 Exact assembly, the established upgrade over reading a ranking top-down,
-has an effect whose sign depends on the normalisation: positive under min--max (TOPSIS: $+\AsmMMtopsis$~pp), negative under vector ($-\AsmVecSAW$ to $-\AsmVecTOPSIS$~pp).
+has an effect whose sign depends on the normalisation in frontier attainment:
+positive under min--max (TOPSIS: $+\AsmMMtopsis$~pp), negative under vector
+($-\AsmVecSAW$ to $-\AsmVecTOPSIS$~pp in $Q_2$).
+In value regret ($R$), exact assembly achieves lower regret than greedy
+under both normalisations ($\RegrDiffSAWvec$~pp, SAW/vec;
+$\RegrDiffTOPSISvec$~pp, TOPSIS/vec): the two effects run opposite.
 
 The reason is a mechanism that operates upstream of the aggregation
 operator, and it is the analytical core of the paper.
@@ -1781,7 +1786,10 @@ sub-optimality in the factorial experiment into four ordered factors:
   \item \emph{Assembly effect (optimal vs.\ greedy):}
     Exact assembly helps under min--max and, on frontier attainment ($Q_2$), hurts under vector
     normalisation; on value regret ($R$), exact assembly achieves lower regret than greedy
-    under both normalisations (Section~\ref{sec:assembly}).
+    under both normalisations: for TOPSIS/min--max the difference is $\RegrDiffTOPSISmmGrdOpt$~pp
+    ($[\RegrDiffTOPSISmmGrdOptLo,\,\RegrDiffTOPSISmmGrdOptHi]$~pp);
+    for SAW/min--max $R=0$ by Proposition~\ref{prop:p1:stmt} and carries no evidential weight
+    (Section~\ref{sec:assembly}).
   \item \emph{Aggregation effect (SAW vs.\ TOPSIS vs.\ VIKOR):}
     TOPSIS and VIKOR aggregate through ideal-point distances;
     The amplitude identity~\eqref{eq:weff} does not apply exactly to them.
@@ -2704,7 +2712,7 @@ optimisation.
 Sharing a normalisation is sufficient but not necessary
 (cell~$B$, Table~\ref{tab:e1}).
 Integer programming on a mismatched score optimises the mismatch:
-SAW assembly is guaranteed under min--max (Proposition~\ref{prop:p1:stmt}); TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation exact assembly loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy assembly.
+SAW assembly is guaranteed under min--max (Proposition~\ref{prop:p1:stmt}); TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation exact assembly loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) in frontier attainment relative to greedy assembly, but achieves $\RegrDiffSAWvec$~pp (SAW) less value regret.
 
 Third, report effective weights alongside elicited weights, and with
 them the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
