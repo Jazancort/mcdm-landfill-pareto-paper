@@ -1,8 +1,8 @@
 # Plano de Trabalho — Paper MCDM Landfill (Omega)
 
-**Última actualização:** 2026-10-28  
-**HEAD actual:** b1d715a  
-**check_consistency:** exit 0, 26 casos  
+**Última actualização:** 2026-10-25 (correcção da data anterior: era 2026-10-28, data futura)
+**HEAD actual:** 6e5af12 (actualizado de b1d715a)
+**check_consistency:** exit 0, 26 casos
 **Nota alvo:** 9/10
 
 ---
@@ -26,21 +26,64 @@
 
 ### C0-fix: Aspecto bug em compute_f8_mm_frontier.py
 
-**Problema:** A célula "score vec vs fronteira mm" reporta Q2=99,8% e 99,6%. A Tabela 5 (factorial) dá 56,8% e 66,2% para as mesmas células. A contradição implica que o texto com "assimetria de 28×" (C4) está errado.
+**Causa raiz confirmada** (commit f52987c, script `_diag_tv_bug.py`):
 
-**Causa raiz confirmada:** `C_score_vec[:, aspect]` era definido como valores brutos {0,1} (amplitude=1,0) em vez do vetor L2-normalizado de `C_vec_raw[:, j]` (amplitude=0,103). Critério aspect inflacionado 9,7× na pontuação vec.
+`C_score_vec[:, aspect]` era definido como `np.where(leeward, 0.0, 1.0)` — valores brutos {0,1} (amplitude=1,0) em vez de `C_vec_raw[:, j]` já L2-normalizado (amplitude=0,103). Aspecto inflacionado **9,7× na pontuação vec**.
 
-**Fix aplicado localmente** (commit pendente): substituída a reimplementação do score vec por `scoring.make_scorers()`, o mesmo que usam todos os outros scripts. Smoke test N=5 dá Q2≈60% (compatível com 56,8% esperado).
+**TV com o bug = 0,377** (não ≈ 0). O bug aumenta a distorção, não a anula.
 
-**Acções pendentes:**
+| Critério | w_nom | w_eff canónico | w_eff bugado | delta |
+|---|---|---|---|---|
+| perm | 0,152 | 0,435 | 0,327 | +0,175 |
+| aspect | 0,075 | 0,038 | **0,277** | **+0,202** |
+| urban | 0,166 | 0,087 | 0,066 | −0,100 |
+| outros | ... | ... | ... | negativos |
+| **TV** | | | **0,377** | (canónico: 0,311) |
 
-- [x] **C0-fix APLICADO** (commit f52987c): `scoring.make_scorers()` substituiu a reimplementação bugada. rho_j assertion adicionada. MCDM_DATA_DIR env var necessária na Athena.
+**Pólo do aspect:** `np.where(leeward, 0.0, 1.0)` → leeward=0 (neutro na score), windward=1 (penalizado em -w_asp=-0,075). A direcção é **acidentalmente correcta**, mas a amplitude é 9,7× acima do canónico.
+
+**Explicação provisória do 99,8%:** o score bugado eleva o peso efectivo do aspect para 27,7% (2.º maior), seleccionando fortemente portfolios all-leeward. Estes portfolios têm F2 baixo (menos impacto ambiental) e aparecem non-dominated na fronteira mm com maior frequência do que os portfolios canónicos vec. O 99,8% reflete esta concentração acidental, não TV ≈ 0.
+
+**H1** (fronteira mm errada) é menos provável: mm/mm/opt = 100% em ambas as corridas confirma que o teste de pertença funciona correctamente.
+
+**Fix aplicado** (commit f52987c): `scoring.make_scorers()` substituiu a reimplementação. Assert rho_j a 1e-12. MCDM_DATA_DIR env var necessária na Athena.
+
+**Run N=500 em curso na Athena** (tmux f8mm, `/tmp/f8mm_run.log`). C0-1 RUNNING.
+
+---
+
+### Critérios de aceitação da corrida (escritos antes de abrir o log)
+
+Os draws, pesos e scorer são agora idênticos ao factorial. Output deve ser bit-for-bit igual.
+
+| Verificação | Esperado exacto | Se falhar |
+|---|---|---|
+| Q2 mm/vec/opt | **284/500 = 56,8%** | Score ainda não é canónico |
+| Q2 mm/vec/grd | **331/500 = 66,2%** | Idem |
+| Q2 mm/mm/opt | 500/500 = 100,0% | Fronteira/Theorem 1 quebrado |
+| Q2 mm/mm/grd | **430/500 = 86,0%** | Fronteira errada |
+| SE mm/vec/opt | √(56,8×43,2/500) ≈ **2,22 pp** | Confirma contagem exacta |
+| `\FEightVecMmOptQ` = `\QtwovecOptimal` | ambos 56,8% | Invariante: mesma célula, dois scripts |
+| `\FEightVecMmGrdQ` = `\QtwovecGreedy` | ambos 66,2% | Idem |
+
+Critério "≈" não é aceitável. Qualquer desvio indica um bug remanescente.
+
+**Acções C0-2 a C0-6** (só executar após passagem de TODOS os critérios acima):
+
+- [x] **C0-fix APLICADO** (commit f52987c): `scoring.make_scorers()` substituiu a reimplementação bugada.
 - [ ] **C0-1** RUNNING na Athena (tmux f8mm, `/tmp/f8mm_run.log`). Espera ~45 min.
-- [ ] **C0-2..6** Após resultados da Athena.
+- [ ] **C0-2** `MCDM_DATA_DIR=.../scripts uv run python scripts/generate_macros_f8.py` na Athena; scp macros_f8.tex para local.
+- [ ] **C0-3** Actualizar §7.4: substituir "assimetria de 28×", "0,2 pp" e "99,8%" pelos correctos. Nova assimetria: óptima mm→vec = 5,6 pp, vec→mm = 43,2 pp; greedy mm→vec = 27,6 pp, vec→mm = 33,8 pp.
+- [ ] **C0-4** Remover 99,8%/99,6%/0,2 pp/28× de main.tex, suplemento, highlights e comentários de macros. Adicionar ao BAD_PHRASES.
+- [ ] **C0-5** Adicionar invariante ao check_consistency: `\FEightVecMmOptQ == \QtwovecOptimal` (56,8%) e `\FEightVecMmGrdQ == \QtwovecGreedy` (66,2%).
+- [ ] **C0-6** Commitar + push.
 
-**Skill/agent:** `research-coder` agent para Athena run, edição de main.tex directa depois.
+**Auditoria anti-reimplementação** (junto com C0-6):
+- [ ] Correr `test_no_local_scorers.py` (ver §6).
+- [ ] Scripts que calculam algo próximo: assert `max|score_local - make_scorers(...)| < 1e-12` em 20 pesos aleatórios. Tolerância explícita, nunca `np.allclose`.
+- [ ] SAW/mm/opt no regret: confirmar R=0 exactamente em 500/500 draws.
 
-**Protecção futura:** cada script de experiência deve importar `saw_sc` de `scoring.py` e fazer `assert np.allclose(saw_sc(w_ahp, 'vector'), ...)` contra o scorer canónico a 1e-12 antes de correr o Monte Carlo. Comentar no script com "ANTI-REIMPLEMENTAÇÃO: never reimplement saw_vec locally".
+**Skill/agent:** `research-coder` agent para Athena run; edição de main.tex directa depois.
 
 ---
 
@@ -66,38 +109,25 @@
 
 ---
 
-### PDF-2: §6.8 — Valores raw em vez de shift (A2, já tem macros)
+### PDF-2: §6.8 — Valores raw (A2)
 
-**Estado:** macros `\TVvec{0.3113}`, `\DeltaLtwoshift{0.3101}`, `\DeltaLinfshift{0.2835}` existem.
+**FEITO** (F475-4, commit 36e7f37): macros `\TVvec`, `\DeltaLtwoshift`, `\DeltaLinfshift` existem e são usados. BAD_PHRASES em check_consistency.py guardam os valores raw 0.3146/0.3127/0.2859. Exit 0 confirma ausência.
 
-- [ ] Verificar se `check_consistency.py` já guarda estes valores contra o PDF. (BAD_PHRASES já têm os raw: 0.3146, 0.3127, 0.2859.)
-- [ ] Se §6.8 ainda tiver literais, substituir. **Provável que já esteja feito** (F475-4 cobriu).
+### PDF-3: §5.4 — "≈1,0 pp in the other direction" (A3)
 
----
+**FEITO** (F475-4): `\FEightMMOptLoss{5.6}` existe. Verificado por grep em check_consistency.py (exit 0).
 
-### PDF-3: §5.4 — "≈1,0 pp in the other direction" deve ser 5,6 pp (A3)
+### PDF-4: §4.3 — aero na lista min=0 (A4)
 
-**Estado:** `\FEightMMOptLoss{5.6}` existe. **Verificar se a linha 1131 de main.tex usa o macro correcto** — era onde o literal 5,6 estava hardcoded antes do F475.
+**FEITO** (F475-4): "perm, aspect, urban, cult, rivers" no texto, sem aero. BAD_PHRASE `\texttt{aero} and \texttt{rivers}` guarda.
 
-- [ ] Rodar `grep -n "1\.0 pp in the other" main.tex` — se encontrar, substituir por `\FEightMMOptLoss pp`.
+### PDF-5: §6.2 e eq.(20) — fórmulas raw vs shift
 
----
+- [ ] **PDF-5** Localizar a equação ou parágrafo em §6.2 que define ρ_j na forma raw (`x_{ij}/||x_j||`). Substituir pela fórmula shift `x̃_{ij}/||x̃_j||` ou acrescentar nota explicando a equivalência. Verificar com check_consistency.
 
-### PDF-4: §4.3 — aero na lista de critérios com mínimo 0 (A4)
+### PDF-6: §7.8 — "24,000 total draws" (A7)
 
-**Estado:** provavelmente corrigido em F475-4 (item A4 do PLANO_REVISAO_9). **Verificar** que "perm, aspect, urban, cult, rivers" está em main.tex sem aero.
-
----
-
-### PDF-5: §6.2 e eq.(20) — fórmulas na forma dos manuais (raw) contradizem eq.(9)
-
-- [ ] **PDF-5** Localizar em main.tex a equação que define ρ_j na forma raw (`x_{ij}/||x_j||`). Substituir pela fórmula shift usada na implementação: `x̃_{ij}/||x̃_j||` com referência à eq.(9) e à nota do shift.
-
----
-
-### PDF-6: §7.8 — "Seven cells yield 24,000 total draws" (A7)
-
-**Estado:** corrigido em A7 (PLANO_REVISAO_9). `\EsixNdrawsTotal{168,000}` existe. **Verificar** no texto actual.
+**FEITO** (F475-6/A7): `\EsixNdrawsTotal{168,000}` existe. BAD_PHRASE guarda o literal. Exit 0 confirma.
 
 ---
 
@@ -105,38 +135,29 @@
 
 ### R1: E1-V vs factorial SAW/vec/opt — draw-by-draw
 
-**Problema:** §7.7 afirma "objectives, frontier, draws and feasible set are identical to the factorial (κ=200, 500 draws, space A′)". Se as sequências de draws forem diferentes, a frase é falsa. O F475-1 verificou 500/500 draws mas contra o F8, que é outra experiência.
-
-**Teste a fazer localmente:**
-```python
-import pandas as pd
-e1 = pd.read_csv("results/e1/e1_diag_bootstrap.csv")   # e1v_opt_nd por draw
-fx = pd.read_csv("results/unified/mc_unified_raw.csv")  # ADAPT se necessário
-fx = fx[(fx.agg=="SAW") & (fx.norm=="vector") & (fx.assembly=="optimal")].sort_values("draw")
-print(len(e1), len(fx), (e1.e1v_opt_nd.values == fx.on_frontier.values).sum())
-```
-
-Resultado esperado: 500/500 (coincidência perfeita confirma draws iguais, como a probabilidade de 2,5% para coincidência por acaso sugere).
-
-- [ ] **R1-1** Correr o teste acima; registar resultado.
-- [ ] **R1-2** Se 500/500: actualizar TASKS.md de "verificado via agregados" para "verificado draw a draw". Frase §7.7 fica correcta.
-- [ ] **R1-3** Se < 500: mudar §7.7 para "draws from the same Dirichlet distribution (seed=42, κ=200)".
-
-**Skill/agent:** edição directa; PowerShell local.
+**VERIFICADO** (2026-10-28): 500/500 draws idênticos.
+`e1_diag_bootstrap.csv (e1v_opt_nd) == mc_unified_raw.csv (SAW/vector/optimal/nd_Q2Ap)` — match perfeito.
+Frase §7.7 "draws identical to the factorial" está correcta. TASKS.md actualizado de "via agregados" para "verificado draw a draw".
 
 ---
 
 ### R2: Bootstrap B=10.000 vs B=2.000 inconsistência
 
-**Problema:** O IC [4,0; 11,0] do E1 foi calculado com B=10.000 (diag_e1b_greedy.py), mas §5.4 e Tabela 6 dizem "2.000-replicate bootstrap". Além disso, o intervalo [3,8; 11,0] mencionado numa versão anterior não corresponde a nenhuma configuração.
+**Decisão:** Opção B — declarar B=10.000 no E1. O `\nbootEone{10,000}` já existe.
 
-**Decisão necessária — escolher UMA:**
-- Opção A: Uniformizar para B=2.000 → [3,8; 11,2]; usar o macro `\nboot{2,000}` existente.
-- Opção B: Declarar B=10.000 no E1 → manter `\nbootEone{10,000}` e escrever "95% paired bootstrap CI, B=\nbootEone, replicates" especificamente no parágrafo E1.
+- [ ] **R2-1** Adicionar frase na legenda da Tabela 6: "E1 intervals use $B=\nbootEone$ replicates."
+- [ ] **R2-2** Verificar que §7.7 usa `\nbootEone`, não o literal.
+- [ ] **R2-3** Adicionar MUST_FAIL para `[3.8; 11.0]` no check_consistency.py — intervalo que não corresponde a nenhuma configuração.
 
-- [ ] **R2-1** Decidir a opção.
-- [ ] **R2-2** Implementar: gerar macro `\EoneWVgapCI` a partir do script correcto; verificar que §7.7 usa o macro, não o literal.
-- [ ] **R2-3** Adicionar MUST_FAIL para `[3.8; 11.0]` no check_consistency.py (intervalo que não corresponde a nenhuma configuração).
+---
+
+### R2: Bootstrap B=10.000 vs B=2.000 inconsistência
+
+**Decisão:** Opção B — declarar B=10.000 no E1. O `\nbootEone{10,000}` já existe.
+
+- [ ] **R2-1** Adicionar frase na legenda da Tabela 6: "E1 intervals use $B=\nbootEone$ replicates."
+- [ ] **R2-2** Verificar que §7.7 usa `\nbootEone`, não o literal.
+- [ ] **R2-3** Adicionar MUST_FAIL para `[3.8; 11.0]` no check_consistency.py — intervalo que não corresponde a nenhuma configuração.
 
 ---
 
@@ -193,11 +214,10 @@ A frase correcta é "the seven fully continuous criteria gain ≈12%" (não "all
 ### Decisões necessárias (responder antes de escrever o PRESPEC)
 
 **Decisão S-D1:** Qual o papel do Santiago no artigo?
-- Opção A: "tabela compacta, evidência secundária" (cita o E6 para generalização)
-- Opção B: replicação completa do factorial + E1 (mesmo protocolo que Fogo)
-- Recomendação: Opção B, com o mesmo protocolo do E1. Mas substituir "Confirmar" por "Testar" em todas as previsões.
+- Papel decidido: replicação completa do factorial + E1 (protocolo idêntico ao Fogo). "Confirmar" substituído por "Testar" em todas as previsões.
+- Posição no artigo: §7.10, paralelo ao §7.9 (E1).
 
-**Decisão S-D2:** Aceitar as previsões S0–S6 como base?
+**Decisão S-D2:** Previsões S0–S6 como base — aceites. Ramo S-L (pesos locais Cabral 2013) adicionado.
 
 | ID | Previsão | Tipo |
 |---|---|---|
@@ -206,22 +226,27 @@ A frase correcta é "the seven fully continuous criteria gain ≈12%" (não "all
 | S2 | óptima−greedy<0 para SAW/vec, se TV_W>0,05 | replicação inversão |
 | S3 | E1-W<100% e E1-V<100%; \|W−V\|<5 pp | protocolo E1 |
 | S4 | Agregação: sem previsão de sinal; reportar por célula | declarado descritivo |
-| S5 | Se nenhum critério de Santiago tiver fracção zeros≥0,5: Q2(SAW/vec/opt)>56,8% | previsão arriscada ligada ao E6 |
+| S5 | Se nenhum critério tiver fracção zeros≥0,5: Q2(SAW/vec/opt,Santiago)>56,8% | previsão arriscada ligada ao E6 |
 | S6 | R(vec,opt)>R(mm,opt) em SAW | regret |
+| S-L | Com pesos locais (Cabral 2013): reportar TV e Q2; sem previsão de sinal vs S-T | ramo de sensibilidade |
 
 ### PRESPEC — Fase 0 (commitar ANTES de extrair qualquer dado)
 
-- [ ] **S-F0-1** Definir fontes, versões e datas de acesso para cada critério.
-- [ ] **S-F0-2** Definir regra da grelha e triagem inicial (replicar critérios de exclusão de AzancortNeto2026 + Andrade 2015).
-- [ ] **S-F0-3** Definir cada critério — incluindo planos A e B para o perm (SoilGrids 250m vs proxy) e limiar de acumulação dos rivers (fixar agora).
-- [ ] **S-F0-4** Fixar pesos: transferidos de Fogo com renormalização se wells ou perm for ausente.
-- [ ] **S-F0-5** Commitar o código de análise (freeze do commit hash).
-- [ ] **S-F0-6** Escrever previsões como regras condicionais em função de (TV_B, TV_W, m_eff, fracção de zeros).
-- [ ] **S-F0-7** Definir critérios de validade e frases para cada resultado possível.
-- [ ] **S-F0-8** Definir regra do espaçamento da grelha: mesmo de Fogo (1 km?), aumentando 0,25 km até n_trios < limite fixado aqui.
-- [ ] **S-F0-9** Planear dois controlos em Fogo: Fogo sem wells (pesos renormalizados) e Fogo com o mesmo substituto do perm.
-- [ ] **S-F0-10** Declarar convenção de aspect: [90°, 180°] é convenção herdada de Fogo, não afirmação física sobre os alísios de Santiago.
-- [ ] **S-F0-COMMIT** `git commit -m "feat: PRESPEC_SANTIAGO.md Fase 0 — pre-extraction"` — **ESTE COMMIT NÃO PODE SER ALTERADO DEPOIS**.
+- [ ] **S-F0-1** Definir fontes, versões e datas de acesso para cada critério:
+  - **perm** — Plano A: carta geológica de Santiago (IDECV/INGT, `carto_base:geologia_santiago`), mesma regra litologia→permeabilidade de Fogo (`geologia_com_permeabilidade_calculada.shp`). Plano B: SoilGrids 250m, só como sensibilidade.
+  - **wells** — OSM, mesma consulta de Fogo. Renormalização e controlo "Fogo sem wells" só se a regra falhar.
+  - **rivers** — DEM, limiar de acumulação de fluxo **fixado aqui** antes de extrair dados.
+  - **aspect** — leeward definido como [90°, 180°] (convenção herdada de Fogo, não afirmação física sobre os alísios de Santiago — **declarar explicitamente**).
+- [ ] **S-F0-2** Grelha: 1 km × 1 km com ≥50% de terra (regra do repositório de Fogo). Resolver a diferença 524/473 entre ficheiros do GitHub e o artigo antes de definir a grelha.
+- [ ] **S-F0-3** Regra de selecção do espaçamento: mesmo de Fogo; aumentar 0,25 km até n_trios < limite fixado agora. Medir só com geometria (sem critérios): `n_trios = int(np.trace(Av @ Av @ Av)) // 6`.
+- [ ] **S-F0-4** Pesos: ramo S-T = transferidos de Fogo; ramo S-L = pesos locais Cabral 2013 (a confirmar na tabela original, região sul de Santiago). Renormalizar se algum critério for ausente.
+- [ ] **S-F0-5** Commitar o código de análise (freeze do commit hash do scoring).
+- [ ] **S-F0-6** Escrever previsões S0–S6 como regras condicionais em função de (TV_B, TV_W, m_eff, fracção de zeros). Cada previsão tem: regra de decisão + frase para o artigo + cenário de falha.
+- [ ] **S-F0-7** Definir critérios de validade: instância inválida se < X sítios admissíveis ou n_trios < Y.
+- [ ] **S-F0-8** Frases para cada resultado possível (aprovação, falha, inconclusivo).
+- [ ] **S-F0-9** Instância opcional: Lemnos (Kontos et al. 2005) como terceira candidata — decidir inclusão aqui.
+- [ ] **S-F0-10** Dois controlos em Fogo: (a) Fogo sem wells (pesos renormalizados); (b) Fogo com o mesmo substituto do perm. Declarar que servem para isolar o efeito da instância vs o conjunto de critérios.
+- [ ] **S-F0-COMMIT** `git commit -m "feat: PRESPEC_SANTIAGO.md Fase 0"` — **IMUTÁVEL após push**.
 
 ### PRESPEC — Fase 1 (após extracção, antes de qualquer score)
 
@@ -276,7 +301,43 @@ Quando PDF actualizado:
 
 ---
 
-## Regras de processo
+## PRIORIDADE 6 — Teste anti-reimplementação do scorer
+
+Quarto episódio do mesmo padrão (Q3 float32, F8 v2 injection, coincidência dos 210, aspecto na C1). A guarda `anti-X_adj_vec` não apanha re-implementações com nomes diferentes.
+
+```python
+# tests/test_no_local_scorers.py
+import re, pathlib
+SUSPECT = re.compile(
+    r"def\s+(saw|topsis|vikor|score)\w*\s*\("
+    r"|linalg\.norm\("
+    r"|np\.where\(.*90.*180"
+)
+for p in pathlib.Path("scripts").rglob("*.py"):
+    if "deprecated" in p.parts or p.name in ("scoring.py", "_diag_tv_bug.py"): continue
+    src = re.sub(r"#.*", "", p.read_text(encoding="utf-8", errors="ignore"))
+    hits = SUSPECT.findall(src)
+    assert not hits, f"{p}: possível reimplementação do scorer {hits}"
+```
+
+Para scripts que legitimamente calculam algo parecido (compute_regret.py, raw_sensitivity):
+
+```python
+# Antes do Monte Carlo, em cada script
+_w_test = np.random.default_rng(0).dirichlet(np.ones(11), size=20)
+for _w in _w_test:
+    _local = my_scorer(_w)
+    _canon = saw_sc_fn(_w, norm='vector')
+    assert np.max(np.abs(_local - _canon)) < 1e-12, "scorer diverge do canónico"
+```
+
+Tolerância explícita `1e-12`, nunca `np.allclose` (rtol=1e-5 é exactamente o tipo de folga que deixou passar bugs antes).
+
+- [ ] **T1** Criar `tests/test_no_local_scorers.py` e adicionar ao Makefile `check`.
+- [ ] **T2** Adicionar assert a 1e-12 no início de `compute_regret.py`.
+- [ ] **T3** SAW/mm/opt no regret: confirmar R=0 exactamente em 500/500 draws (assert no script).
+
+---
 
 1. Nenhum script corre na Athena sem estar commitado.
 2. Cada substituição de literal por macro: verificar contexto com `audit_hardcoded.py`.
