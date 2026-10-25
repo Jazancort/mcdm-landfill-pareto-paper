@@ -16,6 +16,7 @@
 \usepackage{placeins}  % auto FloatBarrier at each \section
 \usepackage{morefloats} % expand float register pool (fixes Float(s) lost)
 \usepackage{url}  % allow line-breaking in URLs (\url{})
+\usepackage{tikz}  % workflow figure (fig_workflow.tex)
 \usepackage{xr}
 \externaldocument{suppl_wrapper}  % read labels from supplementary (e.g., tab:e6-sens)
 % ORCID displayed by submission system; no-op in PDF preprint
@@ -108,21 +109,18 @@ criterion is proportional to its weight times the amplitude of its normalised
 column, and exact assembly is Pareto-efficient on every instance if and only if
 amplitudes are constant within each objective group. Empirically, on this
 instance, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp under greedy
-assembly, whereas the pooled SAW--TOPSIS contrast is equivalent to zero within
-$\pm2.5$~pp ($\AggContrast$~pp, TOST $p=\TOSTp$) but conceals a significant
-interaction ($\AggStratumMMgrd$ to $+\AggStratumVecopt$~pp). The value of exact
+assembly, whereas the pooled SAW--TOPSIS contrast is near zero
+($\AggContrast$~pp, TOST $p=\TOSTp$) but conceals sign-reversing interactions. The value of exact
 assembly depends on the normalisation: under min--max it is guaranteed for SAW
 and adds $+\AsmMMtopsis$~pp for TOPSIS; under vector normalisation it loses
 $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) in frontier
 attainment relative to greedy assembly, though at marginally lower value
-regret ($\RegrDiffSAWvec$~pp of the attainable range for SAW).
-An intervention with pre-specified predictions shows that
-between-group distortion alone never moves the portfolio off the frontier
-(Q$_2=100\%$, confirmed by Theorem~\ref{thm:groupconst}), but it
-relocates the portfolio along the frontier at a mean cost of
-$\RegretEoneB$~pp of value regret (median $\RegretEoneBMed$~pp;
-$\RegretEoneBfracZero\%$ of draws coincide with the reference
-portfolio); within-group distortion alone reduces frontier attainment
+regret ($\RegrDiffSAWvec$~pp for SAW).
+An intervention shows that
+between-group distortion never moves the portfolio off the frontier
+(Q$_2=100\%$, Theorem~\ref{thm:groupconst}) but costs
+$\RegretEoneB$~pp of value regret (median $\RegretEoneBMed$~pp);
+within-group distortion reduces frontier attainment
 by $\EoneWloss$~pp. Separately, a criterion encoded inconsistently
 between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$.
 \end{abstract}
