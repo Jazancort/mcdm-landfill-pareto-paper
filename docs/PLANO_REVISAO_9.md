@@ -269,7 +269,7 @@ Ver D?-6 sobre como obter F_mm.
 
 ## Fase D: Correcções Científicas Pontuais
 
-- [ ] **D1** Convenção de orientação vec (§4.3): justificar explicitamente a convenção TOPSIS. Sensibilidade: `\RhoPermInverted=0.052` já existe. Tabela no suplemento com as duas convenções.
+- [x] **D1** FEITO (commit D1): Convenção de orientação vec justificada explicitamente em §4.3: "We adopt the first convention (orientation after forming the norm), consistent with AzancortNeto2026 and the classical TOPSIS formulation in which cost orientation is applied on the already-normalised columns (Hwang1981); Supplementary Table~\ref{tab:orient_conv} lists ρ_j under both conventions." `tab:orient_conv` adicionado ao supplementary.tex com ρ_j^A e ρ_j^B para todos os 11 critérios. Script `_d1_orient_convention.py` gerou os valores.
 - [x] **D2** FEITO (474c2bd): E1-P1, E6-P1 reformulados como implementation consistency checks. §7.4 já correcto. 2 BAD_PHRASES + MUST_FAIL adicionados.
 - [x] **D3** FEITO (4459272): Highlight 3 — "pooled aggregation by <1 pp" → "cell-dependent (-8.4 to +4.4 pp), no stable sign". TOST removido dos destaques.
 - [x] **D4** FEITO (9ed87a1): "decomposition" → "two complementary indices". Identidade W_g^eff = W_g * Ā_g/S adicionada. Nota de não-aditividade.
@@ -289,12 +289,12 @@ R(t) = [V_w(t*_w) - V_w(t)] / [max_{s∈F} V_w(s) - min_{s∈F} V_w(s)]
 
 Ver D?-4 antes de começar (localizar pesos w por draw).
 
-- [ ] **B1** Criar `scripts/compute_regret.py`.
-- [ ] **B2** Localizar pesos w por draw nos CSVs (ver D?-4).
-- [ ] **B3** Agregar R por método × célula. Acrescentar à Tabela 5 ou como Tabela 5b.
-- [ ] **B4** Verificar: TOPSIS/mm/opt tem R > 0 mesmo com Q₂=100%?
-- [ ] **B5** Reformular §7.2 e abstract: Q₂ ≠ R.
-- [ ] **B6** Definir R formalmente no manuscrito (§5.5 ou extensão de §5.1).
+- [x] **B1** FEITO (fcd4913): `scripts/compute_regret.py` criado (vectorizado, SHA-verificado com e1_weights_k200.npy).
+- [x] **B2** FEITO (fcd4913): pesos w em `results/e1/e1_weights_k200.npy`, shape (500,11), cada linha soma 1. Resolvido em D?-4.
+- [x] **B3** FEITO (fcd4913): R (SE) adicionado como 6ª coluna em tab:factorial (`@{}llrrrr@{}`). Caption actualizada.
+- [x] **B4** FEITO (fcd4913): TOPSIS/mm/opt Q2=96.6% mas R=33.3 pp; 352/500 draws com Q2=1 AND R>0 — demonstra Q2≠R.
+- [x] **B5** FEITO (fcd4913): parágrafo "Value regret." adicionado em §7.2, citando TOPSIS/mm/opt.
+- [x] **B6** FEITO (fcd4913): R definido formalmente em §5.1 após Q3 (eq:R). `\input{results/regret/regret_macros}` adicionado.
 
 ---
 

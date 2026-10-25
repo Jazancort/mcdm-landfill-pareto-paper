@@ -918,6 +918,11 @@ coded as zero: coding leeward sites as $0$ instead of $1$ would change
 $\rho_{\texttt{aspect}}$ from $\RhoAspect$ to $\RhoAspectFlipped$, and
 normalising $1-\tilde{x}$ for \textit{perm} would give $\RhoPermInverted$
 instead of $\RhoPerm$.
+We adopt the first convention (orientation after forming the norm), consistent
+with \citet{AzancortNeto2026} and the classical TOPSIS formulation in which
+cost orientation is applied on the already-normalised columns
+\citep{Hwang1981}; Supplementary Table~\ref{tab:orient_conv} lists $\rho_j$
+under both conventions for all criteria.
 Min--max and midranks are invariant to this choice: the amplitude is always
 $1$ under min--max, and rank amplitudes depend only on the distribution of
 ranks, not on which end of the scale is labelled zero.

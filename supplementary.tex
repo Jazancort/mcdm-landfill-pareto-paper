@@ -1030,3 +1030,59 @@ $|F_A \cap F_{A'}|=132$ & fainter (sorted dominance, inline) & \texttt{9c7a376} 
 \bottomrule
 \end{tabular}
 \end{table*}
+
+% =======================================================================
+% D1: Orientation convention comparison (§4.3)
+% =======================================================================
+\subsection*{Orientation convention for vector normalisation}
+\label{sec:orient_conv}
+
+Two conventions exist for cost criteria under vector normalisation.
+Convention~A (used throughout the paper): the min--max column
+$\tilde{x}_j\in[0,1]$ is normalised by its Euclidean norm, and the cost
+orientation is applied afterwards via the sign of the SAW contribution
+($1-c_j$ for $G_1\cup G_2$ criteria).
+Convention~B: the cost orientation $1-\tilde{x}_j$ is applied before
+forming the norm.
+The amplitude under Convention~B is $\rho_j^B = 1/\lVert 1-\tilde{\mathbf{x}}_j\rVert_2$
+(range of $1-\tilde{x}_j$ is always $1$ by min--max scaling).
+Under both conventions the $G_3$ benefit criteria are unchanged.
+
+Table~\ref{tab:orient_conv} lists $\rho_j$ under both conventions.
+Convention~B reduces amplitudes substantially for most $G_1\cup G_2$
+criteria because the inverted column concentrates mass near $1$
+(large $\lVert 1-\tilde{x}_j\rVert_2$ $\Rightarrow$ small $\rho_j^B$);
+the exception is \textit{wells}, whose distribution is negatively skewed.
+\textit{Perm} shows the largest discrepancy (0.583 vs.\ 0.052) because
+of its 350 tied zeros.
+
+\begin{table}[!ht]
+\centering
+\caption{Vector normalisation amplitudes $\rho_j$ under two orientation
+  conventions.
+  Convention~A (paper): orientation applied after normalisation via the
+  sign of the SAW contribution;
+  $\rho_j^A = 1/\lVert\tilde{\mathbf{x}}_j\rVert_2$.
+  Convention~B: cost orientation $1-\tilde{x}_j$ applied before forming
+  the norm; $\rho_j^B = 1/\lVert 1-\tilde{\mathbf{x}}_j\rVert_2$.
+  $G_3$ criteria are identical under both conventions.
+  Differences $|\rho_j^A - \rho_j^B| > 0.01$ are shown in \textbf{bold}.}
+\label{tab:orient_conv}
+\begin{tabular}{@{}llrrl@{}}
+\toprule
+Criterion & Group & $\rho_j^A$ & $\rho_j^B$ & Notes \\
+\midrule
+\textit{perm}      & $G_1$ & 0.583 & \textbf{0.052} & zero-inflated (350 tied zeros) \\
+\textit{slope}     & $G_1$ & 0.139 & \textbf{0.072} & \\
+\textit{roads}     & $G_1$ & 0.206 & \textbf{0.059} & \\
+\textit{rivers}    & $G_2$ & 0.265 & \textbf{0.057} & \\
+\textit{aspect}    & $G_2$ & 0.103 & \textbf{0.058} & binary ($n_1=94$ leeward) \\
+\textit{coast}     & $G_2$ & 0.131 & \textbf{0.069} & \\
+\textit{protected} & $G_2$ & 0.105 & \textbf{0.078} & \\
+\textit{wells}     & $G_2$ & 0.084 & \textbf{0.098} & negatively skewed \\
+\textit{urban}     & $G_3$ & 0.107 & 0.107 & benefit (no change) \\
+\textit{aero}      & $G_3$ & 0.088 & 0.088 & benefit (no change) \\
+\textit{cult}      & $G_3$ & 0.171 & 0.171 & benefit (no change) \\
+\bottomrule
+\end{tabular}
+\end{table}
