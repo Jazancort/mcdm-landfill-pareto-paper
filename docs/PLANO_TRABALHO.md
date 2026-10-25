@@ -337,28 +337,55 @@ O ramo S-L responde à objecção "os pesos de Fogo são específicos de Fogo". 
 - Recomendação: S-L como análise de sensibilidade, não resultado primário.
 - Pipeline deve cobrir ilha inteira (Cabral só cobre o sul).
 
-### V2: Kontos et al. 2005 (Lemnos)
+### V2: Kontos et al. 2005 (Lemnos) — PARCIALMENTE CONFIRMADO
 
-**Dado parcial confirmado** (por verificar no texto completo):
+**DOI:** 10.1016/j.wasman.2005.04.002. Atrás de paywall Elsevier — texto completo não lido.
 
-| Classe permeabilidade | Condição K | Nota |
-|---|---|---|
-| Alta | K ≥ 10⁻⁵ m/s | 2 |
-| Água salobra | — | 5 |
-| Média-baixa | 10⁻⁵ > K > 10⁻⁷ m/s | 8 |
-| Baixa | K ≤ 10⁻⁷ m/s | 10 |
+**Razoavelmente fiável (múltiplas fontes):**
+- Estrutura: exclusões booleanas → AHP → SAW escala 0-10 → clustering espacial. 9,3% da ilha fica com nota ≥ 9.
+- 4 grupos: Hidrogeológico (perm, águas subterrâneas, águas superficiais, falhas), Ambiental (ecossistemas sensíveis, coberto do solo), Social (urban, patrimônio cultural, usos do solo, visibilidade), Técnico (dist. resíduos, declive, exposição ao vento, estradas).
+- Permeabilidade por classes K (confirmado via Cabral 2012 que também usa): K ≥ 10⁻⁵ → 2; salobra → 5; 10⁻⁵ > K > 10⁻⁷ → 8; K ≤ 10⁻⁷ → 10.
 
-**Diferença importante para o artigo:** esta é uma escala de classes (0–10), não uma distância à zona de baixa permeabilidade como o perm de Fogo. Se Lemnos avançar, decidir qual das duas formas usar para a compatibilidade de critérios.
+**NÃO confirmado:** pesos AHP, buffers de exclusão específicos.
 
-- [ ] **V2-1** Confirmar se o artigo publica os pesos AHP e as regras de exclusão (buffers) em tabela.
-- [ ] **V2-2** Confirmar se os critérios sem equivalente nos 11 (visibilidade, património cultural) têm regra de omissão.
-- [ ] **V2-3** Decidir critério perm: escala de classes de Kontos ou distância à baixa permeabilidade (Fogo).
+**Viabilidade de Lemnos:**
 
-### V3: IDECV WFS de Santiago
+| Aspecto | Avaliação |
+|---|---|
+| Correspondência com os 11 critérios de Fogo | Boa: perm, rivers, wells, protected, urban, slope, roads, aspect (via exposição ao vento) |
+| Critérios sem equivalente | falhas, visibilidade, patrimônio cultural, centralidade dos resíduos |
+| Definição do perm | Classes de K (0-10) vs distância à zona impermeável (Fogo) |
+| Custo dos dados | Alto: geologia HSGME, falhas, viewshed para visibilidade |
 
-- WFS testado (`https://geoservicos-ingt.gov.cv/geoserver/carto_base/wfs`): servidor responde com página Tomcat por defeito. Pode ser bloqueio só a acessos automáticos.
-- [ ] **V3-1** Testar no QGIS: Camada → Adicionar camada WFS → esse URL → procurar `geologia_santiago`.
-- [ ] **V3-2** Se WFS bloqueado, pedir a camada a `ingt@ingt.gov.cv`.
+Com os 11 critérios e pesos de Fogo: viável. Com os critérios e pesos do próprio artigo: requer texto completo.
+
+- [ ] **V2-1** Acesso institucional (UFPA/CAPES) para descarregar o PDF e extrair: tabela de pesos AHP + CR, regras de exclusão, classes e notas, fontes dos dados.
+
+### V3: IDECV WFS — CONCLUÍDA. Camada acessível e descarregada.
+
+**Endpoint:** `https://geoservicos-ingt.gov.cv/geoserver/carto_base/wfs` — WFS 2.0.0, responde 200 OK. Email ao INGT não necessário.
+
+**Camadas disponíveis para Santiago:**
+
+| Camada | Features | Atributos | CRS | Uso no pipeline |
+|---|---|---|---|---|
+| `carto_base:geologia_santiago` | **976** | cod_form, idade, lit, grupo | EPSG:4826 | perm (regra litologia→perm a declarar) |
+| `carto_base:carta_agricola_st` | — | tipo_agric, ilha | — | áreas agrícolas |
+
+**Camadas disponíveis para Fogo (comparação):**
+- `carto_base:geologia_fogo`: 356 features, atributos: form_geolo, geologia (esquema diferente de Santiago)
+- `carto_base:carta_agricola_fg`: carta agrícola de Fogo
+
+**Ficheiro descarregado:** `05-referencia/Novos/geologia_santiago_wfs.geojson` (4105 KB)
+
+**Formações geológicas de Santiago** (24 únicas, alinhadas com as 3 unidades de Cabral 2012):
+- Quaternário (a, a dv, a e, c, d, de, dv, MV): aluviões, cones piroclásticos, dunas — MAIS permeável
+- Pliocénico-Miocénico (A1, PA, PA1, λρ, λρ1, CBm, calc, cong, dφ, φ): complexo eruptivo do Pico da Antónia, Flamengos — INTERMÉDIA
+- Ante-Miocénico médio (CA, B, cb, γ, chy, chφ, chb): complexo filoniano de base, carbonatitos, gabros — MENOS permeável (melhor para aterro)
+
+**CRS:** EPSG:4826 (West Cape Verde, UTM zone 26N). Requere reprojecção para o mesmo sistema que Fogo usa.
+
+**Pendente no PRESPEC (pré-extracção):** regra litologia→permeabilidade fixada a partir de Andrade & Barbosa (2015) ou do script de Fogo. Não abrir/usar os dados antes de fixar a regra.
 
 ---
 
