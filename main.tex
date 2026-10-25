@@ -114,8 +114,8 @@ interaction ($\AggStratumMMgrd$ to $+\AggStratumVecopt$~pp). The value of exact
 assembly depends on the normalisation: under min--max it is guaranteed for SAW
 and adds $+\AsmMMtopsis$~pp for TOPSIS; under vector normalisation it loses
 $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) in frontier
-attainment relative to greedy assembly, but achieves $\RegrDiffSAWvec$~pp
-(SAW) less value regret.
+attainment relative to greedy assembly, though at marginally lower value
+regret ($\RegrDiffSAWvec$~pp of the attainable range for SAW).
 An intervention with pre-specified predictions shows that
 between-group distortion alone never moves the portfolio off the frontier
 (Q$_2=100\%$, confirmed by Theorem~\ref{thm:groupconst}), but it
@@ -133,8 +133,7 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 \item On Fogo, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp;
   aggregation effect cell-dependent ($\AggStratumMMgrd$ to $+\AggStratumVecopt$~pp), no stable sign
 \item Under vector normalisation, exact optimisation loses $\AsmVecSAW$--$\AsmVecTOPSIS$~pp
-  in frontier attainment ($Q_2$) but achieves $\RegrDiffSAWvec$--$\RegrDiffTOPSISvec$~pp less
-  value regret ($R$); the two effects run opposite
+  in frontier attainment; its portfolios carry marginally lower value regret ($\RegrDiffSAWvec$--$\RegrDiffTOPSISvec$~pp)
 \item Score--objective coding mismatches can cut Pareto attainment from $100\%$ to $24\%$
 \end{highlights}
 
@@ -2000,7 +1999,8 @@ reaches the frontier less often than greedy
 ($Q_2 = \QtwovecOptimal\%$ against $\QtwovecGreedy\%$; SAW)
 but achieves lower regret ($R = \RegrSAWvecOpt$ against $\RegrSAWvecGrd$~pp,
 difference $\RegrDiffSAWvec$~pp, 95\%~CI
-$[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp).
+$[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp; below the $\delta=2.5$~pp
+pre-specified margin for $Q_2$ contrasts, applied here by analogy).
 The portfolios selected by exact optimisation of the distorted score,
 though they miss the frontier of~$w$ more often, are better portfolios
 under the elicited weights~$w$.
@@ -2133,7 +2133,8 @@ Section~\ref{sec:e1} isolates the component of the distortion responsible.
 Value regret ($R$, Table~\ref{tab:factorial}) corroborates it:
 under vector normalisation exact assembly achieves $\RegrSAWvecOpt$~pp regret
 against $\RegrSAWvecGrd$~pp for greedy ($\RegrDiffSAWvec$~pp less,
-95\%~CI $[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp).
+95\%~CI $[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp;
+marginally below the $\delta=2.5$~pp practical-significance margin).
 The portfolios exact optimisation selects under the distorted score
 $w^{\mathrm{eff}}$, though they miss the frontier of~$w$ more often,
 carry less value regret under~$w$.
@@ -2338,17 +2339,18 @@ assembly; (P3)~cell~B under greedy assembly performs close to min--max.
   assembly.}
 \label{tab:e1}
 \small
-\begin{tabular}{@{}l@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}r@{\hspace{4pt}}r@{}}
+\begin{tabular}{@{}l@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}r@{\hspace{4pt}}r@{\hspace{4pt}}r@{}}
 \toprule
-Cell & $\mathrm{TV}_B$ & $\mathrm{TV}_W$ & greedy & optimal & loss & $R_{\mathrm{opt}}$~(pp) \\
+Cell & $\mathrm{TV}_B$ & $\mathrm{TV}_W$ & greedy & optimal & loss & $R_{\mathrm{opt}}$ & $R_{\mathrm{grd}}$ \\
 \midrule
-M (min--max)     & 0       & 0       & $\QtwoEoneMGrd$\%  & $\QtwoEoneMOpt$\% & {---} & 0 \\
-B (between only) & \TVBvec & 0       & $\QtwoEoneBGrd$\% & $\QtwoEoneBOpt$\% & 0.0 & $\RegretEoneB{}^{*}$ \\
-W (within only)  & 0       & \TVWvec & $\QtwoEoneWGrd$\%  & $\QtwoEoneWOpt$\%  & \EoneWloss & $\RegretEoneW$ \\
-V (vector)       & \TVBvec & \TVWvec & $\QtwoEoneVGrd$\%  & $\QtwoEoneVOpt$\%  & \EoneVloss & $\RegrSAWvecOpt$ \\
+M (min--max)     & 0       & 0       & $\QtwoEoneMGrd$\%  & $\QtwoEoneMOpt$\% & {---} & 0 & $\RegrSAWmmGrd$ \\
+B (between only) & \TVBvec & 0       & $\QtwoEoneBGrd$\% & $\QtwoEoneBOpt$\% & 0.0 & $\RegretEoneB{}^{*}$ & $\RegretEoneBGrd$ \\
+W (within only)  & 0       & \TVWvec & $\QtwoEoneWGrd$\%  & $\QtwoEoneWOpt$\%  & \EoneWloss & $\RegretEoneW$ & $\RegretEoneWGrd$ \\
+V (vector)       & \TVBvec & \TVWvec & $\QtwoEoneVGrd$\%  & $\QtwoEoneVOpt$\%  & \EoneVloss & $\RegrSAWvecOpt$ & $\RegrSAWvecGrd$ \\
 \bottomrule
-\multicolumn{7}{l}{\footnotesize $^{*}$ Mean; SE~$\RegretEoneBSE$~pp; median~$\RegretEoneBMed$~pp.
-  $\RegretEoneBfracZero\%$ of draws: $R=0$ (exact reference portfolio selected).}
+\multicolumn{8}{l}{\footnotesize $R$ in percentage of attainable $V$-range; $R=0$ means $t^*_w$ selected exactly.}\\
+\multicolumn{8}{l}{\footnotesize $^{*}$ Mean (SE~$\RegretEoneBSE$~pp; median~$\RegretEoneBMed$~pp;
+  $\RegretEoneBfracZero\%$ of draws: $R=0$).}
 \end{tabular}
 \end{table}
 
@@ -2368,7 +2370,15 @@ Between-group distortion, harmless for frontier attainment on its own
 of $\RegretEoneB$~pp of value regret (median $\RegretEoneBMed$~pp,
 SE~$\RegretEoneBSE$~pp; $\RegretEoneBfracZero\%$ of draws select the
 reference portfolio exactly; see Table~\ref{tab:e1}).
-It therefore also amplifies the within-group component in value regret.
+The regret ordering across cells is $M < B < V < W$ under optimal assembly.
+B and~V agree with the $Q_2$ ordering ($Q_2$: $B > V$; $R$: $B < V$).
+W and~V disagree: W fares better than V in $Q_2$ ($64.2\%$ against $56.8\%$)
+but worse in $R$ ($\RegretEoneW$~pp against $\RegrSAWvecOpt$~pp), so
+within-group distortion that recovers some frontier attainment does so at
+a higher value cost.
+Between-group distortion therefore contributes a non-zero but smaller cost than
+within-group distortion in both metrics, and does not simply amplify the
+within-group component.
 A plausible reading, which we have not tested, is that within-group
 distortion matters in proportion to the weight its group carries in
 the score, and that vector normalisation raises the weight of $G_1$,
@@ -2379,8 +2389,14 @@ give $F_1$ roughly $2.5$ times the weight of the other groups; the score
 becomes nearly lexicographic in siting cost, greedy and optimal choices
 coincide in $62.8\%$ of draws, and the median greedy portfolio lies at
 the $0.8$th percentile of $F_1$.
+In value regret, however, the greedy rule fares worse than optimal
+($R=\RegretEoneBGrd$~pp versus $\RegretEoneB$~pp; difference
+$\RegretEoneBGrdOptDiff$~pp, 95\%~CI
+$[\RegretEoneBGrdOptDiffLo,\,\RegretEoneBGrdOptDiffHi]$~pp): landing on
+the frontier reliably through a near-lexicographic score comes at the cost
+of selecting portfolios further from the value-optimal point.
 The theorem says nothing about greedy assembly, and we do not treat
-this result as evidence for it.
+the $Q_2$ result as evidence for it.
 
 \begin{remark}[TV$_W > 0$ is not sufficient for efficiency loss]
 \label{rem:TVW}

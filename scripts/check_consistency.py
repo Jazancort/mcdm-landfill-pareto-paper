@@ -656,6 +656,15 @@ BAD_PHRASES = [
      "E1: incomplete; costs nothing in Q2 only; must add R cost (\\RegretEoneB pp mean, \\RegretEoneBMed pp median)"),
     ("harmless on its own, therefore amplifies",
      "E1: 'harmless on its own' fails in R (\\RegretEoneB pp); must qualify as 'harmless for frontier attainment'"),
+    # Old R values with wrong denominator (min over 8 cells instead of min over all T)
+    ("61.19",
+     "old R(SAW/vec/opt) with wrong denominator; correct macro is \\RegrSAWvecOpt = 5.27 pp"),
+    ("77.15",
+     "old R(SAW/vec/grd) with wrong denominator; correct macro is \\RegrSAWvecGrd = 6.63 pp"),
+    ("15.96",
+     "old R diff SAW/vec with wrong denominator; correct is \\RegrDiffSAWvec = 1.36 pp"),
+    ("$778$",
+     "old random trio baseline with wrong denominator; correct is \\RRegretRandom = 54 pp"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
