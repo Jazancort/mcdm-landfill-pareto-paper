@@ -22,7 +22,7 @@ normalised column, amplitude, distance, score, or Q2 was computed.
 
 | Item | URL / path | Date accessed | SHA-256 (LF-normalised) | What was inspected | What was NOT computed |
 |---|---|---|---|---|---|
-| `geologia_santiago_wfs.geojson` | IDECV WFS `https://geoservicos-ingt.gov.cv/geoserver/carto_base/wfs`, layer `carto_base:geologia_santiago` | 2026-10-25 | `23158bc940efbf6f9e6f4be01c88e8ca332fe8a7bf14e185cc64eb48b4becd33` | schema; 976 polygons; unique `cod_form` and `lit` values (Annex A) | any area, distance, class share, amplitude, score |
+| `geologia_santiago_wfs.geojson` | IDECV WFS `https://geoservicos-ingt.gov.cv/geoserver/carto_base/wfs`, layer `carto_base:geologia_santiago` | 2026-10-25 | `23158bc940efbf6f9e6f4be01c88e8ca332fe8a7bf14e185cc64eb48b4becd33` | schema; 976 polygons; 28 unique `cod_form` values (1 null, 27 named); unique `lit` values mapped in Annex A | any area, distance, class share, amplitude, score |
 | `carta_agricola_st_wfs.geojson` | IDECV WFS, layer `carto_base:carta_agricola_st` | 2026-10-25 | `b3b155c6db081eefe8288d2efea2337cacb30d5b1c126f54dce77524de568a47` | schema; 7 polygons; attribute `tipo_agric` | — |
 | Cabral (2012) | hdl.handle.net/10362/8627 | 2026-10-xx | — (PDF, not a data file) | full text: AHP weights (Tab. 11–16, pp. 54–55), exclusion buffers (Tab. 18–26), hydrogeological units (pp. 45–46) and B1 matrix | — |
 | Fogo source files | NSGA-II Zenodo 17704387, script L257 (`permeabili == 'Baixa'`) and L428 (aspect rule `np.where(90<=asp<=180, 0,1)`) | 2026-10-xx | — | permeability classes; aspect binary rule | — |
@@ -69,10 +69,14 @@ N_adm ≈ 700 is of order 10^7, within the 50 million trio limit (§3).
 
 ## 3. Common pipeline
 
-**Code freeze:** all scripts frozen at commit 022931e. All scores computed via
-`scoring.make_scorers()`. Pre-Monte Carlo assertion: `max|local_score - make_scorers(w)| < 1e-12`
-on 20 random weight vectors drawn with `seed=99` (different from Monte Carlo seed). Abort if any
-assert fails.
+**Code freeze:** the scoring and analysis code (mc_unified.py, compute_f8_mm_frontier.py,
+run_e1.py, compute_regret.py, scoring.py, validate_core.py) is frozen at commit 022931e.
+The Santiago-specific extraction scripts (grid generation, OSM/DEM/WFS feature extraction)
+do not yet exist; they will be written and committed in a dedicated commit before Phase 1 begins.
+That commit hash must be recorded in Phase 1 §9; no criterion value, distance, or normalised
+score may be computed before that commit. All scores computed via `scoring.make_scorers()`.
+Pre-Monte Carlo assertion: `max|local_score - make_scorers(w)| < 1e-12` on 20 random weight
+vectors drawn with `seed=99` (different from Monte Carlo seed). Abort if any assert fails.
 
 **Lock file:** scripts that compute scores or Q2 for Santiago refuse to run unless
 `corpus/PRESPEC_SANTIAGO_F1.lock` exists. This file is created only at Phase 1 commit.
@@ -145,7 +149,7 @@ better for the site).
 | aero | distance to OSM aeroway=aerodrome or helipad, benefit | OSM; Annex B |
 | cult | distance to OSM leisure=park or historic=* or amenity=*, benefit | OSM; Annex B |
 | protected | distance to WDPA protected areas; = 0 inside. Benefit. | WDPA [version]; or IDECV protected area layer if available |
-| wells | distance to OSM amenity=drinking_water or man_made=water_well, cost | OSM; Annex B. If OSM returns fewer than 20 features on Santiago → DEV-S-002: use INGRH inventory if available; if unavailable → omit, redistribute weight proportionally, run Fogo-without-wells control (§8) |
+| wells | distance to OSM amenity=drinking_water or man_made=water_well, cost | OSM; Annex B. If OSM returns fewer than 20 features on Santiago → C-2: use INGRH inventory if available; if unavailable → omit, redistribute weight proportionally, run Fogo-without-wells control (§8) |
 
 ### 4.3 Permeability rule P-F (main) and P-C (sensitivity)
 
@@ -171,7 +175,7 @@ A note on the P-F/P-C divergence will be added to the Limitations section of the
 ### 4.4 Rivers rule
 
 OSM waterway=* as primary. If OSM returns fewer than 20 waterway features on Santiago: use DEM
-flow accumulation ≥ 1 km² (same algorithm as Fogo) → DEV-S-003.
+flow accumulation ≥ 1 km² (same algorithm as Fogo) → C-3.
 
 ### 4.5 Weights and groups
 
@@ -199,15 +203,15 @@ normalisation over A' is the experimental factor.
 | Id | Criterion | Raw variable / orientation | Exclusion | Source |
 |---|---|---|---|---|
 | A1 | Built-up | distance to OSM building=* or place=*, benefit | < 500 m | OSM |
-| A2 | ZDTI | distance to ZDTI zones, benefit | < 500 m | IDECV if layer present (check GetCapabilities); else omit → DEV-S-004 (§5.4) |
+| A2 | ZDTI | distance to ZDTI zones, benefit | < 500 m | IDECV if layer present (check GetCapabilities); else omit → C-4 (§5.4) |
 | A3 | Coast | distance to coastline, benefit | < 80 m | OSM coastline |
 | A4 | Cultural heritage | distance to Cidade Velha UNESCO buffer zone, benefit | < 500 m | UNESCO WHC boundary (public shapefile) |
 | A5 | Agriculture | distance to agricultural protection zones, benefit | inside zones | IDECV `carta_agricola_st`, SHA as §0 |
 | A6 | Airport | distance to Praia International Airport (OSM aeroway=aerodrome), benefit | < 3 000 m | OSM |
 | A7 | Protected areas | distance to WDPA polygons, benefit | < 500 m | WDPA [version] |
 | B1 | Hydrogeological unit | categorical score (see §5.5); orientation benefit | recente unit → exclusion (score = 0) | IDECV `geologia_santiago`, mapping Annex A column P-C |
-| B2 | Water points | distance to OSM amenity=drinking_water or man_made=water_well, benefit | < 400 m | OSM; if < 20 features → INGRH inventory → DEV-S-005 |
-| B3 | Streams | distance to OSM waterway=*, benefit | < 20 m | OSM; if < 20 features → DEM flow acc. ≥ 1 km² → DEV-S-006 |
+| B2 | Water points | distance to OSM amenity=drinking_water or man_made=water_well, benefit | < 400 m | OSM; if < 20 features → INGRH inventory → C-5 |
+| B3 | Streams | distance to OSM waterway=*, benefit | < 20 m | OSM; if < 20 features → DEM flow acc. ≥ 1 km² → C-6 |
 | C1 | Slope | gdaldem slope (degrees), cost | > 20° excluded | Copernicus GLO-30 |
 | C2 | Aspect | v(θ) = (1 − cos(θ − 22.5°)) / 2, benefit; flat cells (undefined aspect) = 0.5 | — | Copernicus GLO-30 |
 | D1 | Main roads | distance to OSM highway=primary or highway=secondary (national network), cost | < 50 m | OSM; Annex B for exact tag rule |
@@ -232,9 +236,10 @@ B1 is a single categorical criterion with three classes (Cabral 2012, Tab. 14, p
 - Intermédia unit: score = 27.8 / 58.9 = 0.472 (ratio of class proportions in the AHP matrix)
 - Recente unit: score = 0 (excluded)
 
-The class-to-cod_form mapping follows the P-C column of T1 (Annex A). Uncertain cases
-(NC in P-C column) receive score = 0.5 (midpoint) and are flagged in the Phase 1 data quality
-report. Their combined area share is reported in Phase 1 §9.
+The class-to-cod_form mapping follows the P-C column of T1 (Annex A). NC cases receive the
+default score declared in T1 (which may be 1.000, 0.472, or 0). A sensitivity run is triggered
+for each NC cod_form with area share in A' > 2%, using the alternative score noted in T1. These
+sensitivity runs are pre-declared and do not constitute deviations.
 
 Note on B1 CI: Cabral (2012, Tab. 14) reports CI = CR = 0.000. The published matrix is not
 exactly reciprocal; the actual CI ≈ 0.004 (see Annex C). The published pairwise ratios and the
@@ -291,8 +296,8 @@ Checked in Phase 1, before any score is computed:
 1. N_adm ≥ 100
 2. Variance > 0 for every criterion on A'
 3. `validate_core` passes: frontier non-dominance and completeness
-4. B1: every polygon in A' has a non-NC P-C class (if > 5% of A' polygons are NC,
-   report as limitation but do not abandon branch)
+4. B1: every polygon in A' has a non-null P-C class. If > 5% of A' polygons are NC,
+   report area share as limitation but do not abandon branch. Apply declared defaults from T1.
 
 TV(vec) < 0.05 does not invalidate the branch; it causes S1, S2, S3, S5, S6 to be
 reported as not-tested (not as failures).
@@ -303,7 +308,7 @@ reported as not-tested (not as failures).
 
 Triggered automatically if the corresponding Santiago deviation occurs:
 
-- Wells absent from Santiago (DEV-S-002): run Fogo factorial without the wells criterion,
+- Wells absent from Santiago (C-2): run Fogo factorial without the wells criterion,
   renormalising the 10 remaining weights proportionally. Report Q2 change.
 - P-C sensitivity (not a deviation): run S-T with P-C rule after S-T main (P-F rule) results
   are sealed. No Fogo control.
@@ -330,13 +335,16 @@ or weight in §3–§6 must be logged as DEV-S-NNN with date, reason, and expect
 of effect. No prediction, threshold, or definition in §3–§6 may be changed after Phase 1
 commit [HASH_F1].
 
-Pre-declared deviations already logged:
-- DEV-S-001: Fogo grid count (pending; see §3)
-- DEV-S-002: Wells OSM < 20 features (pre-declared conditional)
-- DEV-S-003: Rivers OSM < 20 features (pre-declared conditional)
-- DEV-S-004: ZDTI absent from IDECV (pre-declared conditional)
-- DEV-S-005: Water points OSM < 20 features, S-N (pre-declared conditional)
-- DEV-S-006: Streams OSM < 20 features, S-N (pre-declared conditional)
+Pre-declared contingency rules (not deviations; responses are fully specified here):
+- C-1: Fogo grid count. If `_verify_fogo_grid.py` gives N ≠ 473: state the discrepancy; apply declared rule to Santiago unchanged (see §3).
+- C-2: Wells OSM < 20 features (S-T and S-N): use INGRH inventory; if unavailable → omit + Fogo control.
+- C-3: Rivers OSM < 20 features: use DEM flow accumulation ≥ 1 km².
+- C-4: ZDTI absent from IDECV: omit A2, redistribute weight, no Fogo control.
+- C-5: Water points OSM < 20 features, S-N: use INGRH; if unavailable → omit.
+- C-6: Streams OSM < 20 features, S-N: use DEM flow accumulation.
+- C-7: NC cod_form area share > 2% in A': trigger sensitivity run with alternative score (one step up or down; see T1 column for each case).
+
+True deviations (DEV-S-###) are unplanned departures from §3–§6 that occur during Phase 1 or later.
 
 ---
 
@@ -355,9 +363,22 @@ Source: Cabral (2012) pp. 44–46 text, cited as "Base unit", "Unidade Interméd
 explicitly named in Cabral's text are assigned to Base by group membership; this is noted in
 the "P-C source" column.
 
-Data quality note: 2 features in the IDECV layer have cod_form = null or empty string; their
-lit text describes submarine pillow lavas and tuff breccias. These features are excluded from
-the analysis and flagged in the Phase 1 data quality report.
+Data quality note: 1 entry in the IDECV layer has cod_form = null (136 features); lit text
+describes submarine pillow lavas ("Mantos submarinos, inferiores e superiores") and tuff breccias
+("Tufo Brechas"). These features are not in Serralheiro's (1976) terrestrial scheme; they are
+excluded from T1 and flagged in the Phase 1 data quality report. Their combined area share in A'
+is reported in Phase 1 §9. If > 2%, they receive P-F = NC and P-C = NC (default: Base = 1.000).
+
+Note on T1 count: the PLANO_TRABALHO V3 note listed "24 unique formations" (a typo; the same
+list contained 25 items). The T1 below has 27 named formations because: (a) the initial count
+omitted cod_form "A" (Formação da Assomada without numeric suffix); (b) the IDECV layer uses
+cod_form "CB" as a composite code combining two formations (Flamengos + Orgãos) that are also
+separately encoded as λρ, λρ1, and CBm; this composite code is a data artefact but represents
+real polygons that must be classified.
+
+† Symbol in the B1 score column denotes an NC case with a declared default classification.
+The default follows P-F class (Alta→Recente/excl., Média→Base, Baixa→Base or Intermédia as
+noted per row). A sensitivity run is triggered for each NC cod_form whose area share in A' > 2%.
 
 | cod_form | lit (IDECV, key terms) | grupo | P-F class | P-F source | P-C unit | B1 score | P-C source |
 |---|---|---|---|---|---|---|---|
@@ -374,24 +395,25 @@ the analysis and flagged in the Phase 1 data quality report.
 | a dv | Aluviões antigas e modernas depósitos de vertente (Quaternário) | — | **Alta** | As "a"; plus slope deposits | **Recente** | 0 (excl.) | As "a" |
 | a e | Aluviões e eluviões (Quaternário) | — | **Alta** | Alluvium + eluvial deposits | **Recente** | 0 (excl.) | As "a" |
 | c | Conglomerados e calcarenitos marinhos fossilíferos (Quaternário) | — | **Alta** | Marine sediments; highly porous | **Recente** | 0 (excl.) | Quaternary marine deposits = Recente |
-| calc | Calcarenitos marinhos, fossilíferos (Pliocénico-Miocénico) | — | **Alta** | Marine calcarenite; highly porous; no compact lava | **NC** | 0.5† | Not in Cabral (2012) pp. 44–46; by age and texture close to Recente but no explicit assignment. †Default mid-score used; flagged in Phase 1. |
+| calc | Calcarenitos marinhos, fossilíferos (Pliocénico-Miocénico) | — | **Alta** | Marine calcarenite; highly porous; no compact lava | **NC (default: Recente)** | 0 (excl.)† | Not in Cabral (2012) pp. 44–46. Default = Recente (same rule as "c": marine calcarenite = high permeability = excluded). Sensitivity: Intermédia (0.472). Sensitivity run only if calc area share in A' > 2%. |
 | cb | Rochas granulares (carbonatitos); Complexo eruptivo interno, antigo (Ante-Miocénico médio) | Complexo eruptivo interno, antigo | **Baixa** | Massive carbonatite intrusive rocks; compact; very low permeability | **Base** | 1.000 | Cabral (2012) p.45: formations of "Complexo eruptivo interno, antigo" = Base; cb in this group |
 | chb | Filões e chaminés piroclastos; Complexo eruptivo interno, antigo (Miocénico médio) | Complexo eruptivo interno, antigo | **NC** | Pyroclastic dykes/necks; variable; not compact lavas | **Base** | 1.000 | Part of "Complexo eruptivo interno, antigo" group = Base (Cabral 2012 p.45) |
 | chy | Filões e chaminés piroclastos; Complexo eruptivo interno, antigo (Ante-Miocénico médio) | Complexo eruptivo interno, antigo | **NC** | As chb | **Base** | 1.000 | As chb |
 | chφ | Filões e chaminés; Complexo eruptivo interno, antigo (Ante-Miocénico médio) | Complexo eruptivo interno, antigo | **NC** | Phonolitic dykes; intrusive; variable | **Base** | 1.000 | As chb |
-| cong | Conglomerados e facies terrestres (Pliocénico-Miocénico) | — | **Média** | Terrestrial conglomerates; variable consolidation; not compact lava | **NC** | 0.5† | Not explicitly listed in Cabral (2012); may be equivalent to CBm (Orgãos) but lacks explicit attribution. †Default. |
+| cong | Conglomerados e facies terrestres (Pliocénico-Miocénico) | — | **Média** | Terrestrial conglomerates; variable consolidation; not compact lava | **NC (default: Base)** | 1.000† | Not explicitly listed in Cabral (2012). Default = Base by analogy with CBm (Formação dos Orgãos = Base), which also consists of terrestrial conglomerate-breccia. Sensitivity: Intermédia (0.472). Sensitivity run only if cong area share in A' > 2%. |
 | d | Dunas (Quaternário) | — | **Alta** | Sandy dunes; very high permeability | **Recente** | 0 (excl.) | Quaternary = Recente |
 | de | Duna, eluviões (Quaternário) | — | **Alta** | Dunes + eluvial deposits | **Recente** | 0 (excl.) | As "d" |
 | dv | Depósitos de vertente (Quaternário) | — | **Média** | Slope deposits; heterogeneous; more permeable than lavas | **Recente** | 0 (excl.) | Quaternary = Recente |
-| dφ | Domas e chaminés (fonólitos e traquitos); Fonólitos e traquitos (Pliocénico-Miocénico) | Fonólitos e traquitos | **Baixa** | Phonolite domes; massive compact intrusive; very low permeability | **NC** | 0.5† | Not in Cabral (2012); younger than CBm, no explicit unit assignment. †Default. |
+| dφ | Domas e chaminés (fonólitos e traquitos); Fonólitos e traquitos (Pliocénico-Miocénico) | Fonólitos e traquitos | **Baixa** | Phonolite domes; massive compact intrusive; very low permeability | **NC (default: Base)** | 1.000† | Not in Cabral (2012). Default = Base: compact intrusive phonolite behaves like Base (same rule as cb = carbonatitos = Base). Sensitivity: Intermédia (0.472). |
 | γ | Rochas granulares (gabros feldspatóidicos, piroxenitos alcalinos, sienitos feldspatóidicos); Complexo eruptivo interno, antigo (Ante-Miocénico médio) | Complexo eruptivo interno, antigo | **Baixa** | Granular intrusive; massive, compact; very low permeability | **Base** | 1.000 | Cabral (2012) p.45: γ = gabros = Base unit |
 | λρ | Formação dos Flamengos; Mantos, piroclastos, chaminés (Miocénico médio) | — | **Baixa** | "Mantos" (lava flows); the dominant component | **Base** | 1.000 | Cabral (2012) p.45: λρ = Formação dos Flamengos = Base unit |
 | λρ1 | Formação dos Flamengos; Mantos, piroclastos, chaminés e hialoclastitos, submarinos (Miocénico médio) | — | **Baixa** | As λρ; submarine hyaloclastites = solidified lava glass, generally impermeable | **Base** | 1.000 | As λρ |
-| φ | Fase lávica pós Formação dos Orgãos (rochas traquito-fonolíticas); Mantos; Piroclastos (Pliocénico-Miocénico) | Fonólitos e traquitos | **Baixa** | "Mantos" (lava flows component); compact phonolitic/trachytic lavas | **NC** | 0.5† | Post-Orgãos, pre-PA; no explicit unit in Cabral (2012). †Default. |
+| φ | Fase lávica pós Formação dos Orgãos (rochas traquito-fonolíticas); Mantos; Piroclastos (Pliocénico-Miocénico) | Fonólitos e traquitos | **Baixa** | "Mantos" (lava flows component); compact phonolitic/trachytic lavas | **NC (default: Intermédia)** | 0.472† | Post-Orgãos, pre-PA stratigraphically. Default = Intermédia: by age position (between Base and Intermédia units) and because compact phonolite lavas are the main constituent of the PA aquifer. Sensitivity: Base (1.000). |
+| null | Mantos submarinos, inferiores e superiores (hialoclastitos); Piroclastos; Tufo Brechas (Pliocénico-Miocénico) | — | **NC** | Submarine pillow lavas + tuff breccias; not in Serralheiro (1976) terrestrial scheme | **NC (default: Base)** | 1.000† | 136 features with null cod_form. Submarine lavas are structurally compact → default Base by lithology analogy. Sensitivity: Intermédia (0.472). |
 
 Summary for distance computation (S-T, P-F main rule):
 - Baixa polygons (used in `dist_low_permeability`): CA, λρ, λρ1, CB, cb, γ, PA, PA1, A, A1, dφ, φ
-- NC polygons (excluded from Baixa zones): B, CBm, chb, chy, chφ, cong
+- NC polygons (excluded from Baixa zones, get positive distance): B, CBm, chb, chy, chφ, null
 - Média polygons: dv, cong
 - Alta polygons: MV, a, a dv, a e, c, d, de, calc
 
@@ -399,7 +421,10 @@ Summary for B1 score (S-N, P-C):
 - Base (score = 1.000): CA, λρ, λρ1, CB, CBm, B, cb, γ, chb, chy, chφ
 - Intermédia (score = 0.472): PA, PA1, A, A1
 - Recente / excluded (score = 0): MV, a, a dv, a e, c, d, de, dv
-- NC (score = 0.5, flagged): calc, cong, dφ, φ
+- NC with default Recente/excl. (score = 0†): calc
+- NC with default Base (score = 1.000†): cong, dφ
+- NC with default Intermédia (score = 0.472†): φ
+- NC null (136 features, default Base, score = 1.000†): cod_form = null
 
 ---
 
@@ -522,7 +547,10 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 
 ## Pre-commit checklist
 
-- [ ] Run `scripts/_verify_fogo_grid.py`: record N_Fogo, log DEV-S-001 if ≠ 473
+- [ ] Run `scripts/_verify_fogo_grid.py`: record N_Fogo, log C-1 if ≠ 473 (see §10)
+- [ ] Note: do NOT choose between boundary sources based on which reproduces 473.
+       Use the boundary that the original study was based on (from NSGA-II Zenodo repo); if not accessible, use IDECV island boundary and log the discrepancy as C-1.
+- [ ] Complete Annex B: copy Overpass queries from Fogo script
 - [ ] Complete Annex B: copy Overpass queries from Fogo script
 - [ ] Fill `[HASH_F0]` (this commit's hash — fill after `git commit`, before push)
 - [ ] Fill `[HASH_CODE]` = 022931e (already known; confirm unchanged)

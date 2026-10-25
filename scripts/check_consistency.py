@@ -638,6 +638,14 @@ BAD_PHRASES = [
      "C0: stale claim from buggy run; vec score loses 43.2pp, not rarely misses"),
     ("$\\FEightVecMMOptLoss/\\FEightMmVecOptLoss = 28$",
      "C0: literal 28x ratio removed; use \\FEightMmVecOptLoss/\\FEightVecMMOptLoss with correct values"),
+    # §7.4: old asymmetry text — direction reversal under greedy now stated explicitly
+    # (the 7.7x ratio was removed; 1.2x was wrong baseline; use aligned losses L1-L4)
+    ("times more costly\nto misalign than min--max scoring under optimal assembly",
+     "§7.4: 7.7x ratio removed; report aligned L1/L2/L3/L4 losses with bootstrap CIs instead"),
+    ("ratio $\\approx 1.2\\times$",
+     "§7.4: 1.2x ratio used wrong baseline (33.8pp from 100%, not 19.8pp from 86.0%); use FEightGrdMmLossVecScore=19.8 and FEightGrdVecLossMmScore=27.6"),
+    ("$\\FEightMmVecGrdLoss$~pp versus $\\FEightVecMMGrdLoss$~pp, ratio $\\approx 1.2",
+     "§7.4: stale greedy ratio; aligned loss is FEightGrdMmLossVecScore=19.8pp vs FEightGrdVecLossMmScore=27.6pp"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:

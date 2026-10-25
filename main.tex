@@ -2150,24 +2150,35 @@ Vector   & optimal & $\FEightMmVecOptQ$\% & ($\FEightMmVecOptSE$) & $\FEightVecV
 \end{tabular}
 \end{table}
 
-Under optimal assembly, moving the score from min--max to vector while keeping the
-frontier at $\mathcal{F}_{\mathrm{mm}}$ costs $\FEightMmVecOptLoss$~pp;
-moving the frontier to $\mathcal{F}_{\mathrm{vec}}$ while keeping a
-min--max score costs $\FEightVecMMOptLoss$~pp.
-The asymmetry is large: vector scoring is approximately
-$\FEightMmVecOptLoss/\FEightVecMMOptLoss \approx 7.7$ times more costly
-to misalign than min--max scoring under optimal assembly.
-Under greedy assembly the asymmetry narrows substantially
-($\FEightMmVecGrdLoss$~pp versus $\FEightVecMMGrdLoss$~pp, ratio $\approx 1.2\times$).
-The pattern is consistent with the amplitude argument: the vector score,
-with \textit{perm} inflated $\PermInflation\times$, systematically selects
-portfolios that favour low-permeability sites; these portfolios are
-often dominated under the broader, evenly-amplified min--max criterion.
-A min--max score evaluated against the concentrated vector frontier
-loses $\FEightVecMMOptLoss$~pp because the vec frontier is stricter;
-a vector score evaluated against the min--max frontier loses
-$\FEightMmVecOptLoss$~pp because perm inflation systematically misaligns
-the score from what the objectives, built on equal amplitudes, value.
+Under optimal assembly, moving the score from min--max to vector while keeping
+the frontier at $\mathcal{F}_{\mathrm{mm}}$ costs
+$\FEightOptMmLossVecScore$~pp relative to the aligned $Q_2 = 100\%$ baseline
+(95\%~CI: $[\FEightOptMmLossVecScoreLo, \FEightOptMmLossVecScoreHi]$~pp);
+the symmetric misalignment (min--max score against
+$\mathcal{F}_{\mathrm{vec}}$) costs only $\FEightOptVecLossMmScore$~pp
+($[\FEightOptVecLossMmScoreLo, \FEightOptVecLossMmScoreHi]$~pp).
+Under optimal assembly, a wrong score normalisation is substantially costlier
+than a wrong frontier normalisation.
+
+Under greedy assembly the direction reverses.
+A vector score against $\mathcal{F}_{\mathrm{mm}}$ costs
+$\FEightGrdMmLossVecScore$~pp relative to the aligned mm/mm/greedy baseline
+of $\FEightMmMMGrdQ$\%
+(95\%~CI: $[\FEightGrdMmLossVecScoreLo, \FEightGrdMmLossVecScoreHi]$~pp),
+whereas a min--max score against $\mathcal{F}_{\mathrm{vec}}$ costs
+$\FEightGrdVecLossMmScore$~pp
+($[\FEightGrdVecLossMmScoreLo, \FEightGrdVecLossMmScoreHi]$~pp).
+Under greedy assembly, a wrong frontier normalisation is the costlier error.
+
+The reversal is driven by the 100\% attainment under vec/vec/greedy
+(discussed below): the greedy heuristic recovers the SAW optimum almost perfectly
+under vector normalisation on this instance, setting a high aligned baseline,
+so a min--max score suffers a large penalty when evaluated against the
+concentrated vector frontier.
+Under optimal assembly the causal direction is reversed: perm inflation
+($\PermInflation\times$) causes the vector score to select portfolios
+that systematically favour low-permeability sites, which are often dominated
+under the broader, evenly-amplified min--max frontier.
 
 The $100\%$ attainment under vec/vec/greedy is an empirical observation.
 In \FEightVecCoinc{} of \ndraws{} draws the greedy rule returned the

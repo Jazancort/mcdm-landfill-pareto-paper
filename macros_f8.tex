@@ -39,3 +39,24 @@
 \newcommand{\FEightMmVecGrdSE}{2.115} % SE of above
 \newcommand{\FEightMmVecGrdLoss}{33.8} % 100-MmVecGrdQ
 
+
+% ── Aligned misalignment losses (paired bootstrap B=2000, seed=777) ─────────
+% Measure misalignment cost relative to the ALIGNED baseline in the same
+% assembly strategy. Source: scripts/_f8_asymmetry_bootstrap.py.
+% L1: optimal/mm-frontier  Q2(mm,mm,opt)-Q2(mm,vec,opt) = 100.0-56.8
+\newcommand{\FEightOptMmLossVecScore}{43.2}
+\newcommand{\FEightOptMmLossVecScoreLo}{38.6}
+\newcommand{\FEightOptMmLossVecScoreHi}{47.8}
+% L2: optimal/vec-frontier  Q2(vec,vec,opt)-Q2(vec,mm,opt) = 100.0-94.4
+\newcommand{\FEightOptVecLossMmScore}{5.6}
+\newcommand{\FEightOptVecLossMmScoreLo}{3.6}
+\newcommand{\FEightOptVecLossMmScoreHi}{7.6}
+% L3: greedy/mm-frontier  Q2(mm,mm,grd)-Q2(mm,vec,grd) = 86.0-66.2
+% old \FEightMmVecGrdLoss = 33.8 was measured from 100%, not from 86.0%
+\newcommand{\FEightGrdMmLossVecScore}{19.8}
+\newcommand{\FEightGrdMmLossVecScoreLo}{14.6}
+\newcommand{\FEightGrdMmLossVecScoreHi}{24.8}
+% L4: greedy/vec-frontier  Q2(vec,vec,grd)-Q2(vec,mm,grd) = 100.0-72.4
+\newcommand{\FEightGrdVecLossMmScore}{27.6}
+\newcommand{\FEightGrdVecLossMmScoreLo}{23.6}
+\newcommand{\FEightGrdVecLossMmScoreHi}{31.6}
