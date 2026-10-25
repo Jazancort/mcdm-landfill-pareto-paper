@@ -113,10 +113,17 @@ $\pm2.5$~pp ($\AggContrast$~pp, TOST $p=\TOSTp$) but conceals a significant
 interaction ($\AggStratumMMgrd$ to $+\AggStratumVecopt$~pp). The value of exact
 assembly depends on the normalisation: under min--max it is guaranteed for SAW
 and adds $+\AsmMMtopsis$~pp for TOPSIS; under vector normalisation it loses
-$\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy
-assembly. An intervention with pre-specified predictions shows that
-between-group distortion alone costs nothing, while within-group distortion
-alone costs $\EoneWloss$~pp. Separately, a criterion encoded inconsistently
+$\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) in frontier
+attainment relative to greedy assembly, but achieves $\RegrDiffSAWvec$~pp
+(SAW) less value regret.
+An intervention with pre-specified predictions shows that
+between-group distortion alone never moves the portfolio off the frontier
+(Q$_2=100\%$, confirmed by Theorem~\ref{thm:groupconst}), but it
+relocates the portfolio along the frontier at a mean cost of
+$\RegretEoneB$~pp of value regret (median $\RegretEoneBMed$~pp;
+$\RegretEoneBfracZero\%$ of draws coincide with the reference
+portfolio); within-group distortion alone reduces frontier attainment
+by $\EoneWloss$~pp. Separately, a criterion encoded inconsistently
 between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$.
 \end{abstract}
 
@@ -2325,15 +2332,17 @@ assembly; (P3)~cell~B under greedy assembly performs close to min--max.
   assembly.}
 \label{tab:e1}
 \small
-\begin{tabular}{@{}l@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}r@{}}
+\begin{tabular}{@{}l@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}c@{\hspace{3pt}}r@{\hspace{4pt}}r@{}}
 \toprule
-Cell & $\mathrm{TV}_B$ & $\mathrm{TV}_W$ & greedy & optimal & loss \\
+Cell & $\mathrm{TV}_B$ & $\mathrm{TV}_W$ & greedy & optimal & loss & $R_{\mathrm{opt}}$~(pp) \\
 \midrule
-M (min--max)     & 0       & 0       & $\QtwoEoneMGrd$\%  & $\QtwoEoneMOpt$\% & --- \\
-B (between only) & \TVBvec & 0       & $\QtwoEoneBGrd$\% & $\QtwoEoneBOpt$\% & 0.0 \\
-W (within only)  & 0       & \TVWvec & $\QtwoEoneWGrd$\%  & $\QtwoEoneWOpt$\%  & \EoneWloss \\
-V (vector)       & \TVBvec & \TVWvec & $\QtwoEoneVGrd$\%  & $\QtwoEoneVOpt$\%  & \EoneVloss \\
+M (min--max)     & 0       & 0       & $\QtwoEoneMGrd$\%  & $\QtwoEoneMOpt$\% & {---} & 0 \\
+B (between only) & \TVBvec & 0       & $\QtwoEoneBGrd$\% & $\QtwoEoneBOpt$\% & 0.0 & $\RegretEoneB{}^{*}$ \\
+W (within only)  & 0       & \TVWvec & $\QtwoEoneWGrd$\%  & $\QtwoEoneWOpt$\%  & \EoneWloss & $\RegretEoneW$ \\
+V (vector)       & \TVBvec & \TVWvec & $\QtwoEoneVGrd$\%  & $\QtwoEoneVOpt$\%  & \EoneVloss & $\RegrSAWvecOpt$ \\
 \bottomrule
+\multicolumn{7}{l}{\footnotesize $^{*}$ Mean; SE~$\RegretEoneBSE$~pp; median~$\RegretEoneBMed$~pp.
+  $\RegretEoneBfracZero\%$ of draws: $R=0$ (reference portfolio selected).}
 \end{tabular}
 \end{table}
 
@@ -2348,8 +2357,13 @@ $+\EonePtwoDiff$~pp, beyond the declared $<5$~pp threshold
 note that the interval includes values below $5$~pp,
 so the falsification rests on the point estimate exceeding the threshold,
 not on statistical certainty that the true effect exceeds $5$~pp).
-Between-group distortion, harmless on its own, therefore amplifies the
-within-group component.
+Between-group distortion, harmless for frontier attainment on its own
+($Q_2=100\%$), relocates the portfolio along the frontier at a mean cost
+of $\RegretEoneB$~pp of value regret (median $\RegretEoneBMed$~pp,
+SE~$\RegretEoneBSE$~pp; $\RegretEoneBfracZero\%$ of draws select the
+reference portfolio; $\RegretEoneBfracOverHundred\%$ exceed
+$100$~pp---see Table~\ref{tab:e1}).
+It therefore also amplifies the within-group component in value regret.
 A plausible reading, which we have not tested, is that within-group
 distortion matters in proportion to the weight its group carries in
 the score, and that vector normalisation raises the weight of $G_1$,
@@ -2502,8 +2516,10 @@ monotonically within additive aggregation (Table~\ref{tab:tvorder}).
 Within Fogo the ordering is monotone in $\mathrm{TV}$ under optimal
 assembly (Table~\ref{tab:tvorder}), but Section~\ref{sec:e1} shows that
 $\mathrm{TV}$ conflates two components with different consequences:
-between-group distortion alone costs nothing, and within-group
-distortion carries the loss on this instance
+between-group distortion alone never moves the portfolio off the frontier
+($Q_2=100\%$), but relocates it along the frontier at a mean cost of
+$\RegretEoneB$~pp of value regret (median $\RegretEoneBMed$~pp);
+within-group distortion carries the $Q_2$ loss on this instance
 (Remark~\ref{rem:TVW} qualifies the generality of this claim).
 It is also invisible: nothing in a standard TOPSIS or SAW report reveals
 that \texttt{perm} entered at $\PermInflation$ times its nominal weight.
@@ -2897,14 +2913,18 @@ Normalisation was worth $+\NormGreedyContrast$~pp under greedy assembly
 on Fogo.
 Exact assembly had no unconditional benefit on this instance: the value depends on the normalisation. SAW assembly was guaranteed under min--max (Proposition~\ref{prop:p1:stmt})
 and TOPSIS gained $+\AsmMMtopsis$~pp; under vector normalisation exact assembly
-lost $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) to greedy assembly.
+lost $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) in frontier
+attainment to greedy assembly, but achieved $\RegrDiffSAWvec$~pp (SAW)
+less value regret.
 The explanation is analytical: in additive aggregation the effective
 weight of a criterion is proportional to $w_jA_j$, and exact assembly
 is Pareto-efficient for any weights and any instance of the additive model if and only if
 amplitudes are constant within each objective group
 (Theorem~\ref{thm:groupconst}).
 A follow-up intervention with pre-specified predictions on Fogo confirmed that between-group
-distortion alone costs nothing and that within-group distortion carries
+distortion alone never moves the portfolio off the frontier
+($Q_2=100\%$) but costs $\RegretEoneB$~pp of value regret, and
+that within-group distortion carries
 most of the loss; the prediction that the two components would not
 interact was not confirmed (P2 point estimate exceeds the 5~pp threshold;
 the confidence interval includes values below it).

@@ -651,6 +651,11 @@ BAD_PHRASES = [
      "H4: incomplete; must report R counterpart (\\RegrDiffSAWvec--\\RegrDiffTOPSISvec pp less regret)"),
     ("exact assembly\nloses $\\AsmVecSAW$~pp (SAW) and $\\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy ranking.",
      "Intro §5: incomplete; must add 'but \\RegrDiffSAWvec pp (SAW) less value regret; effects run opposite'"),
+    # E1 between-group: "costs nothing" is incomplete (fails in R)
+    ("between-group distortion alone costs nothing",
+     "E1: incomplete; costs nothing in Q2 only; must add R cost (\\RegretEoneB pp mean, \\RegretEoneBMed pp median)"),
+    ("harmless on its own, therefore amplifies",
+     "E1: 'harmless on its own' fails in R (\\RegretEoneB pp); must qualify as 'harmless for frontier attainment'"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:

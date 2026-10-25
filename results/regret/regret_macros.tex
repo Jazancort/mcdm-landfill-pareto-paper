@@ -29,3 +29,16 @@
 \newcommand{\RegrDiffTOPSISvecLo}{21.0}   % CI lower
 \newcommand{\RegrDiffTOPSISvecHi}{26.3}   % CI upper
 \newcommand{\RRegretRandom}{778}           % median R of random valid trio (pp)
+
+% ── E1 regret (scripts/_compute_e1_regret.py, B=2000, seed=55) ───────────────
+% E1-M optimal: regression, must be 0.
+% E1-B optimal: bimodal — 28% of draws coincide with reference (R=0);
+%   in remaining 72% mean=100pp, median=95pp, 31% of ALL draws exceed 100pp.
+%   Overall: mean=72pp (SE=4), median=67pp.
+\newcommand{\RegretEoneB}{72}            % E1-B/opt mean R (pp)
+\newcommand{\RegretEoneBSE}{4}           % SE
+\newcommand{\RegretEoneBMed}{67}         % E1-B/opt median R (pp)
+\newcommand{\RegretEoneBGrd}{112}        % E1-B/grd mean R (pp)
+\newcommand{\RegretEoneW}{73}            % E1-W/opt mean R (pp)
+\newcommand{\RegretEoneBfracZero}{28}    % % of draws where E1-B/opt = reference
+\newcommand{\RegretEoneBfracOverHundred}{31}  % % of draws with E1-B/opt R > 100pp
