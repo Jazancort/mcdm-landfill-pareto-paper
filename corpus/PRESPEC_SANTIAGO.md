@@ -341,8 +341,11 @@ Triggered automatically if the corresponding Santiago deviation occurs:
 
 - Wells absent from Santiago (C-2): run Fogo factorial without the wells criterion,
   renormalising the 10 remaining weights proportionally. Report Q2 change.
-- P-C sensitivity (not a deviation): run S-T with P-C rule after S-T main (P-F rule) results
+- P-C sensitivity (SENS-1, always): run S-T with P-C rule after S-T main (P-F rule) results
   are sealed. No Fogo control.
+- C-9 (SENS-5, always): run the Santiago extraction pipeline on Fogo with Option A and a
+  contemporaneous OSM snapshot. Compare with df_real_data_cached.csv column-by-column.
+  Report Spearman correlation and fraction of sites with |diff| > 100 m per criterion.
 
 ---
 
@@ -377,6 +380,30 @@ Pre-declared contingency rules (not deviations; responses are fully specified he
 - C-8: OSM agriculture < 50 polygons on Santiago → use WorldCover 2021 class 40 (Cropland) for S-T cult; for S-N use `carta_agricola_st` (IDECV, already downloaded, SHA as §0).
 
 True deviations (DEV-S-###) are unplanned departures from §3–§6 that occur during Phase 1 or later.
+
+---
+
+## 11. Sensitivity runs and controls
+
+All sensitivity runs are pre-declared here. They are all **descriptive**: predictions S0–S6
+are evaluated only on the main analysis. Sensitivity results are reported in a supplementary
+table. No sensitivity run can replace the main analysis.
+
+| ID | Description | Scope | When runs |
+|---|---|---|---|
+| SENS-1 | S-T with P-C rule instead of P-F (perm criterion only) | S-T | Always; after main S-T results are sealed |
+| SENS-2 | S-T with CA, γ, cb, dφ reclassified as Baixa (a single combined run, not formation-by-formation) | S-T | Always |
+| SENS-3 | For each NC B1 cod_form (calc, cong, dφ, φ, null) with area share > 2% in A': reclassify to adjacent unit (one run per triggered formation) | S-N | If C-7 triggers; otherwise skip |
+| SENS-4 | Contingency responses: C-2 (wells), C-8 (cult WorldCover), other C-x triggered | Both | If corresponding C-x triggers |
+| SENS-5 (C-9) | Run Santiago extraction pipeline on Fogo with Option A (island-wide download) and a contemporaneous OSM snapshot; compare dist_* columns with df_real_data_cached.csv: Spearman correlation, fraction of sites with |diff| > 100 m, ρ_j(vec) actual vs published. Report in supplementary. | S-T only | Always |
+
+SENS-2 justification: classifying all four "no Fogo analog" intrusive formations as Baixa in a
+single run avoids creating four separate analyses. The result tells whether the Baixa boundary
+changes qualitatively when these formations are included.
+
+SENS-5 (C-9) also tests whether the 3 NaN values in Fogo (sites 41, 385, 429) were caused by
+the 30 km radius. Under Option A they should receive non-NaN values; if they do, the imputation
+was not neutral and should be reported.
 
 ---
 
@@ -622,8 +649,23 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
   was observed on criterion [j]; S5 condition not met. Q2 = [Q2]% reported descriptively."
 
 ### S1–S6: no-results template (branch abandoned)
-- "Branch S-[T/N] was abandoned: [N_adm < 100 / n_trios > 50M / validity check failed].
+- "Branch S-[T/N] was abandoned: [N_adm < 100 / n_trios > 50M or < 10000 / validity check failed].
   No Q2 results are reported for this branch."
+
+### S2+S6 joint outcome (Q2–R discordance replication)
+- Both confirmed (S2: greedy Q2 > optimal Q2; S6: greedy R > optimal R):
+  "Under S-[T/N] with vector normalisation, exact assembly reached the frontier
+  $\QtwovecOptimal$~pp less often than greedy assembly (S2) but achieved
+  $\RegrDiffSAWvec$~pp less value regret (S6), replicating the Q2--R discordance
+  observed in Fogo."
+- S2 confirmed, S6 not confirmed:
+  "Frontier attainment replicated (S2 confirmed); the Q2--R discordance did not replicate
+  (S6 not confirmed): exact assembly regret was [X] pp, [above/below] greedy [Y] pp."
+- S2 not confirmed, S6 confirmed:
+  "The greedy Q2 advantage did not replicate (S2 not confirmed); however, exact assembly
+  achieved [X] pp less value regret (S6 confirmed)."
+- Both not confirmed:
+  "Neither the Q2 reversal (S2) nor the regret advantage (S6) replicated under S-[T/N]."
 
 ---
 
