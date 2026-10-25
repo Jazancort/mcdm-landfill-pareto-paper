@@ -55,13 +55,11 @@ def main():
     boundary = gpd.read_file(BOUNDARY_PATH)
     print(f"  CRS: {boundary.crs}, features: {len(boundary)}")
 
-    if boundary.crs is None or boundary.crs.to_epsg() == 4326:
-        boundary_proj = boundary.to_crs("EPSG:4826")
-    elif boundary.crs.to_epsg() == 4826:
-        boundary_proj = boundary
-    else:
-        boundary_proj = boundary.to_crs("EPSG:4826")
-        print(f"  Reprojected to EPSG:4826 from {boundary.crs}")
+    # CRS must match mcdm_experiment.py: EPSG:32626 (WGS 84 / UTM Zone 26N)
+    # for Fogo (approximately 24.0-24.4 W), as declared in PRESPEC_SANTIAGO §3.
+    # Using EPSG:4826 (Cape Verde Lambert) gives 475, not 473.
+    boundary_proj = boundary.to_crs("EPSG:32626")
+    print(f"  Reprojected to EPSG:32626 (UTM Zone 26N, per PRESPEC §3)")
 
     island = boundary_proj.geometry.union_all()
     grid_m = GRID_SIZE_KM * 1000.0

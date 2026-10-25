@@ -44,7 +44,9 @@ results/fourthcell_consistent.csv
 results/wp3_mc_fixed_raw.csv
 new_refs_draft.bib
 
-# Editor / OS
+# Grid results: D_km.npy is reproducible from candidates.csv
+results/grid/**/*.npy
+
 docs/session-log.md
 docs/estado-atual.md
 .DS_Store

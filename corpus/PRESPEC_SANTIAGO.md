@@ -4,7 +4,7 @@
 Status:       DRAFT — not yet committed
 Immutability: starts at git tag `prespec-santiago-f0` (not at any specific commit)
 Phase 0 hash: [HASH_F0]   (fill in TASKS.md after the tag is created)
-Code hash:    022931e     (scoring algorithm frozen)
+Code hash:    94b5baf     (includes new R denominator from 5da02ab; scoring algorithm frozen at 022931e)
 Written:      2026-10-xx
 ```
 
@@ -27,6 +27,8 @@ normalised column, amplitude, distance, score, or Q2 was computed.
 | `carta_agricola_st_wfs.geojson` | IDECV WFS, layer `carto_base:carta_agricola_st` | 2026-10-25 | `b3b155c6db081eefe8288d2efea2337cacb30d5b1c126f54dce77524de568a47` | schema; 7 polygons; attribute `tipo_agric` | — |
 | Cabral (2012) | hdl.handle.net/10362/8627 | 2026-10-xx | — (PDF, not a data file) | full text: AHP weights (Tab. 11–16, pp. 54–55), exclusion buffers (Tab. 18–26), hydrogeological units (pp. 45–46) and B1 matrix | — |
 | Fogo source files | NSGA-II Zenodo 17704387, script L257 (`permeabili == 'Baixa'`) and L428 (aspect rule `np.where(90<=asp<=180, 0,1)`) | 2026-10-xx | — | permeability classes; aspect binary rule | — |
+| `fogo_boundary.geojson` | IDECV WFS, layer `divisao_admin:ilha`, filtered to nom_ilha='FOGO'; saved to `05-referencia/fogo_boundary.geojson` | 2026-10-25 | `22680f5bcfdad0266eda35a889f78240f9d0187ec61b4cc6b99e31d976b00d17` | island polygon only; used in PRE-A grid validation | no criterion values |
+| IDECV WFS GetCapabilities | `https://geoservicos-ingt.gov.cv/geoserver/ows?service=WFS&version=2.0.0&request=GetCapabilities` | 2026-10-25 | — (XML metadata) | layer names and workspaces; confirmed presence of `areas_especiais:zdti`, `areas_especiais:area_protegida`, `divisao_admin:concelho`, `divisao_admin:ilha`; total 103 feature types | no geometry or attribute data downloaded |
 
 No Santiago criterion value, normalised column, frontier, or Q2 has been computed before this commit.
 
@@ -88,12 +90,20 @@ drawn with `seed=99`. Abort if any assert fails.
 **Lock file:** scripts that compute scores or Q2 for Santiago refuse to run unless
 `corpus/PRESPEC_SANTIAGO_F1.lock` exists. This file is created only at Phase 1 commit.
 
-**Grid:** 1 km × 1 km cells; cells with less than 50% land coverage discarded; candidate = centroid.
+**Grid:** 1 km × 1 km cells; cells with less than 50% land coverage discarded; candidate = centroid of the full cell (not centroid of the land intersection).
+
+Grid conventions (confirmed from `scripts/_verify_fogo_grid.py` and `scripts/santiago_grid.py`):
+- `origin = bbox`: grid starts at the exact bounding-box lower-left corner of the island polygon (`np.arange(minx, maxx, spacing)`).
+- `centroid = cell`: candidate point is the geometric midpoint of the 1 km × 1 km cell (`x + 500, y + 500`), not the centroid of the land intersection.
+- `land_frac = 0.5`: cell is included iff its land intersection covers at least 50% of the cell area.
+
+PRE-A result (2026-10-25): `scripts/_verify_fogo_grid.py` with `05-referencia/fogo_boundary.geojson` (IDECV `divisao_admin:ilha`, EPSG:32626) gives N_Fogo = 473. PASS. No DEV-S-001 needed. Confirmed by `santiago_grid.py --mode fogo-check` (see `results/grid/fogo_check/grid_report.json`).
+
+Note: the `_verify_fogo_grid.py` script originally used EPSG:4826 (Cape Verde Lambert), which gives N = 475. The declared CRS (EPSG:32626) gives exactly 473. The 2-cell discrepancy is a CRS artefact, not a boundary difference; both the IDECV `divisao_admin:ilha` and the dissolved `geologia_fogo.shp` give the same result with the same CRS.
 
 Boundary source:
-- S-T: Santiago island boundary from [SOURCE — to fill before commit: IDECV layer or OSM coastline,
-  version/date].
-- S-N: Southern Region boundary (Praia, São Domingos, Ribeira Grande) from [SOURCE].
+- S-T: Santiago island boundary from IDECV `divisao_admin:ilha`, filtered to nom_ilha='SANTIAGO'. CRS: EPSG:4326 → reprojected to EPSG:32627 for distance computations. Version: IDECV WFS as accessed 2026-10-25.
+- S-N: Southern Region boundary from IDECV `divisao_admin:concelho`, filtered to concelhos: Praia, São Domingos, Ribeira Grande de Santiago. CRS: EPSG:4326 → reprojected to EPSG:32627.
 
 **CRS:** EPSG:32627 (WGS 84 / UTM Zone 27N, central meridian 21°W) for all spatial distance
 computations. Santiago (approximately 23.4°–23.8°W) lies within UTM Zone 27, whereas Fogo
@@ -159,7 +169,7 @@ better for the site).
 | roads | dist_roads (m), query: Annex B L275–277 | **COST**: min distance = best. (`COST = {'roads', ...}`) | OSM elements downloaded for the whole island boundary (Option A: no radius limit); distance computed in EPSG:32627. Note on Fogo: Fogo script uses `dist=30000` (30 km radius per query), which covered Fogo (≈13 km radius). Santiago (≈55 km N–S) requires Option A to avoid NaN for candidates far from sparse features. | OSM snapshot [date — Phase 1] |
 | rivers | dist_streams (m), query: Annex B L274 | **INV**: max distance = best. (`INV = {'rivers', ...}`) | OSM, Option A. Tags: waterway=[stream, river, canal] (Annex B L274; no ditch/drain in Fogo original). | OSM snapshot [date — Phase 1] |
 | coast | dist_coastline (m), query: Annex B L282 | **INV**: max distance = best. | OSM, Option A. | OSM snapshot [date — Phase 1] |
-| protected | dist_protected_area (m) | **INV**: max distance = best; = 0 inside → exclusion. | Source TBD: IDECV protected area layer if available; else WDPA [version]. Same rule as Fogo (`area_protegida.shp`, island-wide shapefile). | [to fill before commit] |
+| protected | dist_protected_area (m) | **INV**: max distance = best; = 0 inside → exclusion. | Source: IDECV `areas_especiais:area_protegida` (confirmed present in GetCapabilities 2026-10-25); this replaces WDPA as primary source. If the IDECV layer has fewer than 5 polygons on Santiago → fall back to WDPA [version to fill at extraction time]. Same rule as Fogo (`area_protegida.shp`, island-wide shapefile). | IDECV `areas_especiais:area_protegida` [date — Phase 1] |
 | wells | dist_wells (m), query: Annex B L278–280 | **INV**: max distance = best. (`INV = {'wells', ...}`) | OSM, Option A. C-2 applies if < 20 features on Santiago. | OSM snapshot [date — Phase 1] |
 | urban | dist_urban_core (m), query: Annex B L272 | **BENEFIT**: max distance = best. | OSM, Option A. | OSM snapshot [date — Phase 1] |
 | aero | dist_aerodrome (m), query: Annex B L273 | **BENEFIT**: max distance = best. Note: only features within Santiago island; aerodrome on Maio island excluded. | OSM, Option A. | OSM snapshot [date — Phase 1] |
@@ -678,15 +688,16 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 
 ## Pre-commit checklist
 
-- [ ] Run `scripts/_verify_fogo_grid.py`: record N_Fogo, log C-1 if ≠ 473 (see §10)
+- [x] Run `scripts/_verify_fogo_grid.py`: N_Fogo = 473, PASS. No DEV-S-001 needed. (2026-10-25; boundary: IDECV `divisao_admin:ilha`; CRS fix: EPSG:32626 not 4826; grid_report in `results/grid/fogo_check/`)
 - [ ] Note: do NOT choose between boundary sources based on which reproduces 473.
        Use the boundary that the original study was based on (from NSGA-II Zenodo repo); if not accessible, use IDECV island boundary and log the discrepancy as C-1.
 - [ ] Complete Annex B: copy Overpass queries from Fogo script
 - [ ] Fill `[HASH_F0]` (this commit's hash — fill after `git commit`, before push)
-- [ ] Fill `[HASH_CODE]` = 022931e (already known; confirm unchanged)
-- [ ] Fill boundary source and version for S-T and S-N
+- [x] Fill `[HASH_CODE]` = 94b5baf (includes new R denominator; scoring algorithm frozen at 022931e)
+- [x] Fill boundary source and version for S-T: IDECV `divisao_admin:ilha`, nom_ilha='SANTIAGO', EPSG:32627
+- [x] Fill boundary source and version for S-N: IDECV `divisao_admin:concelho`, 3 concelhos, EPSG:32627
 - [ ] Fill OSM snapshot date (for Phase 1; note that at Phase 0 no OSM data has been downloaded)
-- [ ] Fill WDPA version
-- [ ] Confirm ZDTI layer presence/absence in IDECV GetCapabilities
-- [ ] Confirm D2 source (Praia urban limit)
+- [x] Area protegida source: IDECV `areas_especiais:area_protegida` (confirmed 2026-10-25; replaces WDPA as primary)
+- [x] Confirm ZDTI layer presence/absence in IDECV GetCapabilities: PRESENT (`areas_especiais:zdti`). C-4 NOT triggered. (2026-10-25)
+- [ ] Confirm D2 source (Praia urban limit): IDECV `divisao_admin:cidade` or OSM place=city for Praia [to fill at Phase 0 commit]
 - [ ] check_consistency.py exit 0 after adding any PRESPEC-related BAD_PHRASE
