@@ -209,66 +209,140 @@ A frase correcta é "the seven fully continuous criteria gain ≈12%" (não "all
 
 ---
 
-## PRIORIDADE 4 — Santiago (segunda instância, obrigatória para 9/10)
+## PRIORIDADE 4 — Santiago + Instâncias adicionais
 
-### Decisões necessárias (responder antes de escrever o PRESPEC)
+> **Ressalva:** os dados abaixo vêm de resumos de pesquisa, não de textos completos. Pesos, critérios e camadas têm de ser confirmados nos documentos originais com DOI antes de entrarem no PRESPEC.
 
-**Decisão S-D1:** Qual o papel do Santiago no artigo?
-- Papel decidido: replicação completa do factorial + E1 (protocolo idêntico ao Fogo). "Confirmar" substituído por "Testar" em todas as previsões.
-- Posição no artigo: §7.10, paralelo ao §7.9 (E1).
+---
 
-**Decisão S-D2:** Previsões S0–S6 como base — aceites. Ramo S-L (pesos locais Cabral 2013) adicionado.
+### Descoberta sobre o pipeline de Fogo (pré-requisito para Santiago)
 
-| ID | Previsão | Tipo |
+**Repositório de origem:** GitHub `NSGA2-GIS-Landfill-Optimization-Cape-Verde`, dados no Zenodo 17704387 (CC-BY-4.0).
+
+| Item | Resultado |
+|---|---|
+| Como os candidatos foram gerados | Grelha 1 km × 1 km, recortada pela ilha, só células com ≥50% de terra. Candidatos = centróides. É esta a regra a replicar. |
+| 524 vs 473 discrepância | `criteria_data_for_optimization_524-3.csv` tem 524 sítios; Zenodo e artigo falam em 473. Há um passo de triagem não documentado. Resolver antes de replicar a grelha. |
+| Origem do perm | Camada geológica com permeabilidade calculada (`geologia_com_permeabilidade_calculada.shp`). Não é SoilGrids. A regra litologia→permeabilidade vem de Andrade & Barbosa (2015) ou do script. |
+| Origem dos wells | OSM, consulta automática, igual a roads/rivers/urban/aero/cult/coast. |
+| Pipeline automático | O código regenera grelha, filtro de terra e consultas OSM quando os CSV não existem. Pode correr sobre Santiago directamente. |
+
+**Consequências para o plano:**
+- Omitir os wells de Santiago não se justifica: em Fogo também vieram do OSM. Omitir cria confundimento entre conjunto de critérios e ilha.
+- O perm de Santiago é o mesmo critério de Fogo se usar a mesma regra geológica (não SoilGrids).
+
+- [ ] **PRE-1** Resolver a diferença 524/473: ler o script de grelha e identificar o passo que vai de 524 para 473. Documentar no PRESPEC e verificar se há implicações para o próprio artigo de Fogo.
+- [ ] **PRE-2** Extrair a regra litologia→permeabilidade de Andrade & Barbosa (2015) ou do script que criou `geologia_com_permeabilidade_calculada.shp`. Fixar no PRESPEC antes de abrir a camada de Santiago.
+
+---
+
+### Regra de selecção das instâncias (escrever antes de tudo)
+
+Para afastar a crítica de ter escolhido as ilhas a dedo:
+
+> "Ilhas com um estudo de localização de aterros por AHP publicado, geologia digital aberta e área entre 300 e 1000 km²."
+
+Santiago (~991 km²) e Lemnos (~477 km²) cumprem. Maurícia (Ramjeawon & Beerachee 2008) fica de fora por ter só 4 candidatos, insuficientes para portfolio com separação mínima. Regra declarada; instâncias decorrem dela.
+
+---
+
+### Santiago — Fontes confirmadas
+
+**perm:**
+- Plano A (principal): Carta Geológica de Santiago (Serralheiro et al. 1977, 1:100 000), vectorizada pelo INGT. Acesso via IDECV (`idecv.gov.cv`), camada `carto_base:geologia_santiago`, WMS/WFS. Se WFS bloqueado: `ingt@ingt.gov.cv`.
+- Plano B (sensibilidade): SoilGrids 250m.
+- Três unidades hidrogeológicas conhecidas: complexo eruptivo interno (quase impermeável), aquífero principal (pillow lavas/basaltos), cones piroclásticos (muito permeável). Confirmar transmissividade na literatura INGRH.
+
+**wells:**
+- Primário: OSM, mesma consulta de Fogo.
+- Sensibilidade 1: Inventário de furos e poços do INGRH por concelho.
+- Sensibilidade 2: USGS Heilweil et al. (2009), *Hydrogeology Journal*, DOI 10.1007/s10040-009-0434-2. Coordenadas nas tabelas suplementares. Por verificar.
+- Regra PRESPEC: "se OSM tiver ≥ X poços, usa OSM; caso contrário, INGRH como desvio declarado."
+
+**Pesos — dois ramos:**
+
+| Ramo | Fonte | Estado |
 |---|---|---|
-| S0 | SAW/mm/opt=100% e E1-B=100% | regressão (não evidência) |
-| S1 | Q2(mm)−Q2(vec)>0 em greedy, IC exclui 0, se TV(vec)>0,05 | replicação destaque |
-| S2 | óptima−greedy<0 para SAW/vec, se TV_W>0,05 | replicação inversão |
-| S3 | E1-W<100% e E1-V<100%; \|W−V\|<5 pp | protocolo E1 |
-| S4 | Agregação: sem previsão de sinal; reportar por célula | declarado descritivo |
-| S5 | Se nenhum critério tiver fracção zeros≥0,5: Q2(SAW/vec/opt,Santiago)>56,8% | previsão arriscada ligada ao E6 |
-| S6 | R(vec,opt)>R(mm,opt) em SAW | regret |
-| S-L | Com pesos locais (Cabral 2013): reportar TV e Q2; sem previsão de sinal vs S-T | ramo de sensibilidade |
+| S-T (transferidos) | Pesos de Fogo (AHP, Andrade 2015) | Imediato; isola efeito da distribuição dos dados |
+| S-L (locais) | Cabral (2012/2013), dissertação FCSH/Universidade Nova de Lisboa: AHP para aterro na região sul de Santiago. Cobre hidrografia, uso do solo, solos, acessibilidade e declive. | **Por verificar:** extrair tabela de pesos do texto original; confirmar mapeamento para os 11 critérios |
+| (referência adicional) | Tavares, Zsigraiová & Semiao (2011), *Waste Management* 31(9-10), DOI 10.1016/j.wasman.2011.04.013. AHP para incineradora em Santiago: socioeconómico 48%, técnico 41%, ambiental 11%. | Outro tipo de infra-estrutura; útil só se Cabral falhar |
+
+O ramo S-L responde à objecção "os pesos de Fogo são específicos de Fogo". Se o mapeamento entre os critérios de Cabral e os 11 for forçado, S-L cai e fica só S-T — decidir ao ler a tabela original.
+
+---
+
+### Lemnos — Terceira instância (opcional, alto esforço)
+
+**Estudo de base:** Kontos, Komilis & Halvadakis (2005), *Waste Management* 25(8), 818–832. DOI: 10.1016/j.wasman.2005.04.002.
+
+**Por que é um bom candidato:**
+- Área ≈ 477 km² (Fogo: 476 km²). Mesmo tamanho, enumeração exacta continua viável.
+- Pesos AHP publicados para aterro, com SAW. Mesmo modelo de valor.
+- Critérios sobreponíveis a Fogo: permeabilidade, águas superficiais, ecossistemas sensíveis, áreas urbanas, património cultural, uso do solo, morfologia, orientação face ao vento (≈ aspect).
+- Dados europeus abertos: Copernicus DEM GLO-30 (declive/aspect), CORINE/ESA WorldCover (uso do solo), Natura 2000/WDPA (áreas protegidas), OSM (estradas/etc.), mapas geológicos IGME/HSGME.
+
+**Por verificar:**
+- [ ] Confirmar se o artigo publica os pesos e as regras de exclusão em tabela.
+- [ ] Confirmar se a geologia de Lemnos pode ser reconstruída com resolução suficiente.
+- [ ] Identificar os critérios de Kontos sem equivalente nos 11 (visibilidade, património) e decidir regra de omissão.
+
+**Dois ramos de pesos:** L-T (transferidos de Fogo) e L-K (locais Kontos 2005).
+
+**Recomendação:** preparar Lemnos só se Santiago correr bem e houver tempo. Duas instâncias reais bem construídas valem mais do que três com dados frágeis.
+
+---
+
+### Três verificações imediatas (antes do PRESPEC)
+
+- [ ] **V1** Ler a dissertação de Cabral (2013) e extrair tabela de pesos e critérios. Decide se ramo S-L é viável. **Fazer primeiro.**
+- [ ] **V2** Confirmar se Kontos et al. (2005) publica pesos e regras de exclusão em tabela. Decide viabilidade de Lemnos.
+- [ ] **V3** Confirmar se a camada IDECV de geologia de Santiago pode ser exportada via WFS ou precisa de pedido ao INGT.
+
+---
+
+### Decisões confirmadas
+
+| Item | Decisão |
+|---|---|
+| S-D1: papel do Santiago | Replicação completa factorial + E1. §7.10, protocolo idêntico ao Fogo. "Confirmar" → "Testar". |
+| S-D2: previsões base | S0–S6 + S-L aceites. Ver tabela acima. |
+| Wells | Não omitir. OSM principal; INGRH como sensibilidade se necessário. |
+| perm principal | Geologia IDECV (mesma abordagem de Fogo), não SoilGrids. |
+
+---
 
 ### PRESPEC — Fase 0 (commitar ANTES de extrair qualquer dado)
 
-- [ ] **S-F0-1** Definir fontes, versões e datas de acesso para cada critério:
-  - **perm** — Plano A: carta geológica de Santiago (IDECV/INGT, `carto_base:geologia_santiago`), mesma regra litologia→permeabilidade de Fogo (`geologia_com_permeabilidade_calculada.shp`). Plano B: SoilGrids 250m, só como sensibilidade.
-  - **wells** — OSM, mesma consulta de Fogo. Renormalização e controlo "Fogo sem wells" só se a regra falhar.
-  - **rivers** — DEM, limiar de acumulação de fluxo **fixado aqui** antes de extrair dados.
-  - **aspect** — leeward definido como [90°, 180°] (convenção herdada de Fogo, não afirmação física sobre os alísios de Santiago — **declarar explicitamente**).
-- [ ] **S-F0-2** Grelha: 1 km × 1 km com ≥50% de terra (regra do repositório de Fogo). Resolver a diferença 524/473 entre ficheiros do GitHub e o artigo antes de definir a grelha.
-- [ ] **S-F0-3** Regra de selecção do espaçamento: mesmo de Fogo; aumentar 0,25 km até n_trios < limite fixado agora. Medir só com geometria (sem critérios): `n_trios = int(np.trace(Av @ Av @ Av)) // 6`.
-- [ ] **S-F0-4** Pesos: ramo S-T = transferidos de Fogo; ramo S-L = pesos locais Cabral 2013 (a confirmar na tabela original, região sul de Santiago). Renormalizar se algum critério for ausente.
-- [ ] **S-F0-5** Commitar o código de análise (freeze do commit hash do scoring).
-- [ ] **S-F0-6** Escrever previsões S0–S6 como regras condicionais em função de (TV_B, TV_W, m_eff, fracção de zeros). Cada previsão tem: regra de decisão + frase para o artigo + cenário de falha.
-- [ ] **S-F0-7** Definir critérios de validade: instância inválida se < X sítios admissíveis ou n_trios < Y.
-- [ ] **S-F0-8** Frases para cada resultado possível (aprovação, falha, inconclusivo).
-- [ ] **S-F0-9** Instância opcional: Lemnos (Kontos et al. 2005) como terceira candidata — decidir inclusão aqui.
-- [ ] **S-F0-10** Dois controlos em Fogo: (a) Fogo sem wells (pesos renormalizados); (b) Fogo com o mesmo substituto do perm. Declarar que servem para isolar o efeito da instância vs o conjunto de critérios.
-- [ ] **S-F0-COMMIT** `git commit -m "feat: PRESPEC_SANTIAGO.md Fase 0"` — **IMUTÁVEL após push**.
+- [ ] **S-F0-1** Declarar regra de selecção das instâncias (ver acima).
+- [ ] **S-F0-2** Definir fontes, versões e datas de acesso para cada critério (perm IDECV, wells OSM, rivers DEM com limiar fixado aqui, aspect [90°,180°] como convenção herdada).
+- [ ] **S-F0-3** Grelha: 1 km × 1 km, ≥50% terra (regra de Fogo, após resolução da diferença 524/473). Contar trios só com geometria antes de extrair critérios.
+- [ ] **S-F0-4** Pesos: dois ramos S-T e S-L. Mapeamento dos critérios de Cabral declarado aqui; critérios sem correspondência com regra de redistribuição.
+- [ ] **S-F0-5** Regra de contagem mínima de wells do OSM.
+- [ ] **S-F0-6** Commitar o código de análise (freeze do commit hash do scoring).
+- [ ] **S-F0-7** Escrever previsões S0–S6 como regras condicionais em função de (TV_B, TV_W, m_eff, fracção de zeros). Cada previsão: regra + frase para artigo + cenário de falha.
+- [ ] **S-F0-8** Dois controlos em Fogo: (a) Fogo sem wells, pesos renormalizados; (b) Fogo com o substituto do perm de Santiago. Isolam efeito da instância vs critérios.
+- [ ] **S-F0-9** Declarar que resultados serão reportados seja qual for a direcção.
+- [ ] **S-F0-COMMIT** — **IMUTÁVEL após push**.
 
 ### PRESPEC — Fase 1 (após extracção, antes de qualquer score)
 
-- [ ] **S-F1-1** Hash dos dados extraídos.
-- [ ] **S-F1-2** Calcular amplitudes, TV, TV_B, TV_W, m_eff e fracção de zeros por critério.
-- [ ] **S-F1-3** Verificar critérios de validade da Fase 0.
-- [ ] **S-F1-4** Resolver previsões condicionais (S5 especialmente: verificar fracção de zeros).
-- [ ] **S-F1-COMMIT** `git commit -m "feat: PRESPEC_SANTIAGO.md Fase 1 — post-extraction"` — **IMUTÁVEL**.
+- [ ] **S-F1-1** Hash dos dados; amplitudes, TV, TV_B, TV_W, m_eff, fracção de zeros.
+- [ ] **S-F1-2** Verificar critérios de validade e resolver previsões condicionais (S5 especialmente).
+- [ ] **S-F1-COMMIT** — **IMUTÁVEL após push**.
 
-### Pipeline Santiago (após PRESPEC Fase 1)
+### Pipeline Santiago (após Fase 1)
 
 - [ ] **S-P1** `santiago_constants.py` equivalente ao `fogo_constants.py`.
 - [ ] **S-P2** Fronteira, amplitudes e factorial (scripts da Athena, mesma estrutura).
 - [ ] **S-P3** E1 equivalente (TV_W prediction test).
 - [ ] **S-P4** Regret R para as 8 células.
-- [ ] **S-P5** Dois controlos em Fogo (sem wells, com substituto perm).
+- [ ] **S-P5** Dois controlos em Fogo (ver S-F0-8).
 - [ ] **S-P6** Reportar como §7.10 com protocolo análogo ao §7.9 (E1).
 - [ ] **S-P7** Actualizar frase de generalização na §8 e Conclusão.
 
-**Guardrail no código:** os scripts que calculam scores, portfolios ou Q2 para Santiago devem recusar correr se o commit da Fase 1 não existir. Implementar como `assert (ROOT / "PRESPEC_SANTIAGO_F1.lock").exists()`.
+**Guardrail:** scripts de score Santiago recusam correr sem `PRESPEC_SANTIAGO_F1.lock`.
 
-**Skill/agent:** `doc-coauthoring` para o PRESPEC; `research-coder` agent para o pipeline Athena; `feature-dev` skill para a integração no paper.
+**Skill/agent:** `doc-coauthoring` para o PRESPEC; `research-coder` agent para o pipeline Athena; `feature-dev` skill para integração no paper.
 
 ---
 
