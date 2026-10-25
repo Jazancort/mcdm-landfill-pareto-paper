@@ -70,13 +70,12 @@ Critério "≈" não é aceitável. Qualquer desvio indica um bug remanescente.
 
 **Acções C0-2 a C0-6** (só executar após passagem de TODOS os critérios acima):
 
-- [x] **C0-fix APLICADO** (commit f52987c): `scoring.make_scorers()` substituiu a reimplementação bugada.
-- [ ] **C0-1** RUNNING na Athena (tmux f8mm, `/tmp/f8mm_run.log`). Espera ~45 min.
-- [ ] **C0-2** `MCDM_DATA_DIR=.../scripts uv run python scripts/generate_macros_f8.py` na Athena; scp macros_f8.tex para local.
-- [ ] **C0-3** Actualizar §7.4: substituir "assimetria de 28×", "0,2 pp" e "99,8%" pelos correctos. Nova assimetria: óptima mm→vec = 5,6 pp, vec→mm = 43,2 pp; greedy mm→vec = 27,6 pp, vec→mm = 33,8 pp.
-- [ ] **C0-4** Remover 99,8%/99,6%/0,2 pp/28× de main.tex, suplemento, highlights e comentários de macros. Adicionar ao BAD_PHRASES.
-- [ ] **C0-5** Adicionar invariante ao check_consistency: `\FEightVecMmOptQ == \QtwovecOptimal` (56,8%) e `\FEightVecMmGrdQ == \QtwovecGreedy` (66,2%).
-- [ ] **C0-6** Commitar + push.
+- [x] **C0-1** CONCLUÍDA (ebb74c9). Resultados: mm/mm/opt=100%, mm/mm/grd=86%, mm/vec/opt=**56,8%** (284/500, exacto), mm/vec/grd=**66,2%**. Todos os critérios de aceitação passados. H1 descartada.
+- [x] **C0-2** CONCLUÍDA: macros_f8.tex regenerado na Athena, scp para local. `\FEightMmVecOptQ{56.8}`, `\FEightMmVecGrdQ{66.2}`.
+- [x] **C0-3** CONCLUÍDA: §7.4 actualizada — "assimetria de 28×" removida; nova assimetria 7,7× (vec scoring mais vulnerável); causalidade invertida corrigida.
+- [x] **C0-4** CONCLUÍDA: BAD_PHRASES adicionados para "= 28$ times", "rarely misses", "VecMMOptLoss/FEightMmVecOptLoss = 28".
+- [x] **C0-5** CONCLUÍDA: invariante `\FEightMmVecOptQ == \QtwovecOptimal` (56,8%) e `\FEightMmVecGrdQ == \QtwovecGreedy` (66,2%) em check_consistency. Secção "C0 invariant" aparece no log.
+- [x] **C0-6** CONCLUÍDO: commit ebb74c9 + push.
 
 **Auditoria anti-reimplementação** (junto com C0-6):
 - [ ] Correr `test_no_local_scorers.py` (ver §6).
@@ -292,11 +291,44 @@ O ramo S-L responde à objecção "os pesos de Fogo são específicos de Fogo". 
 
 ---
 
-### Três verificações imediatas (antes do PRESPEC)
+### V1: Cabral 2012 (não 2013)
 
-- [ ] **V1** Ler a dissertação de Cabral (2013) e extrair tabela de pesos e critérios. Decide se ramo S-L é viável. **Fazer primeiro.**
-- [ ] **V2** Confirmar se Kontos et al. (2005) publica pesos e regras de exclusão em tabela. Decide viabilidade de Lemnos.
-- [ ] **V3** Confirmar se a camada IDECV de geologia de Santiago pode ser exportada via WFS ou precisa de pedido ao INGT.
+**Metadados confirmados:**
+- Título: *Análise multicritério em SIG para localização de aterros sanitários. O caso da região sul da Ilha de Santiago, Cabo Verde*
+- Autor: Adilson Vaz Cabral
+- Ano: **2012** (não 2013)
+- Grau: Mestrado em Gestão do Território, especialização em Detecção Remota e SIG, FCSH, Universidade Nova de Lisboa
+- Handle: http://hdl.handle.net/10362/8627
+- **Acesso bloqueado** (protecção anti-robô do repositório RUN). PDF deve ser descarregado manualmente em http://hdl.handle.net/10362/8627
+
+**ATENÇÃO:** os pesos "66,7%, 62,5%, ..." que circularam antes vieram de um resumo de pesquisa e não estão confirmados. Não entram no PRESPEC até extracção do texto original.
+
+- [ ] **V1-1** Descarregar PDF de http://hdl.handle.net/10362/8627 e carregar na conversa para extracção.
+- [ ] **V1-2** Extrair: matriz AHP e pesos (com número de página), razão de consistência, critérios de exclusão (buffers em metros), fontes de cada camada, área exacta de estudo (só região sul).
+- [ ] **V1-3** Avaliar viabilidade do mapeamento dos critérios de Cabral para os 11 do artigo.
+
+### V2: Kontos et al. 2005 (Lemnos)
+
+**Dado parcial confirmado** (por verificar no texto completo):
+
+| Classe permeabilidade | Condição K | Nota |
+|---|---|---|
+| Alta | K ≥ 10⁻⁵ m/s | 2 |
+| Água salobra | — | 5 |
+| Média-baixa | 10⁻⁵ > K > 10⁻⁷ m/s | 8 |
+| Baixa | K ≤ 10⁻⁷ m/s | 10 |
+
+**Diferença importante para o artigo:** esta é uma escala de classes (0–10), não uma distância à zona de baixa permeabilidade como o perm de Fogo. Se Lemnos avançar, decidir qual das duas formas usar para a compatibilidade de critérios.
+
+- [ ] **V2-1** Confirmar se o artigo publica os pesos AHP e as regras de exclusão (buffers) em tabela.
+- [ ] **V2-2** Confirmar se os critérios sem equivalente nos 11 (visibilidade, património cultural) têm regra de omissão.
+- [ ] **V2-3** Decidir critério perm: escala de classes de Kontos ou distância à baixa permeabilidade (Fogo).
+
+### V3: IDECV WFS de Santiago
+
+- WFS testado (`https://geoservicos-ingt.gov.cv/geoserver/carto_base/wfs`): servidor responde com página Tomcat por defeito. Pode ser bloqueio só a acessos automáticos.
+- [ ] **V3-1** Testar no QGIS: Camada → Adicionar camada WFS → esse URL → procurar `geologia_santiago`.
+- [ ] **V3-2** Se WFS bloqueado, pedir a camada a `ingt@ingt.gov.cv`.
 
 ---
 
