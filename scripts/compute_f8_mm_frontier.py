@@ -69,37 +69,27 @@ for j, b in enumerate(benefit_flags):
     if not b:
         X_adj_mm[:, j] = 1.0 - X_via_raw[:, j]
 
-# Vec score (reuse logic from compute_f8_circularity.py)
-from mcdm_experiment import F1_CRIT, F2_CRIT, INV as INV_SET, COST as COST_SET
-from mcdm_experiment import _norm as _mm_norm
+# Vec score: use canonical scorer from scoring.py
+# BUG HISTORY: earlier reimplementation set C_score_vec[:, aspect] = raw {0,1}
+# (not L2-normalised), inflating aspect amplitude by ~9.7x and collapsing TV to ~0.
+# Fix: import make_scorers — same path as mc_unified.py and run_e1.py.
+from scoring import make_scorers
+norms_via = np.array([max(float(np.sqrt((X_via_raw[:,j]**2).sum())), 1e-12)
+                      for j in range(len(col_names))])
+_saw_sc_fn, _ = make_scorers(X_via_raw, X_adj_mm, norms_via, benefit_flags)
 
-f1_set = set(F1_CRIT); f2_set = set(F2_CRIT)
-
-C_vec_raw = np.zeros((N, len(col_names)), dtype=np.float64)
-L2_raw = np.zeros(len(col_names))
+# Assert canonical amplitudes match macros_amplitudes.json as sanity check
+import json as _json
+_amp = _json.loads((ROOT/"results/amplitudes/amplitudes.json").read_text())
 for j, k in enumerate(col_names):
-    x = df_via[COL[k]].values.astype(np.float64)
-    if k == "aspect":
-        c = np.where((x >= 90) & (x <= 180), 0.0, 1.0)
-    else:
-        c = _mm_norm(x, x)
-    L2_raw[j] = max(np.sqrt((c**2).sum()), 1e-12)
-    C_vec_raw[:, j] = c / L2_raw[j]
-
-sign_obj = np.array([-1.0 if k in (f1_set | f2_set) else 1.0
-                     for k in col_names])
-C_score_vec = np.zeros((N, len(col_names)), dtype=np.float64)
-for j, k in enumerate(col_names):
-    if k == "aspect":
-        x = df_via[COL[k]].values.astype(float)
-        C_score_vec[:, j] = np.where((x >= 90) & (x <= 180), 0.0, 1.0)
-    elif k in INV_SET:
-        C_score_vec[:, j] = 1.0 - C_vec_raw[:, j]
-    else:
-        C_score_vec[:, j] = C_vec_raw[:, j]
+    expected_rho = _amp["rho_j"][k]
+    got_rho = 1.0/norms_via[j]
+    assert abs(got_rho - expected_rho) < 0.001, (
+        f"rho mismatch for {k}: expected {expected_rho:.4f} got {got_rho:.4f}")
+print("  rho_j assertion passed", flush=True)
 
 def saw_mm(w): return X_adj_mm @ w
-def saw_vec(w): return (C_score_vec * (w * sign_obj)).sum(axis=1)
+def saw_vec(w): return _saw_sc_fn(w, norm='vector')
 
 def top_opt(scores):
     return trios[int(np.argmax(scores[T0] + scores[T1] + scores[T2]))]
@@ -123,8 +113,13 @@ compute_objs_mm, is_dominated_mm, _ = build_pareto_utils(
 print(f"Min-max objective utilities ready  t={time.time()-t0:.1f}s", flush=True)
 
 # ── Monte Carlo ───────────────────────────────────────────────────────────────
-W_draws = sp_dirichlet.rvs(KAPPA * w_ahp, size=N_DRAWS,
-                            random_state=np.random.default_rng(SEED))
+# Load canonical weights (same draws as mc_unified.py / run_e1.py / factorial)
+_wmat = ROOT / "results/e1/e1_weights_k200.npy"
+_W_all = np.load(_wmat)
+W_draws = _W_all[:N_DRAWS]
+assert W_draws.shape == (N_DRAWS, len(col_names)), (
+    f"Weight matrix shape mismatch: expected ({N_DRAWS},{len(col_names)}), got {W_draws.shape}")
+print(f"Loaded {N_DRAWS} weight draws from {_wmat.name}", flush=True)
 
 cells = [("mm", "optimal"), ("mm", "greedy"), ("vec", "optimal"), ("vec", "greedy")]
 rows = []
