@@ -220,18 +220,29 @@ A frase correcta é "the seven fully continuous criteria gain ≈12%" (não "all
 
 | Item | Resultado |
 |---|---|
-| Como os candidatos foram gerados | Grelha 1 km × 1 km, recortada pela ilha, só células com ≥50% de terra. Candidatos = centróides. É esta a regra a replicar. |
-| 524 vs 473 discrepância | `criteria_data_for_optimization_524-3.csv` tem 524 sítios; Zenodo e artigo falam em 473. Há um passo de triagem não documentado. Resolver antes de replicar a grelha. |
-| Origem do perm | Camada geológica com permeabilidade calculada (`geologia_com_permeabilidade_calculada.shp`). Não é SoilGrids. A regra litologia→permeabilidade vem de Andrade & Barbosa (2015) ou do script. |
+| Como os candidatos foram gerados | Grelha 1 km × 1 km, recortada pela ilha, só células com ≥50% de terra (MIN_LAND_COVERAGE=0.50). Candidatos = centróides. É esta a regra a replicar. |
+| 524 vs 473 discrepância | **RESOLVIDA**: `df_real_data_cached.csv` tem 473 linhas; 84 com dist_protected_area=0 (Nexcl) → 389 admissíveis. Os 524 do CSV do GitHub vêm de uma shapefile de fronteira ligeiramente diferente. Desvio a declarar no PRESPEC se a replicação der número diferente. |
+| Origem do perm | **CONFIRMADA**: `geologia_com_permeabilidade_calculada.shp`, campo `permeabili`. `dist_low_permeability` = distância às zonas `permeabili == 'Baixa'` (fluxos de lava compactos). Linha 257 de landfill_nsga2_optimization.py. |
+| Regra de perm completa | Alta=só cinzas do Pico de Fogo; Média=cinder cones, talus; Baixa=todos os fluxos de lava datados e não datados; Não Classificada=1769, carbonatitos, aglomerados. |
 | Origem dos wells | OSM, consulta automática, igual a roads/rivers/urban/aero/cult/coast. |
 | Pipeline automático | O código regenera grelha, filtro de terra e consultas OSM quando os CSV não existem. Pode correr sobre Santiago directamente. |
+| Aspect — regra Fogo | `norm_asp = 0 if 90 ≤ asp ≤ 180 else 1` (linha 428 do script). Confirma [90°,180°] = leeward = melhor. |
 
-**Consequências para o plano:**
-- Omitir os wells de Santiago não se justifica: em Fogo também vieram do OSM. Omitir cria confundimento entre conjunto de critérios e ilha.
-- O perm de Santiago é o mesmo critério de Fogo se usar a mesma regra geológica (não SoilGrids).
+**Equivalência Santiago S-T:**
+- `dist_low_permeability` de Santiago = distância às formações da **Unidade de Base** (CA, λρ, λρ1, CBm, B, cb, γ) — mesma lógica que Fogo.
+- Regra a fixar no PRESPEC: cada cod_form → unidade → se base, inclui nas zonas 'Baixa'. Usar estratigrafia de Serralheiro (1976) citada no Cabral (2012, p. 44-46). Não depende da distribuição espacial.
 
-- [ ] **PRE-1** Resolver a diferença 524/473: ler o script de grelha e identificar o passo que vai de 524 para 473. Documentar no PRESPEC e verificar se há implicações para o próprio artigo de Fogo.
-- [ ] **PRE-2** Extrair a regra litologia→permeabilidade de Andrade & Barbosa (2015) ou do script que criou `geologia_com_permeabilidade_calculada.shp`. Fixar no PRESPEC antes de abrir a camada de Santiago.
+**SHA dos dados descarregados:**
+
+| Ficheiro | SHA-256 (LF-norm) | Features |
+|---|---|---|
+| `geologia_santiago_wfs.geojson` | `23158bc940efbf6f...` | 976, EPSG:4826 |
+| `carta_agricola_st_wfs.geojson` | `b3b155c6db081eef...` | 7 polígonos |
+
+Inspeccionado: esquema, n_features, lista de cod_form. Nenhuma distância, amplitude ou score calculado.
+
+- [x] **PRE-1** RESOLVIDA: 524 = grelha NSGA-II; 473 = paper (shapefile diferente). Declarar desvio se replicação divergir.
+- [x] **PRE-2** RESOLVIDA: regra `permeabili == 'Baixa'` recuperada do script. Santiago equivalente = unidade base.
 
 ---
 
