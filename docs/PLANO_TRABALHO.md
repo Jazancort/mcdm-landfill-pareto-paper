@@ -291,21 +291,51 @@ O ramo S-L responde à objecção "os pesos de Fogo são específicos de Fogo". 
 
 ---
 
-### V1: Cabral 2012 (não 2013)
+### V1: Cabral 2012 — EXTRACÇÃO CONCLUÍDA
 
 **Metadados confirmados:**
 - Título: *Análise multicritério em SIG para localização de aterros sanitários. O caso da região sul da Ilha de Santiago, Cabo Verde*
-- Autor: Adilson Vaz Cabral
-- Ano: **2012** (não 2013)
-- Grau: Mestrado em Gestão do Território, especialização em Detecção Remota e SIG, FCSH, Universidade Nova de Lisboa
-- Handle: http://hdl.handle.net/10362/8627
-- **Acesso bloqueado** (protecção anti-robô do repositório RUN). PDF deve ser descarregado manualmente em http://hdl.handle.net/10362/8627
+- Autor: Adilson Vaz Cabral. Ano: **2012**. FCSH/UNL. Handle: http://hdl.handle.net/10362/8627
+- PDF lido: `05-referencia/Novos/content.pdf`
 
-**ATENÇÃO:** os pesos "66,7%, 62,5%, ..." que circularam antes vieram de um resumo de pesquisa e não estão confirmados. Não entram no PRESPEC até extracção do texto original.
+**Área de estudo:** só a região Sul (3 concelhos: Praia, São Domingos, Ribeira Grande de Santiago). SIG raster, ArcGIS 10. **NÃO cobre a ilha inteira.**
 
-- [ ] **V1-1** Descarregar PDF de http://hdl.handle.net/10362/8627 e carregar na conversa para extracção.
-- [ ] **V1-2** Extrair: matriz AHP e pesos (com número de página), razão de consistência, critérios de exclusão (buffers em metros), fontes de cada camada, área exacta de estudo (só região sul).
-- [ ] **V1-3** Avaliar viabilidade do mapeamento dos critérios de Cabral para os 11 do artigo.
+**Consistência AHP:** CI=0.047, CR=0.052 (nível 2); subcritérios todos CR<0.015. ✓
+
+**14 critérios em 4 grupos — pesos finais calculados (p. 54-55, Tabelas 11-16):**
+
+| Critério | Peso final | Fogo equiv. | Problema |
+|---|---|---|---|
+| Áreas edificadas | 3,85% | urban 16,6% | Mapeável |
+| ZDTI (turismo) | 3,14% | **sem equiv.** | Redistribuir |
+| Orla costeira | 2,62% | coast 6,9% | Mapeável |
+| Património cultural | 3,85% | **sem equiv.** | Redistribuir |
+| Áreas agrícolas | 1,58% | cult 8,1% | Mapeável |
+| Aeroporto | 3,14% | aero 10,2% | Mapeável |
+| Áreas protegidas | 2,62% | protected 6,6% | Mapeável |
+| Unidade recente (geo) | 2,70% | perm | Alta fricção |
+| Unidade intermédia (geo) | 5,64% | perm | Idem |
+| Unidade base (geo) | 11,96% | perm | 3 classes → 1 critério |
+| Pontos de água | 10,15% | wells 5,5% | Mapeável |
+| Ribeiras e eixos | 10,15% | rivers 9,1% | Mapeável |
+| Declive | 7,35% | slope 11,3% | Mapeável |
+| Orientação vertentes | 2,45% | aspect 7,5% | **Convenção oposta** |
+| Principais vias | 9,50% | roads 3,0% | Mapeável |
+| Centro RSU | 19,30% | urban (proxy) | Mapeável |
+
+**Aspect (p. 73):** "ventos dominantes: Nordeste e Nor-Nordeste → vertentes a NE/NNE com pontuações mais baixas." Orientação contínua; NE/NNE = barlavento = pior. Fogo usa [90°,180°] = sotavento = melhor. **Convenções opostas** — decidir no PRESPEC.
+
+**Geologia (Tabela 9, p. 52):** Tiff raster sem projecção, fonte = PDMs dos concelhos. Georreferenciado e vectorizado manualmente.
+
+**Buffers de exclusão chave:** edificado <500 m, aeroporto <3 000 m, pontos de água <400 m, estradas <50 m, ribeiras <20 m, protegidas <500 m, ZDTI <500 m.
+
+**Perm:** 3 unidades hidrogeológicas (recente=impermeável ruim, base=impermeável boa). Cabral usa permeabilidade directamente por classe; Fogo usa distância à zona de baixa permeabilidade. Semântica diferente — requere regra de mapeamento declarada.
+
+**Avaliação ramo S-L:**
+- Viável se regras de mapeamento forem declaradas rigorosamente.
+- Maior risco: perm (3 classes vs 1 distância) e aspect (convenção oposta).
+- Recomendação: S-L como análise de sensibilidade, não resultado primário.
+- Pipeline deve cobrir ilha inteira (Cabral só cobre o sul).
 
 ### V2: Kontos et al. 2005 (Lemnos)
 
