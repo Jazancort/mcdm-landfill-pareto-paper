@@ -130,9 +130,9 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 \begin{highlights}
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
 \item Exact assembly is Pareto-safe iff amplitudes are constant within objective groups
-\item Normalisation effect ($+\NormGreedyContrast$~pp) dominates; aggregation effect sign unstable
-\item Exact assembly loses $\AsmVecSAW$--$\AsmVecTOPSIS$~pp~$Q_2$ under vector; gains $\RegrDiffSAWvec$--$\RegrDiffTOPSISvec$~pp in regret
-\item Score--objective coding mismatches can cut Pareto attainment from $100\%$ to $24\%$
+\item On Fogo, normalisation moves attainment by \NormGreedyContrast~pp; aggregation has no stable sign
+\item Under vector scores, exact assembly loses \AsmVecSAW{}--\AsmVecTOPSIS{}~pp of frontier attainment
+\item Between-group distortion keeps exact assembly on the frontier but costs value
 \end{highlights}
 
 \begin{keywords}
@@ -291,7 +291,9 @@ Our contributions are as follows.
     constraint; a factorial design shows that normalisation dominates the
     choice of aggregation operator, with frontier attainment reversing sign
     between min--max and vector normalisation; in value regret, exact assembly
-    is marginally better than greedy under both normalisations.
+    is marginally better than greedy under vector normalisation
+    ($\RegrDiffSAWvec$--$\RegrDiffTOPSISvec$~pp) and for TOPSIS under
+    min--max ($\RegrDiffTOPSISmmGrdOpt$~pp).
   \item A necessary and sufficient condition for exact assembly to remain
     Pareto-efficient under normalisation: amplitudes must be constant
     within each objective group (Theorem~\ref{thm:groupconst}),

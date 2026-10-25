@@ -314,6 +314,7 @@ before any score or Q2 is computed.
 | S4 | SAW minus TOPSIS per cell: no sign predicted | — | Descriptive |
 | S5 | Q2(SAW, vec, opt) in branch b > 56.8% (Fogo result) | max_{j ∈ non-binary} point-mass share (fraction of A' at modal value, continuous criteria only) < 0.5. Note: binary criteria (aspect in S-T; B1 in S-N after normalization) are excluded from this condition. In Fogo: perm point-mass = 350/389 = 0.90 → S5 would not have been tested; Santiago should have smoother distributions. | Risky: predicts weaker mechanism under smoother distributions (E6 reasoning) |
 | S6 | R(SAW, vec, grd) > R(SAW, vec, opt), 95% CI excludes 0. Fogo reference (new denominator, min over all T): R(vec,grd)=6.63 pp, R(vec,opt)=5.27 pp, difference=1.36 pp [95% CI: 0.95, 1.74 pp]. Note: this difference is below the δ=2.5 pp margin pre-specified for Q2; in the PRESPEC it is treated as a secondary test. | TV_W(vec) ≥ 0.05 | Greedy has more regret than optimal under vector scoring; consistent with Q2 reversal (S2). Effect is small. |
+| S7 | R(E1-B, optimal) > 0, 95% CI excludes 0. Fogo reference: 4.53 pp mean (median 5.50 pp); 28% of draws R = 0. | TV_B(vec) ≥ 0.05 | Between-group distortion imposes a non-zero value cost visible in R but not in Q2; complements S2 (Q2) with the R metric. |
 
 If a condition fails, the prediction is not tested and the cell is reported descriptively
 (see Annex D for templates).
@@ -638,6 +639,12 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
   under S-[T/N], consistent with Fogo (1.36 pp [0.95, 1.74 pp]; below δ=2.5 pp)."
 - Not confirmed: "The difference was [X] pp (95% CI: [[a], [b]] pp), inconsistent with Fogo."
 - Not tested: "TV_W = [tw] < 0.05; S6 not tested."
+
+### S7 (R(E1-B, opt) > 0 — between-group distortion has positive value cost)
+- Confirmed: "R(E1-B, opt) was [X] pp (95% CI: [[a], [b]] pp) under S-[T/N], with the CI
+  excluding zero, consistent with Fogo (4.53 pp mean, median 5.50 pp; 28% of draws R = 0)."
+- Not confirmed: "R(E1-B, opt) was [X] pp (95% CI: [[a], [b]] pp), consistent with zero."
+- Not tested: "TV_B(vec) = [tv] < 0.05; S7 not tested."
 
 ### S5 (Q2 > Fogo 56.8%)
 - Confirmed (Q2 > 56.8%, condition met): "SAW/vec/opt reached [Q2]% under S-[T/N],

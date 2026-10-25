@@ -1035,6 +1035,13 @@ if _e1_perdraw.exists() and _Rvec_opt is not None:
             print(f"  [OK  ] R(E1-M/opt) == R(SAW/mm/opt) == 0 (construction check)")
         else:
             FAIL.append(f"R(E1-M/opt) = {_Rmm_opt} != 0")
+        # R(E1-M/grd) == R(SAW/mm/grd) = 2.33 pp (same portfolio and draw, different scripts)
+        if _Rmm_grd is not None:
+            check("R(E1-M/grd) == R(SAW/mm/grd) == 2.33 pp",
+                  _Rmm_grd, 2.33, tol=0.05)
+        else:
+            FAIL.append("R(E1-M/grd): RegrSAWmmGrd not found in regret_macros.tex")
+            print("  [FAIL] R(E1-M/grd): RegrSAWmmGrd not found in regret_macros.tex")
     else:
         print("  [INFO] R invariant: RegretEoneB not found in regret_macros.tex")
 else:
