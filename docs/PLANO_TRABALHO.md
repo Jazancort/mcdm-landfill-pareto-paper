@@ -291,51 +291,87 @@ O ramo S-L responde à objecção "os pesos de Fogo são específicos de Fogo". 
 
 ---
 
-### V1: Cabral 2012 — EXTRACÇÃO CONCLUÍDA
+### V1: Cabral 2012 — EXTRACÇÃO COMPLETA
 
-**Metadados confirmados:**
-- Título: *Análise multicritério em SIG para localização de aterros sanitários. O caso da região sul da Ilha de Santiago, Cabo Verde*
-- Autor: Adilson Vaz Cabral. Ano: **2012**. FCSH/UNL. Handle: http://hdl.handle.net/10362/8627
-- PDF lido: `05-referencia/Novos/content.pdf`
+**Metadados:** Adilson Vaz Cabral, 2012, FCSH/UNL, handle hdl.handle.net/10362/8627. PDF: `05-referencia/Novos/content.pdf`.
 
-**Área de estudo:** só a região Sul (3 concelhos: Praia, São Domingos, Ribeira Grande de Santiago). SIG raster, ArcGIS 10. **NÃO cobre a ilha inteira.**
+**Área de estudo:** região Sul, **395 km²** (40% de Santiago, 991 km²), 3 concelhos. SIG raster, pixel 35×35 m.
 
-**Consistência AHP:** CI=0.047, CR=0.052 (nível 2); subcritérios todos CR<0.015. ✓
+---
 
-**14 critérios em 4 grupos — pesos finais calculados (p. 54-55, Tabelas 11-16):**
+**Hierarquia AHP — 14 critérios em 4 grupos:**
 
-| Critério | Peso final | Fogo equiv. | Problema |
+Nível 2 (p. 54, Tabela 11, CI=0,047, CR=0,052):
+
+| Grupo | Peso |
+|---|---|
+| A — Uso do solo | 20,8% |
+| B — Hidrogeologia | 40,6% |
+| C — Morfologia | 9,8% |
+| D — Acessibilidade | 28,8% |
+
+B1 (Unidades hidrogeológicas) é um critério **categórico único** com 3 classes — não 3 critérios independentes. Os pesos 13,3/27,8/58,9% são notas relativas dentro de B1.
+
+| Critério | Peso no grupo | Peso final | Buffer exclusão |
 |---|---|---|---|
-| Áreas edificadas | 3,85% | urban 16,6% | Mapeável |
-| ZDTI (turismo) | 3,14% | **sem equiv.** | Redistribuir |
-| Orla costeira | 2,62% | coast 6,9% | Mapeável |
-| Património cultural | 3,85% | **sem equiv.** | Redistribuir |
-| Áreas agrícolas | 1,58% | cult 8,1% | Mapeável |
-| Aeroporto | 3,14% | aero 10,2% | Mapeável |
-| Áreas protegidas | 2,62% | protected 6,6% | Mapeável |
-| Unidade recente (geo) | 2,70% | perm | Alta fricção |
-| Unidade intermédia (geo) | 5,64% | perm | Idem |
-| Unidade base (geo) | 11,96% | perm | 3 classes → 1 critério |
-| Pontos de água | 10,15% | wells 5,5% | Mapeável |
-| Ribeiras e eixos | 10,15% | rivers 9,1% | Mapeável |
-| Declive | 7,35% | slope 11,3% | Mapeável |
-| Orientação vertentes | 2,45% | aspect 7,5% | **Convenção oposta** |
-| Principais vias | 9,50% | roads 3,0% | Mapeável |
-| Centro RSU | 19,30% | urban (proxy) | Mapeável |
+| A1 Áreas edificadas | 18,5% | 3,85% | <500 m |
+| A2 ZDTI | 15,1% | 3,14% | <500 m |
+| A3 Orla costeira | 12,6% | 2,62% | <80 m |
+| A4 Património cultural | 18,5% | 3,85% | <500 m da Zona Tampão |
+| A5 Áreas agrícolas | 7,6% | 1,58% | zona de protecção |
+| A6 Aeroporto | 15,1% | 3,14% | <3 000 m |
+| A7 Áreas protegidas | 12,6% | 2,62% | <500 m |
+| B1 Unidades hidrogeol. | 50% de B | 20,3% | recente = excluída (0) |
+| B2 Pontos de água | 25% de B | 10,15% | <400 m |
+| B3 Ribeiras e eixos | 25% de B | 10,15% | <20 m |
+| C1 Declive | 75% de C | 7,35% | >20° = excluído (0) |
+| C2 Orientação vertentes | 25% de C | 2,45% | (ver aspect abaixo) |
+| D1 Principais vias | 33% de D | 9,50% | <50 m |
+| D2 Centro RSU | 67% de D | 19,30% | <500 m = excluído |
 
-**Aspect (p. 73):** "ventos dominantes: Nordeste e Nor-Nordeste → vertentes a NE/NNE com pontuações mais baixas." Orientação contínua; NE/NNE = barlavento = pior. Fogo usa [90°,180°] = sotavento = melhor. **Convenções opostas** — decidir no PRESPEC.
+---
 
-**Geologia (Tabela 9, p. 52):** Tiff raster sem projecção, fonte = PDMs dos concelhos. Georreferenciado e vectorizado manualmente.
+**Mapeamento geologia → Unidades Hidrogeológicas (p. 45-46, Gomes 2007):**
 
-**Buffers de exclusão chave:** edificado <500 m, aeroporto <3 000 m, pontos de água <400 m, estradas <50 m, ribeiras <20 m, protegidas <500 m, ZDTI <500 m.
+| Unidade | Formações | IDECV cod_form | Permeabilidade | Nota B1 |
+|---|---|---|---|---|
+| Recente | Formação Monte das Vacas + Aluviões | MV, a, a dv, a e, c, d, de, dv | Alta | 0 (excluída) |
+| Intermédia | Complexo Pico da Antónia | PA, PA1, A1 | Média-alta | 27,8/58,9 ≈ 0,472 |
+| Base | CA + Flamengos + Órgãos | CA, λρ, λρ1, CBm, B, cb, γ | Baixa (0,2–5×10⁻⁵ m²/s) | 1,000 |
 
-**Perm:** 3 unidades hidrogeológicas (recente=impermeável ruim, base=impermeável boa). Cabral usa permeabilidade directamente por classe; Fogo usa distância à zona de baixa permeabilidade. Semântica diferente — requere regra de mapeamento declarada.
+Nota: formações calc, cong, dφ, φ, chy, chφ, chb a classificar. Regra a fixar no PRESPEC antes de abrir os dados.
 
-**Avaliação ramo S-L:**
-- Viável se regras de mapeamento forem declaradas rigorosamente.
-- Maior risco: perm (3 classes vs 1 distância) e aspect (convenção oposta).
-- Recomendação: S-L como análise de sensibilidade, não resultado primário.
-- Pipeline deve cobrir ilha inteira (Cabral só cobre o sul).
+---
+
+**Aspect (C2):** Sem tabela numérica (só Figura 37 — mapa). "Ventos dominantes NE e NNE → pontuações mais baixas" (citando Kontos 2005 e Sener 2011). Nenhum intervalo angular publicado. Para o S-N: usar função contínua proposta `c = (1 - cos(θ - 22,5°))/2`, onde θ é o azimute da encosta. Confirmar que esta função reproduz a ordem das classes da figura antes de a fixar.
+
+**Aspect vs Fogo:** as convenções NÃO são opostas. Ambas concordam que NE é mau. Diferem no que consideram melhor. O intervalo [90°,180°] de Fogo é uma convenção herdada do estudo de origem, não uma regra física — **o artigo deve dizer isto numa frase**.
+
+---
+
+**CI/CR do B1 (p. 55, Tabela 14):** Publicado como CI=CR=0,000. A matriz como publicada NÃO é exactamente recíproca (B1.2:B1.1=2 em vez de 3; B1.3:B1.1=3 em vez de 5; B1.3:B1.2=2 em vez de 3). O CI real é ≈0,004, arredondado a 0 pelo autor. As discrepâncias são menores e os pesos publicados (13,3/27,8/58,9) correspondem à média geométrica desta matriz quase-recíproca.
+
+**RI para grupo A (n=7):** O autor reporta CR=0,014 com CI=0,021. Usando RI(7)=1,32 (tabela de Saaty na p. 10 da própria dissertação): CR = 0,021/1,32 ≈ 0,016. A diferença sugere que o autor usou RI(7)=0,0207/0,0142≈1,46, que não consta da tabela da dissertação. Não bloqueia nada.
+
+---
+
+**Avaliação arquitectura S-T + S-N (novo):**
+
+Em vez de mapear 14 critérios de Cabral para 11 de Fogo, usar dois ramos independentes:
+
+| | S-T (transferido) | S-N (nativo Cabral 2012) |
+|---|---|---|
+| Área | Santiago inteira | Região Sul (395 km²) |
+| Critérios | 11 de Fogo | 14 do Cabral |
+| Pesos | AHP de Fogo | AHP do Cabral (CR=0,052) |
+| Grupos/objectivos | G1–G3 (3D) | 4 grupos Cabral (4D) |
+| Aspect | binário [90°,180°], declarado como convenção herdada | c=(1-cos(θ-22,5°))/2 |
+| Perm/hidrogeo | distância à unidade base | classes: recente=0, intermédia=0,472, base=1,000 |
+| Pergunta | magnitudes dependem da distribuição dos dados? | mecanismo aparece em modelo de valor diferente? |
+
+Todas as fricções do mapeamento desaparecem. Os 3 "problemas" identificados anteriormente (perm, aspect, ZDTI) deixam de existir.
+
+**Dados do S-N:** quase tudo tem substituto aberto (OSM, WorldCover, Copernicus, WDPA, UNESCO). As duas excepções: ZDTI (só em PDF do PDM — georreferenciar como fez Cabral, ou redistribuir peso) e geologia (IDECV WFS disponível e já descarregado).
 
 ### V2: Kontos et al. 2005 (Lemnos) — PARCIALMENTE CONFIRMADO
 
