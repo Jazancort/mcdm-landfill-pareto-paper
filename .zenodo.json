@@ -1,6 +1,6 @@
 {
   "title": "Replication package: Normalisation as implicit re-weighting in multi-criteria portfolio selection: closed form and cost against an exact Pareto frontier",
-  "version": "v1.2",
+  "version": "v1.3",
   "upload_type": "software",
   "publication_date": "2026-10-28",
   "license": "MIT",
@@ -8,7 +8,6 @@
   "creators": [
     {
       "name": "Azancort Neto, Julio Leite",
-      "orcid": "0009-0000-2754-8503",
       "affiliation": "Instituto de Tecnologia, Universidade Federal do Para (UFPA), Belem, PA, Brazil"
     }
   ],
