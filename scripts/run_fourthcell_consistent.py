@@ -33,6 +33,7 @@ from mcdm_experiment import (
     _build_decision_matrix, INV, COST, F1_CRIT, F2_CRIT, F3_CRIT, _norm,
 )
 from pareto_utils import build_pareto_utils
+from aspect_utils import normalize_continuous_aspect, normalize_continuous_aspect_389
 
 EPS       = 1e-9
 N_DRAWS   = 500
@@ -76,27 +77,17 @@ for jj, c in enumerate(col_names):
     mn, mx = x_a.min(), x_a.max(); rng = mx - mn or 1.0
     Xb473[:, jj] = (x_v - mn) / rng
 # Correct Xb473 aspect column: same (270°−θ_nb)%360 transform as R-asp.
-# Without this, R-V uses the notebook-convention (reflected) azimuth while
-# R-asp uses geographic azimuth, so the contrast R-asp−R-V conflates
-# reference-set effect with convention difference.
-x_asp_via_nb = df_via[COL["aspect"]].values.astype(float)
-x_asp_imp_nb = df_imp[COL["aspect"]].values.astype(float)
-x_asp_via_c = (270.0 - x_asp_via_nb) % 360.0
-x_asp_imp_c = (270.0 - x_asp_imp_nb) % 360.0
-mn_rv = x_asp_imp_c.min(); rng_rv = x_asp_imp_c.max() - mn_rv or 1.0
-Xb473[:, J_ASPECT] = (x_asp_via_c - mn_rv) / rng_rv
+# Uses aspect_utils.normalize_continuous_aspect (473-base range).
+Xb473[:, J_ASPECT] = normalize_continuous_aspect(df_via, df_imp, COL["aspect"])
 Xadj473 = Xb473.copy()
 for jj, b in enumerate(benefit):
     if not b: Xadj473[:, jj] = 1.0 - Xb473[:, jj]
 
 # R-asp: X_adj_dm with aspect replaced by continuous (389-base)
-x_asp = df_via[COL["aspect"]].values.astype(float)
-# Correct from notebook convention (270°−θ) to geographic azimuth (arctan2(-dx,dy))
-# Max circular diff between DEM-recomputed and this transformation = 0.000107° (< 1e-4)
-x_asp = (270.0 - x_asp) % 360.0
-mn_asp = x_asp.min(); rng_asp = x_asp.max() - mn_asp or 1.0
+# Uses aspect_utils.normalize_continuous_aspect_389 for the corrected geographic azimuth.
+x_asp = normalize_continuous_aspect_389(df_via, COL["aspect"])
 X_rasp = X_adj_dm.copy()
-X_rasp[:, J_ASPECT] = (x_asp - mn_asp) / rng_asp
+X_rasp[:, J_ASPECT] = x_asp
 
 # ── Trios ─────────────────────────────────────────────────────────────────────
 D = haversine_km(df_via["latitude (degrees)"].values, df_via["longitude (degrees)"].values)

@@ -69,6 +69,7 @@
 \renewcommand{\dbltopfraction}{0.9}
 \setcounter{dbltopnumber}{4}
 \setcounter{topnumber}{4}
+\emergencystretch=2em
 
 \shorttitle{Normalisation as Implicit Re-weighting in MCDM Portfolio Selection}
 \shortauthors{Azancort Neto}
@@ -109,8 +110,9 @@ criterion is proportional to its weight times the amplitude of its normalised
 column, and exact assembly is Pareto-efficient on every instance if and only if
 amplitudes are constant within each objective group. Empirically, on this
 instance, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp under greedy
-assembly, whereas the pooled SAW--TOPSIS contrast is near zero
-($\AggContrast$~pp, TOST $p=\TOSTp$) but conceals sign-reversing interactions. The value of exact
+assembly; the pooled SAW--TOPSIS contrast is near zero
+($\AggContrast$\,pp, TOST $p=\TOSTp$), but conceals
+sign-reversing interactions. The value of exact
 assembly depends on the normalisation: under min--max it is guaranteed for SAW
 and adds $+\AsmMMtopsis$~pp for TOPSIS; under vector normalisation it loses
 $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) in frontier
@@ -127,10 +129,13 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 
 \begin{highlights}
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
-\item Exact assembly is Pareto-safe iff amplitudes are constant within objective groups
-\item On Fogo, normalisation moves attainment by \NormGreedyContrast~pp; aggregation has no stable sign
-\item Under vector scores, exact assembly loses \AsmVecSAW{}--\AsmVecTOPSIS{}~pp of frontier attainment
-\item Between-group distortion keeps exact assembly on the frontier but costs value
+\item Exact assembly is Pareto-safe iff within-group TV is zero
+\item On Fogo, normalisation changes greedy attainment by
+  $\NormGreedyContrast$~pp; aggregation has no stable sign
+\item Under vector scores, exact assembly loses $\AsmVecSAW$--$\AsmVecTOPSIS$~pp
+  of frontier attainment relative to greedy
+\item Between-group distortion keeps assembly on the frontier
+  but costs $\RegretEoneB$~pp of value regret
 \end{highlights}
 
 \begin{keywords}
@@ -972,9 +977,11 @@ Min--max and midranks are invariant to this choice: the amplitude is always
 $1$ under min--max, and rank amplitudes depend only on the distribution of
 ranks, not on which end of the scale is labelled zero.
 This formulation coincides with the classical textbook form $x_{ij}/\lVert\mathbf{x}_j\rVert_2$
-when $\min_j x_j=0$ (true for \texttt{perm}, \texttt{urban}, \texttt{cult},
-\texttt{aspect} and \texttt{rivers}) and differs by at most $\RhoShiftMaxPct\,\%$
-(\texttt{\RhoShiftMaxCrit}) for the remaining criteria.
+when $\min_j x_j=0$ (true for \texttt{perm}, \texttt{slope}, \texttt{urban},
+\texttt{cult}, \texttt{aspect} and \texttt{protected} in the 473-site dataset)
+and differs by at most $\RhoShiftMaxPct\,\%$
+(\texttt{\RhoShiftMaxCrit}) for the remaining five criteria
+(\texttt{roads}, \texttt{rivers}, \texttt{coast}, \texttt{wells}, \texttt{aero}).
 For SAW, switching from shift to raw norms with the same weights leaves the selected
 portfolio unchanged in \RawSensSawOptSame{} of \RawSensTotal{} draws under optimal
 assembly and \RawSensSawGrdSame{} under greedy; for TOPSIS the counts are
@@ -2297,10 +2304,13 @@ places the top quartile at WNW-facing azimuths (circular mean
 $\approx302^\circ$, s.d.\ $27^\circ$) by construction of the linear
 scale, not as an empirical finding; those azimuths belong to the class
 that \citet{Andrade2015} classify as minimum suitability on Fogo.
-The Spearman correlation between the normalised azimuth and the SE-facing
-indicator is $\rho=\AspSpearman$ (point-biserial on ranks; $p<0.001$;
-$\AspTopQuartile\%$ of top-quartile sites have indicator zero),
-reducing $Q_2$ from $100\%$ to $\RaspOptimal\%$ under
+Because the SE-facing indicator is a deterministic function of $\theta$
+($b_\mathrm{asp}=\mathbf{1}[\theta\in[90^\circ,180^\circ]]$), the
+Spearman correlation between normalised azimuth and the indicator
+($\rho=\AspSpearman$, point-biserial on ranks, descriptive) measures
+only where the SE class falls on the linear scale, not an empirical
+association.
+This coding mismatch reduces $Q_2$ from $100\%$ to $\RaspOptimal\%$ under
 SAW/min--max/optimal: $\RaspLoss$~pp through coding alone
 (Table~\ref{tab:coding2x2}).
 With a consistent encoding, normalising over the $\Ncand$-site set costs
@@ -2611,12 +2621,10 @@ improves greedy assembly by $\RefSetGreedyGain$~pp
 When the coding is inconsistent, the 473-site reference set reduces
 $Q_2$ by $\ResidualRefOptDelta$~pp under optimal assembly relative to
 the 389-site reference
-($95\%$~CI $[\ResidualRefOptCIlo,\,\ResidualRefOptCIhi]$) and
-$\ResidualRefGrdDelta$~pp under greedy assembly
-($[\ResidualRefGrdCIlo,\,\ResidualRefGrdCIhi]$).
-The wider reference set dilutes the evaluation: inadmissible sites with
-extreme azimuth values distort the min--max scale, making the
-389-site reference slightly less harmful on this instance.
+($95\%$~CI $[\ResidualRefOptCIlo,\,\ResidualRefOptCIhi]$,
+greedy: $\ResidualRefGrdDelta$~pp, $[\ResidualRefGrdCIlo,\,\ResidualRefGrdCIhi]$).
+On this instance, a larger reference set under inconsistent coding
+reduces $Q_2$ further; the sign and magnitude are not generalisable.
 All cells in this paragraph are post hoc exploratory
 (Supplementary Material).
 
@@ -3067,7 +3075,7 @@ contrast was zero on this instance (an observation on Fogo, not a
 general zero-cost guarantee for mismatched reference sets).
 
 The broader implication is methodological.
-Benchmarking multi-criteria methods by agreement between their rankings
+Benchmarking multi-criteria methods by rank agreement
 can establish that they differ, but not that any is closer to the
 decision maker's objectives.
 Where the feasible set is enumerable, as it is for
@@ -3098,8 +3106,8 @@ During the preparation of this work the author used the Claude assistant
 (Anthropic), accessed via the Kiro development environment (Amazon Web
 Services), for structural organisation of the manuscript, code review,
 drafting and revising passages of scientific prose (including
-Section~\ref{sec:data}, Section~\ref{sec:refset}, and the provenance note
-in Section~\ref{sec:criteria}), and language editing.
+the coding-inconsistency remark, Section~\ref{sec:refset}, and the provenance note
+in Section~\ref{sec:methods}), and language editing.
 The formulation of arguments, the design and execution of experiments,
 the selection and interpretation of results, and all final scientific
 judgements are the responsibility of the author.

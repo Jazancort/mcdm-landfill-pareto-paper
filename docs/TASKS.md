@@ -806,3 +806,42 @@ o mesmo conjunto de 94 sites SE-facing, Δ simétrico = 0). Com coding binário,
 o kappa = 50 e kappa = 200 produzem exactamente os mesmos trios-ótimos, porque
 a fronteira de Pareto sobre a coluna binária não muda com o limiar de distância.
 Apenas a célula R-asp usa aspecto contínuo, e essa é a que foi corrigida.
+
+
+---
+
+## Histórico completo do R1-6 (correcção de 2026-10-28)
+
+A "inversão de sinal" registada na sessão anterior era um artefacto. O sinal correcto é POSITIVO (R-asp > R-V) em todos os três estados.
+
+| Estado | R-asp | R-V | R-asp − R-V |
+|---|---|---|---|
+| As duas células reflectidas (original) | 24,0% | 20,0% | +4,0 pp |
+| Convenções misturadas (commit intermédio) | 15,6% | 20,0% | −4,4 pp |
+| As duas células geográficas (correcto) | 15,6% | 6,2% | +9,4 pp |
+
+O estado intermédio ("−4,4 pp") foi causado por: R-asp usa (270−θ_nb)%360 (correcto) mas R-V ainda usava θ_nb directo (reflectido). A mistura de convenções inverteu o sinal. Com as duas células na convenção geográfica, o sinal é o mesmo do original (+), e a magnitude é maior.
+
+O 9,4 pp igual para óptimo e greedy (15,6−6,2=9,4 e 15,8−6,4=9,4) é uma coincidência aritmética. Os intervalos de confiança são diferentes ([6,6;12,4] e [6,4;12,6]), confirmando bootstraps independentes.
+
+## Inventário de scripts que usam slope_aspect (2026-10-28)
+
+| Script | Como usa o aspecto | Convenção | Corrigido? | Resultados no artigo? |
+|---|---|---|---|---|
+| run_fourthcell_consistent.py | Contínuo (R-asp: 389-base; R-V: 473-base) via aspect_utils | Geográfica | SIM (2026-10-28) | SIM (RaspOptimal, RVoptimal, ResidualRef*) |
+| run_e4_vstar.py | R-V*: binário (invariante); R-asp secundário: contínuo | R-V*: N/A; R-asp: notebook (não corrigido) | R-V*: N/A; R-asp: NÃO | R-V*: SIM (RVstarOptimal/Greedy). R-asp: NÃO usado no artigo |
+| validate_core.py | Só contagem binária n1=94 | Notebook (mas check binário é invariante) | N/A | NÃO (diagnóstico) |
+| check_aspect_impact.py | Só contagem binária n1=94 | Notebook (invariante) | N/A | NÃO |
+| diag_p3.py | Lê raw; diagnóstico | Notebook | NÃO | NÃO |
+| diag_r14.py | Lê raw; verifica estrutura binária | Notebook | NÃO | NÃO |
+| _verify_amend3.py | Lê raw para oracle test | Notebook (intencional — testa θ_pub) | N/A | NÃO |
+| compute_f8_circularity.py | Binário via _build_decision_matrix | N/A | N/A | SIM (FEight* macros) — SEGURO |
+| run_e6.py | Binário via _build_decision_matrix | N/A | N/A | SIM (Esix* macros) — SEGURO |
+| run_e1.py | Binário via _build_decision_matrix | N/A | N/A | SIM (E1 macros) — SEGURO |
+| run_e5_grid.py | Grid sintético — sem Fogo aspect | N/A | N/A | SIM (E5 macros) — SEGURO |
+| aggregation_strata.py | Sem aspecto | N/A | N/A | SIM (F1 macros) — SEGURO |
+| generate_macros_amplitudes.py | Binário via _build_decision_matrix | N/A | N/A | SIM (amplitude macros) — SEGURO |
+
+**Conclusão**: todos os resultados relevantes para o artigo usam aspecto binário (invariante) ou a convenção geográfica corrigida (via aspect_utils.py). O único script com a convenção errada (run_e4_vstar.py / R-asp secundário) não é citado no artigo.
+
+**Prevenção**: aspect_utils.py criado como módulo centralizado. check_consistency.py deve proibir leituras directas de slope_aspect fora desse módulo.
