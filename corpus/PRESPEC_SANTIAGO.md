@@ -176,23 +176,18 @@ DEM processing pipeline (confirmed from file inspection of Fogo working director
    the Overpass source in Fogo, so the slope column from the SENS-5/C-9 run will be compared
    against `df_real_data_cached.csv` to assess the combined pipeline sensitivity). Santiago DEM
    will be in EPSG:32627 (projected, metres); gdaldem does not need `-s` because the CRS is
-   metric. For gdaldem slope: use the default Horn algorithm, **no `-compute_edges`** (consistent
-   with the Fogo inferred default). **Confirmed for Fogo (`declive_gdal_graus.tif`):** slope
-   raster has 10 837 nodata cells in the top 3 rows and ~9 700 per border column — consistent
-   with Horn without -compute_edges. (Script: `_verify_amend3.py` §C.) Without `-compute_edges`,
-   gdaldem returns nodata for any cell whose 3×3 neighbourhood contains a nodata pixel (ocean
-   boundary). **nodata handling
-   for slope:** any candidate site that receives slope = nodata is **excluded from A'** (added
-   to N_excl, not imputed). Exclusion is consistent with the protected-area exclusion rule and
-   introduces no bias in the amplitude A_j of the remaining sites. Imputation to 0° is not used
-   as primary rule because it would systematically favour coastal cells (where the true slope may
-   be high) and would alter the amplitude of the slope criterion for all sites.
-   Empirical check on Fogo: 0 of 473 published sites have nodata slope (see
-   `_verify_leeward_sets.py` results). The nodata rule therefore has no Fogo precedent;
-   it applies only if Santiago generates nodata slope values.
-   Phase 1 must report: (a) count of sites excluded for slope nodata in A'; (b) whether
-   ASTER tile covers the full island without gaps. Sensitivity: add SENS-slope-compute_edges
-   (run with `gdaldem slope -compute_edges`; compare N_adm and all predictions).
+   metric. For gdaldem slope: use **`-compute_edges`** (Horn with -compute_edges confirmed
+   for Fogo). **Empirical verification:** `hell.tif` has 285 179 nodata cells (ocean =
+   nodata −32768); `declive_gdal_graus.tif` has exactly 285 179 nodata cells. Every cell
+   with valid elevation in `hell.tif` has a valid slope value in the slope raster. This is
+   only possible with -compute_edges: without it, any land cell adjacent to ocean (nodata)
+   would also become nodata in the slope, expanding the nodata zone. (Script:
+   `_verify_amend3.py` §C; ocean coding in hell.tif = nodata −32768; in elevation_utm.tif =
+   value 0 without mask.) Santiago must use the same coding: gdalwarp output must have
+   ocean = nodata (Phase 1 assert: `src.nodata is not None`). With -compute_edges, coastal
+   land cells always receive a valid slope value; the nodata exclusion rule (amend2) is a
+   fallback for any remaining uncovered cells only. Phase 1 must report the count of sites
+   excluded for slope nodata in A' (expected: 0 given -compute_edges).
 
 DEM URL and SHA-256 of the downloaded tile(s) recorded in Phase 1 §9.
 
