@@ -40,19 +40,19 @@ Generated from full PDF audit. Order: §1+§2 (mechanical) → §3 (claims) → 
 
 ## §3 — Claims reviewers will challenge (editorial)
 
-- [ ] **3.01** §5.1 κ chronology: "κ=200 was fixed in the E1 pre-specification and **adopted for the factorial**" is impossible (E1 is a follow-up posterior to the factorial) → rewrite: "κ=200 was used in the factorial without a written pre-specification; E1 subsequently fixed κ=200 in its pre-specification for comparability"
-- [ ] **3.02** §5.2: linked to 3.01 — TOST is pre-specified but κ of the factorial is not; add explicit statement: "The choice of κ for the factorial was not pre-specified; it is discussed in Section 5.1"
-- [ ] **3.03** §8.6 (Limitations) F8 claim: "confirm that the result reflects score–objective alignment **rather than an intrinsic property** of min–max" — asymmetry (5.6 vs 43.2 pp) disproves pure alignment → rewrite: "alignment explains the diagonals, but the asymmetry (5.6 vs 43.2 pp off-diagonal) indicates that min–max scores are more robust to frontier misspecification than vector scores"
-- [ ] **3.04** Intro, §6.9, §9: R advantage (1.36 pp) presented as result without "(below δ)" qualifier → add "(below the δ=2.5 pp margin)" in each occurrence
+- [x] **3.01** §5.1 κ chronology: "κ=200 was fixed in the E1 pre-specification and **adopted for the factorial**" is impossible (E1 is a follow-up posterior to the factorial) → rewrite: "κ=200 was used in the factorial without a written pre-specification; E1 subsequently fixed κ=200 in its pre-specification for comparability"
+- [x] **3.02** §5.2: linked to 3.01 — TOST is pre-specified but κ of the factorial is not; add explicit statement: "The choice of κ for the factorial was not pre-specified; it is discussed in Section 5.1"
+- [x] **3.03** §8.6 (Limitations) F8 claim: "confirm that the result reflects score–objective alignment **rather than an intrinsic property** of min–max" — asymmetry (5.6 vs 43.2 pp) disproves pure alignment → rewrite: "alignment explains the diagonals, but the asymmetry (5.6 vs 43.2 pp off-diagonal) indicates that min–max scores are more robust to frontier misspecification than vector scores"
+- [x] **3.04** Intro, §6.9, §9: R advantage (1.36 pp) presented as result without "(below δ)" qualifier → add "(below the δ=2.5 pp margin)" in each occurrence
 - [ ] **3.05** §7.8: E6 "85 of 88, p<0.001" reported without stating which criterion was pre-registered and what it showed → add: state the pre-registered criterion and its result before reporting DEV-E6-002 revision
 - [ ] **3.06** §7.8 and §8.6: "order of magnitude" wrong — <3 pp vs 10.7 pp is 3–4×, not 10×; only against Fogo (35.8 pp) is ~12× → correct phrasing
-- [ ] **3.07** §2.6: "Eiselt & Marianov (2014) were **the only prior study** to compute an exact Pareto frontier…" — but AzancortNeto2026 also did → add "apart from the source study (AzancortNeto2026)"
-- [ ] **3.08** §4.1 "none enters F" missing scope: verified under nominal weights only, or across all 500 draws? → clarify "under the nominal weights $\wahp$"
-- [ ] **3.09** §4.1 "imputation by midpoint is immaterial" too strong — midpoint doesn't change min–max extrema but does change vector norms → rewrite: "does not affect the min–max normalisation constants; its effect on vector norms is negligible given the three sites account for $3/\Ncand$ of the column"
+- [x] **3.07** §2.6: "Eiselt & Marianov (2014) were **the only prior study** to compute an exact Pareto frontier…" — but AzancortNeto2026 also did → add "apart from the source study (AzancortNeto2026)"
+- [x] **3.08** §4.1 "none enters F" missing scope: verified under nominal weights only, or across all 500 draws? → clarify "under the nominal weights $\wahp$"
+- [x] **3.09** §4.1 "imputation by midpoint is immaterial" too strong — midpoint doesn't change min–max extrema but does change vector norms → rewrite: "does not affect the min–max normalisation constants; its effect on vector norms is negligible given the three sites account for $3/\Ncand$ of the column"
 - [ ] **3.10** Remark 7 calls the theorem a "sufficient" condition: the theorem is **necessary and sufficient** for efficiency over all instances; on one instance TV_W>0 is insufficient to guarantee loss → rewrite: "TV_W=0 is sufficient for efficiency; TV_W>0 is not sufficient to cause loss on every instance, as R-V* illustrates"
-- [ ] **3.11** Intro: "within-group distortion **accounts for** 35.8 of the 43.2 pp" implies additivity → rewrite: "within-group distortion alone costs 35.8 pp, against 43.2 pp for the full distortion (the effects are not additive)"
-- [ ] **3.12** §9: "distortions that **no** rank-agreement diagnostic reveals" — exaggeration → "that rank-agreement diagnostics **do not** reveal"
-- [ ] **3.13** §9: "extending to TOPSIS and VIKOR **remains open**" — VIKOR is already characterised as affine-invariant → "extending the exact characterisation to TOPSIS (via α=2 analogy) remains open"
+- [x] **3.11** Intro: "within-group distortion **accounts for** 35.8 of the 43.2 pp" implies additivity → rewrite: "within-group distortion alone costs 35.8 pp, against 43.2 pp for the full distortion (the effects are not additive)"
+- [x] **3.12** §9: "distortions that **no** rank-agreement diagnostic reveals" — exaggeration → "that rank-agreement diagnostics **do not** reveal"
+- [x] **3.13** §9: "extending to TOPSIS and VIKOR **remains open**" — VIKOR is already characterised as affine-invariant → "extending the exact characterisation to TOPSIS (via α=2 analogy) remains open"
 - [ ] **3.14** §8.6 "Regulatory grounding": "does not affect the relative comparison of methods" contradicts Table 8 → clarify: "the exclusion removes sites from the *selectable* set; it does not affect the normalisation reference set comparison in Table 8"
 - [ ] **3.15** §8.6 "Scope of closed form": "Remark 3 extends the identity to **ordinal** families" — it does not → remove "ordinal" or clarify
 

@@ -205,7 +205,7 @@ $\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy at $\kappa=200$;
 at $\kappa=50$ neither effect is distinguishable from zero.
 In value regret ($R$), exact assembly achieves lower regret than greedy
 under both normalisations ($\RegrDiffSAWvec$~pp, SAW/vec;
-$\RegrDiffTOPSISvec$~pp, TOPSIS/vec): the two effects run opposite.
+$\RegrDiffTOPSISvec$~pp, TOPSIS/vec; both below the $\delta=2.5$~pp equivalence margin): the two effects run opposite.
 
 The reason is a mechanism that operates upstream of the aggregation
 operator, and it is the analytical core of the paper.
@@ -248,8 +248,8 @@ the optimum along the frontier, and only distortion within a group can
 move it off.
 A follow-up intervention with pre-specified predictions confirms the structural prediction
 (P1, guaranteed by Theorem~\ref{thm:groupconst}) and falsifies the two empirical ones
-(P2, P3) (Section~\ref{sec:e1}); post hoc, within-group distortion accounts for
-$\EoneWloss$ of the $\EoneVloss$~pp lost under vector normalisation at $\kappa=200$.
+(P2, P3) (Section~\ref{sec:e1}); post hoc, within-group distortion alone costs $\EoneWloss$~pp, against
+$\EoneVloss$~pp for the full vector distortion (the effects are not additive).
 Adding integer programming on top of a ranking
 \citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012}
 improved Pareto attainment under min--max and reduced it under vector
@@ -293,7 +293,8 @@ Our contributions are as follows.
     is better than greedy under vector normalisation
     ($\RegrDiffSAWvec$--$\RegrDiffTOPSISvec$~pp) and for TOPSIS under
     min--max ($\RegrDiffTOPSISmmGrdOpt$~pp,
-    $95\%$~CI $[\RegrDiffTOPSISmmGrdOptLo,\,\RegrDiffTOPSISmmGrdOptHi]$~pp).
+    $95\%$~CI $[\RegrDiffTOPSISmmGrdOptLo,\,\RegrDiffTOPSISmmGrdOptHi]$~pp;
+    all below the $\delta=2.5$~pp equivalence margin).
   \item A necessary and sufficient condition for exact assembly to remain
     Pareto-efficient under normalisation: amplitudes must be constant
     within each objective group (Theorem~\ref{thm:groupconst}),
@@ -593,7 +594,8 @@ landfill siting in Greece, combining GIS-based scoring with ELECTRE TRI
 to handle weight uncertainty across multiple stakeholder scenarios; that
 study evaluates suitability class assignments rather than portfolio
 efficiency against a Pareto frontier.
-\citet{EiseltMarianov2014} were, to our knowledge, the only prior study to
+\citet{EiseltMarianov2014} were, to our knowledge, the only prior study
+apart from \citet{AzancortNeto2026} to
 compute an exact Pareto frontier for a landfill siting problem; they use
 a bi-objective MIP without any MCDM ranking component, and the frontier
 is bivariate rather than trivariate.
@@ -911,8 +913,10 @@ aerodromes (site~429).
 Each is imputed by the midpoint of the observed range of its criterion over
 all $\Ncand$ candidates.
 Because the affected sites are three out of $\Ncand$ and none enters the
-exact Pareto frontier $\mathcal{F}$ (verified computationally), the
-choice of imputation rule is immaterial.
+exact Pareto frontier $\mathcal{F}$ under the nominal weights $\wahp$ (verified computationally), the
+choice of imputation rule does not affect the min--max normalisation constants;
+its effect on vector norms is negligible given the three sites account for
+$3/\Ncand$ of the column.
 
 \paragraph{Regulatory exclusion.}
 Sites overlapping a protected area (\texttt{dist\_protected}$=0$) cannot
@@ -1067,8 +1071,8 @@ portfolio objectives per draw.
 Weights are perturbed as $w\sim\mathrm{Dir}(\kappa\,\wahp)$, $\ndraws$ draws per cell.
 The primary analysis uses $\kappa=200$ (standard deviation $\approx0.025$ for $w_j=0.15$);
 $\kappa=50$ ($\approx0.05$) is reported for every contrast in Table~\ref{tab:contrasts}.
-$\kappa=200$ was fixed in the E1 pre-specification and adopted for the factorial for
-consistency; the factorial has no separate pre-specification of $\kappa$.
+$\kappa=200$ was used in the factorial without a written pre-specification;
+E1 subsequently fixed $\kappa=200$ in its own pre-specification for comparability with the factorial.
 Value regret ($R$) and the F8 alignment matrix were computed at $\kappa=200$ only.
 $\kappa$ concentrates the draws around $\wahp$.
 Throughout, $\kappa$ denotes only this concentration parameter; the
@@ -1181,6 +1185,8 @@ bootstrap intervals, paired by draw.
 E1 uses $\nbootEone$ replicates; the factorial uses $\nboot$.
 Intervals are unadjusted for multiplicity; contrasts other than the
 pre-specified aggregation TOST are descriptive.
+The choice of $\kappa$ for the factorial was not pre-specified; it is discussed in
+Section~\ref{sec:entries}.
 
 \paragraph{Benchmark circularity.}
 The Pareto frontier and the objectives are both built on additive
@@ -2876,9 +2882,11 @@ The benchmark is therefore internal to the model class: it cannot detect
 whether the value model is mis-specified.
 The MAVT justification for the min--max choice is presented in Section~\ref{sec:design};
 the robustness experiment (F8) is in Section~\ref{sec:alignment};
-they confirm
-that the result reflects score--objective alignment rather than an
-intrinsic property of min--max, but do not resolve the deeper
+they confirm that alignment explains the diagonal cells, but the asymmetry
+($\FEightVecMMOptLoss$~pp when min--max scores against a vector frontier
+vs $\FEightMmVecOptLoss$~pp when vector scores against a min--max frontier)
+indicates that min--max scores are more robust to frontier misspecification;
+neither result resolves the deeper
 limitation that $Q_2$ measures proximity to one value model.
 A method that scores well on $Q_2$ may still select a portfolio that
 would be suboptimal under a different specification of the objectives.
@@ -3028,7 +3036,7 @@ Exact assembly had no unconditional benefit on this instance: the value depends 
 and TOPSIS gained $+\AsmMMtopsis$~pp at $\kappa=200$; under vector normalisation exact assembly
 lost $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$ in frontier
 attainment to greedy assembly (both effects not distinguishable from zero at $\kappa=50$), but achieved $\RegrDiffSAWvec$~pp (SAW)
-less value regret.
+less value regret (below the $\delta=2.5$~pp equivalence margin).
 The explanation is analytical: in additive aggregation the effective
 weight of a criterion is proportional to $w_jA_j$, and exact assembly
 is Pareto-efficient for any weights and any instance of the additive model if and only if
@@ -3081,15 +3089,12 @@ alternatives costs nothing under optimal assembly on this instance.
 The immediate recommendation is inexpensive: report effective weights
 alongside elicited ones.
 Given the normalised decision matrix the computation is a single line,
-and it exposes distortions that no rank-agreement diagnostic reveals.
+and it exposes distortions that rank-agreement diagnostics do not reveal.
 Where weights encode stakeholder judgements, as AHP weights do, a
 normalisation that silently multiplies one criterion by $\PermInflation\times$ and
 scales another by a factor of $\UrbanRatioVec$ is difficult to defend.
 
-The closed form is exact for additive aggregation under affine normalisation; for ranks the identity is approximate. TOPSIS and VIKOR
-combine distances to ideal points, where amplitudes enter quadratically
-or in ratio form, and extending the characterisation to those families
-remains open.
+The closed form is exact for additive aggregation under affine normalisation; for ranks the identity is approximate. TOPSIS combines distances to ideal points, where amplitudes enter quadratically, and extending the exact characterisation to TOPSIS (via the $\alpha=2$ analogy) remains open.
 Theorem~\ref{thm:groupconst} is an exact characterisation for additive
 aggregation; the ordering of cells by $Q_2$ under combined distortions
 observed in Section~\ref{sec:e1} (between-group does not simply amplify
