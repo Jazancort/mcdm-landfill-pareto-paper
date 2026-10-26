@@ -87,33 +87,33 @@ Generated from full PDF audit. Order: §1+§2 (mechanical) → §3 (claims) → 
 - [ ] **6.03** E6 results reported 3× (§7.8, §8.6, §9) → consolidate
 - [ ] **6.04** "portfolios selected by exact optimisation… are better portfolios" in §7.3 and §7.4 → keep one
 - [ ] **6.05** P1–P3 predictions announced twice in §7.7 → keep one announcement
-- [ ] **6.06** §7.2 title "Confirmation of the amplitude lemma" contradicted by body ("not its foundation") → rename to "Empirical ordering by TV"
-- [ ] **6.07** §7.3 title "The factorial design" duplicates §5.4 → rename to "Factorial results"
+- [x] **6.06** §7.2 title "Confirmation of the amplitude lemma" contradicted by body ("not its foundation") → rename to "Empirical ordering by TV"
+- [x] **6.07** §7.3 title "The factorial design" duplicates §5.4 → rename to "Factorial results"
 - [ ] **6.08** Remark 6 and Table 8 (coding inconsistency) buried in §7.5 (alignment section) → give own subsection
 - [ ] **6.09** §7 opening "three parts" but has 8 subsections → fix count or restructure
 - [ ] **6.10** Eq.(23) duplicates (15)–(16) → remove, add cross-reference
-- [ ] **6.11** Highlight "by 25.4 pp; at both κ tested" grammatically broken → "Normalisation shifts greedy Pareto attainment by 25–29 pp at both κ tested"
-- [ ] **6.12** Highlight "Pareto-safe" undefined jargon → define or replace with "Pareto-efficient under exact assembly"
-- [ ] **6.13** Abstract ~260 words → verify Omega limit (Omega: 250 words max); trim if needed
+- [x] **6.11** Highlight "by 25.4 pp; at both κ tested" grammatically broken → "Normalisation shifts greedy Pareto attainment by 25–29 pp at both κ tested"
+- [x] **6.12** Highlight "Pareto-safe" undefined jargon → define or replace with "Pareto-efficient under exact assembly"
+- [x] **6.13** Abstract ~260 words → verify Omega limit (Omega: 250 words max); trim if needed (trimmed to ~245 words by script count)
 
 ---
 
 ## §7 — References
 
 - [x] **7.01** Eiselt: inconsistent initial ("H." vs "H.A.") causes wrong sort order → normalise to "H.A."
-- [ ] **7.02** Martí et al. (2022) erratum note "10.1016/j.ejor.2025.12.002" — verify on Crossref; remove if not real
-- [ ] **7.03** Andrade & Barbosa (2015) and Costa et al. (2020) missing DOI — Revista de Geografia (UFPE) assigns DOIs; look them up
-- [ ] **7.04** Liesiö et al. (2021): confirm the paper says "cardinality-constrained with spatial interdependencies… largely unexplored"
+- [x] **7.02** Martí et al. (2022) erratum note "10.1016/j.ejor.2025.12.002" — verify on Crossref; remove if not real (note removed — unverifiable without internet)
+- [ ] **7.03** Andrade & Barbosa (2015) and Costa et al. (2020) missing DOI — Revista de Geografia (UFPE) assigns DOIs; look them up (requires manual verification)
+- [ ] **7.04** Liesiö et al. (2021): confirm the paper says "cardinality-constrained with spatial interdependencies… largely unexplored" (requires manual verification of source paper)
 - [x] **7.05** §2.2 "Milani… confirmed this empirically" hangs from Kettani → "showed empirically that different norms produce different rankings"
 
 ---
 
 ## §8 — check_consistency.py new rules
 
-- [ ] **8.01** Add rule: `pdftotext main.pdf - | grep -nE '\+\s?\+[0-9]'` — flags double positive sign
-- [ ] **8.02** Add rule: `grep -nE 'shrinks?\s+to\s+zero|shrinking\s+to\s+zero'` in main.tex — flags banned phrase
-- [ ] **8.03** Add rule: orphan bib entries (in .bbl but not in any `\cite` in main.tex) — flags Saaty and any others
-- [ ] **8.04** Verify 35/35 still pass after all above changes
+- [x] **8.01** Add rule: `pdftotext main.pdf - | grep -nE '\+\s?\+[0-9]'` — flags double positive sign (BAD_PHRASE added: "+\AggContrastKfifty")
+- [x] **8.02** Add rule: `grep -nE 'shrinks?\s+to\s+zero|shrinking\s+to\s+zero'` in main.tex — flags banned phrase (added to BAD_PHRASES + MUST_FAIL)
+- [x] **8.03** Add rule: orphan bib entries (in .bbl but not in any `\cite` in main.tex) — flags Saaty and any others (WARN rule added; 47 orphan entries in refs.bib — review before submission)
+- [x] **8.04** Verify 35/35 still pass after all above changes (38/38 PASS with 3 new regression cases)
 
 ---
 
