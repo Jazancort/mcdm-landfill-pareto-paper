@@ -10,7 +10,7 @@
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.11+-blue?logo=python&logoColor=white" alt="Python 3.11+"></a>
   <a href="https://numpy.org/"><img src="https://img.shields.io/badge/NumPy-1.26+-013243?logo=numpy&logoColor=white" alt="NumPy 1.26+"></a>
   <a href="https://scipy.org/"><img src="https://img.shields.io/badge/SciPy-1.13+-8CAAE6?logo=scipy&logoColor=white" alt="SciPy 1.13+"></a>
-  <a href="https://doi.org/10.5281/zenodo.23676429"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.23676429.svg" alt="DOI"></a>
+  <a href="https://doi.org/10.5281/zenodo.23676428"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.23676428.svg" alt="DOI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green" alt="License MIT"></a>
   <img src="https://img.shields.io/badge/Journal-Omega%20(Elsevier)-orange" alt="Omega">
 </p>
@@ -93,7 +93,7 @@ Vector normalization systematically reduces regret by 9.4 pp compared to aspect 
 
 ---
 
-## Reproducing the results (v1.1)
+## Reproducing the results (v1.6)
 
 ### 1. Install dependencies
 
@@ -277,8 +277,8 @@ All six sub-experiments and the main factorial were pre-registered before data a
 
 | DOI type | Link | Resolves to |
 |----------|------|-------------|
-| **Concept** (always latest) | [10.5281/zenodo.23676429](https://doi.org/10.5281/zenodo.23676429) | Latest release |
-| **Version v1.1** (this submission) | [10.5281/zenodo.23676429](https://doi.org/10.5281/zenodo.23676429) | This exact snapshot |
+| **Concept** (always latest) | [10.5281/zenodo.23676428](https://doi.org/10.5281/zenodo.23676428) | Latest release |
+| **Version v1.1** (this submission) | [10.5281/zenodo.23676428](https://doi.org/10.5281/zenodo.23676428) | This exact snapshot |
 
 ---
 
@@ -293,7 +293,7 @@ All six sub-experiments and the main factorial were pre-registered before data a
   journal = {Omega},
   note    = {Under review},
   year    = {2026},
-  doi     = {10.5281/zenodo.23676429}
+  doi     = {10.5281/zenodo.23676428}
 }
 ```
 
