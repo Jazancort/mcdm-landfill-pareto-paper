@@ -155,14 +155,20 @@ DEM processing pipeline (confirmed from file inspection of Fogo working director
    the Overpass source in Fogo, so the slope column from the SENS-5/C-9 run will be compared
    against `df_real_data_cached.csv` to assess the combined pipeline sensitivity). Santiago DEM
    will be in EPSG:32627 (projected, metres); gdaldem does not need `-s` because the CRS is
-   metric. For gdaldem slope: use the default Horn algorithm, **no `-compute_edges`**. Without
-   `-compute_edges`, gdaldem returns nodata for any cell whose 3×3 neighbourhood contains a
-   nodata pixel; this includes coastal cells adjacent to the masked ocean. **nodata handling:**
-   a candidate site that receives slope = nodata is treated as slope = 0°; the slope criterion
-   is COST with orientation min-better, so a zero-slope imputation does not exclude any site
-   but places it at the maximum score (best) rather than removing it. This imputation is
-   declared here and will be recorded as a limitation in Phase 1 §9. Phase 1 must report the
-   count of imputed cells in A'.
+   metric. For gdaldem slope: use the default Horn algorithm, **no `-compute_edges`** (consistent
+   with the Fogo inferred default). Without `-compute_edges`, gdaldem returns nodata for any
+   cell whose 3×3 neighbourhood contains a nodata pixel (ocean boundary). **nodata handling
+   for slope:** any candidate site that receives slope = nodata is **excluded from A'** (added
+   to N_excl, not imputed). Exclusion is consistent with the protected-area exclusion rule and
+   introduces no bias in the amplitude A_j of the remaining sites. Imputation to 0° is not used
+   as primary rule because it would systematically favour coastal cells (where the true slope may
+   be high) and would alter the amplitude of the slope criterion for all sites.
+   Empirical check on Fogo: 0 of 473 published sites have nodata slope (see
+   `_verify_leeward_sets.py` results). The nodata rule therefore has no Fogo precedent;
+   it applies only if Santiago generates nodata slope values.
+   Phase 1 must report: (a) count of sites excluded for slope nodata in A'; (b) whether
+   ASTER tile covers the full island without gaps. Sensitivity: add SENS-slope-compute_edges
+   (run with `gdaldem slope -compute_edges`; compare N_adm and all predictions).
 
 DEM URL and SHA-256 of the downloaded tile(s) recorded in Phase 1 §9.
 
@@ -267,7 +273,7 @@ better for the site).
 |---|---|---|---|---|
 | perm | distance to P-F Baixa polygons (m) | **COST**: site wants to be close to Baixa zones; min distance = best. (`mcdm_experiment.py` L101: `COST = {'perm', ...}`) | **Rule P-F** (see §4.3 and Annex A): polygons of cod_form classified as Baixa in column P-F of T1. | IDECV `geologia_santiago`, SHA as §0 |
 | slope | slope (degrees) | **COST**: min degrees = best. | Pre-computed with `gdaldem slope` from ASTER GDEM v3 (same product as Fogo). Raster sampling: nearest-pixel (`rasterio.windows.Window(col, row, 1, 1)`) at the WGS84 centroid of each candidate, projected to the DEM CRS. | ASTER GDEM v3 (doi: 10.5067/ASTER/ASTGTM.003) |
-| aspect | binary: 0 if azimuth ∈ [90°, 180°] (leeward), 1 otherwise; flat cells = 0.5 | Special (binary, leeward coded as 0 in objectives, as 1 in SAW score). Flat cells (Sobel magnitude < 1e-9) receive aspect = −1 → norm_asp = 0.5. Source: `Landfill_NSGA2_Paper_Final.ipynb` (`norm_asp = 0.5 # neutral for missing aspect`). Not L428 of the NSGA-II pipeline (that script produced the 524-site dataset, not the 473-site one). | Aspect computed at extraction time via Sobel gradient from ASTER GDEM v3 (not read from a pre-computed aspect raster). Rule: azimuth computed from Sobel dx/dy; flat cells detected by `abs(dx) < 1e-9 and abs(dy) < 1e-9`. | ASTER GDEM v3 |
+| aspect | binary: 0 if azimuth ∈ [90°, 180°] (leeward), 1 otherwise; flat cells = 0.5 | Special (binary, leeward coded as 0 in objectives, as 1 in SAW score). Flat cells (Sobel magnitude < 1e-9) receive aspect = −1 → norm_asp = 0.5. Source: `Landfill_NSGA2_Paper_Final.ipynb` (`norm_asp = 0.5 # neutral for missing aspect`). Not L428 of the NSGA-II pipeline (that script produced the 524-site dataset, not the 473-site one). | Aspect computed at extraction time via Sobel gradient from ASTER GDEM v3 (not read from a pre-computed aspect raster). Rule: azimuth computed from Sobel dx/dy; flat cells detected by `abs(dx) < 1e-9 and abs(dy) < 1e-9`. **Meteorological note:** under both formulas, [90°, 180°] = E-to-S-facing slopes in true geography. The NE trade winds make the SW side ([180°, 270°] true) the meteorological leeward; the [90°, 180°] criterion is specific to the Fogo study (Andrade 2015) and likely reflects shelter from the Pico do Fogo caldera rather than prevailing winds. This limitation is inherited by S-T and will be noted in the article's Limitations section. | ASTER GDEM v3 |
 | roads | dist_roads (m) | **COST**: min distance = best. | OSM `highway=[motorway, trunk, primary, secondary, tertiary, unclassified, residential, service, road, track, path]` (tags from Annex B). Downloaded from Geofabrik PBF (island-wide, Option A); distance = 0 if inside a road polygon, computed in EPSG:32627. | OSM snapshot [date — Phase 1] |
 | rivers | dist_streams (m) | **INV**: max distance = best. | OSM `waterway=[stream, river, canal]` (tags from Annex B, no ditch/drain). Option A. | OSM snapshot [date — Phase 1] |
 | coast | dist_coastline (m) | **INV**: max distance = best. | OSM `natural=coastline`. Option A. | OSM snapshot [date — Phase 1] |
@@ -478,6 +484,8 @@ Phase 1 commit [HASH_F1] contains, and only contains:
 8. OSM element counts per criterion (resolves C-2 through C-8)
 9. Count of sites in A' that fall outside any geology polygon (B1 criterion); these receive the default NC score
 10. SHA-256 of the extraction code commit and the Geofabrik PBF tile
+11. CRS assert: the Santiago DEM must have a projected CRS (metres). If `src.crs.is_projected` is False, abort with "DEM is geographic (degrees): re-run gdalwarp to EPSG:32627 before continuing." Record the confirmed CRS in §9.
+12. Count of sites excluded for slope nodata (from step 8 of the DEM pipeline); if > 0, trigger SENS-slope-compute_edges automatically.
 
 ---
 
