@@ -80,7 +80,7 @@
   exact Pareto frontier}
 
 \tnotemark[1]
-\tnotetext[1]{The author declares no competing interests. No external funding was received for this work.}
+\tnotetext[1]{This article has a replication package; see Data availability.}
 
 % -----------------------------------------------------------------------
 \author[1]{Julio L.~Azancort Neto\orcid{0009-0000-2754-8503}}
@@ -129,13 +129,10 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 
 \begin{highlights}
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
-\item Exact assembly is Pareto-safe iff within-group TV is zero
-\item On Fogo, normalisation changes greedy attainment by
-  $\NormGreedyContrast$~pp; aggregation has no stable sign
-\item Under vector scores, exact assembly loses $\AsmVecSAW$--$\AsmVecTOPSIS$~pp
-  of frontier attainment relative to greedy
-\item Between-group distortion keeps assembly on the frontier
-  but costs $\RegretEoneB$~pp of value regret
+\item Exact assembly is Pareto-safe iff within-group TV is zero (proved exactly)
+\item Normalisation shifts greedy attainment by \NormGreedyContrast~pp; aggregation has no stable sign
+\item Under vector scores, exact assembly loses $\AsmVecSAW$--$\AsmVecTOPSIS$~pp vs greedy
+\item Between-group distortion stays on the frontier but costs $\RegretEoneB$~pp regret
 \end{highlights}
 
 \begin{keywords}
@@ -310,8 +307,7 @@ Our contributions are as follows.
 
 \noindent
 An exact identity connecting PROMETHEE~II to rank-weighted SAW for
-arbitrary tie structure is derived in the Supplementary Material
-(Proposition~\ref{prop:p2}).
+arbitrary tie structure is stated and proved in Section~\ref{prop:p2}.
 Section~\ref{sec:litreview} reviews the relevant literature.
 Section~\ref{sec:problem} formulates the portfolio problem and the
 reference set; Section~\ref{sec:methods} describes the data and the
@@ -490,7 +486,7 @@ Rank reversal and set dependence in PROMETHEE~II have been studied by
 who formalised the mechanism by which a third alternative shifts the
 flows of existing alternatives.
 These results concern a different channel than the one we study: our
-set-dependence effect (Section~\ref{sec:refset}) operates through
+set-dependence effect (Remark~\ref{rem:nonmonotone} and Table~\ref{tab:coding2x2}) operates through
 normalisation constants, not through pairwise preference flows.
 
 \citet{Eppe2014} examined the computational scalability of exact
@@ -754,7 +750,7 @@ are equivalent under min--max normalisation (top-100 rank agreement
 $=1.000$) but differ under vector normalisation by a factor of
 $\sqrt{n_0/n_1}=\AspectAmplitudeRatio$ (Corollary~\ref{cor:order}); score and
 objective use the decision-matrix encoding throughout
-(a score--evaluator coding mismatch is analysed in Section~\ref{sec:refset}).
+(a score--evaluator coding mismatch is analysed in Remark~\ref{rem:nonmonotone}).
 Amplitudes in Table~\ref{tab:amplitude} are measured on the decision
 matrix, with $n_1=94$ SE-facing sites among the $\Nvia$ admissible sites.
 The SAW method produces the oriented score
@@ -869,8 +865,8 @@ The \texttt{slope\_aspect} column of the published dataset
 \citep{AzancortNeto2026} is stored in a reflected convention,
 $\theta_{\text{pub}} = (270^\circ - \theta) \bmod 360^\circ$, where $\theta$
 is the geographic descent azimuth (0\textdegree{}=N, clockwise), computed via
-Sobel gradient on the ASTER GDEM~v3 tile.
-We verified this against an independent oracle: across all $\Nvia=389$ admissible
+the Horn algorithm (\texttt{gdaldem slope}) on the ASTER GDEM~v3 tile.
+We verified this against an independent oracle: across all $\Nvia$ admissible
 sites on Fogo (admissibility filter: \texttt{dist\_protected}$>0$), the mean cosine
 between the aspect and the summit-to-site bearing is $0.805$ for $\theta$ computed
 from the DEM directly and $-0.102$ for $\theta_{\text{pub}}$.
@@ -978,7 +974,9 @@ $1$ under min--max, and rank amplitudes depend only on the distribution of
 ranks, not on which end of the scale is labelled zero.
 This formulation coincides with the classical textbook form $x_{ij}/\lVert\mathbf{x}_j\rVert_2$
 when $\min_j x_j=0$ (true for \texttt{perm}, \texttt{slope}, \texttt{urban},
-\texttt{cult}, \texttt{aspect} and \texttt{protected} in the 473-site dataset)
+\texttt{cult}, \texttt{aspect} and \texttt{protected} in the 473-site dataset,
+where \texttt{slope} and \texttt{protected} attain zero only at excluded candidate
+sites not present in $A'$)
 and differs by at most $\RhoShiftMaxPct\,\%$
 (\texttt{\RhoShiftMaxCrit}) for the remaining five criteria
 (\texttt{roads}, \texttt{rivers}, \texttt{coast}, \texttt{wells}, \texttt{aero}).
@@ -1309,8 +1307,11 @@ weights exactly under additive aggregation.
 
 \textbf{2) Vector.}\;
 $A_j = \rho_j = 1/\lVert\tilde{\mathbf{x}}_j\rVert_2$,
-where $\tilde{x}_j(a)=\bigl(x_j(a)-\min_j x_j\bigr)/\bigl(\max_j x_j-\min_j x_j\bigr)$,
-which depends on the shape of the marginal distribution.
+where $\tilde{x}_j(a)=\bigl(x_j(a)-\min_j x_j\bigr)/\bigl(\max_j x_j-\min_j x_j\bigr)$;
+the range of $\tilde{\mathbf{x}}_j$ is always~$1$, so $A_j = 1/\lVert\tilde{\mathbf{x}}_j\rVert_2$
+regardless of the raw scale.
+For the binary criterion ($\tilde{x}_j = x_j \in\{0,1\}$) this reduces to
+$A_j = 1/\sqrt{n_1}$ as stated in~\eqref{eq:Arank_binary}.
 Criteria with heavy tails obtain $\rho_j$ close to unity;
 criteria with most mass at the median obtain small $\rho_j$.
 
@@ -1833,7 +1834,7 @@ sub-optimality in the factorial experiment into four ordered factors:
   \item \emph{Reference-set effect (normalisation over $A$ vs.\ $A'$):}
     Including inadmissible sites in the normalisation reference shifts
     the scale without those sites being selectable
-    (Section~\ref{sec:refset}).
+    (Section~\ref{sec:alignment}, Table~\ref{tab:coding2x2}).
 \end{enumerate}
 
 
@@ -1912,7 +1913,7 @@ normalisation constants are recomputed over the $\Nvia$ admissible sites
 The failures in space~$A$ are not solely attributable to the methods;
 they are partly induced by computing the value scale over sites that
 cannot be selected.
-Section~\ref{sec:refset} returns to this.
+Section~\ref{sec:alignment} returns to this.
 
 \begin{figure*}[!t]
 \centering
@@ -2711,9 +2712,8 @@ to the distortion: immunity (VIKOR), linear amplification (SAW), and
 quadratic-like amplification (TOPSIS, by analogy; Remark~\ref{rem:mm_not_neutral}).
 Three observations previously treated separately become corollaries of
 one identity: the vector-normalisation distortion
-(Section~\ref{sec:three_norms}), the rank-space contraction
-(Eq.~\eqref{eq:Arank_binary}), and the reference-set amplitude ratio
-(Remark~\ref{rem:nonmonotone}).
+(Section~\ref{sec:three_norms}) and the rank-space contraction
+(Eq.~\eqref{eq:Arank_binary}).
 
 The second difference is evidential.
 Existing comparisons measure the consequence of a normalisation choice by
@@ -2909,9 +2909,10 @@ $\mathrm{TV}_W$ prediction.
 At $\mathrm{TV}_W=\EsixTargetTVW$, the loss was below $3$~pp under
 continuous marginals but $\EsixLossZinfWinfF$~pp under zero-inflation,
 an order-of-magnitude difference.
-The monotone ordering (P2: $L\ge F\ge H$) was confirmed among
+The monotone ordering (P2: $L\ge F\ge H$) held among
 informative instances (\EsixPtwoMonoAll{} of \EsixPtwoLossyNAll{},
-\EsixPtwoPAll, pooled across families).
+\EsixPtwoPAll, pooled across families; DEV-E6-002 counts three-way ties as failures,
+giving 85 instead of the 87 in an earlier version that used a lenient tie rule).
 Together, E6 supports the directional ordering among informative instances;
 E5 found no linear association under greedy assembly ($-1.3$~pp, 95\%~CI
 $[-5.1,\,+2.4]$).
@@ -3015,9 +3016,10 @@ with instance size and spatial geometry.
 
 A pre-specified experiment on \EsixNinst{} synthetic instances across
 \EsixNfam{} marginal families (Experiment~E6, Section~\ref{sec:e6})
-confirms the directional prediction: the monotone ordering $L\ge F\ge H$
+supports the directional prediction: the monotone ordering $L\ge F\ge H$
 held among informative instances (\EsixPtwoMonoAll{} of
-\EsixPtwoLossyNAll{}, \EsixPtwoPAll{}, pooled).
+\EsixPtwoLossyNAll{}, \EsixPtwoPAll{}, pooled; note that P2 used the
+post-hoc ordering criterion of DEV-E6-002).
 At equal $\mathrm{TV}_W$, however, losses ranged from below $3$~pp
 under continuous marginals to $\EsixLossZinfWinfF$~pp under
 zero-inflation, confirming that $\mathrm{TV}_W$ alone does not
@@ -3054,16 +3056,17 @@ combine distances to ideal points, where amplitudes enter quadratically
 or in ratio form, and extending the characterisation to those families
 remains open.
 Theorem~\ref{thm:groupconst} is an exact characterisation for additive
-aggregation; the amplification of within-group distortion by
-between-group distortion observed in Section~\ref{sec:e1} is measured on
-one instance and not yet explained analytically.
+aggregation; the ordering of cells by $Q_2$ under combined distortions
+observed in Section~\ref{sec:e1} (between-group does not simply amplify
+within-group by the $R$ metric, but the $Q_2$ ordering places V below W)
+is measured on one instance and not yet explained analytically.
 The magnitudes are specific to one candidate set: the analytical results
 hold for any instance, but the size of the distortion depends on the
 marginal distributions, and a criterion with $350$ tied zeros among
 $\Nvia$ sites is an adversarial case; extending the measurement to
 further instances remains open.
 
-The reference-set analyses in Section~\ref{sec:refset} and
+The reference-set analyses in Section~\ref{sec:alignment} and
 Remark~\ref{rem:nonmonotone} are based on post hoc exploratory cells
 (Supplementary Material) and should be
 treated as descriptive rather than confirmatory.
@@ -3106,7 +3109,7 @@ During the preparation of this work the author used the Claude assistant
 (Anthropic), accessed via the Kiro development environment (Amazon Web
 Services), for structural organisation of the manuscript, code review,
 drafting and revising passages of scientific prose (including
-the coding-inconsistency remark, Section~\ref{sec:refset}, and the provenance note
+the coding-inconsistency remark, Remark~\ref{rem:nonmonotone}, and the provenance note
 in Section~\ref{sec:methods}), and language editing.
 The formulation of arguments, the design and execution of experiments,
 the selection and interpretation of results, and all final scientific

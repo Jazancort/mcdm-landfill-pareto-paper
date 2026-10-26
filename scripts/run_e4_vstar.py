@@ -28,6 +28,7 @@ from mcdm_experiment import (
     _build_decision_matrix, COST as COST_SET,
 )
 from pareto_utils import build_pareto_utils
+from aspect_utils import normalize_continuous_aspect, normalize_continuous_aspect_389
 
 EPS       = 1e-9
 N_DRAWS   = 500
@@ -74,23 +75,22 @@ for jj, crit in enumerate(col_names):
     rng389 = x_via_raw.max() - x_via_raw.min() or 1.0
     r_vec[jj] = rng389 / rng473
 
-# Xadj473_aspect: aspect column as continuous (azimuth in degrees, 473-base)
+# Xadj473_aspect: aspect column as continuous geographic azimuth (473-base)
+# Uses aspect_utils.normalize_continuous_aspect for correct (270-θ_nb)%360 convention.
+# NOTE: This R-asp cell in run_e4_vstar is NOT cited in the article; the authoritative
+# R-asp and R-V results come from run_fourthcell_consistent.py. This script is kept
+# for reference but the R-asp values here will differ from the article.
 J_ASPECT = col_names.index("aspect")
-x_asp_all = df_imp[COL["aspect"]].values.astype(float)
-x_asp_via = df_via[COL["aspect"]].values.astype(float)
-mn473_asp = x_asp_all.min(); rng473_asp = x_asp_all.max() - mn473_asp or 1.0
-xb473_asp = (x_asp_via - mn473_asp) / rng473_asp  # continuous, 473-base, [0,1]
-# aspect is benefit=True in _build_decision_matrix => no flip needed
-Xadj473_asp = xb473_asp   # already benefit-adjusted (higher = better in score)
+xb473_asp = normalize_continuous_aspect(df_via, df_imp, COL["aspect"])
+Xadj473_asp = xb473_asp   # benefit=True for aspect, no flip needed
 
 # R-V*: X_adj_dm * r_j  (aspect binary, amplitudes r_j)
 X_Vstar = X_adj_dm * r_vec
 
 # R-asp: X_adj_dm but aspect column replaced with continuous azimuth (389-base)
+# Uses aspect_utils.normalize_continuous_aspect_389 for correct convention.
 X_adj_asp = X_adj_dm.copy()
-# 389-base continuous aspect: (x_via - min_via) / range_via
-mn389_asp = x_asp_via.min(); rng389_asp = x_asp_via.max() - mn389_asp or 1.0
-xb389_asp = (x_asp_via - mn389_asp) / rng389_asp
+xb389_asp = normalize_continuous_aspect_389(df_via, COL["aspect"])
 X_adj_asp[:, J_ASPECT] = xb389_asp
 
 print(f"R-V*  aspect col: binary (X_adj_dm * r_j).  r_aspect={r_vec[J_ASPECT]:.4f}")

@@ -766,7 +766,38 @@ if blg_path.exists():
 else:
     print("  [INFO] main.blg not found — skip duplicate check")
 
-# Rule 5b: main.log quality gates — undefined refs, rerun warning, overfull hbox
+# Rule 4b: prohibit direct slope_aspect reads in scripts outside aspect_utils.py
+# (all continuous-aspect normalisations must use aspect_utils.normalize_continuous_aspect*)
+print()
+print("=== Rule 4b: slope_aspect direct reads outside aspect_utils.py ===")
+_scripts_dir = ROOT / "scripts"
+_allowed_direct_reads = {"aspect_utils.py", "_verify_amend3.py", "mcdm_experiment.py",
+                          "validate_core.py", "check_aspect_impact.py",
+                          "diag_p3.py", "diag_r14.py"}
+_py_files = list(_scripts_dir.glob("*.py"))
+_direct_read_violations = []
+import re as _re4b
+for _pf in _py_files:
+    if _pf.name in _allowed_direct_reads:
+        continue
+    _text = _pf.read_text(encoding="utf-8", errors="replace")
+    for _ln, _line in enumerate(_text.splitlines(), 1):
+        _stripped = _line.strip()
+        if _stripped.startswith("#"):
+            continue
+        # Check for direct reads of COL["aspect"] or slope_aspect without aspect_utils import
+        if (re.search(r'COL\[.aspect.\].*values|df.*\[COL\[.aspect.\]\]', _stripped)
+                and "aspect_utils" not in _text):
+            _direct_read_violations.append(f"{_pf.name}:{_ln} — direct aspect column read without aspect_utils import")
+if _direct_read_violations:
+    for _v in _direct_read_violations[:5]:
+        FAIL.append(f"Rule4b: {_v}")
+        print(f"  [FAIL] {_v}")
+else:
+    print(f"  [OK  ] No direct slope_aspect reads outside aspect_utils.py"
+          f" (checked {len(_py_files)} scripts)")
+
+print()
 print()
 print("=== Log quality gates (undefined refs, Rerun, Overfull) ===")
 log_for_gates = next((p for p in [Path(r"C:\build\paper\main.log"), ROOT / "main.log"]
@@ -1380,4 +1411,5 @@ if _reg_fail:
     sys.exit(1)
 else:
     print(f"  All {len(_MUST_FAIL)+len(_MUST_PASS)} regression cases correct")
+
 
