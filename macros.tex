@@ -134,12 +134,12 @@
 \newcommand{\RVprimeOptimal}{88.4}   % R-V' kappa=200 optimal (1/r_j pattern vs A')
 \newcommand{\RefSetGreedyGain}{11.8} % R1-2: greedy improvement with consistent coding (pp)
 
-% ── Marco B/E3: aspect non-monotonicity (computed 2026-10-02) ─────────────
-\newcommand{\AspSpearman}{0.018}     % Spearman(normalised azimuth, leeward indicator)
-\newcommand{\AspSpearmanP}{0.73}     % p-value (not correlated)
-\newcommand{\AspTopQuartile}{98}     % sites in top 25% continuous aspect
+% ── Marco B/E3: aspect non-monotonicity (recomputed 2026-10-26 with correct geographic formula)
+\newcommand{\AspSpearman}{-0.445}    % Spearman(normalised azimuth, leeward indicator)
+\newcommand{\AspSpearmanP}{0.000}    % p-value (strongly anti-correlated, p<0.001)
+\newcommand{\AspTopQuartile}{100}    % sites in top 25% continuous aspect
 \newcommand{\AspTopQuartileNonLee}{100} % of which indicator=0 (non-leeward), %
-\newcommand{\AspLeewardCount}{94}    % indicator=1 (leeward [90-180]) sites
+\newcommand{\AspLeewardCount}{94}    % indicator=1 (leeward [90-180]) sites (invariant)
 \newcommand{\AspLeewardPct}{24.2}    % % of 389 viable sites that are leeward
 
 % ── F1: SAW-TOPSIS contrast by stratum (aggregation_strata.py, 2026-10-02) ──
@@ -157,15 +157,15 @@
 \newcommand{\RoneTwoGrdDelta}{11.8}     % R1-2 grd: Δ_ref greedy (pp)
 \newcommand{\RoneTwoGrdCIlo}{8.8}      % R1-2 grd CI lower (pp)
 \newcommand{\RoneTwoGrdCIhi}{14.8}     % R1-2 grd CI upper (pp)
-\newcommand{\RaspOptimal}{24.0}        % R-asp opt: aspect continuous cell (%)
-\newcommand{\RaspLoss}{76}             % = 100 - \RaspOptimal; Q2 cost of aspect coding alone
+\newcommand{\RaspOptimal}{15.6}        % R-asp opt: aspect continuous cell (%) [corrected 2026-10-26]
+\newcommand{\RaspLoss}{84}             % = 100 - \RaspOptimal; Q2 cost of aspect coding alone
 % Residual reference-set effect (R-asp vs R-V, source: results/r1/r1_bootstrap.csv)
-\newcommand{\ResidualRefOptDelta}{4.0}   % R-asp vs R-V opt pp
-\newcommand{\ResidualRefOptCIlo}{2.2}    % 95\% CI lower
-\newcommand{\ResidualRefOptCIhi}{6.0}    % 95\% CI upper
-\newcommand{\ResidualRefGrdDelta}{5.6}   % R-asp vs R-V grd pp
-\newcommand{\ResidualRefGrdCIlo}{3.6}    % 95\% CI lower
-\newcommand{\ResidualRefGrdCIhi}{7.8}    % 95\% CI upper (text had 7.6 -- corrected from r1_bootstrap.csv)
+\newcommand{\ResidualRefOptDelta}{-4.4}   % R-asp vs R-V opt pp [was +4.0 with notebook formula]
+\newcommand{\ResidualRefOptCIlo}{-7.2}    % 95\% CI lower
+\newcommand{\ResidualRefOptCIhi}{-1.4}    % 95\% CI upper
+\newcommand{\ResidualRefGrdDelta}{-3.8}   % R-asp vs R-V grd pp [was +5.6 with notebook formula]
+\newcommand{\ResidualRefGrdCIlo}{-6.8}    % 95\% CI lower
+\newcommand{\ResidualRefGrdCIhi}{-0.8}    % 95\% CI upper
 
 
 % ── F3: Q3 results (q3_perdraw.py v2, 2026-10-19) ───────────────────────────
