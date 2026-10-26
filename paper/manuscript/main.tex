@@ -99,22 +99,20 @@
 \begin{abstract}
 Multi-site facility siting is a portfolio problem: several locations are chosen
 jointly under a minimum separation. Practice reads multi-criteria rankings
-top-down; the methodological literature compares methods by rank agreement,
-which shows that they differ, not that any is worse. We supply a benchmark
-external to the ranking, though internal to the value model. For $\Nvia$ admissible
+top-down; the literature compares methods by rank agreement,
+showing they differ but not which is worse. We supply a benchmark
+external to the ranking. For $\Nvia$ admissible
 sites on Fogo Island, Cape Verde, we enumerate all $\Ntrios$ three-site
 portfolios satisfying a $\dmin$~km separation and compute the exact Pareto frontier
 over siting cost, environmental impact and social safety. Analytically, under
-additive aggregation with affine normalisation, the effective weight of a
-criterion is proportional to its weight times the amplitude of its normalised
-column, and exact assembly is Pareto-efficient on every instance if and only if
-amplitudes are constant within each objective group. Empirically, on this
+additive aggregation, the effective weight equals the nominal weight times the
+column amplitude; exact assembly is Pareto-efficient on all instances iff
+within-group amplitudes are constant. Empirically, on this
 instance, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp under greedy
 assembly (robust; $+\NormGreedyContrastKfifty$~pp at $\kappa=50$).
 the pooled SAW--TOPSIS mean contrast is near zero at $\kappa=200$
 ($\AggContrast$\,pp, TOST $p=\TOSTp$) but rises to
-$\AggContrastKfifty$~pp at $\kappa=50$; aggregation depends on the
-dispersion of the weight perturbation ($\kappa$).
+$\AggContrastKfifty$~pp at $\kappa=50$; aggregation depends on weight-draw dispersion ($\kappa$).
 The value of exact
 assembly under vector normalisation also depends on $\kappa$: it loses
 $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$,
@@ -122,7 +120,7 @@ but these effects are not distinguishable from zero at $\kappa=50$.
 An intervention shows that
 between-group distortion never moves the portfolio off the frontier
 (Q$_2=100\%$, Theorem~\ref{thm:groupconst}) but costs
-$\RegretEoneB$~pp of value regret (median $\RegretEoneBMed$~pp);
+$\RegretEoneB$~pp of value regret;
 within-group distortion reduces frontier attainment
 by $\EoneWloss$~pp. Separately, a criterion encoded inconsistently
 between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$.
@@ -130,8 +128,8 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 
 \begin{highlights}
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
-\item Exact assembly is Pareto-safe on all instances iff amplitudes are group-constant
-\item Normalisation shifts greedy attainment by $\NormGreedyContrast$~pp; at both $\kappa$ tested
+\item Exact assembly stays Pareto-efficient iff amplitudes are group-constant
+\item Normalisation shifts greedy Pareto attainment by $\NormGreedyContrast$--$\NormGreedyContrastKfifty$~pp at both $\kappa$ tested
 \item Aggregation and assembly under vector depend on weight-draw dispersion ($\kappa$)
 \item Criterion coded differently in score and objectives alone costs $\RaspLoss$~pp
 \end{highlights}
@@ -205,7 +203,7 @@ $\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy at $\kappa=200$;
 at $\kappa=50$ neither effect is distinguishable from zero.
 In value regret ($R$), exact assembly achieves lower regret than greedy
 under both normalisations ($\RegrDiffSAWvec$~pp, SAW/vec;
-$\RegrDiffTOPSISvec$~pp, TOPSIS/vec): the two effects run opposite.
+$\RegrDiffTOPSISvec$~pp, TOPSIS/vec; both below the $\delta=2.5$~pp equivalence margin): the two effects run opposite.
 
 The reason is a mechanism that operates upstream of the aggregation
 operator, and it is the analytical core of the paper.
@@ -248,8 +246,8 @@ the optimum along the frontier, and only distortion within a group can
 move it off.
 A follow-up intervention with pre-specified predictions confirms the structural prediction
 (P1, guaranteed by Theorem~\ref{thm:groupconst}) and falsifies the two empirical ones
-(P2, P3) (Section~\ref{sec:e1}); post hoc, within-group distortion accounts for
-$\EoneWloss$ of the $\EoneVloss$~pp lost under vector normalisation at $\kappa=200$.
+(P2, P3) (Section~\ref{sec:e1}); post hoc, within-group distortion alone costs $\EoneWloss$~pp, against
+$\EoneVloss$~pp for the full vector distortion (the effects are not additive).
 Adding integer programming on top of a ranking
 \citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012}
 improved Pareto attainment under min--max and reduced it under vector
@@ -293,7 +291,8 @@ Our contributions are as follows.
     is better than greedy under vector normalisation
     ($\RegrDiffSAWvec$--$\RegrDiffTOPSISvec$~pp) and for TOPSIS under
     min--max ($\RegrDiffTOPSISmmGrdOpt$~pp,
-    $95\%$~CI $[\RegrDiffTOPSISmmGrdOptLo,\,\RegrDiffTOPSISmmGrdOptHi]$~pp).
+    $95\%$~CI $[\RegrDiffTOPSISmmGrdOptLo,\,\RegrDiffTOPSISmmGrdOptHi]$~pp;
+    all below the $\delta=2.5$~pp equivalence margin).
   \item A necessary and sufficient condition for exact assembly to remain
     Pareto-efficient under normalisation: amplitudes must be constant
     within each objective group (Theorem~\ref{thm:groupconst}),
@@ -409,7 +408,7 @@ scale and encode preferences, and the two roles interact whenever the
 achievable range of each goal changes; the present paper shows that
 the same tension arises in additive MCDM through the amplitude
 identity~\eqref{eq:weff}.
-\citet{Milani2005} confirmed this empirically, showing that different
+\citet{Milani2005} showed empirically that different
 normalisation norms produce different rankings in a gear material
 selection study and recommending vector normalisation on the grounds that
 it is less sensitive to the raw scale of the data.
@@ -432,7 +431,7 @@ identity~\eqref{eq:weff} derived in this paper explains analytically why
 normalisation choice produces those changes.
 
 Two observations qualify this body of work.
-First, every study uses ranking agreement (RCI, Spearman's $\rho$,
+First, every study uses ranking agreement (RCI, Spearman's $r_s$,
 or Pearson correlation between ranked lists) as its performance measure,
 which establishes that outcomes differ without establishing that any
 outcome is better.
@@ -593,7 +592,8 @@ landfill siting in Greece, combining GIS-based scoring with ELECTRE TRI
 to handle weight uncertainty across multiple stakeholder scenarios; that
 study evaluates suitability class assignments rather than portfolio
 efficiency against a Pareto frontier.
-\citet{EiseltMarianov2014} were, to our knowledge, the only prior study to
+\citet{EiseltMarianov2014} were, to our knowledge, the only prior study
+apart from \citet{AzancortNeto2026} to
 compute an exact Pareto frontier for a landfill siting problem; they use
 a bi-objective MIP without any MCDM ranking component, and the frontier
 is bivariate rather than trivariate.
@@ -911,8 +911,10 @@ aerodromes (site~429).
 Each is imputed by the midpoint of the observed range of its criterion over
 all $\Ncand$ candidates.
 Because the affected sites are three out of $\Ncand$ and none enters the
-exact Pareto frontier $\mathcal{F}$ (verified computationally), the
-choice of imputation rule is immaterial.
+exact Pareto frontier $\mathcal{F}$ under the nominal weights $\wahp$ (verified computationally), the
+choice of imputation rule does not affect the min--max normalisation constants;
+its effect on vector norms is negligible given the three sites account for
+$3/\Ncand$ of the column.
 
 \paragraph{Regulatory exclusion.}
 Sites overlapping a protected area (\texttt{dist\_protected}$=0$) cannot
@@ -929,6 +931,10 @@ matters for Sections~\ref{sec:three_norms} and~\ref{sec:order_ops}.
 Stage~2 of Figure~\ref{fig:workflow}. Weights are taken from the column-normalised
 priority vector of \citet{Andrade2015} (their Table~5), as adopted by
 \citet{AzancortNeto2026}.
+\citet{AzancortNeto2026} describe the principal eigenvector; the released weights
+coincide with the column-normalised vector ($\max|\Delta|=0.001$, criterion \textit{rivers})
+and differ from the eigenvector by at most $0.004$ (\textit{perm}), well below
+the Dirichlet SD ($\approx0.025$ at $\kappa=200$).
 Consistency is acceptable: $\lambda_{\max}=\lmax$, $\mathrm{CI}=0.08525$,
 $\mathrm{RI}=1.51$ \citep{Saaty1990}, hence $\mathrm{CR}=\CR<0.10$
 (threshold: \citealt{Saaty1990,Saaty2008}).
@@ -1067,8 +1073,11 @@ portfolio objectives per draw.
 Weights are perturbed as $w\sim\mathrm{Dir}(\kappa\,\wahp)$, $\ndraws$ draws per cell.
 The primary analysis uses $\kappa=200$ (standard deviation $\approx0.025$ for $w_j=0.15$);
 $\kappa=50$ ($\approx0.05$) is reported for every contrast in Table~\ref{tab:contrasts}.
-$\kappa=200$ was fixed in the E1 pre-specification and adopted for the factorial for
-consistency; the factorial has no separate pre-specification of $\kappa$.
+$\kappa=200$ is declared in the main pre-specification (PRESPEC.md, committed
+before any run, \texttt{0780644}); E1 subsequently specifies the same value
+independently in its own pre-specification for comparability.
+The factorial has no separate $\kappa$ document; the value is inherited from the
+main pre-specification.
 Value regret ($R$) and the F8 alignment matrix were computed at $\kappa=200$ only.
 $\kappa$ concentrates the draws around $\wahp$.
 Throughout, $\kappa$ denotes only this concentration parameter; the
@@ -1181,6 +1190,9 @@ bootstrap intervals, paired by draw.
 E1 uses $\nbootEone$ replicates; the factorial uses $\nboot$.
 Intervals are unadjusted for multiplicity; contrasts other than the
 pre-specified aggregation TOST are descriptive.
+The value $\kappa=200$ is declared in the main pre-specification
+(PRESPEC.md) and repeated in the E1 pre-specification; it is discussed
+in Section~\ref{sec:entries}.
 
 \paragraph{Benchmark circularity.}
 The Pareto frontier and the objectives are both built on additive
@@ -1755,7 +1767,7 @@ Criterion & Group & $w_j$ & $A_j^{\text{mm}}$ & $A_j^{\text{vec}}$ &
 \textit{aero}      & $G_3$ & 0.102 & 1.000 & 0.088 & 0.995 & 0.43 & 1.12 \\
 \textit{cult}      & $G_3$ & 0.081 & 1.000 & 0.171 & 0.981 & 0.85 & 1.11 \\
 \midrule
-$\mathrm{TV}$ & & & 0.000 & \TVvec & 0.091 & & \\
+$\mathrm{TV}$ & & & 0.000 & $\TVvec$ & 0.091 & & \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -1865,11 +1877,13 @@ sub-optimality in the factorial experiment into four ordered factors:
 \section{Results}
 \label{sec:results}
 
-The results are organised in three parts: the base portfolios under nominal
-weights, which establish the empirical magnitude of the normalisation and
-assembly effects; the confirmation of the amplitude lemma against the
-factorial data; and the cost of normalisation--assembly mismatch measured
-against the exact Pareto frontier.
+The results are organised as follows.
+Section~\ref{sec:base} establishes the base portfolios under nominal weights.
+Section~\ref{sec:lemmaconf} confirms the TV ordering empirically.
+Sections~\ref{sec:factorial}--\ref{sec:alignment} report the factorial experiment:
+aggregation, assembly and cross-model alignment.
+Sections~\ref{sec:greedy}--\ref{sec:e6} present three follow-up experiments:
+the greedy-shortfall analysis, the E1 within-group intervention, and the E6 synthetic test.
 
 % ----------------------------------------------------------
 \subsection{Base portfolios under nominal weights}
@@ -1931,7 +1945,8 @@ Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.0
 
 A first indication that the reference set is itself implicated: when
 normalisation constants are recomputed over the $\Nvia$ admissible sites
-(space~$A'$), the Pareto membership of method portfolios improves.
+(space~$A'$), the Pareto membership of method portfolios improves
+(3 of 7 efficient in space~$A$; 6 of 7 in space~$A'$).
 The failures in space~$A$ are not solely attributable to the methods;
 they are partly induced by computing the value scale over sites that
 cannot be selected.
@@ -1958,23 +1973,17 @@ Section~\ref{sec:alignment} returns to this.
 \end{figure*}
 
 % ----------------------------------------------------------
-\subsection{Confirmation of the amplitude lemma}
+\subsection{Empirical ordering by TV}
 \label{sec:lemmaconf}
 % ----------------------------------------------------------
 
 The amplitude identity~\eqref{eq:weff} characterises the weight deviation
 the normalisation imposes on the elicited weights, measured
-on the simplex by
-\begin{equation}
-  \label{eq:TV_results}
-  \mathrm{TV} = \tfrac12\sum_{j=1}^{m}\bigl|w_j^{\mathrm{eff}}-w_j\bigr|,
-  \qquad
-  w_j^{\mathrm{eff}} = \frac{w_j A_j}{\sum_k w_k A_k}.
-\end{equation}
+on the simplex by~\eqref{eq:TV} with $w_j^{\mathrm{eff}}$ from~\eqref{eq:weff}.
 Total variation is the appropriate measure because, as noted after
 Section~\ref{sec:three_norms}, $w^{\mathrm{eff}}$ is invariant to a common
 rescaling of all amplitudes: a factor $c>0$ applied to every $A_j$
-cancels in~\eqref{eq:TV_results} and produces no re-weighting.
+cancels in~\eqref{eq:TV} and produces no re-weighting.
 
 Table~\ref{tab:tvorder} pairs the distortion with observed
 performance on Fogo, restricted to additive aggregation, the scope in which
@@ -2017,7 +2026,7 @@ Further families (max, Peldschus, sum) are reported in the
 Supplementary Material.
 
 % ----------------------------------------------------------
-\subsection{The factorial design}
+\subsection{Factorial results}
 \label{sec:factorial}
 % ----------------------------------------------------------
 
@@ -2338,7 +2347,7 @@ that \citet{Andrade2015} classify as minimum suitability on Fogo.
 Because the SE-facing indicator is a deterministic function of $\theta$
 ($b_\mathrm{asp}=\mathbf{1}[\theta\in[90^\circ,180^\circ]]$), the
 Spearman correlation between normalised azimuth and the indicator
-($\rho=\AspSpearman$, point-biserial on ranks, descriptive) measures
+($r_s=\AspSpearman$, point-biserial on ranks, descriptive) measures
 only where the SE class falls on the linear scale, not an empirical
 association.
 This coding mismatch reduces $Q_2$ from $100\%$ to $\RaspOptimal\%$ under
@@ -2491,9 +2500,11 @@ the $Q_2$ result as evidence for it.
 
 \begin{remark}[TV$_W > 0$ is not sufficient for efficiency loss]
 \label{rem:TVW}
-Theorem~\ref{thm:groupconst} gives a sufficient condition for efficiency
-(constant amplitudes within groups); it does not claim that any $\mathrm{TV}_W > 0$
-will produce loss.
+Theorem~\ref{thm:groupconst} is a necessary and sufficient condition for efficiency
+\emph{over all instances}: $\mathrm{TV}_W=0$ iff exact assembly is Pareto-efficient
+for every instance and every weight draw.
+On any single instance, $\mathrm{TV}_W>0$ does not guarantee a loss, as
+R-V$^*$ illustrates.
 The reference-set cell R-V$^*$ illustrates the distinction.
 Its within-group amplitudes range from $0.482$ (\texttt{perm}) to $1.0$
 (\texttt{roads}) in $G_1$, giving $\mathrm{TV}_W\approx0.082$ and
@@ -2550,8 +2561,10 @@ Theorem~\ref{thm:groupconst}) confirmed the implementation: both baseline
 cells (M and B) attained $Q_2=100\%$ on all \EsixPoneNDesign{}
 draws (\EsixPoneHits{} of \EsixPoneTotal{} draw-cell combinations).
 
-P2 (monotone ordering $L\ge F\ge H$ with $H<L$, one-sided
-Poisson-binomial) was a mixed result.
+P2 (pre-registered criterion: $\rho_s(\mathrm{TV}_W, Q_2^{\mathrm{opt}}) < 0$ in $\ge80\%$ of instances per family; Supplementary Material, \S\ref{sec:prespec_e6}):
+among informative instances $\rho_s < 0$ in $100\%$ per family, satisfying the pre-registered criterion.
+Supplementary Material, DEV-E6-002, revised the test to a monotone ordering
+criterion ($L\ge F\ge H$ with $H<L$, one-sided Poisson-binomial); that analysis was a mixed result.
 Among instances with no detectable loss at any $\mathrm{TV}_W$
 level (27--40\% of instances under continuous marginals)
 the comparison is uninformative.
@@ -2589,8 +2602,9 @@ conclusion from it.
 At $\mathrm{TV}_W=\EsixTargetTVW$ the loss was approximately $\EsixLossZinfWinfF$~pp in
 the zero-inflated family and below $3$~pp under continuous marginals,
 against $\EoneWloss$~pp on Fogo.
-At equal $\mathrm{TV}_W$, losses differ by an order of magnitude
-across marginal families, confirming that $\mathrm{TV}_W$ alone
+At equal $\mathrm{TV}_W$, losses span a $3$--$4\times$ range
+across marginal families (below $3$~pp under continuous marginals
+vs $\EsixLossZinfWinfF$~pp under zero-inflation), confirming that $\mathrm{TV}_W$ alone
 does not determine the cost (Remark~\ref{rem:TVW}).
 Point masses are associated with larger losses; whether concentrating
 sparsity in a single high-weight criterion is more harmful than
@@ -2834,8 +2848,8 @@ scale of $[2,11]$ tells the decision maker both that the elicited
 weights were substantially moved and that the movement is concentrated;
 neither number conveys this alone.
 Where elicited weights carry normative content, as with AHP judgements
-from stakeholders, a normalisation that silently reweights them is
-difficult to defend.
+from stakeholders, the re-weighting implicit in vector normalisation is
+difficult to defend (Section~\ref{sec:discussion}).
 
 Fourth, report the order in which orientation adjustment and
 normalisation are applied.
@@ -2876,9 +2890,11 @@ The benchmark is therefore internal to the model class: it cannot detect
 whether the value model is mis-specified.
 The MAVT justification for the min--max choice is presented in Section~\ref{sec:design};
 the robustness experiment (F8) is in Section~\ref{sec:alignment};
-they confirm
-that the result reflects score--objective alignment rather than an
-intrinsic property of min--max, but do not resolve the deeper
+they confirm that alignment explains the diagonal cells, but the asymmetry
+($\FEightVecMMOptLoss$~pp when min--max scores against a vector frontier
+vs $\FEightMmVecOptLoss$~pp when vector scores against a min--max frontier)
+indicates that min--max scores are more robust to frontier misspecification;
+neither result resolves the deeper
 limitation that $Q_2$ measures proximity to one value model.
 A method that scores well on $Q_2$ may still select a portfolio that
 would be suboptimal under a different specification of the objectives.
@@ -2887,8 +2903,8 @@ would be suboptimal under a different specification of the objectives.
 The amplitude identity~\eqref{eq:weff} is exact for additive
 aggregation under affine normalisation (min-max and vector);
 for rank normalisation the identity is approximate.
-Remark~\ref{prop:exponent} extends it to distance-based and
-ordinal families through the amplitude exponent, but the extension is
+Remark~\ref{prop:exponent} extends it to distance-based
+families through the amplitude exponent, but the extension is
 exact for the squared TOPSIS distance rather than the distance itself,
 and we have not characterised families whose contribution is not
 homogeneous in $w_j n_j(\cdot)$, outranking methods with non-linear
@@ -2939,14 +2955,9 @@ External confirmation on other published instances was not obtained.
 A pre-specified experiment, with declared deviations, on \EsixNinst{} synthetic instances
 across \EsixNfam{} marginal families (Experiment~E6,
 Section~\ref{sec:e6}) provides the most direct cross-family test of the
-$\mathrm{TV}_W$ prediction.
-At $\mathrm{TV}_W=\EsixTargetTVW$, the loss was below $3$~pp under
-continuous marginals but $\EsixLossZinfWinfF$~pp under zero-inflation,
-an order-of-magnitude difference.
-The monotone ordering (P2: $L\ge F\ge H$) held among
-informative instances (\EsixPtwoMonoAll{} of \EsixPtwoLossyNAll{},
-\EsixPtwoPAll, pooled across families).
-E6 supports the directional ordering among informative instances;
+$\mathrm{TV}_W$ prediction; at equal $\mathrm{TV}_W$, losses ranged from below $3$~pp
+under continuous marginals to $\EsixLossZinfWinfF$~pp under zero-inflation
+($3$--$4\times$), confirming that $\mathrm{TV}_W$ alone does not calibrate the cost.
 E5 found no linear association under greedy assembly ($-1.3$~pp, 95\%~CI
 $[-5.1,\,+2.4]$).
 
@@ -2997,9 +3008,8 @@ $Q_3$ for all cells is reported in Table~\ref{tab:factorial}.
 
 \emph{Regulatory grounding.}
 The $\Nexcl$ candidates overlapping protected areas are excluded before
-analysis; the exclusion reflects a hard constraint from national
-conservation legislation and does not affect the relative comparison of
-methods, which are evaluated on the same admissible set of $\Nvia$ sites.
+analysis; the exclusion removes them from the selectable set and does not affect the
+normalisation reference set comparison in Table~\ref{tab:coding2x2}.
 
 
 % =======================================================================
@@ -3028,7 +3038,7 @@ Exact assembly had no unconditional benefit on this instance: the value depends 
 and TOPSIS gained $+\AsmMMtopsis$~pp at $\kappa=200$; under vector normalisation exact assembly
 lost $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$ in frontier
 attainment to greedy assembly (both effects not distinguishable from zero at $\kappa=50$), but achieved $\RegrDiffSAWvec$~pp (SAW)
-less value regret.
+less value regret (below the $\delta=2.5$~pp equivalence margin).
 The explanation is analytical: in additive aggregation the effective
 weight of a criterion is proportional to $w_jA_j$, and exact assembly
 is Pareto-efficient for any weights and any instance of the additive model if and only if
@@ -3051,14 +3061,9 @@ with instance size and spatial geometry.
 
 A pre-specified experiment on \EsixNinst{} synthetic instances across
 \EsixNfam{} marginal families (Experiment~E6, Section~\ref{sec:e6})
-supports the directional prediction: the monotone ordering $L\ge F\ge H$
-held among informative instances (\EsixPtwoMonoAll{} of
-\EsixPtwoLossyNAll{}, \EsixPtwoPAll{}, pooled; note that P2 used the
-post-hoc ordering criterion of DEV-E6-002).
-At equal $\mathrm{TV}_W$, however, losses ranged from below $3$~pp
-under continuous marginals to $\EsixLossZinfWinfF$~pp under
-zero-inflation, confirming that $\mathrm{TV}_W$ alone does not
-calibrate the magnitude of the cost.
+supports the directional prediction and shows that at equal $\mathrm{TV}_W$
+the cost ranges $3$--$4\times$ across marginal families, confirming that $\mathrm{TV}_W$
+alone does not calibrate its magnitude.
 
 The Fogo magnitudes are therefore instance-specific; the within-group
 mechanism is directionally robust but its magnitude depends on the
@@ -3081,15 +3086,12 @@ alternatives costs nothing under optimal assembly on this instance.
 The immediate recommendation is inexpensive: report effective weights
 alongside elicited ones.
 Given the normalised decision matrix the computation is a single line,
-and it exposes distortions that no rank-agreement diagnostic reveals.
-Where weights encode stakeholder judgements, as AHP weights do, a
-normalisation that silently multiplies one criterion by $\PermInflation\times$ and
-scales another by a factor of $\UrbanRatioVec$ is difficult to defend.
+and it exposes distortions that rank-agreement diagnostics do not reveal.
+Where weights encode stakeholder judgements, as AHP weights do,
+the re-weighting is difficult to defend; the argument is developed in
+Section~\ref{sec:discussion}.
 
-The closed form is exact for additive aggregation under affine normalisation; for ranks the identity is approximate. TOPSIS and VIKOR
-combine distances to ideal points, where amplitudes enter quadratically
-or in ratio form, and extending the characterisation to those families
-remains open.
+The closed form is exact for additive aggregation under affine normalisation; for ranks the identity is approximate. TOPSIS combines distances to ideal points, where amplitudes enter quadratically, and extending the exact characterisation to TOPSIS (via the $\alpha=2$ analogy) remains open.
 Theorem~\ref{thm:groupconst} is an exact characterisation for additive
 aggregation; the ordering of cells by $Q_2$ under combined distortions
 observed in Section~\ref{sec:e1} (between-group does not simply amplify
@@ -3171,7 +3173,7 @@ and GitHub.\footnote{\nolinkurl{github.com/Jazancort/NSGA2-GIS-Landfill-Optimiza
 The replication package for this article (source code, pre-specified
 analysis plans, and pre-computed data) is publicly available
 online\footnote{\url{https://github.com/Jazancort/mcdm-landfill-pareto-paper}}
-(Zenodo, concept DOI~\url{10.5281/zenodo.23676483}; release~v1.5).
+(Zenodo, concept DOI~\url{10.5281/zenodo.23676428}; release~v1.5).
 The provenance audit script \texttt{verify\_macros\_permanent.py}
 recomputes all primary quantitative claims and exits~0 on
 exact agreement with the values in this article.
