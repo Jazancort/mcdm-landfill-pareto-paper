@@ -695,6 +695,9 @@ BAD_PHRASES = [
      "banned phrase (§1.03 fix): use 'not distinguishable from zero at κ=50'"),
     ("+\\AggContrastKfifty",
      "double positive sign: \\AggContrastKfifty already contains '+'; remove explicit '+'"),
+    # AggContrastKfifty correction (2026-10-30): +20.4 was wrong; correct is +17.2
+    ("+20.4~pp",
+     "AggContrastKfifty corrected to +17.2 pp; hardcoded +20.4 banned"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
@@ -1461,6 +1464,9 @@ _MUST_FAIL = [
      "§8.02: 'shrinking to zero' banned phrase"),
     ("+\\AggContrastKfifty",
      "§8.01: double positive sign — AggContrastKfifty already has embedded '+'"),
+    # AggContrastKfifty: old value +20.4 must be caught
+    ("+20.4~pp",
+     "AggContrastKfifty corrected to +17.2; hardcoded +20.4 banned"),
 ]
 
 _MUST_PASS = [
