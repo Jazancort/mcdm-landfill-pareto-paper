@@ -875,3 +875,9 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 | `prespec-santiago-f0-amend-final` | this commit | 2026-10-26 | **Ocean coding corrected:** ocean in hell.tif = VALUE 0 (not nodata); nodata = 2.27% corner triangles only; -compute_edges irrelevant; Python Horn gives max\|Δ\| = 0.000° on 7241 coastal cells; amend3 "10837 border cells" explained as UTM corner triangles. PRESPEC technically frozen after this commit. |
 
 Note: amend4b contained an incorrect statement (ocean = nodata, -compute_edges confirmed). That tag is retained for audit trail; the correction is in amend-final.
+---
+## External pre-registration timestamp
+
+This document (`PRESPEC_SANTIAGO.md`) is included in the Zenodo archive of the primary paper's replication package (repository `Jazancort/mcdm-landfill-pareto-paper`, release v1.1, Zenodo deposit 28 October 2026, DOI `10.5281/zenodo.23675961` or successor concept DOI). The archive date (28 Oct 2026) constitutes an external timestamp for this pre-registration, predating any Santiago-island experimental run.
+
+Phase 1 (S-T model as specified here) may proceed once this timestamp is confirmed.
