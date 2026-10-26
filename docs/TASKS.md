@@ -650,3 +650,16 @@ contínuo e portanto os macros `\RaspOptimal`, `\AspSpearman`, `\AspTopQuartile`
 valores 24.0%/20.0% da Tabela 7. Os números têm de ser recalculados com a fórmula
 correcta `arctan2(-dx, dy)` antes da próxima revisão do artigo. Não bloqueia a tag
 `prespec-santiago-f0`.
+
+---
+
+## PRESPEC Santiago Phase 0 — hash imutável
+
+Tag: `prespec-santiago-f0`
+Commit (HASH_F0): `5ead7f594e48241189c5b7396a1d6ddd9edafd5a`
+Data: 2026-10-26
+Tagger: Julio Azancort <julioazancortneto@gmail.com>
+
+A partir deste commit o texto do Phase 0 é imutável.
+Qualquer mudança a §3–§6 do PRESPEC é um DEV-S-### com data, razão e direcção esperada.
+Phase 1 é appendada num commit separado; o texto do Phase 0 nunca é editado depois.
