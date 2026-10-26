@@ -187,7 +187,7 @@ Pareto-efficient or not, with no approximation error.
 We then cross SAW and TOPSIS with three normalisations and two
 assembly rules in a balanced $2^3$ design, and measure how often each cell recovers an efficient
 portfolio under Monte Carlo perturbation of the elicited weights;
-VIKOR and PROMETHEE~II are included under nominal weights
+VIKOR and PRO\-ME\-THEE~II are included under nominal weights
 (Table~\ref{tab:canonical}) and in the Supplementary Material.
 
 The answer is not about the aggregation methods.
@@ -865,10 +865,10 @@ The \texttt{slope\_aspect} column of the published dataset
 $\theta_{\text{pub}} = (270^\circ - \theta) \bmod 360^\circ$, where $\theta$
 is the geographic descent azimuth (0\textdegree{}=N, clockwise), computed via
 Sobel gradient on the ASTER GDEM~v3 tile.
-We verified this against an independent oracle: across all 389 admissible
-sites on Fogo, the mean cosine between the aspect and the summit-to-site
-bearing is $0.805$ for $\theta$ computed from the DEM directly
-and $-0.102$ for $\theta_{\text{pub}}$.
+We verified this against an independent oracle: across all $\Nvia=389$ admissible
+sites on Fogo (admissibility filter: \texttt{dist\_protected}$>0$), the mean cosine
+between the aspect and the summit-to-site bearing is $0.805$ for $\theta$ computed
+from the DEM directly and $-0.102$ for $\theta_{\text{pub}}$.
 The binary SE-facing indicator ($90^\circ \le \theta \le 180^\circ$, closed)
 is invariant under this reflection, because the reflection axis
 $135^\circ$ is the midpoint of the interval; the 94 SE-facing sites and
@@ -974,7 +974,7 @@ ranks, not on which end of the scale is labelled zero.
 This formulation coincides with the classical textbook form $x_{ij}/\lVert\mathbf{x}_j\rVert_2$
 when $\min_j x_j=0$ (true for \texttt{perm}, \texttt{urban}, \texttt{cult},
 \texttt{aspect} and \texttt{rivers}) and differs by at most $\RhoShiftMaxPct\,\%$
-(\texttt{\RhoShiftMaxCrit}) for the remaining four criteria.
+(\texttt{\RhoShiftMaxCrit}) for the remaining criteria.
 For SAW, switching from shift to raw norms with the same weights leaves the selected
 portfolio unchanged in \RawSensSawOptSame{} of \RawSensTotal{} draws under optimal
 assembly and \RawSensSawGrdSame{} under greedy; for TOPSIS the counts are
@@ -1158,8 +1158,7 @@ is invariant to per-criterion affine transformation (min--max and vector
 are both affine, so VIKOR$\times$vector duplicates VIKOR$\times$min--max)
 and four because PROMETHEE~II with
 the usual preference function is ordinal and therefore identical under
-all three normalisations, leaving $\Ncellsnet$ estimable cells
-(Remark~\ref{prop:exponent});
+all three normalisations, leaving $\Ncellsnet$ estimable cells;
 it is unbalanced and its results are reported in the Supplementary Material.
 Effects are reported in percentage points with $\nboot$-replicate
 bootstrap intervals, paired by draw.
@@ -1302,7 +1301,8 @@ Min--max is the unique member of the three that preserves elicited
 weights exactly under additive aggregation.
 
 \textbf{2) Vector.}\;
-$A_j = \rho_j = (\max_j x_j - \min_j x_j) / \lVert\mathbf{x}_j\rVert_2$,
+$A_j = \rho_j = 1/\lVert\tilde{\mathbf{x}}_j\rVert_2$,
+where $\tilde{x}_j(a)=\bigl(x_j(a)-\min_j x_j\bigr)/\bigl(\max_j x_j-\min_j x_j\bigr)$,
 which depends on the shape of the marginal distribution.
 Criteria with heavy tails obtain $\rho_j$ close to unity;
 criteria with most mass at the median obtain small $\rho_j$.
@@ -1342,9 +1342,9 @@ of~$389$, while \textit{aspect} (binary) gives $A_j = N/[2(N+1)]
 \eqref{eq:Arank_binary}, independent of $n_1$.
 The seven fully continuous criteria are conversely \emph{inflated}
 (factor $\approx 1.12\times$) because the mean amplitude $\bar{A}<1$
-makes each criterion's unit relative weight larger; \textit{perm} and \textit{aspect} lose weight; the seven fully continuous criteria
-gain $\approx\RnkContinuousGainPct\%$, while \textit{urban} and \textit{cult} gain
-slightly less (see Table~\ref{tab:amplitude}).
+makes each criterion's unit relative weight larger; \textit{perm} and
+\textit{aspect} lose weight, while \textit{urban} and \textit{cult} gain
+slightly less than $\approx\RnkContinuousGainPct\%$ (see Table~\ref{tab:amplitude}).
 The directions are reversed: the same heavy-zero distribution inflates
 \textit{perm} under vector normalisation and deflates it under rank
 scaling.
@@ -1361,7 +1361,8 @@ Figure~\ref{fig:binary_amplitude} illustrates the binary case analytically.
   continuous criterion without ties (dashed line); the shaded region marks
   the gap of~$0.496$.
   The marker shows \textit{aspect} at $n_1=94$.
-  This figure is purely analytical: no data from Fogo Island enter it.}
+  This figure is purely analytical: apart from the marker ($n_1=94$, $N=\Nvia$),
+  no data from Fogo Island enter it.}
 \label{fig:binary_amplitude}
 \end{figure}
 
@@ -1662,7 +1663,7 @@ $\PermInflation\times$ inflation under vector normalisation.
 
 \subsection{Vector normalisation distorts effective weights}
 \label{prop:p3}
-Under vector normalisation, $v_j(a) = x_j(a) / \lVert\mathbf{x}_j\rVert_2$.
+Under vector normalisation, $v_j(a) = \tilde{x}_j(a) / \lVert\tilde{\mathbf{x}}_j\rVert_2$.
 The amplitude is $A_j = \rho_j$ as defined in
 Section~\ref{sec:amplitude}, and by~\eqref{eq:weff}
 \begin{equation}
@@ -2038,7 +2039,7 @@ For context, the median regret of a randomly drawn valid trio on this
 instance is approximately $\RRegretRandom$~pp; all eight cells are far
 into the upper tail of the portfolio-quality distribution.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering\small
 \caption{$Q_2[A']$ with standard error (SE) in parentheses, value regret~$R$~\eqref{eq:R} (percentage of achievable $V$-range, SE in parentheses), $Q_3$ and conditional gap (CG) for the balanced $2^3$ design
 ($\kappa=200$, $\ndraws$ draws). $Q_3$ is the expected gap~\eqref{eq:Q3} in
@@ -2062,7 +2063,7 @@ TOPSIS & mm, greedy   & $\QtwoTOPSISmmGrd$\% (\QtwoSETOPSISmmGrd)  & \RegrTOPSIS
        & vec, optimal & $\QtwoTOPSISvecOpt$\% (\QtwoSETOPSISvecOpt) & \RegrTOPSISvecOpt{} (\RegrTOPSISvecOptSE) & \QthreeTOPSISvecOptPct & \CondGapTOPSISvecOpt \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \begin{table*}[!t]
 \centering\small
@@ -2192,7 +2193,7 @@ implementation.
 The two off-diagonal entries (score and frontier diverge) reveal a
 strong directional asymmetry.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering\small
 \caption{Cross-model alignment matrix:
   $Q_2[\mathcal{A}']$ (\%) for SAW under each combination of
@@ -2216,7 +2217,7 @@ Vector   & optimal & $\FEightMmVecOptQ$\% & ($\FEightMmVecOptSE$) & $\FEightVecV
          & greedy  & $\FEightMmVecGrdQ$\% & ($\FEightMmVecGrdSE$) & $\FEightVecVecGrdQ$\% & {---} \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 Under optimal assembly, moving the score from min--max to vector while keeping
 the frontier at $\mathcal{F}_{\mathrm{mm}}$ costs
@@ -2230,12 +2231,12 @@ than a wrong frontier normalisation.
 
 Under greedy assembly the direction reverses.
 A vector score against $\mathcal{F}_{\mathrm{mm}}$ costs
-$\FEightGrdMmLossVecScore$~pp relative to the aligned mm/mm/greedy baseline
+$\FEightGrdMmLossVecScore$~pp relative to the aligned baseline
 of $\FEightMmMMGrdQ$\%
-(95\%~CI: $[\FEightGrdMmLossVecScoreLo, \FEightGrdMmLossVecScoreHi]$~pp),
+(95\%~CI: $[\FEightGrdMmLossVecScoreLo,\FEightGrdMmLossVecScoreHi]$~pp),
 whereas a min--max score against $\mathcal{F}_{\mathrm{vec}}$ costs
 $\FEightGrdVecLossMmScore$~pp
-($[\FEightGrdVecLossMmScoreLo, \FEightGrdVecLossMmScoreHi]$~pp).
+($[\FEightGrdVecLossMmScoreLo,\FEightGrdVecLossMmScoreHi]$~pp).
 Under greedy assembly, a wrong frontier normalisation is the costlier error.
 
 The reversal is driven by the 100\% attainment under vec/vec/greedy
@@ -2285,11 +2286,14 @@ objectives use a binary SE-facing indicator ($90^\circ$--$180^\circ$,
 closed) introduces a non-monotone mismatch.
 The score column is the min--max normalisation of the geographic azimuth
 $\theta\in[0^\circ,360^\circ)$: the site with the highest azimuth
-receives score~$1$, so scores decrease monotonically from the WNW/NW
-direction toward $0^\circ$ (due north).
-SE-facing sites ($\theta\in[90^\circ,180^\circ]$) occupy the lower-middle
-range of the scale and receive mid-range scores; the top quartile
-therefore concentrates at WNW-facing azimuths (circular mean
+receives score~$1$; scores decrease monotonically as $\theta$ decreases,
+reaching~$0$ at the minimum azimuth (NNE, near $0^\circ$).
+The discontinuity is at due north: a site at $359^\circ$ scores near~$1$
+while a site at $1^\circ$ scores near~$0$, even though both face nearly
+the same direction.
+SE-facing sites ($\theta\in[90^\circ,180^\circ]$) lie in the lower-middle
+range of the scale and receive mid-range scores; ordering sites by azimuth
+places the top quartile at WNW-facing azimuths (circular mean
 $\approx302^\circ$, s.d.\ $27^\circ$) by construction of the linear
 scale, not as an empirical finding; those azimuths belong to the class
 that \citet{Andrade2015} classify as minimum suitability on Fogo.
@@ -2374,7 +2378,7 @@ assembly (structural consequence of Theorem~\ref{thm:groupconst} for $\mathrm{TV
 serves as an implementation check); (P2)~cells~W and~V differ by less than $5$~pp under optimal
 assembly; (P3)~cell~B under greedy assembly performs close to min--max.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering
 \caption{Intervention on amplitudes, SAW, $\kappa=200$, $\ndraws$ draws,
   space $A'$. $\mathrm{TV}_B$ and $\mathrm{TV}_W$ as in
@@ -2395,7 +2399,7 @@ V (vector)       & \TVBvec & \TVWvec & $\QtwoEoneVGrd$\%  & $\QtwoEoneVOpt$\%  &
 \multicolumn{8}{l}{\footnotesize $^{*}$ Mean (SE~$\RegretEoneBSE$~pp; median~$\RegretEoneBMed$~pp;
   $\RegretEoneBfracZero\%$ of draws: $R=0$).}
 \end{tabular}
-\end{table}
+\end{table*}
 
 P1 holds by Theorem~\ref{thm:groupconst}: $\mathrm{TV}_W=0$ for cell~B
 guarantees $Q_2=100\%$ under optimal assembly, confirming the implementation
@@ -2604,13 +2608,15 @@ Normalising over the $\Ncand$ candidates costs nothing under optimal
 assembly when the coding is consistent ($100.0\%$ in both cells) and
 improves greedy assembly by $\RefSetGreedyGain$~pp
 ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
-When the coding is inconsistent, the 473-site reference set changes
-$Q_2$ by $\ResidualRefOptDelta$~pp under optimal assembly
+When the coding is inconsistent, the 473-site reference set reduces
+$Q_2$ by $\ResidualRefOptDelta$~pp under optimal assembly relative to
+the 389-site reference
 ($95\%$~CI $[\ResidualRefOptCIlo,\,\ResidualRefOptCIhi]$) and
 $\ResidualRefGrdDelta$~pp under greedy assembly
 ($[\ResidualRefGrdCIlo,\,\ResidualRefGrdCIhi]$).
-The reference-set effect is therefore not a fixed cost: its sign and
-magnitude are instance-specific.
+The wider reference set dilutes the evaluation: inadmissible sites with
+extreme azimuth values distort the min--max scale, making the
+389-site reference slightly less harmful on this instance.
 All cells in this paragraph are post hoc exploratory
 (Supplementary Material).
 
@@ -2898,9 +2904,9 @@ an order-of-magnitude difference.
 The monotone ordering (P2: $L\ge F\ge H$) was confirmed among
 informative instances (\EsixPtwoMonoAll{} of \EsixPtwoLossyNAll{},
 \EsixPtwoPAll, pooled across families).
-Together, E5 and E6 confirm that $\mathrm{TV}_W$ is a reliable
-directional predictor but that loss magnitudes depend on the marginal
-distribution of criterion values.
+Together, E6 supports the directional ordering among informative instances;
+E5 found no linear association under greedy assembly ($-1.3$~pp, 95\%~CI
+$[-5.1,\,+2.4]$).
 
 Most landfill-selection studies in the literature apply continuous GIS
 overlay analysis rather than enumerating a finite set of candidate sites
@@ -3091,15 +3097,15 @@ this article.
 During the preparation of this work the author used the Claude assistant
 (Anthropic), accessed via the Kiro development environment (Amazon Web
 Services), for structural organisation of the manuscript, code review,
-and language editing of individual sentences.
+drafting and revising passages of scientific prose (including
+Section~\ref{sec:data}, Section~\ref{sec:refset}, and the provenance note
+in Section~\ref{sec:criteria}), and language editing.
 The formulation of arguments, the design and execution of experiments,
-the selection and interpretation of results, and all final writing are
-the responsibility of the author.
-After using this tool, the author reviewed and edited the content as
-needed and takes full responsibility for the content of the published
-article.
-Generative AI was not used to produce any text published as scientific
-content, nor to generate figures or images.
+the selection and interpretation of results, and all final scientific
+judgements are the responsibility of the author.
+After using this tool, the author reviewed and edited all content as
+needed, verified it against the underlying data and analyses, and
+takes full responsibility for the content of the published article.
 
 \section*{Funding}
 
@@ -3110,7 +3116,7 @@ No external funding was received for this work.
 The spatial dataset for Fogo Island (candidate site centroids, criterion
 layers, AHP weights) was obtained from \citet{AzancortNeto2026} and is
 publicly available via Zenodo (\url{https://zenodo.org/records/17704387})
-and GitHub.\footnote{\url{https://github.com/Jazancort/NSGA2-GIS-Landfill-Optimization-Cape-Verde}}
+and GitHub.\footnote{\nolinkurl{github.com/Jazancort/NSGA2-GIS-Landfill-Optimization-Cape-Verde}}
 
 % -----------------------------------------------------------------------
 \section*{Code availability}

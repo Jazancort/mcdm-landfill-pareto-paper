@@ -132,8 +132,8 @@
 % Cost of r_j pattern: 0 pp (R-V* opt = 100%); cost of 1/r_j: 11.6 pp (R-V' opt = 88.4%)
 \newcommand{\RVstarOptimal}{100.0}   % R-V* kappa=200 optimal (consistent coding)
 \newcommand{\RVstarGreedy}{97.8}     % R-V* kappa=200 greedy  (consistent coding)
-\newcommand{\RVoptimal}{20.0}        % R-V  kappa=200 optimal (continuous aspect, 473-base)
-\newcommand{\RVgreedy}{19.6}         % R-V  kappa=200 greedy  (continuous aspect, 473-base)
+\newcommand{\RVoptimal}{6.2}         % R-V  kappa=200 optimal (continuous aspect, 473-base) [corrected 2026-10-28]
+\newcommand{\RVgreedy}{6.4}          % R-V  kappa=200 greedy  (continuous aspect, 473-base) [corrected 2026-10-28]
 \newcommand{\RVprimeOptimal}{88.4}   % R-V' kappa=200 optimal (1/r_j pattern vs A')
 \newcommand{\RefSetGreedyGain}{11.8} % R1-2: greedy improvement with consistent coding (pp)
 
@@ -164,12 +164,13 @@
 \newcommand{\RaspGreedy}{15.8}         % R-asp grd (%) [corrected 2026-10-26]
 \newcommand{\RaspLoss}{84.4}           % = 100 - \RaspOptimal (one decimal precision)
 % Residual reference-set effect (R-asp vs R-V, source: results/r1/r1_bootstrap.csv)
-\newcommand{\ResidualRefOptDelta}{-4.4}   % R-asp vs R-V opt pp [was +4.0 with notebook formula]
-\newcommand{\ResidualRefOptCIlo}{-7.2}    % 95\% CI lower
-\newcommand{\ResidualRefOptCIhi}{-1.4}    % 95\% CI upper
-\newcommand{\ResidualRefGrdDelta}{-3.8}   % R-asp vs R-V grd pp [was +5.6 with notebook formula]
-\newcommand{\ResidualRefGrdCIlo}{-6.8}    % 95\% CI lower
-\newcommand{\ResidualRefGrdCIhi}{-0.8}    % 95\% CI upper
+% [corrected 2026-10-28: R-V recomputed with geographic azimuth convention]
+\newcommand{\ResidualRefOptDelta}{9.4}    % R-asp vs R-V opt pp
+\newcommand{\ResidualRefOptCIlo}{6.6}     % 95\% CI lower
+\newcommand{\ResidualRefOptCIhi}{12.4}    % 95\% CI upper
+\newcommand{\ResidualRefGrdDelta}{9.4}    % R-asp vs R-V grd pp [corrected 2026-10-28]
+\newcommand{\ResidualRefGrdCIlo}{6.4}     % 95\% CI lower
+\newcommand{\ResidualRefGrdCIhi}{12.6}    % 95\% CI upper
 
 
 % ── F3: Q3 results (q3_perdraw.py v2, 2026-10-19) ───────────────────────────

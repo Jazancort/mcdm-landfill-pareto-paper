@@ -74,7 +74,7 @@ rm_opt     = agg("RM_Aprime",      "optimal")
 # Internal consistency assertions (values from geographic formula, 2026-10-26)
 assert abs(rvstar_opt - 100.0) < 0.01, f"RV_star_Aprime diagonal != 100: {rvstar_opt}"
 assert abs(rm_opt     - 100.0) < 0.01, f"RM_Aprime diagonal != 100: {rm_opt}"
-assert abs(r_v_opt    -  20.0) < 0.5,  f"R-V opt changed unexpectedly: {r_v_opt} (expected ~20.0)"
+assert abs(r_v_opt    -   6.2) < 0.5,  f"R-V opt changed unexpectedly: {r_v_opt} (expected ~6.2 with corrected geographic azimuth)"
 assert abs(rasp_opt   -  15.6) < 0.5,  f"RaspOptimal regression: {rasp_opt} (expected ~15.6)"
 assert abs(rasp_grd   -  15.8) < 0.5,  f"RaspGreedy  regression: {rasp_grd} (expected ~15.8)"
 assert abs(rasp_opt + round(100 - rasp_opt, 1) - 100) < 0.01, "RaspOptimal + RaspLoss != 100 (one decimal)"

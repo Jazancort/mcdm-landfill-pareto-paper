@@ -9,5 +9,5 @@ RM_A,200,greedy,58.8,2.201
 RM_A,200,optimal,95.0,0.975
 R_asp_Aprime,200,greedy,15.8,1.631
 R_asp_Aprime,200,optimal,15.6,1.623
-R_V_Aprime,200,greedy,19.6,1.775
-R_V_Aprime,200,optimal,20.0,1.789
+R_V_Aprime,200,greedy,6.4,1.095
+R_V_Aprime,200,optimal,6.2,1.078

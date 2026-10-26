@@ -291,7 +291,7 @@ TAB_CODING2X2 = {
     "RMopt": 100.0, "RMgrd": 86.0,       # binary coding, 389 constants
     "RVstarOpt": 100.0, "RVstarGrd": 97.8, # binary coding, 473 constants
     "AspOpt": 15.6, "AspGrd": 15.8,        # continuous coding, 389 constants (R-asp) [corrected 2026-10-26]
-    "RVopt": 20.0, "RVgrd": 19.6,          # continuous coding, 473 constants (R-V, NOT vector)
+    "RVopt": 6.2, "RVgrd": 6.4,            # continuous coding, 473 constants (R-V) [corrected 2026-10-28: geographic azimuth]
 }# ── REGRESSION GUARD: diagonal cells derive from Prop1 — NEVER editable ────
 # These values are theorems, not measurements. Any run that gives a diagonal
 # cell < 100% has a bug in score/objective/trios alignment. Do NOT edit these
@@ -335,10 +335,10 @@ for label in ["84.6", "97.8", "58.8"]:
 print()
 print("=== tab:coding2x2 arithmetic (DEV-E4-009) ===")
 _c = TAB_CODING2X2
-check("coding2x2 R-asp opt - R-V opt = -4.4 pp [corrected: was +4.0 with notebook formula]",
-      _c["AspOpt"] - _c["RVopt"], -4.4, tol=0.05)
-check("coding2x2 R-asp grd - R-V grd = -3.8 pp [corrected: was +5.6 with notebook formula]",
-      _c["AspGrd"] - _c["RVgrd"], -3.8, tol=0.05)
+check("coding2x2 R-asp opt - R-V opt = +9.4 pp [corrected 2026-10-28: R-V with geographic azimuth]",
+      _c["AspOpt"] - _c["RVopt"], 9.4, tol=0.05)
+check("coding2x2 R-asp grd - R-V grd = +9.4 pp [corrected 2026-10-28]",
+      _c["AspGrd"] - _c["RVgrd"], 9.4, tol=0.05)
 check("coding2x2 R-V* grd - R-M grd = +11.8 pp",
       _c["RVstarGrd"] - _c["RMgrd"], 11.8, tol=0.1)
 check("coding2x2 R-M opt = 100.0%",  _c["RMopt"],    100.0, tol=0.001)
@@ -682,7 +682,12 @@ BAD_PHRASES = [
     ("76~pp",
      "old R-asp loss 76 pp (corrected to \\RaspLoss=84.4 pp)"),
     ("+4.0~pp",
-     "old R-asp vs R-V delta +4.0 pp (corrected to -4.4 pp)"),
+     "old R-asp vs R-V delta +4.0 pp (corrected to +9.4 pp with geographic formula)"),
+    # Old R-V values (corrected 2026-10-28: Xadj473 now uses (270-nb)%360)
+    ("20.0\\%",
+     "old R-V optimal 20.0% (corrected to \\RVoptimal=6.2%)"),
+    ("$-4.4$~pp",
+     "old R-asp vs R-V delta -4.4 pp (corrected to +9.4 pp; sign flipped with R-V correction)"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
@@ -760,6 +765,47 @@ if blg_path.exists():
         print("  [OK  ] No duplicate bib entries")
 else:
     print("  [INFO] main.blg not found — skip duplicate check")
+
+# Rule 5b: main.log quality gates — undefined refs, rerun warning, overfull hbox
+print()
+print("=== Log quality gates (undefined refs, Rerun, Overfull) ===")
+log_for_gates = next((p for p in [Path(r"C:\build\paper\main.log"), ROOT / "main.log"]
+                      if p.exists() and p.stat().st_size > 1024), None)
+if log_for_gates is None:
+    FAIL.append("Log5b: main.log not found — run xelatex first")
+    print("  [FAIL] main.log not found")
+else:
+    import re as _re5
+    _log5 = log_for_gates.read_text(encoding="utf-8", errors="replace")
+    # Undefined references / citations (final pass)
+    _undef = len(_re5.findall(r"(?:Reference|Citation) `[^']+' on page \d+ undefined", _log5))
+    if _undef > 0:
+        FAIL.append(f"Log5b: {_undef} undefined ref/cite in final pass — run bibtex + 2x xelatex")
+        print(f"  [FAIL] Undefined ref/cite: {_undef}")
+    else:
+        print(f"  [OK  ] Undefined ref/cite: 0")
+    # Rerun to get cross-references right
+    _rerun = _log5.count("Rerun to get")
+    if _rerun > 0:
+        FAIL.append(f"Log5b: 'Rerun to get' ({_rerun}) — another xelatex pass needed")
+        print(f"  [FAIL] Rerun to get: {_rerun}")
+    else:
+        print(f"  [OK  ] Rerun to get: 0")
+    # Overfull hbox > 5pt in prose (table cells with & are exempt)
+    _overfull_lines = [l for l in _log5.splitlines()
+                       if "Overfull \\hbox" in l and "pt too wide" in l]
+    _bad_overfull = []
+    for _ol in _overfull_lines:
+        _m = _re5.search(r"([\d.]+)pt too wide", _ol)
+        if _m and float(_m.group(1)) > 5.0:
+            _bad_overfull.append(_ol)
+    if _bad_overfull:
+        FAIL.append(f"Log5b: {len(_bad_overfull)} Overfull \\hbox > 5pt")
+        print(f"  [FAIL] Overfull \\hbox > 5pt: {len(_bad_overfull)}")
+        for _l in _bad_overfull[:5]:
+            print(f"    {_l[:100]}")
+    else:
+        print(f"  [OK  ] Overfull \\hbox > 5pt: 0")
 
 # Rule 5: aspect coding consistency warning
 # The manuscript uses aspect as binary (leeward indicator) in the objectives.
@@ -1238,6 +1284,11 @@ _MUST_FAIL = [
      "old R-asp loss 76 pp replaced by 84.4 pp"),
     ("+4.0~pp",
      "old R-asp vs R-V delta +4.0 pp replaced by -4.4 pp"),
+    # Old R-V values must be caught (corrected 2026-10-28)
+    ("20.0\\%",
+     "old R-V optimal 20.0% replaced by 6.2%"),
+    ("$-4.4$~pp",
+     "old R-asp vs R-V delta -4.4 pp replaced by +9.4 pp (sign flipped with R-V correction)"),
     # DEV-A-G2: blue diamonds in tab:canonical caption (removed b8911a2)
     ("Pareto membership (blue diamonds)",
      "tab:canonical: blue diamonds removed — use \\in\\mathcal{F} column"),
