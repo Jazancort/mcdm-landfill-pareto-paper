@@ -933,6 +933,10 @@ matters for Sections~\ref{sec:three_norms} and~\ref{sec:order_ops}.
 Stage~2 of Figure~\ref{fig:workflow}. Weights are taken from the column-normalised
 priority vector of \citet{Andrade2015} (their Table~5), as adopted by
 \citet{AzancortNeto2026}.
+\citet{AzancortNeto2026} describe the principal eigenvector; the released weights
+coincide with the column-normalised vector ($\max|\Delta|=0.001$, criterion \textit{rivers})
+and differ from the eigenvector by at most $0.004$ (\textit{perm}), well below
+the Dirichlet SD ($\approx0.025$ at $\kappa=200$).
 Consistency is acceptable: $\lambda_{\max}=\lmax$, $\mathrm{CI}=0.08525$,
 $\mathrm{RI}=1.51$ \citep{Saaty1990}, hence $\mathrm{CR}=\CR<0.10$
 (threshold: \citealt{Saaty1990,Saaty2008}).
@@ -1937,7 +1941,8 @@ Source study      & ---     & $\{184,430,460\}$ & 0.0811 & 0.5568 & 0.6170 & 0.0
 
 A first indication that the reference set is itself implicated: when
 normalisation constants are recomputed over the $\Nvia$ admissible sites
-(space~$A'$), the Pareto membership of method portfolios improves.
+(space~$A'$), the Pareto membership of method portfolios improves
+(3 of 7 efficient in space~$A$; 6 of 7 in space~$A'$).
 The failures in space~$A$ are not solely attributable to the methods;
 they are partly induced by computing the value scale over sites that
 cannot be selected.
@@ -2497,9 +2502,10 @@ the $Q_2$ result as evidence for it.
 
 \begin{remark}[TV$_W > 0$ is not sufficient for efficiency loss]
 \label{rem:TVW}
-Theorem~\ref{thm:groupconst} gives a sufficient condition for efficiency
-(constant amplitudes within groups); it does not claim that any $\mathrm{TV}_W > 0$
-will produce loss.
+Theorem~\ref{thm:groupconst} is a necessary and sufficient condition for efficiency over
+all instances: TV$_W=0$ (constant amplitudes within groups) is sufficient for
+Pareto-efficiency; TV$_W>0$ is not sufficient to cause loss on every instance,
+as the cell R-V$^*$ below illustrates.
 The reference-set cell R-V$^*$ illustrates the distinction.
 Its within-group amplitudes range from $0.482$ (\texttt{perm}) to $1.0$
 (\texttt{roads}) in $G_1$, giving $\mathrm{TV}_W\approx0.082$ and
@@ -2556,8 +2562,10 @@ Theorem~\ref{thm:groupconst}) confirmed the implementation: both baseline
 cells (M and B) attained $Q_2=100\%$ on all \EsixPoneNDesign{}
 draws (\EsixPoneHits{} of \EsixPoneTotal{} draw-cell combinations).
 
-P2 (monotone ordering $L\ge F\ge H$ with $H<L$, one-sided
-Poisson-binomial) was a mixed result.
+P2 (pre-registered criterion: $\rho_s(\mathrm{TV}_W, Q_2^{\mathrm{opt}}) < 0$ in $\ge80\%$ of instances per family; Supplementary Material, \S\ref{sec:prespec_e6}):
+among informative instances $\rho_s < 0$ in $100\%$ per family, satisfying the pre-registered criterion.
+Supplementary Material, DEV-E6-002, revised the test to a monotone ordering
+criterion ($L\ge F\ge H$ with $H<L$, one-sided Poisson-binomial); that analysis was a mixed result.
 Among instances with no detectable loss at any $\mathrm{TV}_W$
 level (27--40\% of instances under continuous marginals)
 the comparison is uninformative.
@@ -2595,8 +2603,9 @@ conclusion from it.
 At $\mathrm{TV}_W=\EsixTargetTVW$ the loss was approximately $\EsixLossZinfWinfF$~pp in
 the zero-inflated family and below $3$~pp under continuous marginals,
 against $\EoneWloss$~pp on Fogo.
-At equal $\mathrm{TV}_W$, losses differ by an order of magnitude
-across marginal families, confirming that $\mathrm{TV}_W$ alone
+At equal $\mathrm{TV}_W$, losses span a $3$--$4\times$ range
+across marginal families (below $3$~pp under continuous marginals
+vs $\EsixLossZinfWinfF$~pp under zero-inflation), confirming that $\mathrm{TV}_W$ alone
 does not determine the cost (Remark~\ref{rem:TVW}).
 Point masses are associated with larger losses; whether concentrating
 sparsity in a single high-weight criterion is more harmful than
@@ -2895,8 +2904,8 @@ would be suboptimal under a different specification of the objectives.
 The amplitude identity~\eqref{eq:weff} is exact for additive
 aggregation under affine normalisation (min-max and vector);
 for rank normalisation the identity is approximate.
-Remark~\ref{prop:exponent} extends it to distance-based and
-ordinal families through the amplitude exponent, but the extension is
+Remark~\ref{prop:exponent} extends it to distance-based
+families through the amplitude exponent, but the extension is
 exact for the squared TOPSIS distance rather than the distance itself,
 and we have not characterised families whose contribution is not
 homogeneous in $w_j n_j(\cdot)$, outranking methods with non-linear
@@ -2950,7 +2959,7 @@ Section~\ref{sec:e6}) provides the most direct cross-family test of the
 $\mathrm{TV}_W$ prediction.
 At $\mathrm{TV}_W=\EsixTargetTVW$, the loss was below $3$~pp under
 continuous marginals but $\EsixLossZinfWinfF$~pp under zero-inflation,
-an order-of-magnitude difference.
+a $3$--$4\times$ difference (against Fogo's $\EoneWloss$~pp, a $\approx12\times$ gap).
 The monotone ordering (P2: $L\ge F\ge H$) held among
 informative instances (\EsixPtwoMonoAll{} of \EsixPtwoLossyNAll{},
 \EsixPtwoPAll, pooled across families).
@@ -3005,9 +3014,8 @@ $Q_3$ for all cells is reported in Table~\ref{tab:factorial}.
 
 \emph{Regulatory grounding.}
 The $\Nexcl$ candidates overlapping protected areas are excluded before
-analysis; the exclusion reflects a hard constraint from national
-conservation legislation and does not affect the relative comparison of
-methods, which are evaluated on the same admissible set of $\Nvia$ sites.
+analysis; the exclusion removes them from the selectable set and does not affect the
+normalisation reference set comparison in Table~\ref{tab:coding2x2}.
 
 
 % =======================================================================

@@ -44,17 +44,17 @@ Generated from full PDF audit. Order: §1+§2 (mechanical) → §3 (claims) → 
 - [x] **3.02** §5.2: linked to 3.01 — TOST is pre-specified but κ of the factorial is not; add explicit statement: "The choice of κ for the factorial was not pre-specified; it is discussed in Section 5.1"
 - [x] **3.03** §8.6 (Limitations) F8 claim: "confirm that the result reflects score–objective alignment **rather than an intrinsic property** of min–max" — asymmetry (5.6 vs 43.2 pp) disproves pure alignment → rewrite: "alignment explains the diagonals, but the asymmetry (5.6 vs 43.2 pp off-diagonal) indicates that min–max scores are more robust to frontier misspecification than vector scores"
 - [x] **3.04** Intro, §6.9, §9: R advantage (1.36 pp) presented as result without "(below δ)" qualifier → add "(below the δ=2.5 pp margin)" in each occurrence
-- [ ] **3.05** §7.8: E6 "85 of 88, p<0.001" reported without stating which criterion was pre-registered and what it showed → add: state the pre-registered criterion and its result before reporting DEV-E6-002 revision
-- [ ] **3.06** §7.8 and §8.6: "order of magnitude" wrong — <3 pp vs 10.7 pp is 3–4×, not 10×; only against Fogo (35.8 pp) is ~12× → correct phrasing
-- [x] **3.07** §2.6: "Eiselt & Marianov (2014) were **the only prior study** to compute an exact Pareto frontier…" — but AzancortNeto2026 also did → add "apart from the source study (AzancortNeto2026)"
-- [x] **3.08** §4.1 "none enters F" missing scope: verified under nominal weights only, or across all 500 draws? → clarify "under the nominal weights $\wahp$"
-- [x] **3.09** §4.1 "imputation by midpoint is immaterial" too strong — midpoint doesn't change min–max extrema but does change vector norms → rewrite: "does not affect the min–max normalisation constants; its effect on vector norms is negligible given the three sites account for $3/\Ncand$ of the column"
-- [ ] **3.10** Remark 7 calls the theorem a "sufficient" condition: the theorem is **necessary and sufficient** for efficiency over all instances; on one instance TV_W>0 is insufficient to guarantee loss → rewrite: "TV_W=0 is sufficient for efficiency; TV_W>0 is not sufficient to cause loss on every instance, as R-V* illustrates"
+- [x] **3.05** §7.8: E6 "85 of 88, p<0.001" reported without stating which criterion was pre-registered and what it showed → add: state the pre-registered criterion and its result before reporting DEV-E6-002 revision
+- [x] **3.06** §7.8 and §8.6: "order of magnitude" wrong — <3 pp vs 10.7 pp is 3–4×, not 10×; only against Fogo (35.8 pp) is ~12× → correct phrasing
+- [ ] **3.07** §2.6: "Eiselt & Marianov (2014) were **the only prior study** to compute an exact Pareto frontier…" — but AzancortNeto2026 also did → add "apart from the source study (AzancortNeto2026)"
+- [ ] **3.08** §4.1 "none enters F" missing scope: verified under nominal weights only, or across all 500 draws? → clarify "under the nominal weights $\wahp$"
+- [ ] **3.09** §4.1 "imputation by midpoint is immaterial" too strong — midpoint doesn't change min–max extrema but does change vector norms → rewrite: "does not affect the min–max normalisation constants; its effect on vector norms is negligible given the three sites account for $3/\Ncand$ of the column"
+- [x] **3.10** Remark 7 calls the theorem a "sufficient" condition: the theorem is **necessary and sufficient** for efficiency over all instances; on one instance TV_W>0 is insufficient to guarantee loss → rewrite: "TV_W=0 is sufficient for efficiency; TV_W>0 is not sufficient to cause loss on every instance, as R-V* illustrates"
 - [x] **3.11** Intro: "within-group distortion **accounts for** 35.8 of the 43.2 pp" implies additivity → rewrite: "within-group distortion alone costs 35.8 pp, against 43.2 pp for the full distortion (the effects are not additive)"
 - [x] **3.12** §9: "distortions that **no** rank-agreement diagnostic reveals" — exaggeration → "that rank-agreement diagnostics **do not** reveal"
 - [x] **3.13** §9: "extending to TOPSIS and VIKOR **remains open**" — VIKOR is already characterised as affine-invariant → "extending the exact characterisation to TOPSIS (via α=2 analogy) remains open"
-- [ ] **3.14** §8.6 "Regulatory grounding": "does not affect the relative comparison of methods" contradicts Table 8 → clarify: "the exclusion removes sites from the *selectable* set; it does not affect the normalisation reference set comparison in Table 8"
-- [ ] **3.15** §8.6 "Scope of closed form": "Remark 3 extends the identity to **ordinal** families" — it does not → remove "ordinal" or clarify
+- [x] **3.14** §8.6 "Regulatory grounding": "does not affect the relative comparison of methods" contradicts Table 8 → clarify: "the exclusion removes sites from the *selectable* set; it does not affect the normalisation reference set comparison in Table 8"
+- [x] **3.15** §8.6 "Scope of closed form": "Remark 3 extends the identity to **ordinal** families" — it does not → remove "ordinal" or clarify
 
 ---
 
@@ -62,8 +62,8 @@ Generated from full PDF audit. Order: §1+§2 (mechanical) → §3 (claims) → 
 
 - [ ] **4.01** **Table 5 at κ=50** — add κ=50 columns (Q₂ and SE) or a supplementary table; this is prerequisite for readers to verify the +20.4 pp aggregation result
 - [ ] **4.02** **κ sweep plot** — run κ ∈ {25, 50, 100, 200, 400, 1000} on main contrasts; plot contrast vs κ; transforms κ-sensitivity from caveat to result (high priority)
-- [ ] **4.03** §7.1 quantify membership: "Pareto membership improves" — add counts: e.g. "3 of 7 efficient in A; 6 of 7 in A′" (read from Table 3)
-- [ ] **4.04** §4.2 eigenvector note — add: "AzancortNeto2026 describe the principal eigenvector; the released weights coincide with the column-normalised vector (max|Δ|=0.001) and differ from the eigenvector by at most 0.004 (perm), well below the Dirichlet SD (≈0.025)"
+- [x] **4.03** §7.1 quantify membership: "Pareto membership improves" — add counts: e.g. "3 of 7 efficient in A; 6 of 7 in A′" (read from Table 3)
+- [x] **4.04** §4.2 eigenvector note — add: "AzancortNeto2026 describe the principal eigenvector; the released weights coincide with the column-normalised vector (max|Δ|=0.001) and differ from the eigenvector by at most 0.004 (perm), well below the Dirichlet SD (≈0.025)"
 - [ ] **4.05** TOPSIS mechanism (post hoc, optional) — α=2 analogy implies effective-weight dispersion doubles in log scale; test TV(2)−TV(1) per draw as predictor of frontier miss in §7.3
 
 ---
