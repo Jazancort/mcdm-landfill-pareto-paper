@@ -1055,11 +1055,16 @@ try:
     import sys as _sys, io as _io, contextlib as _cl
     _sys.path.insert(0, str(ROOT / "scripts"))
     from classify_pf import T1 as _PF_T1, classify_pf as _cpf
+    import unicodedata as _ud
+
+    # NFC-normalize cod_form keys — shapefiles may deliver λ, ρ, φ in different
+    # Unicode canonical forms (e.g. NFD decomposed vs NFC precomposed).
+    def _nfc(s): return _ud.normalize('NFC', str(s))
 
     # The only invariant that matters for S-T is the Baixa PARTITION.
     # Subclass errors (Média vs Alta vs NC) are warnings: they do not affect
     # the dist_low_permeability computation.
-    EXPECTED_BAIXA = frozenset(['λρ', 'λρ1', 'PA', 'PA1', 'A', 'A1', 'φ', 'CB', 'null'])
+    EXPECTED_BAIXA = frozenset(_nfc(c) for c in ['λρ', 'λρ1', 'PA', 'PA1', 'A', 'A1', 'φ', 'CB', 'null'])
 
     partition_errors = []
     subclass_warns   = []
@@ -1067,13 +1072,13 @@ try:
         got = _cpf(lit, cod_form)
         if (got == 'Baixa') != (expected == 'Baixa'):
             partition_errors.append(
-                f"    PARTITION FAIL {cod_form!r}: got={got!r} expected={expected!r}  lit={lit[:50]!r}")
+                f"    PARTITION FAIL {_nfc(cod_form)!r}: got={got!r} expected={expected!r}  lit={lit[:50]!r}")
         elif got != expected:
             subclass_warns.append(
-                f"    WARN subclass {cod_form!r}: got={got!r} expected={expected!r} (not-Baixa, does not affect S-T)")
+                f"    WARN subclass {_nfc(cod_form)!r}: got={got!r} expected={expected!r} (not-Baixa, does not affect S-T)")
 
-    # Also verify the Baixa set as a whole (independent of T1 ordering)
-    computed_baixa = frozenset(cod for cod, lit, _ in _PF_T1 if _cpf(lit, cod) == 'Baixa')
+    # Also verify the Baixa set as a whole (independent of T1 ordering, NFC-normalized)
+    computed_baixa = frozenset(_nfc(cod) for cod, lit, _ in _PF_T1 if _cpf(lit, cod) == 'Baixa')
     if computed_baixa != EXPECTED_BAIXA:
         partition_errors.append(
             f"    PARTITION SET FAIL: got={sorted(computed_baixa)} expected={sorted(EXPECTED_BAIXA)}")

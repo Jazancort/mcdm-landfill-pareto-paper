@@ -140,7 +140,7 @@ DEM processing pipeline (confirmed from file inspection of Fogo working director
    (axis=0, increasing row = increasing southing = decreasing northing) is already the south
    gradient, so the sign is correct for the N-S descent component.
 5. Raster sampling: **`src.index(x, y)`** (rasterio method that returns the row/col for the pixel containing the projected coordinate) — NOT `np.round((x - cf) / a)`. The difference matters: `src.index` handles rasterio's half-pixel offset convention; `np.round` does not. Using `np.round` introduces a 1-pixel shift for ~89% of sites, changing slope and aspect values.
-6. DEM array type: **`src.read(1).astype(np.float32)`** (matches notebook; float64 would give slightly different Sobel results for the aspect computation). **Declared regression tolerance: max |Δ| ≤ 1×10⁻⁴ graus, zero classification changes.** Measured on 389 Fogo admissible sites: max |Δ| = 5×10⁻⁵ against `df_real_data_cached.csv`, leeward count = 94/94. The 1×10⁻⁴ ceiling is the float32 Sobel upper bound; any deviation above this indicates a sampling or precision error, not rounding noise.
+6. DEM array type: **`src.read(1).astype(np.float32)`** (matches notebook; float64 would give slightly different Sobel results for the aspect computation). **Declared regression tolerance: max |Δ| ≤ 1×10⁻⁴ graus, zero classification changes.** Measured on 389 Fogo admissible sites: max |Δ| = 5×10⁻⁵ against `df_real_data_cached.csv`, leeward count = 94/94. The tolerance ceiling 1×10⁻⁴ was set after the pilot measurement of 5×10⁻⁵ (post-measurement declaration; the 2× margin accounts for float32 non-associativity). The deciding criterion is zero classification changes, not the continuous |Δ| value.
 7. Flat cells: `|dx| < 1e-9 AND |dy| < 1e-9` → aspect = −1 → norm_asp = 0.5.
    Phase 1 must report the count of flat cells in A' (aspect = −1 before binarisation).
 7. Anisotropy: at 15°N, 1°lon ≈ 107 km vs 1°lat ≈ 111 km. The formula divides both axes by
@@ -150,12 +150,19 @@ DEM processing pipeline (confirmed from file inspection of Fogo working director
 8. Reprojecção (hell.tif): the gdalwarp command that produced hell.tif was not recorded in the
    notebook; only the output file survives (EPSG:32626, 30.28 m/pixel). gdalwarp/gdaldem are not
    available in the local environment for pixel-level comparison. **Declared defaults for Santiago:**
-   reproject ASTER GDEM v3 to EPSG:32627 using `gdalwarp -r bilinear -tr 30 30`; compute slope
-   with `gdaldem slope` (default Horn algorithm, no `-compute_edges`). These are the most common
-   parameter choices and are consistent with the Fogo filename (`declive_gdal_graus.tif` shows
-   no `-compute_edges` suffix). The SENS-5/C-9 sensitivity run (§8) tests the full Santiago
-   pipeline using the Fogo Geofabrik PBF and compares slope columns with `df_real_data_cached.csv`,
-   providing the quality check for any parameter deviation.
+   reproject ASTER GDEM v3 to EPSG:32627 using `gdalwarp -r bilinear -tr 30 30` (**declared,
+   not verified pixel-by-pixel against Fogo's hell.tif**; the Geofabrik PBF is different from
+   the Overpass source in Fogo, so the slope column from the SENS-5/C-9 run will be compared
+   against `df_real_data_cached.csv` to assess the combined pipeline sensitivity). Santiago DEM
+   will be in EPSG:32627 (projected, metres); gdaldem does not need `-s` because the CRS is
+   metric. For gdaldem slope: use the default Horn algorithm, **no `-compute_edges`**. Without
+   `-compute_edges`, gdaldem returns nodata for any cell whose 3×3 neighbourhood contains a
+   nodata pixel; this includes coastal cells adjacent to the masked ocean. **nodata handling:**
+   a candidate site that receives slope = nodata is treated as slope = 0°; the slope criterion
+   is COST with orientation min-better, so a zero-slope imputation does not exclude any site
+   but places it at the maximum score (best) rather than removing it. This imputation is
+   declared here and will be recorded as a limitation in Phase 1 §9. Phase 1 must report the
+   count of imputed cells in A'.
 
 DEM URL and SHA-256 of the downloaded tile(s) recorded in Phase 1 §9.
 
@@ -293,6 +300,8 @@ a sensitivity run states otherwise.
 - **sem análogo em Fogo (NC)**: formations whose first term is not a lava flow and have no direct Fogo analog. Default = not included in the Baixa zone set. Includes: intrusive rocks (CA, γ), carbonatites (cb), dykes/necks (chb, chy, chφ), breccias (B, CBm), conglomerates (cong), and lava domes/necks (dφ — "Domas e chaminés" begin with domes, not flows; NC, not Baixa).
 
 Note: the calc (calcarenites) and other sedimentary Alta formations are not Baixa; their first term is a sedimentary description, not a lava flow.
+
+Note on null cod_form: the IDECV `geologia_santiago` layer contains 136 features with `cod_form = null`. Their `lit` field describes submarine hyaloclastites ("Mantos submarinos, inferiores e superiores..."). The classify_pf algorithm processes these as a normal row: "Mantos" is the first token → Baixa. **This is a substantive choice:** treating a missing cod_form as Baixa means 136 unlabelled features contribute to the low-permeability zone set. The decision is based solely on the lit text and is analogous to the λρ1 classification ("Formação dos Flamengos; Mantos, piroclastos, chaminés e hialoclastitos"). Phase 1 must report the area share of these null features in A' as a data quality note.
 
 **SENS-2 (always, one run):** all NC formations reclassified as Baixa in a single combined run. NC formations: CA, γ, cb, dφ, chb, chy, chφ, B, CBm, cong. Run always (not contingent on area share).
 
