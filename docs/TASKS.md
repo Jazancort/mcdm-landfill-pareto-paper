@@ -612,3 +612,41 @@ Previsão: Q2 muda poucos pp. Fronteira recalculada com pesos raw antes de compa
   O `c_site` (leeward=0) é só para os objectivos F1/F2/F3, não para o score SAW.
   Diagnóstico anterior de "inconsistência de c_site" estava errado. Retirada a referência a DEV-E4-007 no contexto do E1.
 - CSV e1_v3_results_DRYRUN_N10_DEV-E1-004.csv: dry-run de 10 draws, SE=15,8% confirma exactamente. Não é bug. Não é corrida inválida. É um ensaio curto compatível com 56,8% (P(X<=5, n=10, p=0.568) ≈ 22%).
+
+---
+
+## PRESPEC Santiago Phase 0 — registo de proveniência e erros corrigidos
+
+### classify_pf.py — três ajustes para coincidir com T1
+
+A regra P-F foi implementada em `scripts/classify_pf.py` e testada contra os 28 cod_forms
+da T1 (Annex A do PRESPEC). Para que os 28/28 passassem, foram necessários três ajustes ao
+código. Todos baseados exclusivamente no texto das legendas da camada IDECV; nenhum usou
+dados espaciais, áreas, ou distribuição geográfica das formações.
+
+| # | cod_form afectado | Ajuste | Justificação |
+|---|---|---|---|
+| 1 | CB | Adicionou verificação de conteúdo parentético nas cláusulas ignoradas por `_is_skip`. `CB` tem lit `"Formação dos Flamengos (Mantos, piroclastos, chaminés)"`: o prefixo "Formação" é ignorado como nome de formação, mas o conteúdo `(Mantos, piroclastos, chaminés)` revela carácter de lava → Baixa. Sem este ajuste, CB retornava NC (nenhum primeiro termo primário após ignorar a cláusula). | Apenas texto da legenda. |
+| 2 | de | Adicionou `'duna'` (singular) a `_ALTA_PREFIXES` ao lado de `'dunas'` (plural). `de` tem lit `"Duna, eluviões (Quaternário)"`: o primeiro token é singular "Duna". Sem este ajuste, retornava NC. | Apenas texto da legenda. |
+| 3 | dv | Adicionou `'depósitos de vertente'` a `_MEDIA_PREFIXES`. `dv` tem lit `"Depósitos de vertente (Quaternário)"`. Sem este ajuste, "Depósitos" não matchava nenhum prefixo e retornava NC. | Apenas texto da legenda. |
+
+Impacto na partição S-T: o ajuste 1 (CB) é o único que afecta a partição Baixa/não-Baixa.
+Os ajustes 2 e 3 afectam apenas sub-classificações dentro de não-Baixa (Média vs NC), que
+são irrelevantes para o critério de distância em S-T. O assert em `check_consistency.py`
+verifica a partição Baixa; avisos são gerados para divergências de sub-classe.
+
+### Erros de proveniência corrigidos nesta fase (pré-tag)
+
+| Erro | Causa verdadeira | Commit de correcção |
+|---|---|---|
+| "96/94 pode ser erro de coordenadas" | A causa era a amostragem (`np.round` vs `src.index`), não precisão das coordenadas. O floor1m+land grid com src.index dá exactamente 94/94. | 4561462 |
+| "elevation_utm.tif não é o ficheiro que gerou o CSV" | O ficheiro gera o CSV correctamente; a causa dos valores errados era a amostragem, não o ficheiro de origem. | cf9a1e3 → 4561462 |
+
+### R-asp — artigo pendente (não bloqueia a tag)
+
+O critério R-asp no artigo (Tabela 7) usa o azimute verdadeiro no score contínuo. A
+reflexão θ → (270°−θ) preserva o indicador binário [90°,180°] mas altera o valor
+contínuo e portanto os macros `\RaspOptimal`, `\AspSpearman`, `\AspTopQuartile`, e os
+valores 24.0%/20.0% da Tabela 7. Os números têm de ser recalculados com a fórmula
+correcta `arctan2(-dx, dy)` antes da próxima revisão do artigo. Não bloqueia a tag
+`prespec-santiago-f0`.

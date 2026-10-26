@@ -123,8 +123,9 @@ DEM processing pipeline (confirmed from file inspection of Fogo working director
    Synthetic verification: N→270°, E→180°, S→90°, W→0°. The reflection axis is 135°, exactly
    the centre of [90°, 180°]. The leeward interval maps to itself, so the Fogo binary indicator
    is identical with the notebook formula or the correct formula. Regression on 389 Fogo
-   admissible sites: both formulas give identical binary vectors (leeward count = 96 with
-   floor1m+land grid coordinates; published value 94).
+   admissible sites: both formulas give identical binary vectors (leeward count = 94 with
+   floor1m+land grid coordinates; published value 94). An earlier trial with `np.round` pixel
+   addressing gave 96 leeward; corrected to 94 by switching to `src.index` (commit 4561462).
 
    **Santiago uses the correct formula** for both S-T (same binary result) and S-N (C2 is
    continuous; the notebook formula would invert v(θ)):
@@ -139,19 +140,22 @@ DEM processing pipeline (confirmed from file inspection of Fogo working director
    (axis=0, increasing row = increasing southing = decreasing northing) is already the south
    gradient, so the sign is correct for the N-S descent component.
 5. Raster sampling: **`src.index(x, y)`** (rasterio method that returns the row/col for the pixel containing the projected coordinate) — NOT `np.round((x - cf) / a)`. The difference matters: `src.index` handles rasterio's half-pixel offset convention; `np.round` does not. Using `np.round` introduces a 1-pixel shift for ~89% of sites, changing slope and aspect values.
-6. DEM array type: **`src.read(1).astype(np.float32)`** (matches notebook; float64 would give slightly different Sobel results for the aspect computation). Regression (slope + aspect): max |Δ| = 5×10⁻⁵ against `df_real_data_cached.csv`, zero classification changes (leeward = 94/94).
-6. Flat cells: `|dx| < 1e-9 AND |dy| < 1e-9` → aspect = −1 → norm_asp = 0.5.
+6. DEM array type: **`src.read(1).astype(np.float32)`** (matches notebook; float64 would give slightly different Sobel results for the aspect computation). **Declared regression tolerance: max |Δ| ≤ 1×10⁻⁴ graus, zero classification changes.** Measured on 389 Fogo admissible sites: max |Δ| = 5×10⁻⁵ against `df_real_data_cached.csv`, leeward count = 94/94. The 1×10⁻⁴ ceiling is the float32 Sobel upper bound; any deviation above this indicates a sampling or precision error, not rounding noise.
+7. Flat cells: `|dx| < 1e-9 AND |dy| < 1e-9` → aspect = −1 → norm_asp = 0.5.
    Phase 1 must report the count of flat cells in A' (aspect = −1 before binarisation).
 7. Anisotropy: at 15°N, 1°lon ≈ 107 km vs 1°lat ≈ 111 km. The formula divides both axes by
    the same pixel size (0.000278°), introducing a systematic E-W overscale of 111/107 ≈ 1.035.
    Maximum angular distortion: arctan(1.035) − 45° ≈ 1°. Negligible for the binary [90°, 180°]
    classification (S-T) and negligible for the continuous v(θ) (S-N).
 8. Reprojecção (hell.tif): the gdalwarp command that produced hell.tif was not recorded in the
-   notebook; only the output file survives (EPSG:32626, 30.28 m/pixel). For Santiago: reproject
-   ASTER GDEM v3 to EPSG:32627 with bilinear resampling at 30 m target resolution. Record the
-   exact gdalwarp command in Phase 1 §9. For gdaldem slope: use the default Horn algorithm
-   without -compute_edges (the same combination that produced declive_gdal_graus.tif, inferred
-   from the absence of -compute_edges in the filename and the default gdaldem behaviour).
+   notebook; only the output file survives (EPSG:32626, 30.28 m/pixel). gdalwarp/gdaldem are not
+   available in the local environment for pixel-level comparison. **Declared defaults for Santiago:**
+   reproject ASTER GDEM v3 to EPSG:32627 using `gdalwarp -r bilinear -tr 30 30`; compute slope
+   with `gdaldem slope` (default Horn algorithm, no `-compute_edges`). These are the most common
+   parameter choices and are consistent with the Fogo filename (`declive_gdal_graus.tif` shows
+   no `-compute_edges` suffix). The SENS-5/C-9 sensitivity run (§8) tests the full Santiago
+   pipeline using the Fogo Geofabrik PBF and compares slope columns with `df_real_data_cached.csv`,
+   providing the quality check for any parameter deviation.
 
 DEM URL and SHA-256 of the downloaded tile(s) recorded in Phase 1 §9.
 
@@ -513,6 +517,18 @@ intrusive, dome, and uncommon formations are included. Run always (not contingen
 ---
 
 ## Annex A — T1: cod_form → permeability classification
+
+**Canonical algorithm:** the P-F classification is implemented in `scripts/classify_pf.py`
+(frozen at commit `4561462`). That file is the canonical form; in case of divergence between
+this prose description and the code, the code governs. The partition is verified at every
+`make check` run via `check_consistency.py`. Three adjustments were made during the T1
+reconciliation (all based on legend text only; no spatial data used; see TASKS.md §classify_pf):
+1. Added parenthetical check for formation-name clauses (`_is_skip` path), enabling CB to be
+   classified as Baixa via `(Mantos, piroclastos, chaminés)` inside the Flamengos clause.
+2. Added `'duna'` (singular) to `_ALTA_PREFIXES` alongside `'dunas'`, enabling `de` (`Duna,
+   eluviões`) to resolve to Alta.
+3. Added `'depósitos de vertente'` to `_MEDIA_PREFIXES`, enabling `dv` (`Depósitos de
+   vertente`) to resolve to Média.
 
 Each cod_form has two independent classifications:
 
