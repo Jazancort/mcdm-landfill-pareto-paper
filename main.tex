@@ -114,11 +114,11 @@ assembly (robust; $+\NormGreedyContrastKfifty$~pp at $\kappa=50$).
 The pooled SAW--TOPSIS contrast is near zero at $\kappa=200$
 ($\AggContrast$\,pp, TOST $p=\TOSTp$) but rises to
 $+\AggContrastKfifty$~pp at $\kappa=50$; aggregation depends on the
-dispersion of the elicited weights.
+dispersion of the weight perturbation ($\kappa$).
 The value of exact
 assembly under vector normalisation also depends on $\kappa$: it loses
 $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$,
-but these effects shrink to zero at $\kappa=50$.
+but these effects are not distinguishable from zero at $\kappa=50$.
 An intervention shows that
 between-group distortion never moves the portfolio off the frontier
 (Q$_2=100\%$, Theorem~\ref{thm:groupconst}) but costs
@@ -130,8 +130,8 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 
 \begin{highlights}
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
-\item Exact assembly is Pareto-safe iff within-group TV is zero (proved exactly)
-\item Normalisation shifts greedy attainment by $\NormGreedyContrast$~pp; robust across $\kappa$
+\item Exact assembly is Pareto-safe on all instances iff amplitudes are group-constant
+\item Normalisation shifts greedy attainment by $\NormGreedyContrast$~pp; at both $\kappa$ tested
 \item Aggregation and assembly under vector depend on weight-draw dispersion ($\kappa$)
 \item Criterion coded differently in score and objectives alone costs $\RaspLoss$~pp
 \end{highlights}
@@ -193,19 +193,16 @@ portfolio under Monte Carlo perturbation of the elicited weights;
 VIKOR and PRO\-ME\-THEE~II are included under nominal weights
 (Table~\ref{tab:canonical}) and in the Supplementary Material.
 
-The answer is not about the aggregation methods.
-Choosing between SAW and TOPSIS has a pooled mean equivalent to zero
-($\AggContrast$~pp, $95\%$ CI $[\AggLo,\,\AggHi]$, TOST $p=\TOSTp$
-within $\pm2.5$~pp), but a significant cell-level interaction:
-SAW performs significantly worse than TOPSIS under min--max$\times$greedy
-($\AggStratumMMgrd$~pp) and better under vector normalisation
-($+\AggStratumVecgrd$ and $+\AggStratumVecopt$~pp).
-Normalisation is worth $+\NormGreedyContrast$~pp under greedy assembly,
-and $+\NormInfoEffect$~pp over the three informative cells.
-Exact assembly, the established upgrade over reading a ranking top-down,
-has an effect whose sign depends on the normalisation in frontier attainment:
-positive under min--max (TOPSIS: $+\AsmMMtopsis$~pp), negative under vector
-($-\AsmVecSAW$ to $-\AsmVecTOPSIS$~pp in $Q_2$).
+The answer depends more on the normalisation than on the aggregation operator.
+Normalisation moves greedy attainment by $+\NormGreedyContrast$~pp at $\kappa=200$
+and $+\NormGreedyContrastKfifty$~pp at $\kappa=50$.
+The SAW--TOPSIS contrast is not stable: at $\kappa=200$ its pooled mean is equivalent to zero
+($\AggContrast$~pp, $95\%$ CI $[\AggLo,\,\AggHi]$, TOST $p=\TOSTp$),
+with cell-level effects ranging from $\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp;
+at $\kappa=50$ SAW leads by $+\AggContrastKfifty$~pp.
+Under vector normalisation exact assembly loses $\AsmVecSAW$~pp (SAW) and
+$\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy at $\kappa=200$;
+at $\kappa=50$ neither effect is distinguishable from zero.
 In value regret ($R$), exact assembly achieves lower regret than greedy
 under both normalisations ($\RegrDiffSAWvec$~pp, SAW/vec;
 $\RegrDiffTOPSISvec$~pp, TOPSIS/vec): the two effects run opposite.
@@ -248,9 +245,10 @@ if the normalised amplitudes are constant within each objective group
 (Theorem~\ref{thm:groupconst}): distortion between groups only relocates
 the optimum along the frontier, and only distortion within a group can
 move it off.
-A follow-up intervention with pre-specified predictions that manipulates the two components
-separately confirms the prediction on Fogo
-(Section~\ref{sec:e1}).
+A follow-up intervention with pre-specified predictions confirms the structural prediction
+(P1, guaranteed by Theorem~\ref{thm:groupconst}) and falsifies the two empirical ones
+(P2, P3) (Section~\ref{sec:e1}); post hoc, within-group distortion accounts for
+$\EoneWloss$ of the $\EoneVloss$~pp lost under vector normalisation.
 Adding integer programming on top of a ranking
 \citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012}
 improved Pareto attainment under min--max and reduced it under vector
@@ -270,9 +268,7 @@ costs zero pp under optimal assembly on this instance, and greedy
 assembly improves by $\RefSetGreedyGain$~pp
 ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
 The loss is therefore not an inherent property of the reference set but
-of the mismatch between the score's criterion definition and the
-evaluator's; this amplifies any such inconsistency beyond what standard
-rank-agreement diagnostics would reveal.
+of the mismatch between the score's criterion definition and the evaluator's.
 
 Our contributions are as follows.
 \begin{enumerate}[label=(\roman*)]
@@ -291,8 +287,9 @@ Our contributions are as follows.
     enumerated frontier of $\Ntrios$ portfolios under a hard separation
     constraint; a factorial design shows that normalisation dominates the
     choice of aggregation operator, with frontier attainment reversing sign
-    between min--max and vector normalisation; in value regret, exact assembly
-    is marginally better than greedy under vector normalisation
+    between min--max and vector normalisation at $\kappa=200$;
+    in value regret, exact assembly
+    is better than greedy under vector normalisation
     ($\RegrDiffSAWvec$--$\RegrDiffTOPSISvec$~pp) and for TOPSIS under
     min--max ($\RegrDiffTOPSISmmGrdOpt$~pp,
     $95\%$~CI $[\RegrDiffTOPSISmmGrdOptLo,\,\RegrDiffTOPSISmmGrdOptHi]$~pp).
@@ -308,7 +305,7 @@ Our contributions are as follows.
 
 \noindent
 An exact identity connecting PROMETHEE~II to rank-weighted SAW for
-arbitrary tie structure is stated and proved in Section~\ref{prop:p2}.
+arbitrary tie structure is stated in Section~\ref{prop:p2} and proved in the Supplementary Material.
 Section~\ref{sec:litreview} reviews the relevant literature.
 Section~\ref{sec:problem} formulates the portfolio problem and the
 reference set; Section~\ref{sec:methods} describes the data and the
@@ -951,9 +948,9 @@ Three normalisations are compared, spanning the standard taxonomies of
 Cost criteria are complemented in~\eqref{eq:mm} (subtracted from~1 after
 normalisation); ranks are midranks with ties averaged.
 For \textit{aspect}, the binarisation follows Table~\ref{tab:criteria};
-the amplitude therefore follows
-the binary formula in~\eqref{eq:Arank_binary}, not the continuous formula for
-$\rho_j$ (Section~\ref{sec:three_norms}).
+its amplitude is $1/\sqrt{n_1}$ under vector normalisation (Section~\ref{sec:three_norms})
+and $N/[2(N+1)]$ under rank normalisation (Eq.~\eqref{eq:Arank_binary}),
+not the continuous formula for $\rho_j$.
 The vector form in~\eqref{eq:vec} normalises the min-max column~$\tilde{x}_j$,
 not the raw data.
 The amplitude is therefore $A_j = \rho_j = 1/\lVert\tilde{\mathbf{x}}_j\rVert_2$,
@@ -1060,13 +1057,12 @@ We state this explicitly because it is easy to violate silently when the
 reference set is precomputed once and the Monte Carlo loop recomputes
 portfolio objectives per draw.
 
-Weights are perturbed as $w\sim\mathrm{Dir}(\kappa\,\wahp)$ with
-concentration $\kappa=200$ and $\ndraws$ draws per cell; $\kappa=50$
-serves as a robustness check for Proposition~\ref{prop:p1:stmt} and for
-the follow-up intervention (Section~\ref{sec:e1}), and those results
-are reported in the Supplementary Material.
-The main factorial (Table~\ref{tab:factorial}) and all contrasts use
-$\kappa=200$ throughout.
+Weights are perturbed as $w\sim\mathrm{Dir}(\kappa\,\wahp)$, $\ndraws$ draws per cell.
+The primary analysis uses $\kappa=200$ (standard deviation $\approx0.025$ for $w_j=0.15$);
+$\kappa=50$ ($\approx0.05$) is reported for every contrast in Table~\ref{tab:contrasts}.
+$\kappa=200$ was fixed in the E1 pre-specification and adopted for the factorial for
+consistency; the factorial has no separate pre-specification of $\kappa$.
+Value regret ($R$) and the F8 alignment matrix were computed at $\kappa=200$ only.
 $\kappa$ concentrates the draws around $\wahp$.
 Throughout, $\kappa$ denotes only this concentration parameter; the
 separation threshold is always written $d_{\min}=\dmin$~km.
@@ -1120,7 +1116,8 @@ $R\in[0,1]$ by construction; $R=0$ iff $M(w)=t^*$; $R=1$ iff $M(w)$ is
 the worst feasible portfolio under $V_{\mathrm{mm}}$.
 
 \paragraph{Pre-specification.}
-We pre-specify the following before examining results.
+We fixed the following before examining the factorial results; the choice
+of $\kappa$ is discussed in Section~\ref{sec:design}.
 \begin{enumerate}[label=(\roman*),nosep]
   \item \textbf{Primary outcome}: $Q_2=\Pr[M(w)\in\Fset(w)]$.
     Secondary: $Q_3=\mathbb{E}[\mathrm{gap}]$.
@@ -1168,6 +1165,9 @@ all three normalisations, leaving $\Ncellsnet$ estimable cells;
 it is unbalanced and its results are reported in the Supplementary Material.
 Effects are reported in percentage points with $\nboot$-replicate
 bootstrap intervals, paired by draw.
+E1 uses $\nbootEone$ replicates; the factorial uses $\nboot$.
+Intervals are unadjusted for multiplicity; contrasts other than the
+pre-specified aggregation TOST are descriptive.
 
 \paragraph{Benchmark circularity.}
 The Pareto frontier and the objectives are both built on additive
@@ -1312,9 +1312,11 @@ where $\tilde{x}_j(a)=\bigl(x_j(a)-\min_j x_j\bigr)/\bigl(\max_j x_j-\min_j x_j\
 the range of $\tilde{\mathbf{x}}_j$ is always~$1$, so $A_j = 1/\lVert\tilde{\mathbf{x}}_j\rVert_2$
 regardless of the raw scale.
 For the binary criterion ($\tilde{x}_j = x_j \in\{0,1\}$) this reduces to
-$A_j = 1/\sqrt{n_1}$ as stated in~\eqref{eq:Arank_binary}.
-Criteria with heavy tails obtain $\rho_j$ close to unity;
-criteria with most mass at the median obtain small $\rho_j$.
+$A_j = 1/\sqrt{n_1}$, since $\lVert\tilde{\mathbf{x}}_j\rVert_2=\sqrt{n_1}$
+for a binary min--max column.
+Criteria whose column minimum is tied by many sites obtain large $\rho_j$
+(\textit{perm}: 350 zeros compresses $\lVert\tilde{\mathbf{x}}_j\rVert_2$);
+criteria with mass spread over the range obtain small $\rho_j$.
 
 \textbf{3) Midranks scaled by $N+1$.}\;
 $A_j = (r_j^{\max} - r_j^{\min})/(N+1)$, which approaches~$1$
@@ -1996,7 +1998,7 @@ Further families (max, Peldschus, sum) are reported in the
 Supplementary Material.
 
 % ----------------------------------------------------------
-\subsection{The factorial design: aggregation is downstream}
+\subsection{The factorial design}
 \label{sec:factorial}
 % ----------------------------------------------------------
 
@@ -2082,7 +2084,7 @@ $^\dagger$ Informative cells only: SAW/min--max/optimal is excluded because
 $Q_2=100\%$ by Proposition~\ref{prop:p1:stmt}.
 No pooled assembly contrast is reported because the effect reverses sign with the normalisation
 (Section~\ref{sec:assembly}).
-$^\ddagger$ Effect at $\kappa=50$ is not significant (IC includes zero).}
+$^\ddagger$ Effect at $\kappa=50$ is not significant (CI includes zero).}
 \label{tab:contrasts}
 \begin{tabular}{lrc@{\hspace{10pt}}rc}
 \toprule
@@ -2092,7 +2094,7 @@ Contrast & \multicolumn{2}{c}{$\kappa=200$} & \multicolumn{2}{c}{$\kappa=50$} \\
 \midrule
 Normalisation, greedy (mm $-$ vec)            & $+\NormGreedyContrast$ & $[+\NormGreedyContrastLo,\,+\NormGreedyContrastHi]$ & $+\NormGreedyContrastKfifty$ & $[+\NormGreedyContrastKfiftyLo,\,+\NormGreedyContrastKfiftyHi]$ \\
 Normalisation, informative cells$^\dagger$    & $+\NormInfoEffect$ & $[+\NormInfoLo,\,+\NormInfoHi]$ & $+\NormInfoEffectKfifty$ & $[+\NormInfoEffectKfiftyLo,\,+\NormInfoEffectKfiftyHi]$ \\
-Aggregation (SAW $-$ TOPSIS)$^\dagger$        & $\AggContrast$  & $[\AggLo,\,\AggHi]$ & $+\AggContrastKfifty^\ddagger$ & $[+\AggLoKfifty,\,+\AggHiKfifty]$ \\
+Aggregation (SAW $-$ TOPSIS)$^\dagger$        & $\AggContrast$  & $[\AggLo,\,\AggHi]$ & $+\AggContrastKfifty$ & $[+\AggLoKfifty,\,+\AggHiKfifty]$ \\
 \midrule
 Assembly within min--max (TOPSIS)             & $+\AsmMMtopsis$ & $[+\AsmMMtopsisLo,\,+\AsmMMtopsisHi]$ & $+\AsmMMtopsisKfifty^\ddagger$ & $[\AsmMMtopsisKfiftyLo,\,+\AsmMMtopsisKfiftyHi]$ \\
 Assembly within vector (mean of SAW, TOPSIS)  & $-\AsmVec$ & $[-\AsmVecLo,\,-\AsmVecHi]$ & $+\AsmVecKfifty^\ddagger$ & $[\AsmVecKfiftyLo,\,+\AsmVecKfiftyHi]$ \\
@@ -2102,7 +2104,7 @@ Assembly $\times$ normalisation (TOPSIS)      & $+\InteractionTOPSIS$ & $[+\Inte
 \end{table*}
 
 The aggregation contrast of $\AggContrast$~pp ($95\%$ CI
-$[\AggLo,\,\AggHi]$) has a pooled mean equivalent to zero
+$[\AggLo,\,\AggHi]$) has a pooled mean equivalent to zero at $\kappa=200$
 (TOST $p=\TOSTp$, $\delta=2.5$~pp, $90\%$ CI within $\pm\delta$).
 This pooled mean masks a strong interaction: the per-cell
 contrasts range from $\AggStratumMMgrd$~pp
@@ -2157,7 +2159,7 @@ empirical benefit of optimisation. For TOPSIS, whose score is not additive in
 the objectives, exact assembly adds $+\AsmMMtopsis$~pp
 ($95\%$ CI $[+\AsmMMtopsisLo,\,+\AsmMMtopsisHi]$), a gain whose lower bound
 is close to zero. Under vector normalisation, exact assembly is worse than
-reading the ranking top-down for both aggregations: $-\AsmVecSAW$~pp for SAW
+reading the ranking top-down at $\kappa=200$ for both aggregations: $-\AsmVecSAW$~pp for SAW
 ($[-\AsmVecSAWLo,\,-\AsmVecSAWHi]$) and $-\AsmVecTOPSIS$~pp for TOPSIS
 ($[-\AsmVecTOPSISLo,\,-\AsmVecTOPSISHi]$). For
 TOPSIS the assembly-by-normalisation interaction is $+\InteractionTOPSIS$~pp ($95\%$ CI
@@ -2177,10 +2179,10 @@ Value regret ($R$, Table~\ref{tab:factorial}) corroborates it:
 under vector normalisation exact assembly achieves $\RegrSAWvecOpt$~pp regret
 against $\RegrSAWvecGrd$~pp for greedy ($\RegrDiffSAWvec$~pp less,
 95\%~CI $[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp;
-marginally below the $\delta=2.5$~pp practical-significance margin).
-The portfolios exact optimisation selects under the distorted score
-$w^{\mathrm{eff}}$, though they miss the frontier of~$w$ more often,
-carry less value regret under~$w$.
+below the $\delta=2.5$~pp practical-significance margin, applied here by analogy).
+The portfolios selected by exact optimisation of the distorted score,
+though they miss the frontier of~$w$ more often, are better portfolios
+under the elicited weights~$w$.
 
 
 % ----------------------------------------------------------
@@ -2212,8 +2214,9 @@ strong directional asymmetry.
   scoring normalisation (rows) and Pareto frontier normalisation
   (columns), at $\kappa=200$ and $\ndraws$ draws.
   Standard errors in parentheses.
-  Diagonal entries are structural guarantees of Theorem~\ref{thm:groupconst};
-  off-diagonal entries measure the cost of misalignment.}
+  Diagonal entries are structural guarantees of Proposition~\ref{prop:p1:stmt}
+  under optimal assembly; greedy diagonal entries are empirical observations on this instance.
+  Off-diagonal entries measure the cost of misalignment.}
 \label{tab:alignment}
 \begin{tabular}{@{}llcccc@{}}
 \toprule
@@ -2256,10 +2259,10 @@ The reversal is driven by the 100\% attainment under vec/vec/greedy
 under vector normalisation on this instance, setting a high aligned baseline,
 so a min--max score suffers a large penalty when evaluated against the
 concentrated vector frontier.
-Under optimal assembly the causal direction is reversed: perm inflation
+Under optimal assembly a plausible reading is that perm inflation
 ($\PermInflation\times$) causes the vector score to select portfolios
-that systematically favour low-permeability sites, which are often dominated
-under the broader, evenly-amplified min--max frontier.
+that favour sites near low-permeability units (\texttt{perm}$=0$),
+which are often dominated under the broader, evenly-amplified min--max frontier.
 
 The $100\%$ attainment under vec/vec/greedy is an empirical observation.
 In \FEightVecCoinc{} of \ndraws{} draws the greedy rule returned the
@@ -2438,9 +2441,12 @@ W and~V disagree: W fares better than V in $Q_2$ ($64.2\%$ against $56.8\%$)
 but worse in $R$ ($\RegretEoneW$~pp against $\RegrSAWvecOpt$~pp), so
 within-group distortion that recovers some frontier attainment does so at
 a higher value cost.
-Between-group distortion therefore contributes a non-zero but smaller cost than
-within-group distortion in both metrics, and does not simply amplify the
-within-group component.
+Alone, between-group distortion costs nothing in $Q_2$
+($Q_2=\QtwoEoneBOpt\%$ under optimal assembly) and $\RegretEoneB$~pp in~$R$
+(Table~\ref{tab:e1}).
+Added to within-group distortion (cell~V against cell~W), it lowers $Q_2$
+by a further $\EonePtwoDiff$~pp but reduces $R$ from $\RegretEoneW$
+to $\RegrSAWvecOpt$~pp; its effect on combined distortion depends on the metric.
 A plausible reading, which we have not tested, is that within-group
 distortion matters in proportion to the weight its group carries in
 the score, and that vector normalisation raises the weight of $G_1$,
@@ -2494,7 +2500,7 @@ the Fogo instance (Section~\ref{sec:e1}).
 A natural follow-up is whether the same quantity, $\mathrm{TV}_W$,
 predicts portfolio loss under different marginal distributions of the
 criteria.
-We test this with a fully pre-specified experiment on \EsixNinst{}
+We test this with a pre-specified experiment, with declared deviations, on \EsixNinst{}
 synthetic instances (\EsixNfam{} marginal families, 30 replicates each)
 using the Fogo trio geometry and weight vector.
 Families are: lognormal, $\mathrm{Beta}(1,3)$, uniform, and zero-inflated
@@ -2594,7 +2600,7 @@ by the amplitude identity~\eqref{eq:weff}: an additive score built on normalised
 columns of unequal amplitude operates on effective weights
 $w^{\mathrm{eff}}\neq w$, whatever the analyst elicited.
 The effect is graded, is summarised by the total
-variation~\eqref{eq:TV_results}, and orders the three normalisations
+variation~\eqref{eq:TV_results}, and, on this instance, orders the three normalisations
 monotonically within additive aggregation (Table~\ref{tab:tvorder}).
 Within Fogo the ordering is monotone in $\mathrm{TV}$ under optimal
 assembly (Table~\ref{tab:tvorder}), but Section~\ref{sec:e1} shows that
@@ -2716,8 +2722,9 @@ to the distortion: immunity (VIKOR), linear amplification (SAW), and
 quadratic-like amplification (TOPSIS, by analogy; Remark~\ref{rem:mm_not_neutral}).
 Three observations previously treated separately become corollaries of
 one identity: the vector-normalisation distortion
-(Section~\ref{sec:three_norms}) and the rank-space contraction
-(Eq.~\eqref{eq:Arank_binary}).
+(Section~\ref{sec:three_norms}), the rank-space contraction
+(Eq.~\eqref{eq:Arank_binary}), and the amplitude change from normalising
+over inadmissible alternatives (Remark~\ref{rem:nonmonotone}, cell~R-V$^*$).
 
 The second difference is evidential.
 Existing comparisons measure the consequence of a normalisation choice by
@@ -2823,9 +2830,7 @@ enters the effective weights.
 Comparing aggregation operators, by contrast, produces a pooled contrast
 equivalent to zero at $\kappa=200$ ($\AggContrast$~pp, TOST $p=\TOSTp$),
 but rising to $+\AggContrastKfifty$~pp at $\kappa=50$ (Table~\ref{tab:contrasts});
-aggregation is the most $\kappa$-sensitive of the three design choices,
-and the mechanism explains why: aggregation acts downstream of the
-distortion, and its effect depends on how dispersed the weight draws are.
+aggregation is the most $\kappa$-sensitive of the three design choices.
 The recommendations above apply to SAW and TOPSIS: the amplitude enters
 the score linearly for SAW and, by analogy, quadratically for TOPSIS.
 VIKOR is invariant to per-criterion affine transformation by its ratio
@@ -2844,8 +2849,9 @@ The Pareto frontier is enumerated using the same weighted-sum value
 model that the methods under evaluation optimise.
 The benchmark is therefore internal to the model class: it cannot detect
 whether the value model is mis-specified.
-The MAVT justification for the min--max choice and the robustness
-experiment (F8) are presented in Section~\ref{sec:design}; they confirm
+The MAVT justification for the min--max choice is presented in Section~\ref{sec:design};
+the robustness experiment (F8) is in Section~\ref{sec:alignment};
+they confirm
 that the result reflects score--objective alignment rather than an
 intrinsic property of min--max, but do not resolve the deeper
 limitation that $Q_2$ measures proximity to one value model.
@@ -2905,7 +2911,7 @@ E5 departs from its pre-specification in seven declared respects,
 including the omission of the $N=389$ level (Supplementary Material).
 External confirmation on other published instances was not obtained.
 
-A fully pre-specified experiment on \EsixNinst{} synthetic instances
+A pre-specified experiment, with declared deviations, on \EsixNinst{} synthetic instances
 across \EsixNfam{} marginal families (Experiment~E6,
 Section~\ref{sec:e6}) provides the most direct cross-family test of the
 $\mathrm{TV}_W$ prediction.
@@ -2914,9 +2920,8 @@ continuous marginals but $\EsixLossZinfWinfF$~pp under zero-inflation,
 an order-of-magnitude difference.
 The monotone ordering (P2: $L\ge F\ge H$) held among
 informative instances (\EsixPtwoMonoAll{} of \EsixPtwoLossyNAll{},
-\EsixPtwoPAll, pooled across families; DEV-E6-002 counts three-way ties as failures,
-giving 85 instead of the 87 in an earlier version that used a lenient tie rule).
-Together, E6 supports the directional ordering among informative instances;
+\EsixPtwoPAll, pooled across families).
+E6 supports the directional ordering among informative instances;
 E5 found no linear association under greedy assembly ($-1.3$~pp, 95\%~CI
 $[-5.1,\,+2.4]$).
 
@@ -3003,8 +3008,9 @@ weight of a criterion is proportional to $w_jA_j$, and exact assembly
 is Pareto-efficient for any weights and any instance of the additive model if and only if
 amplitudes are constant within each objective group
 (Theorem~\ref{thm:groupconst}).
-A follow-up intervention with pre-specified predictions on Fogo confirmed that between-group
-distortion alone never moves the portfolio off the frontier
+A follow-up intervention with pre-specified predictions on Fogo illustrated,
+as Theorem~\ref{thm:groupconst} guarantees,
+that between-group distortion alone never moves the portfolio off the frontier
 ($Q_2=100\%$) but costs $\RegretEoneB$~pp of value regret, and
 that within-group distortion carries
 most of the loss; the prediction that the two components would not
@@ -3088,7 +3094,8 @@ Where the feasible set is enumerable, as it is for
 cardinality-constrained siting problems of realistic size, an exact
 frontier provides an external standard, and under that standard the
 ranking of design choices is not the one the literature's emphasis would
-suggest.
+suggest at the weight dispersion used as primary; at $\kappa=50$ aggregation
+matters substantially.
 
 % -----------------------------------------------------------------------
 % BLOCO4: DOI — substituir 23479281 pelo número real após ativar webhook no zenodo.org
@@ -3138,7 +3145,7 @@ and GitHub.\footnote{\nolinkurl{github.com/Jazancort/NSGA2-GIS-Landfill-Optimiza
 The replication package for this article (source code, pre-specified
 analysis plans, and pre-computed data) is publicly available
 online\footnote{\url{https://github.com/Jazancort/mcdm-landfill-pareto-replication}}
-(v1.0, DOI:~\url{10.5281/zenodo.23479281}).
+(v1.1, DOI:~\url{10.5281/zenodo.23675961}).
 The provenance audit script \texttt{verify\_macros\_permanent.py}
 recomputes all primary quantitative claims and exits~0 on
 exact agreement with the values in this article.
