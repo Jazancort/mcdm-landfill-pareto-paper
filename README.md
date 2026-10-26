@@ -1,8 +1,8 @@
 <p align="center">
-  <h1 align="center">Pareto-Based MCDM Under Normalization and Aggregation Uncertainty<br>Landfill Site Selection on Fogo Island, Cabo Verde</h1>
-  <p align="center"><em>A Monte Carlo Factorial Study Comparing SAW and TOPSIS</em></p>
+  <h1 align="center">Normalisation as Implicit Re-weighting in Multi-Criteria Portfolio Selection<br>Landfill Site Selection on Fogo Island, Cabo Verde</h1>
+  <p align="center"><em>Closed Form and Cost Against an Exact Pareto Frontier</em></p>
   <p align="center">
-    Replication package &middot; Omega (under review) &middot; Manuscript ID OMEGA-D-26-XXXX
+    Replication package &middot; Omega (under review)
   </p>
 </p>
 
@@ -24,18 +24,18 @@
 We study the sensitivity of SAW and TOPSIS rankings to methodological choices — normalization rule (min-max vs vector), aggregation operator (weighted sum vs vector norm), and assembly method (greedy vs optimal) — using a pre-registered Pareto-based Monte Carlo design on **473 candidate landfill sites** on Fogo Island, Cabo Verde.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-replication/main/paper/figs/final/fig_F4_map.png" width="700" alt="Study area: Fogo Island candidate sites">
+  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-paper/main/paper/figs/final/fig_F4_map.png" width="700" alt="Study area: Fogo Island candidate sites">
   <br><sub>Fig. F4 — Fogo Island, Cabo Verde. Candidate sites (N=473) after feasibility screening. Site attributes include slope, aspect, proximity to roads, rivers, coastline, protected areas, wells, and the airport.</sub>
 </p>
 
-The key finding: **normalization is the dominant driver of ranking disagreement** — switching from min-max to vector normalization shifts Q2 retention by +29 to +33 pp regardless of all other choices. Aggregation and assembly have smaller, conditional effects.
+The key finding: **normalization is the dominant driver of Pareto attainment** — switching from min-max to vector normalization shifts Q2 retention by +29 to +33 pp regardless of all other choices. Aggregation and assembly have smaller, conditional effects.
 
 ---
 
-## Main result: normalization dominates
+## Main result: normalisation dominates
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-replication/main/paper/figs/final/fig_F2_interaction.png" width="700" alt="Interaction: normalization × aggregation × assembly">
+  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-paper/main/paper/figs/final/fig_F2_interaction.png" width="700" alt="Interaction: normalization × aggregation × assembly">
   <br><sub>Fig. F2 — Bootstrap contrasts (95% CI, N=4000 Monte Carlo draws, &kappa;=200) for the main factorial effects and pairwise interactions. Normalization dominates across all cells. The aggregation contrast is not robust to &kappa; (see Table 6).</sub>
 </p>
 
@@ -53,7 +53,7 @@ The aggregation and assembly contrasts depend on κ: at κ=50, aggregation rever
 ## Pareto frontier structure
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-replication/main/paper/figs/final/fig_F3_pareto.png" width="700" alt="Pareto frontier: SAW vs TOPSIS under uncertainty">
+  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-paper/main/paper/figs/final/fig_F3_pareto.png" width="700" alt="Pareto frontier: SAW vs TOPSIS under uncertainty">
   <br><sub>Fig. F3 — Pareto-optimal triples under the 2×2×2 factorial. Each point is one (normalization, aggregation, assembly) combination evaluated over the 473 candidate sites. The exact frontier dominates greedy solutions in 8/8 cells for SAW.</sub>
 </p>
 
@@ -76,7 +76,7 @@ Vector normalization systematically reduces regret by 9.4 pp compared to aspect 
 ## Study design
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-replication/main/paper/figs/final/fig_F1_slope_weights.png" width="700" alt="Criteria weight sampling and slope distribution">
+  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-paper/main/paper/figs/final/fig_F1_slope_weights.png" width="700" alt="Criteria weight sampling and slope distribution">
   <br><sub>Fig. F1 — Weight sampling scheme and slope distribution across the 473 candidate sites. Weights are drawn from a Dirichlet distribution with uniform concentration (&kappa;=200 primary, &kappa;=50 robustness check).</sub>
 </p>
 
