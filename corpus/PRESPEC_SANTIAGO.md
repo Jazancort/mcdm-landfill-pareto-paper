@@ -362,8 +362,7 @@ Checked in Phase 1, before any score is computed:
 1. N_adm ≥ 100
 2. Variance > 0 for every criterion on A'
 3. `validate_core` passes: frontier non-dominance and completeness
-4. B1: every polygon in A' has a non-null P-C class. If > 5% of A' polygons are NC,
-   report area share as limitation but do not abandon branch. Apply declared defaults from T1.
+4. B1: every site in A' is covered by a geology polygon with a non-null P-C class. If > 5% of sites in A' fall outside all geology polygons (no polygon covers their centroid), report area share as limitation but do not abandon branch. Apply the NC default (Base, score = 1.000) for uncovered sites.
 
 TV(vec) < 0.05 does not invalidate the branch; it causes predictions whose condition requires
 TV(vec) ≥ 0.05 (S1, S2, S3, S6) or TV_W(vec) ≥ 0.05 (S5) or TV_B(vec) ≥ 0.05 (S7a, S7b)
@@ -433,7 +432,7 @@ table. No sensitivity run can replace the main analysis.
 | ID | Description | Scope | When runs |
 |---|---|---|---|
 | SENS-1 | S-T with P-C rule instead of P-F (perm criterion only) | S-T | Always; after main S-T results are sealed |
-| SENS-2 | S-T with CA, γ, cb, dφ reclassified as Baixa (a single combined run, not formation-by-formation) | S-T | Always |
+| SENS-2 | S-T with all NC formations (CA, γ, cb, dφ, chb, chy, chφ, B, CBm, cong) reclassified as Baixa in a single combined run | S-T | Always |
 | SENS-3 | For each NC B1 cod_form (calc, cong, dφ, φ, null) with area share > 2% in A': reclassify to adjacent unit (one run per triggered formation) | S-N | If C-7 triggers; otherwise skip |
 | SENS-4 | Contingency responses: C-2 (wells), C-8 (cult WorldCover), other C-x triggered | Both | If corresponding C-x triggers |
 | SENS-5 (C-9) | Run Santiago extraction pipeline on Fogo with Option A (island-wide download) and a contemporaneous OSM snapshot; compare dist_* columns with df_real_data_cached.csv: Spearman correlation, fraction of sites with |diff| > 100 m, ρ_j(vec) actual vs published. Report in supplementary. | S-T only | Always |
@@ -467,9 +466,9 @@ the "P-C source" column.
 
 Data quality note: 1 entry in the IDECV layer has cod_form = null (136 features); lit text
 describes submarine pillow lavas ("Mantos submarinos, inferiores e superiores") and tuff breccias
-("Tufo Brechas"). These features are not in Serralheiro's (1976) terrestrial scheme; they are
-excluded from T1 and flagged in the Phase 1 data quality report. Their combined area share in A'
-is reported in Phase 1 §9. If > 2%, they receive P-F = NC and P-C = NC (default: Base = 1.000).
+("Tufo Brechas"). These features have a dedicated row in T1 (see null row below). P-F = Baixa
+(submarine hyaloclastites, direct analog of λρ1). P-C = NC (default: Intermédia, by the
+Plio-Miocénico stratigraphic rule). Their combined area share in A' is reported in Phase 1 §9.
 
 Note on T1 count: the PLANO_TRABALHO V3 note listed "24 unique formations" (a typo; the same
 list contained 25 items). The T1 below has 27 named formations because: (a) the initial count
@@ -484,8 +483,8 @@ stratigraphic rule. The default is Intermédia for Plio-Miocénico formations no
 
 | cod_form | lit (IDECV, key terms) | grupo | P-F class | P-F source | P-C unit | B1 score | P-C source |
 |---|---|---|---|---|---|---|---|
-| A | Formação da Assomada; Mantos e Piroclastos (Pliocénico) | — | **Baixa** | "Mantos" (lava flows) per lit; lava = Baixa by P-F rule | **Intermédia** (†, stratigraphic position) | 0.472 | Stratigraphic note: A and A1 are Pliocénico subaerial lavas post-dating PA but pre-dating MV. Cabral (2012) pp. 44–46 does not list A/A1 explicitly. Assigned Intermédia by analogy with PA (similar lava flow composition; lava flows are the dominant component of both PA and A/A1). **PENDING VERIFICATION:** some Santiago hydrogeological syntheses may assign A/A1 to Recente (alongside MV). Verify in Gomes (2007) or Serralheiro (1976) notícia explicativa. If Recente: update this row to Recente (score = 0, excluded in S-N); add sensitivity run with Intermédia. If no source found: current assignment (Intermédia) remains, with this note. |
-| A1 | Formação da Assomada; Mantos e Piroclastos subaérios (basanitos, basanitóides, limburgiticos) (Pliocénico) | — | **Baixa** | "Mantos subaérios" (subaerial lava flows); lava = Baixa | **Intermédia** (†, stratigraphic position) | 0.472 | As A; pending verification (see A row above). |
+| A | Formação da Assomada; Mantos e Piroclastos (Pliocénico) | — | **Baixa** | "Mantos" (lava flows) per lit; lava = Baixa by P-F rule | **Intermédia** | 0.472 | Gomes (2007) places the Formação da Assomada in the Unidade Intermédia alongside PA (two independent research summaries agree). Source: Gomes, A.M. (2007), Hidrogeologia e recursos hídricos da ilha de Santiago (Cabo Verde), Universidade de Aveiro. **TO CONFIRM before tag:** verify page number in the original thesis (RIA handle 10773/1316). If confirmed: remove †. If Recente: update P-C to Recente (score = 0, excluded in S-N) and add sensitivity with Intermédia. |
+| A1 | Formação da Assomada; Mantos e Piroclastos subaérios (basanitos, basanitóides, limburgiticos) (Pliocénico) | — | **Baixa** | "Mantos subaérios" (subaerial lava flows); lava = Baixa | **Intermédia** | 0.472 | As A; same source (Gomes 2007 pending page confirmation). |
 | B | Brechas intravulcânicas (Ante-Miocénico médio) | Complexo eruptivo interno, antigo | **sem análogo em Fogo (default: NC)** | Intravulcanic breccias; Fogo NC class (agglomerates/breccias) is closest analog. Default NC. Sensitivity: Baixa. | **Base** | 1.000 | Cabral (2012) p.45: formations of "Complexo eruptivo interno, antigo" = Base; B listed in this group |
 | CA | Complexo filoniano de base; basanitos, limburgitos, ancaratritos (Ante-Miocénico médio) | Complexo eruptivo interno, antigo | **sem análogo em Fogo (default: NC)** | Intrusive dyke complex; Fogo has no class for intrusive rocks (NC = carbonatites and agglomerates is closest). Default NC. Sensitivity: Baixa. | **Base** | 1.000 | Cabral (2012) p.45: CA = Complexo de Base |
 | CB | Formação dos Flamengos (Mantos, piroclastos, chaminés) + Formação dos Orgãos (Depósitos conglomeráticos-brechoídes) — composite IDECV code (Miocénico médio) | — | **Baixa** | "Mantos" in Flamengos component = lava flows = Baixa (direct Fogo analog). The CBm component (conglomerate) has no Fogo analog but is dominated by the Flamengos lava component in this composite code. | **Base** | 1.000 | Flamengos = λρ = Base; Orgãos = CBm = Base; both components in Cabral (2012) p.45 |
@@ -734,7 +733,7 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 - [x] DEM: ASTER GDEM v3 (same as Fogo) confirmed from `Landfill_NSGA2_Paper_Final.ipynb`.
 - [x] Raster sampling: nearest-pixel confirmed from notebook.
 - [x] Aspect flat rule: Sobel < 1e-9 → norm_asp = 0.5 confirmed from notebook.
-- [ ] Assomada (A/A1) P-C assignment: currently Intermédia (pending verification in Gomes 2007 or Serralheiro 1976 notícia explicativa; see A row in T1).
+- [ ] Assomada (A/A1) P-C: two research summaries of Gomes (2007) confirm Intermédia; page number in original thesis not yet confirmed (RIA SSL blocked 2026-10-26). Before tag: verify in Gomes (2007) p. [X] or Pina (2009) and update T1 row A accordingly (remove note, add page citation, or change to Recente if source says so).
 - [ ] Fill OSM snapshot date and DEM release version (at Phase 1 extraction time, before Phase 1 commit)
 - [ ] Fogo boundary test with IDECV ilha + floor1m + land (see §4 of review; determines whether Santiago uses ilha boundary or geologia dissolved)
 - [x] → **DONE (2026-10-26):** IDECV ilha + floor1m + land gives 473/473 at 0.0 m, N_adm=389, n_trios=1,944,653. Result is identical to geologia dissolved. The boundary type does not matter; Santiago uses IDECV ilha as declared.
