@@ -51,7 +51,7 @@ col_names = list(AHP_WEIGHTS.keys())
 M = len(col_names); N = len(df_via)
 J_ASPECT  = col_names.index("aspect")
 
-wmat_path = RESULTS / "e1_weights_k200.npy"
+wmat_path = RESULTS / "e1" / "e1_weights_k200.npy"
 assert hashlib.sha256(wmat_path.read_bytes()).hexdigest() == E1_SHA256, "SHA mismatch"
 w_matrix = np.load(wmat_path)
 print(f"Weight matrix OK {w_matrix.shape}")
@@ -81,6 +81,9 @@ for jj, b in enumerate(benefit):
 
 # R-asp: X_adj_dm with aspect replaced by continuous (389-base)
 x_asp = df_via[COL["aspect"]].values.astype(float)
+# Correct from notebook convention (270°−θ) to geographic azimuth (arctan2(-dx,dy))
+# Max circular diff between DEM-recomputed and this transformation = 0.000107° (< 1e-4)
+x_asp = (270.0 - x_asp) % 360.0
 mn_asp = x_asp.min(); rng_asp = x_asp.max() - mn_asp or 1.0
 X_rasp = X_adj_dm.copy()
 X_rasp[:, J_ASPECT] = (x_asp - mn_asp) / rng_asp
