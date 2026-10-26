@@ -290,7 +290,7 @@ TAB_4TH = {
 TAB_CODING2X2 = {
     "RMopt": 100.0, "RMgrd": 86.0,       # binary coding, 389 constants
     "RVstarOpt": 100.0, "RVstarGrd": 97.8, # binary coding, 473 constants
-    "AspOpt": 24.0, "AspGrd": 25.2,        # continuous coding, 389 constants (R-asp)
+    "AspOpt": 15.6, "AspGrd": 15.8,        # continuous coding, 389 constants (R-asp) [corrected 2026-10-26]
     "RVopt": 20.0, "RVgrd": 19.6,          # continuous coding, 473 constants (R-V, NOT vector)
 }
 # ── REGRESSION GUARD: diagonal cells derive from Prop1 — NEVER editable ────
@@ -336,16 +336,16 @@ for label in ["84.6", "97.8", "58.8"]:
 print()
 print("=== tab:coding2x2 arithmetic (DEV-E4-009) ===")
 _c = TAB_CODING2X2
-check("coding2x2 R-asp opt - R-V opt = +4.0 pp",
-      _c["AspOpt"] - _c["RVopt"], 4.0, tol=0.05)
-check("coding2x2 R-asp grd - R-V grd = +5.6 pp",
-      _c["AspGrd"] - _c["RVgrd"], 5.6, tol=0.05)
+check("coding2x2 R-asp opt - R-V opt = -4.4 pp [corrected: was +4.0 with notebook formula]",
+      _c["AspOpt"] - _c["RVopt"], -4.4, tol=0.05)
+check("coding2x2 R-asp grd - R-V grd = -3.8 pp [corrected: was +5.6 with notebook formula]",
+      _c["AspGrd"] - _c["RVgrd"], -3.8, tol=0.05)
 check("coding2x2 R-V* grd - R-M grd = +11.8 pp",
       _c["RVstarGrd"] - _c["RMgrd"], 11.8, tol=0.1)
 check("coding2x2 R-M opt = 100.0%",  _c["RMopt"],    100.0, tol=0.001)
 check("coding2x2 R-V* opt = 100.0%", _c["RVstarOpt"],100.0, tol=0.001)
 # Verify values appear in main.tex
-for label in ["100.0", "97.8", "24.0", "20.0", "25.2", "19.6"]:
+for label in ["100.0", "97.8", "15.6", "20.0", "15.8", "19.6"]:  # updated 2026-10-26 (aspect formula corrected)
     if label in tex:
         print(f"  [OK  ] tab:coding2x2 value {label} in main.tex")
     else:
