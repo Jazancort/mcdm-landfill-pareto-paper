@@ -48,3 +48,18 @@ Initial public release. Contains:
 ## Milestone: Santiago Phase 1 unblocked
 
 PRESPEC_SANTIAGO.md is included in the Zenodo archive (v1.1, 28 Oct 2026). The archive date constitutes an external pre-registration timestamp, predating any Santiago experimental run. Phase 1 may proceed.
+
+## AHP eigendecomposition audit (point 1.2, 2026-10-29)
+
+Andrade (2015) pairwise comparison matrix reconstructed from Table 3; eigendecomposition:
+
+- lambda_max = 11.853
+- CI = 0.085
+- RI = 1.51
+- CR = 0.056 < 0.10
+
+The hardcoded weights in AzancortNeto2026 match Andrade's column-normalisation
+priority vector (Table 5) to three decimal places (max |diff| = 0.001).
+The principal eigenvector from the same matrix differs by up to 0.004.
+Therefore sec 4.2 uses "column-normalised priority vector of Andrade (2015)"
+as the stated method, which matches the actual values.
