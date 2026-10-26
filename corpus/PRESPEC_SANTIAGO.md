@@ -8,6 +8,11 @@ Code hash:    94b5baf     (includes new R denominator from 5da02ab; scoring algo
 Written:      2026-10-26
 ```
 
+**Non-access declaration (updated at each amendment):**
+As of 2026-10-27 (amend3), no criterion value, normalised score, amplitude, distance, frontier,
+or Q2 for Santiago has been extracted, computed, or inspected. The amendments f0, amend1, amend2,
+and amend3 modify pipeline parameter declarations only; none was triggered by Santiago data.
+
 Phase 0 is immutable from tag `prespec-santiago-f0`.
 Phase 1 is appended in a separate commit; Phase 0 text is never edited afterwards.
 Every departure from the design declared here is logged as DEV-S-### with date,
@@ -120,12 +125,27 @@ DEM processing pipeline (confirmed from file inspection of Fogo working director
    flat = (np.abs(dx) < 1e-9) & (np.abs(dy) < 1e-9)
    aspect_notebook[flat] = -1.0  # → norm_asp = 0.5
    ```
-   Synthetic verification: N→270°, E→180°, S→90°, W→0°. The reflection axis is 135°, exactly
+   Synthetic verification (test_aspect_formula.py): N→270°, E→180°, S→90°, W→0°. The reflection axis is 135°, exactly
    the centre of [90°, 180°]. The leeward interval maps to itself, so the Fogo binary indicator
    is identical with the notebook formula or the correct formula. Regression on 389 Fogo
    admissible sites: both formulas give identical binary vectors (leeward count = 94 with
    floor1m+land grid coordinates; published value 94). An earlier trial with `np.round` pixel
    addressing gave 96 leeward; corrected to 94 by switching to `src.index` (commit 4561462).
+
+   **Cone test (independent oracle, 2026-10-27):** computed the azimuth from Fogo's summit
+   (2792 m, −24.343°E/14.950°N) to each of 389 admissible sites, then measured
+   `mean(cos(formula_aspect − azimuth_from_peak))`:
+   - correct formula `arctan2(-dx, dy)`: **+0.805** → strong alignment with geographic descent
+   - notebook formula / published CSV:    **−0.102** → near-zero, NOT a geographic azimuth
+   - published CSV vs notebook: cosine = 1.000 → CSV stores the notebook (reflected) convention
+   Script: `scripts/_verify_amend3.py`. Conclusion: `arctan2(-dx, dy)` is the correct geographic
+   formula; the published Fogo CSV column `slope_aspect (degrees)` stores the notebook convention.
+
+   **Geotransform assert (Phase 1, before any aspect computation):**
+   ```python
+   assert src.transform.e < 0,   "DEM is not North-up — aspect formula will swap N/S"
+   assert abs(src.transform.b) < 1e-12 and abs(src.transform.d) < 1e-12, "DEM has rotation"
+   ```
 
    **Santiago uses the correct formula** for both S-T (same binary result) and S-N (C2 is
    continuous; the notebook formula would invert v(θ)):
@@ -156,8 +176,11 @@ DEM processing pipeline (confirmed from file inspection of Fogo working director
    against `df_real_data_cached.csv` to assess the combined pipeline sensitivity). Santiago DEM
    will be in EPSG:32627 (projected, metres); gdaldem does not need `-s` because the CRS is
    metric. For gdaldem slope: use the default Horn algorithm, **no `-compute_edges`** (consistent
-   with the Fogo inferred default). Without `-compute_edges`, gdaldem returns nodata for any
-   cell whose 3×3 neighbourhood contains a nodata pixel (ocean boundary). **nodata handling
+   with the Fogo inferred default). **Confirmed for Fogo (`declive_gdal_graus.tif`):** slope
+   raster has 10 837 nodata cells in the top 3 rows and ~9 700 per border column — consistent
+   with Horn without -compute_edges. (Script: `_verify_amend3.py` §C.) Without `-compute_edges`,
+   gdaldem returns nodata for any cell whose 3×3 neighbourhood contains a nodata pixel (ocean
+   boundary). **nodata handling
    for slope:** any candidate site that receives slope = nodata is **excluded from A'** (added
    to N_excl, not imputed). Exclusion is consistent with the protected-area exclusion rule and
    introduces no bias in the amplitude A_j of the remaining sites. Imputation to 0° is not used
@@ -273,7 +296,7 @@ better for the site).
 |---|---|---|---|---|
 | perm | distance to P-F Baixa polygons (m) | **COST**: site wants to be close to Baixa zones; min distance = best. (`mcdm_experiment.py` L101: `COST = {'perm', ...}`) | **Rule P-F** (see §4.3 and Annex A): polygons of cod_form classified as Baixa in column P-F of T1. | IDECV `geologia_santiago`, SHA as §0 |
 | slope | slope (degrees) | **COST**: min degrees = best. | Pre-computed with `gdaldem slope` from ASTER GDEM v3 (same product as Fogo). Raster sampling: nearest-pixel (`rasterio.windows.Window(col, row, 1, 1)`) at the WGS84 centroid of each candidate, projected to the DEM CRS. | ASTER GDEM v3 (doi: 10.5067/ASTER/ASTGTM.003) |
-| aspect | binary: 0 if azimuth ∈ [90°, 180°] (leeward), 1 otherwise; flat cells = 0.5 | Special (binary, leeward coded as 0 in objectives, as 1 in SAW score). Flat cells (Sobel magnitude < 1e-9) receive aspect = −1 → norm_asp = 0.5. Source: `Landfill_NSGA2_Paper_Final.ipynb` (`norm_asp = 0.5 # neutral for missing aspect`). Not L428 of the NSGA-II pipeline (that script produced the 524-site dataset, not the 473-site one). | Aspect computed at extraction time via Sobel gradient from ASTER GDEM v3 (not read from a pre-computed aspect raster). Rule: azimuth computed from Sobel dx/dy; flat cells detected by `abs(dx) < 1e-9 and abs(dy) < 1e-9`. **Meteorological note:** under both formulas, [90°, 180°] = E-to-S-facing slopes in true geography. The NE trade winds make the SW side ([180°, 270°] true) the meteorological leeward; the [90°, 180°] criterion is specific to the Fogo study (Andrade 2015) and likely reflects shelter from the Pico do Fogo caldera rather than prevailing winds. This limitation is inherited by S-T and will be noted in the article's Limitations section. | ASTER GDEM v3 |
+| aspect | binary: 0 if azimuth ∈ [90°, 180°] (leeward), 1 otherwise; flat cells = 0.5 | Special (binary, leeward coded as 0 in objectives, as 1 in SAW score). Flat cells (Sobel magnitude < 1e-9) receive aspect = −1 → norm_asp = 0.5. Source: `Landfill_NSGA2_Paper_Final.ipynb` (`norm_asp = 0.5 # neutral for missing aspect`). **Interval declaration: the interval is CLOSED at both endpoints ([90°, 180°], inclusive). 3 of the 94 published leeward sites in Fogo have aspect exactly at the boundary (2 sites at 90°, 1 site at 180°); a half-open interval would miss these.** **Justification of [90°, 180°]: a textual justification was not found in Andrade (2015) during Phase 0 inspection. The criterion is transferred as coded. The interval [90°, 180°] = E-to-S-facing slopes in true geography; the NE trade-wind leeward (SW-facing, [180°, 270°]) is a different octant. The S-T transfer inherits this definition without claiming meteorological equivalence in Santiago.** Not L428 of the NSGA-II pipeline (that script produced the 524-site dataset, not the 473-site one). | Aspect computed at extraction time via Sobel gradient from ASTER GDEM v3 (not read from a pre-computed aspect raster). Rule: azimuth computed from Sobel dx/dy; flat cells detected by `abs(dx) < 1e-9 and abs(dy) < 1e-9`. **Meteorological note:** under both formulas, [90°, 180°] = E-to-S-facing slopes in true geography. The NE trade winds make the SW side ([180°, 270°] true) the meteorological leeward; the [90°, 180°] criterion is specific to the Fogo study (Andrade 2015) and likely reflects shelter from the Pico do Fogo caldera rather than prevailing winds. This limitation is inherited by S-T and will be noted in the article's Limitations section. | ASTER GDEM v3 |
 | roads | dist_roads (m) | **COST**: min distance = best. | OSM `highway=[motorway, trunk, primary, secondary, tertiary, unclassified, residential, service, road, track, path]` (tags from Annex B). Downloaded from Geofabrik PBF (island-wide, Option A); distance = 0 if inside a road polygon, computed in EPSG:32627. | OSM snapshot [date — Phase 1] |
 | rivers | dist_streams (m) | **INV**: max distance = best. | OSM `waterway=[stream, river, canal]` (tags from Annex B, no ditch/drain). Option A. | OSM snapshot [date — Phase 1] |
 | coast | dist_coastline (m) | **INV**: max distance = best. | OSM `natural=coastline`. Option A. | OSM snapshot [date — Phase 1] |
