@@ -75,6 +75,16 @@ for jj, c in enumerate(col_names):
     x_a = df_imp[COL[c]].values.astype(float)
     mn, mx = x_a.min(), x_a.max(); rng = mx - mn or 1.0
     Xb473[:, jj] = (x_v - mn) / rng
+# Correct Xb473 aspect column: same (270°−θ_nb)%360 transform as R-asp.
+# Without this, R-V uses the notebook-convention (reflected) azimuth while
+# R-asp uses geographic azimuth, so the contrast R-asp−R-V conflates
+# reference-set effect with convention difference.
+x_asp_via_nb = df_via[COL["aspect"]].values.astype(float)
+x_asp_imp_nb = df_imp[COL["aspect"]].values.astype(float)
+x_asp_via_c = (270.0 - x_asp_via_nb) % 360.0
+x_asp_imp_c = (270.0 - x_asp_imp_nb) % 360.0
+mn_rv = x_asp_imp_c.min(); rng_rv = x_asp_imp_c.max() - mn_rv or 1.0
+Xb473[:, J_ASPECT] = (x_asp_via_c - mn_rv) / rng_rv
 Xadj473 = Xb473.copy()
 for jj, b in enumerate(benefit):
     if not b: Xadj473[:, jj] = 1.0 - Xb473[:, jj]
