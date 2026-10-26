@@ -663,3 +663,61 @@ Tagger: Julio Azancort <julioazancortneto@gmail.com>
 A partir deste commit o texto do Phase 0 é imutável.
 Qualquer mudança a §3–§6 do PRESPEC é um DEV-S-### com data, razão e direcção esperada.
 Phase 1 é appendada num commit separado; o texto do Phase 0 nunca é editado depois.
+
+---
+
+## Consequências do aspecto reflectido no artigo de Fogo
+
+### O que é afectado (aspecto contínuo)
+
+`run_e4_vstar.py` e `run_fourthcell_consistent.py` lêem `slope_aspect (degrees)` do CSV
+publicado (convenção notebook: 270°−θ) e usam esses valores brutos como azimute contínuo.
+Estes scripts calculam o R-asp.
+
+Macros e secções do artigo que precisam de ser recalculados:
+
+| Macro / local | Recalcular como |
+|---|---|
+| `\RaspOptimal` (24.0%) | `run_e4_vstar.py` com `asp_correct = (270 - asp_notebook) % 360` |
+| `\AspGrd` (25.2%) | idem |
+| `\AspSpearman` | `compute_aspect_polecoding.py` com aspecto corrigido |
+| `\AspTopQuartile` | idem |
+| Tabela 7: 24.0% e 20.0% | macros regenerados |
+| Remark 5: exemplo 350° | fórmula correcta (350° notebook = 280° correcto = W-facing) |
+
+### O que NÃO é afectado
+
+O pipeline factorial (mcdm_experiment.py) binariza o aspecto: `c = 1.0 if asp in [90,180]`.
+A binarização é invariante sob a reflexão ([90°,180°] mapeia para si próprio). Portanto:
+- Q2 (SAW, TOPSIS, min-max, vector, greedy, optimal): CORRECTO
+- R (regret, não-asp): CORRECTO
+- E1, E6: CORRECTOS
+- Teorema 1 e Proposição 1: CORRECTOS
+
+### Caminho para corrigir
+
+```python
+# Em run_e4_vstar.py e run_fourthcell_consistent.py, antes de usar asp:
+asp_notebook = df_imp[COL["aspect"]].values.astype(float)
+asp_correct  = (270.0 - asp_notebook) % 360.0  # converter para azimute geográfico
+```
+
+### Outros itens do artigo pendentes
+
+1. DATA_DICTIONARY.md: adicionar nota que `slope_aspect (degrees)` está em convenção notebook (270°−θ), não azimute geográfico. O hash do ficheiro não muda.
+2. Renomear "leeward" para "SE-facing (90°–180°)" no artigo (ou acrescentar nota explicativa).
+3. Registar limitação: o intervalo [90°,180°] não tem justificação encontrada na fonte.
+4. Zenodo/OSF: fazer upload da série de tags f0, amend1–amend4b antes da Fase 1 de Santiago.
+
+### Estado das tags prespec-santiago
+
+| Tag | Commit | O que resolve |
+|---|---|---|
+| `prespec-santiago-f0`        | 5ead7f5 | Phase 0 base |
+| `prespec-santiago-f0-amend1` | 648e54b | tolerância DEM; null Baixa; NFC; teste sintético |
+| `prespec-santiago-f0-amend2` | f42f89e | nodata slope exclusão; leeward meteorológico; CRS assert |
+| `prespec-santiago-f0-amend3` | fe2e362 | cone test oracle; geotransform assert; [90,180] fechado |
+| `prespec-santiago-f0-amend4` | b20df70 | data 2026-10-26T15:05Z; Andrade2015 não inspeccionado; remove especulação caldera |
+| `prespec-santiago-f0-amend4b`| 6143c88 | compute_edges WITH confirmado (hell.tif = slope nodata match) |
+
+**Estado para Fase 1:** bloqueado por Zenodo/OSF. Pronto tecnicamente.
