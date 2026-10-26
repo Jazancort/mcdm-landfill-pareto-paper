@@ -765,11 +765,11 @@ if main_tex.exists():
                 and _re2.search(r"score|scor", s)):
             FAIL.append(f"Aspect coding inconsistency (sentence-level): {sent[:80]}")
             print(f"  [FAIL] Aspect sentence inconsistency: {sent[:80]}")
-    # Positive check: manuscript should note that aspect is binary
-    if "aspect" in tex and "binary" not in tex.lower() and "leeward" not in tex.lower():
-        print("  [WARN] 'aspect' in main.tex but 'binary' and 'leeward' not found -- verify coding is documented")
+    # Positive check: manuscript should note that aspect is binary SE-facing (renamed from leeward)
+    if "aspect" in tex and "binary" not in tex.lower() and "se-facing" not in tex.lower():
+        print("  [WARN] 'aspect' in main.tex but 'binary' and 'SE-facing' not found -- verify coding is documented")
     else:
-        print("  [OK  ] aspect coding (binary/leeward) documented or aspect not in text")
+        print("  [OK  ] aspect coding (binary/SE-facing) documented or aspect not in text")
 
 
 # ── A7. PDF integrity: pdftotext must find 0 '??' ───────────────────────────

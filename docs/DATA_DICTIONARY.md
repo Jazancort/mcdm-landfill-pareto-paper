@@ -91,18 +91,20 @@ Um candidato é excluído se `dist_protected_area (m) == 0` — o sítio está d
 
 | Campo | Valor |
 |---|---|
-| Definição | Orientação do terreno em graus (azimute, 0° = Norte, sentido horário). Convertido a binário: sotavento ∈ [90°, 180°] = 1 (benéfico), restante = 0 |
+| Definição | Orientação do terreno em graus (azimute geográfico, 0° = Norte, sentido horário). Convertido a binário: SE-facing ∈ [90°, 180°] (fechado nos extremos) = 1 (benéfico), restante = 0. |
 | Unidade | graus (°) em bruto; binário {0,1} no scorer |
-| Fonte | DEM derivado de dados topográficos |
-| Processamento | `gdaldem aspect`, convenção: 0° = Norte, sentido horário. Binarização: `c = 1 if azimute ∈ [90°,180°] else 0` |
-| Resolução | **[TODO — confirmar]** |
-| Direcção | BENEFIT no scorer (1 = sotavento = bom); COST nos objectivos F2 (c=0 para sotavento = menor impacto ambiental) |
+| Fonte | ASTER GDEM v3 (`elevation_utm.tif`, EPSG:4326, 0.000278°/pixel) |
+| Processamento | Sobel gradient na resolução 4326 (fórmula geográfica): `arctan2(-dx, dy)`, graus, 0°=N sentido horário. Fórmula correcta validada pelo teste do cone: coseno médio azimute-pico 0.805. **Nota de convenção:** a coluna `slope_aspect (degrees)` do CSV publicado (SHA-256 234f6e1c…) armazena a convenção reflectida, θ_pub = (270° − θ) mod 360°, onde θ é o azimute geográfico. A coluna NÃO é um azimute geográfico standard. O indicador binário SE-facing é invariante sob esta reflexão (eixo 135° = centro do intervalo). |
+| Binarização | `c = 1 if 90° ≤ θ ≤ 180° else 0` (intervalo fechado; 3 sítios têm aspecto exactamente nos extremos) |
+| Resolução | 30 m (ASTER GDEM v3) |
+| Direcção | BENEFIT no scorer (1 = SE-facing = bom); COST nos objectivos F2 (c=0 para SE-facing = menor impacto ambiental) |
 | Grupo | G2 |
 | Peso AHP | 0.075 |
-| Valor 0 | Sítio não está a sotavento (lado de barlavento, mais exposto) |
-| n₁ (sotavento) | **94 de 389** em A' |
+| Valor 0 | Sítio não está virado a SE (fora do intervalo [90°,180°]) |
+| n₁ (SE-facing) | **94 de 389** em A' |
 | ρ_j (vec) | 1/√94 = 0.103 |
-| Nota crítica | Critério binário. A convenção do azimute (0° = Norte, horário) TEM de ser a mesma em Fogo e em Santiago. Verificar contra o `gdaldem aspect` padrão. |
+| Nota de justificação | O intervalo [90°,180°] é transferido do estudo de origem (Andrade 2015). Nenhuma justificação textual foi encontrada no código ou documentação inspeccionados em Fase 0. |
+| Nota crítica | A coluna `slope_aspect` armazena a convenção reflectida. Qualquer análise contínua (e.g. R-asp) deve usar `θ_correct = (270 − θ_pub) % 360` ou recalcular directamente do DEM com `arctan2(-dx, dy)`. |
 
 #### coast — `dist_coastline (m)`
 
