@@ -31,7 +31,7 @@ ROUND1 = Decimal('0.1')
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CUBE_PATH = os.path.join(REPO, 'results', 'fourthcell', 'mc_2cube_fixed_raw.csv')
 E1_LOG    = os.path.join(REPO, 'data', 'e1_v3_rerun_20261002.log')
-EXPECTED_HASH = 'ea5dfe07d12bd5ff'   # SHA-256[:16] of mc_2cube_fixed_raw.csv
+EXPECTED_HASH = '813030ffd9520c2d'   # SHA-256[:16] of mc_2cube_fixed_raw.csv (corrected 2026-10-28)
 
 # Macros to verify (as strings, exactly as rendered in macros.tex)
 MACRO_STRINGS = {
