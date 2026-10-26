@@ -925,9 +925,9 @@ matters for Sections~\ref{sec:three_norms} and~\ref{sec:order_ops}.
 
 \subsection{Criterion weights}
 
-Stage~2 of Figure~\ref{fig:workflow}. Weights are obtained by AHP \citep{Saaty1990,Saaty2008}
-from the pairwise comparison matrix of \citet{Andrade2015}, as reproduced in \citet{AzancortNeto2026},
-by computing the principal eigenvector of the comparison matrix.
+Stage~2 of Figure~\ref{fig:workflow}. Weights are taken from the column-normalised
+priority vector of \citet{Andrade2015} (their Table~5), as adopted by
+\citet{AzancortNeto2026}.
 Consistency is acceptable: $\lambda_{\max}=\lmax$, $CI=0.08525$,
 $RI=1.51$, hence $CR=\CR<0.10$.
 The weight vector $\wahp$ is held fixed in the base experiment and
@@ -3157,7 +3157,7 @@ and GitHub.\footnote{\nolinkurl{github.com/Jazancort/NSGA2-GIS-Landfill-Optimiza
 The replication package for this article (source code, pre-specified
 analysis plans, and pre-computed data) is publicly available
 online\footnote{\url{https://github.com/Jazancort/mcdm-landfill-pareto-paper}}
-(Zenodo, concept DOI~\url{10.5281/zenodo.23676429}; version~v1.3).
+(Zenodo, concept DOI~\url{10.5281/zenodo.23676483}; release~v1.5).
 The provenance audit script \texttt{verify\_macros\_permanent.py}
 recomputes all primary quantitative claims and exits~0 on
 exact agreement with the values in this article.
