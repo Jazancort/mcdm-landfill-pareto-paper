@@ -71,12 +71,12 @@ Generated from full PDF audit. Order: §1+§2 (mechanical) → §3 (claims) → 
 ## §5 — Notation conflicts
 
 - [ ] **5.01** `δ` = equivalence margin AND `δⱼ` = deviation vector → rename margin to `Δ` throughout
-- [ ] **5.02** `ρ` = vector amplitude AND `ρ` = Spearman correlation (§7.6) → rename Spearman to `rₛ`
+- [x] **5.02** `ρ` = vector amplitude AND `ρ` = Spearman correlation (§7.6) → rename Spearman to `rₛ`
 - [ ] **5.03** `α` = TOPSIS exponent AND `α=0.05` significance level → rename exponent to `γ`
 - [ ] **5.04** `A`/`𝒜` used inconsistently for space A and amplitude Aⱼ → always `𝒜`, `𝒜′` for spaces; `A_j` for amplitude
 - [ ] **5.05** `S` = set of sites, S = ΣwⱼAⱼ, S = IEEE scalarisation, S in Prop.2 proof → resolve in §6.4
 - [ ] **5.06** `R` = regret, `R_ℓ` = criterion range intervals, `R` = set in Thm.1 proof → rename range intervals to `Δ_ℓ` and the set to `U`
-- [ ] **5.07** TV precision: 0.091 (3dp) vs 0.3113 (4dp) → choose 3dp throughout
+- [x] **5.07** TV precision: 0.091 (3dp) vs 0.3113 (4dp) → choose 3dp throughout (display conflict fixed in lines where 0.091 and \TVvec appear together)
 
 ---
 
@@ -100,11 +100,11 @@ Generated from full PDF audit. Order: §1+§2 (mechanical) → §3 (claims) → 
 
 ## §7 — References
 
-- [ ] **7.01** Eiselt: inconsistent initial ("H." vs "H.A.") causes wrong sort order → normalise to "H.A."
+- [x] **7.01** Eiselt: inconsistent initial ("H." vs "H.A.") causes wrong sort order → normalise to "H.A."
 - [ ] **7.02** Martí et al. (2022) erratum note "10.1016/j.ejor.2025.12.002" — verify on Crossref; remove if not real
 - [ ] **7.03** Andrade & Barbosa (2015) and Costa et al. (2020) missing DOI — Revista de Geografia (UFPE) assigns DOIs; look them up
 - [ ] **7.04** Liesiö et al. (2021): confirm the paper says "cardinality-constrained with spatial interdependencies… largely unexplored"
-- [ ] **7.05** §2.2 "Milani… confirmed this empirically" hangs from Kettani → "showed empirically that different norms produce different rankings"
+- [x] **7.05** §2.2 "Milani… confirmed this empirically" hangs from Kettani → "showed empirically that different norms produce different rankings"
 
 ---
 
