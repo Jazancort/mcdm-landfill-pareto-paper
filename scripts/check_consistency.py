@@ -688,6 +688,13 @@ BAD_PHRASES = [
      "old R-V optimal 20.0% (corrected to \\RVoptimal=6.2%)"),
     ("$-4.4$~pp",
      "old R-asp vs R-V delta -4.4 pp (corrected to +9.4 pp; sign flipped with R-V correction)"),
+    # Round 2 additions (2026-10-30)
+    ("shrinks to zero",
+     "banned phrase (§1.03 fix): use 'not distinguishable from zero at κ=50'"),
+    ("shrinking to zero",
+     "banned phrase (§1.03 fix): use 'not distinguishable from zero at κ=50'"),
+    ("+\\AggContrastKfifty",
+     "double positive sign: \\AggContrastKfifty already contains '+'; remove explicit '+'"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
@@ -1263,6 +1270,29 @@ try:
 
 except ImportError:
     print("  [INFO] classify_pf.py not found -- skipping")
+
+# ── Rule 8.03: Orphan bib entries (in refs.bib but not cited in main.tex) ─────
+print()
+print("=== 8.03: Orphan bib entries ===")
+bib_file = ROOT / "refs.bib"
+if bib_file.exists() and main_tex.exists():
+    bib_keys = set(re.findall(r"@\w+\{(\w+),", bib_file.read_text(encoding="utf-8")))
+    cited_keys = set(re.findall(r"\\cite[a-zA-Z]*\{([^}]+)\}", tex))
+    # Expand comma-separated cite keys
+    cited_flat = set()
+    for keys in cited_keys:
+        for k in keys.split(","):
+            cited_flat.add(k.strip())
+    orphans = sorted(bib_keys - cited_flat)
+    if orphans:
+        print(f"  [WARN] {len(orphans)} orphan bib entries (not cited in main.tex — review before submission):")
+        for k in orphans:
+            print(f"         {k}")
+    else:
+        print(f"  [OK  ] No orphan bib entries ({len(bib_keys)} keys all cited)")
+else:
+    print("  [INFO] refs.bib or main.tex not found -- skipping orphan check")
+
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")
     for msg in FAIL:
@@ -1375,6 +1405,13 @@ _MUST_FAIL = [
     # E3: §6.7 merged into §6.2
     ("\\subsection{Magnitude is not enough: the concentration",
      "E3: §6.7 merged into §6.2; must not reappear as standalone subsection"),
+    # Round 2 additions (2026-10-30)
+    ("shrinks to zero at kappa=50",
+     "§8.02: 'shrinks to zero' banned phrase"),
+    ("shrinking to zero",
+     "§8.02: 'shrinking to zero' banned phrase"),
+    ("+\\AggContrastKfifty",
+     "§8.01: double positive sign — AggContrastKfifty already has embedded '+'"),
 ]
 
 _MUST_PASS = [

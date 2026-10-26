@@ -99,22 +99,21 @@
 \begin{abstract}
 Multi-site facility siting is a portfolio problem: several locations are chosen
 jointly under a minimum separation. Practice reads multi-criteria rankings
-top-down; the methodological literature compares methods by rank agreement,
-which shows that they differ, not that any is worse. We supply a benchmark
-external to the ranking, though internal to the value model. For $\Nvia$ admissible
+top-down; the literature compares methods by rank agreement,
+showing they differ but not which is worse. We supply a benchmark
+external to the ranking. For $\Nvia$ admissible
 sites on Fogo Island, Cape Verde, we enumerate all $\Ntrios$ three-site
 portfolios satisfying a $\dmin$~km separation and compute the exact Pareto frontier
 over siting cost, environmental impact and social safety. Analytically, under
-additive aggregation with affine normalisation, the effective weight of a
-criterion is proportional to its weight times the amplitude of its normalised
-column, and exact assembly is Pareto-efficient on every instance if and only if
+additive aggregation, the effective weight of a criterion equals its nominal
+weight times the amplitude of its normalised column, and exact assembly is
+Pareto-efficient on every instance if and only if
 amplitudes are constant within each objective group. Empirically, on this
 instance, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp under greedy
 assembly (robust; $+\NormGreedyContrastKfifty$~pp at $\kappa=50$).
 the pooled SAW--TOPSIS mean contrast is near zero at $\kappa=200$
 ($\AggContrast$\,pp, TOST $p=\TOSTp$) but rises to
-$\AggContrastKfifty$~pp at $\kappa=50$; aggregation depends on the
-dispersion of the weight perturbation ($\kappa$).
+$\AggContrastKfifty$~pp at $\kappa=50$; aggregation depends on weight-draw dispersion ($\kappa$).
 The value of exact
 assembly under vector normalisation also depends on $\kappa$: it loses
 $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$,
@@ -122,7 +121,7 @@ but these effects are not distinguishable from zero at $\kappa=50$.
 An intervention shows that
 between-group distortion never moves the portfolio off the frontier
 (Q$_2=100\%$, Theorem~\ref{thm:groupconst}) but costs
-$\RegretEoneB$~pp of value regret (median $\RegretEoneBMed$~pp);
+$\RegretEoneB$~pp of value regret;
 within-group distortion reduces frontier attainment
 by $\EoneWloss$~pp. Separately, a criterion encoded inconsistently
 between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$.
@@ -130,8 +129,8 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 
 \begin{highlights}
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
-\item Exact assembly is Pareto-safe on all instances iff amplitudes are group-constant
-\item Normalisation shifts greedy attainment by $\NormGreedyContrast$~pp; at both $\kappa$ tested
+\item Exact assembly is Pareto-efficient on all instances iff amplitudes are group-constant
+\item Normalisation shifts greedy Pareto attainment by $\NormGreedyContrast$--$\NormGreedyContrastKfifty$~pp at both $\kappa$ tested
 \item Aggregation and assembly under vector depend on weight-draw dispersion ($\kappa$)
 \item Criterion coded differently in score and objectives alone costs $\RaspLoss$~pp
 \end{highlights}
@@ -1877,7 +1876,7 @@ sub-optimality in the factorial experiment into four ordered factors:
 
 The results are organised in three parts: the base portfolios under nominal
 weights, which establish the empirical magnitude of the normalisation and
-assembly effects; the confirmation of the amplitude lemma against the
+assembly effects; the empirical ordering by total variation against the
 factorial data; and the cost of normalisation--assembly mismatch measured
 against the exact Pareto frontier.
 
@@ -1969,7 +1968,7 @@ Section~\ref{sec:alignment} returns to this.
 \end{figure*}
 
 % ----------------------------------------------------------
-\subsection{Confirmation of the amplitude lemma}
+\subsection{Empirical ordering by TV}
 \label{sec:lemmaconf}
 % ----------------------------------------------------------
 
@@ -2028,7 +2027,7 @@ Further families (max, Peldschus, sum) are reported in the
 Supplementary Material.
 
 % ----------------------------------------------------------
-\subsection{The factorial design}
+\subsection{Factorial results}
 \label{sec:factorial}
 % ----------------------------------------------------------
 
