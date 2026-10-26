@@ -2,11 +2,10 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata below."
 type: software
 title: "Normalisation as implicit re-weighting in multi-criteria portfolio selection: closed form and cost against an exact Pareto frontier"
-version: "v1.2"
+version: "v1.3"
 date-released: "2026-10-29"
 license: MIT
 repository-code: "https://github.com/Jazancort/mcdm-landfill-pareto-paper"
-url: "https://doi.org/10.5281/zenodo.PENDING"
 abstract: >
   Replication package for the Omega paper on normalisation as implicit
   re-weighting in multi-criteria decision analysis. Includes input data,
@@ -16,7 +15,7 @@ authors:
   - family-names: "Azancort Neto"
     given-names: "Julio Leite"
     orcid: "https://orcid.org/0009-0000-2754-8503"
-    affiliation: "Instituto de Tecnologia, Universidade Federal do Pará (UFPA)"
+    affiliation: "Instituto de Tecnologia, Universidade Federal do Para (UFPA), Belem, PA, Brazil"
 keywords:
   - MCDM
   - normalisation
