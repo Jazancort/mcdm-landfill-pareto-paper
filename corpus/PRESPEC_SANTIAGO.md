@@ -90,34 +90,33 @@ drawn with `seed=99`. Abort if any assert fails.
 **Lock file:** scripts that compute scores or Q2 for Santiago refuse to run unless
 `corpus/PRESPEC_SANTIAGO_F1.lock` exists. This file is created only at Phase 1 commit.
 
-**Grid:** 1 km × 1 km cells; cells with less than 50% land coverage discarded; candidate = centroid of the full cell (not centroid of the land intersection).
+**Grid:** 1 km × 1 km cells; cells with less than 50% land coverage discarded; candidate = centroid of the land-covered portion of the cell (guaranteed to be on land).
 
-Grid conventions (confirmed from `Landfill_NSGA2_Paper_Final.ipynb`, which generated the published 473-site dataset, and cross-checked with `scripts/santiago_grid.py`):
-- `origin = floor(xmin)`: source notebook uses `np.floor(xmin)` — rounds the bounding-box corner to the nearest integer metre. Functionally equivalent to `origin=bbox` (difference < 1 m per axis). `scripts/santiago_grid.py --origin bbox` uses exact float xmin; the sub-metre origin difference causes 52 coastal cells to differ (see PRE-A table below).
-- `centroid = cell`: candidate point is the geometric midpoint of the 1 km × 1 km cell (`x0 + 500, y0 + 500`), not the centroid of the land intersection.
-- `land_frac = 0.5`: cell is included iff its land intersection covers at least 50% of the cell area.
-- CRS: `EPSG:32626` (WGS 84 / UTM Zone 26N) confirmed for Fogo. For Santiago: `EPSG:32627`.
+Grid conventions (confirmed to coordinate level from `Landfill_NSGA2_Paper_Final.ipynb` and `scripts/santiago_grid.py`):
+- `origin = floor1m`: `np.floor(xmin)`, `np.floor(ymin)` — rounds to nearest metre. Implemented as `--origin floor1m` in santiago_grid.py.
+- `centroid = land`: centroid of the **land intersection** of the cell with the island polygon (source: `intersection.centroid`; comment in source: "Use centroid of the INTERSECTION. This guarantees the point is on land"). For interior cells (land_frac = 1) this equals the cell midpoint; for coastal cells (land_frac < 1) the point is pulled towards the land by 10–250 m.
+- Post-filter: centroid must be `within` the island polygon (source notebook Method 2). Catches edge cases at complex coastlines.
+- `land_frac = 0.5`: ≥ 50% land coverage required.
+- CRS: `EPSG:32626` for Fogo; `EPSG:32627` for Santiago.
 
-**PRE-A grid validation — all trials recorded (2026-10-25):**
+**PRE-A grid validation — all trials recorded (2026-10-25–26):**
 
-| Trial | CRS | Origin | Boundary | N_cand | N_adm | ref_matched/473 | n_trios |
-|---|---|---|---|---|---|---|---|
-| NSGA-II original (`intersects` filter, no land_frac) | 4826 | floor(xmin) | geologia_fogo.shp | 524 | — | — | — |
-| `_verify_fogo_grid.py` v1 (bug: 4826) | 4826 | bbox | IDECV ilha | 475 | — | — | — |
-| 4826 + snap (nearest km) | 4826 | snap | IDECV ilha | 467 | — | — | — |
-| 4826 + bbox with ref+excl | 4826 | bbox | IDECV ilha | 475 | 480→N/A | — | — |
-| **32626 + bbox + ref + excl — IDECV ilha (principal)** | **32626** | **bbox** | **IDECV ilha** | **473** | **389** | **421/473** | 1,974,552 |
-| 32626 + bbox + ref + excl — geol dissolved | 32626 | bbox | geol dissolved | 473 | 389 | 421/473 | 1,974,552 |
+| Trial | CRS | Origin | Centroid | Boundary | N_cand | N_adm | ref/473 | n_trios |
+|---|---|---|---|---|---|---|---|---|
+| NSGA-II original (`intersects` filter) | 4826 | floor | cell | geologia_fogo.shp | 524 | — | — | — |
+| `_verify_fogo_grid.py` v1 (bug: 4826) | 4826 | bbox | cell | IDECV ilha | 475 | — | — | — |
+| 4826 + snap | 4826 | snap | cell | IDECV ilha | 467 | — | — | — |
+| 4826 + bbox (ref+excl) | 4826 | bbox | cell | IDECV ilha | 475 | — | — | — |
+| 32626 + bbox + cell (ref+excl) | 32626 | bbox | cell | IDECV ilha | 473 | 389 | 421/473 | 1,974,552 |
+| 32626 + bbox + cell + geol (ref+excl) | 32626 | bbox | cell | geol dissolved | 473 | 389 | 421/473 | 1,974,552 |
+| **32626 + floor1m + land + geol (ref+excl)** | **32626** | **floor1m** | **land** | **geol dissolved** | **473** | **389** | **473/473 (0.0 m)** | **1,944,653** |
 
-Reference dataset (`df_real_data_cached.csv`): N_cand=473, N_adm=389, n_trios=1,944,653.
-Source: `Landfill_NSGA2_Paper_Final.ipynb` (SHA-256: `2e62392110c466127b77dcd43c83980f165bc5c300978e71aa9870936119b6f1`), CRS=32626, origin=floor(xmin), boundary=geologia_fogo.shp.
+Reference dataset (`df_real_data_cached.csv`, SHA-256: `8c88b3654f06a3008241a113fdaaceec5888c1aa71b333cb91805dbc5e99fd15`): N_cand=473, N_adm=389, n_trios=1,944,653.
+Source notebook: `Landfill_NSGA2_Paper_Final.ipynb` (SHA-256: `2e62392110c466127b77dcd43c83980f165bc5c300978e71aa9870936119b6f1`).
 
-**PRE-A verdict:** N_cand=473 confirmed ✓. N_adm=389 confirmed ✓. CRS=32626 and origin≈bbox confirmed.
+**PRE-A verdict: CONFIRMED.** All three published values reproduced exactly. 473/473 coordinates match at sub-micrometre precision. The rule is confirmed to coordinate level.
 
-**Residual discrepancies (documented, not blocking):**
-- *421/473 coordinate matches ≤1 m:* 421 interior sites match within 1 m (median 0.736 m). 52 coastal sites differ 1–243 m due to `floor(xmin)` vs exact float origin. Not a different rule.
-- *n_trios +29,899 (+1.5%):* caused by the 52 position differences changing pairwise haversine distances. For Santiago, n_trios is computed independently.
-- *Both boundaries give identical results:* the boundary polygon does not matter; CRS and origin are the determining factors.
+Trials 5–6 (centroid=cell) gave 421/473 position matches and n_trios +1.5% because the 52 coastal cells have land centroids 10–250 m from their cell midpoints. This is not a different rule; it is the correct rule incorrectly implemented.
 
 Boundary source:
 - S-T: Santiago island boundary from IDECV `divisao_admin:ilha`, filtered to nom_ilha='SANTIAGO'. CRS: EPSG:4326 → reprojected to EPSG:32627 for distance computations. Version: IDECV WFS as accessed 2026-10-25.
@@ -704,7 +703,7 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 
 ## Pre-commit checklist
 
-- [x] Run `scripts/santiago_grid.py --mode fogo-check` (replaces deprecated `_verify_fogo_grid.py`): N_cand=473 ✓, N_adm=389 ✓, 421/473 positions ≤1 m. All trials documented in §3 PRE-A table. (2026-10-25)
+- [x] Run `scripts/santiago_grid.py --mode fogo-check` (replaces deprecated `_verify_fogo_grid.py`): **CONFIRMED** 473/473 coordinates at 0.0 m, N_adm=389, n_trios=1,944,653. Convention: 32626+floor1m+land+geol_dissolved. All trials documented in §3 PRE-A table. (2026-10-25–26)
 - [x] Note: did NOT choose between boundary sources based on which reproduces 473. Declared rule (32626+bbox+50%) tested with both boundaries (IDECV ilha and geol dissolved); both give 473 with 421/473 position matches. Source notebook identified as Landfill_NSGA2_Paper_Final.ipynb.
 - [x] Complete Annex B: source confirmed as Landfill_NSGA2_Paper_Final.ipynb (SHA documented in §0). Queries match Zenodo script (same tags, same dist=30000).
 - [ ] Fill `[HASH_F0]` (this commit's hash — fill after `git commit`, before push)

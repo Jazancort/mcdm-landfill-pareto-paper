@@ -850,8 +850,10 @@ that follow correspond to Stages~1--6 in order.
 \subsection{Data and preprocessing}
 
 Stage~1 of Figure~\ref{fig:workflow}. The dataset comprises $\Ncand$ candidate sites on Fogo Island, Cape Verde,
-defined as centroids of 1~km $\times$ 1~km cells with at least 50\% land coverage
-(WGS~84 / UTM Zone~26N grid anchored at the bounding-box corner), each with $m=11$ criteria measured in
+defined as centroids of the land-covered portion of 1~km $\times$ 1~km grid cells, retaining
+only cells with at least 50\% land coverage (WGS~84 / UTM Zone~26N, grid origin at the
+integer-metre bounding-box corner of the geology polygon, each point guaranteed on land
+by an additional within-island validation step), each with $m=11$ criteria measured in
 metres, except slope (degrees) and aspect (binary leeward indicator).
 The spatial discretisation and criteria definition follow
 \citet{AzancortNeto2026}, which provides the validated GIS dataset; the

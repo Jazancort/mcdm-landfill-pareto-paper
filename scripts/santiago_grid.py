@@ -96,6 +96,10 @@ def build_grid(region, crs, spacing, origin, centroid, land_frac):
     xmin, ymin, xmax, ymax = region.bounds
     if origin == "bbox":
         x0, y0 = xmin, ymin
+    elif origin == "floor1m":
+        # Source notebook convention: np.floor(xmin) — rounds to nearest metre.
+        # Different from snap (which rounds to nearest spacing multiple).
+        x0, y0 = np.floor(xmin), np.floor(ymin)
     else:  # snap
         x0, y0 = np.floor(xmin / spacing) * spacing, np.floor(ymin / spacing) * spacing
     xs = np.arange(x0, xmax, spacing)
@@ -110,15 +114,35 @@ def build_grid(region, crs, spacing, origin, centroid, land_frac):
     keep = frac >= land_frac
     near_threshold = int(np.sum(np.abs(frac - land_frac) < 1e-6))   # ambiguity flag
 
-    pts = (cells[keep].centroid if centroid == "cell" else land[keep].centroid).reset_index(drop=True)
-    ll = pts.to_crs(4326)
+    if centroid == "cell":
+        pts_geom = cells[keep].centroid
+    else:  # "land" — centroid of the land intersection (source notebook convention)
+        pts_geom = land[keep].centroid
+        # Second filter: centroid must be within island (source notebook Method 2)
+        within_island = pts_geom.within(region)
+        keep_idx = within_island[within_island].index
+        pts_geom = pts_geom.loc[keep_idx]
+        frac_keep = frac[keep]
+        frac_keep = frac_keep[within_island.values]
+        # Rebuild rows/cols for kept cells
+        rows_arr = np.array(rows)[keep][within_island.values]
+        cols_arr = np.array(cols)[keep][within_island.values]
+        pts_geom = pts_geom.reset_index(drop=True)
+    
+    if centroid == "cell":
+        frac_keep = frac[keep]
+        rows_arr = np.array(rows)[keep]
+        cols_arr = np.array(cols)[keep]
+        pts_geom = pts_geom.reset_index(drop=True)
+
+    ll = pts_geom.to_crs(4326)
     cand = gpd.GeoDataFrame({
-        "cand_id": np.arange(int(keep.sum())),
-        "row": np.array(rows)[keep], "col": np.array(cols)[keep],
-        "land_frac": frac[keep],
-        "x": pts.x.to_numpy(), "y": pts.y.to_numpy(),
+        "cand_id": np.arange(int(len(pts_geom))),
+        "row": rows_arr, "col": cols_arr,
+        "land_frac": frac_keep,
+        "x": pts_geom.x.to_numpy(), "y": pts_geom.y.to_numpy(),
         "lon": ll.x.to_numpy(), "lat": ll.y.to_numpy(),
-    }, geometry=pts, crs=crs)
+    }, geometry=pts_geom, crs=crs)
     return cand, {"n_cells_total": int(len(cells)), "n_near_threshold": near_threshold}
 
 def haversine_matrix(lat, lon):
@@ -185,6 +209,18 @@ def fogo_check(a, base):
             "nearest_dist_m_quantiles": np.quantile(nearest, [0, .5, .95, 1]).round(3).tolist(),
             "cand_matched_by_ref": int(np.sum(dist.min(axis=0) <= a.match_tol_m)),
         }
+        # Diagnostic: are unmatched candidates all coastal (land_frac < 1)?
+        mism = dist.min(axis=0) > a.match_tol_m
+        if mism.any():
+            rep["reference"]["mismatch_land_frac_quantiles"] = (
+                np.quantile(cand.land_frac.to_numpy()[mism], [0, .5, 1]).round(4).tolist()
+            )
+            rep["reference"]["mismatch_all_coastal"] = bool(
+                (cand.land_frac.to_numpy()[mism] < 1.0).all()
+            )
+        else:
+            rep["reference"]["mismatch_land_frac_quantiles"] = []
+            rep["reference"]["mismatch_all_coastal"] = True  # no mismatches = vacuously true
         rep["reference_csv_sha256"] = sha256_lf(a.reference_csv)
 
     if a.exclude:                                          # Fogo exclusion: centroid inside protected
@@ -251,7 +287,7 @@ def main():
     p.add_argument("--boundary")
     p.add_argument("--region-field"); p.add_argument("--region-values", nargs="+")
     p.add_argument("--crs", type=int, help="projected EPSG (Fogo 32626, Santiago 32627)")
-    p.add_argument("--origin", choices=["bbox", "snap"])
+    p.add_argument("--origin", choices=["bbox", "floor1m", "snap"])
     p.add_argument("--centroid", choices=["cell", "land"])
     p.add_argument("--spacing", type=float, default=1000.0)
     p.add_argument("--land-frac", type=float, default=0.5)
