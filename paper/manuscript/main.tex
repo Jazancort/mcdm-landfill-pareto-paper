@@ -465,7 +465,7 @@ unit invariance.
 % ----------------------------------------------------------
 
 The four methods evaluated here are standard.
-\citet{Hwang1981} introduced TOPSIS and SAW; the original PROMETHEE
+\citet{Hwang1981} formalised TOPSIS and SAW; the original PROMETHEE
 formulation is due to \citet{Brans1986}.
 For VIKOR we follow \citet{OpricovicTzeng2004}.
 The connection between PROMETHEE~II and Borda scoring is established
@@ -487,9 +487,9 @@ These results concern a different channel than the one we study: our
 set-dependence effect (Remark~\ref{rem:nonmonotone} and Table~\ref{tab:coding2x2}) operates through
 normalisation constants, not through pairwise preference flows.
 
-\citet{Eppe2014} examined the computational scalability of exact
-PROMETHEE ranking for candidate sets of the size used here
-($N$ up to several hundred), confirming tractability.
+\citet{Eppe2014} proposed piecewise-linear approximations of
+PROMETHEE~II net flow scores; this result is relevant to the
+identity in Section~\ref{sec:propositions}.
 
 % ----------------------------------------------------------
 \subsection{Benchmarking MCDM methods}
@@ -570,8 +570,7 @@ the present problem is deterministic, uncapacitated, and
 includes instead a hard pairwise separation constraint that reduces the
 feasible set from all $\binom{\Nvia}{\kk}$ triples to $\Ntrios$.
 \citet{Kuby1987} studied the related p-dispersion problem (maximise the
-minimum inter-facility distance); \citet{Church2022} reviewed the
-broader class of dispersion and diversity maximisation models.
+minimum inter-facility distance); \citet{Church2022} reviewed obnoxious facilities location problems;
 \citet{Marti2022} provided the most recent comprehensive review of
 discrete dispersion maximisation from an operations research perspective.
 
@@ -1150,6 +1149,12 @@ trios are restricted to admissible sites in both cases, with only the
 normalisation reference differing between $A$ and $A'$);
 space~$A'$ is the factorial design ($|\Fset|=\Fmmsize$), and the two
 reference sets share only $\FAinter$ portfolios (A-space pipeline).
+The source study \citep{AzancortNeto2026} applies a worst-case penalty
+to the $\Nexcl$ protected-area candidates rather than excluding them
+and enumerates approximately $2.90\times10^6$ feasible trios from all
+$\Ncand$ candidates; restricting to the $\Nvia$ admissible sites yields
+$\Ntrios$ trios and reproduces the same $\FAsize$-portfolio frontier
+at the nominal weights.
 Including inadmissible sites shifts the scale without those sites being
 selectable, a set-dependence mechanism documented for TOPSIS by
 \citet{GarciaCascales2012}.
@@ -1869,8 +1874,10 @@ method--assembly pair under the nominal AHP weights $\wahp$, with
 normalisation constants computed over all $\Ncand$ candidates (space~$A$).
 
 The reproduction is exact: SAW under optimal assembly returns
-$\{184,430,460\}$, the best-compromise portfolio identified by \citet{AzancortNeto2026}
-(using the AHP weights of \citealt{Andrade2015}),
+$\{184,430,460\}$, the portfolio that \citet{AzancortNeto2026}
+selected from their NSGA-II Pareto front using a group-weighted
+scalarisation ($S=0.295f_1+0.356f_2+0.349(1-f_3)$, their Table~10,
+scenario~S1); the two selection rules coincide on this instance,
 with objective values agreeing to $10^{-16}$.
 The pipeline therefore recovers the published solution before any
 factor is varied.
