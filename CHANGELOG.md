@@ -44,3 +44,7 @@ Initial public release. Contains:
 - Pre-computed result files (`paper/results/`).
 - Input data for Fogo Island (473 candidate sites).
 - Ten pre-registration documents.
+
+## Milestone: Santiago Phase 1 unblocked
+
+PRESPEC_SANTIAGO.md is included in the Zenodo archive (v1.1, 28 Oct 2026). The archive date constitutes an external pre-registration timestamp, predating any Santiago experimental run. Phase 1 may proceed.
