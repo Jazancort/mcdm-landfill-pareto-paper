@@ -103,7 +103,7 @@ Um candidato é excluído se `dist_protected_area (m) == 0` — o sítio está d
 | Valor 0 | Sítio não está virado a SE (fora do intervalo [90°,180°]) |
 | n₁ (SE-facing) | **94 de 389** em A' |
 | ρ_j (vec) | 1/√94 = 0.103 |
-| Nota de justificação | O intervalo [90°,180°] é transferido do estudo de origem (Andrade 2015). Nenhuma justificação textual foi encontrada no código ou documentação inspeccionados em Fase 0. |
+| Nota de justificação | Andrade & Barbosa (2015, p. 254): "Os ventos dominantes na área de estudo são ventos de nordeste e noroeste. Consequentemente, estas vertentes receberam a classificação de aptidão mínima." NE/NW-facing = aptidão mínima → o complemento (encostas SE/S, intervalo [90°,180°]) = aptidão máxima. O número exacto [90°,180°] não está no texto — deriva da implementação GIS. |
 | Nota crítica | A coluna `slope_aspect` armazena a convenção reflectida. Qualquer análise contínua (e.g. R-asp) deve usar `θ_correct = (270 − θ_pub) % 360` ou recalcular directamente do DEM com `arctan2(-dx, dy)`. |
 
 #### coast — `dist_coastline (m)`
