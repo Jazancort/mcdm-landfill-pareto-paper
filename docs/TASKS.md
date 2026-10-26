@@ -781,3 +781,28 @@ porque V2 substitui NaN por 0 antes da convolução. Para distingui-las formalme
 seria necessário implementar Horn com NaN verdadeiro (sem preenchimento). A conclusão
 de que ocean=0 é a codificação correcta vem da contagem de células válidas
 (11 696 622 células com valor 0 E válidas no hell.tif), não da comparação V1/V2.
+
+
+---
+
+## Clarificações pós-sessão (2026-10-28)
+
+### AspSpearman — transformação validada contra DEM
+
+`\AspSpearman` = −0.445 usa a transformação `(270 − θ_nb) % 360` para converter
+o aspecto no CSV (convenção do notebook, 270°−θ) para azimute geográfico correcto
+(arctan2(−dx, dy)). A transformação foi validada contra o DEM por cálculo directo
+de arctan2(−dx, dy) sobre o raster: máximo Δ circular entre os dois métodos = 0.000107°
+(< 1 × 10⁻⁴°), com 0 células planas. O Spearman ρ = −0.445 e todos os valores
+derivados em Remark 5 (§6.7) usam o azimute transformado.
+
+### κ = 50 no log de run_fourthcell_consistent.py
+
+O log dizia "four cells, all with aspect binary (kappa=50)". Isso é correcto e não
+contradiz o R-asp calculado com kappa=200. As quatro células do run_fourthcell
+(RV_star, RM, em A e A') usam o indicador binário SE-facing. O indicador binário
+é invariante sob a correcção de fórmula (ambas as convenções de aspecto produzem
+o mesmo conjunto de 94 sites SE-facing, Δ simétrico = 0). Com coding binário,
+o kappa = 50 e kappa = 200 produzem exactamente os mesmos trios-ótimos, porque
+a fronteira de Pareto sobre a coluna binária não muda com o limiar de distância.
+Apenas a célula R-asp usa aspecto contínuo, e essa é a que foi corrigida.

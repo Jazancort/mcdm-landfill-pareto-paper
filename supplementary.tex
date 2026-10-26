@@ -498,10 +498,12 @@ Experiment~E1, via the affine identity $n_j^{473}(a)=b_j+r_j\,n_j^{389}(a)$.
   \item R-V$^*$ (consistent binary coding, $473$-site reference):
         $\kappa=200$, greedy $=97.8\%$, optimal $=100.0\%$.
   \item R-asp (continuous coding, $389$-site reference):
-        $\kappa=200$, greedy $=25.2\%$, optimal $=24.0\%$.
+        $\kappa=200$, greedy $=\RaspGreedy\%$, optimal $=\RaspOptimal\%$.
   \end{itemize}
-  Interpretation: the $76\,\mathrm{pp}$ loss attributed to the
-  reference set is entirely a coding effect; with consistent coding the
+  Interpretation: the $\RaspLoss\,\mathrm{pp}$ loss is attributable to the
+  coding inconsistency (continuous azimuth in the score versus binary
+  SE-facing indicator in the evaluator; see also DEV-E4-009); with consistent
+  coding the
   $473$-site reference costs nothing under optimal assembly and
   \emph{improves} greedy assembly by $+\RefSetGreedyGain\,\mathrm{pp}$
   (95\% CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).  P\_E4\_3 is
@@ -639,9 +641,9 @@ ID & Contrast & $\Delta$ & Decision \\
 R1-1 & R-V$^*$ opt $-$ R-M opt & $0.0$~pp & Observation \\
 R1-2 & R-V$^*$ grd $-$ R-M grd & $+11.8$~pp ($[+8.8,\,+14.8]$) & Effect \\
 R1-3 & All diagonal opts $=100\%$ & --- & Pass \\
-R1-5 & R-asp opt $=24.0\%$ & --- & Descriptive \\
-R1-6 & R-asp opt $-$ R-V opt & $+4.0$~pp ($[+2.2,\,+6.0]$) & Effect \\
-R1-6 & R-asp grd $-$ R-V grd & $+5.6$~pp ($[+3.6,\,+7.6]$) & Effect \\
+R1-5 & R-asp opt $=\RaspOptimal\%$ & --- & Descriptive \\
+R1-6 & R-asp opt $-$ R-V opt & $\ResidualRefOptDelta$~pp ($[\ResidualRefOptCIlo,\,\ResidualRefOptCIhi]$) & Effect \\
+R1-6 & R-asp grd $-$ R-V grd & $\ResidualRefGrdDelta$~pp ($[\ResidualRefGrdCIlo,\,\ResidualRefGrdCIhi]$) & Effect \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1008,7 +1010,7 @@ $\mathrm{TV}_W(1/r_j)=0.085$ & \texttt{tvw\_e4.py} & \texttt{d4e970b} & NAO \\
 % --- R1 ---
 $Q_2[\text{R-V}^*,A',\text{opt}]=100.0\%$ & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & NAO \\
 $Q_2[\text{R-V}^*,A',\text{grd}]=97.8\%$  & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & NAO \\
-$Q_2[\text{R-asp},A',\text{opt}]=24.0\%$  & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & NAO \\
+$Q_2[\text{R-asp},A',\text{opt}]=\RaspOptimal\%$  & \texttt{run\_fourthcell\_consistent.py} & \texttt{ddaddc7} & NAO \\
 Greedy gain R1-2 $+11.8\,\mathrm{pp}$ (CI $[+8.8,+14.8]$) & \texttt{analyze\_r1.py} & \texttt{c63b64e} & NAO \\
 % --- tab:fourthcell contaminated ---
 $N_\text{cand}/A'$ greedy (orig.\ $19.6\%$, corrected $97.8\%$) & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & SIM \\

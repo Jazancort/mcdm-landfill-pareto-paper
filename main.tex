@@ -875,14 +875,16 @@ $135^\circ$ is the midpoint of the interval; the 94 SE-facing sites and
 all factorial results ($Q_2$, $R$, E1, E6) are unaffected.
 Only the continuous-aspect analysis (Remark~\ref{rem:nonmonotone}) depends
 on the convention; all values in this paper use $\theta$.
-The interval $[90^\circ, 180^\circ]$ is transferred from the original
-study; the paper justifies it in terms of wind direction: the dominant
-winds on Fogo are from the NE and NW, so NE- and NW-facing slopes
-receive the minimum suitability score; the interval $[90^\circ, 180^\circ]$
-(E-to-S-facing, sheltered from NE winds) is the complement classified
-as most suitable~\citep{AzancortNeto2026}.
-The specific numerical interval is not stated in the article text and
-derives from the GIS implementation.
+\citet{Andrade2015} assign minimum suitability to NE- and NW-facing slopes,
+citing the dominant NE and NW winds and the aim of protecting urban areas
+from landfill odours (p.\,254).\footnote{%
+  ``Os ventos dominantes na {\'a}rea de estudo s\~ao ventos de nordeste
+  e noroeste. Consequentemente, estas vertentes receberam a
+  classifica\c{c}\~ao de aptid\~ao m\'inima.''~\citep[p.\,254]{Andrade2015}.}
+That paper does not state the interval of maximum suitability.
+The closed interval $[90^\circ, 180^\circ]$ is taken from the implementation
+in \citet{AzancortNeto2026}; it is narrower than the complement of the
+minimum-suitability classes, which would also include SW-facing slopes.
 
 \begin{figure*}[!t]
 \centering
@@ -2280,11 +2282,20 @@ Continuous azimuth  & optimal & $\RaspOptimal\%$ (R-asp) & $\RVoptimal\%$ (R-V) 
 \label{sec:refset}\label{rem:nonmonotone}
 Scoring \textit{aspect} as a continuous geographic azimuth while the
 objectives use a binary SE-facing indicator ($90^\circ$--$180^\circ$,
-closed) introduces a non-monotone mismatch: the score's highest values
-correspond to WNW-facing sites (circular mean $\approx302^\circ$, s.d.\
-$27^\circ$), which are negatively correlated with the SE-facing indicator
-(rank-biserial $\rho=\AspSpearman$, $p<0.001$;
-all top-quartile sites ($\AspTopQuartile\%$) have indicator zero),
+closed) introduces a non-monotone mismatch.
+The score column is the min--max normalisation of the geographic azimuth
+$\theta\in[0^\circ,360^\circ)$: the site with the highest azimuth
+receives score~$1$, so scores decrease monotonically from the WNW/NW
+direction toward $0^\circ$ (due north).
+SE-facing sites ($\theta\in[90^\circ,180^\circ]$) occupy the lower-middle
+range of the scale and receive mid-range scores; the top quartile
+therefore concentrates at WNW-facing azimuths (circular mean
+$\approx302^\circ$, s.d.\ $27^\circ$) by construction of the linear
+scale, not as an empirical finding; those azimuths belong to the class
+that \citet{Andrade2015} classify as minimum suitability on Fogo.
+The Spearman correlation between the normalised azimuth and the SE-facing
+indicator is $\rho=\AspSpearman$ (point-biserial on ranks; $p<0.001$;
+$\AspTopQuartile\%$ of top-quartile sites have indicator zero),
 reducing $Q_2$ from $100\%$ to $\RaspOptimal\%$ under
 SAW/min--max/optimal: $\RaspLoss$~pp through coding alone
 (Table~\ref{tab:coding2x2}).

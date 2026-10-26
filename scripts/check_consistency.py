@@ -668,14 +668,21 @@ BAD_PHRASES = [
     ("$778$",
      "old random trio baseline with wrong denominator; correct is \\RRegretRandom = 54 pp"),
     # Aspect formula correction (2026-10-26): old R-asp values + old naming
-    ("binary leeward indicator",
-     "renamed: 'leeward indicator' -> 'SE-facing indicator' (2026-10-26)"),
-    ("leeward sites",
-     "renamed: 'leeward sites' -> 'SE-facing sites' (2026-10-26)"),
+    ("leeward",
+     "word 'leeward' must not appear in manuscript (renamed to SE-facing, 2026-10-26)"),
+    ("rank-biserial",
+     "imprecise: Spearman with binary variable is point-biserial on ranks, not rank-biserial (Glass); use 'Spearman' or 'point-biserial on ranks'"),
     ("$\\rho=0.018",
      "AspSpearman old value 0.018 (notebook convention); correct is -0.445"),
     ("0.73",
      "AspSpearmanP old value 0.73 (now p<0.001); replaced — check context"),
+    # Old R-asp values (corrected 2026-10-26 with geographic formula)
+    ("24.0\\%",
+     "old R-asp optimal 24.0% (corrected to \\RaspOptimal=15.6%)"),
+    ("76~pp",
+     "old R-asp loss 76 pp (corrected to \\RaspLoss=84.4 pp)"),
+    ("+4.0~pp",
+     "old R-asp vs R-V delta +4.0 pp (corrected to -4.4 pp)"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
@@ -689,6 +696,34 @@ if main_tex.exists():
             print(f"  [FAIL] Prohibited phrase: '{phrase}'")
         else:
             print(f"  [OK  ] Prohibited phrase absent: '{phrase}'")
+
+# Rule 1b: critical BAD_PHRASES also checked in supplementary.tex
+print()
+print("=== Supplementary.tex: critical phrase checks ===")
+SUPPL_CRITICAL = [
+    ("leeward",
+     "word 'leeward' must not appear in supplementary.tex (renamed to SE-facing, 2026-10-26)"),
+    ("rank-biserial",
+     "imprecise: Spearman with binary variable is point-biserial on ranks; use 'Spearman' or 'point-biserial on ranks'"),
+    ("$\\rho=0.018",
+     "AspSpearman old value 0.018 (notebook convention); correct is -0.445"),
+    ("24.0\\%",
+     "old R-asp optimal 24.0% (corrected to \\RaspOptimal=15.6%)"),
+]
+if suppl_tex_path.exists():
+    non_comment_suppl = "\n".join(
+        l for l in suppl_tex.splitlines()
+        if not l.strip().startswith("%")
+    )
+    for phrase, reason in SUPPL_CRITICAL:
+        if phrase in non_comment_suppl:
+            FAIL.append(f"Prohibited phrase in supplementary.tex: '{phrase}' ({reason})")
+            print(f"  [FAIL] Prohibited phrase: '{phrase}'")
+        else:
+            print(f"  [OK  ] Prohibited phrase absent: '{phrase}'")
+else:
+    FAIL.append("supplementary.tex not found — cannot check critical phrases")
+    print("  [FAIL] supplementary.tex not found")
 
 # Rule 2: non-ASCII bib keys in refs.bib
 bib_path = ROOT / "refs.bib"
@@ -1188,11 +1223,21 @@ _MUST_FAIL = [
      "§6.9 stale top-100=0.960 (was copy-paste; correct is \\AspectTopKAgree=0.94)"),
     # Aspect formula correction (2026-10-26): phrases that must be caught by BAD_PHRASES
     ("binary leeward indicator",
-     "renamed 'leeward indicator' -> 'SE-facing indicator' (2026-10-26)"),
+     "word 'leeward' in manuscript (renamed to SE-facing, 2026-10-26)"),
     ("leeward sites",
-     "renamed 'leeward sites' -> 'SE-facing sites' (2026-10-26)"),
+     "word 'leeward' in manuscript (renamed to SE-facing, 2026-10-26)"),
     ("$\\rho=0.018",
      "AspSpearman old value 0.018 (notebook convention)"),
+    # rank-biserial must be caught (imprecise term, 2026-10-28)
+    ("rank-biserial $\\rho",
+     "rank-biserial must not appear — use 'Spearman' or 'point-biserial on ranks'"),
+    # Old R-asp values must be caught (corrected 2026-10-26)
+    ("24.0\\%",
+     "old R-asp optimal 24.0% replaced by 15.6%"),
+    ("76~pp",
+     "old R-asp loss 76 pp replaced by 84.4 pp"),
+    ("+4.0~pp",
+     "old R-asp vs R-V delta +4.0 pp replaced by -4.4 pp"),
     # DEV-A-G2: blue diamonds in tab:canonical caption (removed b8911a2)
     ("Pareto membership (blue diamonds)",
      "tab:canonical: blue diamonds removed — use \\in\\mathcal{F} column"),
