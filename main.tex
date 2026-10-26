@@ -2079,26 +2079,27 @@ into the upper tail of the portfolio-quality distribution.
 
 \begin{table*}[!t]
 \centering\small
-\caption{$Q_2[A']$ with standard error (SE) in parentheses, value regret~$R$~\eqref{eq:R} (percentage of achievable $V$-range, SE in parentheses), $Q_3$ and conditional gap (CG) for the balanced $2^3$ design
-($\kappa=200$, $\ndraws$ draws). $Q_3$ is the expected gap~\eqref{eq:Q3} in
+\caption{$Q_2[\mathcal{A}']$ with standard error (SE) in parentheses, value regret~$R$~\eqref{eq:R} (percentage of achievable $V$-range, SE in parentheses), $Q_3$ and conditional gap (CG) for the balanced $2^3$ design
+($\kappa=200$, primary; $\kappa=50$, robustness, rightmost column).
+$Q_3$ is the expected gap~\eqref{eq:Q3} in
 percent of the attainable range; CG $= Q_3/(1-Q_2)$ is the mean shortfall
 over draws in which the portfolio misses the frontier. Both are computed
 against the same reference set as $Q_2$. SAW/min--max/optimal is fixed at
 $100\%$ by Proposition~\ref{prop:p1:stmt}.}
 \label{tab:factorial}
-\begin{tabular}{@{}llrrrr@{}}
+\begin{tabular}{@{}llrrrrrr@{}}
 \toprule
-Agg. & Norm., assembly & $Q_2$~(SE) & $R$~(SE) & $Q_3$~(\%) & CG~(\%) \\
+Agg. & Norm., assembly & $Q_2$ (SE) & $R$ (SE) & $Q_3$\,(\%) & CG\,(\%) & $Q_2^{\kappa=50}$ (SE)\\
 \midrule
-SAW    & mm, greedy   & $\QtwommGreedy$\% (\QtwoSEmmGreedy)  & \RegrSAWmmGrd{} (\RegrSAWmmGrdSE) & \QthreeSAWmmGrdPct   & \CondGapSAWmmGrd   \\
-       & mm, optimal  & $\QtwommOptimal$\% ({---})            & \RegrSAWmmOpt{} ({---})           & \QthreeSAWmmOptPct   & {---}              \\
-       & vec, greedy  & $\QtwovecGreedy$\% (\QtwoSEvecGreedy) & \RegrSAWvecGrd{} (\RegrSAWvecGrdSE) & \QthreeSAWvecGrdPct  & \CondGapSAWvecGrd  \\
-       & vec, optimal & $\QtwovecOptimal$\% (\QtwoSEvecOptimal) & \RegrSAWvecOpt{} (\RegrSAWvecOptSE) & \QthreeSAWvecOptPct  & \CondGapSAWvecOpt  \\
+SAW    & mm, greedy   & $\QtwommGreedy$\% (\QtwoSEmmGreedy)  & \RegrSAWmmGrd{} (\RegrSAWmmGrdSE) & \QthreeSAWmmGrdPct   & \CondGapSAWmmGrd   & $\QtwommGreedyKfifty$\% (\QtwoSEmmGreedyKfifty) \\
+       & mm, optimal  & $\QtwommOptimal$\% ({---})            & \RegrSAWmmOpt{} ({---})           & \QthreeSAWmmOptPct   & {---}              & $\QtwommOptimalKfifty$\% ({---}) \\
+       & vec, greedy  & $\QtwovecGreedy$\% (\QtwoSEvecGreedy) & \RegrSAWvecGrd{} (\RegrSAWvecGrdSE) & \QthreeSAWvecGrdPct  & \CondGapSAWvecGrd  & $\QtwovecGreedyKfifty$\% (\QtwoSEvecGreedyKfifty) \\
+       & vec, optimal & $\QtwovecOptimal$\% (\QtwoSEvecOptimal) & \RegrSAWvecOpt{} (\RegrSAWvecOptSE) & \QthreeSAWvecOptPct  & \CondGapSAWvecOpt  & $\QtwovecOptimalKfifty$\% (\QtwoSEvecOptimalKfifty) \\
 \midrule
-TOPSIS & mm, greedy   & $\QtwoTOPSISmmGrd$\% (\QtwoSETOPSISmmGrd)  & \RegrTOPSISmmGrd{} (\RegrTOPSISmmGrdSE) & \QthreeTOPSISmmGrdPct  & \CondGapTOPSISmmGrd  \\
-       & mm, optimal  & $\QtwoTOPSISmmOpt$\% (\QtwoSETOPSISmmOpt)  & \RegrTOPSISmmOpt{} (\RegrTOPSISmmOptSE) & \QthreeTOPSISmmOptPct  & \CondGapTOPSISmmOpt  \\
-       & vec, greedy  & $\QtwoTOPSISvecGrd$\% (\QtwoSETOPSISvecGrd) & \RegrTOPSISvecGrd{} (\RegrTOPSISvecGrdSE) & \QthreeTOPSISvecGrdPct & \CondGapTOPSISvecGrd \\
-       & vec, optimal & $\QtwoTOPSISvecOpt$\% (\QtwoSETOPSISvecOpt) & \RegrTOPSISvecOpt{} (\RegrTOPSISvecOptSE) & \QthreeTOPSISvecOptPct & \CondGapTOPSISvecOpt \\
+TOPSIS & mm, greedy   & $\QtwoTOPSISmmGrd$\% (\QtwoSETOPSISmmGrd)  & \RegrTOPSISmmGrd{} (\RegrTOPSISmmGrdSE) & \QthreeTOPSISmmGrdPct  & \CondGapTOPSISmmGrd  & $\QtwoTOPSISmmGrdKfifty$\% (\QtwoSETOPSISmmGrdKfifty) \\
+       & mm, optimal  & $\QtwoTOPSISmmOpt$\% (\QtwoSETOPSISmmOpt)  & \RegrTOPSISmmOpt{} (\RegrTOPSISmmOptSE) & \QthreeTOPSISmmOptPct  & \CondGapTOPSISmmOpt  & $\QtwoTOPSISmmOptKfifty$\% (\QtwoSETOPSISmmOptKfifty) \\
+       & vec, greedy  & $\QtwoTOPSISvecGrd$\% (\QtwoSETOPSISvecGrd) & \RegrTOPSISvecGrd{} (\RegrTOPSISvecGrdSE) & \QthreeTOPSISvecGrdPct & \CondGapTOPSISvecGrd & $\QtwoTOPSISvecGrdKfifty$\% (\QtwoSETOPSISvecGrdKfifty) \\
+       & vec, optimal & $\QtwoTOPSISvecOpt$\% (\QtwoSETOPSISvecOpt) & \RegrTOPSISvecOpt{} (\RegrTOPSISvecOptSE) & \QthreeTOPSISvecOptPct & \CondGapTOPSISvecOpt & $\QtwoTOPSISvecOptKfifty$\% (\QtwoSETOPSISvecOptKfifty) \\
 \bottomrule
 \end{tabular}
 \end{table*}
