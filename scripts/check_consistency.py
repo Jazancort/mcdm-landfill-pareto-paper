@@ -942,9 +942,17 @@ if main_tex.exists():
     # All other remarks (other labels, unlabelled) are checked.
     _ALLOWED_REM_MAIN = {"rem:nonmonotone"}
     def _strip_allowed(t):
+        # Strip remark environments that contain the allowed labels
         def _r(m):
             return "" if any("\\label{" + l + "}" in m.group(0) for l in _ALLOWED_REM_MAIN) else m.group(0)
-        return _re2.sub(r"\\begin{remark}(\[[^\]]*\])?\s*.*?\\end{remark}", _r, t, flags=_re2.DOTALL)
+        t = _re2.sub(r"\\begin{remark}(\[[^\]]*\])?\s*.*?\\end{remark}", _r, t, flags=_re2.DOTALL)
+        # Also strip subsubsection* blocks that contain the allowed labels
+        # (rem:nonmonotone was converted from remark to subsubsection* in §6.08 fix)
+        for label in _ALLOWED_REM_MAIN:
+            t = _re2.sub(
+                r"\\subsubsection\*\{[^}]*\}.*?\\label\{" + _re2.escape(label) + r"\}.*?(?=\\subsubsection|\\subsection|\\section|\\FloatBarrier|$)",
+                "", t, flags=_re2.DOTALL)
+        return t
     for sent in _re2.split(r"(?<=[.;])\s+|\n", _strip_allowed(tex)):
         if sent.strip().startswith("%"): continue
         s = sent.lower()
