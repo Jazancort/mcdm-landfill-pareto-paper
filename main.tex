@@ -717,7 +717,7 @@ dependence explicit, since it is central to Section~\ref{sec:design}.
 \caption{Criterion groups, partial-value sense, and SAW score term.
   Criteria in $G_1$ and $G_2$ are costs ($c_j(i)=0$ is most favourable);
   the SAW score uses $1-c_j(a)$ to orient them as benefits.
-  \textit{Aspect} ($G_2$, non-monotone) uses the binary leeward indicator
+  \textit{Aspect} ($G_2$, non-monotone) uses the binary SE-facing indicator
   $b_\mathrm{asp}=\mathbf{1}[\mathrm{aspect}\in[90^\circ,180^\circ]]$
   ($n_1=94$) directly in the score; $F_2$ uses $1-b_\mathrm{asp}$.
   Criteria in $G_3$ are benefits ($c_j(i)=1$ most favourable); score and
@@ -744,14 +744,14 @@ Criterion & Group & Sense & SAW term \\
 
 Table~\ref{tab:criteria} records the group, sense, and SAW term for each criterion.
 For \textit{aspect}, the decision-matrix encoding ($b_\mathrm{asp}=1$ for
-leeward) and the objective encoding ($c_\mathrm{asp}=1-b_\mathrm{asp}$)
+SE-facing) and the objective encoding ($c_\mathrm{asp}=1-b_\mathrm{asp}$)
 are equivalent under min--max normalisation (top-100 rank agreement
 $=1.000$) but differ under vector normalisation by a factor of
 $\sqrt{n_0/n_1}=\AspectAmplitudeRatio$ (Corollary~\ref{cor:order}); score and
 objective use the decision-matrix encoding throughout
 (a score--evaluator coding mismatch is analysed in Section~\ref{sec:refset}).
 Amplitudes in Table~\ref{tab:amplitude} are measured on the decision
-matrix, with $n_1=94$ leeward sites among the $\Nvia$ admissible sites.
+matrix, with $n_1=94$ SE-facing sites among the $\Nvia$ admissible sites.
 The SAW method produces the oriented score
 $s(a)=\sum_{j\in G_1\cup G_2} w_j(1-c_j(a))+\sum_{j\in G_3} w_j c_j(a)$;
 Section~\ref{prop:p1} uses this relationship.
@@ -854,11 +854,30 @@ defined as centroids of the land-covered portion of 1~km $\times$ 1~km grid cell
 only cells with at least 50\% land coverage (WGS~84 / UTM Zone~26N, grid origin at the
 integer-metre bounding-box corner of the geology polygon, each point guaranteed on land
 by an additional within-island validation step), each with $m=11$ criteria measured in
-metres, except slope (degrees) and aspect (binary leeward indicator).
+metres, except slope (degrees) and aspect (binary SE-facing indicator).
 The spatial discretisation and criteria definition follow
 \citet{AzancortNeto2026}, which provides the validated GIS dataset; the
 present paper uses the same candidate set, pairwise distance matrix, and
 criterion evaluations.
+
+The \texttt{slope\_aspect} column of the published dataset
+\citep{AzancortNeto2026} is stored in a reflected convention,
+$\theta_{\text{pub}} = (270^\circ - \theta) \bmod 360^\circ$, where $\theta$
+is the geographic descent azimuth (0\textdegree{}=N, clockwise), computed via
+Sobel gradient on the ASTER GDEM~v3 tile.
+We verified this against an independent oracle: across all 389 admissible
+sites on Fogo, the mean cosine between the aspect and the summit-to-site
+bearing is $0.805$ for $\theta$ computed from the DEM directly
+and $-0.102$ for $\theta_{\text{pub}}$.
+The binary SE-facing indicator ($90^\circ \le \theta \le 180^\circ$, closed)
+is invariant under this reflection, because the reflection axis
+$135^\circ$ is the midpoint of the interval; the 94 SE-facing sites and
+all factorial results ($Q_2$, $R$, E1, E6) are unaffected.
+Only the continuous-aspect analysis (Remark~\ref{rem:nonmonotone}) depends
+on the convention; all values in this paper use $\theta$.
+The interval $[90^\circ, 180^\circ]$ is transferred from the original
+study; no textual justification for this choice was found in the source
+code or documentation inspected.
 
 \begin{figure*}[!t]
 \centering
@@ -933,7 +952,7 @@ and the orientation (cost vs.\ benefit) is applied after normalisation via the
 sign of the SAW contribution, leaving the amplitude unchanged.
 Because the norm is taken after the min--max step but before cost orientation,
 the amplitude of a binary or zero-inflated criterion depends on which pole is
-coded as zero: coding leeward sites as $0$ instead of $1$ would change
+coded as zero: coding SE-facing sites as $0$ instead of $1$ would change
 $\rho_{\texttt{aspect}}$ from $\RhoAspect$ to $\RhoAspectFlipped$, and
 normalising $1-\tilde{x}$ for \textit{perm} would give $\RhoPermInverted$
 instead of $\RhoPerm$.
@@ -1755,10 +1774,10 @@ of the other), and each has a different amplitude $A_j$.
 \end{corollary}
 
 \paragraph{Empirical magnitude on Fogo Island.}
-For \textit{aspect} ($n_1=94$ leeward sites, $n_0=295$), the two orders
+For \textit{aspect} ($n_1=94$ SE-facing sites, $n_0=295$), the two orders
 give $A_j\in\{0.058,\,0.103\}$, a factor of $\AspectAmplitudeRatio$.
 Running TOPSIS with vector normalisation under each order, holding the
-criterion semantics (leeward $=$ favourable), weights, and data fixed,
+criterion semantics (SE-facing $=$ favourable), weights, and data fixed,
 yields a Kendall~$\tau_b=\AspectTauB$ and top-100 set agreement of $\AspectTopKAgree$
 across the $\Nvia$ admissible sites.
 The agreement is high because \textit{aspect} is one of eleven criteria:
@@ -1845,7 +1864,7 @@ normalisation, and PROMETHEE~II attain the reference set.
 \centering
 \caption{Portfolios under nominal weights $\wahp$, space~$A$
   (normalisation over all $\Ncand$ candidates; aspect encoded as
-  binary leeward indicator).
+  binary SE-facing indicator).
   The gap is defined in~\eqref{eq:gap} and computed against the
   space-$A$ Pareto frontier; Figure~\ref{fig:pareto} projects these
   portfolios onto the space-$A'$ frontier for comparison.
@@ -2235,7 +2254,7 @@ result is an additional observation on this instance.
 $\kappa=200$, 500 draws. Post hoc exploratory cells.
 Rows differ only in the encoding of \textit{aspect} in the score;
 columns only in the set over which normalisation constants are computed.
-The objectives use the binary leeward indicator throughout.
+The objectives use the binary SE-facing indicator throughout.
 R-V denotes the original reference-set cell; it uses the continuous
 aspect encoding, not vector normalisation.}
 \label{tab:coding2x2}
@@ -2244,21 +2263,24 @@ aspect encoding, not vector normalisation.}
 \toprule
 Aspect encoding & Assembly & 389-site & 473-site \\
 \midrule
-Binary (consistent) & optimal & $100.0\%$ (R-M)  & $100.0\%$ (R-V$^*$) \\
-                    & greedy  & $86.0\%$          & $97.8\%$ \\
-Continuous azimuth  & optimal & $15.6\%$ (R-asp) & $20.0\%$ (R-V) \\
-                    & greedy  & $15.8\%$          & $19.6\%$ \\
+Binary (consistent) & optimal & $100.0\%$ (R-M)  & $\RVstarOptimal\%$ (R-V$^*$) \\
+                    & greedy  & $\QtwommGreedy\%$  & $\RVstarGreedy\%$ \\
+Continuous azimuth  & optimal & $\RaspOptimal\%$ (R-asp) & $\RVoptimal\%$ (R-V) \\
+                    & greedy  & $\RaspGreedy\%$   & $\RVgreedy\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{remark}[Coding inconsistency: a failure mode outside the theorem]
 \label{sec:refset}\label{rem:nonmonotone}
-Scoring \textit{aspect} as a continuous azimuth while the objectives use
-a binary leeward indicator introduces a non-monotone mismatch
-($\rho=\AspSpearman$; all $\AspTopQuartile$ top-quartile sites carry
-indicator zero), reducing $Q_2$ from $100\%$ to $\RaspOptimal\%$ under
-SAW/min--max/optimal: $\RaspLoss$~pp through coding alone
+Scoring \textit{aspect} as a continuous geographic azimuth while the
+objectives use a binary SE-facing indicator ($90^\circ$--$180^\circ$,
+closed) introduces a non-monotone mismatch: the score's highest values
+correspond to W/SW-facing sites, which are anti-correlated with the
+SE-facing indicator ($\rho=\AspSpearman$, $p<0.001$; all
+$\AspTopQuartile$ top-quartile sites carry indicator zero), reducing
+$Q_2$ from $100\%$ to $\RaspOptimal\%$ under SAW/min--max/optimal:
+$\RaspLoss$~pp through coding alone
 (Table~\ref{tab:coding2x2}).
 With a consistent encoding, normalising over the $\Ncand$-site set costs
 $0$~pp and improves greedy by $\RefSetGreedyGain$~pp
@@ -2556,7 +2578,7 @@ in the units of the objectives, are constant within each objective group.
 Its premise fails when a criterion is encoded in the score by a function
 that is not affine, or not even monotone, in the evaluator's partial value.
 On Fogo, the coding inconsistency arose when aspect was scored as a
-continuous azimuth while the objectives used the binary leeward indicator.
+continuous azimuth while the objectives used the binary SE-facing indicator.
 Crossing the two codings with the two reference sets
 (Table~\ref{tab:coding2x2}) separates three effects.
 The coding inconsistency alone costs $\RaspLoss$~pp under optimal assembly
@@ -2565,13 +2587,14 @@ Normalising over the $\Ncand$ candidates costs nothing under optimal
 assembly when the coding is consistent ($100.0\%$ in both cells) and
 improves greedy assembly by $\RefSetGreedyGain$~pp
 ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
-When the coding is inconsistent, the same 473-site constants cost a
-further $\ResidualRefOptDelta$~pp under optimal assembly
-($95\%$ CI $[+\ResidualRefOptCIlo,\,+\ResidualRefOptCIhi]$) and $\ResidualRefGrdDelta$~pp under greedy assembly
-($[+\ResidualRefGrdCIlo,\,+\ResidualRefGrdCIhi]$).
+When the coding is inconsistent, the 473-site reference set changes
+$Q_2$ by $\ResidualRefOptDelta$~pp under optimal assembly
+($95\%$~CI $[\ResidualRefOptCIlo,\,\ResidualRefOptCIhi]$) and
+$\ResidualRefGrdDelta$~pp under greedy assembly
+($[\ResidualRefGrdCIlo,\,\ResidualRefGrdCIhi]$).
 The reference-set effect is therefore not a fixed cost: its sign depends
-on whether the score and the evaluator agree on the criterion encoding,
-and on this instance it is harmless or beneficial under consistent coding.
+on the direction of the coding mismatch, not only on whether the
+criterion encodings agree.
 All cells in this paragraph are post hoc exploratory
 (Supplementary Material).
 

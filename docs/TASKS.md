@@ -743,3 +743,41 @@ indicator zero), reducing Q2 from 100% to 24.0% under SAW/min-max/optimal: 76 pp
 through coding alone."
 
 Após o recálculo, registar aqui se a conclusão muda ou não.
+
+---
+
+## R-asp recalculation record — resultado contra Remark 5 pré-existente
+
+Registado em 2026-10-26. Remark 5 antes do recálculo (convenção notebook):
+- Custo de discrepância: 76 pp (Q2 = 24.0%)
+- Correlação: ρ = 0.018, p = 0.73 (não correlacionado)
+- R1-6 (R-asp − R-V, opt): +4.0 pp [+2.2, +6.0]
+
+Resultado com fórmula geográfica correcta (arctan2(-dx, dy)):
+- Custo de discrepância: 84 pp (Q2 = 15.6%): aumentou 8 pp
+- Correlação: ρ = -0.445, p < 0.001 (anti-correlacionado): mudou de sentido
+- R1-6 (R-asp − R-V, opt): -4.4 pp [-7.2, -1.4]: inverteu o sinal
+
+Controlo: células sem aspecto (RV_star_Aprime, RM_Aprime, RV_star_A, RM_A) são
+idênticas bit a bit ao run anterior. R-V (20.0%, 19.6%) também não mudou — confirma
+que só o caminho do aspecto contínuo foi alterado.
+
+Comparação: os dois resultados são distintos numericamente. A conclusão central
+(codificação inconsistente é destrutiva) mantém-se; a magnitude aumentou e a
+correlação passou de ruído a anti-correlação significativa. Nenhum valor foi
+escolhido pelo resultado favorável — o pré-registo da Remark 5 estava documentado
+em TASKS.md antes do recálculo (ver secção anterior).
+
+## V2 (ocean=nodata) max|Δ| no teste de codificação do mar
+
+V1 (ocean=0 válido):  max|Δ| = 0.0000° em 7241 células costeiras (arredondamento
+                                exacto a float64; valor medido: < 1×10⁻⁶°)
+V2 (ocean=nodata):    max|Δ| = 0.0000° (ambas as variantes dão resultado idêntico
+                                porque no código V2 preenche NaN com 0 antes de
+                                convolucionar, reproduzindo efectivamente V1)
+
+Conclusão real: as duas variantes são indistinguíveis com a implementação em Python
+porque V2 substitui NaN por 0 antes da convolução. Para distingui-las formalmente
+seria necessário implementar Horn com NaN verdadeiro (sem preenchimento). A conclusão
+de que ocean=0 é a codificação correcta vem da contagem de células válidas
+(11 696 622 células com valor 0 E válidas no hell.tif), não da comparação V1/V2.

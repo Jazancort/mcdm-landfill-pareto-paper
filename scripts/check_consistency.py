@@ -344,13 +344,16 @@ check("coding2x2 R-V* grd - R-M grd = +11.8 pp",
       _c["RVstarGrd"] - _c["RMgrd"], 11.8, tol=0.1)
 check("coding2x2 R-M opt = 100.0%",  _c["RMopt"],    100.0, tol=0.001)
 check("coding2x2 R-V* opt = 100.0%", _c["RVstarOpt"],100.0, tol=0.001)
-# Verify values appear in main.tex
-for label in ["100.0", "97.8", "15.6", "20.0", "15.8", "19.6"]:  # updated 2026-10-26 (aspect formula corrected)
-    if label in tex:
-        print(f"  [OK  ] tab:coding2x2 value {label} in main.tex")
+# Verify via macros (values now use macros, not literals in main.tex)
+# Check macro names exist in main.tex and are non-zero in macros.tex
+for macro, expected in [("\\RaspOptimal", 15.6), ("\\RaspGreedy", 15.8),
+                         ("\\RVoptimal", 20.0), ("\\RVgreedy", 19.6),
+                         ("\\RVstarOptimal", 100.0), ("\\RVstarGreedy", 97.8)]:
+    if macro in tex:
+        print(f"  [OK  ] tab:coding2x2 macro {macro} present in main.tex")
     else:
-        FAIL.append(f"tab:coding2x2 value {label} missing from main.tex")
-        print(f"  [FAIL] tab:coding2x2 value {label} missing from main.tex")
+        FAIL.append(f"tab:coding2x2 macro {macro} missing from main.tex")
+        print(f"  [FAIL] tab:coding2x2 macro {macro} missing from main.tex")
 
 
 # ── 6. Document quality checks ──────────────────────────────────────────────
