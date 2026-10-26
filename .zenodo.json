@@ -1,0 +1,37 @@
+{
+  "title": "Replication package: Pareto-Based MCDM Under Normalization and Aggregation Uncertainty — Landfill Site Selection on Fogo Island, Cabo Verde",
+  "version": "v1.1",
+  "upload_type": "software",
+  "publication_date": "2026-10-28",
+  "license": "MIT",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Azancort Neto, Julio Leite",
+      "orcid": "0009-0000-2754-8503",
+      "affiliation": "Instituto de Tecnologia, Universidade Federal do Para (UFPA), Belem, PA, Brazil"
+    }
+  ],
+  "keywords": [
+    "MCDM",
+    "SAW",
+    "TOPSIS",
+    "normalization",
+    "aggregation",
+    "Pareto frontier",
+    "Monte Carlo",
+    "landfill site selection",
+    "Fogo Island",
+    "Cabo Verde",
+    "sensitivity analysis",
+    "reproducibility"
+  ],
+  "related_identifiers": [
+    {
+      "relation": "isSupplementedBy",
+      "identifier": "https://github.com/Jazancort/mcdm-landfill-pareto-replication",
+      "scheme": "url"
+    }
+  ],
+  "description": "<p>Replication package for <em>Comparing SAW and TOPSIS under normalization and aggregation uncertainty: a Pareto-based Monte Carlo study for landfill site selection on Fogo Island, Cabo Verde</em> (under review at Omega, Elsevier).</p><p>Contents: (i) input data for 473 candidate landfill sites on Fogo Island; (ii) pre-registration documents for six sub-experiments and the main factorial; (iii) pre-computed Monte Carlo results (4000 draws, kappa=200 primary; kappa=50 robustness check); (iv) bootstrap contrast files for all main factorial cells; (v) Python scripts to reproduce all experiments, bootstrap analyses, LaTeX macros, and manuscript figures; (vi) the LaTeX manuscript source.</p><p>The study applies a 2x2x2 factorial design (normalization x aggregation x assembly) across SAW and TOPSIS, computing exact Pareto frontiers over weight uncertainty. The key finding is that normalization is the dominant driver of ranking disagreement (+29 to +33 pp), while aggregation and assembly effects are conditional on the concentration parameter kappa.</p>"
+}
