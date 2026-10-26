@@ -292,8 +292,7 @@ TAB_CODING2X2 = {
     "RVstarOpt": 100.0, "RVstarGrd": 97.8, # binary coding, 473 constants
     "AspOpt": 15.6, "AspGrd": 15.8,        # continuous coding, 389 constants (R-asp) [corrected 2026-10-26]
     "RVopt": 20.0, "RVgrd": 19.6,          # continuous coding, 473 constants (R-V, NOT vector)
-}
-# ── REGRESSION GUARD: diagonal cells derive from Prop1 — NEVER editable ────
+}# ── REGRESSION GUARD: diagonal cells derive from Prop1 — NEVER editable ────
 # These values are theorems, not measurements. Any run that gives a diagonal
 # cell < 100% has a bug in score/objective/trios alignment. Do NOT edit these
 # expected values; fix the script instead.
@@ -668,6 +667,15 @@ BAD_PHRASES = [
      "old R diff SAW/vec with wrong denominator; correct is \\RegrDiffSAWvec = 1.36 pp"),
     ("$778$",
      "old random trio baseline with wrong denominator; correct is \\RRegretRandom = 54 pp"),
+    # Aspect formula correction (2026-10-26): old R-asp values + old naming
+    ("binary leeward indicator",
+     "renamed: 'leeward indicator' -> 'SE-facing indicator' (2026-10-26)"),
+    ("leeward sites",
+     "renamed: 'leeward sites' -> 'SE-facing sites' (2026-10-26)"),
+    ("$\\rho=0.018",
+     "AspSpearman old value 0.018 (notebook convention); correct is -0.445"),
+    ("0.73",
+     "AspSpearmanP old value 0.73 (now p<0.001); replaced — check context"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
@@ -1178,6 +1186,13 @@ _MUST_FAIL = [
      "§6.9 stale tau_b=0.960 (was copy-paste; correct is \\AspectTauB=0.92)"),
     ("agreement of $0.960$",
      "§6.9 stale top-100=0.960 (was copy-paste; correct is \\AspectTopKAgree=0.94)"),
+    # Aspect formula correction (2026-10-26): phrases that must be caught by BAD_PHRASES
+    ("binary leeward indicator",
+     "renamed 'leeward indicator' -> 'SE-facing indicator' (2026-10-26)"),
+    ("leeward sites",
+     "renamed 'leeward sites' -> 'SE-facing sites' (2026-10-26)"),
+    ("$\\rho=0.018",
+     "AspSpearman old value 0.018 (notebook convention)"),
     # DEV-A-G2: blue diamonds in tab:canonical caption (removed b8911a2)
     ("Pareto membership (blue diamonds)",
      "tab:canonical: blue diamonds removed — use \\in\\mathcal{F} column"),

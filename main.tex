@@ -2276,11 +2276,12 @@ Continuous azimuth  & optimal & $\RaspOptimal\%$ (R-asp) & $\RVoptimal\%$ (R-V) 
 Scoring \textit{aspect} as a continuous geographic azimuth while the
 objectives use a binary SE-facing indicator ($90^\circ$--$180^\circ$,
 closed) introduces a non-monotone mismatch: the score's highest values
-correspond to W/SW-facing sites, which are anti-correlated with the
-SE-facing indicator ($\rho=\AspSpearman$, $p<0.001$; all
-$\AspTopQuartile$ top-quartile sites carry indicator zero), reducing
-$Q_2$ from $100\%$ to $\RaspOptimal\%$ under SAW/min--max/optimal:
-$\RaspLoss$~pp through coding alone
+correspond to WNW-facing sites (circular mean $\approx302^\circ$, s.d.\
+$27^\circ$), which are negatively correlated with the SE-facing indicator
+(rank-biserial $\rho=\AspSpearman$, $p<0.001$;
+all top-quartile sites ($\AspTopQuartile\%$) have indicator zero),
+reducing $Q_2$ from $100\%$ to $\RaspOptimal\%$ under
+SAW/min--max/optimal: $\RaspLoss$~pp through coding alone
 (Table~\ref{tab:coding2x2}).
 With a consistent encoding, normalising over the $\Ncand$-site set costs
 $0$~pp and improves greedy by $\RefSetGreedyGain$~pp
@@ -2592,9 +2593,8 @@ $Q_2$ by $\ResidualRefOptDelta$~pp under optimal assembly
 ($95\%$~CI $[\ResidualRefOptCIlo,\,\ResidualRefOptCIhi]$) and
 $\ResidualRefGrdDelta$~pp under greedy assembly
 ($[\ResidualRefGrdCIlo,\,\ResidualRefGrdCIhi]$).
-The reference-set effect is therefore not a fixed cost: its sign depends
-on the direction of the coding mismatch, not only on whether the
-criterion encodings agree.
+The reference-set effect is therefore not a fixed cost: its sign and
+magnitude are instance-specific.
 All cells in this paragraph are post hoc exploratory
 (Supplementary Material).
 
