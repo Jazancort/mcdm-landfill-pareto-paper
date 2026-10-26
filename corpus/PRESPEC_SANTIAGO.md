@@ -9,10 +9,10 @@ Written:      2026-10-26
 ```
 
 **Non-access declaration (updated at each amendment):**
-As of 2026-10-26T15:05Z (amend3, UTC from git log), no criterion value, normalised score,
+As of 2026-10-26T15:05Z (amend3 timestamp, UTC), no criterion value, normalised score,
 amplitude, distance, frontier, or Q2 for Santiago has been extracted, computed, or inspected.
-The amendments f0, amend1, amend2, and amend3 modify pipeline parameter declarations only;
-none was triggered by Santiago data.
+The amendments f0, amend1–amend4, amend4b, and amend-final modify pipeline parameter
+declarations only; none was triggered by Santiago data.
 
 Phase 0 is immutable from tag `prespec-santiago-f0`.
 Phase 1 is appended in a separate commit; Phase 0 text is never edited afterwards.
@@ -176,18 +176,23 @@ DEM processing pipeline (confirmed from file inspection of Fogo working director
    the Overpass source in Fogo, so the slope column from the SENS-5/C-9 run will be compared
    against `df_real_data_cached.csv` to assess the combined pipeline sensitivity). Santiago DEM
    will be in EPSG:32627 (projected, metres); gdaldem does not need `-s` because the CRS is
-   metric. For gdaldem slope: use **`-compute_edges`** (Horn with -compute_edges confirmed
-   for Fogo). **Empirical verification:** `hell.tif` has 285 179 nodata cells (ocean =
-   nodata −32768); `declive_gdal_graus.tif` has exactly 285 179 nodata cells. Every cell
-   with valid elevation in `hell.tif` has a valid slope value in the slope raster. This is
-   only possible with -compute_edges: without it, any land cell adjacent to ocean (nodata)
-   would also become nodata in the slope, expanding the nodata zone. (Script:
-   `_verify_amend3.py` §C; ocean coding in hell.tif = nodata −32768; in elevation_utm.tif =
-   value 0 without mask.) Santiago must use the same coding: gdalwarp output must have
-   ocean = nodata (Phase 1 assert: `src.nodata is not None`). With -compute_edges, coastal
-   land cells always receive a valid slope value; the nodata exclusion rule (amend2) is a
-   fallback for any remaining uncovered cells only. Phase 1 must report the count of sites
-   excluded for slope nodata in A' (expected: 0 given -compute_edges).
+   metric. For gdaldem slope: use the **default Horn algorithm** (no special flags needed).
+   **Ocean coding in hell.tif confirmed (2026-10-26, `_verify_ocean_coding.py`):**
+   - 11 696 622 cells with value = 0 and valid (not nodata) → ocean = VALUE 0 in hell.tif
+   - Only 2.27% of the raster (285 179 cells) is nodata; these are corner triangles from
+     gdalwarp's UTM reprojection (outside the original ASTER tile extent), not sea cells.
+   - Implication: gdaldem Horn treats the ocean as valid 0 m elevation. Coastal land cells
+     get real slope values (land-to-sea gradient). No nodata is generated at the coast, and
+     -compute_edges is irrelevant (no nodata adjacent to land).
+   - Python Horn vs published slope: max|Δ| = 0.000° on 7 241 coastal cells; 4×10⁻⁶° on
+     interior. The published slope is exactly reproduced with ocean = 0.
+   **Santiago must reproduce the same ocean coding:** after gdalwarp, the UTM DEM must have
+   ocean = VALUE 0 (not nodata). ASTER tiles naturally store ocean as 0; gdalwarp keeps
+   these valid values. Phase 1 assert: `(z_dem == 0).sum() > 0` (confirm ocean is value 0)
+   AND count of nodata cells < 5% of raster (only corner triangles expected).
+   Note on amend3 discrepancy: "10837 nodata cells in top 3 rows" reported in amend3 were
+   the UTM corner triangle cells in the top border of the slope raster, NOT a Horn
+   -compute_edges artifact. This was a misinterpretation of the border pattern.
 
 DEM URL and SHA-256 of the downloaded tile(s) recorded in Phase 1 §9.
 
@@ -853,3 +858,20 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 - [ ] Fogo boundary test with IDECV ilha + floor1m + land (see §4 of review; determines whether Santiago uses ilha boundary or geologia dissolved)
 - [x] → **DONE (2026-10-26):** IDECV ilha + floor1m + land gives 473/473 at 0.0 m, N_adm=389, n_trios=1,944,653. Result is identical to geologia dissolved. The boundary type does not matter; Santiago uses IDECV ilha as declared.
 - [ ] check_consistency.py exit 0 after adding any PRESPEC-related BAD_PHRASE
+
+
+---
+
+## Amendment changelog
+
+| Tag | Commit | Date (UTC) | What was changed |
+|---|---|---|---|
+| `prespec-santiago-f0` | `5ead7f5` | 2026-10-26 | Phase 0 base: all three tag blockers resolved (DEM tolerance, classify_pf partition, Annex A code ref) |
+| `prespec-santiago-f0-amend1` | `648e54b` | 2026-10-26 | Tolerance post-measurement note; nodata slope → exclude from A'; null Baixa explicit in §4.3; aspect unit test; NFC normalization in assert |
+| `prespec-santiago-f0-amend2` | `f42f89e` | 2026-10-26 | Nodata slope exclusion rule (not imputation); leeward meteorological note; CRS assert Phase 1; empirical leeward-set verification script |
+| `prespec-santiago-f0-amend3` | `fe2e362` | 2026-10-26T15:05Z | Cone test oracle (0.805 vs −0.102); geotransform assert; [90°,180°] declared closed; no justification found in notebook; non-access declaration |
+| `prespec-santiago-f0-amend4` | `b20df70` | 2026-10-26 | Date fixed to 2026-10-26T15:05Z; Andrade (2015) not inspected (stated explicitly); caldera-ash speculation removed |
+| `prespec-santiago-f0-amend4b` | `6143c88` | 2026-10-26 | (**Errata:** this tag incorrectly stated -compute_edges confirmed and ocean = nodata −32768. Both were wrong; corrected in amend-final.) |
+| `prespec-santiago-f0-amend-final` | this commit | 2026-10-26 | **Ocean coding corrected:** ocean in hell.tif = VALUE 0 (not nodata); nodata = 2.27% corner triangles only; -compute_edges irrelevant; Python Horn gives max\|Δ\| = 0.000° on 7241 coastal cells; amend3 "10837 border cells" explained as UTM corner triangles. PRESPEC technically frozen after this commit. |
+
+Note: amend4b contained an incorrect statement (ocean = nodata, -compute_edges confirmed). That tag is retained for audit trail; the correction is in amend-final.

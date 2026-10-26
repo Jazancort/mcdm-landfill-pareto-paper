@@ -721,3 +721,25 @@ asp_correct  = (270.0 - asp_notebook) % 360.0  # converter para azimute geográf
 | `prespec-santiago-f0-amend4b`| 6143c88 | compute_edges WITH confirmado (hell.tif = slope nodata match) |
 
 **Estado para Fase 1:** bloqueado por Zenodo/OSF. Pronto tecnicamente.
+
+---
+
+## Estado actual do Remark 5 / R-asp (ANTES do recálculo com fórmula correcta)
+
+Registado em 2026-10-26 antes de qualquer recálculo. Valores com convenção notebook (270°−θ):
+
+| Macro | Valor actual | O que mede |
+|---|---|---|
+| `\AspSpearman` | 0.018 | Spearman(azimute contínuo normalizado, indicador binário leeward) |
+| `\AspSpearmanP` | 0.73 | p-value do Spearman (não correlacionado) |
+| `\AspTopQuartile` | 98 | % dos sítios no quartil superior do aspecto contínuo com indicador 0 |
+| `\RaspOptimal` | 24.0% | Q2 da célula R-asp (codificação mista: score contínuo, objectivos binários) |
+| `\RaspLoss` | 76 | = 100 − 24.0 pp (custo da codificação) |
+
+Texto da Remark 5 (linhas 2255–2263 do main.tex):
+"Scoring aspect as a continuous azimuth while the objectives use a binary leeward
+indicator introduces a non-monotone mismatch (ρ=0.018; all 98% top-quartile sites carry
+indicator zero), reducing Q2 from 100% to 24.0% under SAW/min-max/optimal: 76 pp
+through coding alone."
+
+Após o recálculo, registar aqui se a conclusão muda ou não.
