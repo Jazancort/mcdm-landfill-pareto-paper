@@ -2,9 +2,10 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata below."
 type: software
 title: "Normalisation as implicit re-weighting in multi-criteria portfolio selection: closed form and cost against an exact Pareto frontier"
-version: "v1.4"
+version: "v1.5"
 date-released: "2026-10-29"
 license: MIT
+url: "https://doi.org/10.5281/zenodo.23676483"
 repository-code: "https://github.com/Jazancort/mcdm-landfill-pareto-paper"
 url: "https://doi.org/10.5281/zenodo.23676429"
 identifiers:
