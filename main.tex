@@ -410,7 +410,7 @@ scale and encode preferences, and the two roles interact whenever the
 achievable range of each goal changes; the present paper shows that
 the same tension arises in additive MCDM through the amplitude
 identity~\eqref{eq:weff}.
-\citet{Milani2005} confirmed this empirically, showing that different
+\citet{Milani2005} showed empirically that different
 normalisation norms produce different rankings in a gear material
 selection study and recommending vector normalisation on the grounds that
 it is less sensitive to the raw scale of the data.
@@ -433,7 +433,7 @@ identity~\eqref{eq:weff} derived in this paper explains analytically why
 normalisation choice produces those changes.
 
 Two observations qualify this body of work.
-First, every study uses ranking agreement (RCI, Spearman's $\rho$,
+First, every study uses ranking agreement (RCI, Spearman's $r_s$,
 or Pearson correlation between ranked lists) as its performance measure,
 which establishes that outcomes differ without establishing that any
 outcome is better.
@@ -1294,7 +1294,7 @@ rather than determining it exactly.
 Within this scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $\QtwommOptimal\%$,
 $\QtwoRanksOptimal\%$ (heuristic: ranks fall outside the exact scope) and
 $\QtwovecOptimal\%$ for min--max, ranks and vector normalisation
-respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $\TVvec$,
+respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $0.311$,
 a strictly monotone ordering on this instance (Table~\ref{tab:tvorder}).
 
 TOPSIS and VIKOR aggregate distances to ideal points rather than
@@ -1765,7 +1765,7 @@ Criterion & Group & $w_j$ & $A_j^{\text{mm}}$ & $A_j^{\text{vec}}$ &
 \textit{aero}      & $G_3$ & 0.102 & 1.000 & 0.088 & 0.995 & 0.43 & 1.12 \\
 \textit{cult}      & $G_3$ & 0.081 & 1.000 & 0.171 & 0.981 & 0.85 & 1.11 \\
 \midrule
-$\mathrm{TV}$ & & & 0.000 & \TVvec & 0.091 & & \\
+$\mathrm{TV}$ & & & 0.000 & 0.311 & 0.091 & & \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -2349,7 +2349,7 @@ that \citet{Andrade2015} classify as minimum suitability on Fogo.
 Because the SE-facing indicator is a deterministic function of $\theta$
 ($b_\mathrm{asp}=\mathbf{1}[\theta\in[90^\circ,180^\circ]]$), the
 Spearman correlation between normalised azimuth and the indicator
-($\rho=\AspSpearman$, point-biserial on ranks, descriptive) measures
+($r_s=\AspSpearman$, point-biserial on ranks, descriptive) measures
 only where the SE class falls on the linear scale, not an empirical
 association.
 This coding mismatch reduces $Q_2$ from $100\%$ to $\RaspOptimal\%$ under
