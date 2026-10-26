@@ -1877,11 +1877,13 @@ sub-optimality in the factorial experiment into four ordered factors:
 \section{Results}
 \label{sec:results}
 
-The results are organised in three parts: the base portfolios under nominal
-weights, which establish the empirical magnitude of the normalisation and
-assembly effects; the empirical ordering by total variation against the
-factorial data; and the cost of normalisation--assembly mismatch measured
-against the exact Pareto frontier.
+The results are organised as follows.
+Section~\ref{sec:base} establishes the base portfolios under nominal weights.
+Section~\ref{sec:lemmaconf} confirms the TV ordering empirically.
+Sections~\ref{sec:factorial}--\ref{sec:alignment} report the factorial experiment:
+aggregation, assembly and cross-model alignment.
+Sections~\ref{sec:greedy}--\ref{sec:e6} present three follow-up experiments:
+the greedy-shortfall analysis, the E1 within-group intervention, and the E6 synthetic test.
 
 % ----------------------------------------------------------
 \subsection{Base portfolios under nominal weights}
@@ -1977,17 +1979,11 @@ Section~\ref{sec:alignment} returns to this.
 
 The amplitude identity~\eqref{eq:weff} characterises the weight deviation
 the normalisation imposes on the elicited weights, measured
-on the simplex by
-\begin{equation}
-  \label{eq:TV_results}
-  \mathrm{TV} = \tfrac12\sum_{j=1}^{m}\bigl|w_j^{\mathrm{eff}}-w_j\bigr|,
-  \qquad
-  w_j^{\mathrm{eff}} = \frac{w_j A_j}{\sum_k w_k A_k}.
-\end{equation}
+on the simplex by~\eqref{eq:TV} with $w_j^{\mathrm{eff}}$ from~\eqref{eq:weff}.
 Total variation is the appropriate measure because, as noted after
 Section~\ref{sec:three_norms}, $w^{\mathrm{eff}}$ is invariant to a common
 rescaling of all amplitudes: a factor $c>0$ applied to every $A_j$
-cancels in~\eqref{eq:TV_results} and produces no re-weighting.
+cancels in~\eqref{eq:TV} and produces no re-weighting.
 
 Table~\ref{tab:tvorder} pairs the distortion with observed
 performance on Fogo, restricted to additive aggregation, the scope in which
@@ -2852,8 +2848,8 @@ scale of $[2,11]$ tells the decision maker both that the elicited
 weights were substantially moved and that the movement is concentrated;
 neither number conveys this alone.
 Where elicited weights carry normative content, as with AHP judgements
-from stakeholders, a normalisation that silently reweights them is
-difficult to defend.
+from stakeholders, the re-weighting implicit in vector normalisation is
+difficult to defend (Section~\ref{sec:discussion}).
 
 Fourth, report the order in which orientation adjustment and
 normalisation are applied.
@@ -2959,14 +2955,9 @@ External confirmation on other published instances was not obtained.
 A pre-specified experiment, with declared deviations, on \EsixNinst{} synthetic instances
 across \EsixNfam{} marginal families (Experiment~E6,
 Section~\ref{sec:e6}) provides the most direct cross-family test of the
-$\mathrm{TV}_W$ prediction.
-At $\mathrm{TV}_W=\EsixTargetTVW$, the loss was below $3$~pp under
-continuous marginals but $\EsixLossZinfWinfF$~pp under zero-inflation,
-a $3$--$4\times$ difference (against Fogo's $\EoneWloss$~pp, a $\approx12\times$ gap).
-The monotone ordering (P2: $L\ge F\ge H$) held among
-informative instances (\EsixPtwoMonoAll{} of \EsixPtwoLossyNAll{},
-\EsixPtwoPAll, pooled across families).
-E6 supports the directional ordering among informative instances;
+$\mathrm{TV}_W$ prediction; at equal $\mathrm{TV}_W$, losses ranged from below $3$~pp
+under continuous marginals to $\EsixLossZinfWinfF$~pp under zero-inflation
+($3$--$4\times$), confirming that $\mathrm{TV}_W$ alone does not calibrate the cost.
 E5 found no linear association under greedy assembly ($-1.3$~pp, 95\%~CI
 $[-5.1,\,+2.4]$).
 
@@ -3070,14 +3061,9 @@ with instance size and spatial geometry.
 
 A pre-specified experiment on \EsixNinst{} synthetic instances across
 \EsixNfam{} marginal families (Experiment~E6, Section~\ref{sec:e6})
-supports the directional prediction: the monotone ordering $L\ge F\ge H$
-held among informative instances (\EsixPtwoMonoAll{} of
-\EsixPtwoLossyNAll{}, \EsixPtwoPAll{}, pooled; note that P2 used the
-post-hoc ordering criterion of DEV-E6-002).
-At equal $\mathrm{TV}_W$, however, losses ranged from below $3$~pp
-under continuous marginals to $\EsixLossZinfWinfF$~pp under
-zero-inflation, confirming that $\mathrm{TV}_W$ alone does not
-calibrate the magnitude of the cost.
+supports the directional prediction and shows that at equal $\mathrm{TV}_W$
+the cost ranges $3$--$4\times$ across marginal families, confirming that $\mathrm{TV}_W$
+alone does not calibrate its magnitude.
 
 The Fogo magnitudes are therefore instance-specific; the within-group
 mechanism is directionally robust but its magnitude depends on the
@@ -3101,9 +3087,9 @@ The immediate recommendation is inexpensive: report effective weights
 alongside elicited ones.
 Given the normalised decision matrix the computation is a single line,
 and it exposes distortions that rank-agreement diagnostics do not reveal.
-Where weights encode stakeholder judgements, as AHP weights do, a
-normalisation that silently multiplies one criterion by $\PermInflation\times$ and
-scales another by a factor of $\UrbanRatioVec$ is difficult to defend.
+Where weights encode stakeholder judgements, as AHP weights do,
+the re-weighting is difficult to defend; the argument is developed in
+Section~\ref{sec:discussion}.
 
 The closed form is exact for additive aggregation under affine normalisation; for ranks the identity is approximate. TOPSIS combines distances to ideal points, where amplitudes enter quadratically, and extending the exact characterisation to TOPSIS (via the $\alpha=2$ analogy) remains open.
 Theorem~\ref{thm:groupconst} is an exact characterisation for additive
