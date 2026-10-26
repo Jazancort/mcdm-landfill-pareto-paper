@@ -10,9 +10,15 @@ Modes
   --mode fogo-check     validate the declared grid rule on Fogo (PRE-A / contingency C-1)
   --mode santiago       build the S-T or S-N grid and apply the spacing rule (needs tag F0)
 
-Conventions that MUST be declared in the PRESPEC (no defaults on purpose):
-  --origin   {bbox, snap}   grid origin: bbox lower-left corner, or snapped to a multiple of spacing
-  --centroid {cell, land}   candidate point: centroid of the full cell or of its land part
+Conventions (confirmed from Landfill_NSGA2_Paper_Final.ipynb, the source of df_real_data_cached.csv):
+  --origin   {bbox, floor1m, snap}
+    bbox:    grid starts at exact bounding-box lower-left (xmin, ymin)
+    floor1m: grid starts at floor(xmin), floor(ymin) — rounds to nearest metre (notebook convention)
+    snap:    grid starts at floor(xmin/spacing)*spacing — rounds to nearest km
+  --centroid {cell, land}
+    cell:    candidate = midpoint of full 1 km × 1 km cell
+    land:    candidate = centroid of land-covered intersection (notebook convention);
+             includes a post-filter: candidates whose centroid is not within(island) are removed
 """
 import argparse, datetime, hashlib, json, subprocess, sys
 from itertools import combinations
@@ -317,8 +323,10 @@ def main():
         if a.exclude: sys.exit("ABORT: exclusions are applied in Phase 1, not here.")
 
     st = require_provenance(a.allow_dirty, need_tag=(a.mode == "santiago"))
+    import datetime as _dt
     base = {
-        "script": "santiago_grid.py", "timestamp_utc": datetime.datetime.utcnow().isoformat() + "Z",
+        "script": "santiago_grid.py",
+        "timestamp_utc": _dt.datetime.now(_dt.timezone.utc).isoformat(),
         "git": st, "boundary": str(a.boundary), "boundary_sha256": hash_vector_source(a.boundary),
         "params": {k: getattr(a, k) for k in ("crs", "origin", "centroid", "spacing", "land_frac",
                                               "dmin", "trio_limit", "trio_min", "step", "max_spacing")},

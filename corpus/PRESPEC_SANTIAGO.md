@@ -73,7 +73,8 @@ selection transparent; it is not presented as a prospective criterion.
 ## 3. Common pipeline
 
 **Code freeze and generalisation:** the scoring algorithm and analysis logic (scoring.py,
-mc_unified.py, validate_core.py, compute_regret.py, run_e1.py) is frozen at commit 022931e.
+mc_unified.py, validate_core.py, compute_regret.py, run_e1.py) is frozen at commit 94b5baf
+(includes new R denominator; core scoring algorithm frozen at 022931e).
 The Santiago-specific extraction scripts (grid generation, OSM/DEM/WFS feature extraction) and
 the generalised pipeline (supporting variable numbers of criteria and groups) do not yet exist.
 They will be written and committed before Phase 1 begins. That commit hash must be recorded in
@@ -81,8 +82,27 @@ Phase 1 §9; no criterion value, distance, or normalised score may be computed b
 
 **Mandatory regression test before Phase 1:** the generalised code, run with the Fogo
 configuration (11 criteria, 3 groups, weights from `e1_weights_k200.npy`), must reproduce
-results/unified/mc_unified_raw.csv bit-for-bit. SHA-256 of that file is registered at commit
-022931e. If the regression fails, Phase 1 does not start.
+`results/unified/mc_unified_raw.csv` **and** `results/regret/regret_perdraw.csv` bit-for-bit.
+SHA-256 of mc_unified_raw.csv (from commit 022931e): [to confirm at generalisation commit].
+SHA-256 of regret_perdraw.csv (from commit 9375147): [to confirm at generalisation commit].
+If the regression fails, Phase 1 does not start.
+
+**DEM:** ASTER GDEM v3 (doi: 10.5067/ASTER/ASTGTM.003) for slope and aspect in S-T and S-N
+(confirmed in `Landfill_NSGA2_Paper_Final.ipynb` Markdown: "Raster extraction: Slope (°) and
+Aspect (°) from ASTER GDEM v3"). This is the same product as Fogo, ensuring transfer coherence
+for S-T. Slope: pre-computed with `gdaldem slope`, units degrees. Aspect: computed at extraction
+time via Sobel gradient from the DEM elevation; flat cells (Sobel magnitude < 1e-9) receive −1.
+Raster sampling: nearest-pixel (`rasterio.windows.Window(col, row, 1, 1)`) at the projected
+centroid. DEM version must be recorded at Phase 1; URL and SHA-256 of the downloaded tile
+recorded in Phase 1 §9.
+
+**OSM download strategy:** Geofabrik PBF extract for Cabo Verde (not live Overpass queries).
+The first Geofabrik download at Phase 1 extraction time is the definitive snapshot; re-downloading
+is prohibited after Phase 1 begins. Distance to features computed with shapely (0 if point is
+inside a polygon), in EPSG:32627. Buffer: island polygon + 1 km for S-T to ensure coastal
+elements are captured; the three concelhos + 1 km for S-N (elements near the boundary are
+included). In S-N, all OSM elements within the buffer are used regardless of which concelho they
+fall in. Tags for each criterion: as declared in Annex B (from `Landfill_NSGA2_Paper_Final.ipynb`).
 
 **Pre-MC assertion:** `max|local_score - make_scorers(w)| < 1e-12` on 20 random weight vectors
 drawn with `seed=99`. Abort if any assert fails.
@@ -133,20 +153,20 @@ Distances between candidates: great-circle (haversine), same as Fogo.
 Fogo grid validation: COMPLETED (2026-10-25). See PRE-A table above. Use `scripts/santiago_grid.py --mode fogo-check` for any re-verification (replaces the now-deprecated `scripts/deprecated/_verify_fogo_grid.py`).
 
 **Trio enumeration:** n_trios computed from geometry only (trace formula: tr(A³)/6, where A is the
-binary adjacency matrix of valid pairs) BEFORE any criterion is extracted. Note: for N ≈ 800–900
-candidates and 20% admissible, n_trios may reach 80–120 million without distance filtering.
-Limit: 50 000 000 trios. If exceeded, increase spacing by 0.25 km until below limit; if spacing
-reaches 5 km, the branch is abandoned and reported.
+binary adjacency matrix of valid pairs). This formula operates on N_cand (before exclusions) and
+produces an upper bound on n_trios(A'), because exclusions can only remove trios. The trio limit
+(50 000 000) applies to n_trios(N_cand); if exceeded, spacing is increased by 0.25 km steps.
+Minimum: if n_trios(N_cand) < 10 000, decrease spacing; if spacing reaches 5 km without meeting
+the minimum, the branch is abandoned.
 
-Minimum n_trios: if n_trios < 10 000 (can occur in S-N with 10 km separation), the branch is
-reported as degenerate. Decrease spacing by 0.25 km until n_trios ≥ 10 000 and n_trios ≤ limit.
-
-**Normalisation constants:** over the admissible set A' (candidates with zero exclusion
-distance excluded). Missing values imputed to range midpoint (same as Fogo).
+**Rule for N_adm < 100:** if after exclusions N_adm < 100, decrease spacing by 0.25 km until
+N_adm ≥ 100 (while keeping n_trios ≤ limit). If spacing cannot achieve N_adm ≥ 100 without
+exceeding the trio limit, the branch is abandoned and reported as degenerate.
 
 **Monte Carlo:** w ~ Dirichlet(κ · w_AHP), κ = 200, 500 draws, seed 42. S-T uses the Fogo
 weight draws (same random stream, same draws per seed). S-N uses w ~ Dirichlet(κ · w_Cabral),
-κ = 200, 500 draws, seed 42 (independent stream, separate call, same seed for reproducibility).
+κ = 200, 500 draws, seed 42 (independent stream). If C-2 triggers (wells absent): same draws,
+weight of wells removed and remaining weights renormalised per draw.
 
 **Cells computed:** SAW, TOPSIS × {min–max, vector} × {greedy, optimal}; SAW × ranks (as
 Table 4 of main article); E1 cells M, B, W, V (definitions as Fogo §7.7, with Santiago's
@@ -174,16 +194,16 @@ better for the site).
 | Criterion | Raw variable | Orientation | Rule | Source |
 |---|---|---|---|---|
 | perm | distance to P-F Baixa polygons (m) | **COST**: site wants to be close to Baixa zones; min distance = best. (`mcdm_experiment.py` L101: `COST = {'perm', ...}`) | **Rule P-F** (see §4.3 and Annex A): polygons of cod_form classified as Baixa in column P-F of T1. | IDECV `geologia_santiago`, SHA as §0 |
-| slope | slope (degrees) | **COST**: min degrees = best. | `gdaldem slope`, units = degrees, DEM = Copernicus GLO-30 [version, date] | Copernicus GLO-30 |
-| aspect | binary: 0 if azimuth ∈ [90°, 180°] (leeward), 1 otherwise; flat cells (NaN) = 0.5 (from Fogo `impact_function`, L428) | Special (binary, leeward coded as 0 in objectives, as 1 in SAW score). | Rule inherited from Andrade (2015); not a physical claim. | Copernicus GLO-30 |
-| roads | dist_roads (m), query: Annex B L275–277 | **COST**: min distance = best. (`COST = {'roads', ...}`) | OSM elements downloaded for the whole island boundary (Option A: no radius limit); distance computed in EPSG:32627. Note on Fogo: Fogo script uses `dist=30000` (30 km radius per query), which covered Fogo (≈13 km radius). Santiago (≈55 km N–S) requires Option A to avoid NaN for candidates far from sparse features. | OSM snapshot [date — Phase 1] |
-| rivers | dist_streams (m), query: Annex B L274 | **INV**: max distance = best. (`INV = {'rivers', ...}`) | OSM, Option A. Tags: waterway=[stream, river, canal] (Annex B L274; no ditch/drain in Fogo original). | OSM snapshot [date — Phase 1] |
-| coast | dist_coastline (m), query: Annex B L282 | **INV**: max distance = best. | OSM, Option A. | OSM snapshot [date — Phase 1] |
-| protected | dist_protected_area (m) | **INV**: max distance = best; = 0 inside → exclusion. | Source: IDECV `areas_especiais:area_protegida` (confirmed present in GetCapabilities 2026-10-25); this replaces WDPA as primary source. If the IDECV layer has fewer than 5 polygons on Santiago → fall back to WDPA [version to fill at extraction time]. Same rule as Fogo (`area_protegida.shp`, island-wide shapefile). | IDECV `areas_especiais:area_protegida` [date — Phase 1] |
-| wells | dist_wells (m), query: Annex B L278–280 | **INV**: max distance = best. (`INV = {'wells', ...}`) | OSM, Option A. C-2 applies if < 20 features on Santiago. | OSM snapshot [date — Phase 1] |
-| urban | dist_urban_core (m), query: Annex B L272 | **BENEFIT**: max distance = best. | OSM, Option A. | OSM snapshot [date — Phase 1] |
-| aero | dist_aerodrome (m), query: Annex B L273 | **BENEFIT**: max distance = best. Note: only features within Santiago island; aerodrome on Maio island excluded. | OSM, Option A. | OSM snapshot [date — Phase 1] |
-| cult | dist_cultivation (m), query: Annex B L280–282 | **BENEFIT**: max distance = best. | OSM `landuse=farmland/farmyard/orchard/vineyard/allotments`, Option A. C-7 contingency: if OSM returns fewer than 50 agricultural polygons on Santiago → use WorldCover 2021 class 40 (Cropland), declared as C-7. In S-N: use `carta_agricola_st` (IDECV, SHA as §0) as primary; if OSM is used instead, declared as C-8. | OSM snapshot [date — Phase 1] |
+| slope | slope (degrees) | **COST**: min degrees = best. | Pre-computed with `gdaldem slope` from ASTER GDEM v3 (same product as Fogo). Raster sampling: nearest-pixel (`rasterio.windows.Window(col, row, 1, 1)`) at the WGS84 centroid of each candidate, projected to the DEM CRS. | ASTER GDEM v3 (doi: 10.5067/ASTER/ASTGTM.003) |
+| aspect | binary: 0 if azimuth ∈ [90°, 180°] (leeward), 1 otherwise; flat cells = 0.5 | Special (binary, leeward coded as 0 in objectives, as 1 in SAW score). Flat cells (Sobel magnitude < 1e-9) receive aspect = −1 → norm_asp = 0.5. Source: `Landfill_NSGA2_Paper_Final.ipynb` (`norm_asp = 0.5 # neutral for missing aspect`). Not L428 of the NSGA-II pipeline (that script produced the 524-site dataset, not the 473-site one). | Aspect computed at extraction time via Sobel gradient from ASTER GDEM v3 (not read from a pre-computed aspect raster). Rule: azimuth computed from Sobel dx/dy; flat cells detected by `abs(dx) < 1e-9 and abs(dy) < 1e-9`. | ASTER GDEM v3 |
+| roads | dist_roads (m) | **COST**: min distance = best. | OSM `highway=[motorway, trunk, primary, secondary, tertiary, unclassified, residential, service, road, track, path]` (tags from Annex B). Downloaded from Geofabrik PBF (island-wide, Option A); distance = 0 if inside a road polygon, computed in EPSG:32627. | OSM snapshot [date — Phase 1] |
+| rivers | dist_streams (m) | **INV**: max distance = best. | OSM `waterway=[stream, river, canal]` (tags from Annex B, no ditch/drain). Option A. | OSM snapshot [date — Phase 1] |
+| coast | dist_coastline (m) | **INV**: max distance = best. | OSM `natural=coastline`. Option A. | OSM snapshot [date — Phase 1] |
+| protected | dist_protected_area (m) | **INV**: max distance = best; = 0 inside → exclusion. | IDECV `areas_especiais:area_protegida` (confirmed present in GetCapabilities 2026-10-25); this replaces WDPA as primary source. If the IDECV layer has fewer than 5 polygons on Santiago → fall back to WDPA (latest release at Phase 1 time, version recorded in Phase 1 §9). Same rule as Fogo (`area_protegida.shp`, island-wide shapefile). | IDECV `areas_especiais:area_protegida` [date — Phase 1] |
+| wells | dist_wells (m) | **INV**: max distance = best. | OSM `man_made=[water_well, borehole, petroleum_well, water_tap, water_works]` (tags from Annex B). Option A. C-2 applies if < 20 features on Santiago. | OSM snapshot [date — Phase 1] |
+| urban | dist_urban_core (m) | **BENEFIT**: max distance = best. | OSM `landuse=[residential, commercial, retail, industrial]` (tags from Annex B). Option A. | OSM snapshot [date — Phase 1] |
+| aero | dist_aerodrome (m) | **BENEFIT**: max distance = best. Note: only features within Santiago island boundary; aerodrome on Maio island excluded (filtered by island polygon). | OSM `aeroway=aerodrome`. Option A. | OSM snapshot [date — Phase 1] |
+| cult | dist_cultivation (m) | **BENEFIT**: max distance = best. | OSM `landuse=[farmland, farmyard, orchard, vineyard, allotments]` (tags from Annex B). Option A. C-8 contingency: if OSM returns fewer than 50 agricultural polygons on Santiago → use WorldCover 2021 class 40 (Cropland), declared as C-8. In S-N: use IDECV `carta_agricola_st` (SHA as §0) as primary; if OSM is used instead, declared as C-8. | OSM snapshot [date — Phase 1] |
 
 ### 4.3 Permeability rule P-F (main) and P-C (sensitivity)
 
@@ -194,31 +214,25 @@ the minimum distance to any Baixa polygon. If a cod_form has no direct Fogo anal
 classification is "not Baixa" (NC), and it does not enter the low-permeability zone set unless
 a sensitivity run states otherwise.
 
-**P-F (main rule for S-T):** classifies cod_form by lithology following the Fogo convention
-(`landfill_nsga2_optimization.py` L257, `permeabili == 'Baixa'`). Three values:
-- Baixa: formations with "Mantos" (compact lava flows/sheets) in `lit` — direct Fogo analog.
-- não-Baixa: formations with direct Fogo analog to a non-Baixa class (Média = cinder cones,
-  talus; Alta = ash, alluvium, dunas).
-- sem análogo em Fogo: intrusive rocks (CA, γ), carbonatites (cb), dykes/necks (chb, chy, chφ),
-  breccias (B), conglomerates (CBm, cong), composite codes (CB where CBm component is involved).
-  Default = NC (not included in Baixa zones). Sensitivity: classify each as Baixa; run only if
-  their combined area share in A' > 2%.
+**P-F (main rule for S-T):** classifies cod_form by lithology following the Fogo convention (filter: `permeabili == 'Baixa'` applied to `geologia_com_permeabilidade_calculada.shp` in `Landfill_NSGA2_Paper_Final.ipynb`). Criteria for Baixa in Santiago:
+- **Baixa**: formations whose `lit` field describes compact lava flows or sheets ("Mantos", "derrames", "escoadas"), OR formations documented as compact lava complexes with mantos as dominant component (PA: "Complexo eruptivo do Pico da Antónia", where lava flows are the main constituent; cited in the Fogo notebook under "Complexo eruptivo = basaltic lava flows = Baixa").
+- **não-Baixa**: formations with a direct Fogo analog to a non-Baixa class. Média = cinder/scoria cones, talus (MV, dv). Alta = ash, alluvium, sediments (a, a dv, a e, c, d, de).
+- **sem análogo em Fogo (NC)**: formations without a direct Fogo analog. Default = not included in the Baixa zone set. This includes: intrusive rocks (CA, γ), carbonatites (cb), dykes/necks (chb, chy, chφ), breccias (B, CBm), conglomerates (cong), and lava domes/necks (dφ — domos and chaminés are not lava flows and have no Fogo analog; default NC).
 
-Note on aspect: in the Fogo impact function (L428), flat cells (NaN aspect) receive
-`norm_asp = 0.5`. The rule `0 if [90,180], 0.5 if flat, 1 otherwise` is reproduced exactly.
+Note: dφ ("Domas e chaminés") was previously classified as Baixa by the "compact volcanic = Baixa" principle. This principle was removed from the T1 table (see §2 review record). dφ is now NC, consistent with the SENS-2 run which tests all NC formations.
 
-**P-C (sensitivity rule for S-T and B1 mapping for S-N):** classifies cod_form by
-hydrogeological unit following Serralheiro (1976) as interpreted in Cabral (2012, pp. 44–46).
+**SENS-2 (always, one run):** all NC formations reclassified as Baixa in a single combined run. NC formations: CA, γ, cb, dφ, chb, chy, chφ, B, CBm, cong. Run always (not contingent on area share). The combined result tests whether the Baixa boundary changes qualitatively when all intrusive and uncommon formations are included.
+
+Note on aspect flat rule: flat cells (Sobel magnitude < 1e-9) receive aspect = −1, which maps to norm_asp = 0.5 in the scoring function. This rule is confirmed in `Landfill_NSGA2_Paper_Final.ipynb` (`norm_asp = 0.5 # neutral for missing aspect`). Phase 1 must report the count of flat cells in A'.
+
+**P-C (sensitivity rule for S-T and B1 mapping for S-N):** classifies cod_form by hydrogeological unit following Serralheiro (1976) as interpreted in Cabral (2012, pp. 44–46).
 Mapping in Annex A, column P-C.
 
-Key divergence: under P-F, PA/PA1 is Baixa (basaltic lava flows). Under P-C, PA/PA1 is
-Intermédia (main Santiago aquifer, Gomes 2007). PA is likely the most areally extensive
-formation. A note on this divergence will appear in the Limitations section.
+Key divergence: under P-F, PA/PA1 is Baixa (basaltic lava flows). Under P-C, PA/PA1 is Intermédia (main Santiago aquifer, Gomes 2007). PA is likely the most areally extensive formation. A note on this divergence will appear in the Limitations section.
 
 ### 4.4 Rivers rule
 
-OSM waterway=* as primary. If OSM returns fewer than 20 waterway features on Santiago: use DEM
-flow accumulation ≥ 1 km² (same algorithm as Fogo) → C-3.
+OSM `waterway=[stream, river, canal]` as primary (same tags as Annex B; no ditch/drain). Option A (island-wide download). If OSM returns fewer than 20 waterway features on Santiago: use DEM flow accumulation (D8 algorithm, catchment area threshold ≥ 1 km²) from ASTER GDEM v3 → C-3.
 
 ### 4.5 Weights and groups
 
@@ -236,7 +250,7 @@ Distance to protected areas = 0 only (same as Fogo).
 ### 5.1 Area
 
 Southern Region of Santiago: concelhos of Praia, São Domingos, and Ribeira Grande de Santiago.
-Area approximately 395 km² (Cabral 2012). Boundary: [SOURCE — to fill before commit].
+Area approximately 395 km² (Cabral 2012). Boundary: IDECV `divisao_admin:concelho`, filtered to these three concelhos (confirmed present in GetCapabilities 2026-10-25). CRS: EPSG:4326 → reprojected to EPSG:32627. Rule for cells on the boundary between concelhos: cell is included if ≥ 50% of its area (as a 1 km × 1 km grid cell) falls within the 3-concelho region. Land centroid (same rule as S-T, from `Landfill_NSGA2_Paper_Final.ipynb`).
 
 ### 5.2 Criteria
 
@@ -245,20 +259,20 @@ normalisation over A' is the experimental factor.
 
 | Id | Criterion | Raw variable / orientation | Exclusion | Source |
 |---|---|---|---|---|
-| A1 | Built-up | distance to OSM building=* or place=*, benefit | < 500 m | OSM |
-| A2 | ZDTI | distance to ZDTI zones, benefit | < 500 m | IDECV if layer present (check GetCapabilities); else omit → C-4 (§5.4) |
-| A3 | Coast | distance to coastline, benefit | < 80 m | OSM coastline |
-| A4 | Cultural heritage | distance to Cidade Velha UNESCO buffer zone, benefit | < 500 m | UNESCO WHC boundary (public shapefile) |
-| A5 | Agriculture | distance to agricultural protection zones, benefit | inside zones | IDECV `carta_agricola_st`, SHA as §0 |
-| A6 | Airport | distance to Praia International Airport (OSM aeroway=aerodrome), benefit | < 3 000 m | OSM |
-| A7 | Protected areas | distance to WDPA polygons, benefit | < 500 m | WDPA [version] |
-| B1 | Hydrogeological unit | categorical score (see §5.5); orientation benefit | recente unit → exclusion (score = 0) | IDECV `geologia_santiago`, mapping Annex A column P-C |
-| B2 | Water points | distance to OSM amenity=drinking_water or man_made=water_well, benefit | < 400 m | OSM; if < 20 features → INGRH inventory → C-5 |
-| B3 | Streams | distance to OSM waterway=*, benefit | < 20 m | OSM; if < 20 features → DEM flow acc. ≥ 1 km² → C-6 |
-| C1 | Slope | gdaldem slope (degrees), cost | > 20° excluded | Copernicus GLO-30 |
-| C2 | Aspect | v(θ) = (1 − cos(θ − 22.5°)) / 2, benefit; flat cells (undefined aspect) = 0.5 | — | Copernicus GLO-30 |
-| D1 | Main roads | distance to OSM highway=primary or highway=secondary (national network), cost | < 50 m | OSM; Annex B for exact tag rule |
-| D2 | MSW centre | distance to Praia urban limit (OSM or IDECV), cost | < 500 m | [source to fill] |
+| A1 | Built-up | distance to built-up area polygons, benefit | < 500 m | Primary: IDECV `divisao_admin:bairro_cidade` + `divisao_admin:bairro_vila` (confirmed present 2026-10-25); these are neighbourhood-level polygons for cities and towns. Distance = 0 if inside any polygon → excluded. Fall back: OSM `landuse=[residential, commercial, retail, industrial]` if IDECV layer returns < 5 polygons on Santiago. |
+| A2 | ZDTI | distance to ZDTI zones, benefit | < 500 m | IDECV `areas_especiais:zdti` (confirmed present in GetCapabilities 2026-10-25; C-4 NOT triggered). |
+| A3 | Coast | distance to coastline, benefit | < 80 m | OSM `natural=coastline`. Option A. |
+| A4 | Cultural heritage | distance to Cidade Velha UNESCO buffer zone, benefit | < 500 m | UNESCO WHC boundary (publicly available shapefile, world heritage site ID 1072). Version at Phase 1 time; SHA recorded. |
+| A5 | Agriculture | distance to agricultural protection zones, benefit | inside zones | IDECV `carta_agricola_st` (SHA as §0). Distance = 0 if inside any polygon → excluded. |
+| A6 | Airport | distance to Praia International Airport, benefit | < 3 000 m | OSM `aeroway=aerodrome`. Option A. |
+| A7 | Protected areas | distance to protected area polygons, benefit | < 500 m | IDECV `areas_especiais:area_protegida` (confirmed present 2026-10-25; same source as S-T). |
+| B1 | Hydrogeological unit | categorical score (see §5.5); orientation benefit | recente unit → exclusion (score = 0) | IDECV `geologia_santiago`, mapping Annex A column P-C. |
+| B2 | Water points | distance to water points, benefit | < 400 m | OSM `man_made=[water_well, borehole, petroleum_well, water_tap, water_works]` (same tags as Annex B wells criterion). Option A. If < 20 features → INGRH inventory → C-5. |
+| B3 | Streams | distance to streams, benefit | < 20 m | OSM `waterway=[stream, river, canal]` (same tags as Annex B rivers criterion; no ditch/drain). Option A. If < 20 features → DEM flow acc. ≥ 1 km² (D8) → C-6. |
+| C1 | Slope | gdaldem slope (degrees), cost | > 20° excluded | ASTER GDEM v3 (same product as S-T for consistency). Pre-computed with `gdaldem slope`. |
+| C2 | Aspect | v(θ) = (1 − cos(θ − 22.5°)) / 2, benefit; flat cells (Sobel < 1e-9) = 0.5 | — | ASTER GDEM v3. Aspect computed via Sobel gradient at extraction time (same method as S-T). |
+| D1 | Main roads | distance to main road network, cost | < 50 m | OSM `highway=[motorway, trunk, primary, secondary]` (national-level roads, subset of Annex B tags; restricted to match Cabral "principais vias de comunicação"). Option A. |
+| D2 | MSW centre | distance to Praia urban limit, cost | < 500 m → excluded | IDECV `divisao_admin:cidade`, nom_zvc='Cidade da Praia' (confirmed present 2026-10-25). Distance measured to the polygon boundary (not to its centroid); dist = 0 if candidate is inside the polygon → excluded as per Cabral 500 m rule. |
 
 ### 5.3 Exclusion zones (Cabral buffers)
 
@@ -267,10 +281,7 @@ also serves as an exclusion. Slope > 20° serves as an exclusion for C1.
 
 ### 5.4 ZDTI rule
 
-ZDTI (Zonas Demarcadas de Turismo Integrado) layers will be checked in the IDECV GetCapabilities
-response. If present: use as A2. If absent: A2 is omitted, its weight (3.14% of total) is
-redistributed proportionally to the remaining 6 Group A criteria. No manual digitisation from
-PDF is performed. No Fogo control is triggered by ZDTI absence.
+ZDTI layer confirmed present in IDECV GetCapabilities (`areas_especiais:zdti`, 2026-10-25). C-4 is NOT triggered. A2 uses this layer as declared. Weight redistribution (C-4) does not apply.
 
 ### 5.5 B1 — hydrogeological unit scores
 
@@ -297,9 +308,9 @@ resulting weights (13.3 / 27.8 / 58.9%) are used as given.
 
 ### 5.6 Weights and groups
 
-Cabral (2012) AHP leaf weights (Annex C). Weight of A2 redistributed if absent (§5.4).
-Groups: A (criteria A1–A7 or A1–A6 without ZDTI), B (B1–B3), C (C1–C2), D (D1–D2).
-All four group objectives F_A, F_B, F_C, F_D are maximised (4-dimensional frontier).
+Cabral (2012) AHP leaf weights (Annex C). Weight of A2 is NOT redistributed (ZDTI present; C-4 not triggered).
+Groups: A (criteria A1–A7), B (B1–B3), C (C1–C2), D (D1–D2).
+All four group objectives F_A, F_B, F_C, F_D are maximised. Each objective: F_g(t, w) = Σ_{j∈Gg} w_j c̃_j(t), where c̃_j(t) is the partial value score of site t on criterion j, oriented so that higher is better (cost criteria complemented: c̃_j = 1 − c_j for COST orientation), normalised over A'. Excluded sites receive c̃_j = 0 and are not part of A'.
 Theorem 1 and Proposition 1 hold for any criterion-to-group partition (proof unchanged).
 
 ### 5.7 Aspect C2 — operationalisation
@@ -330,11 +341,14 @@ before any score or Q2 is computed.
 | S1 | Q2(SAW, mm, greedy) > Q2(SAW, vec, greedy), 95% CI excludes 0 | TV(vec) ≥ 0.05 | Replication of Fogo main finding |
 | S2 | Q2(SAW, vec, opt) < Q2(SAW, vec, grd), 95% CI excludes 0 | TV_W(vec) ≥ 0.05 | Replication of Fogo greedy reversal |
 | S3a | E1-W optimal < 100% and E1-V optimal < 100% | TV_W(vec) ≥ 0.05 | E1 protocol: both TV components matter |
-| S3b | E1-V optimal < E1-W optimal (direction observed in Fogo and E6) | TV_W(vec) ≥ 0.05 | E1 direction replication |
+| S3b | E1-V optimal < E1-W optimal (direction observed in Fogo and E6) | TV_W(vec) ≥ 0.05 **and** TV_B(vec) ≥ 0.05 | E1 direction replication. V differs from W by the between-group distortion; both conditions needed to ensure the directional claim is not vacuous. |
 | S4 | SAW minus TOPSIS per cell: no sign predicted | — | Descriptive |
-| S5 | Q2(SAW, vec, opt) in branch b > 56.8% (Fogo result) | max_{j ∈ non-binary} point-mass share (fraction of A' at modal value, continuous criteria only) < 0.5. Note: binary criteria (aspect in S-T; B1 in S-N after normalization) are excluded from this condition. In Fogo: perm point-mass = 350/389 = 0.90 → S5 would not have been tested; Santiago should have smoother distributions. | Risky: predicts weaker mechanism under smoother distributions (E6 reasoning) |
+| S5 | Q2(SAW, vec, opt) in branch b > 56.8% (Fogo result) | max_{j ∈ non-binary, non-categorical} point-mass share (fraction of A' at modal value) < 0.5. Binary criteria (aspect in S-T; B1 in S-N after normalisation) and categorical criteria are excluded from this condition. In Fogo: perm point-mass = 350/389 = 0.90 → S5 would not have been tested on Fogo. Under P-F in S-T, PA (likely areally extensive) is Baixa, which may create a similar high point-mass for perm → S5 may not be testable in S-T either. S5 condition is resolved in Phase 1 after data extraction, not as a prior expectation. | Risky: predicts weaker mechanism under smoother distributions (E6 reasoning). Condition is likely not met in S-T under P-F. |
 | S6 | R(SAW, vec, grd) > R(SAW, vec, opt), 95% CI excludes 0. Fogo reference (new denominator, min over all T): R(vec,grd)=6.63 pp, R(vec,opt)=5.27 pp, difference=1.36 pp [95% CI: 0.95, 1.74 pp]. Note: this difference is below the δ=2.5 pp margin pre-specified for Q2; in the PRESPEC it is treated as a secondary test. | TV_W(vec) ≥ 0.05 | Greedy has more regret than optimal under vector scoring; consistent with Q2 reversal (S2). Effect is small. |
-| S7 | R(E1-B, optimal) > 0, 95% CI excludes 0. Fogo reference: 4.53 pp mean (median 5.50 pp); 28% of draws R = 0. | TV_B(vec) ≥ 0.05 | Between-group distortion imposes a non-zero value cost visible in R but not in Q2; complements S2 (Q2) with the R metric. |
+| S7a | R(E1-B, optimal) > 0, 95% CI excludes 0. Fogo reference: 4.53 pp mean (median 5.50 pp); 28% of draws R = 0. | TV_B(vec) ≥ 0.05 | Low risk: R ≥ 0 by construction; if any draws have R > 0 (which happens in 72% of Fogo draws), the mean CI will exclude 0. |
+| S7b | R(E1-B, optimal) < R(E1-W, optimal) — ordering of Fogo (4.53 pp < 6.47 pp). | TV_B(vec) ≥ 0.05 and TV_W(vec) ≥ 0.05 | Risky: can fail if between-group distortion is large relative to within-group. |
+
+**Multiple testing note:** 8 predictions (S0–S7b) × 2 branches (S-T, S-N) = up to 16 tests, each reported individually without multiplicity correction. Results must be read as a pattern of replications, not as independent statistical tests.
 
 If a condition fails, the prediction is not tested and the cell is reported descriptively
 (see Annex D for templates).
@@ -351,8 +365,10 @@ Checked in Phase 1, before any score is computed:
 4. B1: every polygon in A' has a non-null P-C class. If > 5% of A' polygons are NC,
    report area share as limitation but do not abandon branch. Apply declared defaults from T1.
 
-TV(vec) < 0.05 does not invalidate the branch; it causes S1, S2, S3, S5, S6 to be
-reported as not-tested (not as failures).
+TV(vec) < 0.05 does not invalidate the branch; it causes predictions whose condition requires
+TV(vec) ≥ 0.05 (S1, S2, S3, S6) or TV_W(vec) ≥ 0.05 (S5) or TV_B(vec) ≥ 0.05 (S7a, S7b)
+to be reported as not-tested (not as failures). Each prediction is tested if and only if its
+own stated condition is met.
 
 ---
 
@@ -374,12 +390,16 @@ Triggered automatically if the corresponding Santiago deviation occurs:
 
 Phase 1 commit [HASH_F1] contains, and only contains:
 
-1. SHA-256 of every spatial layer extracted (CRS, feature count, date)
-2. N_cand, N_excl, N_adm; n_trios
-3. Per criterion on A': amplitude ρ_j (vec, ranks), point-mass share (fraction of A'
-   at poles), TV, TV_B, TV_W, m_eff
-4. Resolution of every condition in §6 (TV(vec) ≥ 0.05? max point-mass share < 0.5?)
+1. SHA-256 of every spatial layer extracted (CRS, feature count, date, version)
+2. N_cand, N_excl, N_adm; n_trios(N_cand) (upper bound) and n_trios(A') (exact)
+3. Per criterion on A': amplitude ρ_j (vec, ranks), point-mass share (fraction of A' at modal value, continuous criteria only), TV, TV_B, TV_W, m_eff
+4. Resolution of every condition in §6 (TV(vec) ≥ 0.05? TV_W ≥ 0.05? TV_B ≥ 0.05? max point-mass < 0.5?)
 5. Validity checks of §7
+6. Count of cells cut by the within-island filter (centroid=land; how many candidates removed by Method 2)
+7. Count of flat cells in A' for the aspect criterion (Sobel magnitude < 1e-9)
+8. OSM element counts per criterion (resolves C-2 through C-8)
+9. Count of sites in A' that fall outside any geology polygon (B1 criterion); these receive the default NC score
+10. SHA-256 of the extraction code commit and the Geofabrik PBF tile
 
 ---
 
@@ -391,7 +411,7 @@ of effect. No prediction, threshold, or definition in §3–§6 may be changed a
 commit [HASH_F1].
 
 Pre-declared contingency rules (not deviations; responses are fully specified here):
-- C-1: Fogo grid count. If `_verify_fogo_grid.py` gives N ≠ 473: state the discrepancy; apply declared rule to Santiago unchanged (see §3).
+- C-1: Not triggered. PRE-A confirmed (2026-10-25–26): 473/473 coordinates at 0.0 m, N_adm=389, n_trios=1,944,653. Convention: 32626 + floor1m + land + geologia_fogo.shp.
 - C-2: Wells OSM < 20 features (S-T and S-N): use INGRH inventory; if unavailable → omit + Fogo control.
 - C-3: Rivers OSM < 20 features: use DEM flow accumulation ≥ 1 km².
 - C-4: ZDTI absent from IDECV: omit A2, redistribute weight, no Fogo control.
@@ -406,7 +426,7 @@ True deviations (DEV-S-###) are unplanned departures from §3–§6 that occur d
 
 ## 11. Sensitivity runs and controls
 
-All sensitivity runs are pre-declared here. They are all **descriptive**: predictions S0–S6
+All sensitivity runs are pre-declared here. They are all **descriptive**: predictions S0–S7b
 are evaluated only on the main analysis. Sensitivity results are reported in a supplementary
 table. No sensitivity run can replace the main analysis.
 
@@ -418,9 +438,10 @@ table. No sensitivity run can replace the main analysis.
 | SENS-4 | Contingency responses: C-2 (wells), C-8 (cult WorldCover), other C-x triggered | Both | If corresponding C-x triggers |
 | SENS-5 (C-9) | Run Santiago extraction pipeline on Fogo with Option A (island-wide download) and a contemporaneous OSM snapshot; compare dist_* columns with df_real_data_cached.csv: Spearman correlation, fraction of sites with |diff| > 100 m, ρ_j(vec) actual vs published. Report in supplementary. | S-T only | Always |
 
-SENS-2 justification: classifying all four "no Fogo analog" intrusive formations as Baixa in a
-single run avoids creating four separate analyses. The result tells whether the Baixa boundary
-changes qualitatively when these formations are included.
+SENS-2 justification: classifying all NC formations as Baixa in a
+single run avoids creating multiple separate analyses. NC formations: CA, γ, cb, dφ, chb, chy,
+chφ, B, CBm, cong. The result tells whether the Baixa boundary changes qualitatively when all
+intrusive, dome, and uncommon formations are included. Run always (not contingent on area share).
 
 SENS-5 (C-9) also tests whether the 3 NaN values in Fogo (sites 41, 385, 429) were caused by
 the 30 km radius. Under Option A they should receive non-NaN values; if they do, the imputation
@@ -457,14 +478,14 @@ cod_form "CB" as a composite code combining two formations (Flamengos + Orgãos)
 separately encoded as λρ, λρ1, and CBm; this composite code is a data artefact but represents
 real polygons that must be classified.
 
-† Symbol in the B1 score column denotes an NC case with a declared default classification.
-The default follows P-F class (Alta→Recente/excl., Média→Base, Baixa→Base or Intermédia as
-noted per row). A sensitivity run is triggered for each NC cod_form whose area share in A' > 2%.
+† Symbol in the B1 score column denotes an NC case with a declared default classification by the
+stratigraphic rule. The default is Intermédia for Plio-Miocénico formations not listed in Cabral
+(2012) pp. 44–46. A sensitivity run is triggered for each such cod_form whose area share in A' > 2%.
 
 | cod_form | lit (IDECV, key terms) | grupo | P-F class | P-F source | P-C unit | B1 score | P-C source |
 |---|---|---|---|---|---|---|---|
-| A | Formação da Assomada; Mantos e Piroclastos (Pliocénico) | — | **Baixa** | "Mantos" (lava flows) per lit; lava = Baixa by P-F rule | **Intermédia** | 0.472 | By analogy with PA: Assomada = post-PA subaerial lavas; similar hydrological role. Not explicitly listed in Cabral (2012) pp. 44–46; assigned by stratigraphic position (Serralheiro 1976). |
-| A1 | Formação da Assomada; Mantos e Piroclastos subaérios (basanitos, basanitóides, limburgiticos) (Pliocénico) | — | **Baixa** | "Mantos subaérios" (subaerial lava flows); lava = Baixa | **Intermédia** | 0.472 | As A; PA1-equivalent by stratigraphy |
+| A | Formação da Assomada; Mantos e Piroclastos (Pliocénico) | — | **Baixa** | "Mantos" (lava flows) per lit; lava = Baixa by P-F rule | **Intermédia** (†, stratigraphic position) | 0.472 | Stratigraphic note: A and A1 are Pliocénico subaerial lavas post-dating PA but pre-dating MV. Cabral (2012) pp. 44–46 does not list A/A1 explicitly. Assigned Intermédia by analogy with PA (similar lava flow composition; lava flows are the dominant component of both PA and A/A1). **PENDING VERIFICATION:** some Santiago hydrogeological syntheses may assign A/A1 to Recente (alongside MV). Verify in Gomes (2007) or Serralheiro (1976) notícia explicativa. If Recente: update this row to Recente (score = 0, excluded in S-N); add sensitivity run with Intermédia. If no source found: current assignment (Intermédia) remains, with this note. |
+| A1 | Formação da Assomada; Mantos e Piroclastos subaérios (basanitos, basanitóides, limburgiticos) (Pliocénico) | — | **Baixa** | "Mantos subaérios" (subaerial lava flows); lava = Baixa | **Intermédia** (†, stratigraphic position) | 0.472 | As A; pending verification (see A row above). |
 | B | Brechas intravulcânicas (Ante-Miocénico médio) | Complexo eruptivo interno, antigo | **sem análogo em Fogo (default: NC)** | Intravulcanic breccias; Fogo NC class (agglomerates/breccias) is closest analog. Default NC. Sensitivity: Baixa. | **Base** | 1.000 | Cabral (2012) p.45: formations of "Complexo eruptivo interno, antigo" = Base; B listed in this group |
 | CA | Complexo filoniano de base; basanitos, limburgitos, ancaratritos (Ante-Miocénico médio) | Complexo eruptivo interno, antigo | **sem análogo em Fogo (default: NC)** | Intrusive dyke complex; Fogo has no class for intrusive rocks (NC = carbonatites and agglomerates is closest). Default NC. Sensitivity: Baixa. | **Base** | 1.000 | Cabral (2012) p.45: CA = Complexo de Base |
 | CB | Formação dos Flamengos (Mantos, piroclastos, chaminés) + Formação dos Orgãos (Depósitos conglomeráticos-brechoídes) — composite IDECV code (Miocénico médio) | — | **Baixa** | "Mantos" in Flamengos component = lava flows = Baixa (direct Fogo analog). The CBm component (conglomerate) has no Fogo analog but is dominated by the Flamengos lava component in this composite code. | **Base** | 1.000 | Flamengos = λρ = Base; Orgãos = CBm = Base; both components in Cabral (2012) p.45 |
@@ -485,7 +506,7 @@ noted per row). A sensitivity run is triggered for each NC cod_form whose area s
 | d | Dunas (Quaternário) | — | **Alta** | Sandy dunes; very high permeability | **Recente** | 0 (excl.) | Quaternary = Recente |
 | de | Duna, eluviões (Quaternário) | — | **Alta** | Dunes + eluvial deposits | **Recente** | 0 (excl.) | As "d" |
 | dv | Depósitos de vertente (Quaternário) | — | **Média** | Slope deposits; heterogeneous; more permeable than lavas | **Recente** | 0 (excl.) | Quaternary = Recente |
-| dφ | Domas e chaminés (fonólitos e traquitos); Fonólitos e traquitos (Pliocénico-Miocénico) | Fonólitos e traquitos | **Baixa** | "Domas" (lava domes) = compact extrusive phonolite; by Fogo analogy compact lava flows = Baixa. NOTE: no explicit Fogo analog (Fogo has no phonolite); classified as Baixa by the "compact volcanic = Baixa" principle. Sensitivity: NC. | **Intermédia** (†, stratigraphic rule) | 0.472† | Plio-Miocénico age → Intermédia by stratigraphic rule. Not in Cabral (2012). Sensitivity: Base (1.000). |
+| dφ | Domas e chaminés (fonólitos e traquitos); Fonólitos e traquitos (Pliocénico-Miocénico) | Fonólitos e traquitos | **sem análogo em Fogo (default: NC)** | Lava domes and phonolitic necks; not a lava flow; no direct Fogo analog (Fogo has no phonolite domes). Default NC. SENS-2: Baixa. Correction from previous version which classified dφ as Baixa by the "compact volcanic = Baixa" principle; that principle is not in the P-F rule. | **Intermédia** (†, stratigraphic rule) | 0.472† | Plio-Miocénico age → Intermédia by stratigraphic rule. Not in Cabral (2012). Sensitivity: Base (1.000). |
 | γ | Rochas granulares (gabros feldspatóidicos, piroxenitos alcalinos, sienitos feldspatóidicos); Complexo eruptivo interno, antigo (Ante-Miocénico médio) | Complexo eruptivo interno, antigo | **sem análogo em Fogo (default: NC)** | Granular intrusive rocks; no Fogo analog for intrusive rocks. Default NC. Sensitivity: Baixa. | **Base** | 1.000 | Cabral (2012) p.45: γ = gabros = Base unit |
 | λρ | Formação dos Flamengos; Mantos, piroclastos, chaminés (Miocénico médio) | — | **Baixa** | "Mantos" (lava flows); the dominant component | **Base** | 1.000 | Cabral (2012) p.45: λρ = Formação dos Flamengos = Base unit |
 | λρ1 | Formação dos Flamengos; Mantos, piroclastos, chaminés e hialoclastitos, submarinos (Miocénico médio) | — | **Baixa** | As λρ; submarine hyaloclastites = solidified lava glass, generally impermeable | **Base** | 1.000 | As λρ |
@@ -493,8 +514,8 @@ noted per row). A sensitivity run is triggered for each NC cod_form whose area s
 | null | Mantos submarinos, inferiores e superiores (hialoclastitos); Piroclastos; Tufo Brechas (Pliocénico-Miocénico) | — | **Baixa** | "Mantos submarinos (hialoclastitos)" = submarine hyaloclastites; direct analog with λρ1 ("Formação dos Flamengos Mantos, piroclastos, chaminés e hialoclastitos, submarinos") which is Baixa. | **NC (default: Intermédia)** | 0.472† | 136 features with null cod_form. Submarine lavas are age-correlative with Pico da Antónia (Plio-Miocénico); default Intermédia by stratigraphic rule. Sensitivity: Base (1.000). |
 
 Summary for distance computation (S-T, P-F main rule):
-- Baixa polygons (used in `dist_low_permeability`): λρ, λρ1, PA, PA1, A, A1, φ, dφ, CB, null
-- sem análogo em Fogo (default NC, not in Baixa set): CA, γ, cb, chb, chy, chφ, B, CBm, cong
+- Baixa polygons (used in `dist_low_permeability`): λρ, λρ1, PA, PA1, A, A1, φ, CB, null
+- sem análogo em Fogo (default NC, not in Baixa set): CA, γ, cb, dφ, chb, chy, chφ, B, CBm, cong
 - não-Baixa Média: MV, dv
 - não-Baixa Alta: a, a dv, a e, c, d, de, calc
 
@@ -665,22 +686,18 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 - Not confirmed: "The difference was [X] pp (95% CI: [[a], [b]] pp), inconsistent with Fogo."
 - Not tested: "TV_W = [tw] < 0.05; S6 not tested."
 
-### S7 (R(E1-B, opt) > 0 — between-group distortion has positive value cost)
+### S7a (R(E1-B, opt) > 0 — positive value cost of between-group distortion)
 - Confirmed: "R(E1-B, opt) was [X] pp (95% CI: [[a], [b]] pp) under S-[T/N], with the CI
-  excluding zero, consistent with Fogo (4.53 pp mean, median 5.50 pp; 28% of draws R = 0)."
+  excluding zero, consistent with Fogo (4.53 pp mean, median 5.50 pp; 28% of draws R = 0). Low-risk prediction."
 - Not confirmed: "R(E1-B, opt) was [X] pp (95% CI: [[a], [b]] pp), consistent with zero."
-- Not tested: "TV_B(vec) = [tv] < 0.05; S7 not tested."
+- Not tested: "TV_B(vec) = [tv] < 0.05; S7a not tested."
 
-### S5 (Q2 > Fogo 56.8%)
-- Confirmed (Q2 > 56.8%, condition met): "SAW/vec/opt reached [Q2]% under S-[T/N],
-  above the Fogo result (56.8%), consistent with the E6 prediction that smoother distributions
-  reduce the mechanism's magnitude."
-- Not confirmed (Q2 ≤ 56.8%, condition met): "SAW/vec/opt was [Q2]% under S-[T/N], at or
-  below the Fogo result (56.8%). The E6 prediction was not confirmed."
-- Not tested (condition not met, point-mass ≥ 0.5): "A point-mass share of [pm] ≥ 0.5
-  was observed on criterion [j]; S5 condition not met. Q2 = [Q2]% reported descriptively."
+### S7b (R(E1-B, opt) < R(E1-W, opt) — Fogo ordering)
+- Confirmed: "R(E1-B, opt) was [b] pp, below R(E1-W, opt) = [w] pp by [d] pp, replicating the Fogo ordering (4.53 < 6.47 pp)."
+- Not confirmed: "R(E1-B, opt) = [b] pp ≥ R(E1-W, opt) = [w] pp; Fogo ordering not replicated."
+- Not tested: "TV_B < 0.05 or TV_W < 0.05; S7b not tested."
 
-### S1–S6: no-results template (branch abandoned)
+### S0–S7: no-results template (branch abandoned)
 - "Branch S-[T/N] was abandoned: [N_adm < 100 / n_trios > 50M or < 10000 / validity check failed].
   No Q2 results are reported for this branch."
 
@@ -704,15 +721,21 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 ## Pre-commit checklist
 
 - [x] Run `scripts/santiago_grid.py --mode fogo-check` (replaces deprecated `_verify_fogo_grid.py`): **CONFIRMED** 473/473 coordinates at 0.0 m, N_adm=389, n_trios=1,944,653. Convention: 32626+floor1m+land+geol_dissolved. All trials documented in §3 PRE-A table. (2026-10-25–26)
-- [x] Note: did NOT choose between boundary sources based on which reproduces 473. Declared rule (32626+bbox+50%) tested with both boundaries (IDECV ilha and geol dissolved); both give 473 with 421/473 position matches. Source notebook identified as Landfill_NSGA2_Paper_Final.ipynb.
-- [x] Complete Annex B: source confirmed as Landfill_NSGA2_Paper_Final.ipynb (SHA documented in §0). Queries match Zenodo script (same tags, same dist=30000).
+- [x] Note: did NOT choose between boundary sources based on which reproduces 473. Convention (floor1m+land) read from `Landfill_NSGA2_Paper_Final.ipynb` and confirmed by 473/473 coordinate match.
+- [x] Complete Annex B: source confirmed as `Landfill_NSGA2_Paper_Final.ipynb` (SHA documented in §0). Queries identical to Zenodo script (same tags, same dist=30000). Source citation updated from L271-287 to notebook.
 - [ ] Fill `[HASH_F0]` (this commit's hash — fill after `git commit`, before push)
 - [x] Fill `[HASH_CODE]` = 94b5baf (includes new R denominator; scoring algorithm frozen at 022931e)
 - [x] Fill boundary source and version for S-T: IDECV `divisao_admin:ilha`, nom_ilha='SANTIAGO', EPSG:32627
 - [x] Fill boundary source and version for S-N: IDECV `divisao_admin:concelho`, 3 concelhos, EPSG:32627
-- [x] OSM snapshot rule: snapshot-once (first Geofabrik download at Phase 1 is definitive; SHA recorded in Phase 1 §9; re-download prohibited)
+- [x] OSM snapshot rule: snapshot-once (first Geofabrik download at Phase 1 is definitive; SHA recorded in Phase 1 §9; re-download prohibited). Buffer: island + 1 km for S-T, 3 concelhos + 1 km for S-N.
 - [x] Area protegida source: IDECV `areas_especiais:area_protegida` (confirmed 2026-10-25; same service as Fogo; replaces WDPA). Fallback: WDPA latest at Phase 1.
-- [x] Confirm ZDTI layer presence/absence in IDECV GetCapabilities: PRESENT (`areas_especiais:zdti`). C-4 NOT triggered. (2026-10-25)
-- [x] D2 source confirmed: IDECV `divisao_admin:cidade`, nom_zvc='Cidade da Praia' (polygon centroid). Fallback: OSM place=city.
+- [x] Confirm ZDTI layer presence/absence: PRESENT (`areas_especiais:zdti`). C-4 NOT triggered. (2026-10-25)
+- [x] D2 source confirmed: IDECV `divisao_admin:cidade`, nom_zvc='Cidade da Praia'; distance to polygon boundary (not centroid), dist=0 inside → excluded.
+- [x] DEM: ASTER GDEM v3 (same as Fogo) confirmed from `Landfill_NSGA2_Paper_Final.ipynb`.
+- [x] Raster sampling: nearest-pixel confirmed from notebook.
+- [x] Aspect flat rule: Sobel < 1e-9 → norm_asp = 0.5 confirmed from notebook.
+- [ ] Assomada (A/A1) P-C assignment: currently Intermédia (pending verification in Gomes 2007 or Serralheiro 1976 notícia explicativa; see A row in T1).
 - [ ] Fill OSM snapshot date and DEM release version (at Phase 1 extraction time, before Phase 1 commit)
+- [ ] Fogo boundary test with IDECV ilha + floor1m + land (see §4 of review; determines whether Santiago uses ilha boundary or geologia dissolved)
+- [x] → **DONE (2026-10-26):** IDECV ilha + floor1m + land gives 473/473 at 0.0 m, N_adm=389, n_trios=1,944,653. Result is identical to geologia dissolved. The boundary type does not matter; Santiago uses IDECV ilha as declared.
 - [ ] check_consistency.py exit 0 after adding any PRESPEC-related BAD_PHRASE
