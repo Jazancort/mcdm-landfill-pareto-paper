@@ -110,14 +110,15 @@ criterion is proportional to its weight times the amplitude of its normalised
 column, and exact assembly is Pareto-efficient on every instance if and only if
 amplitudes are constant within each objective group. Empirically, on this
 instance, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp under greedy
-assembly; the pooled SAW--TOPSIS contrast is near zero
-($\AggContrast$\,pp, TOST $p=\TOSTp$), but conceals
-sign-reversing interactions. The value of exact
-assembly depends on the normalisation: under min--max it is guaranteed for SAW
-and adds $+\AsmMMtopsis$~pp for TOPSIS; under vector normalisation it loses
-$\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) in frontier
-attainment relative to greedy assembly, though at marginally lower value
-regret ($\RegrDiffSAWvec$~pp for SAW).
+assembly (robust; $+\NormGreedyContrastKfifty$~pp at $\kappa=50$).
+The pooled SAW--TOPSIS contrast is near zero at $\kappa=200$
+($\AggContrast$\,pp, TOST $p=\TOSTp$) but rises to
+$+\AggContrastKfifty$~pp at $\kappa=50$; aggregation depends on the
+dispersion of the elicited weights.
+The value of exact
+assembly under vector normalisation also depends on $\kappa$: it loses
+$\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$,
+but these effects shrink to zero at $\kappa=50$.
 An intervention shows that
 between-group distortion never moves the portfolio off the frontier
 (Q$_2=100\%$, Theorem~\ref{thm:groupconst}) but costs
@@ -130,9 +131,9 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 \begin{highlights}
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
 \item Exact assembly is Pareto-safe iff within-group TV is zero (proved exactly)
-\item Normalisation shifts greedy attainment by \NormGreedyContrast~pp; aggregation has no stable sign
-\item Under vector scores, exact assembly loses $\AsmVecSAW$--$\AsmVecTOPSIS$~pp vs greedy
-\item Between-group distortion stays on the frontier but costs $\RegretEoneB$~pp regret
+\item Normalisation shifts greedy attainment by $\NormGreedyContrast$~pp; robust across $\kappa$
+\item Aggregation and assembly under vector depend on weight-draw dispersion ($\kappa$)
+\item Criterion coded differently in score and objectives alone costs $\RaspLoss$~pp
 \end{highlights}
 
 \begin{keywords}
@@ -239,7 +240,7 @@ When $w^{\mathrm{eff}}$ departs from $w$ within an objective group,
 exact optimisation solves the wrong problem exactly: on Fogo, under min--max
 normalisation SAW assembly is guaranteed at $100\%$ by Proposition~\ref{prop:p1:stmt}
 and TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation exact assembly
-loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy ranking
+loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$ (shrinking to zero at $\kappa=50$)
 in $Q_2$, but achieves $\RegrDiffSAWvec$~pp (SAW) and $\RegrDiffTOPSISvec$~pp (TOPSIS)
 less value regret ($R$); the two effects run opposite under the distorted score.
 Exact assembly remains Pareto-efficient for every instance if and only
@@ -2075,24 +2076,27 @@ TOPSIS & mm, greedy   & $\QtwoTOPSISmmGrd$\% (\QtwoSETOPSISmmGrd)  & \RegrTOPSIS
 
 \begin{table*}[!t]
 \centering\small
-\caption{Contrasts in percentage points of $Q_2[\mathcal{A}']$ ($\kappa=200$;
-$\nboot$ bootstrap replicates paired by draw).
+\caption{Contrasts in percentage points of $Q_2[\mathcal{A}']$
+($\kappa=200$, primary; $\kappa=50$, robustness check; $\nboot$ bootstrap replicates paired by draw).
 $^\dagger$ Informative cells only: SAW/min--max/optimal is excluded because
-$Q_2=100\%$ by Proposition~\ref{prop:p1:stmt}. No pooled assembly contrast is
-reported because the effect reverses sign with the normalisation
-(Section~\ref{sec:assembly}).}
+$Q_2=100\%$ by Proposition~\ref{prop:p1:stmt}.
+No pooled assembly contrast is reported because the effect reverses sign with the normalisation
+(Section~\ref{sec:assembly}).
+$^\ddagger$ Effect at $\kappa=50$ is not significant (IC includes zero).}
 \label{tab:contrasts}
-\begin{tabular}{lrc}
+\begin{tabular}{lrc@{\hspace{10pt}}rc}
 \toprule
-Contrast & Effect & $95\%$ CI \\
+Contrast & \multicolumn{2}{c}{$\kappa=200$} & \multicolumn{2}{c}{$\kappa=50$} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & Effect (pp) & $95\%$ CI & Effect (pp) & $95\%$ CI \\
 \midrule
-Normalisation, greedy (mm $-$ vec)            & $+\NormGreedyContrast$ & $[+\NormGreedyContrastLo,\,+\NormGreedyContrastHi]$ \\
-Normalisation, informative cells$^\dagger$    & $+\NormInfoEffect$ & $[+\NormInfoLo,\,+\NormInfoHi]$ \\
-Aggregation (SAW $-$ TOPSIS)$^\dagger$        & $\AggContrast$  & $[\AggLo,\,\AggHi]$ \\
+Normalisation, greedy (mm $-$ vec)            & $+\NormGreedyContrast$ & $[+\NormGreedyContrastLo,\,+\NormGreedyContrastHi]$ & $+\NormGreedyContrastKfifty$ & $[+\NormGreedyContrastKfiftyLo,\,+\NormGreedyContrastKfiftyHi]$ \\
+Normalisation, informative cells$^\dagger$    & $+\NormInfoEffect$ & $[+\NormInfoLo,\,+\NormInfoHi]$ & $+\NormInfoEffectKfifty$ & $[+\NormInfoEffectKfiftyLo,\,+\NormInfoEffectKfiftyHi]$ \\
+Aggregation (SAW $-$ TOPSIS)$^\dagger$        & $\AggContrast$  & $[\AggLo,\,\AggHi]$ & $+\AggContrastKfifty^\ddagger$ & $[+\AggLoKfifty,\,+\AggHiKfifty]$ \\
 \midrule
-Assembly within min--max (TOPSIS)             & $+\AsmMMtopsis$ & $[+\AsmMMtopsisLo,\,+\AsmMMtopsisHi]$ \\
-Assembly within vector (mean of SAW, TOPSIS)  & $-\AsmVec$ & $[-\AsmVecLo,\,-\AsmVecHi]$ \\
-Assembly $\times$ normalisation (TOPSIS)      & $+\InteractionTOPSIS$ & $[+\InteractionTOPSISLo,\,+\InteractionTOPSISHi]$ \\
+Assembly within min--max (TOPSIS)             & $+\AsmMMtopsis$ & $[+\AsmMMtopsisLo,\,+\AsmMMtopsisHi]$ & $+\AsmMMtopsisKfifty^\ddagger$ & $[\AsmMMtopsisKfiftyLo,\,+\AsmMMtopsisKfiftyHi]$ \\
+Assembly within vector (mean of SAW, TOPSIS)  & $-\AsmVec$ & $[-\AsmVecLo,\,-\AsmVecHi]$ & $+\AsmVecKfifty^\ddagger$ & $[\AsmVecKfiftyLo,\,+\AsmVecKfiftyHi]$ \\
+Assembly $\times$ normalisation (TOPSIS)      & $+\InteractionTOPSIS$ & $[+\InteractionTOPSISLo,\,+\InteractionTOPSISHi]$ & $+\InteractionTOPSISKfifty^\ddagger$ & $[\InteractionTOPSISKfiftyLo,\,+\InteractionTOPSISKfiftyHi]$ \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -2782,7 +2786,7 @@ optimisation.
 Sharing a normalisation is sufficient but not necessary
 (cell~$B$, Table~\ref{tab:e1}).
 Integer programming on a mismatched score optimises the mismatch:
-SAW assembly is guaranteed under min--max (Proposition~\ref{prop:p1:stmt}); TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation exact assembly loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) in frontier attainment relative to greedy assembly, but achieves $\RegrDiffSAWvec$~pp (SAW) less value regret.
+SAW assembly is guaranteed under min--max (Proposition~\ref{prop:p1:stmt}); TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation exact assembly loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$ (these effects shrink to zero at $\kappa=50$, see Table~\ref{tab:contrasts}), but achieves $\RegrDiffSAWvec$~pp (SAW) less value regret.
 
 Third, report effective weights alongside elicited weights, and with
 them the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
@@ -2816,13 +2820,12 @@ The order of operations is not reported in any study we reviewed, yet it
 determines which column is normalised and therefore which amplitude
 enters the effective weights.
 
-Comparing aggregation operators, by contrast, is the least consequential
-of the design choices we examine: the pooled contrast is equivalent to zero ($\AggContrast$~pp, TOST $p=\TOSTp$),
-although its sign depends on the cell
-($\AggStratumMMgrd$~pp to $+\AggStratumVecopt$~pp, a cell-dependent
-interaction),
+Comparing aggregation operators, by contrast, produces a pooled contrast
+equivalent to zero at $\kappa=200$ ($\AggContrast$~pp, TOST $p=\TOSTp$),
+but rising to $+\AggContrastKfifty$~pp at $\kappa=50$ (Table~\ref{tab:contrasts});
+aggregation is the most $\kappa$-sensitive of the three design choices,
 and the mechanism explains why: aggregation acts downstream of the
-distortion.
+distortion, and its effect depends on how dispersed the weight draws are.
 The recommendations above apply to SAW and TOPSIS: the amplitude enters
 the score linearly for SAW and, by analogy, quadratically for TOPSIS.
 VIKOR is invariant to per-criterion affine transformation by its ratio

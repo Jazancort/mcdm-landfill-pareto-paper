@@ -17,7 +17,28 @@
 \newcommand{\AsmMain}{-1.1}              % C2 all4 (-1.05 rounds to -1.1)
 \newcommand{\AsmMM}{8.1}                 % C4 within mm
 
-% Agregacao 3-cell (excl. SAW/mm/opt)
+% Kappa=200 informative cells defined in macros_structural.tex — not duplicating here
+
+% ── Contrastes κ=50 (robustez; bootstrap emparelhado, B=2000, seed=43) ────────
+% Source: results/bootstrap_k50_k200.csv (2026-10-28)
+\newcommand{\NormGreedyContrastKfifty}{29.2}     % Norm greedy κ=50
+\newcommand{\NormGreedyContrastKfiftyLo}{25.7}
+\newcommand{\NormGreedyContrastKfiftyHi}{33.0}
+\newcommand{\NormInfoEffectKfifty}{33.2}          % Norm informative κ=50
+\newcommand{\NormInfoEffectKfiftyLo}{29.4}
+\newcommand{\NormInfoEffectKfiftyHi}{36.7}
+\newcommand{\AggContrastKfifty}{+20.4}            % Agg pooled κ=50 (SAW-TOPSIS, SIG)
+\newcommand{\AggLoKfifty}{17.7}
+\newcommand{\AggHiKfifty}{23.3}
+\newcommand{\AsmMMtopsisKfifty}{2.4}              % Asm mm TOPSIS κ=50 (n.s.)
+\newcommand{\AsmMMtopsisKfiftyLo}{-0.4}
+\newcommand{\AsmMMtopsisKfiftyHi}{5.2}
+\newcommand{\AsmVecKfifty}{0.7}                   % Asm vec mean κ=50 (n.s.)
+\newcommand{\AsmVecKfiftyLo}{-1.5}
+\newcommand{\AsmVecKfiftyHi}{3.0}
+\newcommand{\InteractionTOPSISKfifty}{3.4}        % Interaction TOPSIS κ=50 (n.s.)
+\newcommand{\InteractionTOPSISKfiftyLo}{-0.4}
+\newcommand{\InteractionTOPSISKfiftyHi}{7.4}
 \newcommand{\AggContrast}{-0.4}
 \newcommand{\AggLo}{-2.1}
 \newcommand{\AggHi}{+1.3}
