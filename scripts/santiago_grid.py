@@ -259,19 +259,26 @@ def santiago(a, base):
         tried.append({"spacing_m": spacing, "n_cand": int(len(cand)), "n_trios_cand": n_tr,
                       "n_pairs": n_pairs, "pairs_near_dmin": near, **gmeta})
         print(f"spacing {spacing:.0f} m: N_cand={len(cand)}  n_trios(N_cand)={n_tr:,}")
-        if n_tr <= a.trio_limit:
-            break
-        spacing += a.step
-        if spacing > a.max_spacing:
-            decision = "abandon_trio_limit"
-            break
+        # Phase 1: increase spacing if over limit
+        if n_tr > a.trio_limit:
+            spacing += a.step
+            if spacing > a.max_spacing:
+                decision = "abandon_trio_limit"
+                break
+            continue
+        # Phase 2: decrease spacing if under minimum
+        if n_tr < a.trio_min:
+            spacing -= a.step
+            if spacing < a.min_spacing:
+                decision = "abandon_trio_min"
+                break
+            continue
+        break  # n_trios in [trio_min, trio_limit]: accept
 
     final = tried[-1]
     if decision is None:
-        if final["n_trios_cand"] < a.trio_min:
-            decision = "degenerate_trio_min"
-        elif final["n_cand"] < 100:
-            decision = "flag_ncand_below_100"     # N_adm rule is resolved in Phase 1
+        if final["n_cand"] < 100:
+            decision = "flag_ncand_below_100"
         else:
             decision = "ok"
 
@@ -302,6 +309,8 @@ def main():
     p.add_argument("--trio-min", type=int, default=10_000)
     p.add_argument("--step", type=float, default=250.0)
     p.add_argument("--max-spacing", type=float, default=5000.0)
+    p.add_argument("--min-spacing", type=float, default=500.0,
+                   help="minimum spacing in m when decreasing for trio_min (default 500)")
     p.add_argument("--reference-csv"); p.add_argument("--ref-lat", default="latitude (degrees)")
     p.add_argument("--ref-lon", default="longitude (degrees)")
     p.add_argument("--match-tol-m", type=float, default=1.0)
