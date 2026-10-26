@@ -1047,6 +1047,23 @@ if _e1_perdraw.exists() and _Rvec_opt is not None:
 else:
     print("  [INFO] R invariant: regret_macros.tex macros not found")
 
+
+# ── classify_pf: T1 regression (28 rows) ──────────────────────────────────────
+print()
+print("=== classify_pf T1 regression ===")
+try:
+    import sys as _sys, io as _io, contextlib as _cl
+    _sys.path.insert(0, str(ROOT / "scripts"))
+    from classify_pf import run_tests as _pf_tests
+    try:
+        with _cl.redirect_stdout(_io.StringIO()):
+            _pf_tests()
+        print("  [OK  ] classify_pf: all 28 T1 rows pass")
+    except AssertionError as _e:
+        FAIL.append(f"classify_pf T1 mismatch: {_e}")
+        print(f"  [FAIL] classify_pf: {_e}")
+except ImportError:
+    print("  [INFO] classify_pf.py not found -- skipping")
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")
     for msg in FAIL:
@@ -1173,3 +1190,4 @@ if _reg_fail:
     sys.exit(1)
 else:
     print(f"  All {len(_MUST_FAIL)+len(_MUST_PASS)} regression cases correct")
+

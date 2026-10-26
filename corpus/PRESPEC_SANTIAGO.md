@@ -138,8 +138,8 @@ DEM processing pipeline (confirmed from file inspection of Fogo working director
    In `arctan2(-dx, dy)`: `-dx` reverses the E-W component to the descent direction; `dy`
    (axis=0, increasing row = increasing southing = decreasing northing) is already the south
    gradient, so the sign is correct for the N-S descent component.
-5. Raster sampling at each candidate centroid: nearest-pixel (`rasterio.windows.Window(col, row, 1, 1)`)
-   after projecting the WGS84 centroid to the raster CRS via `rasterio_transform`.
+5. Raster sampling: **`src.index(x, y)`** (rasterio method that returns the row/col for the pixel containing the projected coordinate) — NOT `np.round((x - cf) / a)`. The difference matters: `src.index` handles rasterio's half-pixel offset convention; `np.round` does not. Using `np.round` introduces a 1-pixel shift for ~89% of sites, changing slope and aspect values.
+6. DEM array type: **`src.read(1).astype(np.float32)`** (matches notebook; float64 would give slightly different Sobel results for the aspect computation). Regression (slope + aspect): max |Δ| = 5×10⁻⁵ against `df_real_data_cached.csv`, zero classification changes (leeward = 94/94).
 6. Flat cells: `|dx| < 1e-9 AND |dy| < 1e-9` → aspect = −1 → norm_asp = 0.5.
    Phase 1 must report the count of flat cells in A' (aspect = −1 before binarisation).
 7. Anisotropy: at 15°N, 1°lon ≈ 107 km vs 1°lat ≈ 111 km. The formula divides both axes by
