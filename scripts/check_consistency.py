@@ -1314,7 +1314,16 @@ print("=== 8.03: Orphan bib entries (bbl vs main.tex \\cite) ===")
 bbl_file = ROOT / "main.bbl"
 if bbl_file.exists() and main_tex.exists():
     import re as _re8
-    bbl_keys = set(_re8.findall(r"\\bibitem\[.*?\]\{(\w+)\}", bbl_file.read_text(encoding="utf-8")))
+    _bbl_text = bbl_file.read_text(encoding="utf-8")
+    # re.S required: elsarticle-harv bibitem labels break across lines
+    bbl_keys = set(_re8.findall(r"\\bibitem\[.*?\]\s*\{([^}]+)\}", _bbl_text, _re8.S))
+    # Auto-verify parsed count against declared count
+    _ndecl_m = _re8.search(r"\\begin\{thebibliography\}\{(\d+)\}", _bbl_text)
+    if _ndecl_m:
+        _ndecl = int(_ndecl_m.group(1))
+        if len(bbl_keys) != _ndecl:
+            FAIL.append(f"8.03 parser: {len(bbl_keys)} keys parsed vs {_ndecl} declared in \\begin{{thebibliography}}")
+            print(f"  [FAIL] 8.03 parser: {len(bbl_keys)} keys vs {_ndecl} declared")
     cited_raw = _re8.findall(r"\\cite[a-zA-Z]*\{([^}]+)\}", tex)
     cited_flat = set()
     for keys in cited_raw:

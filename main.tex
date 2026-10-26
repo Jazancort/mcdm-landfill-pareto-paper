@@ -105,12 +105,12 @@ external to the ranking. For $\Nvia$ admissible
 sites on Fogo Island, Cape Verde, we enumerate all $\Ntrios$ three-site
 portfolios satisfying a $\dmin$~km separation and compute the exact Pareto frontier
 over siting cost, environmental impact and social safety. Analytically, under
-additive aggregation, the effective weight equals the nominal weight times the
-column amplitude; exact assembly is Pareto-efficient on all instances iff
-within-group amplitudes are constant. Empirically, on this
+additive aggregation, effective weights are proportional to nominal weight times
+the column amplitude; exact assembly is Pareto-efficient on all instances if and
+only if within-group amplitudes are constant. Empirically, on this
 instance, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp under greedy
 assembly (robust; $+\NormGreedyContrastKfifty$~pp at $\kappa=50$).
-the pooled SAW--TOPSIS mean contrast is near zero at $\kappa=200$
+The pooled SAW--TOPSIS mean contrast is near zero at $\kappa=200$
 ($\AggContrast$\,pp, TOST $p=\TOSTp$) but rises to
 $\AggContrastKfifty$~pp at $\kappa=50$; aggregation depends on weight-draw dispersion ($\kappa$).
 The value of exact
@@ -119,7 +119,7 @@ $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$,
 but these effects are not distinguishable from zero at $\kappa=50$.
 An intervention shows that
 between-group distortion never moves the portfolio off the frontier
-(Q$_2=100\%$, Theorem~\ref{thm:groupconst}) but costs
+but costs
 $\RegretEoneB$~pp of value regret;
 within-group distortion reduces frontier attainment
 by $\EoneWloss$~pp. Separately, a criterion encoded inconsistently
@@ -1073,11 +1073,10 @@ portfolio objectives per draw.
 Weights are perturbed as $w\sim\mathrm{Dir}(\kappa\,\wahp)$, $\ndraws$ draws per cell.
 The primary analysis uses $\kappa=200$ (standard deviation $\approx0.025$ for $w_j=0.15$);
 $\kappa=50$ ($\approx0.05$) is reported for every contrast in Table~\ref{tab:contrasts}.
-$\kappa=200$ is declared in the main pre-specification (PRESPEC.md, committed
-before any run, \texttt{0780644}); E1 subsequently specifies the same value
-independently in its own pre-specification for comparability.
-The factorial has no separate $\kappa$ document; the value is inherited from the
-main pre-specification.
+$\kappa=200$ is declared in the main pre-specification document
+(PRESPEC.md), committed before any factorial run;
+E1 subsequently specifies the same value independently in its own
+pre-specification for comparability.
 Value regret ($R$) and the F8 alignment matrix were computed at $\kappa=200$ only.
 $\kappa$ concentrates the draws around $\wahp$.
 Throughout, $\kappa$ denotes only this concentration parameter; the
