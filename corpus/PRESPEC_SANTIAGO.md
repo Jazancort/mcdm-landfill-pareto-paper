@@ -111,23 +111,47 @@ DEM processing pipeline (confirmed from file inspection of Fogo working director
    gradient, output in degrees). Fogo output: `declive_gdal_graus.tif` (EPSG:32626, 30.28 m).
    Computation on UTM ensures correct metric slope without the scale parameter.
 4. Aspect: Sobel gradient applied to the EPSG:4326 DEM (`elevation_utm.tif`) at extraction time.
-   Exact formula from `Landfill_NSGA2_Paper_Final.ipynb`:
+   Formula from `Landfill_NSGA2_Paper_Final.ipynb` — **this formula returns (270° − aspect_true) mod 360°, a reflection around 135°**:
    ```python
    from scipy.ndimage import sobel
    dx = sobel(dem, axis=1, mode='reflect') / (8 * src.transform.a)    # E-W gradient
    dy = sobel(dem, axis=0, mode='reflect') / (8 * abs(src.transform.e)) # N-S gradient
-   aspect = (90.0 - np.degrees(np.arctan2(dx, -dy)) + 360.0) % 360.0
+   aspect_notebook = (90.0 - np.degrees(np.arctan2(dx, -dy)) + 360.0) % 360.0
    flat = (np.abs(dx) < 1e-9) & (np.abs(dy) < 1e-9)
-   aspect[flat] = -1.0  # → norm_asp = 0.5
+   aspect_notebook[flat] = -1.0  # → norm_asp = 0.5
    ```
-   Convention: 0° = North, clockwise. The -dy argument corrects for rasterio's row axis
-   (increasing row = decreasing northing). For Fogo at ~15°N, 1°lon ≈ 107 km vs 1°lat ≈ 111 km
-   (~3.7% anisotropy); the ratio dx/dy in arctan2 absorbs this without material effect on the
-   binary [90°, 180°] classification.
+   Synthetic verification: N→270°, E→180°, S→90°, W→0°. The reflection axis is 135°, exactly
+   the centre of [90°, 180°]. The leeward interval maps to itself, so the Fogo binary indicator
+   is identical with the notebook formula or the correct formula. Regression on 389 Fogo
+   admissible sites: both formulas give identical binary vectors (leeward count = 96 with
+   floor1m+land grid coordinates; published value 94).
+
+   **Santiago uses the correct formula** for both S-T (same binary result) and S-N (C2 is
+   continuous; the notebook formula would invert v(θ)):
+   ```python
+   dx = sobel(dem, axis=1, mode='reflect') / (8 * src.transform.a)    # dz/dE (positive = up-east)
+   dy = sobel(dem, axis=0, mode='reflect') / (8 * abs(src.transform.e)) # dz/dS (positive = up-south)
+   aspect_correct = (np.degrees(np.arctan2(-dx, dy)) + 360.0) % 360.0  # descent direction, 0°=N, CW
+   flat = (np.abs(dx) < 1e-9) & (np.abs(dy) < 1e-9)
+   aspect_correct[flat] = -1.0  # → norm_asp = 0.5
+   ```
+   In `arctan2(-dx, dy)`: `-dx` reverses the E-W component to the descent direction; `dy`
+   (axis=0, increasing row = increasing southing = decreasing northing) is already the south
+   gradient, so the sign is correct for the N-S descent component.
 5. Raster sampling at each candidate centroid: nearest-pixel (`rasterio.windows.Window(col, row, 1, 1)`)
    after projecting the WGS84 centroid to the raster CRS via `rasterio_transform`.
 6. Flat cells: `|dx| < 1e-9 AND |dy| < 1e-9` → aspect = −1 → norm_asp = 0.5.
    Phase 1 must report the count of flat cells in A' (aspect = −1 before binarisation).
+7. Anisotropy: at 15°N, 1°lon ≈ 107 km vs 1°lat ≈ 111 km. The formula divides both axes by
+   the same pixel size (0.000278°), introducing a systematic E-W overscale of 111/107 ≈ 1.035.
+   Maximum angular distortion: arctan(1.035) − 45° ≈ 1°. Negligible for the binary [90°, 180°]
+   classification (S-T) and negligible for the continuous v(θ) (S-N).
+8. Reprojecção (hell.tif): the gdalwarp command that produced hell.tif was not recorded in the
+   notebook; only the output file survives (EPSG:32626, 30.28 m/pixel). For Santiago: reproject
+   ASTER GDEM v3 to EPSG:32627 with bilinear resampling at 30 m target resolution. Record the
+   exact gdalwarp command in Phase 1 §9. For gdaldem slope: use the default Horn algorithm
+   without -compute_edges (the same combination that produced declive_gdal_graus.tif, inferred
+   from the absence of -compute_edges in the filename and the default gdaldem behaviour).
 
 DEM URL and SHA-256 of the downloaded tile(s) recorded in Phase 1 §9.
 
@@ -253,9 +277,12 @@ a sensitivity run states otherwise.
 
 **P-F (main rule for S-T):** classifies cod_form by lithology following the Fogo convention (filter: `permeabili == 'Baixa'` applied to `geologia_com_permeabilidade_calculada.shp` in `Landfill_NSGA2_Paper_Final.ipynb`). Criteria for Baixa in Santiago:
 
-- **Baixa**: formations whose `lit` field begins with a term describing compact lava flows or sheets ("Mantos", "derrames", "escoadas"). Precedence rule: **the first lithological term in the lit field determines the class**. Formations that begin with non-lava terms (cones, breccias, ash) are not Baixa even if they contain a secondary lava component. This rule reproduces the Fogo dataset: e.g., MV begins with "Cones de piroclastos" → not Baixa despite having "pequenos derrames" later.
+- **Baixa**: formations where the lit field contains "Mantos", "derrames", or "escoadas" as a primary rock type. Precedence rule for ambiguous lits: **the first primary lithological term determines the class, ignoring formation names and stratigraphic qualifiers** ("Formação…", "Fase… pós…", "Complexo… de…"). A term is "primary" if it describes the dominant rock character (not a parenthetical clarification).
 
-  Exception: PA (cod_form = 'PA'). The IDECV lit field for PA is "Complexo eruptivo do Pico da Antónia (Pliocénico-Miocénico)" — does not explicitly begin with "Mantos". PA is classified as Baixa for two reasons: (i) PA1 (a sub-code in the IDECV layer for the same formation) has lit = "Complexo eruptivo do Pico da Antónia; Mantos subaérios, piroclastos", confirming the lava flow character; (ii) Serralheiro (1976) and Cabral (2012, p. 45) describe the PA as an aquifer unit dominated by basaltic lava flows ("mantos basálticos"). PA and PA1 are treated identically.
+  Application to the key cases:
+  - MV ("Cones de piroclastos, escórias e pequenos derrames"): first primary term is "Cones" → not Baixa, despite "derrames" appearing later. Cones are the dominant product; the lava flows are minor ("pequenos derrames").
+  - φ ("Fase lávica pós Formação dos Orgãos (rochas traquito-fonolíticas); Mantos; Piroclastos"): "Fase lávica pós Formação dos Orgãos" is a stratigraphic qualifier → ignored. The parenthetical "(rochas traquito-fonolíticas)" describes the rock composition. "Mantos" appears as the **second clause after the semicolon** as an explicit rock type → **Baixa**. Justification: the lit field explicitly lists "Mantos" as a primary rock type of the formation, confirming lava flow character.
+  - PA ("Complexo eruptivo do Pico da Antónia"): "Complexo…" is a formation name → ignored. No primary lithological term remains in the lit field. Classification by PA1 analogy: PA1 lit = "Complexo…; Mantos subaérios, piroclastos" → "Mantos subaérios" confirms lava flow character → PA classified as Baixa by analogy with its subunit PA1 and by published description (Serralheiro 1976; Cabral 2012 p. 45).
 
 - **não-Baixa**: formations with a direct Fogo analog to a non-Baixa class. Média = cinder/scoria cones, talus (MV — begins with "Cones de piroclastos"; dv). Alta = ash, alluvium, sediments (a, a dv, a e, c, d, de).
 
@@ -481,9 +508,7 @@ single run avoids creating multiple separate analyses. NC formations: CA, γ, cb
 chφ, B, CBm, cong. The result tells whether the Baixa boundary changes qualitatively when all
 intrusive, dome, and uncommon formations are included. Run always (not contingent on area share).
 
-SENS-5 (C-9) also tests whether the 3 NaN values in Fogo (sites 41, 385, 429) were caused by
-the 30 km radius. Under Option A they should receive non-NaN values; if they do, the imputation
-was not neutral and should be reported.
+| SENS-6 | S-N only: A and A1 (Formação da Assomada) reclassified as Recente (score = 0, excluded from A') instead of Intermédia. Tests the sensitivity to the Assomada P-C assignment, based on secondary research summaries of Gomes (2007) pending page verification. | S-N | Always; after main S-N results are sealed |
 
 ---
 
