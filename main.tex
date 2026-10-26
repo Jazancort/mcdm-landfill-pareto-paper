@@ -105,10 +105,9 @@ external to the ranking. For $\Nvia$ admissible
 sites on Fogo Island, Cape Verde, we enumerate all $\Ntrios$ three-site
 portfolios satisfying a $\dmin$~km separation and compute the exact Pareto frontier
 over siting cost, environmental impact and social safety. Analytically, under
-additive aggregation, the effective weight of a criterion equals its nominal
-weight times the amplitude of its normalised column, and exact assembly is
-Pareto-efficient on every instance if and only if
-amplitudes are constant within each objective group. Empirically, on this
+additive aggregation, the effective weight equals the nominal weight times the
+column amplitude; exact assembly is Pareto-efficient on all instances iff
+within-group amplitudes are constant. Empirically, on this
 instance, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp under greedy
 assembly (robust; $+\NormGreedyContrastKfifty$~pp at $\kappa=50$).
 the pooled SAW--TOPSIS mean contrast is near zero at $\kappa=200$
@@ -129,7 +128,7 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 
 \begin{highlights}
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
-\item Exact assembly is Pareto-efficient on all instances iff amplitudes are group-constant
+\item Exact assembly stays Pareto-efficient iff amplitudes are group-constant
 \item Normalisation shifts greedy Pareto attainment by $\NormGreedyContrast$--$\NormGreedyContrastKfifty$~pp at both $\kappa$ tested
 \item Aggregation and assembly under vector depend on weight-draw dispersion ($\kappa$)
 \item Criterion coded differently in score and objectives alone costs $\RaspLoss$~pp
@@ -1074,8 +1073,11 @@ portfolio objectives per draw.
 Weights are perturbed as $w\sim\mathrm{Dir}(\kappa\,\wahp)$, $\ndraws$ draws per cell.
 The primary analysis uses $\kappa=200$ (standard deviation $\approx0.025$ for $w_j=0.15$);
 $\kappa=50$ ($\approx0.05$) is reported for every contrast in Table~\ref{tab:contrasts}.
-$\kappa=200$ was used in the factorial without a written pre-specification;
-E1 subsequently fixed $\kappa=200$ in its own pre-specification for comparability with the factorial.
+$\kappa=200$ is declared in the main pre-specification (PRESPEC.md, committed
+before any run, \texttt{0780644}); E1 subsequently specifies the same value
+independently in its own pre-specification for comparability.
+The factorial has no separate $\kappa$ document; the value is inherited from the
+main pre-specification.
 Value regret ($R$) and the F8 alignment matrix were computed at $\kappa=200$ only.
 $\kappa$ concentrates the draws around $\wahp$.
 Throughout, $\kappa$ denotes only this concentration parameter; the
@@ -1188,8 +1190,9 @@ bootstrap intervals, paired by draw.
 E1 uses $\nbootEone$ replicates; the factorial uses $\nboot$.
 Intervals are unadjusted for multiplicity; contrasts other than the
 pre-specified aggregation TOST are descriptive.
-The choice of $\kappa$ for the factorial was not pre-specified; it is discussed in
-Section~\ref{sec:entries}.
+The value $\kappa=200$ is declared in the main pre-specification
+(PRESPEC.md) and repeated in the E1 pre-specification; it is discussed
+in Section~\ref{sec:entries}.
 
 \paragraph{Benchmark circularity.}
 The Pareto frontier and the objectives are both built on additive
@@ -1293,7 +1296,7 @@ rather than determining it exactly.
 Within this scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $\QtwommOptimal\%$,
 $\QtwoRanksOptimal\%$ (heuristic: ranks fall outside the exact scope) and
 $\QtwovecOptimal\%$ for min--max, ranks and vector normalisation
-respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $0.311$,
+respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $\TVvec$,
 a strictly monotone ordering on this instance (Table~\ref{tab:tvorder}).
 
 TOPSIS and VIKOR aggregate distances to ideal points rather than
@@ -1764,7 +1767,7 @@ Criterion & Group & $w_j$ & $A_j^{\text{mm}}$ & $A_j^{\text{vec}}$ &
 \textit{aero}      & $G_3$ & 0.102 & 1.000 & 0.088 & 0.995 & 0.43 & 1.12 \\
 \textit{cult}      & $G_3$ & 0.081 & 1.000 & 0.171 & 0.981 & 0.85 & 1.11 \\
 \midrule
-$\mathrm{TV}$ & & & 0.000 & 0.311 & 0.091 & & \\
+$\mathrm{TV}$ & & & 0.000 & $\TVvec$ & 0.091 & & \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -2501,10 +2504,11 @@ the $Q_2$ result as evidence for it.
 
 \begin{remark}[TV$_W > 0$ is not sufficient for efficiency loss]
 \label{rem:TVW}
-Theorem~\ref{thm:groupconst} is a necessary and sufficient condition for efficiency over
-all instances: TV$_W=0$ (constant amplitudes within groups) is sufficient for
-Pareto-efficiency; TV$_W>0$ is not sufficient to cause loss on every instance,
-as the cell R-V$^*$ below illustrates.
+Theorem~\ref{thm:groupconst} is a necessary and sufficient condition for efficiency
+\emph{over all instances}: $\mathrm{TV}_W=0$ iff exact assembly is Pareto-efficient
+for every instance and every weight draw.
+On any single instance, $\mathrm{TV}_W>0$ does not guarantee a loss, as
+R-V$^*$ illustrates.
 The reference-set cell R-V$^*$ illustrates the distinction.
 Its within-group amplitudes range from $0.482$ (\texttt{perm}) to $1.0$
 (\texttt{roads}) in $G_1$, giving $\mathrm{TV}_W\approx0.082$ and
@@ -3183,7 +3187,7 @@ and GitHub.\footnote{\nolinkurl{github.com/Jazancort/NSGA2-GIS-Landfill-Optimiza
 The replication package for this article (source code, pre-specified
 analysis plans, and pre-computed data) is publicly available
 online\footnote{\url{https://github.com/Jazancort/mcdm-landfill-pareto-paper}}
-(Zenodo, concept DOI~\url{10.5281/zenodo.23676483}; release~v1.5).
+(Zenodo, concept DOI~\url{10.5281/zenodo.23676428}; release~v1.5).
 The provenance audit script \texttt{verify\_macros\_permanent.py}
 recomputes all primary quantitative claims and exits~0 on
 exact agreement with the values in this article.

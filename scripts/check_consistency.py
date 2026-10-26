@@ -737,6 +737,30 @@ else:
     FAIL.append("supplementary.tex not found — cannot check critical phrases")
     print("  [FAIL] supplementary.tex not found")
 
+# Rule 1c: Highlights ≤ 85 chars per item (Elsevier/CAS-DC limit)
+# Macros expanded with rough approximations for character count
+print()
+print("=== 1c: Highlight item length (≤ 85 chars) ===")
+if main_tex.exists():
+    _hl_block = re.search(r"\\begin\{highlights\}(.*?)\\end\{highlights\}", tex, re.DOTALL)
+    if _hl_block:
+        _hl_items = re.findall(r"\\item\s+(.*?)(?=\\item|$)", _hl_block.group(1), re.DOTALL)
+        for i, item in enumerate(_hl_items, 1):
+            # Rough expansion: replace $...$, \cmd{arg} etc. with short placeholders
+            expanded = item.strip()
+            expanded = re.sub(r"\$[^$]+\$", "X", expanded)
+            expanded = re.sub(r"\\[a-zA-Z]+\{[^}]*\}", "X", expanded)
+            expanded = re.sub(r"\\[a-zA-Z]+", "", expanded)
+            expanded = re.sub(r"\s+", " ", expanded).strip()
+            n = len(expanded)
+            if n > 85:
+                FAIL.append(f"Highlight {i}: {n} chars > 85-char limit: '{expanded[:60]}...'")
+                print(f"  [FAIL] Highlight {i}: {n} chars > 85: '{expanded[:60]}...'")
+            else:
+                print(f"  [OK  ] Highlight {i}: {n} chars — '{expanded}'")
+    else:
+        print("  [INFO] No highlights environment found")
+
 # Rule 2: non-ASCII bib keys in refs.bib
 bib_path = ROOT / "refs.bib"
 if bib_path.exists():
@@ -1033,8 +1057,19 @@ for _fname in ["main.tex", "macros.tex", "macros_amplitudes.tex", "macros_e6.tex
         for _m in re.finditer(r"\\(new|provide|renew)command\{\\(\w+)\}", _line):
             _defs[_m.group(2)].append(f"{_fname}:{_lineno} ({_m.group(1)}command)")
 # Flag only cross-file duplicates (same name in 2+ distinct files)
-_dups = {k: v for k, v in _defs.items()
-         if len(set(l.split(":")[0] for l in v)) > 1}
+# Exception: \renewcommand in macros.tex is an intentional override of a
+# \newcommand in an auto-generated file (macros_amplitudes.tex, macros_e6.tex)
+_RENEW_OVERRIDES = {
+    "TVvec",   # rounded to 3dp; auto-generated = 0.3113
+}
+_dups = {}
+for k, v in _defs.items():
+    _files = set(l.split(":")[0] for l in v)
+    if len(_files) <= 1:
+        continue
+    if k in _RENEW_OVERRIDES:
+        continue  # intentional override
+    _dups[k] = v
 if _dups:
     for k, locs in _dups.items():
         FAIL.append(f"Macro \\{k} defined {len(locs)}x: {', '.join(locs)}")
@@ -1271,27 +1306,32 @@ try:
 except ImportError:
     print("  [INFO] classify_pf.py not found -- skipping")
 
-# ── Rule 8.03: Orphan bib entries (in refs.bib but not cited in main.tex) ─────
+# ── Rule 8.03: Orphan bib entries (in .bbl but not cited in main.tex) ─────
+# A key in .bbl but not in any \cite in main.tex indicates \nocite{*} or
+# a supplementary-only citation sneaking into the main bibliography.
 print()
-print("=== 8.03: Orphan bib entries ===")
-bib_file = ROOT / "refs.bib"
-if bib_file.exists() and main_tex.exists():
-    bib_keys = set(re.findall(r"@\w+\{(\w+),", bib_file.read_text(encoding="utf-8")))
-    cited_keys = set(re.findall(r"\\cite[a-zA-Z]*\{([^}]+)\}", tex))
-    # Expand comma-separated cite keys
+print("=== 8.03: Orphan bib entries (bbl vs main.tex \\cite) ===")
+bbl_file = ROOT / "main.bbl"
+if bbl_file.exists() and main_tex.exists():
+    import re as _re8
+    bbl_keys = set(_re8.findall(r"\\bibitem\[.*?\]\{(\w+)\}", bbl_file.read_text(encoding="utf-8")))
+    cited_raw = _re8.findall(r"\\cite[a-zA-Z]*\{([^}]+)\}", tex)
     cited_flat = set()
-    for keys in cited_keys:
+    for keys in cited_raw:
         for k in keys.split(","):
             cited_flat.add(k.strip())
-    orphans = sorted(bib_keys - cited_flat)
+    orphans = sorted(bbl_keys - cited_flat)
+    print(f"  BBL keys: {len(bbl_keys)} | Cited in main.tex: {len(cited_flat)}")
     if orphans:
-        print(f"  [WARN] {len(orphans)} orphan bib entries (not cited in main.tex — review before submission):")
         for k in orphans:
-            print(f"         {k}")
+            FAIL.append(f"Orphan bib entry (in .bbl but not cited in main.tex): {k}")
+            print(f"  [FAIL] Orphan: {k}")
     else:
-        print(f"  [OK  ] No orphan bib entries ({len(bib_keys)} keys all cited)")
+        print(f"  [OK  ] No orphan entries (all {len(bbl_keys)} bbl keys are cited in main.tex)")
+elif not bbl_file.exists():
+    print("  [INFO] main.bbl not found — compile first (xelatex + bibtex)")
 else:
-    print("  [INFO] refs.bib or main.tex not found -- skipping orphan check")
+    print("  [INFO] main.tex not found")
 
 if FAIL:
     print(f"FAILED: {len(FAIL)} check(s):")
