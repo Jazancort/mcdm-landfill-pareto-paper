@@ -1,3 +1,8 @@
+# DEPRECATED: replaced by santiago_grid.py --mode fogo-check
+# Original used EPSG:4826 (Cape Verde Lambert) -> gives N=475, not 473.
+# Corrected to EPSG:32626 before deprecation; documented in PRESPEC §3 PRE-A table.
+# Kept for audit trail only. Do not use.
+
 # -*- coding: utf-8 -*-
 """
 _verify_fogo_grid.py
@@ -103,3 +108,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

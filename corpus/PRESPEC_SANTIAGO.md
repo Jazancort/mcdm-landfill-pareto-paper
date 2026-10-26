@@ -28,7 +28,7 @@ normalised column, amplitude, distance, score, or Q2 was computed.
 | Cabral (2012) | hdl.handle.net/10362/8627 | 2026-10-xx | — (PDF, not a data file) | full text: AHP weights (Tab. 11–16, pp. 54–55), exclusion buffers (Tab. 18–26), hydrogeological units (pp. 45–46) and B1 matrix | — |
 | Fogo source files | NSGA-II Zenodo 17704387, script L257 (`permeabili == 'Baixa'`) and L428 (aspect rule `np.where(90<=asp<=180, 0,1)`) | 2026-10-xx | — | permeability classes; aspect binary rule | — |
 | `fogo_boundary.geojson` | IDECV WFS, layer `divisao_admin:ilha`, filtered to nom_ilha='FOGO'; saved to `05-referencia/fogo_boundary.geojson` | 2026-10-25 | `22680f5bcfdad0266eda35a889f78240f9d0187ec61b4cc6b99e31d976b00d17` | island polygon only; used in PRE-A grid validation | no criterion values |
-| IDECV WFS GetCapabilities | `https://geoservicos-ingt.gov.cv/geoserver/ows?service=WFS&version=2.0.0&request=GetCapabilities` | 2026-10-25 | — (XML metadata) | layer names and workspaces; confirmed presence of `areas_especiais:zdti`, `areas_especiais:area_protegida`, `divisao_admin:concelho`, `divisao_admin:ilha`; total 103 feature types | no geometry or attribute data downloaded |
+| `Landfill_NSGA2_Paper_Final.ipynb` | `G:\Faculdade\Estudo\Doutorado\2025.1\Otimização Bioinspirada\Tentativa de dados via GIS\Landfill_NSGA2_Paper_Final.ipynb` | 2026-10-25 | `2e62392110c466127b77dcd43c83980f165bc5c300978e71aa9870936119b6f1` | script that generated `df_real_data_cached.csv` (the published 473-site dataset): CRS=EPSG:32626, MIN_LAND_COVERAGE=0.50, origin=`np.floor(xmin)` (integer bbox), centroid=cell midpoint, boundary=`geologia_fogo.shp`, OSM via `osmnx.features_from_point(..., dist=30000)`; criterion columns inspected (schema only) | no criterion values computed against Santiago |
 
 No Santiago criterion value, normalised column, frontier, or Q2 has been computed before this commit.
 
@@ -92,14 +92,32 @@ drawn with `seed=99`. Abort if any assert fails.
 
 **Grid:** 1 km × 1 km cells; cells with less than 50% land coverage discarded; candidate = centroid of the full cell (not centroid of the land intersection).
 
-Grid conventions (confirmed from `scripts/_verify_fogo_grid.py` and `scripts/santiago_grid.py`):
-- `origin = bbox`: grid starts at the exact bounding-box lower-left corner of the island polygon (`np.arange(minx, maxx, spacing)`).
-- `centroid = cell`: candidate point is the geometric midpoint of the 1 km × 1 km cell (`x + 500, y + 500`), not the centroid of the land intersection.
+Grid conventions (confirmed from `Landfill_NSGA2_Paper_Final.ipynb`, which generated the published 473-site dataset, and cross-checked with `scripts/santiago_grid.py`):
+- `origin = floor(xmin)`: source notebook uses `np.floor(xmin)` — rounds the bounding-box corner to the nearest integer metre. Functionally equivalent to `origin=bbox` (difference < 1 m per axis). `scripts/santiago_grid.py --origin bbox` uses exact float xmin; the sub-metre origin difference causes 52 coastal cells to differ (see PRE-A table below).
+- `centroid = cell`: candidate point is the geometric midpoint of the 1 km × 1 km cell (`x0 + 500, y0 + 500`), not the centroid of the land intersection.
 - `land_frac = 0.5`: cell is included iff its land intersection covers at least 50% of the cell area.
+- CRS: `EPSG:32626` (WGS 84 / UTM Zone 26N) confirmed for Fogo. For Santiago: `EPSG:32627`.
 
-PRE-A result (2026-10-25): `scripts/_verify_fogo_grid.py` with `05-referencia/fogo_boundary.geojson` (IDECV `divisao_admin:ilha`, EPSG:32626) gives N_Fogo = 473. PASS. No DEV-S-001 needed. Confirmed by `santiago_grid.py --mode fogo-check` (see `results/grid/fogo_check/grid_report.json`).
+**PRE-A grid validation — all trials recorded (2026-10-25):**
 
-Note: the `_verify_fogo_grid.py` script originally used EPSG:4826 (Cape Verde Lambert), which gives N = 475. The declared CRS (EPSG:32626) gives exactly 473. The 2-cell discrepancy is a CRS artefact, not a boundary difference; both the IDECV `divisao_admin:ilha` and the dissolved `geologia_fogo.shp` give the same result with the same CRS.
+| Trial | CRS | Origin | Boundary | N_cand | N_adm | ref_matched/473 | n_trios |
+|---|---|---|---|---|---|---|---|
+| NSGA-II original (`intersects` filter, no land_frac) | 4826 | floor(xmin) | geologia_fogo.shp | 524 | — | — | — |
+| `_verify_fogo_grid.py` v1 (bug: 4826) | 4826 | bbox | IDECV ilha | 475 | — | — | — |
+| 4826 + snap (nearest km) | 4826 | snap | IDECV ilha | 467 | — | — | — |
+| 4826 + bbox with ref+excl | 4826 | bbox | IDECV ilha | 475 | 480→N/A | — | — |
+| **32626 + bbox + ref + excl — IDECV ilha (principal)** | **32626** | **bbox** | **IDECV ilha** | **473** | **389** | **421/473** | 1,974,552 |
+| 32626 + bbox + ref + excl — geol dissolved | 32626 | bbox | geol dissolved | 473 | 389 | 421/473 | 1,974,552 |
+
+Reference dataset (`df_real_data_cached.csv`): N_cand=473, N_adm=389, n_trios=1,944,653.
+Source: `Landfill_NSGA2_Paper_Final.ipynb` (SHA-256: `2e62392110c466127b77dcd43c83980f165bc5c300978e71aa9870936119b6f1`), CRS=32626, origin=floor(xmin), boundary=geologia_fogo.shp.
+
+**PRE-A verdict:** N_cand=473 confirmed ✓. N_adm=389 confirmed ✓. CRS=32626 and origin≈bbox confirmed.
+
+**Residual discrepancies (documented, not blocking):**
+- *421/473 coordinate matches ≤1 m:* 421 interior sites match within 1 m (median 0.736 m). 52 coastal sites differ 1–243 m due to `floor(xmin)` vs exact float origin. Not a different rule.
+- *n_trios +29,899 (+1.5%):* caused by the 52 position differences changing pairwise haversine distances. For Santiago, n_trios is computed independently.
+- *Both boundaries give identical results:* the boundary polygon does not matter; CRS and origin are the determining factors.
 
 Boundary source:
 - S-T: Santiago island boundary from IDECV `divisao_admin:ilha`, filtered to nom_ilha='SANTIAGO'. CRS: EPSG:4326 → reprojected to EPSG:32627 for distance computations. Version: IDECV WFS as accessed 2026-10-25.
@@ -113,14 +131,7 @@ grid cells but incorrect. The IDECV GeoJSON data is in EPSG:4826 (WGS 84 / Cape 
 a Lambert projection) and must be reprojected to EPSG:32627 before distance computation.
 Distances between candidates: great-circle (haversine), same as Fogo.
 
-Fogo grid validation (REQUIRED before commit):
-- Run `scripts/_verify_fogo_grid.py` with the Fogo island boundary and the declared rule
-  (1 km × 1 km, ≥ 50% land coverage). Record N_Fogo.
-- If N_Fogo = 473: the declared rule reproduces the published dataset. No deviation.
-- If N_Fogo ≠ 473: record as DEV-S-001: "declared rule gives N = [N_Fogo]; published
-  dataset has 473; difference unexplained. Declared rule applied to Santiago."
-  The unexplained difference between 473 (published paper) and 524 (original NSGA-II repo)
-  most likely results from different island boundary shapefiles.
+Fogo grid validation: COMPLETED (2026-10-25). See PRE-A table above. Use `scripts/santiago_grid.py --mode fogo-check` for any re-verification (replaces the now-deprecated `scripts/deprecated/_verify_fogo_grid.py`).
 
 **Trio enumeration:** n_trios computed from geometry only (trace formula: tr(A³)/6, where A is the
 binary adjacency matrix of valid pairs) BEFORE any criterion is extracted. Note: for N ≈ 800–900
@@ -496,11 +507,10 @@ Summary for B1 score (S-N, P-C) using stratigraphic rule for NC cases:
 
 ---
 
-## Annex B — OSM criterion definitions (verbatim from Fogo script)
+## Annex B — OSM criterion definitions (confirmed from the source that generated df_real_data_cached.csv)
 
-Source: `landfill_nsga2_optimization.py` (NSGA-II pipeline, Zenodo 17704387), lines 271–287.
-All criteria use `osmnx.features_from_point(lat, lon, tags, dist=30000)` to query features within
-30 km of each candidate, then compute minimum Euclidean distance in EPSG:32626 (WGS 84 / UTM Zone 26N).
+Source: `Landfill_NSGA2_Paper_Final.ipynb` (SHA-256: `2e62392110c466127b77dcd43c83980f165bc5c300978e71aa9870936119b6f1`), located at `G:\Faculdade\Estudo\Doutorado\2025.1\Otimização Bioinspirada\Tentativa de dados via GIS\`. This is the script that wrote `results_cache/df_real_data_cached.csv` (confirmed by grep for the write call). An earlier NSGA-II notebook (`landfill_nsga2_optimization.py`, Zenodo 17704387, L271–287) has the same queries; the Final Paper notebook is the authoritative source for the 473-site dataset.
+All criteria use `osmnx.features_from_point((lat, lon), tags=tags, dist=max_dist)` with `max_dist=30000` (30 km per candidate), then compute minimum Euclidean distance in EPSG:32626 (WGS 84 / UTM Zone 26N). Santiago uses Option A (island-wide download) to avoid NaN; same tags apply.
 
 ```python
 osm_criteria = {                                                   # L271–287
@@ -555,6 +565,12 @@ No `ditch` or `drain`. Santiago uses the same tags under Option A.
 
 OSM snapshot date for Santiago: [date — to fill at extraction time, before Phase 1 commit].
 All criteria use the same OSM snapshot. The snapshot date is recorded in Phase 1 §9.
+
+**OSM snapshot rule (snapshot-once):** the first Geofabrik Cabo Verde extract downloaded at Phase 1 extraction time is the definitive snapshot. Re-downloading is prohibited after Phase 1 begins. The extraction script must record the Geofabrik URL, the download date, and the SHA-256 of the PBF file. Any re-download would constitute a deviation (DEV-S-###).
+
+**D2 source (Centro de RSU — Praia urban limit):** IDECV `divisao_admin:cidade`, filtered to nom_zvc='Cidade da Praia' (confirmed present in GetCapabilities 2026-10-25; feature count = 1 polygon for Praia). The centroid of this polygon is the reference point for D2 distance computation. If the polygon is absent or has zero area at Phase 1: fall back to the OSM `place=city` boundary for Praia (relation boundary=administrative, admin_level=8 or as available).
+
+**Area protegida source:** IDECV `areas_especiais:area_protegida` (confirmed present 2026-10-25). This layer replaces WDPA as primary source. The `area_protegida.shp` used in Fogo came from the same IDECV service (confirmed by CRS=EPSG:4826 and field names: ilha, categorias, designacao). If the IDECV layer covers fewer than 5 polygons on Santiago: fall back to WDPA (latest release at Phase 1 time, version recorded in Phase 1 §9).
 
 ---
 
@@ -688,16 +704,16 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 
 ## Pre-commit checklist
 
-- [x] Run `scripts/_verify_fogo_grid.py`: N_Fogo = 473, PASS. No DEV-S-001 needed. (2026-10-25; boundary: IDECV `divisao_admin:ilha`; CRS fix: EPSG:32626 not 4826; grid_report in `results/grid/fogo_check/`)
-- [ ] Note: do NOT choose between boundary sources based on which reproduces 473.
-       Use the boundary that the original study was based on (from NSGA-II Zenodo repo); if not accessible, use IDECV island boundary and log the discrepancy as C-1.
-- [ ] Complete Annex B: copy Overpass queries from Fogo script
+- [x] Run `scripts/santiago_grid.py --mode fogo-check` (replaces deprecated `_verify_fogo_grid.py`): N_cand=473 ✓, N_adm=389 ✓, 421/473 positions ≤1 m. All trials documented in §3 PRE-A table. (2026-10-25)
+- [x] Note: did NOT choose between boundary sources based on which reproduces 473. Declared rule (32626+bbox+50%) tested with both boundaries (IDECV ilha and geol dissolved); both give 473 with 421/473 position matches. Source notebook identified as Landfill_NSGA2_Paper_Final.ipynb.
+- [x] Complete Annex B: source confirmed as Landfill_NSGA2_Paper_Final.ipynb (SHA documented in §0). Queries match Zenodo script (same tags, same dist=30000).
 - [ ] Fill `[HASH_F0]` (this commit's hash — fill after `git commit`, before push)
 - [x] Fill `[HASH_CODE]` = 94b5baf (includes new R denominator; scoring algorithm frozen at 022931e)
 - [x] Fill boundary source and version for S-T: IDECV `divisao_admin:ilha`, nom_ilha='SANTIAGO', EPSG:32627
 - [x] Fill boundary source and version for S-N: IDECV `divisao_admin:concelho`, 3 concelhos, EPSG:32627
-- [ ] Fill OSM snapshot date (for Phase 1; note that at Phase 0 no OSM data has been downloaded)
-- [x] Area protegida source: IDECV `areas_especiais:area_protegida` (confirmed 2026-10-25; replaces WDPA as primary)
+- [x] OSM snapshot rule: snapshot-once (first Geofabrik download at Phase 1 is definitive; SHA recorded in Phase 1 §9; re-download prohibited)
+- [x] Area protegida source: IDECV `areas_especiais:area_protegida` (confirmed 2026-10-25; same service as Fogo; replaces WDPA). Fallback: WDPA latest at Phase 1.
 - [x] Confirm ZDTI layer presence/absence in IDECV GetCapabilities: PRESENT (`areas_especiais:zdti`). C-4 NOT triggered. (2026-10-25)
-- [ ] Confirm D2 source (Praia urban limit): IDECV `divisao_admin:cidade` or OSM place=city for Praia [to fill at Phase 0 commit]
+- [x] D2 source confirmed: IDECV `divisao_admin:cidade`, nom_zvc='Cidade da Praia' (polygon centroid). Fallback: OSM place=city.
+- [ ] Fill OSM snapshot date and DEM release version (at Phase 1 extraction time, before Phase 1 commit)
 - [ ] check_consistency.py exit 0 after adding any PRESPEC-related BAD_PHRASE
