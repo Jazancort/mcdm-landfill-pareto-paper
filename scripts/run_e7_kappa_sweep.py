@@ -11,7 +11,7 @@ Design:
   - Same 8 cells as Table 5 (2³: SAW/TOPSIS × mm/vec × greedy/opt)
   - κ ∈ {25, 50, 100, 200, 400, 1000} + w_AHP deterministic point
   - 500 paired draws per κ
-  - Seeds: κ=200 → 42, κ=50 → 43, others → 100 + κ
+  - Seeds: κ=200 → 42, κ=50 → 42 (same seed, different alpha), others → 100 + κ
   - Gates G1-G5 checked before writing final output
 
 Per-draw extras (Amendment A1):
@@ -60,6 +60,10 @@ from scoring import make_scorers
 # ── Constants ─────────────────────────────────────────────────────────────────
 E1_SHA   = "bea05275e85bc6ddbd754c88c0a05c90a568374ff76eacfc8b522750a4aef487"
 E1_SHA50 = "e761c76d47bb7b6f949d116170fd900b8a87f4c356bf4a149f403a0f586060be"
+# Data SHAs: sha256(W.tobytes()) — verified 2026-11-01 by diagnose_v1v2.py
+# Must match rng(42).dirichlet(kappa*w_ahp, size=500).tobytes()
+DATA_SHA_K200 = "1d5bb4dae459e895c818343c1805f3c0e39b379d28c5454e6ef0e5bc23b807c1"
+DATA_SHA_K50  = "8b91cba20b29b08bde9f26a19eaceeabf187791ae7c8d60bbb9982ea87084ddf"
 N_DRAWS  = 500
 B_BOOT   = 2000
 BASE_SEED = 100  # seed for new κ = BASE_SEED + κ
@@ -138,7 +142,11 @@ if wmat_path.exists():
     sha = hashlib.sha256(wmat_path.read_bytes()).hexdigest()
     assert sha == E1_SHA, f"Weight matrix κ=200 SHA mismatch: {sha[:16]}"
     W_k200 = np.load(wmat_path)
-    print(f"κ=200 weight matrix: {W_k200.shape}  SHA OK", flush=True)
+    data_sha200 = hashlib.sha256(W_k200.tobytes()).hexdigest()
+    assert data_sha200 == DATA_SHA_K200, (
+        f"κ=200 data SHA mismatch: got {data_sha200[:16]}, expected {DATA_SHA_K200[:16]}"
+    )
+    print(f"κ=200 weight matrix: {W_k200.shape}  file_SHA OK  data_SHA OK  ({data_sha200[:8]}...)", flush=True)
 else:
     W_k200 = None
     print("WARNING: e1_weights_k200.npy not found", flush=True)
@@ -147,7 +155,14 @@ if wmat_k50_path.exists():
     sha50 = hashlib.sha256(wmat_k50_path.read_bytes()).hexdigest()
     assert sha50 == E1_SHA50, f"Weight matrix κ=50 SHA mismatch: {sha50[:16]}"
     W_k50 = np.load(wmat_k50_path)
-    print(f"κ=50 weight matrix:  {W_k50.shape}  SHA OK", flush=True)
+    data_sha50 = hashlib.sha256(W_k50.tobytes()).hexdigest()
+    assert data_sha50 == DATA_SHA_K50, (
+        f"κ=50 data SHA mismatch: got {data_sha50[:16]}, expected {DATA_SHA_K50[:16]}\n"
+        f"This means the file contains different draws than rng(42).dirichlet(50*w_ahp, 500).\n"
+        f"Regenerate e1_weights_k50.npy with seed=42 before running E7."
+    )
+    print(f"loaded draws_k50  SHA={data_sha50[:8]}...  (data OK)", flush=True)
+    print(f"κ=50 weight matrix:  {W_k50.shape}  file_SHA OK  data_SHA OK  ({data_sha50[:8]}...)", flush=True)
 else:
     W_k50 = None
     print("WARNING: e1_weights_k50.npy not found — κ=50 gate may fail", flush=True)
