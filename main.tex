@@ -410,7 +410,7 @@ the same tension arises in additive MCDM through the amplitude
 identity~\eqref{eq:weff}.
 \citet{Milani2005} showed empirically that different
 normalisation norms produce different rankings in a gear material
-selection study and recommending vector normalisation on the grounds that
+selection study and recommended vector normalisation on the grounds that
 it is less sensitive to the raw scale of the data.
 
 A large subsequent literature has measured the sensitivity of rankings to
@@ -484,7 +484,7 @@ Rank reversal and set dependence in PROMETHEE~II have been studied by
 who formalised the mechanism by which a third alternative shifts the
 flows of existing alternatives.
 These results concern a different channel than the one we study: our
-set-dependence effect (Remark~\ref{rem:nonmonotone} and Table~\ref{tab:coding2x2}) operates through
+set-dependence effect (Section~\ref{sec:coding} and Table~\ref{tab:coding2x2}) operates through
 normalisation constants, not through pairwise preference flows.
 
 \citet{Eppe2014} proposed piecewise-linear approximations of
@@ -748,7 +748,7 @@ are equivalent under min--max normalisation (top-100 rank agreement
 $=1.000$) but differ under vector normalisation by a factor of
 $\sqrt{n_0/n_1}=\AspectAmplitudeRatio$ (Corollary~\ref{cor:order}); score and
 objective use the decision-matrix encoding throughout
-(a score--evaluator coding mismatch is analysed in Remark~\ref{rem:nonmonotone}).
+(a score--evaluator coding mismatch is analysed in Section~\ref{sec:coding}).
 Amplitudes in Table~\ref{tab:amplitude} are measured on the decision
 matrix, with $n_1=94$ SE-facing sites among the $\Nvia$ admissible sites.
 The SAW method produces the oriented score
@@ -877,7 +877,7 @@ The binary SE-facing indicator ($90^\circ \le \theta \le 180^\circ$, closed)
 is invariant under this reflection, because the reflection axis
 $135^\circ$ is the midpoint of the interval; the 94 SE-facing sites and
 all factorial results ($Q_2$, $R$, E1, E6) are unaffected.
-Only the continuous-aspect analysis (Remark~\ref{rem:nonmonotone}) depends
+Only the continuous-aspect analysis (Section~\ref{sec:coding}) depends
 on the convention; all values in this paper use $\theta$.
 \citet{Andrade2015} assign minimum suitability to NE- and NW-facing slopes,
 citing the dominant NE and NW winds and the aim of protecting urban areas
@@ -1189,9 +1189,6 @@ bootstrap intervals, paired by draw.
 E1 uses $\nbootEone$ replicates; the factorial uses $\nboot$.
 Intervals are unadjusted for multiplicity; contrasts other than the
 pre-specified aggregation TOST are descriptive.
-The value $\kappa=200$ is declared in the main pre-specification
-(PRESPEC.md) and repeated in the E1 pre-specification; it is discussed
-in Section~\ref{sec:entries}.
 
 \paragraph{Benchmark circularity.}
 The Pareto frontier and the objectives are both built on additive
@@ -2326,8 +2323,8 @@ Continuous azimuth  & optimal & $\RaspOptimal\%$ (R-asp) & $\RVoptimal\%$ (R-V) 
 \end{tabular}
 \end{table}
 
-\subsubsection*{Coding inconsistency: a failure mode outside the theorem}
-\label{sec:refset}\label{rem:nonmonotone}
+\subsection{Coding inconsistency: a failure mode outside the theorem}
+\label{sec:coding}\label{rem:nonmonotone}
 Scoring \textit{aspect} as a continuous geographic azimuth while the
 objectives use a binary SE-facing indicator ($90^\circ$--$180^\circ$,
 closed) introduces a non-monotone mismatch.
@@ -2504,7 +2501,6 @@ Theorem~\ref{thm:groupconst} is a necessary and sufficient condition for efficie
 for every instance and every weight draw.
 On any single instance, $\mathrm{TV}_W>0$ does not guarantee a loss, as
 R-V$^*$ illustrates.
-The reference-set cell R-V$^*$ illustrates the distinction.
 Its within-group amplitudes range from $0.482$ (\texttt{perm}) to $1.0$
 (\texttt{roads}) in $G_1$, giving $\mathrm{TV}_W\approx0.082$ and
 $\mathrm{TV}_B\approx0.072$, yet $Q_2=100.0\%$ under optimal assembly on
@@ -2560,8 +2556,8 @@ Theorem~\ref{thm:groupconst}) confirmed the implementation: both baseline
 cells (M and B) attained $Q_2=100\%$ on all \EsixPoneNDesign{}
 draws (\EsixPoneHits{} of \EsixPoneTotal{} draw-cell combinations).
 
-P2 (pre-registered criterion: $\rho_s(\mathrm{TV}_W, Q_2^{\mathrm{opt}}) < 0$ in $\ge80\%$ of instances per family; Supplementary Material, \S\ref{sec:prespec_e6}):
-among informative instances $\rho_s < 0$ in $100\%$ per family, satisfying the pre-registered criterion.
+P2 (pre-registered criterion: $r_s(\mathrm{TV}_W, Q_2^{\mathrm{opt}}) < 0$ in $\ge80\%$ of instances per family; Supplementary Material):
+among informative instances $r_s < 0$ in $100\%$ per family, satisfying the pre-registered criterion.
 Supplementary Material, DEV-E6-002, revised the test to a monotone ordering
 criterion ($L\ge F\ge H$ with $H<L$, one-sided Poisson-binomial); that analysis was a mixed result.
 Among instances with no detectable loss at any $\mathrm{TV}_W$
@@ -2646,7 +2642,7 @@ between-group distortion alone never moves the portfolio off the frontier
 $\RegretEoneB$~pp of value regret (median $\RegretEoneBMed$~pp);
 within-group distortion carries
 the $Q_2$ loss on this instance, with a cost of
-$\EoneWloss$~pp under optimal assembly at $\kappa=200$
+$\EoneWloss$~pp under optimal assembly at $\kappa=200$.
 It is also invisible: nothing in a standard TOPSIS or SAW report reveals
 that \texttt{perm} entered at $\PermInflation$ times its nominal weight.
 
@@ -2716,6 +2712,7 @@ selection cannot be recovered by any re-weighting
 (Section~\ref{sec:greedy}).
 
 \subsection{Relation to the normalisation literature}
+\label{sec:normliterature}
 
 That criterion weights cannot be interpreted independently of the
 normalisation is established.
@@ -2848,7 +2845,7 @@ weights were substantially moved and that the movement is concentrated;
 neither number conveys this alone.
 Where elicited weights carry normative content, as with AHP judgements
 from stakeholders, the re-weighting implicit in vector normalisation is
-difficult to defend (Section~\ref{sec:discussion}).
+difficult to defend (Section~\ref{sec:normliterature}).
 
 Fourth, report the order in which orientation adjustment and
 normalisation are applied.
@@ -3088,7 +3085,7 @@ Given the normalised decision matrix the computation is a single line,
 and it exposes distortions that rank-agreement diagnostics do not reveal.
 Where weights encode stakeholder judgements, as AHP weights do,
 the re-weighting is difficult to defend; the argument is developed in
-Section~\ref{sec:discussion}.
+Section~\ref{sec:normliterature}.
 
 The closed form is exact for additive aggregation under affine normalisation; for ranks the identity is approximate. TOPSIS combines distances to ideal points, where amplitudes enter quadratically, and extending the exact characterisation to TOPSIS (via the $\alpha=2$ analogy) remains open.
 Theorem~\ref{thm:groupconst} is an exact characterisation for additive
@@ -3103,7 +3100,7 @@ $\Nvia$ sites is an adversarial case; extending the measurement to
 further instances remains open.
 
 The reference-set analyses in Section~\ref{sec:alignment} and
-Remark~\ref{rem:nonmonotone} are based on post hoc exploratory cells
+Section~\ref{sec:coding} are based on post hoc exploratory cells
 (Supplementary Material) and should be
 treated as descriptive rather than confirmatory.
 A post hoc analysis found that
@@ -3146,7 +3143,7 @@ During the preparation of this work the author used the Claude assistant
 (Anthropic), accessed via the Kiro development environment (Amazon Web
 Services), for structural organisation of the manuscript, code review,
 drafting and revising passages of scientific prose (including
-the coding-inconsistency remark, Remark~\ref{rem:nonmonotone}, and the provenance note
+the coding-inconsistency analysis, Section~\ref{sec:coding}, and the provenance note
 in Section~\ref{sec:methods}), and language editing.
 The formulation of arguments, the design and execution of experiments,
 the selection and interpretation of results, and all final scientific
@@ -3172,7 +3169,7 @@ and GitHub.\footnote{\nolinkurl{github.com/Jazancort/NSGA2-GIS-Landfill-Optimiza
 The replication package for this article (source code, pre-specified
 analysis plans, and pre-computed data) is publicly available
 online\footnote{\url{https://github.com/Jazancort/mcdm-landfill-pareto-paper}}
-(Zenodo, concept DOI~\url{10.5281/zenodo.23676428}; release~v1.5).
+(Zenodo, concept DOI~\url{10.5281/zenodo.23676428}).
 The provenance audit script \texttt{verify\_macros\_permanent.py}
 recomputes all primary quantitative claims and exits~0 on
 exact agreement with the values in this article.

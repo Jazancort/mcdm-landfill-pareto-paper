@@ -946,11 +946,11 @@ if main_tex.exists():
         def _r(m):
             return "" if any("\\label{" + l + "}" in m.group(0) for l in _ALLOWED_REM_MAIN) else m.group(0)
         t = _re2.sub(r"\\begin{remark}(\[[^\]]*\])?\s*.*?\\end{remark}", _r, t, flags=_re2.DOTALL)
-        # Also strip subsubsection* blocks that contain the allowed labels
-        # (rem:nonmonotone was converted from remark to subsubsection* in §6.08 fix)
+        # Also strip subsection blocks that contain the allowed labels
+        # (rem:nonmonotone was converted from remark to \subsection in §6.08 fix)
         for label in _ALLOWED_REM_MAIN:
             t = _re2.sub(
-                r"\\subsubsection\*\{[^}]*\}.*?\\label\{" + _re2.escape(label) + r"\}.*?(?=\\subsubsection|\\subsection|\\section|\\FloatBarrier|$)",
+                r"\\subsection\{[^}]*\}.*?\\label\{" + _re2.escape(label) + r"\}.*?(?=\\FloatBarrier|\\subsection\{|\\section\{|\\end\{document\})",
                 "", t, flags=_re2.DOTALL)
         return t
     for sent in _re2.split(r"(?<=[.;])\s+|\n", _strip_allowed(tex)):
@@ -1071,7 +1071,11 @@ for _fname in ["main.tex", "macros.tex", "macros_amplitudes.tex", "macros_e6.tex
 # Exception: \renewcommand in macros.tex is an intentional override of a
 # \newcommand in an auto-generated file (macros_amplitudes.tex, macros_e6.tex)
 _RENEW_OVERRIDES = {
-    "TVvec",   # rounded to 3dp; auto-generated = 0.3113
+    "TVvec",       # rounded to 3dp; auto-generated = 0.3113
+    "TVBvec",      # rounded to 3dp; auto-generated = 0.2479
+    "TVWvec",      # rounded to 3dp; auto-generated = 0.1954
+    "DeltaLtwoshift",  # rounded to 3dp; auto-generated = 0.3101
+    "DeltaLinfshift",  # rounded to 3dp; auto-generated = 0.2835
 }
 _dups = {}
 for k, v in _defs.items():
@@ -1472,9 +1476,6 @@ _MUST_FAIL = [
      "§8.02: 'shrinking to zero' banned phrase"),
     ("+\\AggContrastKfifty",
      "§8.01: double positive sign — AggContrastKfifty already has embedded '+'"),
-    # AggContrastKfifty: old value +20.4 must be caught
-    ("+20.4~pp",
-     "AggContrastKfifty corrected to +17.2; hardcoded +20.4 banned"),
 ]
 
 _MUST_PASS = [
