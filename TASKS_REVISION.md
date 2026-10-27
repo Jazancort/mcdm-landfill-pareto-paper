@@ -19,7 +19,7 @@ Generated from full PDF audit. Order: §1+§2 (mechanical) → §3 (claims) → 
 - [x] **1.11** Contrib. (ii) "frontier attainment reversing sign" — clarify it is the *assembly effect* that reverses sign, not frontier attainment per se
 - [x] **1.12** §6.6 Eq.(21) uses `n`; rest of paper uses `N`. Also missing explicit assumption `Σwⱼ=1` → rename to `N`, add hypothesis
 - [x] **1.13** §6.7 derivation uses raw `x` while Eq.(22) uses `x̃` → replace `x` with `x̃`
-- [x] **1.14** Title page "ORCID(s):" field is empty → fill `\orcid{0009-0000-2754-8503}` or use cas-dc `[orcid=...]` syntax
+- [ ] **1.14** Title page "ORCID(s):" field is empty → fill `\orcid{0009-0000-2754-8503}` or use cas-dc `[orcid=...]` syntax — **BLOCKED: 0009-0000-2754-8503 fails InvenioRDM check-digit validation; copy correct ORCID from orcid.org/profile and update main.tex line 104, CITATION.cff line 24, and add to .zenodo.json creators[0]**
 - [x] **1.15** Saaty 1990 and 2008 in bib but not cited in text (orphans) → add `\citep{Saaty1990,Saaty2008}` in §4.2 for RI=1.51 and CR<0.10 threshold
 
 ---
@@ -63,7 +63,7 @@ Generated from full PDF audit. Order: §1+§2 (mechanical) → §3 (claims) → 
 - [x] **4.01** **Table 5 at κ=50** — κ=50 columns (Q₂ and SE) added to Table 5 in main.tex (2026-10-30); macro provenance: mc_2cube_fixed_raw.csv (seed=42, correct) [DONE]
 - [ ] **4.02** **κ sweep plot** — run κ ∈ {25, 50, 100, 200, 400, 1000} on main contrasts; plot contrast vs κ; transforms κ-sensitivity from caveat to result (high priority)
 - [ ] **4.06** κ interpretation (new, B1): add SD(wᵢ) table to §7.x or caption; if expert weights available compute κ̂ = w₀(1−w₀)/Var(w) − 1 to locate the empirical regime on the reversal curve
-- [ ] **4.07** Reversal mechanism (new, B2): per-draw regression of SAW−TOPSIS contrast on N_eff = 1/Σwᵢ² (or max(wᵢ)); uses e7_raw.csv columns H_w and tv2_w; explains whether the reversal is driven by draws where one criterion dominates
+- [x] **4.07** Reversal mechanism (new, B2): per-draw regression of SAW−TOPSIS contrast on N_eff = 1/Σwᵢ²; script: scripts/analyze_neff_regression.py; results: results/e7/neff_regression.json; paragraph added to sec:kappa after "reversal comes from both sides"; macros added to macros_e7.tex; commit 74896a2 [DONE: pooled r=−0.23, p<0.001, n=3000; crossover N_eff*≈9.2 ≈ AHP N_eff=9.3]
 - [ ] **4.08** Re-run official gate code on Athena with assert len > 0 active; report 22/22 from run_e7_kappa_sweep.py log, not just verify_e7_gates.py
 - [x] **4.03** §7.1 quantify membership: "Pareto membership improves" — add counts: e.g. "3 of 7 efficient in A; 6 of 7 in A′" (read from Table 3)
 - [x] **4.04** §4.2 eigenvector note — add: "AzancortNeto2026 describe the principal eigenvector; the released weights coincide with the column-normalised vector (max|Δ|=0.001) and differ from the eigenvector by at most 0.004 (perm), well below the Dirichlet SD (≈0.025)"
