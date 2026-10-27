@@ -1700,23 +1700,16 @@ $\PermInflation\times$ inflation under vector normalisation.
 \label{prop:p3}
 Under vector normalisation, $v_j(a) = \tilde{x}_j(a) / \lVert\tilde{\mathbf{x}}_j\rVert_2$.
 The amplitude is $A_j = \rho_j$ as defined in
-Section~\ref{sec:amplitude}, and by~\eqref{eq:weff}
-\begin{equation}
-  \label{eq:weff_vec}
-  w_j^{\mathrm{eff}} = \frac{w_j\,\rho_j}{\sum_k w_k\,\rho_k},
-  \qquad
-  \rho_j = \frac{\max_a \tilde{x}_j(a) - \min_a \tilde{x}_j(a)}
-                {\lVert\tilde{\mathbf{x}}_j\rVert_2}.
-\end{equation}
-For binary criteria, $\rho_j = 1/\sqrt{n_1}$ exactly, where $n_1$ is
-the number of ones.
+Section~\ref{sec:amplitude}, so by~\eqref{eq:weff}
+$w_j^{\mathrm{eff}} = w_j\rho_j / \sum_k w_k\rho_k$.
+For binary criteria, $\rho_j = 1/\sqrt{n_1}$ exactly, where $n_1$ is the number of ones.
 
 \textit{Derivation.}
 The range of $v_j(a)$ over all sites is
 $(\max_a \tilde{x}_j(a) - \min_a \tilde{x}_j(a)) /
   \lVert\tilde{\mathbf{x}}_j\rVert_2
-  = 1/\lVert\tilde{\mathbf{x}}_j\rVert_2 = \rho_j$,
-so $A_j = \rho_j$ and~\eqref{eq:weff_vec} follows from~\eqref{eq:weff}.
+  = \rho_j$,
+so $A_j = \rho_j$ and the expression follows from~\eqref{eq:weff}.
 \begin{sloppypar}
 For binary $\tilde{x}_j \in \{0,1\}$ (min-max of binary is binary)
 with $n_1$ ones,
@@ -2212,9 +2205,6 @@ under vector normalisation exact assembly achieves $\RegrSAWvecOpt$~pp regret
 against $\RegrSAWvecGrd$~pp for greedy ($\RegrDiffSAWvec$~pp less,
 95\%~CI $[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp;
 below the $\delta=2.5$~pp practical-significance margin, applied here by analogy).
-The portfolios selected by exact optimisation of the distorted score,
-though they miss the frontier of~$w$ more often, are better portfolios
-under the elicited weights~$w$ (Section~\ref{sec:factorial}).
 % ----------------------------------------------------------
 
 % ----------------------------------------------------------
@@ -2404,8 +2394,7 @@ alone leaves exact assembly on the frontier.
 We test this by intervening on the amplitudes directly.
 The intervention was not part of the original pre-specified factorial
 design but was specified as a follow-up analysis before any experimental
-run; the predictions were committed to the repository before the first
-run (Supplementary Material).
+run.
 We therefore classify E1 as a \emph{follow-up analysis with
 pre-specified predictions}, not as confirmatory evidence for the theorem
 nor as fully post hoc exploratory.
@@ -2911,8 +2900,8 @@ scale of $[2,11]$ tells the decision maker both that the elicited
 weights were substantially moved and that the movement is concentrated;
 neither number conveys this alone.
 Where elicited weights carry normative content, as with AHP judgements
-from stakeholders, the re-weighting implicit in vector normalisation is
-difficult to defend (Section~\ref{sec:normliterature}).
+from stakeholders, the case for preferring min-max is developed in
+Section~\ref{sec:normliterature}.
 
 Fourth, report the order in which orientation adjustment and
 normalisation are applied.
@@ -3017,12 +3006,9 @@ External confirmation on other published instances was not obtained.
 
 A pre-specified experiment, with declared deviations, on \EsixNinst{} synthetic instances
 across \EsixNfam{} marginal families (Experiment~E6,
-Section~\ref{sec:e6}) provides the most direct cross-family test of the
-$\mathrm{TV}_W$ prediction; at equal $\mathrm{TV}_W$, losses ranged from below $3$~pp
-under continuous marginals to $\EsixLossZinfWinfF$~pp under zero-inflation
-($3$--$4\times$), confirming that $\mathrm{TV}_W$ alone does not calibrate the cost.
-E5 found no linear association under greedy assembly ($-1.3$~pp, 95\%~CI
-$[-5.1,\,+2.4]$).
+Section~\ref{sec:e6}) confirms that $\mathrm{TV}_W$ alone does not
+calibrate the magnitude of the cost; losses vary substantially across
+marginal families at equal $\mathrm{TV}_W$.
 
 Most landfill-selection studies in the literature apply continuous GIS
 overlay analysis rather than enumerating a finite set of candidate sites
@@ -3124,9 +3110,7 @@ with instance size and spatial geometry.
 
 A pre-specified experiment on \EsixNinst{} synthetic instances across
 \EsixNfam{} marginal families (Experiment~E6, Section~\ref{sec:e6})
-supports the directional prediction and shows that at equal $\mathrm{TV}_W$
-the cost ranges $3$--$4\times$ across marginal families, confirming that $\mathrm{TV}_W$
-alone does not calibrate its magnitude.
+supports the directional prediction.
 
 The Fogo magnitudes are therefore instance-specific; the within-group
 mechanism is directionally robust but its magnitude depends on the
@@ -3151,8 +3135,7 @@ alongside elicited ones.
 Given the normalised decision matrix the computation is a single line,
 and it exposes distortions that rank-agreement diagnostics do not reveal.
 Where weights encode stakeholder judgements, as AHP weights do,
-the re-weighting is difficult to defend; the argument is developed in
-Section~\ref{sec:normliterature}.
+the argument for preferring min-max is in Section~\ref{sec:normliterature}.
 
 The closed form is exact for additive aggregation under affine normalisation; for ranks the identity is approximate. TOPSIS combines distances to ideal points, where amplitudes enter quadratically, and extending the exact characterisation to TOPSIS (via the $\alpha=2$ analogy) remains open.
 Theorem~\ref{thm:groupconst} is an exact characterisation for additive

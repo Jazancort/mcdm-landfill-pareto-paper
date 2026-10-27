@@ -60,8 +60,11 @@ Generated from full PDF audit. Order: §1+§2 (mechanical) → §3 (claims) → 
 
 ## §4 — Analysis additions (computational)
 
-- [ ] **4.01** **Table 5 at κ=50** — add κ=50 columns (Q₂ and SE) or a supplementary table; this is prerequisite for readers to verify the +20.4 pp aggregation result
+- [x] **4.01** **Table 5 at κ=50** — κ=50 columns (Q₂ and SE) added to Table 5 in main.tex (2026-10-30); macro provenance: mc_2cube_fixed_raw.csv (seed=42, correct) [DONE]
 - [ ] **4.02** **κ sweep plot** — run κ ∈ {25, 50, 100, 200, 400, 1000} on main contrasts; plot contrast vs κ; transforms κ-sensitivity from caveat to result (high priority)
+- [ ] **4.06** κ interpretation (new, B1): add SD(wᵢ) table to §7.x or caption; if expert weights available compute κ̂ = w₀(1−w₀)/Var(w) − 1 to locate the empirical regime on the reversal curve
+- [ ] **4.07** Reversal mechanism (new, B2): per-draw regression of SAW−TOPSIS contrast on N_eff = 1/Σwᵢ² (or max(wᵢ)); uses e7_raw.csv columns H_w and tv2_w; explains whether the reversal is driven by draws where one criterion dominates
+- [ ] **4.08** Re-run official gate code on Athena with assert len > 0 active; report 22/22 from run_e7_kappa_sweep.py log, not just verify_e7_gates.py
 - [x] **4.03** §7.1 quantify membership: "Pareto membership improves" — add counts: e.g. "3 of 7 efficient in A; 6 of 7 in A′" (read from Table 3)
 - [x] **4.04** §4.2 eigenvector note — add: "AzancortNeto2026 describe the principal eigenvector; the released weights coincide with the column-normalised vector (max|Δ|=0.001) and differ from the eigenvector by at most 0.004 (perm), well below the Dirichlet SD (≈0.025)"
 - [ ] **4.05** TOPSIS mechanism (post hoc, optional) — α=2 analogy implies effective-weight dispersion doubles in log scale; test TV(2)−TV(1) per draw as predictor of frontier miss in §7.3
@@ -83,15 +86,16 @@ Generated from full PDF audit. Order: §1+§2 (mechanical) → §3 (claims) → 
 ## §6 — Structure and repetition
 
 - [ ] **6.01** Pages 15–17 near-empty: §6.9 item 4 alone on a page, Fig.3 alone, Fig.4 alone → use `[t]` specifiers and reduce Fig.3 to single column; recover ~2 pages
-- [ ] **6.02** "2.86×… 0.53 is difficult to defend" appears 3× (§8.3, §8.5, §9) → keep one, remove others
-- [ ] **6.03** E6 results reported 3× (§7.8, §8.6, §9) → consolidate
-- [ ] **6.04** "portfolios selected by exact optimisation… are better portfolios" in §7.3 and §7.4 → keep one
-- [ ] **6.05** P1–P3 predictions announced twice in §7.7 → keep one announcement
+- [x] **6.02** "2.86×… 0.53 is difficult to defend" appears 3× → §8.3 keeps full argument (with \PermInflation× and \UrbanRatioVec); §8.5 reduced to "the case for preferring min-max is developed in Section~\ref{sec:normliterature}"; §9 reduced to "see Section~\ref{sec:normliterature}" [DONE]
+- [x] **6.03** E6 results reported 3× → §7.8 keeps full results; §8.6 reduced to cross-reference with interpretation ("losses vary substantially across marginal families"); §9 reduced to "supports the directional prediction" [DONE]
+- [x] **6.04** "portfolios selected by exact optimisation… are better portfolios" in §7.3 and §7.4 → second occurrence (§7.4) removed [DONE]
+- [x] **6.05** P1–P3 predictions announced twice in §7.7 → removed duplicate "predictions were committed to the repository before the first run (Supplementary Material)" from the introductory paragraph; single explicit list at "Three predictions were committed..." remains [DONE]
 - [x] **6.06** §7.2 title "Confirmation of the amplitude lemma" contradicted by body ("not its foundation") → rename to "Empirical ordering by TV"
 - [x] **6.07** §7.3 title "The factorial design" duplicates §5.4 → rename to "Factorial results"
-- [ ] **6.08** Remark 6 and Table 8 (coding inconsistency) buried in §7.5 (alignment section) → give own subsection
-- [ ] **6.09** §7 opening "three parts" but has 8 subsections → fix count or restructure
-- [ ] **6.10** Eq.(23) duplicates (15)–(16) → remove, add cross-reference
+- [ ] **6.08** Remark 6 and Table 8 (coding inconsistency) buried in §7.5 (alignment section) → give own subsection — VERIFY: sec:coding exists; check grep for residual "Remark 6" references
+- [ ] **6.09** §7 opening "three parts" — verify text no longer says "three parts"; now reads "three follow-up experiments" (accurate) — CHECK then mark done
+- [x] **6.10** Eq.(23) = eq:weff_vec removed; replaced by inline formula "$w_j^{eff} = w_j\rho_j/\sum_k w_k\rho_k$" with cross-reference to eq:weff; no dangling \eqref{eq:weff_vec} references remain [DONE]
+- [ ] **6.11** Practical recommendations paragraph — add to §8 or §9 (bloco 3 from 2026-11-01 review): report normalisation scheme; characterise weight uncertainty before choosing aggregation; validate aspect encoding; report effective weights with elicited weights
 - [x] **6.11** Highlight "by 25.4 pp; at both κ tested" grammatically broken → "Normalisation shifts greedy Pareto attainment by 25–29 pp at both κ tested"
 - [x] **6.12** Highlight "Pareto-safe" undefined jargon → define or replace with "Pareto-efficient under exact assembly"
 - [x] **6.13** Abstract ~260 words → verify Omega limit (Omega: 250 words max); trim if needed (trimmed to ~245 words by script count)
@@ -119,10 +123,10 @@ Generated from full PDF audit. Order: §1+§2 (mechanical) → §3 (claims) → 
 
 ## §9 — Zenodo (last)
 
-- [ ] **9.01** Confirm concept DOI: open zenodo.org record for 23676483 → click "Cite all versions" box → copy the DOI there (not the version DOI)
-- [ ] **9.02** Update Code availability in main.tex with confirmed concept DOI + release v1.6
-- [ ] **9.03** After all changes are committed, create release v1.6
-- [ ] **9.04** Update README badge and CITATION.cff with confirmed concept DOI if different from 23676483
+- [x] **9.01** Confirm concept DOI: 10.5281/zenodo.23676428 confirmed [DONE]
+- [x] **9.02** Code availability in main.tex updated with concept DOI + version DOI 10.5281/zenodo.23688817 (v1.7) [DONE]
+- [x] **9.03** Release v1.7 created on GitHub (tag + GitHub Release); Zenodo deposit 23688817 published [DONE]
+- [x] **9.04** README badge and CITATION.cff updated to v1.7; concept DOI 10.5281/zenodo.23676428 [DONE]
 
 ---
 
