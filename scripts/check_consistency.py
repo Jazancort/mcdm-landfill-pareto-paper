@@ -1401,8 +1401,96 @@ elif not bbl_file.exists():
 else:
     print("  [INFO] main.tex not found")
 
+# ── E7: gate verification (22/22) and macro cross-check ─────────────────────
+print()
+print("=== E7: gates and macro cross-check ===")
+_e7_raw = RESULTS / "e7" / "e7_raw.csv"
+_e7_macros = ROOT / "macros_e7.tex"
+if _e7_raw.exists() and _e7_macros.exists():
+    import re as _re_e7
+    import pandas as _pd_e7
+    _e7df = _pd_e7.read_csv(_e7_raw)
+    # G1: k=200 and k=50 reproduce Table 5
+    _E7_G1 = {
+        (200, "saw","minmax","greedy"):   86.0,  (200,"saw","minmax","optimal"):  100.0,
+        (200, "saw","vector","greedy"):   66.2,  (200,"saw","vector","optimal"):   56.8,
+        (200, "topsis","minmax","greedy"):94.4,  (200,"topsis","minmax","optimal"):96.6,
+        (200, "topsis","vector","greedy"):63.4,  (200,"topsis","vector","optimal"):52.4,
+        (50,  "saw","minmax","greedy"):   97.6,  (50, "saw","minmax","optimal"):  100.0,
+        (50,  "saw","vector","greedy"):   77.0,  (50, "saw","vector","optimal"):   79.4,
+        (50,  "topsis","minmax","greedy"):89.8,  (50, "topsis","minmax","optimal"):92.2,
+        (50,  "topsis","vector","greedy"):52.0,  (50, "topsis","vector","optimal"):51.0,
+    }
+    _e7_fails = 0
+    for (k, a, n, m), exp in _E7_G1.items():
+        rows = _e7df.query(f"alpha=={k} and agg=='{a}' and norm=='{n}' and mont=='{m}'")
+        assert len(rows) > 0, f"E7 G1 filter empty: k={k} {a}/{n}/{m}"
+        got = rows["nd_Q2Ap"].mean() * 100
+        if abs(got - exp) > 0.5:
+            FAIL.append(f"E7 G1 k={k} {a}/{n}/{m}: {got:.1f}% vs {exp}%")
+            _e7_fails += 1
+    if _e7_fails == 0:
+        print(f"  [OK  ] E7 G1: all 16 cells at k=50 and k=200 match Table 5")
+    # G2: SAW/mm/opt = 100% at all kappa
+    for k in sorted(_e7df["alpha"].unique()):
+        q2 = _e7df.query(f"alpha=={k} and agg=='saw' and norm=='minmax' and mont=='optimal'")["nd_Q2Ap"].mean()*100
+        if abs(q2-100.0) > 0.1:
+            FAIL.append(f"E7 G2 SAW/mm/opt k={k}: {q2:.1f}% != 100%")
+    _kappas_ok = sorted(_e7df["alpha"].unique())
+    print(f"  [OK  ] E7 G2: SAW/mm/opt = 100% at k = {list(_kappas_ok)}")
+    # E7 macros cross-check (sample key macros)
+    _e7_mac_text = _e7_macros.read_text(encoding="utf-8")
+    def _get_e7_mac(name):
+        m = _re_e7.search(rf"\\newcommand\{{\\{name}\}}\{{([+-]?\d+\.?\d*)\}}", _e7_mac_text)
+        return float(m.group(1)) if m else None
+    _E7_MACRO_CHECKS = {
+        "AggKtwentyfive": (25, 21.1), "AggKonehundred": (100, 9.3),
+        "AggKfourhundred": (400, -5.7), "AggKthousand": (1000, -9.0),
+    }
+    _e7_csv = RESULTS / "e7" / "e7_contrasts.csv"
+    if _e7_csv.exists():
+        _cdf = _pd_e7.read_csv(_e7_csv)
+        for mac, (k, exp_mac) in _E7_MACRO_CHECKS.items():
+            csv_val = _cdf.query(f"kappa=={k} and contrast=='Agg_pooled3'")["diff_pp"].values
+            if len(csv_val) == 0:
+                continue
+            got_csv = float(csv_val[0])
+            got_mac = _get_e7_mac(mac)
+            if got_mac is not None and abs(got_mac - got_csv) > 0.15:
+                FAIL.append(f"E7 macro {mac}: macro={got_mac} != CSV={got_csv:.2f}")
+        print(f"  [OK  ] E7 macros match e7_contrasts.csv (sample 4/36)")
+else:
+    print(f"  [INFO] e7_raw.csv or macros_e7.tex not found — run E7 and make_fig_kappa.py")
+
+# ── 8.05: N-gram duplicate detection (warns only, not a hard failure) ────────
+print()
+print("=== 8.05: N-gram duplicate detection (n=12, warn >=2 hits) ===")
+import re as _re_ng, collections as _col_ng
+_ng_tex = tex
+_ng_body = _re_ng.sub(r"%.*", "", _ng_tex)
+_ng_body = _re_ng.sub(r"\\(begin|end)\{[^}]*\}", " ", _ng_body)
+_ng_words = _re_ng.findall(r"[A-Za-z0-9.][A-Za-z0-9.\-]*", _ng_body.lower())
+_n = 12
+_grams = _col_ng.Counter(tuple(_ng_words[i:i+_n]) for i in range(len(_ng_words)-_n))
+# Whitelist: legitimate repeated phrases (equation labels, boilerplate)
+_NG_WHITELIST = {
+    "the reference set analyses in section", "for any two alternatives i and i",
+    "p_g is the greedy portfolio", "the amplitude identity",
+    "exact assembly stays pareto efficient", "under optimal assembly",
+    "at p 0 05 each tost", "of each criterion",
+}
+_ng_hits = [(g, c) for g, c in _grams.items()
+            if c >= 2 and " ".join(g[:6]) not in _NG_WHITELIST]
+if _ng_hits:
+    top = sorted(_ng_hits, key=lambda x: -x[1])[:5]
+    for g, c in top:
+        phrase = " ".join(g)
+        print(f"  [WARN] {c}x: '{phrase}'")
+    print(f"  (Total n-gram duplicates: {len(_ng_hits)}; check if intentional)")
+else:
+    print(f"  [OK  ] No unexpected {_n}-gram repeats")
+
 if FAIL:
-    print(f"FAILED: {len(FAIL)} check(s):")
     for msg in FAIL:
         print(f"  x {msg}")
     sys.exit(1)

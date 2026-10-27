@@ -2651,6 +2651,21 @@ locate the crossing more precisely.
 All five non-null contrasts remain significant after Holm correction across
 the six values of~$\kappa$.
 
+\begin{figure}[!tbp]
+\centering
+\includegraphics[width=0.92\columnwidth]{figures/fig_kappa.pdf}
+\caption{%
+  Aggregation contrast (SAW minus TOPSIS, three informative cells,
+  Section~\ref{sec:factorial}) as a function of weight concentration~$\kappa$.
+  Error bars: $95\%$ bootstrap CI ($B=2000$, paired by draw).
+  Shaded band: equivalence margin $\pm\eqmargin=\pm2.5$~pp.
+  Open diamond ($\diamond$) marks the single non-significant point ($\kappa=200$);
+  all others survive Holm correction.
+  Lower $\kappa$ means more dispersed weights; the sign of the contrast
+  reverses between $\kappa=100$ and $\kappa=400$.}
+\label{fig:kappa}
+\end{figure}
+
 Decomposing by method: the mean $Q_2$ across the three informative cells
 falls from $\SAWmeanKtwentyfive\%$ (SAW, $\kappa=25$) to
 $\SAWmeanKtwohundred\%$ ($\kappa=200$) and stabilises near~$70\%$ for
@@ -2679,6 +2694,9 @@ is intermediate; the sign of the assembly effect also reverses with~$\kappa$.
 
 All 36 bootstrap intervals are unadjusted (6 contrasts $\times$ 6~$\kappa$);
 the analysis is post hoc and descriptive throughout.
+The full $6\kappa\times8$-cell grid is in Supplementary
+Table~\ref{tab:e7grid}; Figure~\ref{fig:kappa} shows the aggregation
+contrast.
 
 
 % =======================================================================
