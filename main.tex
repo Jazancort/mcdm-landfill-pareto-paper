@@ -223,9 +223,9 @@ uncertainty of the weights, not on the operator alone.
 The value of exact assembly is conditional twice over.
 Under min--max it is guaranteed for SAW and adds $+\AsmMMtopsis$~pp for TOPSIS
 at $\kappa=200$. Under vector normalisation it gains $+\AsmVecSAWKtwentyfiveMag$~pp (SAW)
-at $\kappa=25$, loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS)
-at $\kappa=200$, has no detectable effect at $\kappa=50$, and loses
-$\AsmVecSAWKthousandMag$~pp (SAW) at $\kappa=1000$.
+at $\kappa=25$, has no detectable effect at $\kappa=50$,
+loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$,
+and loses $\AsmVecSAWKthousandMag$~pp (SAW) at $\kappa=1000$.
 
 The reason is a mechanism that operates upstream of the aggregation
 operator, and it is the analytical core of the paper.
@@ -934,7 +934,7 @@ $3/\Ncand$ of the column.
 \paragraph{Regulatory exclusion.}
 Sites overlapping a protected area (\texttt{dist\_protected}$=0$) cannot
 be licensed and are removed, leaving $\Nvia=\Ncand-\Nexcl$ admissible
-sites.
+sites (Figure~\ref{fig:map}).
 
 
 Criterion orientation and sense follow Table~\ref{tab:criteria}.
@@ -1509,7 +1509,7 @@ For the lower bound, let $P^+=\sum_{\delta_j>0}\delta_j$.
 Since $\sum_j\delta_j=0$ we have $P^+=-\sum_{\delta_j<0}\delta_j>0$,
 so $\lVert\delta\rVert_1=2P^+$.
 Also $\lVert\delta\rVert_2^2\le 2(P^+)^2$
-(because the positive and negative parts each contribute at most $S^2$
+(because the positive and negative parts each contribute at most $(P^+)^2$
 to the squared norm, with equality when each part is concentrated on a
 single component).
 Therefore $m_{\mathrm{eff}}=\lVert\delta\rVert_1^2/\lVert\delta\rVert_2^2\ge 4(P^+)^2/(2(P^+)^2)=2$.
@@ -1732,8 +1732,8 @@ $\max - \min = 1$, giving $\rho_j = 1/\sqrt{n_1}$.\hfill$\square$
 \end{sloppypar}
 
 \noindent\textbf{Empirical calibration.}
-Table~\ref{tab:amplitude} lists $\rho_j$ and $w_j^{\mathrm{eff}}/w_j$
-for all eleven criteria.
+Table~\ref{tab:amplitude} and Figure~\ref{fig:slope_weights} show $\rho_j$ and
+$w_j^{\mathrm{eff}}/w_j$ for all eleven criteria.
 \textit{Perm} ($w_j = 0.152$): $\rho_j = 0.583$, effective-weight
 factor $\mathbf{\PermInflation\times}$.
 \textit{Urban} ($w_j = 0.166$): factor $\mathbf{\UrbanRatioVec\times}$.
@@ -1926,7 +1926,7 @@ normalisation, and PROMETHEE~II attain the reference set.
   binary SE-facing indicator).
   The gap is defined in~\eqref{eq:gap} and computed against the
   space-$\Aspace$ Pareto frontier; Figure~\ref{fig:pareto} projects these
-  portfolios onto the space-$A'$ frontier for comparison.
+  portfolios onto the space-$\Aspace'$ frontier for comparison.
   The $\in\mathcal{F}$ column indicates Pareto membership
   (determined by a separate dominance test);
   the gap measures simultaneous improvement and can be zero for a
@@ -1957,7 +1957,7 @@ normalisation constants are recomputed over the $\Nvia$ admissible sites
 The failures in space~$\Aspace$ are not solely attributable to the methods;
 they are partly induced by computing the value scale over sites that
 cannot be selected.
-Section~\ref{sec:alignment} returns to this.
+Section~\ref{sec:coding} returns to this.
 
 \begin{figure*}[!t]
 \centering
@@ -2076,8 +2076,7 @@ reaches the frontier less often than greedy
 ($Q_2 = \QtwovecOptimal\%$ against $\QtwovecGreedy\%$; SAW)
 but achieves lower regret ($R = \RegrSAWvecOpt$ against $\RegrSAWvecGrd$~pp,
 difference $\RegrDiffSAWvec$~pp, 95\%~CI
-$[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp; below the $\eqmargin=2.5$~pp
-pre-specified margin for $Q_2$ contrasts, applied here by analogy).
+$[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp).
 The portfolios selected by exact optimisation of the distorted score
 miss the frontier of~$w$ more often but carry slightly lower regret;
 the difference is below $\eqmargin$ and we do not treat it as practically
@@ -2215,11 +2214,9 @@ of $w^{\mathrm{eff}}$ precisely, and departs from the frontier defined by $w$.
 Greedy assembly is myopic and, on this evidence, less exposed to a distortion
 it does not optimise. This last statement is an interpretation;
 Section~\ref{sec:e1} isolates the component of the distortion responsible.
-Value regret ($R$, Table~\ref{tab:factorial}) corroborates it:
-under vector normalisation exact assembly achieves $\RegrSAWvecOpt$~pp regret
-against $\RegrSAWvecGrd$~pp for greedy ($\RegrDiffSAWvec$~pp less,
-95\%~CI $[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp;
-below the $\eqmargin=2.5$~pp practical-significance margin, applied here by analogy).
+Value regret is consistent with this reading, but the difference
+($\RegrDiffSAWvec$~pp, 95\%~CI $[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp)
+is below $\eqmargin$~pp.
 % ----------------------------------------------------------
 
 % ----------------------------------------------------------
@@ -2415,7 +2412,7 @@ pre-specified predictions}, not as confirmatory evidence for the theorem
 nor as fully post hoc exploratory.
 Four score matrices differ only in $A_j$; objectives, frontier, draws and
 feasible set are identical to the factorial ($\kappa=200$, $\ndraws$
-draws, space $A'$).
+draws, space~$\Aspace'$).
 \textbf{M} sets $A_j\equiv1$.
 \textbf{B} sets $A_j=\bar A_g$, the weighted mean of $\rho_j$ within
 the group of $j$, which reproduces the between-group distortion of
@@ -2435,7 +2432,7 @@ assembly; (P3)~cell~B under greedy assembly performs close to min--max.
 \begin{table*}[!t]
 \centering
 \caption{Intervention on amplitudes, SAW, $\kappa=200$, $\ndraws$ draws,
-  space $A'$. $\mathrm{TV}_B$ and $\mathrm{TV}_W$ as in
+  space~$\Aspace'$. $\mathrm{TV}_B$ and $\mathrm{TV}_W$ as in
   Section~\ref{sec:groupconst}. Loss is relative to cell~M under optimal
   assembly.}
 \label{tab:e1}
@@ -2641,9 +2638,16 @@ $\AggContrast$~pp at $\kappa=200$
 (equivalent to zero; TOST $\eqmargin=2.5$~pp, $p=\TOSTp$;
 equivalence holds for any $\eqmargin\ge1.9$~pp),
 $\AggKfourhundred$~pp at $\kappa=400$,
-and $\AggKthousand$~pp at $\kappa=1000$.
+and $\AggKthousand$~pp at $\kappa=1000$ (Fig.~\ref{fig:kappa}).
 The sign changes between $\kappa=100$ and $\kappa=400$; the grid does not
 locate the crossing more precisely.
+Over the tested grid the decline is monotone, but it does not continue: at the
+deterministic limit ($\kappa\to\infty$, nominal weights;
+Supplementary Table~\ref{tab:e7grid}, column $\kappa\to\infty$)
+SAW and TOPSIS attain the frontier in the same two of three informative cells
+and the contrast is exactly zero.
+The negative values at $\kappa=400$--$1000$ therefore arise under small but
+non-zero weight uncertainty, not at the nominal weights themselves.
 Applying Holm correction to all six contrasts simultaneously, five remain
 significant; only $\kappa=200$ is non-significant.
 
@@ -2684,6 +2688,9 @@ $\NormKtwentyfive$~pp at $\kappa=25$, peaks near $\kappa=50$
 ($+\NormGreedyContrastKfifty$~pp), remains significant through $\kappa=400$
 ($\NormKfourhundred$~pp) and is not distinguishable from zero at $\kappa=1000$
 ($\NormKthousand$~pp). It never favours vector normalisation significantly.
+At $\kappa\to\infty$ the contrast is zero, because both normalisations yield
+efficient greedy portfolios at the nominal weights; the non-significant value at
+$\kappa=1000$ reflects this limit.
 
 \textbf{Assembly under vector normalisation.}
 Relative to greedy, exact assembly changes $Q_2$ by
@@ -2694,9 +2701,9 @@ $-\AsmVecSAW$~pp (SAW) and $-\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$
 $-\AsmVecTOPKthousandMag$~pp (TOPSIS) at $\kappa=1000$;
 at the deterministic limit ($\kappa\to\infty$, nominal AHP weights)
 the SAW/vec/optimal and TOPSIS/vec/optimal cells reach $0\%$
-(Supplementary Table~\ref{tab:e7grid}, rightmost column),
-confirming that the large penalties at $\kappa=1000$ are not artefacts
-of the stochastic draw but reflect the behaviour at the nominal weights.
+(Supplementary Table~\ref{tab:e7grid}, column $\kappa\to\infty$);
+for this factor, unlike aggregation, the large penalties at high $\kappa$
+converge to a deterministic limit, not to zero.
 
 \textbf{Comparison across factors.}
 Measured by range over the grid, the assembly effect under vector normalisation
@@ -2976,12 +2983,16 @@ Fifth, characterise the uncertainty of the weights before choosing an
 aggregation operator. On Fogo the SAW--TOPSIS contrast reverses sign across
 the $\kappa$ grid (Section~\ref{sec:kappa}): SAW reaches the frontier more
 often when weights are dispersed ($\kappa\le100$), TOPSIS when they are
-concentrated ($\kappa\ge400$), and the two are equivalent at $\kappa=200$.
+concentrated but still uncertain ($\kappa=400$--$1000$);
+at the nominal weights alone the two operators are indistinguishable on Fogo.
 An analyst with weights elicited from several stakeholders can locate the problem
 on this scale, since
-$\hat\kappa=w_j(1-w_j)/\widehat{\mathrm{Var}}(w_j)-1$
-for any criterion $j$; without such information, attainment gives no basis
-for choosing between the two operators.
+$\hat\kappa=\bigl(1-\textstyle\sum_j\bar w_j^2\bigr)
+\big/\textstyle\sum_j\widehat{\mathrm{Var}}(w_j)-1$
+(individual $\hat\kappa_j=w_j(1-w_j)/\widehat{\mathrm{Var}}(w_j)-1$
+varying widely signals poor Dirichlet fit);
+without such information, attainment gives no basis for choosing between
+the two operators.
 The recommendations above apply to SAW and TOPSIS: the amplitude enters
 the score linearly for SAW and, by analogy, quadratically for TOPSIS.
 VIKOR is invariant to per-criterion affine transformation by its ratio
@@ -3199,10 +3210,10 @@ Benchmarking by rank agreement can establish that methods differ, but not that
 any is closer to the decision maker's objectives.
 Where the feasible set is enumerable, as it is for cardinality-constrained siting
 problems of realistic size, an exact frontier provides that external standard.
-Under it, normalisation, a choice the applied literature rarely reports, matters
-across the whole range of weight uncertainty tested, whereas the aggregation
-operator, the choice it compares most, matters in a direction that depends on
-that uncertainty.
+Under it, normalisation, a choice the applied literature rarely reports, shifts
+attainment in the same direction wherever its effect is detectable
+($\kappa\le400$), whereas the aggregation operator, the choice it compares most,
+matters in a direction that depends on the uncertainty of the weights.
 
 % -----------------------------------------------------------------------
 \section*{CRediT authorship contribution statement}

@@ -1557,6 +1557,56 @@ print()
 print("=== Rule regression tests ===")
 
 # All MUST_FAIL cases run through run_all_checks() (not just BAD_PHRASES substring)
+
+# ── R9: every figure and table label must be cited in the body ────────────────
+print("=== R9: figure/table citations ===")
+body_no_floats = re.sub(
+    r"(?s)\\begin\{(?:figure|table)\*?\}.*?\\end\{(?:figure|table)\*?\}", "", tex
+)
+all_labels = re.findall(r"\\label\{((?:fig|tab):[^}]+)\}", tex)
+for lab in all_labels:
+    pattern = r"\\(?:ref|pageref|autoref)\{" + re.escape(lab) + r"\}"
+    if re.search(pattern, body_no_floats):
+        print(f"  [OK  ] cited: {lab}")
+    else:
+        FAIL.append(f"R9: not cited: {lab}")
+        print(f"  [FAIL] R9 not cited: {lab}")
+
+# ── R10: log must not request recompilation ────────────────────────────────────
+print("=== R10: no rerun request in log ===")
+if log_path and log_path.exists():
+    log_txt = log_path.read_text(encoding="utf-8", errors="replace")
+    if re.search(r"Rerun to get|Label\(s\) may have changed", log_txt):
+        FAIL.append("R10: log requests rerun")
+        print("  [FAIL] R10: rerun requested in log")
+    else:
+        print("  [OK  ] R10: no rerun needed")
+
+# ── R11: forbidden phrases in main.tex ────────────────────────────────────────
+print("=== R11: forbidden phrases ===")
+FORBIDDEN_R11 = [
+    ("matters across the whole range of weight uncertainty tested",
+     "R11: banned: 'whole range' in §9"),
+    ("confirming that Section",
+     "R11: banned: 'confirming that Section' (broken sentence)"),
+    ("most $\\\\kappa$-sensitive",
+     "R11: banned: 'most κ-sensitive'"),
+    ("normalisation dominates",
+     "R11: banned: 'normalisation dominates'"),
+    ("(\\\\mathrm{TV},N_{\\\\mathrm{eff}})",
+     "R11: banned: TV N_eff should be TV m_eff"),
+    ("robustness check",
+     "R11: banned: 'robustness check' in table caption"),
+    ("for any criterion \\$j\\$; without such information",
+     "R11: banned: per-criterion kappa-hat"),
+]
+for phrase, label in FORBIDDEN_R11:
+    if phrase in tex:
+        FAIL.append(label)
+        print(f"  [FAIL] {label}")
+    else:
+        print(f"  [OK  ] {label}")
+
 _MUST_FAIL = [
     # BAD_PHRASES
     ("& 0.135 & 0.995",          "Tab2 stale rho_raw slope"),
