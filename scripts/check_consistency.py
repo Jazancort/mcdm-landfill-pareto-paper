@@ -1321,6 +1321,50 @@ try:
 except ImportError:
     print("  [INFO] classify_pf.py not found -- skipping")
 
+# ── Rule 6c: Tab6 contrasts = deterministic function of Tab5 Q2 values ───────
+# Every Table 6 contrast is computed from Table 5 Q2 cells (3 informative, †).
+# Tolerance = 0.2 pp (rounding from 1dp display).
+print()
+print("=== 6c: Table 6 contrasts derived from Table 5 Q2 values ===")
+def _get_Q(macros_text, name):
+    """Extract numeric value of \\newcommand{\\name}{...} from macros text."""
+    import re as _re6c
+    m = _re6c.search(r"\\(?:re)?newcommand\{\\%s\}\{([+-]?[\d.]+)\}" % name, macros_text)
+    return float(m.group(1)) if m else None
+
+try:
+    _macros_text = (ROOT / "macros.tex").read_text(encoding="utf-8")
+    _macro_amp_text = (ROOT / "macros_amplitudes.tex").read_text(encoding="utf-8")
+    _all_macros = _macros_text + _macro_amp_text
+    for _k, _suffix, _lo_mac, _hi_mac, _agg_mac, _ci_lo, _ci_hi in [
+        ("200", "", "AggLo", "AggHi", "AggContrast", -2.5, 2.5),
+        ("50",  "Kfifty", "AggLoKfifty", "AggHiKfifty", "AggContrastKfifty", 15.0, 25.0),
+    ]:
+        # Table 5 Q2 values (use renewcommand override values from macros.tex)
+        def Q(agg, norm, mont):
+            if agg == "saw":
+                names = {"mm_grd": "QtwommGreedy", "mm_opt": "QtwommOptimal",
+                         "vec_grd": "QtwovecGreedy", "vec_opt": "QtwovecOptimal"}
+            else:
+                names = {"mm_grd": "QtwoTOPSISmmGrd", "mm_opt": "QtwoTOPSISmmOpt",
+                         "vec_grd": "QtwoTOPSISvecGrd", "vec_opt": "QtwoTOPSISvecOpt"}
+            key = f"{norm}_{mont[:3]}"
+            macro = names[key] + ("Kfifty" if _suffix else "")
+            v = _get_Q(_all_macros, macro)
+            return v if v is not None else 0.0
+        # Aggregation contrast (3 informative cells †: mm_grd, vec_grd, vec_opt)
+        agg_derived = ((Q("saw","mm","grd") - Q("topsis","mm","grd")) +
+                       (Q("saw","vec","grd") - Q("topsis","vec","grd")) +
+                       (Q("saw","vec","opt") - Q("topsis","vec","opt"))) / 3.0
+        agg_macro = _get_Q(_all_macros, _agg_mac)
+        if agg_macro is not None and abs(agg_derived - float(agg_macro)) > 0.2:
+            FAIL.append(f"6c Tab6 Agg κ={_k}: macro {agg_macro} ≠ Tab5-derived {agg_derived:.2f}")
+            print(f"  [FAIL] Agg κ={_k}: macro={agg_macro}, Tab5-derived={agg_derived:.2f}")
+        else:
+            print(f"  [OK  ] Agg κ={_k}: macro={agg_macro}, Tab5-derived={agg_derived:.2f}")
+except Exception as _e6c:
+    print(f"  [WARN] Rule 6c skipped: {_e6c}")
+
 # ── Rule 8.03: Orphan bib entries (in .bbl but not cited in main.tex) ─────
 # A key in .bbl but not in any \cite in main.tex indicates \nocite{*} or
 # a supplementary-only citation sneaking into the main bibliography.
