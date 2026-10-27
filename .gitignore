@@ -1,5 +1,7 @@
 # LaTeX build artefacts (compiled output only)
 main.pdf
+main.xdv
+Normalisation*.pdf
 supplementary.pdf
 *.aux
 *.bbl
