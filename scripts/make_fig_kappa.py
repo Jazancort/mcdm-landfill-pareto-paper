@@ -55,12 +55,12 @@ assert all_ok, "Macro mismatch — check macros_e7.tex vs e7_contrasts.csv"
 plt.rcParams.update({
     "font.family":      "sans-serif",
     "font.sans-serif":  ["Arial", "Helvetica", "DejaVu Sans"],
-    "font.size":        11,
-    "axes.labelsize":   13,
+    "font.size":        12,
+    "axes.labelsize":   14,
     "axes.titlesize":   14,
-    "xtick.labelsize":  11,
-    "ytick.labelsize":  11,
-    "legend.fontsize":  10,
+    "xtick.labelsize":  12,
+    "ytick.labelsize":  12,
+    "legend.fontsize":  11,
     "figure.dpi":       150,
     "savefig.dpi":      300,
     "axes.linewidth":   1.0,
@@ -93,15 +93,16 @@ ax.plot(kappas, mid, "-o", color="#2980B9", linewidth=2.5, markersize=6,
 # Mark significant points
 for k, m, s in zip(kappas, mid, sig_mask):
     if not s:
-        ax.plot(k, m, "D", color="#2980B9", markersize=7, zorder=3)
+        ax.plot(k, m, "D", color="#2980B9", markersize=8,
+                markerfacecolor="white", markeredgewidth=2, zorder=3)
 
 ax.set_xscale("log")
 ax.set_xticks(kappas)
 ax.set_xticklabels([str(k) for k in kappas])
 ax.set_xlim(18, 1300)
 
-ymax = max(abs(mid.min()), abs(mid.max())) * 1.35 + 2
-ax.set_ylim(-ymax, ymax)
+# Manual limits: data+CI range approx [-11, +24]; give headroom
+ax.set_ylim(-14, 27)
 
 ax.set_xlabel(r"Weight concentration $\kappa$ (log scale)", fontweight="bold")
 ax.set_ylabel("SAW\u2009\u2212\u2009TOPSIS attainment (pp)", fontweight="bold")
@@ -110,7 +111,7 @@ ax.legend(loc="upper right", frameon=False, fontsize=10)
 
 # Note about open diamond for null result
 ax.text(0.02, 0.03,
-        r"$\diamond$: not sig. ($\kappa=200$)",
+        "\u25c7: not sig. (\u03ba=200)",
         transform=ax.transAxes, fontsize=9, color="#555555", va="bottom")
 
 plt.tight_layout()

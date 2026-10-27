@@ -76,6 +76,7 @@
 \input{macros_f8}
 % E7 kappa sweep contrasts (authoritative run 2026-11-01, verify_e7_gates.py 22/22 PASS)
 \input{macros_e7}
+\input{macros_kappa_inf}
 % Auto-generated regret macros (scripts/compute_regret.py) -- DO NOT EDIT BY HAND
 \input{results/regret/regret_macros}
 \begin{document}
@@ -801,13 +802,14 @@ is obtained \emph{exactly}, with no metaheuristic approximation.
 All dominance tests use a tolerance $\varepsilon=10^{-9}$.
 
 For dominated portfolios we report a scale-free shortfall.
-With $R_\ell = \max_{t\in\Tset}F_\ell - \min_{t\in\Tset}F_\ell$,
+With $\Lambda_\ell = \max_{t\in\Tset}F_\ell - \min_{t\in\Tset}F_\ell$
+(the range of objective~$\ell$),
 \begin{equation}
   \label{eq:gap}
   \mathrm{gap}(t) = \max_{t'\in\Tset}\;\min\!\left(
-    \frac{F_1(t){-}F_1(t')}{R_1},\;
-    \frac{F_2(t){-}F_2(t')}{R_2},\;
-    \frac{F_3(t'){-}F_3(t)}{R_3}
+    \frac{F_1(t){-}F_1(t')}{\Lambda_1},\;
+    \frac{F_2(t){-}F_2(t')}{\Lambda_2},\;
+    \frac{F_3(t'){-}F_3(t)}{\Lambda_3}
   \right)^{\!+},
 \end{equation}
 where $(x)^{+}=\max(0,x)$, so $\mathrm{gap}(t)=0$ if $t\in\Fset$.
@@ -1171,7 +1173,7 @@ of $\kappa$ is discussed in Section~\ref{sec:entries}.
 
 Min-max and vector constants may be computed over all $\Ncand$ candidates
 (space~$\Aspace$) or over the $\Nvia$ admissible ones (space~$\Aspace'$).
-Space~$A$ reproduces the source study (frontier size $|\Fset|=\FAsize$ portfolios
+Space~$\Aspace$ reproduces the source study (frontier size $|\Fset|=\FAsize$ portfolios
 at the nominal AHP weights $\wahp$, reported for context only;
 trios are restricted to admissible sites in both cases, with only the
 normalisation reference differing between $\Aspace$ and $\Aspace'$);
@@ -1259,28 +1261,24 @@ produced by min--max, vector, and rank normalisation.
 % ----------------------------------------------------------
 
 \label{sec:amp_identity}
-\label{lem:amplitude}
-The following states in closed form a qualitative relationship established
-by \citet{Choo1999}: a weight cannot be interpreted independently of the
-scale and range of its criterion.
-Let $n_j : \mathbb{R}^N \to \mathbb{R}^N$ be a normalisation applied
-column-wise to criterion $j$, and let
-\begin{equation}
-  A_j = \max_i n_j(x_{ij}) - \min_i n_j(x_{ij})
-\end{equation}
-be the \emph{amplitude} of the normalised column.
-In any additive aggregation $s(i) = \sum_j w_j n_j(x_{ij})$, the
-contribution of criterion $j$ to score differences between any two
-alternatives is proportional to $w_j A_j$.
-The effective weights are therefore
+\begin{lemma}[Amplitude identity]\label{lem:amplitude}
+Let $n_j$ be any column-wise normalisation applied to criterion $j$, and
+let $A_j = \max_i n_j(x_{ij}) - \min_i n_j(x_{ij})$ be the
+\emph{amplitude} of the normalised column.
+In any additive aggregation $s(i) = \sum_j w_j n_j(x_{ij})$,
+the effective weights are
 \begin{equation}
   \label{eq:weff}
   w_j^{\mathrm{eff}} = \frac{w_j A_j}{\sum_k w_k A_k},
 \end{equation}
 and $w^{\mathrm{eff}} = w$ for all $w$ if and only if $A_j$ is constant
 across $j$.
+For affine $n_j(x)=b_j+A_j\tilde{n}_j(x)$, the ranking and the
+exact-assembly optimum are identical to SAW on min--max columns with
+weights $w^{\mathrm{eff}}$.
+\end{lemma}
 
-\textit{Derivation.}
+\begin{proof}
 For any two alternatives $i$ and $i'$,
 $s(i) - s(i') = \sum_j w_j [n_j(x_{ij}) - n_j(x_{i'j})]$.
 The maximum absolute contribution of criterion $j$ to this difference,
@@ -1290,7 +1288,8 @@ criteria, is therefore $w_j A_j / \sum_k w_k A_k$, which is $w_j^{\mathrm{eff}}$
 in~\eqref{eq:weff}.
 The ``if and only if'' follows because $w^{\mathrm{eff}} = w$ iff
 $w_j A_j / \sum_k w_k A_k = w_j$ for all $j$, which holds iff all
-$A_j$ equal the same constant.\hfill$\square$
+$A_j$ equal the same constant.
+\end{proof}
 
 For affine normalisation $n_j(x) = b_j + A_j \tilde{n}_j(x)$ (which
 includes min--max and vector), the score reduces to
@@ -1506,14 +1505,14 @@ and $m_{\mathrm{eff}} \ge 2$ (lower bound) and $m_{\mathrm{eff}} \le m$ (upper b
 Equation~\eqref{eq:l2fact} is immediate from~\eqref{eq:meff}:
 $\lVert\delta\rVert_2 = \lVert\delta\rVert_1/\sqrt{m_{\mathrm{eff}}}$
 and $\lVert\delta\rVert_1 = 2\,\mathrm{TV}$.
-For the lower bound, let $S=\sum_{\delta_j>0}\delta_j$.
-Since $\sum_j\delta_j=0$ we have $S=-\sum_{\delta_j<0}\delta_j>0$,
-so $\lVert\delta\rVert_1=2S$.
-Also $\lVert\delta\rVert_2^2\le 2S^2$
+For the lower bound, let $P^+=\sum_{\delta_j>0}\delta_j$.
+Since $\sum_j\delta_j=0$ we have $P^+=-\sum_{\delta_j<0}\delta_j>0$,
+so $\lVert\delta\rVert_1=2P^+$.
+Also $\lVert\delta\rVert_2^2\le 2(P^+)^2$
 (because the positive and negative parts each contribute at most $S^2$
 to the squared norm, with equality when each part is concentrated on a
 single component).
-Therefore $m_{\mathrm{eff}}=\lVert\delta\rVert_1^2/\lVert\delta\rVert_2^2\ge 4S^2/(2S^2)=2$.
+Therefore $m_{\mathrm{eff}}=\lVert\delta\rVert_1^2/\lVert\delta\rVert_2^2\ge 4(P^+)^2/(2(P^+)^2)=2$.
 The upper bound is Cauchy--Schwarz: $\lVert\delta\rVert_1^2\le m\,\lVert\delta\rVert_2^2$,
 so $m_{\mathrm{eff}}\le m$.
 The upper bound is attained when all $|\delta_j|$ coincide; the lower bound
@@ -1868,7 +1867,7 @@ sub-optimality in the factorial experiment into four ordered factors:
     The amplitude identity~\eqref{eq:weff} does not apply exactly to them.
     The factorial experiment measures the residual effect after
     controlling for items~1 and~2.
-  \item \emph{Reference-set effect (normalisation over $A$ vs.\ $A'$):}
+  \item \emph{Reference-set effect (normalisation over $\Aspace$ vs.\ $\Aspace'$):}
     Including inadmissible sites in the normalisation reference shifts
     the scale without those sites being selectable
     (Section~\ref{sec:coding} and Table~\ref{tab:coding2x2}).
@@ -1926,7 +1925,7 @@ normalisation, and PROMETHEE~II attain the reference set.
   (normalisation over all $\Ncand$ candidates; aspect encoded as
   binary SE-facing indicator).
   The gap is defined in~\eqref{eq:gap} and computed against the
-  space-$A$ Pareto frontier; Figure~\ref{fig:pareto} projects these
+  space-$\Aspace$ Pareto frontier; Figure~\ref{fig:pareto} projects these
   portfolios onto the space-$A'$ frontier for comparison.
   The $\in\mathcal{F}$ column indicates Pareto membership
   (determined by a separate dominance test);
@@ -2656,7 +2655,7 @@ significant; only $\kappa=200$ is non-significant.
   Section~\ref{sec:factorial}) as a function of weight concentration~$\kappa$.
   Shaded band: $95\%$ bootstrap CI ($B=2000$, paired by draw).
   Grey band: equivalence margin $\pm\eqmargin=\pm2.5$~pp.
-  The open diamond marks the only point not significant after Holm correction
+  The open diamond marks the only non-significant point after Holm correction
   ($\kappa=200$). Lower $\kappa$ means more dispersed weights.}
 \label{fig:kappa}
 \end{figure}
@@ -2692,7 +2691,12 @@ $+\AsmVecSAWKtwentyfiveMag$~pp for SAW at $\kappa=25$
 ($95\%$ CI $[\AsmVecSAWKtwentyfiveLo,\,\AsmVecSAWKtwentyfiveHi]$), by
 $-\AsmVecSAW$~pp (SAW) and $-\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$
 (Section~\ref{sec:assembly}), and by $-\AsmVecSAWKthousandMag$~pp (SAW) and
-$-\AsmVecTOPKthousandMag$~pp (TOPSIS) at $\kappa=1000$.
+$-\AsmVecTOPKthousandMag$~pp (TOPSIS) at $\kappa=1000$;
+at the deterministic limit ($\kappa\to\infty$, nominal AHP weights)
+the SAW/vec/optimal and TOPSIS/vec/optimal cells reach $0\%$
+(Supplementary Table~\ref{tab:e7grid}, rightmost column),
+confirming that the large penalties at $\kappa=1000$ are not artefacts
+of the stochastic draw but reflect the behaviour at the nominal weights.
 
 \textbf{Comparison across factors.}
 Measured by range over the grid, the assembly effect under vector normalisation
