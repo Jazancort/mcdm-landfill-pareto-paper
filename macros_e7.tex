@@ -80,3 +80,16 @@
 \newcommand{\NeffRegrN}{3{,}000}    % n draws pooled
 \newcommand{\NeffMeanKtwentyfive}{7.2}  % mean N_eff at kappa=25
 \newcommand{\NeffMeanKthousand}{9.3}    % mean N_eff at kappa=1000 (≈ AHP)
+% -- New macros: kappa-framing rewrite (generate_macros_new.py 2026-10-27) ----
+% NormSigMin/Max: min/max of Norm_greedy where 95% CI excludes zero
+\newcommand{\NormSigMin}{13.3}    % kappa=400  (lowest sig value)
+\newcommand{\NormSigMax}{29.2}    % kappa=50   (highest sig value)
+% AsmVecSAW kappa=25 CI bounds  [1.2, 5.8]  SIG  (CI excludes zero)
+\newcommand{\AsmVecSAWKtwentyfiveLo}{1.2}
+\newcommand{\AsmVecSAWKtwentyfiveHi}{5.8}
+% NeffWithin: within-kappa fixed-effects slope (demeaned per kappa)
+% slope=+1.40 pp/unit, CI=[0.30,2.50], CI EXCLUDES ZERO
+% Variant B (corrected sign): within a fixed kappa, more-dispersed draws favour SAW
+\newcommand{\NeffWithinSlope}{+1.40}
+\newcommand{\NeffWithinLo}{0.30}
+\newcommand{\NeffWithinHi}{2.50}
