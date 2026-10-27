@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-mc_2cube_and_4thcell.py — Round 14, tarefas 2 e 3
-2³ balanceado {SAW,TOPSIS} × {mm,vec} × {greedy,ótimo} com interação norm×mont.
-Quarta casa 2×2: método ref=473 avaliado em A′.
+mc_2cube_and_4thcell.py — DEPRECATED. DO NOT USE.
 
-Run: uv run --with pandas --with numpy --with scipy python scripts/mc_2cube_and_4thcell.py
+This script has TWO known bugs confirmed on 2026-11-01 (DEV-E7-001):
+  1. SAW/vector scorer uses X_via/norms instead of X_adj/norms.
+     Cost criteria are treated as benefit criteria → portfolios always dominated.
+  2. Q2 check uses float32 objectives without self-exclusion → massive false positives.
+The two bugs cancel in the aggregate Q2 rate (coincidence verified by diagnose_q2_rates.py).
+
+USE INSTEAD: mc_2cube_fixed.py (correct scorer + pareto_utils float64 Q2 check)
+             scoring.py (canonical SAW/TOPSIS scorers, single source of truth)
 """
+raise RuntimeError(
+    "mc_2cube_and_4thcell.py is DEPRECATED (DEV-E7-001). "
+    "Use mc_2cube_fixed.py or scoring.py instead."
+)
+
 import sys, os, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np

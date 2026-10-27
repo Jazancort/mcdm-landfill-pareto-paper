@@ -58,6 +58,8 @@
 \input{macros_e6}
 % Auto-generated F8 macros (scripts/generate_macros_f8.py) -- DO NOT EDIT BY HAND
 \input{macros_f8}
+% E7 kappa sweep contrasts (authoritative run 2026-11-01, verify_e7_gates.py 22/22 PASS)
+\input{macros_e7}
 % Auto-generated regret macros (scripts/compute_regret.py) -- DO NOT EDIT BY HAND
 \input{results/regret/regret_macros}
 \begin{document}
@@ -1880,6 +1882,8 @@ Sections~\ref{sec:factorial}--\ref{sec:alignment} report the factorial experimen
 aggregation, assembly and cross-model alignment.
 Sections~\ref{sec:greedy}--\ref{sec:e6} present three follow-up experiments:
 the greedy-shortfall analysis, the E1 within-group intervention, and the E6 synthetic test.
+Section~\ref{sec:kappa} reports a post hoc sensitivity analysis of the factorial contrasts
+to the weight-draw concentration parameter~$\kappa$.
 
 % ----------------------------------------------------------
 \subsection{Base portfolios under nominal weights}
@@ -2604,6 +2608,66 @@ does not determine the cost (Remark~\ref{rem:TVW}).
 Point masses are associated with larger losses; whether concentrating
 sparsity in a single high-weight criterion is more harmful than
 distributing it uniformly across all criteria is not tested here.
+
+
+% =======================================================================
+% \S7.x Dependence on weight-draw dispersion (E7)
+% =======================================================================
+
+\subsection{Dependence on weight-draw dispersion}
+\label{sec:kappa}
+
+As a post hoc sensitivity analysis, pre-registered before the E7 run
+(PRESPEC\_E7\_KAPPA.md in the replication archive) and treated as
+descriptive throughout, we extended the factorial sweep to
+$\kappa\in\{25,50,100,200,400,1000\}$ with 500 paired draws per~$\kappa$.
+Gates~G1--G3 verified before reporting (all 22 checks pass; see
+\texttt{results/e7/e7\_gates.txt}).
+
+\textbf{Aggregation.}
+The pooled SAW--TOPSIS contrast (three informative cells;
+Section~\ref{sec:factorial}) decreases monotonically with~$\kappa$:
+$\AggKtwentyfive$~pp at $\kappa=25$,
+$\AggContrastKfifty$~pp at $\kappa=50$,
+$\AggKonehundred$~pp at $\kappa=100$,
+$\AggContrast$~pp at $\kappa=200$
+(equivalent to zero; TOST $\delta=2.5$~pp, $p=\TOSTp$),
+$\AggKfourhundred$~pp at $\kappa=400$,
+and $\AggKthousand$~pp at $\kappa=1000$.
+The contrast is statistically significant at every $\kappa$ except $\kappa=200$;
+it changes sign between $\kappa=100$ and $\kappa=400$, consistent with a
+zero crossing in the range~$[170,\,240]$ (interpolated from the 95\%~CI
+bounds of those two adjacent points).
+The grid contains no point between~100 and~400; a precise threshold
+cannot be estimated from these data.
+
+Decomposing by method: the mean $Q_2$ across the three informative cells
+falls from $\SAWmeanKtwentyfive\%$ (SAW, $\kappa=25$) to
+$\SAWmeanKtwohundred\%$ ($\kappa=200$) and stabilises near~$70\%$ for
+$\kappa\ge200$; the TOPSIS mean rises from $\TOPmeanKtwentyfive\%$ to
+$\TOPmeanKthousand\%$ over the same range.
+The reversal therefore comes from both sides.
+
+\textbf{Normalisation.}
+The min--max advantage over vector normalisation (greedy assembly) is
+$\NormKtwentyfive$~pp at $\kappa=25$, reaches a maximum near $\kappa=50$
+($\NormGreedyContrastKfifty$~pp), and remains positive and significant
+through $\kappa=400$ ($\NormKfourhundred$~pp); at $\kappa=1000$ it is not
+distinguishable from zero ($\NormKthousand$~pp).
+
+\textbf{Assembly under vector normalisation.}
+At $\kappa=25$ exact assembly improves $Q_2$ by $\AsmVecSAWKtwentyfiveMag$~pp
+for SAW (Section~\ref{sec:assembly}).
+At $\kappa=200$, it reduces $Q_2$ by $\AsmVecSAW$~pp (SAW) and
+$\AsmVecTOPSIS$~pp (TOPSIS) as reported in Section~\ref{sec:assembly}.
+At $\kappa=1000$ the penalty reaches $\AsmVecSAWKthousandMag$~pp (SAW) and
+$\AsmVecTOPKthousandMag$~pp (TOPSIS).
+Aggregation is the design choice most sensitive to $\kappa$; normalisation
+is intermediate; the relative cost of assembly depends on $\kappa$ but
+not monotonically for the two methods taken together.
+
+All 36 bootstrap intervals are unadjusted (6 contrasts $\times$ 6~$\kappa$);
+the analysis is post hoc and descriptive throughout.
 
 
 % =======================================================================

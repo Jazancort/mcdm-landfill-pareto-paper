@@ -65,6 +65,10 @@ G1. κ=200 and κ=50 reproduce Tables 5–6 to the reported precision.
 G2. SAW/min–max/optimal: Q₂ = 100% at every κ (Proposition 1).
 G3. 500 valid draws per κ; any failure is reported as a deviation.
 
+**Equivalence margin:** The aggregation contrast is declared equivalent to zero at κ=200 using
+TOST with δ=2.5 pp (matching the pre-declared margin in §5.4 of the manuscript). The 90%
+bootstrap CI must lie entirely within (−2.5, +2.5) pp.
+
 ---
 
 ## 6. Multiplicity and reporting
