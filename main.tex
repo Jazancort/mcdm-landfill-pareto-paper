@@ -47,7 +47,10 @@
 \newtheorem{lemma}{Lemma}
 \newtheorem{remark}{Remark}
 \newcommand{\argmax}{\operatorname{argmax}}
-% --- Semantic notation macros (one concept = one macro) ---
+% --- Float placement tuning (prevents near-empty pages) ---
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.10}
+\renewcommand{\floatpagefraction}{0.75}
 % 5.01: TOST equivalence margin (was \delta; changed to \Delta to separate from deviation vector)
 \newcommand{\eqmargin}{\Delta}
 % 5.01: Deviation vector \delta_j = w_j^eff - w_j (keeps \delta)
@@ -374,9 +377,10 @@ interactive linear programme.
 for infrastructure maintenance; \citet{Yang2015SMAAPO}
 combined SMAA with portfolio optimisation (SMAA-PO), producing
 acceptability indices for portfolios under full weight uncertainty.
-\citet{Liesio2021} reviewed 148 PDA contributions and found that
-cardinality-constrained portfolio selection with spatial interdependencies
-between facilities remains largely unexplored.
+\citet{Liesio2021} surveyed 148 PDA contributions; the
+cardinality-constrained selection problem with hard spatial-separation
+requirements (the defining constraint of our problem) is not among the
+problem structures that survey examines.
 Within PDA, \citet{Barbati2018} optimised portfolios under multiple
 satisfaction levels defined jointly across criteria, a formulation that
 avoids collapsing value into a single additive score; \citet{Carazo2010}
@@ -1397,7 +1401,7 @@ The directions are reversed: the same heavy-zero distribution inflates
 scaling.
 Figure~\ref{fig:binary_amplitude} illustrates the binary case analytically.
 
-\begin{figure}[!htbp]
+\begin{figure}[!tbp]
 \centering
 \includegraphics[width=0.92\columnwidth]{figures/fig_F5_binary_amplitude.pdf}
 \caption{%
@@ -1886,8 +1890,9 @@ Section~\ref{sec:base} establishes the base portfolios under nominal weights.
 Section~\ref{sec:lemmaconf} confirms the TV ordering empirically.
 Sections~\ref{sec:factorial}--\ref{sec:alignment} report the factorial experiment:
 aggregation, assembly and cross-model alignment.
-Sections~\ref{sec:greedy}--\ref{sec:e6} present three follow-up experiments:
-the greedy-shortfall analysis, the E1 within-group intervention, and the E6 synthetic test.
+Sections~\ref{sec:greedy}, \ref{sec:e1}, and~\ref{sec:e6} present
+follow-up experiments on the greedy shortfall, within-group distortion,
+and the $\mathrm{TV}_W$ prediction, respectively.
 Section~\ref{sec:kappa} reports a post hoc sensitivity analysis of the factorial contrasts
 to the weight-draw concentration parameter~$\kappa$.
 
@@ -2625,8 +2630,9 @@ but specified after the main factorial results were known; all results are
 descriptive.
 Weights are drawn as $\mathbf{w}\sim\mathrm{Dir}(\kappa\,\mathbf{w}_0)$;
 smaller $\kappa$ means more dispersed weights
-(for $w_{0,i}=0.2$, $\mathrm{SD}(w_i)$ falls from $0.078$ at $\kappa=25$
-to $0.013$ at $\kappa=1000$).
+($\mathrm{SD}(w_i)$ falls from $0.03$--$0.07$ across the 11 criteria at
+$\kappa=25$ to $0.005$--$0.012$ at $\kappa=1000$, computed from
+$\sqrt{w_{0,i}(1-w_{0,i})/(\kappa+1)}$ with the AHP weights as $\mathbf{w}_0$).
 Positive contrasts indicate higher attainment under SAW than under TOPSIS.
 
 \textbf{Aggregation.}
