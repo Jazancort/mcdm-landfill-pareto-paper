@@ -271,7 +271,8 @@ all_gates_pass = True
 for kappa, cells_known in KNOWN_Q2.items():
     dfk = df_raw[df_raw.alpha == kappa]
     for (agg, norm, mont), expected in cells_known.items():
-        got = dfk[(dfk.agg==agg)&(dfk.norm==norm)&(dfk.mont==mont)]["nd_Q2Ap"].mean()*100
+        # Use .astype(str) to guard against pandas StringDtype boolean indexing quirks
+        got = dfk.query(f"agg=='{agg}' and norm=='{norm}' and mont=='{mont}'")["nd_Q2Ap"].mean()*100
         ok = abs(got - expected) <= 0.5
         gate(f"G1 κ={kappa} {agg}/{norm}/{mont}", ok, f"{got:.1f}% vs expected {expected:.1f}%")
         if not ok:
@@ -280,7 +281,7 @@ for kappa, cells_known in KNOWN_Q2.items():
 # ── Gate G2: SAW/mm/opt = 100% at every κ ───────────────────────────────────
 for kappa in ALPHAS:
     dfk = df_raw[df_raw.alpha == kappa]
-    q2 = dfk[(dfk.agg=="saw")&(dfk.norm=="minmax")&(dfk.mont=="optimal")]["nd_Q2Ap"].mean()*100
+    q2 = dfk.query("agg=='saw' and norm=='minmax' and mont=='optimal'")["nd_Q2Ap"].mean()*100
     ok = abs(q2 - 100.0) < 0.01
     gate(f"G2 SAW/mm/opt κ={kappa}", ok, f"{q2:.1f}%")
     if not ok:
