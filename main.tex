@@ -126,19 +126,16 @@ over siting cost, environmental impact and social safety. Analytically, under
 additive aggregation, effective weights are proportional to nominal weight times
 the column amplitude; exact assembly is Pareto-efficient on all instances if and
 only if within-group amplitudes are constant. Empirically, on this
-instance, normalisation shifts Pareto attainment by $\NormGreedyContrast$~pp under greedy
-assembly (robust; $+\NormGreedyContrastKfifty$~pp at $\kappa=50$).
-The pooled SAW--TOPSIS mean contrast is near zero at $\kappa=200$
-($\AggContrast$\,pp, TOST $p=\TOSTp$) but rises to
-$\AggContrastKfifty$~pp at $\kappa=50$; aggregation depends on weight-draw dispersion ($\kappa$).
-The value of exact
-assembly under vector normalisation also depends on $\kappa$: it loses
-$\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$,
-but these effects are not distinguishable from zero at $\kappa=50$.
+instance, normalisation shifts greedy Pareto attainment by
+$\NormKfourhundred$--$\NormGreedyContrastKfifty$~pp wherever the effect is distinguishable
+from zero ($\kappa\le400$).
+The pooled SAW--TOPSIS contrast reverses sign, from
+$+\AggKtwentyfive$~pp at $\kappa=25$ to $\AggKthousand$~pp at $\kappa=1000$,
+and is equivalent to zero at $\kappa=200$ (TOST $p=\TOSTp$).
+Under vector normalisation, the effect of exact over greedy assembly
+falls from $\AsmVecSAWKtwentyfive$~pp to $\AsmVecSAWKthousand$~pp (SAW) over the same range.
 An intervention shows that
-between-group distortion never moves the portfolio off the frontier
-but costs
-$\RegretEoneB$~pp of value regret;
+between-group distortion never moves the portfolio off the frontier;
 within-group distortion reduces frontier attainment
 by $\EoneWloss$~pp. Separately, a criterion encoded inconsistently
 between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$.
@@ -147,8 +144,8 @@ between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$
 \begin{highlights}
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
 \item Exact assembly stays Pareto-efficient iff amplitudes are group-constant
-\item Normalisation shifts greedy Pareto attainment by $\NormGreedyContrast$--$\NormGreedyContrastKfifty$~pp at both $\kappa$ tested
-\item Aggregation and assembly under vector depend on weight-draw dispersion ($\kappa$)
+\item Normalisation shifts greedy Pareto attainment by $\NormKfourhundred$--$\NormGreedyContrastKfifty$~pp for $\kappa\le400$
+\item SAW--TOPSIS contrast reverses sign as weight dispersion falls: $+\AggKtwentyfive$ to $\AggKthousand$~pp
 \item Criterion coded differently in score and objectives alone costs $\RaspLoss$~pp
 \end{highlights}
 
@@ -379,8 +376,7 @@ combined SMAA with portfolio optimisation (SMAA-PO), producing
 acceptability indices for portfolios under full weight uncertainty.
 \citet{Liesio2021} surveyed 148 PDA contributions; the
 cardinality-constrained selection problem with hard spatial-separation
-requirements (the defining constraint of our problem) is not among the
-problem structures that survey examines.
+requirements (the defining constraint of our problem) does not address this problem structure.
 Within PDA, \citet{Barbati2018} optimised portfolios under multiple
 satisfaction levels defined jointly across criteria, a formulation that
 avoids collapsing value into a single additive score; \citet{Carazo2010}
@@ -1889,7 +1885,8 @@ The results are organised as follows.
 Section~\ref{sec:base} establishes the base portfolios under nominal weights.
 Section~\ref{sec:lemmaconf} confirms the TV ordering empirically.
 Sections~\ref{sec:factorial}--\ref{sec:alignment} report the factorial experiment:
-aggregation, assembly and cross-model alignment.
+aggregation, assembly, and cross-model alignment;
+Section~\ref{sec:coding} reports a criterion coding inconsistency.
 Sections~\ref{sec:greedy}, \ref{sec:e1}, and~\ref{sec:e6} present
 follow-up experiments on the greedy shortfall, within-group distortion,
 and the $\mathrm{TV}_W$ prediction, respectively.
@@ -2060,7 +2057,7 @@ $\CondGapTOPSISvecOpt\%$ against $\CondGapTOPSISvecGrd\%$ for TOPSIS).
 This is consistent with exact assembly reaching the frontier of
 $w^{\mathrm{eff}}$, which lies close to, but not on, the frontier of $w$.
 According to the pre-specified equivalence criterion ($\eqmargin=2.5$~pp),
-all differences in $Q_3$ scaled to percentage points are below $\delta$;
+all differences in $Q_3$ scaled to percentage points are below $\eqmargin$;
 severity differences are not practically relevant on this instance.
 
 \textbf{Value regret.}
@@ -2148,7 +2145,7 @@ $[\AggLo,\,\AggHi]$) has a pooled mean equivalent to zero at $\kappa=200$
 (TOST $p=\TOSTp$, $\eqmargin=2.5$~pp, $90\%$ CI within $\pm\eqmargin$).
 The same contrast rises to $\AggContrastKfifty$~pp ($95\%$ CI
 $[+\AggLoKfifty,\,+\AggHiKfifty]$) at $\kappa=50$, confirming that
-aggregation is the most $\kappa$-sensitive design choice.
+Section~\ref{sec:kappa} reports the full $\kappa$-grid.
 This pooled mean masks a strong interaction: the per-cell
 contrasts range from $\AggStratumMMgrd$~pp
 ($95\%$ CI $[\AggMMgrdCIlo,\,\AggMMgrdCIhi]$) under min--max$\times$greedy,
@@ -2621,7 +2618,7 @@ distributing it uniformly across all criteria is not tested here.
 % \S7.x Dependence on weight-draw dispersion (E7)
 % =======================================================================
 
-\subsection{Sensitivity of the aggregation contrast to weight dispersion}
+\subsection{Sensitivity of the factorial contrasts to weight dispersion}
 \label{sec:kappa}
 
 This is a post hoc sensitivity analysis, pre-registered before the E7 run
@@ -2669,18 +2666,19 @@ significant; only $\kappa=200$ is non-significant.
 Decomposing by method: the mean $Q_2$ across the three informative cells
 falls from $\SAWmeanKtwentyfive\%$ (SAW, $\kappa=25$) to
 $\SAWmeanKtwohundred\%$ ($\kappa=200$) and stabilises near~$70\%$ for
-$\kappa\ge200$; the TOPSIS mean rises from $\TOPmeanKtwentyfive\%$ to
-$\TOPmeanKthousand\%$ over the same range.
+$\kappa\ge200$; the TOPSIS mean rises from $\TOPmeanKtwentyfive\%$ (at $\kappa=25$) to
+$\TOPmeanKthousand\%$ (at $\kappa=1000$), with a local minimum of $\TOPmeanKfifty\%$ at
+$\kappa=50$.
 The reversal comes from both sides.
 A per-draw regression of the pooled contrast on the effective number of
 criteria $N_{\mathrm{eff}}=1/\!\sum_j w_j^2$ ($n=\NeffRegrN$ draw-pairs
 across all six~$\kappa$) gives slope $-\NeffRegrSlopePP$~pp per unit,
-$r=-\NeffRegrR$ ($p<0.001$), with the zero-crossing at
-$N_{\mathrm{eff}}^*\approx\NeffCrossover$, within rounding of
-the AHP-deterministic value $N_{\mathrm{eff}}^{\mathrm{AHP}}=\NeffAHP$.
+$r=-\NeffRegrR$ ($p<0.001$), with a zero-crossing at $N_{\mathrm{eff}}^*\approx\NeffCrossover$.
 Mean $N_{\mathrm{eff}}$ rises from $\NeffMeanKtwentyfive$ at $\kappa=25$
 to $\NeffMeanKthousand$ at $\kappa=1000$; the pooled slope therefore
-reflects the between-$\kappa$ trend rather than within-draw variation.
+reflects the between-$\kappa$ trend (within a fixed $\kappa$, the
+within-draw variation in $N_{\mathrm{eff}}$ is too small to predict the
+per-draw contrast; see Supplementary Material).
 
 \textbf{Normalisation.}
 The min--max advantage over vector normalisation (greedy assembly) is
@@ -2698,8 +2696,13 @@ At $\kappa=200$, it reduces $Q_2$ by $\AsmVecSAW$~pp (SAW) and
 $\AsmVecTOPSIS$~pp (TOPSIS) as reported in Section~\ref{sec:assembly}.
 At $\kappa=1000$ the penalty reaches $\AsmVecSAWKthousandMag$~pp (SAW) and
 $\AsmVecTOPKthousandMag$~pp (TOPSIS).
-Aggregation is the design choice most sensitive to~$\kappa$; normalisation
-is intermediate; the sign of the assembly effect also reverses with~$\kappa$.
+Across the grid, the assembly effect under vector normalisation spans the
+widest range ($\AsmVecSAWKtwentyfive$ to $\AsmVecSAWKthousand$~pp, SAW), followed by
+normalisation ($+\NormGreedyContrastKfifty$ to $\NormKthousand$~pp) and aggregation
+($+\AggKtwentyfive$ to $\AggKthousand$~pp).
+Both aggregation and the assembly effect under vector normalisation show
+significant reversals of sign across the $\kappa$-grid; normalisation remains
+positive and significant through $\kappa=400$.
 
 All 36 bootstrap intervals are unadjusted (6 contrasts $\times$ 6~$\kappa$);
 the analysis is post hoc and descriptive throughout.
@@ -2967,7 +2970,7 @@ enters the effective weights.
 Comparing aggregation operators, by contrast, produces a pooled contrast
 equivalent to zero at $\kappa=200$ ($\AggContrast$~pp, TOST $p=\TOSTp$),
 but rising to $\AggContrastKfifty$~pp at $\kappa=50$ (Table~\ref{tab:contrasts});
-aggregation is the most $\kappa$-sensitive of the three design choices.
+the assembly effect under vector normalisation spans the widest range across the $\kappa$-grid (Section~\ref{sec:kappa}).
 The recommendations above apply to SAW and TOPSIS: the amplitude enters
 the score linearly for SAW and, by analogy, quadratically for TOPSIS.
 VIKOR is invariant to per-criterion affine transformation by its ratio
@@ -3156,8 +3159,8 @@ with instance size and spatial geometry.
 
 A pre-specified experiment on \EsixNinst{} synthetic instances across
 \EsixNfam{} marginal families (Experiment~E6, Section~\ref{sec:e6})
-supports the directional prediction.
-
+supports the $\mathrm{TV}_W$ ordering ($\EsixSensPtwoMonoAll$~of
+$\EsixSensPtwoLossyNAll$ informative instances; Prediction~4 was not confirmed).
 The Fogo magnitudes are therefore instance-specific; the within-group
 mechanism is directionally robust but its magnitude depends on the
 marginal distribution of criterion values.
@@ -3214,8 +3217,10 @@ Where the feasible set is enumerable, as it is for
 cardinality-constrained siting problems of realistic size, an exact
 frontier provides an external standard, and under that standard the
 ranking of design choices is not the one the literature's emphasis would
-suggest at the weight dispersion used as primary; at $\kappa=50$ aggregation
-matters substantially.
+suggest at $\kappa=200$; at $\kappa=50$ aggregation is comparable to normalisation,
+and the assembly effect reverses sign across the full tested range.
+The $\kappa$-dependence of the empirical effects is itself a result:
+normalisation is the only factor that remains large and of constant sign for $\kappa\le400$.
 
 % -----------------------------------------------------------------------
 % BLOCO4: DOI — substituir 23479281 pelo número real após ativar webhook no zenodo.org

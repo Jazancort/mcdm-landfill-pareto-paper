@@ -387,6 +387,14 @@ else:
     else:
         print(f"  [OK  ] Citation undefined: 0")
 
+    # Check for bibtex-level "There were undefined citations"
+    bibtex_undef = log_text.count("There were undefined citations")
+    if bibtex_undef > 0:
+        FAIL.append("BibTeX: There were undefined citations in main.log")
+        print(f"  [FAIL] BibTeX undefined citations detected")
+    else:
+        print(f"  [OK  ] BibTeX: no undefined citations")
+
     # Check for ?? in output (unresolved cross-references)
     qq_count = log_text.count("??")
     if qq_count > 0:
@@ -398,7 +406,14 @@ else:
 # Check: main.bbl exists and is > 1 KB (check build dir too)
 bbl_path = ROOT / "main.bbl"
 build_bbl = Path(r"C:\build\paper\main.bbl")
-bbl_real = build_bbl if build_bbl.exists() and build_bbl.stat().st_size > 1024 else bbl_path
+# Use the most recently updated bbl (prefer local over stale build dir)
+if build_bbl.exists() and build_bbl.stat().st_size > 1024:
+    if bbl_path.exists() and bbl_path.stat().st_mtime >= build_bbl.stat().st_mtime:
+        bbl_real = bbl_path   # local is newer or same age
+    else:
+        bbl_real = build_bbl
+else:
+    bbl_real = bbl_path
 if bbl_real.exists():
     bbl_size = bbl_real.stat().st_size
     if bbl_size < 1024:
@@ -406,6 +421,15 @@ if bbl_real.exists():
         print(f"  [FAIL] main.bbl: {bbl_size} bytes (<1 KB)")
     else:
         print(f"  [OK  ] main.bbl: {bbl_size:,} bytes ({bbl_real})")
+    # Check .bbl is not older than refs.bib or main.tex
+    bbl_mtime = bbl_real.stat().st_mtime
+    for dep in [ROOT / "refs.bib", ROOT / "main.tex"]:
+        if dep.exists() and dep.stat().st_mtime > bbl_mtime + 5:
+            FAIL.append(f"main.bbl older than {dep.name} — re-run bibtex")
+            print(f"  [FAIL] main.bbl stale vs {dep.name}")
+        else:
+            if dep.exists():
+                print(f"  [OK  ] main.bbl up-to-date vs {dep.name}")
 else:
     FAIL.append("main.bbl not found — run make paper")
     print(f"  [FAIL] main.bbl not found")
