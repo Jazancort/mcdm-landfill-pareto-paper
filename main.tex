@@ -132,8 +132,8 @@ $\NormSigMin$--$\NormSigMax$~pp wherever the effect is distinguishable from zero
 The pooled SAW--TOPSIS contrast reverses sign, from $\AggKtwentyfive$~pp at
 $\kappa=25$ to $\AggKthousand$~pp at $\kappa=1000$, and is equivalent to zero at
 $\kappa=200$ (TOST $p=\TOSTp$). Under vector normalisation, exact assembly goes
-from no detectable effect at $\kappa=50$ to a loss of $\AsmVecSAWKthousandMag$~pp
-(SAW) relative to greedy at $\kappa=1000$. An intervention shows that
+from $+\AsmVecSAWKtwentyfiveMag$~pp (SAW) at $\kappa=25$ to
+$-\AsmVecSAWKthousandMag$~pp at $\kappa=1000$. An intervention shows that
 between-group distortion never moves the portfolio off the frontier but costs
 $\RegretEoneB$~pp of value regret, whereas within-group distortion reduces
 frontier attainment by $\EoneWloss$~pp. Separately, a criterion encoded
@@ -217,14 +217,14 @@ $\kappa=25$; the pooled contrast is equivalent to zero at $\kappa=200$
 ($\AggContrast$~pp, $95\%$ CI $[\AggLo,\,\AggHi]$, TOST $p=\TOSTp$, with
 cell-level effects from $\AggStratumMMgrd$ to $+\AggStratumVecopt$~pp); and it
 reaches $\AggKthousand$~pp at $\kappa=1000$.
-Which operator attains the frontier more often is therefore a property of the
-weight uncertainty, not of the operator.
+Which operator attains the frontier more often therefore depends on the
+uncertainty of the weights, not on the operator alone.
 The value of exact assembly is conditional twice over.
 Under min--max it is guaranteed for SAW and adds $+\AsmMMtopsis$~pp for TOPSIS
-at $\kappa=200$. Under vector normalisation it loses $\AsmVecSAW$~pp (SAW) and
-$\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy at $\kappa=200$, has no
-detectable effect at $\kappa=50$, and loses $\AsmVecSAWKthousandMag$~pp (SAW)
-at $\kappa=1000$.
+at $\kappa=200$. Under vector normalisation it gains $+\AsmVecSAWKtwentyfiveMag$~pp (SAW)
+at $\kappa=25$, loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS)
+at $\kappa=200$, has no detectable effect at $\kappa=50$, and loses
+$\AsmVecSAWKthousandMag$~pp (SAW) at $\kappa=1000$.
 
 The reason is a mechanism that operates upstream of the aggregation
 operator, and it is the analytical core of the paper.
@@ -299,17 +299,12 @@ Our contributions are as follows.
     from normalising over inadmissible alternatives, become corollaries
     of one identity.
   \item A measurement of the cost of that distortion in units of Pareto
-    efficiency rather than rank agreement, against an exhaustively
-    enumerated frontier of $\Ntrios$ portfolios under a hard separation
-    constraint; a factorial design shows that normalisation dominates the
-    choice of aggregation operator, with the assembly effect on frontier
-    attainment reversing sign between min--max and vector normalisation at $\kappa=200$;
-    in value regret, exact assembly
-    is better than greedy under vector normalisation
-    ($\RegrDiffSAWvec$--$\RegrDiffTOPSISvec$~pp) and for TOPSIS under
-    min--max ($\RegrDiffTOPSISmmGrdOpt$~pp,
-    $95\%$~CI $[\RegrDiffTOPSISmmGrdOptLo,\,\RegrDiffTOPSISmmGrdOptHi]$~pp;
-    all below the $\eqmargin=2.5$~pp equivalence margin).
+    efficiency rather than rank agreement, against an exhaustively enumerated
+    frontier of $\Ntrios$ portfolios under a hard separation constraint, in a
+    factorial design repeated over six levels of weight dispersion.
+    Normalisation is the only design choice whose effect never changes sign
+    significantly; the preferred aggregation operator reverses with~$\kappa$,
+    and the value of exact assembly depends on both the normalisation and~$\kappa$.
   \item A necessary and sufficient condition for exact assembly to remain
     Pareto-efficient under normalisation: amplitudes must be constant
     within each objective group (Theorem~\ref{thm:groupconst}),
@@ -376,9 +371,9 @@ interactive linear programme.
 for infrastructure maintenance; \citet{Yang2015SMAAPO}
 combined SMAA with portfolio optimisation (SMAA-PO), producing
 acceptability indices for portfolios under full weight uncertainty.
-\citet{Liesio2021} surveyed 148 PDA contributions; the
-cardinality-constrained selection problem with hard spatial-separation
-requirements (the defining constraint of our problem) does not address this problem structure.
+\citet{Liesio2021} surveyed 148 PDA contributions; the survey does not
+address cardinality-constrained selection under hard spatial-separation
+requirements, the defining constraint of our problem.
 Within PDA, \citet{Barbati2018} optimised portfolios under multiple
 satisfaction levels defined jointly across criteria, a formulation that
 avoids collapsing value into a single additive score; \citet{Carazo2010}
@@ -645,13 +640,9 @@ optimality benchmark.
 
 The present paper addresses this gap by: (i)~enumerating the exact Pareto
 frontier of $\Ntrios$ portfolios over three group-level partial value
-functions under $r$-separation; (ii)~measuring the cost of that distortion in units of Pareto efficiency rather
-than rank agreement, against an exhaustively enumerated frontier of $\Ntrios$
-portfolios under a hard separation constraint, in a factorial design repeated
-over six levels of weight dispersion: normalisation is the only design choice
-whose effect never changes sign significantly; the preferred aggregation
-operator reverses with $\kappa$; and the value of exact assembly depends on both
-the normalisation and $\kappa$; VIKOR and PROMETHEE~II are included under
+functions under $r$-separation; (ii)~evaluating SAW and TOPSIS in a balanced $2^3$ design (aggregation
+$\times$ normalisation $\times$ assembly) against that frontier, repeated over
+six levels of weight dispersion; VIKOR and PROMETHEE~II are included under
 nominal weights and in the Supplementary Material;
 and (iii)~providing a closed-form account of the mechanism by which
 normalisation implicitly re-weights criteria, expressed in terms
@@ -2088,9 +2079,10 @@ but achieves lower regret ($R = \RegrSAWvecOpt$ against $\RegrSAWvecGrd$~pp,
 difference $\RegrDiffSAWvec$~pp, 95\%~CI
 $[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp; below the $\eqmargin=2.5$~pp
 pre-specified margin for $Q_2$ contrasts, applied here by analogy).
-The portfolios selected by exact optimisation of the distorted score,
-though they miss the frontier of~$w$ more often, are better portfolios
-under the elicited weights~$w$.
+The portfolios selected by exact optimisation of the distorted score
+miss the frontier of~$w$ more often but carry slightly lower regret;
+the difference is below $\eqmargin$ and we do not treat it as practically
+relevant.
 For context, the median regret of a randomly drawn valid trio on this
 instance is approximately $\RRegretRandom$~pp; all eight cells are far
 into the upper tail of the portfolio-quality distribution.
@@ -2098,7 +2090,7 @@ into the upper tail of the portfolio-quality distribution.
 \begin{table*}[!t]
 \centering\small
 \caption{$Q_2[\mathcal{A}']$ with standard error (SE) in parentheses, value regret~$R$~\eqref{eq:R} (percentage of achievable $V$-range, SE in parentheses), $Q_3$ and conditional gap (CG) for the balanced $2^3$ design
-($\kappa=200$, primary; $\kappa=50$, robustness, rightmost column).
+($\kappa=200$, reference level; $\kappa=50$, second level; full grid in Section~\ref{sec:kappa}).
 $Q_3$ is the expected gap~\eqref{eq:Q3} in
 percent of the attainable range; CG $= Q_3/(1-Q_2)$ is the mean shortfall
 over draws in which the portfolio misses the frontier. Both are computed
@@ -2125,7 +2117,7 @@ TOPSIS & mm, greedy   & $\QtwoTOPSISmmGrd$\% (\QtwoSETOPSISmmGrd)  & \RegrTOPSIS
 \begin{table*}[!t]
 \centering\small
 \caption{Contrasts in percentage points of $Q_2[\mathcal{A}']$
-($\kappa=200$, primary; $\kappa=50$, robustness check; $\nboot$ bootstrap replicates paired by draw).
+($\kappa=200$, reference level; $\kappa=50$, second level; full grid in Section~\ref{sec:kappa}; $\nboot$ bootstrap replicates paired by draw).
 $^\dagger$ Informative cells only: SAW/min--max/optimal is excluded because
 $Q_2=100\%$ by Proposition~\ref{prop:p1:stmt}.
 No pooled assembly contrast is reported because the effect reverses sign with the normalisation
@@ -2152,9 +2144,9 @@ Assembly $\times$ normalisation (TOPSIS)      & $+\InteractionTOPSIS$ & $[+\Inte
 The aggregation contrast of $\AggContrast$~pp ($95\%$ CI
 $[\AggLo,\,\AggHi]$) has a pooled mean equivalent to zero at $\kappa=200$
 (TOST $p=\TOSTp$, $\eqmargin=2.5$~pp, $90\%$ CI within $\pm\eqmargin$).
-The same contrast rises to $\AggContrastKfifty$~pp ($95\%$ CI
-$[+\AggLoKfifty,\,+\AggHiKfifty]$) at $\kappa=50$, confirming that
-Section~\ref{sec:kappa} reports the full $\kappa$-grid.
+At $\kappa=50$ the same contrast is $\AggContrastKfifty$~pp ($95\%$ CI
+$[+\AggLoKfifty,\,+\AggHiKfifty]$); Section~\ref{sec:kappa} shows that both
+values lie on a monotone reversal across $\kappa$.
 This pooled mean masks a strong interaction: the per-cell
 contrasts range from $\AggStratumMMgrd$~pp
 ($95\%$ CI $[\AggMMgrdCIlo,\,\AggMMgrdCIhi]$) under min--max$\times$greedy,
@@ -2630,9 +2622,9 @@ distributing it uniformly across all criteria is not tested here.
 \subsection{Sensitivity of the factorial contrasts to weight dispersion}
 \label{sec:kappa}
 
-This is a post hoc sensitivity analysis, pre-registered before the E7 run
-(PRESPEC\_E7\_KAPPA.md, amendments A1--A2, in the replication archive) but
-specified after the main factorial results were known.
+This analysis was specified (PRESPEC\_E7\_KAPPA.md, amendments A1--A2, in the
+replication archive) before the E7 run but after the main factorial results
+were known; we treat it as exploratory throughout.
 Weights are drawn as $\mathbf{w}\sim\mathrm{Dir}(\kappa\,\mathbf{w}_0)$ with the
 AHP weights as $\mathbf{w}_0$; smaller $\kappa$ means more dispersed weights
 ($\mathrm{SD}(w_i)=\sqrt{w_{0,i}(1-w_{0,i})/(\kappa+1)}$ falls from
@@ -2682,7 +2674,10 @@ is a deterministic function of~$\kappa$, so a regression of the contrast on
 $N_{\mathrm{eff}}=1/\sum_j w_j^2$ pooled over $\kappa$ only re-expresses the
 $\kappa$ trend. Within $\kappa$ (fixed effects), the slope is $\NeffWithinSlope$~pp
 per unit of $N_{\mathrm{eff}}$ ($95\%$ CI $[\NeffWithinLo,\,\NeffWithinHi]$);
-draws that spread weight over more criteria favour SAW even at fixed $\kappa$.
+opposite in sign to the between-$\kappa$ association (about $-14$~pp per unit)
+and an order of magnitude smaller. The concentration of an individual draw
+therefore does not explain the reversal; what varies with $\kappa$ and drives
+it is not captured by $N_{\mathrm{eff}}$.
 
 \textbf{Normalisation.}
 The min--max advantage over vector normalisation under greedy assembly is
@@ -2703,10 +2698,10 @@ $-\AsmVecTOPKthousandMag$~pp (TOPSIS) at $\kappa=1000$.
 Measured by range over the grid, the assembly effect under vector normalisation
 varies most ($\AsmVecSAWKtwentyfive$ to $\AsmVecSAWKthousand$~pp, SAW),
 normalisation next ($+\NormGreedyContrastKfifty$ to $\NormKthousand$~pp) and
-aggregation least ($+\AggKtwentyfive$ to $\AggKthousand$~pp).
-Their qualitative behaviour differs: aggregation shows significant effects of
-both signs, whereas normalisation keeps its sign wherever it is distinguishable
-from zero.
+aggregation least ($\AggKtwentyfive$ to $\AggKthousand$~pp).
+Assembly and aggregation both show significant effects of both signs;
+normalisation is the only factor that keeps its sign wherever it is
+distinguishable from zero.
 
 Holm correction is applied to the six aggregation contrasts only; the remaining
 30 intervals ($5$ contrasts $\times$ $6$ values of $\kappa$) are unadjusted and
@@ -2717,6 +2712,7 @@ The full $6\kappa\times8$-cell grid is in Supplementary Table~\ref{tab:e7grid}.
 % =======================================================================
 % \S8 Discussion
 % =======================================================================
+\FloatBarrier
 \section{Discussion}
 \label{sec:discussion}
 
@@ -3156,9 +3152,9 @@ The preferred aggregation operator reversed: SAW led by $\AggKtwentyfive$~pp at
 $\kappa=25$, the pooled contrast was equivalent to zero at $\kappa=200$
 (TOST $p=\TOSTp$; cell-level effects from $\AggStratumMMgrd$ to
 $+\AggStratumVecopt$~pp), and it reached $\AggKthousand$~pp at $\kappa=1000$.
-Under vector normalisation, exact assembly went from no detectable effect at
-$\kappa=50$ to a loss of $\AsmVecSAWKthousandMag$~pp (SAW) at $\kappa=1000$
-relative to greedy.
+Under vector normalisation, exact assembly gained $+\AsmVecSAWKtwentyfiveMag$~pp
+(SAW) at $\kappa=25$, had no detectable effect at $\kappa=50$, and lost
+$\AsmVecSAWKthousandMag$~pp at $\kappa=1000$ relative to greedy.
 When a portfolio misses the frontier, it does so by $1$--$3\%$ of the
 attainable range (Table~\ref{tab:factorial}).
 
@@ -3180,7 +3176,7 @@ under optimal assembly; these reference-set cells are post hoc and exploratory
 
 The recommendations are inexpensive.
 Report effective weights alongside elicited ones, with
-$(\mathrm{TV},N_{\mathrm{eff}})$ and $(\mathrm{TV}_B,\mathrm{TV}_W)$; check
+$(\mathrm{TV},m_{\mathrm{eff}})$ and $(\mathrm{TV}_B,\mathrm{TV}_W)$; check
 that score and objectives encode every criterion identically; check that
 amplitudes are constant within each objective group before adding exact
 optimisation; and characterise the uncertainty of the weights before choosing an
