@@ -15,7 +15,7 @@
   <a href="https://pandas.pydata.org/"><img src="https://img.shields.io/badge/pandas-2.0+-150458?logo=pandas&logoColor=white" alt="pandas"></a>
   <a href="https://scipy.org/"><img src="https://img.shields.io/badge/scipy-1.10+-8CAAE6?logo=scipy&logoColor=white" alt="scipy"></a>
   <a href="https://creativecommons.org/licenses/by/4.0/"><img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey" alt="License"></a>
-  <a href="https://doi.org/10.5281/zenodo.23479281"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.23479281.svg" alt="DOI"></a>
+  <a href="https://doi.org/10.5281/zenodo.23676428"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.23676428.svg" alt="DOI"></a>
 </p>
 
 ---
@@ -234,7 +234,7 @@ mcdm-landfill-pareto/
              a factorial comparison on {F}ogo {I}sland landfill siting},
   journal = {Omega},
   year    = {2026},
-  doi     = {10.5281/zenodo.23479281},
+  doi     = {10.5281/zenodo.23676428},
   note    = {Under review}
 }
 ```
