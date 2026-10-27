@@ -2648,8 +2648,8 @@ $\AggKfourhundred$~pp at $\kappa=400$,
 and $\AggKthousand$~pp at $\kappa=1000$.
 The sign changes between $\kappa=100$ and $\kappa=400$; the grid does not
 locate the crossing more precisely.
-All five non-null contrasts remain significant after Holm correction across
-the six values of~$\kappa$.
+Applying Holm correction to all six contrasts simultaneously, five remain
+significant; only $\kappa=200$ is non-significant.
 
 \begin{figure}[!tbp]
 \centering
@@ -2672,6 +2672,15 @@ $\SAWmeanKtwohundred\%$ ($\kappa=200$) and stabilises near~$70\%$ for
 $\kappa\ge200$; the TOPSIS mean rises from $\TOPmeanKtwentyfive\%$ to
 $\TOPmeanKthousand\%$ over the same range.
 The reversal comes from both sides.
+A per-draw regression of the pooled contrast on the effective number of
+criteria $N_{\mathrm{eff}}=1/\!\sum_j w_j^2$ ($n=\NeffRegrN$ draw-pairs
+across all six~$\kappa$) gives slope $-\NeffRegrSlopePP$~pp per unit,
+$r=-\NeffRegrR$ ($p<0.001$), with the zero-crossing at
+$N_{\mathrm{eff}}^*\approx\NeffCrossover$, within rounding of
+the AHP-deterministic value $N_{\mathrm{eff}}^{\mathrm{AHP}}=\NeffAHP$.
+Mean $N_{\mathrm{eff}}$ rises from $\NeffMeanKtwentyfive$ at $\kappa=25$
+to $\NeffMeanKthousand$ at $\kappa=1000$; the pooled slope therefore
+reflects the between-$\kappa$ trend rather than within-draw variation.
 
 \textbf{Normalisation.}
 The min--max advantage over vector normalisation (greedy assembly) is

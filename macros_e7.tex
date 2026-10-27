@@ -69,3 +69,14 @@
 \newcommand{\AsmVecSAWKtwentyfiveMag}{3.4}   % k=25 positive (improves)
 \newcommand{\AsmVecSAWKthousandMag}{38.4}     % k=1000 magnitude
 \newcommand{\AsmVecTOPKthousandMag}{40.8}     % k=1000 magnitude
+
+% ── N_eff regression (4.07 / B2) ─────────────────────────────────────────────
+% Source: scripts/analyze_neff_regression.py  (2026-11-xx)
+% Pooled regression: contrast_3inf ~ N_eff, n=3000 draws (6 alpha × 500)
+\newcommand{\NeffAHP}{9.3}          % AHP-deterministic: 1/sum_j w_j^2 = 9.32
+\newcommand{\NeffRegrSlopePP}{5.4}  % |slope| in pp per unit N_eff (signed: negative)
+\newcommand{\NeffRegrR}{0.23}       % |r| pooled (signed: r = -0.23)
+\newcommand{\NeffCrossover}{9.2}    % N_eff* = zero-crossing of regression
+\newcommand{\NeffRegrN}{3{,}000}    % n draws pooled
+\newcommand{\NeffMeanKtwentyfive}{7.2}  % mean N_eff at kappa=25
+\newcommand{\NeffMeanKthousand}{9.3}    % mean N_eff at kappa=1000 (≈ AHP)
