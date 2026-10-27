@@ -59,11 +59,12 @@ from scoring import make_scorers
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 E1_SHA   = "bea05275e85bc6ddbd754c88c0a05c90a568374ff76eacfc8b522750a4aef487"
+E1_SHA50 = "e761c76d47bb7b6f949d116170fd900b8a87f4c356bf4a149f403a0f586060be"
 N_DRAWS  = 500
 B_BOOT   = 2000
 BASE_SEED = 100  # seed for new κ = BASE_SEED + κ
-SEED_200  = 42   # reuse existing κ=200 seed
-SEED_50   = 43   # reuse existing κ=50 seed
+SEED_200  = 42   # reuse existing κ=200 seed (e1_weights_k200.npy)
+SEED_50   = 42   # reuse existing κ=50 seed (e1_weights_k50.npy, same seed=42 + alpha=50)
 
 ALPHAS = [25, 50, 100, 200, 400, 1000]
 
@@ -132,14 +133,24 @@ def argmax_trio(sc):
 
 # Verify weight matrix SHA
 wmat_path = ROOT / "results" / "e1" / "e1_weights_k200.npy"
+wmat_k50_path = ROOT / "results" / "e1" / "e1_weights_k50.npy"
 if wmat_path.exists():
     sha = hashlib.sha256(wmat_path.read_bytes()).hexdigest()
-    assert sha == E1_SHA, f"Weight matrix SHA mismatch: {sha[:16]}"
+    assert sha == E1_SHA, f"Weight matrix κ=200 SHA mismatch: {sha[:16]}"
     W_k200 = np.load(wmat_path)
     print(f"κ=200 weight matrix: {W_k200.shape}  SHA OK", flush=True)
 else:
     W_k200 = None
-    print("WARNING: e1_weights_k200.npy not found — gate G1 will use on-the-fly draws", flush=True)
+    print("WARNING: e1_weights_k200.npy not found", flush=True)
+
+if wmat_k50_path.exists():
+    sha50 = hashlib.sha256(wmat_k50_path.read_bytes()).hexdigest()
+    assert sha50 == E1_SHA50, f"Weight matrix κ=50 SHA mismatch: {sha50[:16]}"
+    W_k50 = np.load(wmat_k50_path)
+    print(f"κ=50 weight matrix:  {W_k50.shape}  SHA OK", flush=True)
+else:
+    W_k50 = None
+    print("WARNING: e1_weights_k50.npy not found — κ=50 gate may fail", flush=True)
 
 CELLS_8 = [
     ("saw",   "minmax", "greedy"), ("saw",   "minmax", "optimal"),
@@ -171,9 +182,11 @@ for alpha in ALPHAS:
     else:
         seed = BASE_SEED + alpha
 
-    # Weight draws
+    # Weight draws — use precomputed matrices for κ=200 and κ=50 (gate replication)
     if alpha == 200 and W_k200 is not None:
-        W = W_k200  # exact same draws as existing analysis (gate)
+        W = W_k200
+    elif alpha == 50 and W_k50 is not None:
+        W = W_k50
     else:
         rng = np.random.default_rng(seed)
         W = rng.dirichlet(alpha * w_ahp, size=N_DRAWS)
