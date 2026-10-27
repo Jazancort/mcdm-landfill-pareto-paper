@@ -276,7 +276,7 @@ all_gates_pass = True
 for kappa, cells_known in KNOWN_Q2.items():
     dfk = df_raw[df_raw.alpha == kappa]
     for (agg, norm, mont), expected in cells_known.items():
-        rows = dfk[(dfk.agg==agg)&(dfk.norm==norm)&(dfk.mont==mont)]
+        rows = dfk[(dfk["agg"]==agg)&(dfk["norm"]==norm)&(dfk["mont"]==mont)]
         assert len(rows) > 0, (
             f"Gate G1 filter returned 0 rows for k={kappa} {agg}/{norm}/{mont} — "
             f"check df_raw string column dtypes: {dict(dfk.dtypes[['agg','norm','mont']])}"
@@ -290,7 +290,7 @@ for kappa, cells_known in KNOWN_Q2.items():
 # ── Gate G2: SAW/mm/opt = 100% at every κ ───────────────────────────────────
 for kappa in ALPHAS:
     dfk = df_raw[df_raw.alpha == kappa]
-    rows_g2 = dfk[(dfk.agg=="saw")&(dfk.norm=="minmax")&(dfk.mont=="optimal")]
+    rows_g2 = dfk[(dfk["agg"]=="saw")&(dfk["norm"]=="minmax")&(dfk["mont"]=="optimal")]
     assert len(rows_g2) > 0, f"Gate G2 filter returned 0 rows for k={kappa}"
     q2 = rows_g2["nd_Q2Ap"].mean()*100
     ok = abs(q2 - 100.0) < 0.01
