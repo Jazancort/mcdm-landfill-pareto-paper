@@ -1560,13 +1560,19 @@ print("=== Rule regression tests ===")
 
 # ── R9: every figure and table label must be cited in the body ────────────────
 print("=== R9: figure/table citations ===")
-body_no_floats = re.sub(
-    r"(?s)\\begin\{(?:figure|table)\*?\}.*?\\end\{(?:figure|table)\*?\}", "", tex
+body_no_figure_floats = re.sub(
+    r"(?s)\\begin\{figure\*?\}.*?\\end\{figure\*?\}", "", tex
 )
+body_no_table_floats = re.sub(
+    r"(?s)\\begin\{table\*?\}.*?\\end\{table\*?\}", "", tex
+)
+all_labels = re.findall(r"\\label\{((?:fig|tab):[^}]+)\}", tex)
+
 all_labels = re.findall(r"\\label\{((?:fig|tab):[^}]+)\}", tex)
 for lab in all_labels:
     pattern = r"\\(?:ref|pageref|autoref)\{" + re.escape(lab) + r"\}"
-    if re.search(pattern, body_no_floats):
+    body_to_search = body_no_figure_floats if lab.startswith("fig:") else body_no_table_floats
+    if re.search(pattern, body_to_search):
         print(f"  [OK  ] cited: {lab}")
     else:
         FAIL.append(f"R9: not cited: {lab}")
