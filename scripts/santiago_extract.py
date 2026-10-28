@@ -87,7 +87,12 @@ if not FOGO_CACHE.exists():
                       "/Tentativa de dados via GIS/results_cache/df_real_data_cached.csv")
 
 # Grid parameters (from PRESPEC §3 PRE-A — validated 473/473)
-GRID_SPACING  = 1250.0   # 1.25 km — spacing rule triggered (n_trios=76M at 1km > 50M; 1.25km gives 21M OK)
+# Per-branch spacing (DEV-SANT-SPACING-001):
+#   S-T: 1250 m — spacing rule triggered (n_trios_Ncand=76,124,767 at 1km > 50M; 1.25km gives 21,112,677 OK)
+#   S-N: 1000 m — spacing rule NOT triggered (n_trios_Ncand=1,146,955 at 1km << 50M)
+GRID_SPACING_ST = 1250.0
+GRID_SPACING_SN = 1000.0
+GRID_SPACING    = GRID_SPACING_ST  # legacy alias; do not use directly — use branch-specific values
 LAND_FRAC     = 0.50     # >= 50% land coverage
 ORIGIN        = "floor1m"
 CENTROID      = "land"
@@ -157,12 +162,18 @@ def check_required_files(branch: str) -> list[str]:
 # 3. Grid (delegates to santiago_grid.py logic)
 # ---------------------------------------------------------------------------
 
-def build_santiago_grid(boundary_path: Path, crs: str) -> gpd.GeoDataFrame:
-    """Build the 1 km candidate grid using the floor1m+land convention.
+def build_santiago_grid(boundary_path: Path, crs: str, spacing: float = None) -> gpd.GeoDataFrame:
+    """Build the candidate grid using the floor1m+land convention.
 
-    Returns GeoDataFrame with columns: geometry (Point, CRS=crs), row, col, land_frac.
+    @param boundary_path - path to the boundary GeoJSON file.
+    @param crs - projected CRS string (e.g. 'EPSG:32627').
+    @param spacing - grid spacing in metres. Defaults to GRID_SPACING_ST if None.
+    @returns GeoDataFrame with geometry (Point), row, col, land_frac columns.
     """
     from shapely.geometry import box
+
+    if spacing is None:
+        spacing = GRID_SPACING_ST
 
     gdf = gpd.read_file(boundary_path)
     if gdf.crs is None or str(gdf.crs) == "None":
@@ -173,17 +184,17 @@ def build_santiago_grid(boundary_path: Path, crs: str) -> gpd.GeoDataFrame:
     xmin, ymin, xmax, ymax = region.bounds
     x0, y0 = np.floor(xmin), np.floor(ymin)
 
-    xs = np.arange(x0, xmax, GRID_SPACING)
-    ys = np.arange(y0, ymax, GRID_SPACING)
+    xs = np.arange(x0, xmax, spacing)
+    ys = np.arange(y0, ymax, spacing)
 
     rows, cols, pts_geom = [], [], []
     land_fracs = []
 
     for r, y in enumerate(ys):
         for c, x in enumerate(xs):
-            cell = box(x, y, x + GRID_SPACING, y + GRID_SPACING)
+            cell = box(x, y, x + spacing, y + spacing)
             land_geom = cell.intersection(region)
-            frac = land_geom.area / GRID_SPACING**2
+            frac = land_geom.area / spacing**2
             if frac < LAND_FRAC:
                 continue
             centroid = land_geom.centroid
@@ -465,7 +476,7 @@ def extract_st(candidates_path: Path | None = None,
         print(f"  [DRY-RUN] {len(missing)} files missing — skipping criterion extraction")
         return pd.DataFrame()
 
-    candidates = build_santiago_grid(BOUNDARY_ST, CRS_SANTIAGO)
+    candidates = build_santiago_grid(BOUNDARY_ST, CRS_SANTIAGO, GRID_SPACING_ST)
     print(f"  N_cand = {len(candidates)}")
 
     # Geology (P-F Baixa polygons)
@@ -761,8 +772,8 @@ def extract_sn(dry_run: bool = False) -> "pd.DataFrame":
         return pd.DataFrame()
 
     # Build S-N grid (1.25 km, floor1m, land centroid, S-N boundary)
-    print(f"Building S-N grid (spacing={GRID_SPACING}m)...")
-    candidates = build_santiago_grid(BOUNDARY_SN, CRS_SANTIAGO)
+    print(f"Building S-N grid (spacing={GRID_SPACING_SN:.0f}m, DEV-SANT-SPACING-001)...")
+    candidates = build_santiago_grid(BOUNDARY_SN, CRS_SANTIAGO, GRID_SPACING_SN)
     print(f"  N_cand = {len(candidates)}")
 
     # --- B1: Hydrogeological unit score (P-C, categorical) ---
@@ -969,7 +980,8 @@ def write_report(branch: str, df: pd.DataFrame, extra: dict | None = None) -> No
         "flat_cells_aspect": flat_c,
         "source_sha256": sha_sources,
         "grid_params": {
-            "spacing_m": GRID_SPACING, "land_frac": LAND_FRAC,
+            "spacing_m": GRID_SPACING_ST if branch == "ST" else GRID_SPACING_SN,
+            "land_frac": LAND_FRAC,
             "origin": ORIGIN, "centroid": CENTROID, "crs": CRS_SANTIAGO,
         },
     }

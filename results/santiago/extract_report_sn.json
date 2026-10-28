@@ -1,8 +1,8 @@
 {
   "branch": "SN",
-  "timestamp": "2026-10-28T03:10:11Z",
-  "n_cand": 249,
-  "n_adm": 135,
+  "timestamp": "2026-10-28T10:21:01Z",
+  "n_cand": 387,
+  "n_adm": 190,
   "flat_cells_aspect": null,
   "source_sha256": {
     "geologia_santiago_wfs.geojson": "23158bc940efbf6f9e6f4be01c88e8ca332fe8a7bf14e185cc64eb48b4becd33",
@@ -12,7 +12,7 @@
     "cabo-verde-latest.osm.pbf": "26d7378e0b4a649f0cbd4b916ee085d9a50c65bd2d5af1c7a4556b44b97e0576"
   },
   "grid_params": {
-    "spacing_m": 1250.0,
+    "spacing_m": 1000.0,
     "land_frac": 0.5,
     "origin": "floor1m",
     "centroid": "land",
