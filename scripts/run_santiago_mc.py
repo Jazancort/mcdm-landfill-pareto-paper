@@ -581,6 +581,16 @@ def compute_pareto_nd_fast(F: np.ndarray) -> np.ndarray:
     return F[trios[:, 0]] + F[trios[:, 1]] + F[trios[:, 2]]
 
 
+def compute_trio_objectives(F: np.ndarray, trios: np.ndarray) -> np.ndarray:
+    """Aggregate per-site objectives to per-trio by summing over the 3 sites.
+
+    @param F - per-site objectives, shape (N, n_groups).
+    @param trios - valid trio indices, shape (n_trios, 3).
+    @returns F_trios, shape (n_trios, n_groups).
+    """
+    return F[trios[:, 0]] + F[trios[:, 1]] + F[trios[:, 2]]
+
+
 def greedy_selector(scores: np.ndarray, D: np.ndarray) -> tuple:
     """Sequential greedy: pick highest-scoring site, then each next >= d_min away.
 
