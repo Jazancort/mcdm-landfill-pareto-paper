@@ -371,33 +371,34 @@ def compute_trio_objectives(F: np.ndarray, trios: np.ndarray) -> np.ndarray:
     return F[trios[:, 0]] + F[trios[:, 1]] + F[trios[:, 2]]
 
 
-def greedy_selector(scores: np.ndarray, trios: np.ndarray) -> int:
-    """Select trio with maximum sum of per-site scores.
+def greedy_selector(scores: np.ndarray, D: np.ndarray) -> tuple:
+    """Sequential greedy: pick highest-scoring site, then each next >= d_min away.
 
     @param scores - per-site scores, shape (N,).
-    @param trios - valid trio indices, shape (n_trios, 3).
+    @param D - pairwise distance matrix, shape (N, N).
+    @returns tuple of 3 site indices (the selected trio).
+    """
+    order = np.argsort(-scores)
+    chosen = []
+    for idx in order:
+        if all(D[idx, c] >= D_MIN_KM for c in chosen):
+            chosen.append(int(idx))
+        if len(chosen) == 3:
+            break
+    if len(chosen) < 3:
+        raise ValueError(f"Could not form greedy trio from {len(scores)} sites")
+    return tuple(chosen)
+
+
+def optimal_selector(scores: np.ndarray, trios: np.ndarray) -> int:
+    """Optimal: argmax over all valid trios by sum of scorer values.
+
+    @param scores - per-site scores, shape (N,).
+    @param trios - pre-enumerated valid trios, shape (n_trios, 3).
     @returns index into trios of the selected trio.
     """
     trio_scores = scores[trios[:, 0]] + scores[trios[:, 1]] + scores[trios[:, 2]]
     return int(trio_scores.argmax())
-
-
-def optimal_selector(F_trios: np.ndarray, non_dom: np.ndarray) -> int:
-    """Select the trio with highest sum over group objectives among non-dominated trios.
-
-    SAW-mm-opt: select argmax(sum_g F_g(trio)) among non-dominated trios.
-    This maximises a balanced aggregate of all group objectives.
-
-    @param F_trios - trio objectives, shape (n_trios, n_groups).
-    @param non_dom - non-dominated mask, shape (n_trios,).
-    @returns index into trios of the selected non-dominated trio.
-    """
-    # Among non-dominated trios, select the one maximising the sum of objectives
-    candidates = np.where(non_dom)[0]
-    if len(candidates) == 0:
-        return int(F_trios.sum(1).argmax())
-    best_local = F_trios[candidates].sum(1).argmax()
-    return int(candidates[best_local])
 
 
 # ---------------------------------------------------------------------------
@@ -438,56 +439,69 @@ def get_e1_amplitudes(rho_j: np.ndarray, w: np.ndarray, groups: list) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# 6. Q2 computation for one draw and one amplitude vector
+# 6. Q2 computation — all 8 cells for one draw
 # ---------------------------------------------------------------------------
 
-def compute_q2_draw(X_mm, w, A_j, groups, trios, scorers, selector_name):
-    """Compute Q2 for one draw under a given amplitude vector.
+def check_dominated_raw(F_trios: np.ndarray, f: np.ndarray) -> bool:
+    """Check if a trio with objectives f is dominated by any trio in F_trios.
+
+    O(n_trios) — used for Q2 check of a single selected trio.
+
+    @param F_trios - (n_trios, n_groups) all trio objectives.
+    @param f - (n_groups,) objectives of the query trio.
+    @returns True if dominated, False if on the Pareto frontier.
+    """
+    dom = (np.all(F_trios >= f - EPS, axis=1) &
+           np.any(F_trios >  f + EPS, axis=1))
+    return bool(dom.any())
+
+
+def compute_q2_all_cells(X_mm, w, A_j_mm, groups, trios, D, scorers) -> dict:
+    """Compute Q2 for all 8 factorial cells for one draw.
+
+    All 8 cells check against the SAME mm Pareto frontier (defined by group SAW
+    with A_j=A_j_mm, i.e. ones for mm cells). The cells differ only in how
+    they select the trio (greedy/optimal, mm/vec scorer).
 
     @param X_mm - benefit-adj mm-normed, (N, M).
     @param w - weight draw, (M,).
-    @param A_j - amplitude vector, (M,).
+    @param A_j_mm - amplitude for mm objectives (all ones for 8-cell factorial).
     @param groups - list of index lists.
     @param trios - (n_trios, 3) int32.
+    @param D - (N, N) distance matrix (km).
     @param scorers - tuple (saw_mm, saw_vec, topsis_mm, topsis_vec).
-    @param selector_name - one of "SAW_mm_grd", "SAW_mm_opt", ...
-    @returns dict with Q2 and selected trio index.
+    @returns dict cell_name -> Q2 (0 or 1).
     """
     saw_mm, saw_vec, topsis_mm, topsis_vec = scorers
 
-    # Objectives for Pareto frontier (using A_j for this cell)
-    F = compute_group_objectives(X_mm, w, A_j, groups)
-    F_trios = compute_trio_objectives(F, trios)
-    non_dom = build_pareto_frontier_general(F_trios)
+    # Per-site mm objectives (shared across all 8 cells)
+    F_mm_site = compute_group_objectives(X_mm, w, A_j_mm, groups)  # (N, G)
+    F_mm_trios = compute_trio_objectives(F_mm_site, trios)          # (n_trios, G)
 
-    # Select trio based on scoring rule
-    if selector_name == "SAW_mm_grd":
-        sc = saw_mm(w); tidx = greedy_selector(sc, trios)
-    elif selector_name == "SAW_mm_opt":
-        tidx = optimal_selector(F_trios, non_dom)
-    elif selector_name == "SAW_vec_grd":
-        sc = saw_vec(w); tidx = greedy_selector(sc, trios)
-    elif selector_name == "SAW_vec_opt":
-        # For vec-opt: objectives are also vec-normed
-        F_vec = compute_group_objectives(X_mm, w, A_j * np.where(A_j > 0, 1.0, 0.0), groups)
-        F_vec_trios = compute_trio_objectives(F_vec, trios)
-        nd_vec = build_pareto_frontier_general(F_vec_trios)
-        tidx = optimal_selector(F_vec_trios, nd_vec)
-        # Q2 check: is this trio non-dom under MM objectives?
-        return {"Q2": int(non_dom[tidx]), "trio_idx": tidx, "n_nd": int(non_dom.sum())}
-    elif selector_name == "TOPSIS_mm_grd":
-        sc = topsis_mm(w); tidx = greedy_selector(sc, trios)
-    elif selector_name == "TOPSIS_mm_opt":
-        tidx = optimal_selector(F_trios, non_dom)
-    elif selector_name == "TOPSIS_vec_grd":
-        sc = topsis_vec(w); tidx = greedy_selector(sc, trios)
-    elif selector_name == "TOPSIS_vec_opt":
-        tidx = optimal_selector(F_trios, non_dom)
-    else:
-        raise ValueError(f"Unknown selector: {selector_name}")
+    result = {}
+    for cell in CELLS_8:
+        # Choose scorer
+        if   "SAW_mm"    in cell: sc = saw_mm(w)
+        elif "SAW_vec"   in cell: sc = saw_vec(w)
+        elif "TOPSIS_mm" in cell: sc = topsis_mm(w)
+        else:                      sc = topsis_vec(w)
 
-    q2 = int(non_dom[tidx])
-    return {"Q2": q2, "trio_idx": tidx, "n_nd": int(non_dom.sum())}
+        # Select trio
+        if "_grd" in cell:
+            # Sequential greedy: 3 sites chosen independently
+            trio = greedy_selector(sc, D)  # returns tuple of 3 indices
+            f_sel = (F_mm_site[trio[0]] +
+                     F_mm_site[trio[1]] +
+                     F_mm_site[trio[2]])
+            q2 = 0 if check_dominated_raw(F_mm_trios, f_sel) else 1
+        else:
+            # Optimal: argmax over all valid trios
+            tidx = optimal_selector(sc, trios)
+            q2 = 0 if check_dominated_raw(F_mm_trios, F_mm_trios[tidx]) else 1
+
+        result[cell] = q2
+
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -540,24 +554,20 @@ def run_kappa(branch_key: str, kappa, rng, data: dict,
 
         # K1 cell: SAW_mm_opt — compute first as gate
         A_ones = np.ones(len(w0))
-        F_mm = compute_group_objectives(X_mm, w, A_ones, groups)
-        F_mm_trios = compute_trio_objectives(F_mm, trios)
-        non_dom_mm = build_pareto_frontier_general(F_mm_trios)
-        tidx_mm_opt = optimal_selector(F_mm_trios, non_dom_mm)
-        q2_k1 = int(non_dom_mm[tidx_mm_opt])
+        saw_mm_scores = scorers[0](w)
+        tidx_mm_opt = optimal_selector(saw_mm_scores, trios)
+        F_mm_site_k1 = compute_group_objectives(X_mm, w, A_ones, groups)
+        F_mm_trios_k1 = compute_trio_objectives(F_mm_site_k1, trios)
+        q2_k1 = 0 if check_dominated_raw(F_mm_trios_k1, F_mm_trios_k1[tidx_mm_opt]) else 1
 
         if not timing_only and q2_k1 != 1:
             print(f"  K1 FAIL at draw {draw_idx} kappa={label_k}: SAW/mm/opt Q2={q2_k1}")
             return {"abort": True, "reason": f"K1 FAIL draw={draw_idx} kappa={label_k}"}
 
-        # Run all 8 cells
-        row = {"draw": draw_idx, "kappa": label_k, "SAW_mm_opt": q2_k1}
-        for cell_name in CELLS_8:
-            if cell_name == "SAW_mm_opt":
-                continue  # already computed
-            res = compute_q2_draw(X_mm, w, A_ones if "mm" in cell_name else rho_j,
-                                  groups, trios, scorers, cell_name)
-            row[cell_name] = res["Q2"]
+        # Run all 8 cells using the unified function
+        q2_all = compute_q2_all_cells(X_mm, w, A_ones, groups, trios, data["D"], scorers)
+        row = {"draw": draw_idx, "kappa": label_k}
+        row.update(q2_all)
         rows_8.append(row)
 
         # E1 cells at κ=200 and κ=∞
@@ -565,23 +575,24 @@ def run_kappa(branch_key: str, kappa, rng, data: dict,
             e1_amps = get_e1_amplitudes(rho_j, w, groups)
             for e1_name in E1_CELLS:
                 A_e1 = e1_amps[e1_name]
-                F_e1 = compute_group_objectives(X_mm, w, A_e1, groups)
-                F_e1_trios = compute_trio_objectives(F_e1, trios)
-                nd_e1 = build_pareto_frontier_general(F_e1_trios)
+                F_e1_site = compute_group_objectives(X_mm, w, A_e1, groups)
+                F_e1_trios = compute_trio_objectives(F_e1_site, trios)
 
-                # Optimal selector on E1 objectives
-                tidx_opt = optimal_selector(F_e1_trios, nd_e1)
-                q2_opt = int(nd_e1[tidx_opt])
+                # Optimal selector on E1-specific objectives
+                sc_opt = (X_mm * A_e1 * w).sum(1)  # SAW score with E1 amplitude
+                tidx_opt = optimal_selector(sc_opt, trios)
+                q2_opt = 0 if check_dominated_raw(F_e1_trios, F_e1_trios[tidx_opt]) else 1
 
-                # Greedy (SAW-mm score for M, vec amplitude for others)
-                sc_grd = (X_mm * w).sum(1) if e1_name == "M" else (X_mm * A_e1 * w).sum(1)
-                tidx_grd = greedy_selector(sc_grd, trios)
-                q2_grd = int(nd_e1[tidx_grd])
+                # Greedy (SAW score with E1 amplitude, sequential selection)
+                trio_grd = greedy_selector(sc_opt, data["D"])
+                f_grd = (F_e1_site[trio_grd[0]] +
+                         F_e1_site[trio_grd[1]] +
+                         F_e1_site[trio_grd[2]])
+                q2_grd = 0 if check_dominated_raw(F_e1_trios, f_grd) else 1
 
                 rows_e1.append({
                     "draw": draw_idx, "kappa": label_k, "e1_cell": e1_name,
                     "Q2_opt": q2_opt, "Q2_grd": q2_grd,
-                    "n_nd": int(nd_e1.sum()),
                 })
 
     return {
