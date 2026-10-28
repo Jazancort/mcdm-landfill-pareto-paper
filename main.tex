@@ -117,14 +117,14 @@
 % -----------------------------------------------------------------------
 \begin{abstract}
 Multi-site facility siting is a portfolio problem: several locations are chosen
-under a minimum separation. Practice reads multi-criteria rankings
+jointly under a minimum separation. Practice reads multi-criteria rankings
 top-down; the literature compares methods by rank agreement, showing they differ
 but not which is worse. We supply a benchmark external to the ranking. For
 $\Nvia$ admissible sites on Fogo Island, Cape Verde, we enumerate all $\Ntrios$
 three-site portfolios satisfying a $\dmin$~km separation and compute the exact
 Pareto frontier over siting cost, environmental impact and social safety.
 Analytically, under additive aggregation and affine normalisation, effective
-weights are proportional to nominal weight times the column amplitude, and exact
+weights are proportional to nominal weight times column amplitude, and exact
 assembly is Pareto-efficient on all instances if and only if amplitudes are
 constant within each objective group. Empirically, effect sizes depend on the
 dispersion of the weight draws, which we vary over six Dirichlet concentrations
@@ -672,9 +672,11 @@ method--normalisation--assembly combinations are subsequently measured.
 
 \subsection{Candidate sites and the separation constraint}
 
-Let $\Sites=\{1,\dots,N\}$ index candidate sites, each described by $m=11$
-geospatial criteria.
-A \emph{portfolio} is a subset $t\subseteq S$ with $|t|=\kk$.
+Of the $\Ncand$ candidate sites, $\Nexcl$ overlap protected areas and are
+excluded (Section~\ref{sec:methods}).
+Let $\Sites$, with $|\Sites|=N=\Nvia$, be the set of admissible sites,
+each described by $m=11$ geospatial criteria.
+A \emph{portfolio} is a subset $t\subseteq\Sites$ with $|t|=\kk$.
 Portfolios must satisfy a hard pairwise separation constraint
 \begin{equation}
   \label{eq:rsep}
@@ -691,14 +693,12 @@ renders non-compliant portfolios infeasible.
 The feasible set is
 \begin{equation}
   \label{eq:T}
-  \Tset = \bigl\{\,t\subseteq S \;:\; |t|=\kk,\ t \text{ satisfies }
+  \Tset = \bigl\{\,t\subseteq\Sites \;:\; |t|=\kk,\ t \text{ satisfies }
     \eqref{eq:rsep}\,\bigr\},
   \qquad |\Tset| = \Ntrios.
 \end{equation}
-Throughout, $S$ is the set of $\Nvia$ admissible sites
-(Section~\ref{sec:methods}); the $\Nexcl$ excluded candidates never enter
-a portfolio in either reference space and affect only the normalisation
-constants.
+The excluded $\Nexcl$ candidates never enter a portfolio in either reference
+space and affect only the normalisation constants.
 
 \subsection{Three partial value functions}
 
@@ -1289,14 +1289,15 @@ in~\eqref{eq:weff}.
 The ``if and only if'' follows because $w^{\mathrm{eff}} = w$ iff
 $w_j A_j / \sum_k w_k A_k = w_j$ for all $j$, which holds iff all
 $A_j$ equal the same constant.
-\end{proof}
-
-For affine normalisation $n_j(x) = b_j + A_j \tilde{n}_j(x)$ (which
-includes min--max and vector), the score reduces to
-$s(i) = \mathrm{const} + \sum_j w_j A_j \tilde{n}_j(x_{ij})$, identical
-to SAW with weights $w^{\mathrm{eff}}$ applied to the column $\tilde{n}_j$.
+For affine $n_j(x) = b_j + A_j \tilde{n}_j(x)$ (which includes min--max
+and vector), the score reduces to $s(i) = \mathrm{const} + \sum_j w_j A_j
+\tilde{n}_j(x_{ij})$, identical to SAW with weights $w^{\mathrm{eff}}$
+on the column $\tilde{n}_j$.
 The ranking under any affine normalisation is therefore equivalent to SAW
 under min--max with weights $w^{\mathrm{eff}}$.
+For $|T|=3$ fixed, $\sum_{i\in T}s(i)=3\,\mathrm{const}+U\sum_{i\in T}\tilde{s}(i)$
+with $U=\sum_k w_kA_k>0$, so the argmax over $\Tset$ is unchanged.
+\end{proof}
 
 \paragraph{Scope and empirical confirmation.}
 \label{rem:scope}
@@ -1396,23 +1397,9 @@ slightly less than $\approx\RnkContinuousGainPct\%$ (see Table~\ref{tab:amplitud
 The directions are reversed: the same heavy-zero distribution inflates
 \textit{perm} under vector normalisation and deflates it under rank
 scaling.
-Figure~\ref{fig:binary_amplitude} illustrates the binary case analytically.
+Supplementary Figure~S1 illustrates the binary case analytically.
 
-\begin{figure}[!tbp]
-\centering
-\includegraphics[width=0.92\columnwidth]{figures/fig_F5_binary_amplitude.pdf}
-\caption{%
-  $A_j^{\rm rank}$ for a binary criterion as a function of $n_1$ (number
-  of ones), with $N=\Nvia$.
-  The amplitude is $N/[2(N+1)]=0.499$ for any class balance, independent
-  of $n_1$ (solid line), compared with $(N-1)/(N+1)=0.995$ for a
-  continuous criterion without ties (dashed line); the shaded region marks
-  the gap of~$0.496$.
-  The marker shows \textit{aspect} at $n_1=94$.
-  This figure is purely analytical: apart from the marker ($n_1=94$, $N=\Nvia$),
-  no data from Fogo Island enter it.}
-\label{fig:binary_amplitude}
-\end{figure}
+% Figure S1 moved to supplementary.tex (binary amplitude; purely analytical)
 
 
 % ----------------------------------------------------------
@@ -2652,9 +2639,9 @@ non-zero weight uncertainty, not at the nominal weights themselves.
 Applying Holm correction to all six contrasts simultaneously, five remain
 significant; only $\kappa=200$ is non-significant.
 
-\begin{figure}[!tbp]
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.92\columnwidth]{figures/fig_kappa.pdf}
+\includegraphics[width=\columnwidth]{figures/fig_kappa.pdf}
 \caption{%
   Aggregation contrast (SAW minus TOPSIS, three informative cells,
   Section~\ref{sec:factorial}) as a function of weight concentration~$\kappa$.

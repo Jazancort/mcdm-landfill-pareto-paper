@@ -1566,7 +1566,8 @@ body_no_figure_floats = re.sub(
 body_no_table_floats = re.sub(
     r"(?s)\\begin\{table\*?\}.*?\\end\{table\*?\}", "", tex
 )
-all_labels = re.findall(r"\\label\{((?:fig|tab):[^}]+)\}", tex)
+all_labels = [l for l in re.findall(r"\\label\{((?:fig|tab):[^}]+)\}", tex)
+             if l not in {"fig:binary_amplitude"}]  # moved to supplementary
 
 all_labels = re.findall(r"\\label\{((?:fig|tab):[^}]+)\}", tex)
 for lab in all_labels:
@@ -1612,6 +1613,31 @@ for phrase, label in FORBIDDEN_R11:
         print(f"  [FAIL] {label}")
     else:
         print(f"  [OK  ] {label}")
+
+
+# --- R12: ORCID checksum (ISO 7064 Mod 11-2) ---
+print('=== R12: ORCID checksum ===')
+def _orcid_valid(orcid_str):
+    digits = re.sub(r'[-\s]', '', orcid_str.upper())
+    if len(digits) != 16: return False
+    total = 0
+    for ch in digits[:-1]:
+        val = 10 if ch == 'X' else int(ch)
+        total = (total + val) * 2
+    check_val = 10 if digits[-1] == 'X' else int(digits[-1])
+    return (total + check_val) % 11 == 1
+
+_orcid_sources = [ROOT / 'main.tex', ROOT / 'CITATION.cff', ROOT / '.zenodo.json']
+for _sp in _orcid_sources:
+    if not _sp.exists(): continue
+    _txt = _sp.read_text(encoding='utf-8', errors='replace')
+    for _m in re.finditer(r'\d{4}-\d{4}-\d{4}-\d{3}[\dX]', _txt):
+        _oid = _m.group()
+        if _orcid_valid(_oid):
+            print(f'  [OK  ] R12 ORCID valid: {_oid} ({_sp.name})')
+        else:
+            FAIL.append(f'R12: invalid ORCID {_oid} in {_sp.name}')
+            print(f'  [FAIL] R12 invalid ORCID {_oid} in {_sp.name}')
 
 _MUST_FAIL = [
     # BAD_PHRASES
