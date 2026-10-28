@@ -1,0 +1,22 @@
+Stage 1 Regression Report — 2026-10-27
+=======================================
+Worktree: commit 94b5baf (paper) — flat structure at stage1_worktree
+Python: 3.12.13 | numpy 2.5.3 | pandas 3.0.6 | scipy 1.18.1
+
+PRIMARY CRITERION: PASS
+- check_consistency.py: all checks OK (FAIL only on main.bbl=0 bytes, LaTeX build artifact)
+- E7 gates (verify_e7_gates.py): 28/28 PASS (G1:16, G2:6, G3:6)
+  - G1 κ=200: all 8 cells match Table 5
+  - G1 κ=50: all 8 cells match Table 5
+  - G2: SAW/mm/opt = 100% at κ={25,50,100,200,400,1000}
+  - G3: 500 valid draws per κ
+
+SECONDARY CRITERION: PASS (all SHA-256 match)
+- results/unified/mc_unified_raw.csv: b02df727...  MATCH
+- results/regret/regret_perdraw.csv:  0f8eb63d...  MATCH
+- results/e1/e1_diag_bootstrap.csv:   32b536bf...  MATCH
+- results/f8/f8_per_draw.csv:         228d54ec...  MATCH
+
+CONCLUSION: Stage 1 PASS. Stage 2 (data extraction) may begin.
+Note: duplicate paper/ and archive/ directories were committed inadvertently
+in a2418ec (merge artifact). Cleanup scheduled as separate commit.
