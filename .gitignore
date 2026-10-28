@@ -56,6 +56,13 @@ Thumbs.db
 .vscode/
 *.swp
 
-# Santiago data (large files — SHA recorded in osm_snapshot_meta.json and lock file)
+# Stage 4 Monte Carlo outputs (large; committed manually after run is complete)
+results/santiago/mc_*_k*.npz     # per-κ checkpoint files (can be regenerated)
+results/santiago/timing_*.txt    # timing logs
+results/santiago/_stage4_run_meta.json  # run metadata (git hash + SHAs); not scientific data
+# Note: mc_ST_raw.csv, mc_SN_raw.csv, mc_*_e1.csv and macros_santiago.tex
+# are NOT gitignored — they must be committed after Stage 4 completes.
+
+
 data/santiago/*.pbf
 data/santiago/*.tif

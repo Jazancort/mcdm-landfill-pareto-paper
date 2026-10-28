@@ -26,7 +26,7 @@ The PRESPEC declaration was based on the GetCapabilities response (layer exists 
 catalog). The actual download failure was only discovered at Phase 1 extraction time
 (2026-10-27), after the PRESPEC was committed and locked.
 
-## Second attempt (2026-10-29)
+## Second attempt (2026-10-28 UTC)
 
 Two WFS GetFeature requests were sent at different times:
 

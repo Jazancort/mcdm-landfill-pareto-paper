@@ -199,7 +199,51 @@ Result: PASS (deciding criterion)
 
 
 
-## Stage 4 timing (Athena RTX 4000 Ada, CPU only — 2026-10-28)
+
+## Timing explanation: S-T/S-N ratio (2026-10-28)
+
+User question: "o factor de 138× não bate certo com o ratio N_adm de 3.2×"
+
+Explanation: the cost per draw scales with **n_trios**, not N_adm³.
+
+- check_dominated_raw is O(n_trios) per Q2 check × 8 cells = O(8 × n_trios) per draw
+- n_trios(S-T) = 16,699,705; n_trios(S-N) = 77,995
+- Ratio n_trios: 16.7M / 78K = **214×**
+- Per-draw timing ratio: 9.4s / 0.04s = **235×** ≈ 214× ✓ (consistent)
+- Full-run ratio appears lower (552min / 2.4min ≈ 230×) because κ=∞ runs 1 draw on both branches
+
+N_adm³ scaling (32×) only applies if each draw cost is O(N_adm³). But cost is O(n_trios) = O(n_trios(N_adm)) which for our spatial data with d_min=10km gives a much higher ratio.
+
+GPU (nvidia-smi, 2026-10-28): RTX 5000 Ada 0%, RTX 4000 Ada 0%. Stage 4 runs on CPU.
+numpy does not use GPU automatically. Portfolio k=3, N_DRAWS=500, same for both branches.
+
+## Launch commands (revised — 2026-10-28)
+
+```bash
+# On Athena:
+cd ~/scratch/mcdm-landfill-pareto-paper
+git fetch --tags --force origin
+git checkout --detach stage4-launch-r1          # correct tag (d0635a3)
+git describe --exact-match --tags HEAD          # must return stage4-launch-r1
+git status --porcelain --untracked-files=no     # must be empty
+uv sync --frozen                                # pin env — no re-resolution
+uv run --frozen python scripts/verify_stage4_sha.py   # ST=0980d076 SN=65160166
+uv run --frozen python scripts/compute_stage3b.py     # Fogo gate before launch
+
+uv pip freeze > ~/scratch/stage4_env_freeze_$(date -u +%Y%m%dT%H%MZ).txt
+tmux new -s stage4
+LOG="results/santiago/mc_full_$(date -u +%Y%m%dT%H%MZ).log"
+uv run --frozen python -u scripts/run_santiago_mc.py --branch both 2>&1 | tee -a "$LOG"
+# Resume (if session drops — use same log name stored in _stage4_run_meta.json):
+# uv run --frozen python -u scripts/run_santiago_mc.py --branch both 2>&1 | tee -a "$LOG"
+# Script checks _stage4_run_meta.json and aborts if commit/SHA mismatch.
+```
+
+Note: `tee -a` appends (does not truncate log on resume).
+Note: `--frozen` prevents environment re-resolution between runs.
+Note: results/santiago/mc_*_k*.npz (checkpoints) and _stage4_run_meta.json are gitignored.
+
+
 
 Script: `scripts/run_santiago_mc.py --branch both --timing` (5 draws/κ, python -u)
 Commit: 0755358

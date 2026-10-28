@@ -307,14 +307,16 @@ def fogo_gate() -> bool:
         if not ok:
             failures.append(f"{name}: |computed - published| = {diff:.4f} > tol={tol}")
 
-    # w_eff/w gate for perm (key criterion, most sensitive to formula bug)
-    # Correct formula A_j/S gives ~2.73x (precise) or 2.865x (Tab 2 rounded).
-    # Bug A_j/w_j gave 3.83x. Range [2.65, 2.95] catches this bug.
+    # perm w_eff/w gate
+    # Published value in paper Tab 2: \PermInflation{2.86} (macros_amplitudes.tex, 2 d.p.)
+    # Rule: half of last decimal place → 0.01/2 = 0.005 → range [2.855, 2.865]
+    # Computed precise value: 2.8649 → rounds to 2.86 ✓
+    # The original bug (A_j/w_j) gives 3.836 → FAR outside this range.
     perm_ratio = w_eff[0] / FOGO_W[0]
-    perm_expected_min = 2.65
-    perm_expected_max = 2.95
+    perm_expected_min = 2.855
+    perm_expected_max = 2.865
     perm_ok = perm_expected_min <= perm_ratio <= perm_expected_max
-    print(f"  {'perm w_eff/w':12s}: computed={perm_ratio:.4f}  expected=[{perm_expected_min},{perm_expected_max}]  "
+    print(f"  {'perm w_eff/w':12s}: computed={perm_ratio:.4f}  published=2.86  expected=[{perm_expected_min},{perm_expected_max}]  "
           f"[{'PASS' if perm_ok else 'FAIL'}]")
     if not perm_ok:
         failures.append(f"perm w_eff/w = {perm_ratio:.4f} outside [{perm_expected_min},{perm_expected_max}]")
@@ -358,23 +360,31 @@ def fogo_gate_negative_test() -> None:
     meff_bug = compute_meff(FOGO_W, w_eff_bug)
     perm_ratio_bug = A_bug[0] / FOGO_W[0]       # = 3.836 (the original error)
 
-    print(f"  Bug formula: perm w_eff/w = {perm_ratio_bug:.4f}x  (correct: ~2.73-2.87x)")
+    print(f"  Bug formula: perm w_eff/w = {perm_ratio_bug:.4f}x  (correct: ~2.86, published \PermInflation)")
     print(f"  Bug formula: TV = {TV_bug:.4f}  (correct: ~0.311)")
 
-    # The gate should catch these wrong values:
-    perm_fails = not (2.65 <= perm_ratio_bug <= 2.95)
+    # Near-boundary test: a value just outside the range [2.855, 2.865] must fail
+    # 2.870 is 0.005 above the upper bound → must be rejected
+    perm_near_hi = 2.870
+    perm_near_lo = 2.850
+    near_hi_fails = not (2.855 <= perm_near_hi <= 2.865)
+    near_lo_fails = not (2.855 <= perm_near_lo <= 2.865)
+    print(f"  Near-boundary: 2.870 outside [2.855,2.865]: {near_hi_fails}  ← gate must reject this")
+    print(f"  Near-boundary: 2.850 outside [2.855,2.865]: {near_lo_fails}  ← gate must reject this")
+
+    perm_fails = not (2.855 <= perm_ratio_bug <= 2.865)
     tv_diff = abs(TV_bug - FOGO_TV_PUB)
     tv_fails = tv_diff > 0.0005
 
-    print(f"  perm w_eff/w OUT of [2.65, 2.95]: {perm_fails}  ← gate must catch this")
-    print(f"  TV |diff|={tv_diff:.4f} > 0.0005: {tv_fails}  ← gate must catch this")
+    print(f"  perm w_eff/w OUT of [2.855, 2.865]: {perm_fails}  ← gate must catch this")
+    print(f"  TV |diff|={tv_diff:.4f} > 0.0005: {tv_fails}")
 
-    if not (perm_fails or tv_fails):
-        print("CRITICAL: NEGATIVE TEST FAILED — gate does not detect the original bug!")
+    if not (perm_fails or tv_fails) or not near_hi_fails or not near_lo_fails:
+        print("CRITICAL: NEGATIVE TEST FAILED — gate does not detect the original bug or boundary is wrong!")
         print("The gate tolerances or checks are too loose. Fix before using.")
         sys.exit(1)
     else:
-        print("  NEGATIVE TEST PASSED — gate correctly rejects the buggy formula.")
+        print("  NEGATIVE TEST PASSED — gate correctly rejects the buggy formula and boundary cases.")
 
 
 # ---------------------------------------------------------------------------
@@ -500,7 +510,13 @@ def compute_branch(label: str, csv_path: Path, w: np.ndarray, crit_names: list,
     cond_TV_W   = bool(TV_W  >= 0.05)
 
     # S5 condition: max point_mass of non-binary, non-categorical continuous criteria
-    # Binary/categorical in S-T: aspect (0/1); in S-N: B1 (3 values)
+    # PRESPEC §6: "Binary criteria (aspect in S-T; B1 in S-N after normalisation)
+    # and categorical criteria are excluded from this condition."
+    # Perm: continuous distance in metres, NOT categorical. Its high point mass (>60%)
+    # comes from many sites inside Baixa polygons (distance=0), a DATA property not a
+    # criterion type. Perm is included in S5 check → S5 not testable in S-T.
+    # B1 (S-N): explicitly categorical (3 classes only). Excluded.
+    # Aspect (S-T): binary by construction. Excluded.
     if label == "S-T":
         # Exclude aspect (binary 0/1); report max of remaining
         contin_crits = [n for n in crit_names if n != "aspect"]

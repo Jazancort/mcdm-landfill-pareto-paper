@@ -874,6 +874,48 @@ def run_branch(branch_key: str, timing_only: bool = False) -> None:
     all_rows_8  = []
     all_rows_e1 = []
 
+    # Stage 4 run metadata: commit hash + data SHAs, written once and verified on resume
+    _meta_path = RESULTS / "_stage4_run_meta.json"
+    try:
+        import subprocess as _sp, hashlib as _hs
+        _git_hash = _sp.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=str(ROOT), text=True, stderr=_sp.DEVNULL,
+        ).strip()
+        _st_sha = _hs.sha256(
+            (ROOT / "results/santiago/df_santiago_st.csv").read_bytes().replace(b"\r\n", b"\n")
+        ).hexdigest()[:8]
+        _sn_sha = _hs.sha256(
+            (ROOT / "results/santiago/df_santiago_sn.csv").read_bytes().replace(b"\r\n", b"\n")
+        ).hexdigest()[:8]
+    except Exception:
+        _git_hash = "UNKNOWN"
+        _st_sha = "UNKNOWN"
+        _sn_sha = "UNKNOWN"
+
+    if _meta_path.exists() and not timing_only:
+        # Verify metadata matches this run
+        _meta = json.loads(_meta_path.read_text())
+        _mismatches = []
+        if _meta.get("git_hash") not in ("UNKNOWN", _git_hash):
+            _mismatches.append(f"git_hash: checkpoint={_meta['git_hash'][:7]} current={_git_hash[:7]}")
+        if _meta.get("st_sha") not in ("UNKNOWN", _st_sha):
+            _mismatches.append(f"st_sha: checkpoint={_meta['st_sha']} current={_st_sha}")
+        if _meta.get("sn_sha") not in ("UNKNOWN", _sn_sha):
+            _mismatches.append(f"sn_sha: checkpoint={_meta['sn_sha']} current={_sn_sha}")
+        if _mismatches:
+            print(f"\nABORT: checkpoint metadata mismatch — cannot resume:")
+            for m in _mismatches:
+                print(f"  {m}")
+            print("Delete _stage4_run_meta.json if you intend to restart from scratch.")
+            return
+        print(f"  [meta] checkpoint metadata matches current run ✓")
+    elif not timing_only and not _meta_path.exists():
+        # Write metadata on first run
+        _meta_path.write_text(json.dumps({
+            "git_hash": _git_hash, "st_sha": _st_sha, "sn_sha": _sn_sha,
+            "started_utc": __import__("time").strftime("%Y-%m-%dT%H:%M:%SZ", __import__("time").gmtime()),
+        }, indent=2))
+
     total_time = 0.0
     timing_by_kappa = {}
 
