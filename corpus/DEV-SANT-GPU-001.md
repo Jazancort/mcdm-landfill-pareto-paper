@@ -131,12 +131,41 @@ Gate comparison (CPU vs GPU):
 
 Result: GPU r5 ACCEPTED as main analysis for S-N (equivalence rule satisfied).
 
-### S-T equivalence: partial
+### S-T equivalence: partial — pending A+B verification
 
-S-T --timing (CPU r4, 5 draws): K1=100% all κ (confirms same code path active).
-Full S-T CPU run (~9.3h) deferred. Given S-N covers the same 8 cells, same E1 cells,
-same GPU functions, the S-T equivalence is expected but not yet confirmed by direct output
-comparison. S-T full CPU run to be run in a separate session when a CPU core is free.
+S-T full CPU run (9.3h) was cancelled during κ=25 after ~3 min without completing
+any κ (see timeline above). Replaced by two targeted checks:
+
+**Criterion (written BEFORE running A and B):**
+
+S-T GPU r5 is accepted as equivalent to CPU r4 if:
+  (A) No decision in the margin audit has gap < τ=1e-9 in absolute terms
+      (meaning floating-point rounding cannot flip any Q2 or argmax result), OR
+      all flagged fragile draws coincide in (B).
+  (B) All discrete Q2 values in the CPU sample match GPU r5 exactly.
+  Combined: zero fragile decisions OR all fragile decisions confirmed correct.
+
+If any Q2 differs in (B): GPU r5 S-T result is NOT accepted; r4 CPU is the reference.
+
+**Verification A: margin audit (GPU, a few minutes)**
+
+For each of the 3000 stochastic S-T draws, record:
+  - argmax_gap: trio_scores[rank1] - trio_scores[rank2] per scorer-cell
+  - dom_gap: for the selected trio, min positive value of any dominating-direction
+    component across all 16.7M trios (i.e., the closest near-dominator)
+τ = 1e-9 (absolute). Float64 rounding error for sums of ~600 terms ≈ 600 × ε₅₄ ≈ 1e-13.
+Fragile: gap < τ for either metric.
+
+**Verification B: CPU sample (r4 worktree, parallel κ, ~13 min)**
+
+Draws per κ: 20 random (seed=99, not a canonical seed) + all fragile from A.
+Weight regeneration: advance `get_branch_rngs(κ)` exactly draw_idx steps to
+reproduce the same w as in the sealed run.
+Criterion: discrete Q2 outputs identical for all sampled draws.
+Statistical bound: if all 120 random draws (20 × 6 κ) match, divergence rate
+< 2.5% with 95% confidence (rule of three over 120 independent draws).
+
+Results pending; update this section when A and B complete.
 
 ## κ=∞ K6=0 in S-T: diagnostic complete
 
