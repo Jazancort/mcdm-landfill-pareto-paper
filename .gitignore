@@ -58,6 +58,7 @@ Thumbs.db
 
 # Stage 4 Monte Carlo outputs (large; committed manually after run is complete)
 results/santiago/mc_*_k*.npz     # per-κ checkpoint files (can be regenerated)
+results/santiago/mc_full_*.log   # tee log from launch command (not scientific data)
 results/santiago/timing_*.txt    # timing logs
 results/santiago/_stage4_run_meta.json  # run metadata (git hash + SHAs); not scientific data
 # Note: mc_ST_raw.csv, mc_SN_raw.csv, mc_*_e1.csv and macros_santiago.tex

@@ -1189,11 +1189,21 @@ def log_startup_provenance() -> None:
     for rel_path, expected in expected_sha.items():
         fpath = ROOT / rel_path
         if fpath.exists():
-            actual = hashlib.sha256(fpath.read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:8]
-            match_str = "MATCH" if actual == expected else f"MISMATCH (expected {expected})"
-            print(f"  {rel_path.split('/')[-1]}: sha256[:8]={actual}  [{match_str}]")
+            actual_full = hashlib.sha256(fpath.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+            actual_short = actual_full[:8]
+            match_str = "MATCH" if actual_short == expected else f"MISMATCH (expected {expected})"
+            print(f"  {rel_path.split('/')[-1]}: sha256={actual_full}  [{match_str}]")
         else:
             print(f"  {rel_path}: NOT FOUND")
+
+    # uv.lock hash — verifies the pinned environment used to run Stage 4
+    print()
+    lock_path = ROOT / "uv.lock"
+    if lock_path.exists():
+        lock_hash = hashlib.sha256(lock_path.read_bytes()).hexdigest()
+        print(f"  uv.lock sha256: {lock_hash}")
+    else:
+        print("  uv.lock: NOT FOUND (environment not pinned via uv)")
 
     # Seed table
     print()

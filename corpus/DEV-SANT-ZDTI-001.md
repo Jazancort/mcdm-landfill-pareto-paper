@@ -30,17 +30,26 @@ catalog). The actual download failure was only discovered at Phase 1 extraction 
 
 Two WFS GetFeature requests were sent at different times:
 
-**Attempt 1 (2026-10-29, endpoint 1):**
+**Attempt 1 (2026-10-28 UTC, endpoint 1):**
 URL: `https://geoservicos-ingt.gov.cv/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=areas_especiais:zdti&outputFormat=application/json`
 Response: HTTP 500 / OperationProcessingFailed
 Error body: "Schema 'zdti' does not exist."
+HTTP Date header: not captured.
 
-**Attempt 2 (2026-10-29, endpoint 2):**
+**Attempt 2 (2026-10-28 UTC, endpoint 2):**
 URL: `https://geoservicos-ingt.gov.cv/geoserver/areas_especiais/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=areas_especiais:zdti&outputFormat=application/json`
 Response: HTTP 500 / OperationProcessingFailed
 Error body: "Schema 'zdti' does not exist."
+HTTP Date header: not captured.
 
-**GetCapabilities (2026-10-29):**
+**Correction note:** The dates in the attempt labels above were originally written as
+"2026-10-29" due to a timezone/date error (UTC vs local time). Corrected to
+"2026-10-28 UTC" in commit r2 (stage4-launch-r2). The server response body and
+error code are unchanged. The HTTP Date header was not captured at the time of the
+request; its absence is noted here as it would have provided independent confirmation
+of the date. The diagnosis and conclusion are unaffected by the date correction.
+
+**GetCapabilities (2026-10-28 UTC):**
 `areas_especiais:zdti` is still listed as a valid feature type in the WFS capabilities.
 
 **Diagnosis:** The layer exists in GeoServer's layer configuration but the underlying

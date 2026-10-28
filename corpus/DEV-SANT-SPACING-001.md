@@ -77,6 +77,18 @@ and the trio limit, not on any criterion value or MCDM result. Applying the rule
 correctly after having seen S-N descriptors at 1.25 km introduces no criterion-value-
 dependent arbitrariness. The PRESPEC spacing rule is mechanical.
 
+## Independence of spacing from TV_B
+
+The 1.0 km spacing for S-N was determined exclusively by the geometric rule
+(n_trios_Ncand = 1,146,955 at 1.0 km < 50M limit), which was fixed in PRESPEC_SANTIAGO
+§3 before any criterion value, score or descriptor was computed for S-N.
+
+It was NOT chosen because TV_B at 1.0 km (0.057) is above the 0.05 testability
+threshold. The testability consequence (S3b and S7b now testable) is an incidental
+observation made after the rule was applied correctly. Choosing 1.0 km to obtain
+TV_B ≥ 0.05 would be a post-hoc adjustment; the actual sequence was the reverse:
+the rule gives 1.0 km; TV_B is then computed from that grid and happens to be 0.057.
+
 ## Official S-T spacing record (Stage 3a, for completeness)
 
 | Spacing | N_cand | n_trios(N_cand) | Decision |
