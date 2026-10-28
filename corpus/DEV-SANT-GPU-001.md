@@ -165,7 +165,27 @@ Criterion: discrete Q2 outputs identical for all sampled draws.
 Statistical bound: if all 120 random draws (20 × 6 κ) match, divergence rate
 < 2.5% with 95% confidence (rule of three over 120 independent draws).
 
-Results pending; update this section when A and B complete.
+**Verification A results (2026-10-28, GPU 0, 3000 draws × 6κ × 8 cells):**
+  min_argmax_gap = 1.250e-07  (>> τ=1e-9; safety factor ×125 over τ, ×1.25M over float64 error)
+  min_dom_gap    = 2.716e-04  (>> τ=1e-9; safety factor ×270,000)
+  total_fragile (gap < τ) = 0
+  Elapsed: 238.6 s
+  PASS: no fragile decisions — rounding cannot change any Q2 or argmax in S-T.
+
+**Verification B results (2026-10-28, CPU r4 worktree, 6κ in parallel, ~3 min wall time):**
+  20 random draws × 8 cells × 6κ = 960 Q2 values
+  Draws selected: numpy.default_rng(99+kappa).choice(500, 20) per κ (seed 99, not canonical)
+  Weight regeneration: advance get_branch_rngs(κ) exactly draw_idx steps
+  Fragile draws (from A): 0 — none added
+  Total Q2 differences: 0
+  PASS: all 960 sampled Q2 values agree between CPU r4 and GPU r5.
+
+Statistical bound: 0 failures in 120 independent draws → divergence rate < 3/120 = 2.5%
+with 95% confidence (rule of three). Same order as Δ=2.5pp TOST margin.
+
+**Conclusion (S-T):** GPU r5 ACCEPTED as equivalent to CPU r4 for S-T.
+Criterion A satisfied (0 fragile). Criterion B satisfied (0 differences in 960 Q2).
+S-T results are no longer provisional.
 
 ## κ=∞ K6=0 in S-T: diagnostic complete
 
