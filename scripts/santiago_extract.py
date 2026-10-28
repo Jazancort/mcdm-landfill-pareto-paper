@@ -65,8 +65,8 @@ CRS_GEO      = "EPSG:4326"
 PRESPEC_LOCK = PAPER / "corpus" / "PRESPEC_SANTIAGO_F1.lock"
 
 # Declared data paths — must exist before Stage 2 begins
-GEOL_GEOJSON = PAPER / "05-referencia" / "Novos" / "geologia_santiago_wfs.geojson"
-AGRI_GEOJSON = PAPER / "05-referencia" / "Novos" / "carta_agricola_st_wfs.geojson"
+GEOL_GEOJSON = PAPER / "05-referencia" / "geologia_santiago_wfs.geojson"
+AGRI_GEOJSON = PAPER / "05-referencia" / "carta_agricola_st_wfs.geojson"
 
 # These must be downloaded by the user before running
 DEM_UTM_TIF    = PAPER / "data" / "santiago" / "dem_santiago_utm27.tif"  # gdalwarp output
