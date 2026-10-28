@@ -249,3 +249,41 @@ Note: range will be strongly concentrated around Praia (high A_j expected).
 data/santiago/dem_santiago_geo.tif = Copernicus GLO-30 (DEV-SANT-DEM-001).
 Official Stage 2 requires ASTER GDEM v3 tiles N14W024 and N15W024.
 Download via NASA Earthdata (free account) or earthaccess with credentials.
+
+## Aspect and |T| verification (2026-10-28)
+
+### Aspect CRS
+- Geographic DEM: EPSG:4326 (aspect computed from this)
+- UTM DEM: EPSG:32627 (slope only)
+- UTM zone (26N vs 27N) is IRRELEVANT for aspect — no meridional convergence issue
+- Aspect is computed from geographic Sobel (same method as Fogo, validated by selftest)
+
+### Anisotropy check (PRESPEC §3)
+- Factor = 111.32 / (111.32 * cos(15°)) = 1.035 (E-W overscale at 15°N)
+- Correct formula: arctan2(sin(asp_formula) * FACTOR, cos(asp_formula))
+- Max aspect shift = 0.993° (within PRESPEC 1° negligibility threshold)
+- Mean shift = 0.630°
+- Class changes (leeward [90°,180°]): 0
+- No DEV-SANT-ASP-001 needed. Anisotropy confirmed negligible.
+
+### |T| with official data
+- N_cand=650, n_trios(N_cand) = 21,112,677 (from Stage 3a, geometry only)
+- N_adm=601, n_trios(N_adm) = 16,699,705 (< 50M; > 10,000) — OK
+- Both bounds satisfied.
+
+### C-2 wells — full record
+Search performed: IDECV WFS GetCapabilities (103 layers); specific queries for
+hidrogeologia:pontos_de_agua, furos, nascentes, carto_base:pontos_de_agua, furos.
+All returned HTTP 400 or 404. No water point inventory found in INGRH/IDECV WFS.
+OSM: 7 features (all man_made=water_works, sparse coverage).
+
+Decision: omit wells criterion; renormalise 10 remaining weights proportionally.
+
+Renormalised w0 effective (C-2 applied):
+  perm=0.1608, slope=0.1196, roads=0.0317, rivers=0.0963,
+  aspect=0.0794, coast=0.0730, protected=0.0698,
+  urban=0.1757, aero=0.1079, cult=0.0857  (sum=1.000)
+
+Note: Predictions K1-K6 (PRESPEC_SANTIAGO_A5) apply to THIS renormalised w0,
+not to the original Fogo weights. S-T no longer transfers Fogo weights exactly.
+W_g after C-2: G1=0.3122, G2=0.3185 (wells removed), G3=0.3693.
