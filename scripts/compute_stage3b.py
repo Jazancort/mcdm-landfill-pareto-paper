@@ -289,10 +289,15 @@ def fogo_gate() -> bool:
 
     failures = []
     checks = [
-        ("TV",   TV,   FOGO_TV_PUB,   0.002),
-        ("TV_B", TV_B, FOGO_TVB_PUB,  0.002),
-        ("TV_W", TV_W, FOGO_TVW_PUB,  0.002),
-        ("m_eff",meff, FOGO_MEFF_PUB, 0.05),
+        # Tolerances: half the last decimal place of the published value.
+        # TV   = 0.311 → last decimal 0.001 → tol = 0.0005
+        # TV_B = 0.248 → last decimal 0.001 → tol = 0.0005
+        # TV_W = 0.195 → last decimal 0.001 → tol = 0.0005
+        # m_eff = 4.03 → last decimal 0.01  → tol = 0.005
+        ("TV",   TV,   FOGO_TV_PUB,   0.0005),
+        ("TV_B", TV_B, FOGO_TVB_PUB,  0.0005),
+        ("TV_W", TV_W, FOGO_TVW_PUB,  0.0005),
+        ("m_eff",meff, FOGO_MEFF_PUB, 0.005),
     ]
     for name, computed, published, tol in checks:
         diff = abs(computed - published)
@@ -303,12 +308,11 @@ def fogo_gate() -> bool:
             failures.append(f"{name}: |computed - published| = {diff:.4f} > tol={tol}")
 
     # w_eff/w gate for perm (key criterion, most sensitive to formula bug)
+    # Correct formula A_j/S gives ~2.73x (precise) or 2.865x (Tab 2 rounded).
+    # Bug A_j/w_j gave 3.83x. Range [2.65, 2.95] catches this bug.
     perm_ratio = w_eff[0] / FOGO_W[0]
-    # Expected range from rounded Tab 2: 2.865±0.02 OR from precise: 2.731±0.02
-    # Accept if either is within 0.05 (precise or rounded differ by ~0.13)
-    perm_tol = 0.15  # covers both rounded (2.865) and precise (2.73x) values
-    perm_expected_min = 2.60
-    perm_expected_max = 3.00
+    perm_expected_min = 2.65
+    perm_expected_max = 2.95
     perm_ok = perm_expected_min <= perm_ratio <= perm_expected_max
     print(f"  {'perm w_eff/w':12s}: computed={perm_ratio:.4f}  expected=[{perm_expected_min},{perm_expected_max}]  "
           f"[{'PASS' if perm_ok else 'FAIL'}]")
@@ -328,6 +332,49 @@ def fogo_gate() -> bool:
         print("GATE PASSED — all Fogo Tab 2 values reproduced within tolerance.")
         print()
         return True
+
+
+# ---------------------------------------------------------------------------
+# 3b. Negative test for the Fogo gate
+# ---------------------------------------------------------------------------
+
+def fogo_gate_negative_test() -> None:
+    """Verify the gate catches the original formula bug (A_j/w_j instead of A_j/S).
+
+    The bug produced perm w_eff/w = 3.83x. The gate must reject this.
+    Aborts with sys.exit(1) if the negative test FAILS (i.e., gate does not catch the bug).
+    """
+    print("\nNEGATIVE TEST — gate must reject the A_j/w_j bug:")
+
+    # Replicate the bug: w_eff_j = A_j / w_j  (wrong denominator)
+    A_bug = FOGO_A.copy()
+    S_bug = float(FOGO_W[0])                    # BUG: use w_perm instead of sum(w*A)
+    w_eff_bug = FOGO_W * A_bug / S_bug          # wrong formula
+    w_eff_bug = w_eff_bug / w_eff_bug.sum()     # normalize to 1 (masks the error)
+
+    TV_bug  = compute_TV(FOGO_W, w_eff_bug)
+    TV_B_bug = compute_TV_between(FOGO_W, A_bug, FOGO_GROUPS)
+    TV_W_bug = compute_TV_within(FOGO_W, A_bug, FOGO_GROUPS)
+    meff_bug = compute_meff(FOGO_W, w_eff_bug)
+    perm_ratio_bug = A_bug[0] / FOGO_W[0]       # = 3.836 (the original error)
+
+    print(f"  Bug formula: perm w_eff/w = {perm_ratio_bug:.4f}x  (correct: ~2.73-2.87x)")
+    print(f"  Bug formula: TV = {TV_bug:.4f}  (correct: ~0.311)")
+
+    # The gate should catch these wrong values:
+    perm_fails = not (2.65 <= perm_ratio_bug <= 2.95)
+    tv_diff = abs(TV_bug - FOGO_TV_PUB)
+    tv_fails = tv_diff > 0.0005
+
+    print(f"  perm w_eff/w OUT of [2.65, 2.95]: {perm_fails}  ← gate must catch this")
+    print(f"  TV |diff|={tv_diff:.4f} > 0.0005: {tv_fails}  ← gate must catch this")
+
+    if not (perm_fails or tv_fails):
+        print("CRITICAL: NEGATIVE TEST FAILED — gate does not detect the original bug!")
+        print("The gate tolerances or checks are too loose. Fix before using.")
+        sys.exit(1)
+    else:
+        print("  NEGATIVE TEST PASSED — gate correctly rejects the buggy formula.")
 
 
 # ---------------------------------------------------------------------------
@@ -519,6 +566,8 @@ def get_prior_ntrios(label: str) -> dict:
 def main():
     # Fogo gate: blocking — aborts if formula is wrong
     fogo_gate()
+    # Negative test: aborts if gate would NOT catch the original formula bug
+    fogo_gate_negative_test()
 
     results = {}
 
@@ -631,10 +680,26 @@ def main():
         ("TV_B",      FOGO_TVB_PUB,   results["S-T"]["TV_B"],    results["S-N"]["TV_B"]),
         ("TV_W",      FOGO_TVW_PUB,   results["S-T"]["TV_W"],    results["S-N"]["TV_W"]),
         ("m_eff",     FOGO_MEFF_PUB,  results["S-T"]["m_eff"],   results["S-N"]["m_eff"]),
-        ("perm/B3 pm", 0.9,           results["S-T"]["point_masses"]["perm"],
-                                       results["S-N"]["point_masses"]["B3"]),
     ]:
         print(f"  {key:20s}  {str(f_val):>12}  {str(st_val):>12}  {str(sn_val):>12}")
+
+    # S5 condition: per-branch maximum continuous point mass
+    # S-T: exclude aspect (binary); S-N: exclude B1 (categorical)
+    st_pm = results["S-T"]["point_masses"]
+    sn_pm = results["S-N"]["point_masses"]
+    st_contin = {k:v for k,v in st_pm.items() if k != "aspect"}
+    sn_contin = {k:v for k,v in sn_pm.items() if k != "B1"}
+    st_s5_crit = max(st_contin, key=st_contin.get)
+    sn_s5_crit = max(sn_contin, key=sn_contin.get)
+    st_max_pm = st_contin[st_s5_crit]
+    sn_max_pm = sn_contin[sn_s5_crit]
+
+    print(f"\n  S5 condition: max point_mass of non-binary, non-categorical continuous criteria")
+    print(f"  S-T: max_pm_contin={st_max_pm:.4f} ({st_s5_crit})"
+          f"  → S5 {'NOT testable (>0.5)' if st_max_pm >= 0.5 else 'testable (<0.5)'}")
+    print(f"  S-N: max_pm_contin={sn_max_pm:.4f} ({sn_s5_crit})"
+          f"  → S5 {'NOT testable (>0.5)' if sn_max_pm >= 0.5 else 'testable (<0.5)'}")
+    print(f"  S-N B1 (categorical, EXCLUDED from S5): pm={sn_pm.get('B1',0):.4f}")
 
     print("\nPrediction conditions (per branch):")
     for b in ["S-T", "S-N"]:

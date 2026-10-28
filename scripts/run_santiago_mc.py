@@ -62,6 +62,7 @@ EPS      = 1e-9
 N_DRAWS  = 500
 B_BOOT   = 2000
 D_MIN_KM = 10.0
+DELTA_PP = 2.5   # equivalence margin (pp) for TOST on S0-S7 (PRESPEC A5 §1); applied post-collection
 
 # ---------------------------------------------------------------------------
 # 1. Branch configuration
@@ -1107,6 +1108,81 @@ def run_sens_a5(timing_only: bool = False) -> None:
 # 13. CLI
 # ---------------------------------------------------------------------------
 
+def log_startup_provenance() -> None:
+    """Print startup provenance: commit hash, data SHAs, seed table, environment.
+
+    Called at the start of every Stage 4 run (not --timing). Records in the log:
+    - git commit hash (the frozen script version)
+    - SHA-256 of both input CSVs (verifies correct data)
+    - Canonical seed table from gen_santiago_seeds
+    - pip freeze of the active environment
+    """
+    import subprocess, hashlib
+    print("=" * 70)
+    print("STAGE 4 PROVENANCE")
+    print("=" * 70)
+
+    # git commit hash
+    try:
+        git_hash = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=str(ROOT), text=True, stderr=subprocess.DEVNULL,
+        ).strip()
+        git_dirty = subprocess.check_output(
+            ["git", "status", "--porcelain", "--untracked-files=no"],
+            cwd=str(ROOT), text=True, stderr=subprocess.DEVNULL,
+        ).strip()
+        git_status = "DIRTY" if git_dirty else "CLEAN"
+        print(f"  git commit : {git_hash}  [{git_status}]")
+        if git_dirty:
+            print(f"  WARNING: working directory has uncommitted changes — tag before running")
+    except Exception as e:
+        print(f"  git commit : UNKNOWN ({e})")
+
+    # SHA-256 of data files (expected values from committed extractions)
+    expected_sha = {
+        "results/santiago/df_santiago_st.csv": "0980d076",
+        "results/santiago/df_santiago_sn.csv": "65160166",
+    }
+    print()
+    for rel_path, expected in expected_sha.items():
+        fpath = ROOT / rel_path
+        if fpath.exists():
+            actual = hashlib.sha256(fpath.read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:8]
+            match_str = "MATCH" if actual == expected else f"MISMATCH (expected {expected})"
+            print(f"  {rel_path.split('/')[-1]}: sha256[:8]={actual}  [{match_str}]")
+        else:
+            print(f"  {rel_path}: NOT FOUND")
+
+    # Seed table
+    print()
+    print("  Canonical seed table (PRESPEC_SANTIAGO_A5b):")
+    from gen_santiago_seeds import KAPPA_VALUES, SEED_VALUES, FORBIDDEN_SEED
+    for k, s in zip(KAPPA_VALUES, SEED_VALUES):
+        print(f"    κ={k:5d}  parent_seed={s}")
+    print(f"    κ=∞       deterministic (w=w0)  n_draws=1  [DEV-SANT-KINF-001]")
+    print(f"    Forbidden seed: {FORBIDDEN_SEED} (Fogo legacy)")
+
+    # pip freeze (abbreviated)
+    print()
+    try:
+        freeze = subprocess.check_output(
+            ["pip", "freeze"], text=True, stderr=subprocess.DEVNULL,
+        )
+        key_pkgs = [l for l in freeze.splitlines() if any(
+            p in l.lower() for p in ["numpy", "pandas", "scipy"]
+        )]
+        print(f"  Environment (key packages): {'; '.join(key_pkgs)}")
+    except Exception:
+        try:
+            import numpy, pandas, scipy
+            print(f"  Environment: numpy={numpy.__version__}  pandas={pandas.__version__}  scipy={scipy.__version__}")
+        except Exception as e:
+            print(f"  Environment: could not determine ({e})")
+
+    print("=" * 70)
+    print()
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -1121,6 +1197,9 @@ def main():
     if a.sens_a5:
         run_sens_a5(a.timing)
         return
+
+    if not a.timing:
+        log_startup_provenance()
 
     gates_st = {}
     gates_sn = {}

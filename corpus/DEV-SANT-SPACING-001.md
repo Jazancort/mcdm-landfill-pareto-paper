@@ -39,7 +39,29 @@ tr(A³)/6 formula (same algorithm as santiago_grid.py), d_min = 10 km:
 Both spacings are within the acceptable range. The PRESPEC rule gives 1000 m
 for S-N because n_trios_Ncand = 1,146,955 at 1000 m is below the 50M limit.
 
-## Correction
+## Impact on testability of S3b and S7b in S-N
+
+PRESPEC_SANTIAGO §6 declares conditions for S3b and S7b:
+
+> "S3b condition: TV_W(vec) ≥ 0.05 AND TV_B(vec) ≥ 0.05"
+> "S7b condition: TV_B(vec) ≥ 0.05 AND TV_W(vec) ≥ 0.05"
+
+At the original S-N spacing of 1250 m (N_adm=135), Stage 3b reported:
+  TV_B = 0.037 < 0.05 → S3b and S7b **NOT testable** at 1250 m
+
+At the corrected S-N spacing of 1000 m (N_adm=190), Stage 3b computed:
+  TV_B = 0.057 ≥ 0.05 → S3b and S7b **NOW TESTABLE** at 1000 m
+  TV_W = 0.056 ≥ 0.05 → both conditions met
+
+This change in testability is a direct consequence of applying the spacing rule
+correctly (per-branch, not globally). The rule is mechanical and geometry-only —
+it depends only on n_trios(N_cand) and the 50M limit. It does not depend on any
+criterion value, normalised score, or Q2.
+
+Note: TV_B at 1000 m (0.057) is only marginally above the 0.05 threshold. If
+the spacing rule had given a different spacing (e.g., 1.25 km for S-N), S3b and
+S7b would not be testable. The change from 1250 m to 1000 m is the minimum
+step allowed by the spacing algorithm.
 
 S-N extraction re-run at 1000 m (commit following this DEV file).
 df_santiago_sn.csv, extract_report_sn.json, and stage3b_descriptors.json

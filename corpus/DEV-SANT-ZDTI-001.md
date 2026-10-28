@@ -26,7 +26,33 @@ The PRESPEC declaration was based on the GetCapabilities response (layer exists 
 catalog). The actual download failure was only discovered at Phase 1 extraction time
 (2026-10-27), after the PRESPEC was committed and locked.
 
-## Decision
+## Second attempt (2026-10-29)
+
+Two WFS GetFeature requests were sent at different times:
+
+**Attempt 1 (2026-10-29, endpoint 1):**
+URL: `https://geoservicos-ingt.gov.cv/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=areas_especiais:zdti&outputFormat=application/json`
+Response: HTTP 500 / OperationProcessingFailed
+Error body: "Schema 'zdti' does not exist."
+
+**Attempt 2 (2026-10-29, endpoint 2):**
+URL: `https://geoservicos-ingt.gov.cv/geoserver/areas_especiais/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=areas_especiais:zdti&outputFormat=application/json`
+Response: HTTP 500 / OperationProcessingFailed
+Error body: "Schema 'zdti' does not exist."
+
+**GetCapabilities (2026-10-29):**
+`areas_especiais:zdti` is still listed as a valid feature type in the WFS capabilities.
+
+**Diagnosis:** The layer exists in GeoServer's layer configuration but the underlying
+database schema/table `zdti` does not exist in the PostGIS database. This is a
+permanent server-side misconfiguration, not a transient HTTP error. The layer will
+continue to return HTTP 500 on every GetFeature request until the DBA creates the
+database table.
+
+**Conclusion:** C-4 is permanently triggered for this criterion. The ZDTI data is
+not recoverable via this service. Email to IDECV/INGT would be the only recourse,
+but this is outside the timeline of the current study. The DEV-SANT-ZDTI-001
+justification stands.
 
 C-4 applied per PRESPEC_SANTIAGO §10 contingency rule:
 
