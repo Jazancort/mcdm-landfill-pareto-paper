@@ -1,0 +1,1110 @@
+%% supplementary.tex
+%% Content moved from main.tex (Marco A, 2026-10-01)
+%% This file is NOT compiled with the main paper.
+%% It contains sec:external (External validity: synthetic instances)
+%% and tab:external (Synthetic grid table).
+%%
+%% To compile standalone, wrap with:
+%%   \documentclass{article}
+%%   \usepackage{booktabs,amsmath,amssymb}
+%%   \begin{document}
+%%   \input{supplementary}
+%%   \end{document}
+
+% =======================================================================
+% =======================================================================
+% \S7.7 External validity
+% =======================================================================
+
+\subsection{External validity: synthetic instances}
+\label{sec:external}
+
+The preceding sections quantify both mechanisms on a single candidate
+set, Fogo Island, whose marginal distributions are specific and in one
+respect extreme: \textit{perm} carries $350$ tied zeros.
+This section separates the mechanism from the instance by re-drawing the
+criterion columns while holding the spatial structure fixed: each
+synthetic instance reuses the Fogo distance matrix, and hence the same
+$\Ntrios$ feasible trios, and varies only the marginals.
+
+\paragraph{Design.}
+The manipulated factor is the \emph{number} of sparse criteria rather
+than a global zero mass.
+The reason is analytic: $\mathrm{TV}$ is invariant to a common amplitude
+level (Section~\ref{sec:three_norms}), so applying the same zero mass to
+every column leaves the elicited weights untouched however extreme that
+mass becomes.
+Distortion requires heterogeneity \emph{across} columns.
+We therefore cross $n_{\mathrm{sparse}}\in\{0,1,2,3,4\}$, with zero mass
+applied to the $n_{\mathrm{sparse}}$ most heavily weighted criteria,
+with $p_0\in\{0.50,0.75,0.90,0.95\}$ and two tail shapes (lognormal,
+bimodal), with $6$ replications: $240$ instances at $200$ draws each.
+Four cells are evaluated per instance: SAW under min--max and vector
+normalisation, each with greedy and optimal assembly.
+The objectives $F_\ell$ are defined by min--max normalisation
+throughout, so the vector cells measure score--evaluator divergence as
+well as re-weighting.
+The min--max/optimal cell is the regression test of
+Proposition~\ref{prop:p1:stmt} and returned $Q_2=1$ in $240/240$
+instances.
+
+\paragraph{Unit of analysis.}
+Replications within a cell are not independent draws of the manipulated
+factor, so inference is conducted on the $20$ cell means.
+The intra-class correlation is $\mathrm{ICC}=0.35$, giving a design
+effect of $4.8$ and an effective sample size of
+$n_{\mathrm{eff}}\approx50$ against the nominal $240$; reporting on
+$240$ rows would understate the standard errors by roughly a factor
+of two.
+
+\paragraph{Total variation alone does not order the loss.}
+Over all $20$ cells the loss correlates with $\mathrm{TV}$ at
+$r=0.600$ ($95\%$ CI by Fisher transformation $[0.214,\,0.824]$,
+$n=20$), but the relation is not monotone: $21.6\%$ of the $190$ cell
+pairs are inversions (Kendall $\tau_b=0.550$).
+Restricting to the $16$ cells that carry a distortion at all
+($n_{\mathrm{sparse}}\ge1$), the association is statistically
+indistinguishable from no effect ($r=0.346$, $p=0.189$): the
+correlation over all $20$ cells is carried by the four cells in which
+no criterion is sparse and the loss is zero by construction.
+The inversions run in both directions of the design.
+Holding $p_0$ fixed, the loss falls as the distortion is spread over
+more criteria while $\mathrm{TV}$ does not fall correspondingly;
+holding $n_{\mathrm{sparse}}=1$, the loss rises with $p_0$ up to
+$0.90$ and then falls by $16.4$~pp at $p_0=0.95$ although
+$\mathrm{TV}$ continues to rise.
+Table~\ref{tab:external} reports both patterns by cell.
+
+\paragraph{The factorisation does.}
+Proposition~\ref{prop:concentration} accounts for this.
+Regressing the loss on the $16$ distorted cells gives
+$R^2_{\mathrm{adj}}=0.057$ for $\mathrm{TV}$ alone ($r=0.346$,
+$p=0.189$, statistically indistinguishable from no effect)
+against $R^2_{\mathrm{adj}}=0.488$ for $\lVert\delta\rVert_2$
+of~\eqref{eq:l2fact} ($r=0.723$, $p=0.002$).
+Entering magnitude and concentration separately gives
+$R^2_{\mathrm{adj}}=0.582$ with a negative coefficient on
+$m_{\mathrm{eff}}$ ($-0.026$ per effective criterion, $p=0.0008$): at
+fixed $\mathrm{TV}$, spreading the distortion over more criteria
+\emph{reduces} the loss, because deviations of opposite sign cancel in
+the weighted sum.
+The combined model, with both predictors, reaches $R^2_{\mathrm{adj}}=0.665$,
+confirming that magnitude is necessary but not sufficient: concentration
+is the term that $\mathrm{TV}$ omits.
+
+\paragraph{What the grid does not establish.}
+Under the two-group amplitude model the participation
+ratio~\eqref{eq:meff} depends only on the total weight of the sparse
+columns, so $m_{\mathrm{eff}}$ is constant within each level of
+$n_{\mathrm{sparse}}$ and takes only the four values
+$\{3.59,\,6.42,\,8.38,\,9.67\}$ across the grid
+($\text{Spearman }\rho(m_{\mathrm{eff}},n_{\mathrm{sparse}})=1$).
+Concentration was therefore not varied orthogonally to the manipulated
+factor: the model in $\mathrm{TV}$ and $m_{\mathrm{eff}}$
+($R^2_{\mathrm{adj}}=0.582$) is a reparameterisation of the model in
+$\mathrm{TV}$ and $n_{\mathrm{sparse}}$ ($0.532$), and the
+$5$-percentage-point gain reflects the concavity of the transformation
+rather than independent information.
+The factorisation~\eqref{eq:l2fact} is an algebraic identity and holds
+for any deviation vector; what the grid supports is that the loss
+responds to the combination of magnitude and concentration rather than
+to magnitude alone, not that $m_{\mathrm{eff}}$ has been identified as
+a separate causal channel.
+A design in which the sparse columns carry unequal zero masses would
+decouple the two, and is the natural next step.
+
+\paragraph{Reconciliation with Fogo.}
+Fogo has $m_{\mathrm{eff}}=4.05$ on the admissible range $[2,11]$,
+placing it near the $n_{\mathrm{sparse}}=1$ regime of the grid
+($m_{\mathrm{eff}}=3.59$).
+The comparison must be made at the grid's estimand, which is the
+greedy-assembly contrast under SAW: on Fogo that is
+$86.0-66.2=19.8$~pp (min--max minus vector, greedy assembly,
+Table~\ref{tab:tvorder}), not the
+$\AggContrast$~pp normalisation main effect of Table~\ref{tab:contrasts}
+(which averages both assemblies and both aggregations, and is therefore
+attenuated by the optimal-assembly cells where min--max attains $100\%$
+by Proposition~\ref{prop:p1:stmt}).
+The model in $\lVert\delta\rVert_2$, fitted on the synthetic cells
+alone, predicts $22.2$~pp at Fogo's $\lVert\delta\rVert_2=0.3127$, with
+a $95\%$ prediction interval for a new instance of $[7.5,\,36.9]$~pp;
+the model in $\mathrm{TV}$ predicts $14.0$~pp with interval
+$[-4.7,\,32.7]$~pp.
+Both prediction intervals contain the observed $19.8$~pp.
+The $\lVert\delta\rVert_2$ point prediction exceeds the observed value
+by $22.2-19.8=2.4$~pp; the TV-based prediction falls $5.8$~pp short
+($14.0-19.8=-5.8$~pp).
+We do not read the residuals as a calibrated bias in either direction.
+The grid varies the marginals while holding the spatial structure fixed,
+and its vector cells confound implicit re-weighting with
+score--evaluator divergence because the objectives remain defined on
+min--max throughout; Fogo's deviation geometry differs from the
+generator's in a way the design does not parameterise
+(see below).
+What the grid establishes is that the loss responds to magnitude and
+concentration jointly rather than to magnitude alone, and that Fogo's
+predicted loss falls inside the interval the grid implies; it does not
+establish a bound.
+
+The shortfall is systematic and its source identifiable.
+The generator inflates $n_{\mathrm{sparse}}$ columns and deflates the
+remainder uniformly.
+Fogo's deviation vector is not of that form: \textit{perm} is inflated
+$2.88\times$ while \textit{urban} $(0.53\times)$, \textit{aspect}
+$(0.51\times)$, \textit{aero} $(0.43\times)$ and \textit{wells}
+$(0.40\times)$ are independently and unequally deflated
+(Table~\ref{tab:amplitude}).
+Two-sided distortion of this kind displaces the weight vector along the
+simplex differently from a one-sided distortion of the same
+$\lVert\delta\rVert_2$, so the generator does not reproduce Fogo's
+deviation geometry.
+We report the difference in geometry rather than a correction for it:
+the grid supports the joint role of magnitude and concentration, and
+does not calibrate the level of the loss for an instance outside its
+generating family.
+
+\begin{table*}[!t]
+\centering
+\caption{Synthetic grid: $20$ cells, $12$ instances each
+  ($240$ instances, $200$ draws per instance).
+  Loss is $Q_2(\text{min--max, greedy})-Q_2(\text{vector, greedy})$.
+  $m_{\mathrm{eff}}$ is~\eqref{eq:meff} and $\lVert\delta\rVert_2$
+  is~\eqref{eq:l2fact}, both reconstructed from the two-group amplitude
+  model.
+  Cells with $n_{\mathrm{sparse}}=0$ carry no distortion and are
+  excluded from the regressions.
+  Within each level of $p_0$ the loss falls as the distortion is spread
+  over more criteria, while $\mathrm{TV}$ does not decline
+  correspondingly and at $p_0=0.95$ peaks at $n_{\mathrm{sparse}}=2$;
+  the two quantities are not ordered alike, which is what motivates
+  Proposition~\ref{prop:concentration}.}
+\label{tab:external}
+\begin{tabular}{rrrrrr}
+\toprule
+$n_{\mathrm{sparse}}$ & $p_0$ & $\mathrm{TV}$ &
+  $m_{\mathrm{eff}}$ & $\lVert\delta\rVert_2$ & Loss \\
+\midrule
+0 & --- & 0.007--0.008 & --- & --- & $\approx 0$ \\
+1 & 0.50 & 0.121 & 3.59 & 0.128 & 0.065 \\
+1 & 0.75 & 0.191 & 3.59 & 0.201 & 0.192 \\
+1 & 0.90 & 0.262 & 3.59 & 0.276 & 0.360 \\
+1 & 0.95 & 0.301 & 3.59 & 0.318 & 0.196 \\
+2 & 0.50 & 0.165 & 6.42 & 0.130 & 0.105 \\
+2 & 0.75 & 0.216 & 6.42 & 0.170 & 0.057 \\
+2 & 0.90 & 0.307 & 6.42 & 0.242 & 0.146 \\
+2 & 0.95 & 0.379 & 6.42 & 0.299 & 0.135 \\
+3 & 0.50 & 0.160 & 8.38 & 0.110 & 0.065 \\
+3 & 0.75 & 0.225 & 8.38 & 0.155 & 0.052 \\
+3 & 0.90 & 0.303 & 8.38 & 0.210 & 0.129 \\
+3 & 0.95 & 0.349 & 8.38 & 0.241 & 0.131 \\
+4 & 0.50 & 0.153 & 9.67 & 0.099 & 0.025 \\
+4 & 0.75 & 0.211 & 9.67 & 0.136 & 0.020 \\
+4 & 0.90 & 0.269 & 9.67 & 0.173 & 0.058 \\
+4 & 0.95 & 0.315 & 9.67 & 0.203 & 0.083 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+
+% =======================================================================
+% S6  Experiment E6 — Mechanism Generalisation: sensitivity analysis
+% =======================================================================
+
+\subsection*{Experiment E6 — Sensitivity to the TV\textsubscript{W} Target (DEV-E6-005)}
+\label{sec:e6-sensit}
+
+\noindent
+The primary run used $\mathrm{TV}_W = \EsixTargetTVW$ for cell $W_\infty^F$
+(the Fogo level computed with rho\_raw, before the rho\_shift correction).
+The corrected level is $\EsixSensTargetTVW$ (difference $\approx 0.003$).
+Both the amplitude cells $W_\infty^F$, $V_\infty^F$, and $W_{\mathrm{def}}^F$
+use this target; cells M, B, $W_\infty^L$ and $W_\infty^H$ are identical
+bit-for-bit between the two runs.
+
+Table~\ref{tab:e6-sens} shows the P3 and P4 counts by family and pooled
+for both runs.
+P1 ($48{,}000/48{,}000$ in both) and P2 (Mono~$85/88$, $p<0.001$ in both)
+are invariant across runs and are not repeated in the table.
+
+\begin{table*}[!t]
+\centering
+\caption{P3 and P4 by marginal family and pooled, for the primary run
+  ($\mathrm{TV}_W=\EsixTargetTVW$) and the sensitivity run
+  ($\mathrm{TV}_W=\EsixSensTargetTVW$; DEV-E6-005).
+  P3: met = V$_\infty^F \le$ W$_\infty^F$ (pre-registered);
+  Strict = strict inequality among informative instances;
+  $p$ = one-sided binomial.
+  P4: Defl = deflate $>$ inflate (observed, opposite of prediction);
+  Prop = Defl/NonTied; CI = Wilson 95\%; $p$ = two-sided binomial, post hoc.}
+\label{tab:e6-sens}
+\small
+\begin{tabular}{lcccccccccc}
+\toprule
+& \multicolumn{4}{c}{Primary ($\mathrm{TV}_W=\EsixTargetTVW$)}
+& \multicolumn{4}{c}{Sensitivity ($\mathrm{TV}_W=\EsixSensTargetTVW$)} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+Family
+& \multicolumn{2}{c}{P3}
+& \multicolumn{2}{c}{P4}
+& \multicolumn{2}{c}{P3}
+& \multicolumn{2}{c}{P4} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+& Strict/Inf & $p$ & Defl/Non & Prop ($p$) & Strict/Inf & $p$ & Defl/Non & Prop ($p$) \\
+\midrule
+Lognormal
+& $\EsixPthreeInfStrictLogn/\EsixPthreeInfDenomLogn$ & $\EsixPthreeP{Logn}$
+& $\EsixPfourDeflLogn/\EsixPfourNonTiedLogn$ & $\EsixPfourPropThreeLogn$ ($\EsixPfourP{Logn}$)
+& $\EsixSensPthreeInfStrictLogn/\EsixSensPthreeInfDenomLogn$ & $\EsixSensPthreePLogn$
+& $\EsixSensPfourDeflLogn/\EsixSensPfourNonTiedLogn$ & $\EsixSensPfourPropThreeLogn$ ($\EsixSensPfourPLogn$) \\
+Beta(1,3)
+& $\EsixPthreeInfStrictBeta/\EsixPthreeInfDenomBeta$ & $\EsixPthreeP{Beta}$
+& $\EsixPfourDeflBeta/\EsixPfourNonTiedBeta$ & $\EsixPfourPropThreeBeta$ ($\EsixPfourP{Beta}$)
+& $\EsixSensPthreeInfStrictBeta/\EsixSensPthreeInfDenomBeta$ & $\EsixSensPthreePBeta$
+& $\EsixSensPfourDeflBeta/\EsixSensPfourNonTiedBeta$ & $\EsixSensPfourPropThreeBeta$ ($\EsixSensPfourPBeta$) \\
+Uniform
+& $\EsixPthreeInfStrictUnif/\EsixPthreeInfDenomUnif$ & $\EsixPthreeP{Unif}$
+& $\EsixPfourDeflUnif/\EsixPfourNonTiedUnif$ & $\EsixPfourPropThreeUnif$ ($\EsixPfourP{Unif}$)
+& $\EsixSensPthreeInfStrictUnif/\EsixSensPthreeInfDenomUnif$ & $\EsixSensPthreePUnif$
+& $\EsixSensPfourDeflUnif/\EsixSensPfourNonTiedUnif$ & $\EsixSensPfourPropThreeUnif$ ($\EsixSensPfourPUnif$) \\
+Zero-inflated
+& $\EsixPthreeInfStrictZinf/\EsixPthreeInfDenomZinf$ & $\EsixPthreeP{Zinf}$
+& $\EsixPfourDeflZinf/\EsixPfourNonTiedZinf$ & $\EsixPfourPropThreeZinf$ ($\EsixPfourP{Zinf}$)
+& $\EsixSensPthreeInfStrictZinf/\EsixSensPthreeInfDenomZinf$ & $\EsixSensPthreePZinf$
+& $\EsixSensPfourDeflZinf/\EsixSensPfourNonTiedZinf$ & $\EsixSensPfourPropThreeZinf$ ($\EsixSensPfourPZinf$) \\
+\midrule
+All (pooled)
+& $\EsixPthreeInfStrictAll/\EsixPthreeInfDenomAll$ & $\EsixPthreeP{All}$
+& $\EsixPfourDeflAll/\EsixPfourNonTiedAll$
+& $\EsixPfourPropThreeAll$
+  [$\EsixPfourCIloAll$,\,$\EsixPfourCIhiAll$]
+  ($\EsixPfourP{All}$)
+& $\EsixSensPthreeInfStrictAll/\EsixSensPthreeInfDenomAll$ & $\EsixSensPthreePAll$
+& $\EsixSensPfourDeflAll/\EsixSensPfourNonTiedAll$
+& $\EsixSensPfourPropThreeAll$
+  [$\EsixSensPfourCIloAll$,\,$\EsixSensPfourCIhiAll$]
+  ($\EsixSensPfourPAll$) \\
+\bottomrule
+\multicolumn{9}{l}{\footnotesize Strict/Inf = informative instances with strict $V<W$ / total informative. NonTied = non-tied pairs.}\\
+\multicolumn{9}{l}{\footnotesize CI = Wilson 95\% confidence interval for the proportion. $p$ values for P4 are post hoc (DEV-E6-003).}\\
+\end{tabular}
+\end{table*}
+
+% =======================================================================
+% S0  Pre-registration for Experiment E1
+% =======================================================================
+%
+% The following is PRESPEC_E1.md exactly as committed in f6042f8 on
+% 2026-09-30T14:25:20-03:00, BEFORE any E1 run was executed.
+% Commit subject: "prespec(E1): predictions declared before running --
+%   P1=E1-B optimal=100%; P2=E1-W optimal~57%; P3=E1-B greedy~65%"
+%
+% File in repository: corpus/PRESPEC_E1.md at commit f6042f8
+% Verify: git show f6042f8:corpus/PRESPEC_E1.md
+%
+% -----------------------------------------------------------------------
+
+\section*{Pre-registered Predictions for Experiment~E1}
+\label{sec:prespec_e1}
+
+\noindent
+\textbf{Committed:} 2026-09-30, commit \texttt{f6042f8}, before any E1 run.\\
+\textbf{File:} \texttt{corpus/PRESPEC\_E1.md}.
+
+\subsection*{Three predictions}
+
+\begin{description}
+\item[P1 (hard assertion)] \textbf{Cell~B optimal $= 100.0\%$.}
+  By group-constant-amplitude sufficiency (Proposition~\ref{thm:groupconst}),
+  $A_j = \bar A_g$ for all $j \in G_g$ implies the score is a strictly
+  positive scalarisation of the group objectives; hence optimal assembly
+  attains the frontier for any $w$.
+  If P1 fails, there is a bug.
+
+\item[P2 (primary empirical prediction)]
+  $|Q_2^\text{W, optimal} - Q_2^\text{V, optimal}| < 5$~pp.\\
+  \emph{Rationale:} both E1-W and E1-V have $\mathrm{TV}_W = 0.1986$.
+  By the necessity argument, within-group distortion governs efficiency loss
+  in optimal assembly; between-group distortion only displaces the optimum
+  along the frontier.
+  Predicted $Q_2^\text{W, optimal} \approx 57\%$ (close to E1-V's $56.8\%$).\\
+  \emph{Falsification criterion:} if $Q_2^\text{W, optimal} > 90\%$,
+  within-group distortion accounts for less than $10\%$ of the loss.
+
+\item[P3 (secondary prediction)]
+  $Q_2^\text{B, greedy} \neq 100.0\%$.\\
+  \emph{Rationale:} greedy assembly is not constrained to be Pareto-efficient
+  even under group-constant amplitudes; foreclosure affects greedy but not
+  optimal.
+  Predicted $Q_2^\text{B, greedy} \approx 65\%$.
+\end{description}
+
+\subsection*{Design}
+
+Four score matrices differing only in $A_j$, with identical objectives,
+frontier, draws, and feasible set ($\kappa=200$, $N=500$ draws, space $A'$):
+
+\begin{center}
+\begin{tabular}{llcc}
+\toprule
+Cell & $A_j$ & $\mathrm{TV}_B$ & $\mathrm{TV}_W$ \\
+\midrule
+M & $A_j \equiv 1$ (min--max)                        & 0       & 0 \\
+B & $A_j = \bar A_g$ (between-group only)           & 0.2489  & 0 \\
+W & $A_j \propto \rho_j/\bar A_g$ (within only)    & 0       & 0.1986 \\
+V & $A_j = \rho_j$ (vector, as in WP3)             & 0.2489  & 0.1986 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Groups and weighted means $\bar A_g$ (from \texttt{fogo\_constants.py}):
+\begin{itemize}
+\item $G_1 = \{\text{perm},\text{slope},\text{roads}\}$, indices $[0,1,2]$,
+  $W_{G_1}=0.2950$, $\bar A_{G_1}=0.3731$.
+\item $G_2 = \{\text{rivers},\text{aspect},\text{coast},\text{prot},\text{wells}\}$,
+  indices $[3\ldots7]$, $W_{G_2}=0.3560$, $\bar A_{G_2}=0.1458$.
+\item $G_3 = \{\text{urban},\text{aero},\text{cult}\}$, indices $[8,9,10]$,
+  $W_{G_3}=0.3490$, $\bar A_{G_3}=0.1157$.
+\end{itemize}
+
+\subsection*{Outcome and deviations (DEV-E1-001 to DEV-E1-004)}
+
+Results from \texttt{run\_e1\_v3.py}, commit \texttt{18e7a66}
+(2026-09-30T23:23-03:00, Athena; reachable from G:\ after merge).
+
+\begin{description}
+\item[DEV-E1-001 INVALID] \texttt{380ee1a}, 2026-09-30T22:40-03:00.\\
+  \emph{Fixed-objectives bug.}
+  Script used objectives pre-computed on a fixed weight vector rather
+  than per-draw objectives.
+  Consequence: E1-V greedy $=100\%$ (should be $\sim54\%$, matching WP3);
+  E1-W optimal $=100\%$ (should be $\sim57\%$, as predicted).
+  Pre-registration \texttt{f6042f8} precedes this run in both the G: and
+  Athena histories.
+
+\item[DEV-E1-002 INVALID] \texttt{8391944}, 2026-09-30T23:11:38-03:00.\\
+  \emph{Float32 dominance noise.}
+  Per-draw objectives corrected, but float32 arithmetic introduced
+  auto-dominance artefacts (same bug as WP3 greedy cells).
+  Consequence: E1-V greedy $=14.8\%$ (expected $\sim54\%$).
+
+\item[DEV-E1-003 INVALID] \texttt{18b7b88}, 2026-09-30T23:11:43-03:00.\\
+  \emph{Score/objective normalisation mismatch.}
+  Float64 applied but score computed over 473 sites while objectives
+  evaluated over 389 admissible sites.
+  Consequence: E1-V optimal $=46.6\%$ (expected $56.8\%$, regression
+  test \textbf{FAIL}); E1-B optimal $=81.8\%$ (expected $100\%$, P1
+  \textbf{FAIL}).
+
+\item[DEV-E1-004] \texttt{18e7a66}, 2026-09-30T23:23:14-03:00.\\
+  \emph{Corrected run (\texttt{run\_e1\_v3.py}): float64, eps$=10^{-9}$,
+  score and objectives both over 389 admissible sites.}
+  Results: \textbf{P1 confirmed} (E1-B optimal $=100\%$);
+  \textbf{P2 falsified} at the pre-specified margin
+  ($|Q_2^\text{W}-Q_2^\text{V}|=7.4$~pp, $95\%$ CI $[+3.8,+11.0]$,
+  declared margin $<5$~pp);
+  \textbf{P3 falsified} (D-greedy: greedy $=100\%$; post hoc diagnostic:
+  score becomes nearly lexicographic in $F_1$, greedy and optimal
+  coincide in $62.8\%$ of draws).
+\end{description}
+
+
+
+
+% =======================================================================
+% S1  Pre-registration for Experiment E4
+% =======================================================================
+%
+% Source: corpus/PRESPEC_E4.md
+% Committed before any E4 run; deviations DEV-E4-001..007 appended
+% chronologically as they occurred.
+% Verify: git log --oneline corpus/PRESPEC_E4.md
+%
+% -----------------------------------------------------------------------
+
+\section*{Pre-registered Design and Deviations for Experiment~E4}
+\label{sec:prespec_e4}
+
+\noindent
+\textbf{Purpose:} Test whether the reference-set mismatch (473 vs.\ 389 sites
+in the score) reduces to within-group re-weighting of the same form as
+Experiment~E1, via the affine identity $n_j^{473}(a)=b_j+r_j\,n_j^{389}(a)$.
+
+\subsection*{Pre-declared predictions}
+
+\begin{description}
+\item[P\_E4\_1 (Theorem, hard assertion)]
+  Cells R-B and R-B$'$ attain $Q_2=100\%$ under optimal assembly on
+  every draw.  Failure implies a bug or a violation of
+  Theorem~\ref{thm:groupconst}.
+
+\item[P\_E4\_2 (Regression test)]
+  R-V (fwd) reproduces the published $473/A'$ cell within $3\,\mathrm{SE}$;
+  R-V$'$ (mirror) reproduces the published $389/A$ cell within $3\,\mathrm{SE}$.
+
+\item[P\_E4\_3 (Primary empirical, declared before any run)]
+  Within-group loss $(100\%-Q_2^\text{R-W,opt})\ge 50\%$ of total loss
+  $(100\%-Q_2^\text{R-V,opt})$ in the $473\to A'$ direction.
+
+\item[P\_E4\_4 (Exploratory, declared)]
+  The $80\,\mathrm{pp}$ vs.\ $5\,\mathrm{pp}$ asymmetry of
+  tab:fourthcell persists in the within-group cells R-W and R-W$'$.
+
+\item[P\_E4\_5 (Exploratory, declared, superseded by DEV-E4-004)]
+  $Q_2^\text{R-W,opt} < Q_2^\text{E1-W,opt}=64.2\%$ despite
+  $\mathrm{TV}_W(\text{R-W})=0.0815 < 0.199=\mathrm{TV}_W(\text{E1-W})$.
+\end{description}
+
+\subsection*{Deviations (DEV-E4-001 to DEV-E4-007)}
+
+\begin{description}
+\item[DEV-E4-001] \textit{Kappa/alpha parameter clarification.}
+  The declared $\kappa=200$ is the Dirichlet concentration parameter
+  (not the portfolio size $k=3$).  Two values $\kappa\in\{50,200\}$
+  were run; the primary estimand uses $\kappa=200$.
+
+\item[DEV-E4-002] \textit{Mirror direction frontier and amplitude sign.}
+  The $389\to A$ direction uses the $A$-frontier (213 portfolios,
+  objectives over 473 sites) and amplitude $A_j=1/r_j$ (not $r_j$).
+  Corrected amplitude sentence: the 389-site score has amplitude $1/r_j$
+  relative to the $A$-evaluator.
+
+\item[DEV-E4-003] \textit{Weight-matrix provenance and $N_\text{draws}$.}
+  $N=500$ (matching the main factorial, not the declared 1000);
+  weight matrix loaded from \texttt{results/e1/e1\_weights\_k200.npy},
+  SHA-256 \texttt{bea05...487}.
+
+\item[DEV-E4-004] \textit{P\_E4\_5 restated.}
+  $\mathrm{TV}_W(\text{R-W})=0.0815$ (correcting the DEV-E4-001 value of
+  $0.163$ which omitted the factor $\tfrac{1}{2}$).  The direction of
+  distortion on \textit{perm} (deflation vs.\ inflation at comparable
+  $\mathrm{TV}_W$) is the substantive claim.
+
+\item[DEV-E4-005] \textit{Feasibility and DEV-E4-002 correction.}
+  All 1\,944\,653 trios are indexed over the 389 admissible sites;
+  excluded candidates cannot enter any portfolio.
+
+\item[DEV-E4-006] \textit{Pipeline bug in \texttt{run\_e4.py} v1--v5.}
+  Versions v1--v5 produced $Q_2^\text{opt}=100\%$ for all cells,
+  including R-V (should be $\approx20\%$), because the score rescaling
+  preserved rank order under the 389-site normalisation.
+  Version v6 uses \texttt{build\_score\_473()} for fwd cells.
+
+\item[DEV-E4-007] \textit{Post hoc declaration — coding inconsistency.}
+  R-V confounds the reference-set effect with a coding inconsistency:
+  \texttt{build\_score\_473} encodes \textit{aspect} as a continuous
+  azimuth while the evaluator uses a binary SE-facing indicator.
+  Post-hoc exploratory cells declared and run after this diagnosis:
+  \begin{itemize}
+  \item R-V$^*$ (consistent binary coding, $473$-site reference):
+        $\kappa=200$, greedy $=97.8\%$, optimal $=100.0\%$.
+  \item R-asp (continuous coding, $389$-site reference):
+        $\kappa=200$, greedy $=\RaspGreedy\%$, optimal $=\RaspOptimal\%$.
+  \end{itemize}
+  Interpretation: the $\RaspLoss\,\mathrm{pp}$ loss is attributable to the
+  coding inconsistency (continuous azimuth in the score versus binary
+  SE-facing indicator in the evaluator; see also DEV-E4-009); with consistent
+  coding the
+  $473$-site reference costs nothing under optimal assembly and
+  \emph{improves} greedy assembly by $+\RefSetGreedyGain\,\mathrm{pp}$
+  (95\% CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).  P\_E4\_3 is
+  testable but uninformative as designed (see main text, \S\ref{sec:greedy}).
+
+\item[DEV-E4-008] \textit{Corrections to DEV-E4-002 and DEV-E4-006;
+  invalidation of \texttt{b1\_spaceA.csv} (commit 54195c1).}
+
+  \textbf{Correction to DEV-E4-002:}
+  DEV-E4-002 stated ``frontier $A$ (213 portfolios, objectives over 473
+  sites)''.  This was misleading.  Frontier $A$ is enumerated over the
+  same 1\,944\,653 admissible trios (indices into the 389 admissible
+  sites); the only difference from frontier $A'$ is that normalisation
+  constants (min/max per column) are computed over the 473 candidates.
+  Excluded candidates never appear in any portfolio (confirmed by
+  DEV-E4-005 and re-verified in commit \texttt{4059fb1}).
+
+  \textbf{Correction to DEV-E4-006:}
+  DEV-E4-006 stated that v1--v5 produced $Q_2^\text{opt}=100\%$
+  ``(should be $\approx20\%$)''.  This was wrong.  Under consistent
+  binary coding, $Q_2^\text{opt}=100\%$ is the correct value (it follows
+  from Proposition~1 in the main text): the score and the evaluator
+  share the same normalisation, so optimal assembly must be
+  non-dominated.  It was the v6 \texttt{build\_score\_473()} refactoring
+  that introduced the coding inconsistency (continuous \emph{aspect} in
+  the score vs.\ binary in the objectives), producing the incorrect
+  $\approx20\%$.  The inconsistency is documented in DEV-E4-007.
+
+  \textbf{Invalidation of \texttt{b1\_spaceA.csv} (commit 54195c1,
+  2026-10-02):}
+  A first attempt at the B1/D1 recalculation (commit 54195c1) built the
+  Pareto frontier over trios of all 473 candidates, including the 84
+  excluded sites.  This violated the admissibility constraint of~\S3.1
+  and produced 473/A optimal $=0\%$, which contradicts Proposition~1
+  (a diagonal cell must reach $100\%$).  The regression guard in
+  \texttt{check\_consistency.py} was incorrectly removed to suppress
+  the failure rather than fix the script.  Commits 54195c1 and
+  2aa0d38 were both reverted in commit \texttt{ec33779}.
+  The corrected B1 run (commit \texttt{8f6a15a}, script
+  \texttt{compute\_b1\_spaceA.py} v3) uses the 1\,944\,653 admissible
+  trios, computes objectives with \texttt{ref\_df=df\_all} for space~$A$
+  normalisation, and the score is the direct scalarisation
+  $-(F_1+F_2)+F_3$ with the same column values.  The corrected results
+  (473/A optimal $=100\%$, greedy $=84.6\%$; 389/A optimal $=95\%$,
+  greedy $=58.8\%$) confirm the values that were already in the table.
+
+\item[DEV-E4-009] \textit{Correction to DEV-E4-007 and to rule R1-6.}
+
+  DEV-E4-007 stated that ``the 76~pp loss attributed to the reference
+  set is entirely a coding effect''.
+  The full $2\times2$ (coding $\times$ constants,
+  Table~3 of the main text) shows that coding alone accounts for 76~pp
+  at 389-site constants, and that the 473-site constants add a further
+  4.0~pp under optimal assembly \emph{only} when the coding is
+  inconsistent (interaction of $-4.0$~pp optimal, $-17.4$~pp greedy).
+  The phrase ``entirely a coding effect'' understated the interaction.
+
+  The first version of rule R1-6 described the contrast as ``under
+  consistent coding'' and as ``relative to vector normalisation''.
+  Both cells use the continuous azimuth encoding; R-V is the original
+  reference-set cell, not vector normalisation.
+  The sign of the interpretation (``lower'') was also inverted.
+  The numbers are unchanged; only their labelling and reading are
+  corrected.
+
+  The directional asymmetry between the $r_j$ and $1/r_j$ amplitude
+  patterns reported in an earlier version of the manuscript was computed
+  with the pipeline identified in DEV-E4-007 as encoding
+  \textit{aspect} inconsistently, and has not been recomputed;
+  it is withdrawn from the main text.
+\end{description}
+
+% =======================================================================
+% S2  Pre-registration for Confirmatory Recalculation R1
+% =======================================================================
+%
+% Source: corpus/PRESPEC_R1.md, committed 2026-10-02 before Fase D runs.
+% Verify: git log --oneline corpus/PRESPEC_R1.md
+%
+% -----------------------------------------------------------------------
+
+\section*{Post Hoc Decision Rules for Exploratory Recalculation~R1}
+\label{sec:prespec_r1}
+
+\noindent
+\textbf{Written:} 2026-10-02 (after auditing coding inconsistency, before Fase~D
+scripts were run).  Results of \texttt{run\_fourthcell\_consistent.py}
+were already known when these rules were written; this document fixes
+the decision rules \emph{post hoc} (results seen, rules fixed before manuscript
+revision) so that Fase~G uses automatic decisions rather than human reading
+of the numbers.  The R1 recalculation is therefore classified as
+\textbf{post hoc exploratory}, not confirmatory.
+
+\subsection*{Decision rules}
+
+\begin{description}
+\item[R1-1 (Optimal assembly)] $\Delta_\text{ref,opt}=Q_2[\text{R-V}^*,A']-Q_2[\text{R-M},A']$
+  under consistent binary coding, $\kappa=200$.
+  \textbf{Effect} if 95\% paired bootstrap CI excludes $0$ and
+  $|\Delta|\ge2.5\,\mathrm{pp}$; otherwise \textbf{Observation}.
+
+\item[R1-2 (Greedy assembly)] Same contrast, greedy.
+
+\item[R1-3 (Regression test)] Pass if all four diagonal cells equal
+  $100.0\%$ under optimal assembly.  Fail $\Rightarrow$ abort Fase~D.
+
+\item[R1-4 (tab:canonical)] Not applicable: tab:canonical declared
+  uncontaminated in \texttt{docs/contamination-note.md}.
+
+\item[R1-5 (Coding-only cell R-asp)] Descriptive; post hoc exploratory.
+
+\item[R1-6 (Residual reference-set effect under inconsistent coding)]
+  R-asp $-$ R-V, where both cells encode \textit{aspect} as a continuous
+  azimuth and differ only in the set over which normalisation constants
+  are computed (389 vs.\ 473).
+  Same rule as R1-1. Expectation stated before \texttt{analyze\_r1.py}
+  was run: significant.
+  Optimal: $+4.0$~pp ($95\%$ CI $[+2.2,\,+6.0]$);
+  greedy: $+5.6$~pp ($[+3.6,\,+7.6]$). Both \textbf{Effect}.
+  Interpretation: under the inconsistent encoding, normalising over
+  the 473 candidates (R-V) yields \emph{lower} $Q_2$ than normalising
+  over the 389 admissible sites (R-asp). Under the consistent encoding
+  the sign is reversed or null (R1-1, R1-2).
+  Note: R-V denotes the original reference-set cell, not vector
+  normalisation; see DEV-E4-009 and Table~3 of the main text.
+\end{description}
+
+\subsection*{Outcomes}
+
+\begin{center}
+\begin{tabular}{llr@{\quad}l}
+\toprule
+ID & Contrast & $\Delta$ & Decision \\
+\midrule
+R1-1 & R-V$^*$ opt $-$ R-M opt & $0.0$~pp & Observation \\
+R1-2 & R-V$^*$ grd $-$ R-M grd & $+11.8$~pp ($[+8.8,\,+14.8]$) & Effect \\
+R1-3 & All diagonal opts $=100\%$ & --- & Pass \\
+R1-5 & R-asp opt $=\RaspOptimal\%$ & --- & Descriptive \\
+R1-6 & R-asp opt $-$ R-V opt & $\ResidualRefOptDelta$~pp ($[\ResidualRefOptCIlo,\,\ResidualRefOptCIhi]$) & Effect \\
+R1-6 & R-asp grd $-$ R-V grd & $\ResidualRefGrdDelta$~pp ($[\ResidualRefGrdCIlo,\,\ResidualRefGrdCIhi]$) & Effect \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+All decisions produced automatically by
+\texttt{scripts/analyze\_r1.py}, commit \texttt{c63b64e}.
+
+% =======================================================================
+% S3  Version history
+% =======================================================================
+
+\section*{Version History}
+\label{sec:versions}
+
+\begin{description}
+\item[v1 — Marco~A (commit \texttt{1e48292})]
+  First complete draft: full 2$\times$2$\times$2 factorial, tab:canonical,
+  tab:fourthcell, Theorem~\ref{thm:groupconst}, Experiment~E1 (PRESPEC\_E1
+  committed at \texttt{f6042f8} before any run).
+  PDF: 23 pages.
+
+\item[v2 — Marco~B1 (commit \texttt{1a4fe47})]
+  Theorem proof completed: necessary and sufficient conditions;
+  Proposition~\ref{thm:groupconst} iff form.
+
+\item[v3 — Fases Math--F (commit \texttt{03bbda7})]
+  Mathematical corrections (M1--M4): gap definition, PROMETHEE sign,
+  amplitude-invariant proposition, nomenclature.
+  Provenance audit (Fases B--D): coding inconsistency in
+  \texttt{build\_score\_473} identified and documented;
+  confirmatory recalculation~R1 run with consistent coding.
+  Diagnostic experiments E1--E3, E5 completed.
+  F1--F7 corrections: aggregation contrasts, benchmark circularity,
+  PROMETHEE sign in main text.
+  PDF: 24 pages.
+
+\item[v4 — Fase~G (commits \texttt{68ec41b}--\texttt{03bbda7})]
+  Full manuscript rewrite following R1 decisions.
+  Key changes: decision tree revised (only R1-2 is an effect under
+  greedy assembly); tab:fourthcell $N_\text{cand}/A'$ updated to
+  $97.8\%/100\%$; Remark~\ref{rem:nonmonotone} inserted;
+  Limitations updated with instance uniqueness and E4 exploratory status.
+  PDF: 25 pages.
+
+\item[v5 — Fase~H (commits \texttt{1c076c8}--\texttt{9c7a376})]
+  Internal review: abstract trimmed to ${\approx}240$ words;
+  tab:contrasts aggregation row converted to macros;
+  three reviewer objections answered;
+  claim-evidence matrix completed;
+  provenance audit closed ($|F_A \cap F_{A'}|=132$ confirmed).
+  PDF: 25 pages, \texttt{ALL CHECKS PASSED}.
+\end{description}
+
+% =======================================================================
+% S4  Data provenance
+% =======================================================================
+
+\section*{Post Hoc Experiment: Benchmark Circularity (F8)}
+\label{sec:dev_f8}
+
+\noindent
+\textbf{Classification:} Post hoc exploratory.
+Declared and run after the main factorial results were known.
+
+\noindent
+\textbf{Research question:} Is the Pareto frontier circular with respect to
+min--max normalisation?  A benchmark built on min--max objectives
+necessarily favours methods that also use min--max.  Experiment~F8
+tests this by rebuilding the frontier with vector-normalised objectives.
+
+\noindent
+\textbf{Design:} All four SAW cells from the main factorial
+(score $\in\{\text{mm},\text{vec}\}$, assembly $\in\{\text{greedy},\text{opt}\}$)
+repeated with the Pareto frontier computed from vector-normalised objectives.
+$N=500$, $\kappa=200$, seed~42.
+
+\noindent
+\textbf{Bug and fix (commit \texttt{4d0a98d}):}
+An earlier run (commit \texttt{58b06f8}) injected the vector-normalised
+score matrix \texttt{X\_adj\_vec} into a copy of \texttt{df\_via}, then
+passed it to \texttt{build\_pareto\_utils}.  This caused two errors:
+(1)~the injected column values were re-normalised a second time by the
+function's internal \texttt{\_norm} call, changing the ranking; and
+(2)~the \textit{aspect} column values ($\in[0,1]$) were no longer in
+the expected azimuth range $[90^\circ,180^\circ]$, so the binary
+encoding classified all sites as windward (constant column).
+The corrected approach (\texttt{compute\_objs\_vec\_direct}) computes
+per-column $c_j$ values directly from the raw data with per-column L2
+normalisation, and builds the SAW score as the direct scalarisation
+$-(F_1+F_2)+F_3$ using the same column values.
+A regression test (5 draws) confirmed vec/opt $=100\%$ before the full
+run was launched.
+
+\noindent
+\textbf{Results} ($N=500$, script \texttt{compute\_f8\_circularity.py} v2,
+commit \texttt{43b8427}):
+
+\begin{center}
+\begin{tabular}{llrc}
+\toprule
+Score norm & Assembly & $Q_2$ (\%) & Prop.\,1 check \\
+\midrule
+vec & optimal & 100.0 & \textbf{Pass} ($=100\%$ as required) \\
+vec & greedy  & 100.0 & \textbf{Pass} \\
+mm  & optimal &  94.4 & --- \\
+mm  & greedy  &  72.4 & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+\textbf{Interpretation:}
+The vec/opt $=100\%$ result is exactly the value predicted by Proposition~1
+(score and frontier share the same normalisation), providing a direct
+falsifiability check on the implementation.
+Under a vector-normalised frontier, min--max normalisation loses $5.6$~pp
+(optimal) and $27.6$~pp (greedy) relative to the aligned vector score.
+This reverses the direction seen in the main factorial, confirming that
+the original result reflects score--objective alignment rather than an
+intrinsic property of min--max normalisation.
+Note the asymmetry: min--max evaluated against a vector frontier loses
+$5.6$~pp, but vector evaluated against a min--max frontier loses
+$43.2$~pp ($100.0-56.8\%$); the two penalties are not symmetric because
+the frontier changes.
+
+% =======================================================================
+% S4b  Reference-set comparison (ARCHIVED — not active evidence)
+% The score×evaluator table (tab:fourthcell) was added here after P1
+% review but the GPT gate requires it to be archived, not presented
+% as supporting evidence, until a full numerical audit of the A-space
+% (473-candidate) pipeline is completed in P2.
+% Data are preserved in the repository history for reproducibility.
+% =======================================================================
+
+% [ARCHIVED] The score×evaluator analysis (Score set: Ncand/Nvia;
+% Evaluator: A/A') is not presented as active evidence in this version.
+% See corpus/PHASES_STATUS.md for the provenance status.
+
+% =======================================================================
+% S5  Experiment E5 — Synthetic Grid for Generalisation
+% =======================================================================
+
+\section*{Post Hoc Experiment: Synthetic Grid for Generalisation (E5)}
+\label{sec:e5}
+
+\noindent
+\textbf{Classification:} Post hoc exploratory.
+Pre-specified before results: \texttt{corpus/PRESPEC\_E5.md},
+committed before any E5 run was launched.
+
+\noindent
+\textbf{Research question:}
+Is the relationship between within-group amplitude variation
+($\mathrm{TV}_W$) and greedy-assembly Pareto efficiency consistent across
+instances differing in size, spatial geometry, and amplitude structure?
+
+\subsection*{Design}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Factor & Levels \\
+\midrule
+$N$ (sites) & 50, 100, 200 \\
+Geometry & uniform, clustered, grid \\
+$s_B$ (between-group spread) & 0.0, 0.5, 1.0 \\
+$s_W$ (within-group spread) & 0.0, 0.25, 0.5, 0.75, 1.0 \\
+Replicates & 3 per cell \\
+\midrule
+Total instances & 405 \\
+$N_\text{draws}$ & 100 per instance \\
+$\kappa$ & 200 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Sites generated randomly within an $80\times80$~km bounding box.
+Three geometries: uniform random, three-cluster Gaussian, regular
+grid with jitter.
+Amplitude vectors are imposed directly via $s_W\in[0,1]$, ensuring
+$\mathrm{TV}_W$ spans $[0,\,0.096]$ independently of $N$.
+Script: \texttt{run\_e5\_grid.py} v4, commit \texttt{4d438b6}.
+
+\subsection*{Pre-specified decision rules}
+
+\textbf{E5-R1:} $Q_2^{\mathrm{mm\,opt}} = 100\%$ on every instance (regression).
+\textbf{E5-R2:} Slope of $Q_2^{\mathrm{grd}}$ on $\mathrm{TV}_W$ excludes zero
+in $\geq70\%$ of strata $\Rightarrow$ robust predictor.
+\textbf{E5-R3:} CI includes zero in $>30\%$ of strata $\Rightarrow$ not robust.
+
+\paragraph{Deviations from PRESPEC\_E5 (DEV-E5-001 to DEV-E5-007).}
+\label{sec:dev_e5}
+\texttt{PRESPEC\_E5.md} was committed before the first E5 run.
+The executed design departs from it as follows.
+
+\begin{description}
+\item[DEV-E5-001] \emph{Instance size.}
+  Declared $N\in\{50,100,200,389\}$; executed $N\in\{50,100,200\}$.
+  $N=389$ was dropped because its $O(n^3)$ trio enumeration
+  (${\approx}9.4\times10^6$ trios) would have required $\approx7$~h per
+  instance without parallelism.
+  Consequence: no synthetic instance matches the size of Fogo ($N=389$),
+  and the grid cannot be used to place Fogo within a size-comparable
+  distribution.
+\item[DEV-E5-002] \emph{Number of instances.}
+  Declared 540; executed 405, as a direct consequence of DEV-E5-001.
+\item[DEV-E5-003] \emph{Monte Carlo draws.}
+  Declared $N_\text{draws}=200$ per instance; executed 100 for speed.
+  Per-instance MC SE is $\approx5.0$~pp at $Q_2=50\%$ and
+  $\approx1.8$~pp at $Q_2=97\%$, against $3.5$~pp and $1.2$~pp declared.
+\item[DEV-E5-004] \emph{Amplitude generator.}
+  Declared amplitudes derived from each synthetic column via $\rho_j$.
+  Executed: amplitudes imposed directly, giving
+  $\mathrm{TV}_W = 0.096\,s_W$ exactly, independently of the data.
+  $\mathrm{TV}_W$ is therefore a design constant, not a property of any
+  normalisation of the synthetic columns.
+\item[DEV-E5-005] \emph{Locus of the imposed amplitudes (critical).}
+  The imposed amplitude vector $A_j$ enters \emph{both} the score
+  and the objectives.
+  From \texttt{run\_e5\_grid.py} (commit \texttt{4d438b6}):
+  score matrix \texttt{X\_score = X\_adj * Aj[np.newaxis, :]} (line~263)
+  and objective matrix \texttt{X\_obj\_amp = X\_obj * Aj[np.newaxis, :]} (line~270).
+  Both objects use the same array \texttt{Aj}, so score and evaluator
+  have identical amplitude vectors.
+  By code inspection, $\mathrm{TV}_W > 0$ reflects spread \emph{within}
+  a common amplitude, not a mismatch \emph{between} score and evaluator
+  amplitudes.
+  When score and evaluator share the same amplitude, optimal assembly
+  is efficient by Theorem~\ref{thm:groupconst}; the
+  $Q_2^{\mathrm{opt}}=100\%$ results are therefore a pipeline consistency
+  check, not evidence about the amplitude-distortion mechanism.
+  E5 consequently does not test Theorem~\ref{thm:groupconst}, which
+  concerns amplitudes that differ between score and evaluator.
+  Its informative outcome is greedy assembly only.
+\item[DEV-E5-006] \emph{Primary analysis.}
+  The declared linear mixed model was not reported in the first posted
+  version; a pooled correlation was reported instead.
+  The declared model is now reported above.
+  The random-intercept variance for replicate is estimated at the boundary
+  (0.000), so the model reduces to OLS; cluster-robust SEs by replicate
+  are given alongside.
+\item[DEV-E5-007] \emph{Estimand E5-P3.}
+  The fraction of instances where $\mathrm{TV}_W$ explains $>50\%$ of
+  $Q_2$ variance is not computable on a one-row-per-instance file, since
+  $\mathrm{TV}_W$ is constant within each instance.
+  It is not reported.
+\end{description}
+
+\subsection*{Results}
+
+\textbf{E5-R1 (regression):} $Q_2^{\mathrm{mm,opt}}=100\%$ on 405/405
+instances. Pass.
+Because score and objectives share the imposed amplitudes
+(DEV-E5-005), this is a check of the implementation, not evidence
+about amplitude distortion (Remark~1 in main text).
+
+\textbf{Declared model.}
+$Q_2^{\mathrm{grd}} \sim \mathrm{TV}_W + \mathrm{TV}_B
++ \log N + \mathrm{geometry} + (1\mid\mathrm{rep})$.
+Coefficient on $\mathrm{TV}_W$: $-1.3$~pp per $0.1$ of $\mathrm{TV}_W$
+(95\% bootstrap CI over instances $[-5.1,\,+2.4]$, $p=0.47$).
+Adding $\log N\times\mathrm{geometry}$ leaves it unchanged
+($-1.3$~pp, CI $[-4.7,\,+2.1]$).
+Instance size ($+6.2$~pp per unit $\log N$, $p<0.001$) and
+geometry (grid $+8.1$~pp, uniform $+8.6$~pp relative to clustered,
+both $p<0.001$) are the only significant terms.
+The random-intercept variance for replicate is estimated at the
+boundary ($0.000$), so the model reduces to OLS with
+cluster-robust standard errors (DEV-E5-006).
+
+\textbf{E5-R3 activated.}
+The slope of $Q_2^{\mathrm{grd}}$ on $\mathrm{TV}_W$ has a confidence
+interval including zero in 25 of 25 non-degenerate
+$N\times\mathrm{geometry}\times s_B$ strata (two strata are constant
+at 100\%).
+Pooled $r(\mathrm{TV}_W,\,\text{loss})=0.034$ ($p=0.50$).
+We found no evidence of linear association between imposed amplitude
+spread and greedy loss in the model as fitted;
+the confidence interval ($[-5.1,\,+2.4]$~pp per $0.1$ of $\mathrm{TV}_W$)
+is consistent with small effects in either direction but excludes effects
+larger than approximately $5$~pp per $0.1$ of $\mathrm{TV}_W$.
+
+\textbf{Distribution of greedy loss.}
+329 of 405 instances (81\%) reach $Q_2^{\mathrm{grd}}=100\%$.
+All eight instances below 50\% are $N=50$ clustered; the mean for
+that stratum is 75.6\% (SD 31.8), against $\geq97.9\%$ in every other
+$N\times\mathrm{geometry}$ stratum.
+Within $N=50$ clustered the mean is not monotone in $s_W$
+(69.8, 89.3, 85.8, 59.9, 73.4\% for $s_W=0,\ldots,1$).
+
+The instance with $s_W=s_B=0$ (130 feasible trios) has
+$Q_2^{\mathrm{grd}}=0\%$.
+Here $\mathrm{TV}_W=0$ by construction (no within-group amplitude spread),
+so amplitude is not the cause.
+Inspection shows the greedy heuristic failed to assemble a complete
+valid portfolio ($C=0$: no three mutually separated sites were reachable
+by the greedy top-down pass) on every draw of this instance.
+This is therefore an \emph{assembly failure}, not a dominance event.
+The reported $Q_2$ figures are unconditional:
+$Q_2^{\mathrm{grd}} = P(C \cap \text{frontier})$;
+the conditional efficiency $Q_2^{\mathrm{grd}} | C$ is undefined when $P(C)=0$.
+The $0\%$ instance should be read as a degenerate combinatorial
+outcome under extreme spatial clustering and the $d_{\min}$ separation
+constraint, not as evidence for or against the normalisation mechanism.
+
+\paragraph{Conclusion.}
+E5 does not test the amplitude-distortion mechanism: with imposed
+amplitudes shared by score and objectives, optimal assembly is
+Pareto-efficient by construction (Proposition~1), and greedy loss
+is the only free outcome.
+On that outcome, we found no evidence of linear association between
+the imposed amplitude spread and greedy efficiency in the model as
+fitted; greedy loss is more strongly associated with instance size
+and spatial geometry.
+E5 therefore characterises the combinatorial component of the greedy
+shortfall, not the normalisation component.
+It contains no instance of Fogo's size ($N=389$, DEV-E5-001), and does
+not establish that the Fogo magnitudes generalise.
+
+% =======================================================================
+% S4  Data provenance
+% =======================================================================
+
+\section*{Data Provenance}
+\label{sec:provenance}
+
+Every quantitative claim in the manuscript is traceable to a script
+committed before that claim was inserted.
+The table below lists the key numbers, their source scripts, and whether
+the corresponding macro was affected by the coding inconsistency.
+
+\begin{table*}[!t]
+\centering
+\caption{Provenance of key manuscript values.
+  ``Script'' identifies the Python script that produced each number.
+  ``Contaminated'' (SIM/YES) means the number was produced using the
+  continuous-aspect encoding in \texttt{build\_score\_473} and was
+  updated in Fase~G; NAO/NO means it was unaffected.
+  \texttt{check\_consistency.py} verifies that no contaminated macro
+  appears in the current manuscript.}
+\label{tab:provenance}
+\begin{tabular}{p{4.5cm}p{3.5cm}cc}
+\toprule
+Quantity & Script & Commit & Contaminated \\
+\midrule
+% --- Main factorial ---
+$Q_2[\text{SAW/mm/grd}] = 86.0\%$  & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$Q_2[\text{SAW/mm/opt}] = 100.0\%$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$Q_2[\text{SAW/vec/grd}] = 66.2\%$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$Q_2[\text{SAW/vec/opt}] = 56.8\%$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$Q_2[\text{TOPSIS/mm/opt}] = 96.6\%$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$Q_2[\text{TOPSIS/vec/opt}] = 52.4\%$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+% --- Contrasts ---
+Normalisation greedy contrast $+25.4\,\mathrm{pp}$ & \texttt{mc\_2cube\_fixed.py} + bootstrap & \texttt{1e48292} & NAO \\
+SAW$-$TOPSIS pooled $+0.5\,\mathrm{pp}$ & \texttt{aggregation\_strata.py} & \texttt{18361a6} & NAO \\
+Optimal$-$greedy within mm $+8.1\,\mathrm{pp}$ & \texttt{mc\_2cube\_fixed.py} + bootstrap & \texttt{1e48292} & NAO \\
+Optimal$-$greedy within vec $-10.2\,\mathrm{pp}$ & \texttt{mc\_2cube\_fixed.py} + bootstrap & \texttt{1e48292} & NAO \\
+% --- E1 ---
+E1-W optimal $Q_2 = 64.2\%$ & \texttt{run\_e1\_v3.py} & \texttt{18e7a66} & NAO \\
+E1-V optimal $Q_2 = 56.8\%$ & \texttt{run\_e1\_v3.py} & \texttt{18e7a66} & NAO \\
+$\mathrm{TV}_W(r_j)=0.082$ & \texttt{tvw\_e4.py} & \texttt{d4e970b} & NAO \\
+$\mathrm{TV}_W(1/r_j)=0.085$ & \texttt{tvw\_e4.py} & \texttt{d4e970b} & NAO \\
+% --- R1 ---
+$Q_2[\text{R-V}^*,A',\text{opt}]=100.0\%$ & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & NAO \\
+$Q_2[\text{R-V}^*,A',\text{grd}]=97.8\%$  & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & NAO \\
+$Q_2[\text{R-asp},A',\text{opt}]=\RaspOptimal\%$  & \texttt{run\_fourthcell\_consistent.py} & \texttt{ddaddc7} & NAO \\
+$Q_2[\text{R-V},A',\text{opt}]=\RVoptimal\%$  (geographic azimuth) & \texttt{run\_fourthcell\_consistent.py} & \texttt{61d4686} & NAO \\
+Greedy gain R1-2 $+11.8\,\mathrm{pp}$ (CI $[+8.8,+14.8]$) & \texttt{analyze\_r1.py} & \texttt{c63b64e} & NAO \\
+% --- tab:fourthcell contaminated ---
+$N_\text{cand}/A'$ greedy (orig.\ $19.6\%$, corrected $97.8\%$) & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & SIM \\
+$N_\text{cand}/A'$ optimal (orig.\ $20.0\%$, corrected $100.0\%$) & \texttt{run\_fourthcell\_consistent.py} & \texttt{3d4c48a} & SIM \\
+% --- tab:fourthcell space A (B1/D1 corrected run) ---
+$N_\text{cand}/A$ greedy $=84.6\%$ & \texttt{compute\_b1\_spaceA.py} v3 & \texttt{8f6a15a} & NAO \\
+$N_\text{cand}/A$ optimal $=100.0\%$ (Prop.\,1 check) & \texttt{compute\_b1\_spaceA.py} v3 & \texttt{8f6a15a} & NAO \\
+$N_\text{via}/A$ greedy $=58.8\%$ & \texttt{compute\_b1\_spaceA.py} v3 & \texttt{8f6a15a} & NAO \\
+$N_\text{via}/A$ optimal $=95.0\%$ & \texttt{compute\_b1\_spaceA.py} v3 & \texttt{8f6a15a} & NAO \\
+\multicolumn{4}{l}{\footnotesize Note: earlier run (commit \texttt{54195c1}) used trios of 473 candidates — invalid; reverted \texttt{ec33779}.} \\
+% --- F8 circularity (corrected run) ---
+$Q_2[\text{vec/opt, vec frontier}]=100.0\%$ (Prop.\,1 check) & \texttt{compute\_f8\_circularity.py} v2 & \texttt{43b8427} & NAO \\
+$Q_2[\text{mm/opt, vec frontier}]=94.4\%$ & \texttt{compute\_f8\_circularity.py} v2 & \texttt{43b8427} & NAO \\
+\multicolumn{4}{l}{\footnotesize Note: earlier run (commit \texttt{58b06f8}) used injection approach — double-normalisation bug; corrected in \texttt{4d0a98d}.} \\
+% --- Geometry ---
+$|F_A|=213$ & \texttt{mc\_2cube\_fixed.py} & \texttt{1e48292} & NAO \\
+$|F_{A'}|=181$ & fainter (sorted dominance, inline) & \texttt{9c7a376} & NAO \\
+$|F_A \cap F_{A'}|=132$ & fainter (sorted dominance, inline) & \texttt{9c7a376} & NAO \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+% =======================================================================
+% D1: Orientation convention comparison (§4.3)
+% =======================================================================
+\subsection*{Orientation convention for vector normalisation}
+\label{sec:orient_conv}
+
+Two conventions exist for cost criteria under vector normalisation.
+Convention~A (used throughout the paper): the min--max column
+$\tilde{x}_j\in[0,1]$ is normalised by its Euclidean norm, and the cost
+orientation is applied afterwards via the sign of the SAW contribution
+($1-c_j$ for $G_1\cup G_2$ criteria).
+Convention~B: the cost orientation $1-\tilde{x}_j$ is applied before
+forming the norm.
+The amplitude under Convention~B is $\rho_j^B = 1/\lVert 1-\tilde{\mathbf{x}}_j\rVert_2$
+(range of $1-\tilde{x}_j$ is always $1$ by min--max scaling).
+Under both conventions the $G_3$ benefit criteria are unchanged.
+
+Table~\ref{tab:orient_conv} lists $\rho_j$ under both conventions.
+Convention~B reduces amplitudes substantially for most $G_1\cup G_2$
+criteria because the inverted column concentrates mass near $1$
+(large $\lVert 1-\tilde{x}_j\rVert_2$ $\Rightarrow$ small $\rho_j^B$);
+the exception is \textit{wells}, whose distribution is negatively skewed.
+\textit{Perm} shows the largest discrepancy (0.583 vs.\ 0.052) because
+of its 350 tied zeros.
+
+\begin{table}[!ht]
+\centering
+\caption{Vector normalisation amplitudes $\rho_j$ under two orientation
+  conventions.
+  Convention~A (paper): orientation applied after normalisation via the
+  sign of the SAW contribution;
+  $\rho_j^A = 1/\lVert\tilde{\mathbf{x}}_j\rVert_2$.
+  Convention~B: cost orientation $1-\tilde{x}_j$ applied before forming
+  the norm; $\rho_j^B = 1/\lVert 1-\tilde{\mathbf{x}}_j\rVert_2$.
+  $G_3$ criteria are identical under both conventions.
+  Differences $|\rho_j^A - \rho_j^B| > 0.01$ are shown in \textbf{bold}.}
+\label{tab:orient_conv}
+\begin{tabular}{@{}llrrl@{}}
+\toprule
+Criterion & Group & $\rho_j^A$ & $\rho_j^B$ & Notes \\
+\midrule
+\textit{perm}      & $G_1$ & 0.583 & \textbf{0.052} & zero-inflated (350 tied zeros) \\
+\textit{slope}     & $G_1$ & 0.139 & \textbf{0.072} & \\
+\textit{roads}     & $G_1$ & 0.206 & \textbf{0.059} & \\
+\textit{rivers}    & $G_2$ & 0.265 & \textbf{0.057} & \\
+\textit{aspect}    & $G_2$ & 0.103 & \textbf{0.058} & binary ($n_1=94$ SE-facing) \\
+\textit{coast}     & $G_2$ & 0.131 & \textbf{0.069} & \\
+\textit{protected} & $G_2$ & 0.105 & \textbf{0.078} & \\
+\textit{wells}     & $G_2$ & 0.084 & \textbf{0.098} & negatively skewed \\
+\textit{urban}     & $G_3$ & 0.107 & 0.107 & benefit (no change) \\
+\textit{aero}      & $G_3$ & 0.088 & 0.088 & benefit (no change) \\
+\textit{cult}      & $G_3$ & 0.171 & 0.171 & benefit (no change) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =======================================================================
+% E7: kappa sweep full grid (auto-generated)
+% =======================================================================
+\input{results/e7/tab_kappa_supp}
+
+% === Supplementary Figure S1 ===
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/fig_F5_binary_amplitude.pdf}
+\caption{$A_j^{\rm rank}$ for a binary criterion as a function of $n_1$
+  (number of ones), with $N=\Nvia$. The amplitude is $N/[2(N+1)]=0.499$
+  for any class balance (solid line); $(N-1)/(N+1)=0.995$ for continuous
+  criterion without ties (dashed). The marker shows aspect at $n_1=94$.
+  Purely analytical.}
+\label{fig:binary_amplitude}
+\end{figure}

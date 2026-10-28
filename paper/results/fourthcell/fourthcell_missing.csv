@@ -1,0 +1,9 @@
+agg,norm,mont,ref_method,evaluator,Q2
+saw,minmax,greedy,473,A,58.8
+saw,minmax,optimal,473,A,95.0
+topsis,minmax,greedy,473,A,76.8
+topsis,minmax,optimal,473,A,81.2
+saw,minmax,greedy,389,A,86.0
+saw,minmax,optimal,389,A,100.0
+topsis,minmax,greedy,389,A,94.39999999999999
+topsis,minmax,optimal,389,A,96.6

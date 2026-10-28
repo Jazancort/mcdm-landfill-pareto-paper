@@ -1,0 +1,51 @@
+{
+  "prespec_commit": "595a760",
+  "analyze_r1_commit": "6b9c13d58d883705c55b7f198c6c9aba68a30686",
+  "kappa_primary": 200,
+  "threshold_pp": 2.5,
+  "timestamp_utc": "2026-10-26T15:36:58.009267+00:00",
+  "R1-3": {
+    "label": "Diagonal cells = 100% optimal",
+    "decision": "PASS",
+    "evidence": {
+      "RV_star_Aprime": 100.0,
+      "RM_Aprime": 100.0,
+      "RV_star_A": 100.0
+    }
+  },
+  "R1-1": {
+    "label": "\u0394_ref optimal (Ncand/A' \u2212 Nvia/A')",
+    "decision": "OBSERVA\u00c7\u00c3O",
+    "delta_pp": 0.0,
+    "ci_lo": 0.0,
+    "ci_hi": 0.0,
+    "reason": "\u0394=+0.0pp  IC=[+0.0,+0.0]  IC includes 0; |\u0394|=0.0<2.5"
+  },
+  "R1-2": {
+    "label": "\u0394_ref greedy",
+    "decision": "EFEITO",
+    "delta_pp": 11.8,
+    "ci_lo": 8.8,
+    "ci_hi": 14.8,
+    "reason": "\u0394=+11.8pp  IC=[+8.8,+14.8]  both criteria met"
+  },
+  "R1-4": {
+    "label": "Recalculate tab:canonical",
+    "decision": "N/A",
+    "reason": "tab:canonical not contaminated (contamination-note.md \u00a72)"
+  },
+  "R1-5": {
+    "label": "R-asp descriptive",
+    "decision": "DESCRITIVO: R-asp opt=15.6% grd=15.8%",
+    "R_asp_opt": 15.6,
+    "R_asp_grd": 15.8
+  },
+  "R1-6": {
+    "label": "Residual R-V \u2212 R-asp (reference-set effect)",
+    "decision": "EFEITO",
+    "delta_pp": -4.4,
+    "ci_lo": -7.2,
+    "ci_hi": -1.4,
+    "reason": "\u0394=-4.4pp  IC=[-7.2,-1.4]  both criteria met"
+  }
+}

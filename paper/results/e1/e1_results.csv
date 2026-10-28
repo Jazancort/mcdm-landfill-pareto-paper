@@ -1,0 +1,7 @@
+cell,assembly,Q2,SE,n_draws
+E1-B,greedy,80.4,1.7752971582245038,500
+E1-B,optimal,100.0,0.0,500
+E1-W,greedy,91.8,1.2269963325128566,500
+E1-W,optimal,100.0,0.0,500
+E1-V,greedy,100.0,0.0,500
+E1-V,optimal,100.0,0.0,500

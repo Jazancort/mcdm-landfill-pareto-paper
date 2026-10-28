@@ -1,0 +1,12 @@
+contrast,mean_pp,ci_lo,ci_hi,p
+C1_norm_all4,34.55,30.7,38.35,0.0
+C6_norm_greedy,25.4,21.2,29.7,0.0
+C2_asm_all4,-1.05,-2.6,0.45,0.1864
+C4_asm_mm,8.1,6.2,10.1,0.0
+norm_info_3cell,31.67,27.67,35.67,0.0
+asm_3cell,-6.07,-8.13,-4.07,0.0
+asm_saw_vec,-9.4,-12.4,-6.4,0.0
+asm_top_vec,-11.0,-14.2,-7.8,0.0
+asm_top_mm,2.2,0.2,4.2,0.039
+topsis_interaction,13.2,9.6,17.0,0.0
+agg_3cell,-0.4,-2.13,1.33,0.6688

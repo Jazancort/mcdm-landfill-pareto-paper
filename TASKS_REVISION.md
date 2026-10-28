@@ -143,3 +143,46 @@ Round 4 (polish):             §6 + §8 new rules + §9 Zenodo
 
 *Last updated: 2026-10-29. check_consistency.py: 35/35 PASS before this list.*
 
+
+## Stage 1 regression criteria (committed before run — 2026-10-27)
+
+### Primary criterion (blocking)
+All macros from Table 5, Table 6, E1 and F8 reproduce to the published value.
+All 22 E7 gates pass (`check_e7_gates.py` exit 0).
+
+### Secondary criterion (informative, non-blocking)
+SHA-256 of the four reference files:
+- `results/unified/mc_unified_raw.csv`: b02df7277956c0112271065efbe201c2048ad4c92c2e6000794c659477e730f2
+- `results/regret/regret_perdraw.csv`:  0f8eb63d93bdde9d1f4827bf62c4d4941e189f52191a6cf721cd9e35bc401b77
+- `results/e1/e1_diag_bootstrap.csv`:  32b536bf32516bb2458a8941929c5a85dba41bd54731a02cf3e4a947daf368aa
+- `results/f8/f8_per_draw.csv`:         228d54ec91535fb4d85f723d7f6a196abfa9d76da4df546acfc08547b8e8850f
+
+If SHA differs: report numeric max|diff| per column and library versions (pip freeze + Python version).
+SHA mismatch alone does NOT block Stage 2.
+
+### Environment
+- Run code at commit 94b5baf via `git worktree add ../stage1_worktree 94b5baf`
+- Do NOT modify the worktree code
+- Record pip freeze and Python version in `results/stage1/stage1_env.txt`
+
+## Git reconciliation audit (2026-10-27)
+
+Performed before Santiago Stage 1.
+Old origin/main: 19db852 (v1.6)
+Merge-base (local main / old origin/main): 265a242a
+Restored tree: e23be28 (flat structure, Santiago PRESPEC A5+A5a+A5b)
+Current origin/main: ef12e7c (= e23be28 tree, b2fadc2 as parent)
+
+### Verification: ef12e7c descends from 19db852
+CONFIRMED: git merge-base --is-ancestor 19db852 ef12e7c returns 0.
+
+### What origin/main had since merge-base that was NOT in local (265a242a → 19db852)
+- .zenodo.json: new file (v1.6, ORCID 0009-0000-2754-8503 — OUTDATED, superseded by local v1.8 with correct ORCID 0000-0003-2866-5445)
+- CITATION.cff: new file (v1.6, same ORCID issue — superseded)
+- paper/manuscript/main.tex: v1.6 content — superseded by local main.tex at root (v1.8)
+- paper/docs/prespec/PRESPEC_SANTIAGO.md: v1.6 snapshot — superseded by corpus/PRESPEC_SANTIAGO.md (A5+A5a+A5b)
+
+### Content verdict
+No content was lost. All v1.6 material was superseded by v1.8 local changes
+with corrections (ORCID, v1.8 version bump, PRESPEC amendments, Santiago A5/A5a/A5b).
+The v1.6 remote had outdated ORCID and version; the local had the correct values.

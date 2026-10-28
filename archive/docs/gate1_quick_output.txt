@@ -1,0 +1,51 @@
+====================================================================
+VALIDATE_CORE — Phase 1 independent pipeline validation
+====================================================================
+
+Data file: G:\Faculdade\Estudo\Doutorado\2025.1\Otimização Bioinspirada\Tentativa de dados via GIS\results_cache\df_real_data_cached.csv
+SHA-256:   234f6e1c2697ea540ed0e0674018e6446e9255b25009167cbb0c19c51311722a
+
+Loaded: 473 rows x 13 columns
+
+── COUNTS ──────────────────────────────────────────────────────
+  [PASS] n_all: 473
+  [PASS] n_excluded (dist_protected==0): 84
+  [PASS] n_admissible: 389
+
+── NaN SITES ───────────────────────────────────────────────────
+    NaN at row 41, col=roads
+    NaN at row 385, col=urban
+    NaN at row 429, col=aero
+  [PASS] nan_sites (0-indexed row in df_all): {41, 385, 429}
+
+── PERM STATISTICS IN A' ───────────────────────────────────────
+  [PASS] perm zeros in A': 350
+  [PASS] perm max in A' (metres, tol=1): 532.5736
+
+── ASPECT IN A' ────────────────────────────────────────────────
+  [PASS] aspect leeward n1 in A': 94
+  rho_j(aspect) = 1/sqrt(94) = 0.1031 (manuscript: 0.103)
+
+  [NOT RUN] n_trios (from fogo_trios.npy) — --quick
+  [NOT RUN] n_trios (trace method, independent) — --quick
+  [NOT RUN] Pareto |F'| A' non-dominated check — --quick
+  [NOT RUN] Pareto A' exact completeness — --quick
+  [NOT RUN] Pareto |F| A (213) — --quick
+  [NOT RUN] |A cap A'| (132) — --quick
+  [NOT RUN] SAW/mm/optimal in A matches {184,430,460} — --quick
+  [NOT RUN] F1/F2/F3 of A-portfolio matches manuscript to 1e-6 — --quick
+
+====================================================================
+GATE 1 RESULT: 7/7 checks PASS  |  0 FAIL  |  8 NOT RUN
+
+NOT RUN (gate not clearable until resolved):
+  n_trios (from fogo_trios.npy) (--quick)
+  n_trios (trace method, independent) (--quick)
+  Pareto |F'| A' non-dominated check (--quick)
+  Pareto A' exact completeness (--quick)
+  Pareto |F| A (213) (--quick)
+  |A cap A'| (132) (--quick)
+  SAW/mm/optimal in A matches {184,430,460} (--quick)
+  F1/F2/F3 of A-portfolio matches manuscript to 1e-6 (--quick)
+
+Status: INCOMPLETE — re-run without --quick to clear NOT RUN checks.

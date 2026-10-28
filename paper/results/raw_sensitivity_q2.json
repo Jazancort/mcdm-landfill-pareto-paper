@@ -1,0 +1,39 @@
+{
+  "source_sha256": "9aee31af4d3e8d47",
+  "weights_path": "results\\e1\\e1_weights_k200.npy",
+  "n_draws": 500,
+  "cells": {
+    "SAW/opt": {
+      "Q2_shift": 56.8,
+      "Q2_raw": 57.8,
+      "delta": 1.0,
+      "bound": 2.4,
+      "n_same": 488,
+      "n_diff": 12
+    },
+    "SAW/grd": {
+      "Q2_shift": 66.2,
+      "Q2_raw": 66.6,
+      "delta": 0.4,
+      "bound": 2.2,
+      "n_same": 489,
+      "n_diff": 11
+    },
+    "TOPSIS/opt": {
+      "Q2_shift": 52.4,
+      "Q2_raw": 53.2,
+      "delta": 0.8,
+      "bound": 2.6,
+      "n_same": 487,
+      "n_diff": 13
+    },
+    "TOPSIS/grd": {
+      "Q2_shift": 63.4,
+      "Q2_raw": 63.8,
+      "delta": 0.4,
+      "bound": 2.2,
+      "n_same": 489,
+      "n_diff": 11
+    }
+  }
+}

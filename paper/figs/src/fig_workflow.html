@@ -1,0 +1,429 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #fff;
+  font-family: 'Source Serif 4', Georgia, serif;
+  color: #1b2128;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── root container ── */
+.fig {
+  width: 1640px;
+  padding: 44px 48px 40px;
+  background: #fff;
+}
+
+/* ── BOTH floors share the same grid template ──
+   3 cards (1fr each) + 2 arrows (120px each)
+   Total: 3fr + 240px */
+.floor {
+  display: grid;
+  grid-template-columns: 1fr 120px 1fr 120px 1fr;
+  align-items: stretch;
+}
+
+/* ── Cards ── */
+.cw {          /* card wrapper — adds space for the circle */
+  position: relative;
+  padding-top: 28px;
+  display: flex;
+}
+
+.num {
+  position: absolute;
+  top: 10px; left: 50%;
+  transform: translateX(-50%);
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  font-size: 16px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2; color: #fff;
+}
+
+.card {
+  flex: 1;
+  display: flex; flex-direction: column;
+  border-radius: 10px; overflow: hidden;
+}
+
+.ch {          /* card header */
+  padding: 14px 22px 10px;
+  text-align: center;
+  font-size: 20px; font-weight: 700; line-height: 1.2;
+}
+
+.cs { height: 1px; margin: 0 18px; } /* card separator */
+
+.cb {          /* card body */
+  flex: 1;
+  padding: 13px 22px 16px;
+  font-size: 16px; line-height: 1.5;
+  display: flex; flex-direction: column; gap: 2px;
+}
+
+.lbl {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.7px; text-transform: uppercase;
+  margin-top: 10px; margin-bottom: 1px;
+}
+.lbl:first-child { margin-top: 0; }
+
+.it { display: flex; gap: 8px; }
+.dt { flex-shrink: 0; margin-top: 1px; }
+
+.cf {          /* card footer */
+  padding: 10px 18px 12px;
+  text-align: center;
+  font-size: 17px; font-weight: 700; line-height: 1.2;
+}
+.fs { font-size: 14px; font-weight: 400; margin-top: 3px; opacity: 0.8; }
+
+/* ── Horizontal arrows ── */
+.ha {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding-top: 28px; gap: 7px;
+}
+.hl { font-size: 14px; font-style: italic; text-align: center; line-height: 1.3; color: #3a4552; }
+.hr { display: flex; align-items: center; width: 100%; }
+.hs { flex: 1; height: 2px; background: #2c3742; }
+.hd {
+  width: 0; height: 0;
+  border-left: 9px solid #2c3742;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+/* ══════════════════════════════════════════════
+   CONNECTOR: U-turn from col-5 down to col-1
+   Same grid as .floor. Each cell draws its
+   portion with border — no pseudo-elements,
+   no position:absolute, no z-index fights.
+
+   Visual:
+     col1      col2-4 (span 3)   col5
+     |                            |
+     └────── label text ──────────┘
+
+   col1: border-left + border-bottom (corner bottom-left)
+   col2/3/4 (mid): border-bottom only + label centred
+   col5: border-right + border-bottom (corner bottom-right)
+
+   Arrow pointing down into card 4 is a separate
+   ::after on .cn-left (placed outside the grid flow
+   so it doesn't expand the row height).
+   ══════════════════════════════════════════════ */
+.connector {
+  display: grid;
+  grid-template-columns: 1fr 120px 1fr 120px 1fr;
+  height: 64px;
+  /* gap-free so borders meet */
+}
+
+/* col 1: receives the arrow — LEFT border + bottom (corner bottom-left)
+   The horizontal bar arrives from the right and turns DOWN here      */
+.cn-left {
+  grid-column: 1;
+  border-left: 2px solid #2c3742;
+  border-bottom: 2px solid #2c3742;
+  /* push corner to centre of cell */
+  margin-left: 50%;
+  position: relative;
+}
+/* arrowhead pointing down at the bottom of the left border */
+.cn-left::after {
+  content: '';
+  position: absolute;
+  left: -1px;
+  bottom: -13px;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 11px solid #2c3742;
+}
+
+/* col 2-4: bottom bar + label */
+.cn-mid {
+  grid-column: 2 / span 3;
+  border-bottom: 2px solid #2c3742;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 7px;
+}
+.cn-label {
+  font-size: 16px; font-style: italic; color: #3a4552;
+  background: #fff;
+  padding: 0 14px;
+}
+
+/* col 5: source — RIGHT border + bottom (corner bottom-right)
+   The line comes DOWN from card 3 and turns LEFT toward col-1  */
+.cn-right {
+  grid-column: 5;
+  border-right: 2px solid #2c3742;
+  border-bottom: 2px solid #2c3742;
+  /* push corner to centre of cell */
+  margin-right: 50%;
+}
+.cn-left-vert,
+.cn-right-vert { display: none; }
+
+/* ══════════════════════════════════════════════
+   COLOUR SCHEMES — 6 clearly distinct families
+   ══════════════════════════════════════════════ */
+
+/* 1 — Slate grey */
+.s1 .num  { background: #64748b; }
+.s1 .card { border: 1.5px solid #b0bac6; background: #f8f9fa; }
+.s1 .ch   { background: #ebeef2; color: #1e2832; }
+.s1 .cs   { background: #cdd3da; }
+.s1 .lbl  { color: #64748b; }
+.s1 .cf   { background: #dde1e7; border-top: 1px solid #cdd3da; color: #2c3742; }
+
+/* 2 — Teal */
+.s2 .num  { background: #0e7490; }
+.s2 .card { border: 1.5px solid #67c2d4; background: #f0fbfd; }
+.s2 .ch   { background: #c4eaf4; color: #073d4d; }
+.s2 .cs   { background: #7dcee0; }
+.s2 .lbl  { color: #0e7490; }
+.s2 .cf   { background: #a4dce8; border-top: 1px solid #7dcee0; color: #073d4d; }
+
+/* 3 — Navy PRIMARY (thicker border) */
+.s3 .num  { background: #1e3a6e; }
+.s3 .card { border: 2.5px solid #1e3a6e; background: #f5f8fd; }
+.s3 .ch   { background: #d0e2f8; color: #0f2247; }
+.s3 .cs   { background: #96b8e8; }
+.s3 .lbl  { color: #1e3a6e; }
+.s3 .cf   { background: #b4ccf0; border-top: 1px solid #96b8e8; color: #0f2247; }
+
+/* 4 — Forest green */
+.s4 .num  { background: #166534; }
+.s4 .card { border: 1.5px solid #5daa7c; background: #f0faf3; }
+.s4 .ch   { background: #bce8cc; color: #0a3d1e; }
+.s4 .cs   { background: #6ec090; }
+.s4 .lbl  { color: #166534; }
+.s4 .cf   { background: #9cd8b0; border-top: 1px solid #6ec090; color: #0a3d1e; }
+
+/* 5 — Amber */
+.s5 .num  { background: #92400e; }
+.s5 .card { border: 1.5px solid #c8983a; background: #fdfbf2; }
+.s5 .ch   { background: #f6e4b0; color: #4e2406; }
+.s5 .cs   { background: #d8b460; }
+.s5 .lbl  { color: #92400e; }
+.s5 .cf   { background: #ecd08c; border-top: 1px solid #d8b460; color: #4e2406; }
+
+/* 6 — Violet */
+.s6 .num  { background: #4c1d95; }
+.s6 .card { border: 1.5px solid #8b6acc; background: #faf8fe; }
+.s6 .ch   { background: #e0d4f8; color: #280d60; }
+.s6 .cs   { background: #ae90e0; }
+.s6 .lbl  { color: #4c1d95; }
+.s6 .cf   { background: #ccb8f0; border-top: 1px solid #ae90e0; color: #280d60; }
+
+/* ══════════════════════════════════════════════
+   SUMMARY STRIP
+   ══════════════════════════════════════════════ */
+.strip {
+  margin-top: 22px;
+  border: 1.5px solid #c4cdd6;
+  border-radius: 8px;
+  background: #f2f5f8;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: hidden;
+}
+.sc { padding: 13px 20px 15px; border-right: 1px solid #c4cdd6; }
+.sc:last-child { border-right: none; }
+.st { font-size: 16px; font-weight: 700; color: #16202b; margin-bottom: 3px; }
+.ss { font-size: 14px; color: #46525e; line-height: 1.45; }
+</style>
+</head>
+<body>
+<div class="fig">
+
+  <!-- ════════ FLOOR 1: stages 1 · 2 · 3 ════════ -->
+  <div class="floor">
+
+    <div class="cw s1">
+      <div class="num">1</div>
+      <div class="card">
+        <div class="ch">Data &amp; preprocessing</div>
+        <div class="cs"></div>
+        <div class="cb">
+          <div class="lbl">Sites</div>
+          <div class="it"><span class="dt">•</span><span>473 candidate grid cells, Fogo Island, Cape Verde</span></div>
+          <div class="it"><span class="dt">•</span><span>84 removed by regulatory screening (protected-area overlap)</span></div>
+          <div class="it"><span class="dt">•</span><span><strong>389 viable sites</strong> enter the analysis</span></div>
+          <div class="lbl">Criteria</div>
+          <div class="it"><span class="dt">•</span><span><em>m</em> = 11 GIS-derived attributes</span></div>
+          <div class="it"><span class="dt">•</span><span>3 groups: cost · environmental impact · social safety</span></div>
+          <div class="it"><span class="dt">•</span><span>3 missing values imputed (range midpoint); G&#8321;, G&#8322; criteria oriented as costs</span></div>
+        </div>
+        <div class="cf">GIS dataset<div class="fs">Azancort Neto et al. (2026)</div></div>
+      </div>
+    </div>
+
+    <div class="ha">
+      <div class="hl">AHP pairwise matrix</div>
+      <div class="hr"><div class="hs"></div><div class="hd"></div></div>
+    </div>
+
+    <div class="cw s2">
+      <div class="num">2</div>
+      <div class="card">
+        <div class="ch">Criterion weights</div>
+        <div class="cs"></div>
+        <div class="cb">
+          <div class="lbl">Elicitation</div>
+          <div class="it"><span class="dt">•</span><span>AHP (Saaty 1990) — column normalisation</span></div>
+          <div class="it"><span class="dt">•</span><span>CR = 0.056 &lt; 0.10 &nbsp;|&nbsp; &#955;<sub>max</sub> = 11.853</span></div>
+          <div class="lbl">Perturbation</div>
+          <div class="it"><span class="dt">•</span><span>Dirichlet Dir(&#954;&thinsp;<em>w</em><sub>AHP</sub>), &#954; &#8712; {50, 200}</span></div>
+          <div class="it"><span class="dt">•</span><span>500 draws per cell (Monte Carlo)</span></div>
+          <div class="it"><span class="dt">•</span><span>Coherence: <em>w</em><sup>sc</sup> = <em>w</em><sup>ob</sup> = <em>w</em><sup>fr</sup> = <em>w</em> (Section&nbsp;5.1)</span></div>
+        </div>
+        <div class="cf">Nominal weights <em>w</em><div class="fs">3 weight-vector sources</div></div>
+      </div>
+    </div>
+
+    <div class="ha">
+      <div class="hl">3 normalisation rules</div>
+      <div class="hr"><div class="hs"></div><div class="hd"></div></div>
+    </div>
+
+    <div class="cw s3">
+      <div class="num">3</div>
+      <div class="card">
+        <div class="ch">Normalisation</div>
+        <div class="cs"></div>
+        <div class="cb">
+          <div class="lbl">Min–max</div>
+          <div class="it"><span class="dt">•</span><span><em>A<sub>j</sub></em> &#8801; 1 &#8594; <em>w</em><sup>eff</sup> = <em>w</em> &nbsp;(no distortion)</span></div>
+          <div class="lbl">Vector</div>
+          <div class="it"><span class="dt">•</span><span><em>A<sub>j</sub></em> = &#961;<sub><em>j</em></sub> (distribution-dependent)</span></div>
+          <div class="it"><span class="dt">•</span><span>perm: 2.88&#215; &nbsp;|&nbsp; urban: 0.53&#215;</span></div>
+          <div class="lbl">Ranks (midranks)</div>
+          <div class="it"><span class="dt">•</span><span><em>A<sub>j</sub></em> &#8776; ½ for binary criteria, independent of <em>n</em><sub>1</sub></span></div>
+        </div>
+        <div class="cf">Effective weights <em>w</em><sup>eff</sup><div class="fs">Amplitude identity, Eq.&nbsp;(14)</div></div>
+      </div>
+    </div>
+
+  </div><!-- end floor 1 -->
+
+  <!-- ════════ CONNECTOR ════════ -->
+  <div class="connector">
+    <div class="cn-left"><div class="cn-left-vert"></div></div>
+    <div class="cn-mid"><div class="cn-label">4 aggregation rules &nbsp;·&nbsp; 2 assembly rules</div></div>
+    <div class="cn-right"><div class="cn-right-vert"></div></div>
+  </div>
+
+  <!-- ════════ FLOOR 2: stages 4 · 5 · 6 ════════ -->
+  <div class="floor">
+
+    <div class="cw s4">
+      <div class="num">4</div>
+      <div class="card">
+        <div class="ch">Aggregation</div>
+        <div class="cs"></div>
+        <div class="cb">
+          <div class="lbl">Additive</div>
+          <div class="it"><span class="dt">•</span><span>SAW — weighted linear sum</span></div>
+          <div class="lbl">Distance-based</div>
+          <div class="it"><span class="dt">•</span><span>TOPSIS (ideal-point)</span></div>
+          <div class="it"><span class="dt">•</span><span>VIKOR (compromise rank)</span></div>
+          <div class="lbl">Outranking</div>
+          <div class="it"><span class="dt">•</span><span>PROMETHEE II (usual criterion)</span></div>
+          <div class="it"><span class="dt">•</span><span>&#8801; rank-weighted SAW (Section&nbsp;6.3)</span></div>
+          <div class="lbl">Note</div>
+          <div class="it"><span class="dt">•</span><span>VIKOR &#215; vector excluded (VIKOR is invariant to per-criterion affine maps)</span></div>
+        </div>
+        <div class="cf">Site ranking <em>s</em>(<em>i</em>)<div class="fs">Over all 389 viable sites</div></div>
+      </div>
+    </div>
+
+    <div class="ha">
+      <div class="hl">2 assembly rules</div>
+      <div class="hr"><div class="hs"></div><div class="hd"></div></div>
+    </div>
+
+    <div class="cw s5">
+      <div class="num">5</div>
+      <div class="card">
+        <div class="ch">Portfolio assembly</div>
+        <div class="cs"></div>
+        <div class="cb">
+          <div class="lbl">Greedy</div>
+          <div class="it"><span class="dt">•</span><span>Add sites in decreasing score order</span></div>
+          <div class="it"><span class="dt">•</span><span>Skip if nearest selected site &lt; <em>d</em><sub>min</sub> = 10&thinsp;km</span></div>
+          <div class="lbl">Optimal</div>
+          <div class="it"><span class="dt">•</span><span>Maximise additive score over all of &#119983;</span></div>
+          <div class="it"><span class="dt">•</span><span>Complete enumeration of all feasible trios</span></div>
+          <div class="lbl">Constraint</div>
+          <div class="it"><span class="dt">•</span><span><em>k</em> = 3 facilities, pairwise separation &#8805; 10&thinsp;km</span></div>
+          <div class="it"><span class="dt">•</span><span>|&#119983;| = <strong>1,944,653</strong> feasible trios evaluated</span></div>
+        </div>
+        <div class="cf">Portfolio <em>T</em> &#8712; &#119983;<div class="fs">1,944,653 feasible trios</div></div>
+      </div>
+    </div>
+
+    <div class="ha">
+      <div class="hl">Exact Pareto frontier</div>
+      <div class="hr"><div class="hs"></div><div class="hd"></div></div>
+    </div>
+
+    <div class="cw s6">
+      <div class="num">6</div>
+      <div class="card">
+        <div class="ch">Evaluation</div>
+        <div class="cs"></div>
+        <div class="cb">
+          <div class="lbl">Pareto frontier</div>
+          <div class="it"><span class="dt">•</span><span>Exhaustive enumeration of &#119985;(<em>w</em>)</span></div>
+          <div class="it"><span class="dt">•</span><span>3 objectives: cost · impact · safety</span></div>
+          <div class="lbl">Performance metric</div>
+          <div class="it"><span class="dt">•</span><span><em>Q</em><sub>2</sub> = Pr[<em>M</em>(<em>w</em>) &#8712; &#119985;(<em>w</em>)]</span></div>
+          <div class="it"><span class="dt">•</span><span>500 Monte Carlo weight draws per cell</span></div>
+          <div class="lbl">Factorial design</div>
+          <div class="it"><span class="dt">•</span><span>24 nominal / 18 estimable cells</span></div>
+          <div class="it"><span class="dt">•</span><span>2<sup>3</sup> balanced core (Table&nbsp;5); wider design in Supplementary Material</span></div>
+        </div>
+        <div class="cf"><em>Q</em><sub>2</sub> &#8712; [0,&nbsp;1]<div class="fs">Pareto efficiency rate</div></div>
+      </div>
+    </div>
+
+  </div><!-- end floor 2 -->
+
+  <!-- ════════ SUMMARY STRIP ════════ -->
+  <div class="strip">
+    <div class="sc">
+      <div class="st">Dataset</div>
+      <div class="ss">389 viable sites · 11 criteria · Fogo Island, Cape Verde · 1,944,653 feasible trios</div>
+    </div>
+    <div class="sc">
+      <div class="st">Factorial</div>
+      <div class="ss">3 normalisations &#215; 4 aggregations &#215; 2 assembly rules = 24 nominal cells; 18 estimable (VIKOR&thinsp;&#215;&thinsp;vector &#8801; VIKOR&thinsp;&#215;&thinsp;min&#8211;max; PROMETHEE II normalisation-invariant). Balanced 2<sup>3</sup> core: {SAW, TOPSIS} &#215; {min&#8211;max, vector} &#215; {greedy, optimal}</div>
+    </div>
+    <div class="sc">
+      <div class="st">Analytical core (Stage&nbsp;3)</div>
+      <div class="ss">Amplitude identity Eq.&nbsp;(14):&nbsp; <em>w</em><sup>eff</sup><sub><em>j</em></sub> = <em>w<sub>j</sub>A<sub>j</sub></em>&thinsp;/&thinsp;&#8721;<em>w<sub>k</sub>A<sub>k</sub></em>. Theorem&nbsp;1: exact assembly is efficient for all instances iff <em>A<sub>j</sub></em> is constant within each objective group</div>
+    </div>
+    <div class="sc">
+      <div class="st">Key finding</div>
+      <div class="ss">Normalisation: +25.4&thinsp;pp (greedy; +34.6&thinsp;pp full 2<sup>3</sup>). Assembly: &minus;1.1&thinsp;pp on average (+8.1&thinsp;pp under min&#8211;max, &minus;10.2&thinsp;pp under vector). Aggregation: +0.5&thinsp;pp, equivalent to zero (TOST, &#948; = 2.5&thinsp;pp)</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+norm,mont,diff_pp,ci_lo,ci_hi,sig,n_draws
+minmax,greedy,-8.4,-11.6,-5.2,SIG,500
+vector,greedy,2.8,0.4,5.2,SIG,500
+minmax,optimal,3.4,1.8,5.0,SIG,500
+vector,optimal,4.4,2.0,6.8,SIG,500

@@ -1,0 +1,88 @@
+====================================================================
+VALIDATE_CORE ÔÇö Phase 1 independent pipeline validation
+====================================================================
+
+Data file: G:\Faculdade\Estudo\Doutorado\2025.1\Otimiza├º├úo Bioinspirada\Tentativa de dados via GIS\results_cache\df_real_data_cached.csv
+SHA-256:   234f6e1c2697ea540ed0e0674018e6446e9255b25009167cbb0c19c51311722a
+
+Loaded: 473 rows x 13 columns
+
+ÔöÇÔöÇ COUNTS ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  [PASS] n_all: 473
+  [PASS] n_excluded (dist_protected==0): 84
+  [PASS] n_admissible: 389
+
+ÔöÇÔöÇ NaN SITES ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+    NaN at row 41, col=roads
+    NaN at row 385, col=urban
+    NaN at row 429, col=aero
+  [PASS] nan_sites (0-indexed row in df_all): {41, 385, 429}
+
+ÔöÇÔöÇ PERM STATISTICS IN A' ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  [PASS] perm zeros in A': 350
+  [PASS] perm max in A' (metres, tol=1): 532.5736
+
+ÔöÇÔöÇ ASPECT IN A' ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  [PASS] aspect leeward n1 in A': 94
+  rho_j(aspect) = 1/sqrt(94) = 0.1031 (manuscript: 0.103)
+
+ÔöÇÔöÇ TRIOS ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  [PASS] n_trios (from fogo_trios.npy): 1944653
+  [PASS] trio indices out of [0, N): 0
+  [PASS] trios with repeated site: 0
+  [PASS] n_unique trios (sorted rows all distinct): 1944653
+  [PASS] distance constraint violations in ALL 1.9M trios: 0
+  [PASS] n_trios (trace method, independent): 1944653
+
+ÔöÇÔöÇ PARETO FRONTIER A' ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  [PASS] pareto_Ap count in CSV: 181
+
+  [INDEX DIAGNOSIS]
+  idx range: [0, 472]  (A' range: [0, 388])
+  all idx in adm(df_all):    True
+  any idx in excl(df_all):   False
+  any idx > 388 (A' range): True
+  after remap all >=0:       181/181
+  after remap, found in trios_arr: 181/181
+  F-value comparison (A' norm, found trios): max_diff = 9.71e-17
+  [PASS] F-values A' vs CSV (max |diff|): 9.71445146547012e-17
+
+  [PASS] Pareto non-dominated within remapped set: 0
+
+  [EXACT COMPLETENESS]
+  [PASS] exact completeness: trios outside F' not dominated by F': 0
+  [PASS] A' completeness sweep eps=1e-07 (escaped): 0
+  [PASS] A' completeness sweep eps=1e-05 (escaped): 0
+
+ÔöÇÔöÇ PARETO FRONTIER A ÔÇö CSV CONSISTENCY ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  [PASS] pareto_A |F| (213): 213
+  idx range A CSV: [0, 472]
+  remapped to A' indices: 213/213 valid
+  found in trios_arr after remap: 213/213
+  F-value comparison (A norm, found trios): max_diff F1=9.71e-17 F3=5.55e-17
+  [PASS] F-values A vs CSV (F1, max|diff|): 9.71445146547012e-17
+  [PASS] F-values A vs CSV (F3, max|diff|): 5.551115123125783e-17
+  NOTE: intersection uses remapped subsets (213 and 181 trios found)
+  NOTE: if remapping is partial, |A cap A'| = 132 is a lower bound
+
+ÔöÇÔöÇ PORTFOLIO SAW/mm/OPTIMAL IN A ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  [PASS] SAW/mm/optimal in A matches {184,430,460}: frozenset({376, 346, 180})
+  F1 = 0.0810694713  (manuscript: from Table 3)
+  F2 = 0.5568063326
+  F3 = 0.6169814465
+  NOTE: update gate criterion with manuscript F-values after Phase 1.7
+
+ÔöÇÔöÇ PORTFOLIO SAW/mm/OPTIMAL IN A' (informational) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  Portfolio: {376, 346, 180}
+  NOTE: TBD ÔÇö update EXPECTED after Phase 1.7 canonical run
+
+====================================================================
+GATE 1 RESULT: 23/23 checks PASS  |  0 FAIL  |  0 NOT RUN
+
+Status: ALL CHECKS PASS ÔÇö Phase 1 gate cleared.
+CSV SHA-256: 234f6e1c2697ea540ed0e0674018e6446e9255b25009167cbb0c19c51311722a
+SHA-256 data/fogo_trios.npy: d2b250ef11e88dea23f364c00ca7cbd79fea3a250334a1abf8f3b2c889b80f4b
+SHA-256 scripts/results/pareto_front_Aprime.csv: 619a80fa83adf841124aac71de258c76ca95b9fbe746e187950099c383882388
+SHA-256 scripts/results/pareto_front_A.csv: ae4efe96d02ee50c6721dcfeaa59963002262c08c21ea59a30f9e4b582a9c311
+paretoset version: 1.2.5
+pandas version: 3.0.6  numpy version: 2.5.3

@@ -1,0 +1,53 @@
+{
+  "protocol_hash": "08db40bdcf53b2b3",
+  "frozen_at": "2026-10-03T01:00:00",
+  "N_SIZES": [
+    50,
+    100,
+    200
+  ],
+  "GEOMETRIES": [
+    "uniform",
+    "clustered",
+    "grid"
+  ],
+  "SPATIAL_SEEDS": [
+    10,
+    20,
+    30,
+    40,
+    50
+  ],
+  "SEED_DRAWS": 9999,
+  "KAPPA": 200,
+  "N_DRAWS": 200,
+  "K": 3,
+  "M_CRIT": 11,
+  "GROUPS": [
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    [
+      8,
+      9,
+      10
+    ]
+  ],
+  "W_G": [
+    0.295,
+    0.356,
+    0.349
+  ],
+  "DMIN_KM": 5.0,
+  "BBOX_KM": 80.0,
+  "note": "Seeds frozen before execution. Do not modify."
+}

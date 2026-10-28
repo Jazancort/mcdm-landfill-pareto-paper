@@ -1,0 +1,9 @@
+agg,norm,mont,Q3_mean,Q3_se,frac_gap0,cond_gap_pct
+saw,minmax,greedy,0.001811,0.000254,86.0,1.2937
+saw,minmax,optimal,0.0,0.0,100.0,
+saw,vector,greedy,0.008598,0.000689,66.2,2.5438
+saw,vector,optimal,0.008683,0.000565,56.8,2.01
+topsis,minmax,greedy,0.000879,0.000192,94.4,1.5695
+topsis,minmax,optimal,0.000478,0.000146,96.6,1.4049
+topsis,vector,greedy,0.011369,0.000815,63.4,3.1063
+topsis,vector,optimal,0.011128,0.000654,52.4,2.3378

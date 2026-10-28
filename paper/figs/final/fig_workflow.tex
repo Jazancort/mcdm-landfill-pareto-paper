@@ -1,0 +1,107 @@
+% fig_workflow.tex — Six-stage MCDM pipeline (TikZ, replaces fig_workflow.png)
+% All numerical values via macros; never hardcode.
+% Layout: 3 boxes / row, 2 rows, L-shaped flow.
+%
+% Required macros (macros_structural.tex + macros.tex):
+%   \Ncand \Nvia \Nexcl \Ntrios \kk \dmin \ndraws \CR
+%   \PermInflation \NormGreedyContrast \AsmVecSAW \AsmVecTOPSIS
+%   \AggContrast \RegrDiffSAWvec
+%
+\usetikzlibrary{positioning,shapes.geometric,arrows.meta,calc}
+
+\begin{tikzpicture}[
+  font=\small,
+  % Stage boxes
+  stage/.style={
+    rectangle, rounded corners=4pt,
+    draw=black!55, fill=white,
+    minimum width=4.6cm, minimum height=2.3cm,
+    align=center, inner sep=5pt, text width=4.4cm
+  },
+  % Highlighted stage (Normalisation)
+  highlight/.style={
+    stage, draw=orange!65!black, fill=orange!7
+  },
+  % Arrows between stages
+  flow/.style={-{Latex[length=5pt]}, thick, black!50},
+  % Key-finding annotation row
+  finding/.style={
+    rectangle, rounded corners=3pt,
+    draw=black!30, fill=gray!5,
+    inner sep=6pt, align=left, font=\small
+  }
+]
+
+%% ──────────────────────────────────────────────────────────────────────
+%% Row 1: Stages 1–3 (left → right)
+%% ──────────────────────────────────────────────────────────────────────
+\node[stage] (S1) {
+  \textbf{1.\ GIS Dataset}\\[3pt]
+  $\Ncand$ candidates
+  ($\Nexcl$ excluded)\\
+  $\Nvia$ viable sites\\
+  11 criteria $\cdot$ 3 groups
+};
+
+\node[stage, right=0.55cm of S1] (S2) {
+  \textbf{2.\ Weights}\\[3pt]
+  AHP ($\mathrm{CR}=\CR$)\\
+  Dirichlet perturbation ($\kappa=200$ reference; six levels $25$--$1000$,
+  Section~\ref{sec:kappa}; $\ndraws$ draws per level)
+};
+
+\node[highlight, right=0.55cm of S2] (S3) {
+  \textbf{3.\ Normalisation}\\[3pt]
+  Min-max / vector / ranks\\
+  $w_j^{\mathrm{eff}} = w_j A_j\,/\!\sum_k w_k A_k$\\
+  \textit{perm}: $\PermInflation\!\times$ eff.\ wt.\ (vec.)
+};
+
+%% Arrows Row 1
+\draw[flow] (S1) -- (S2);
+\draw[flow] (S2) -- (S3);
+
+%% ──────────────────────────────────────────────────────────────────────
+%% Row 2: Stages 4–6 (right → left, under Row 1)
+%% ──────────────────────────────────────────────────────────────────────
+\node[stage, below=0.65cm of S3] (S4) {
+  \textbf{4.\ Aggregation}\\[3pt]
+  SAW \textbar\ TOPSIS\\
+  VIKOR \textbar\ PROMETHEE
+};
+
+\node[stage, left=0.55cm of S4] (S5) {
+  \textbf{5.\ Assembly}\\[3pt]
+  Greedy \& optimal\\
+  $k=\kk$ sites;\  $d_{\min}=\dmin$~km\\
+  $\Ntrios$ feasible trios
+};
+
+\node[stage, left=0.55cm of S5] (S6) {
+  \textbf{6.\ Evaluation}\\[3pt]
+  $Q_2 = \Pr\!\left[M(w)\in\mathcal{F}(w)\right]$\\
+  Value regret $R$\\
+  Exact frontier, $2^3$ factorial
+};
+
+%% Turn arrow S3→S4
+\draw[flow] (S3) -- (S4);
+
+%% Arrows Row 2
+\draw[flow] (S4) -- (S5);
+\draw[flow] (S5) -- (S6);
+
+%% ──────────────────────────────────────────────────────────────────────
+%% Key-findings band
+%% ──────────────────────────────────────────────────────────────────────
+\node[finding,
+      below=0.65cm of S5,
+      minimum width=15.05cm,   % span full figure width
+      text width=14.7cm] (KF) {
+  \textbf{Key findings}\quad
+  \textbf{Normalisation:}~$+\NormSigMin$ to $+\NormSigMax$~pp (greedy), constant sign\quad
+  \textbf{Aggregation:}~reverses with $\kappa$ ($\AggKtwentyfive\to\AggKthousand$~pp)\quad
+  \textbf{Assembly (vector):}~$+\AsmVecSAWKtwentyfiveMag\to-\AsmVecSAWKthousandMag$~pp
+};
+
+\end{tikzpicture}

@@ -1,0 +1,63 @@
+{
+  "script": "santiago_grid.py",
+  "timestamp_utc": "2026-10-26T00:02:15.734298Z",
+  "git": {
+    "commit": "b7abb12a4a813ff8c7ebcaf8681c8d59e05f209c",
+    "describe": "v3.0-formatted-188-gb7abb12-dirty",
+    "dirty": true
+  },
+  "boundary": "05-referencia\\fogo_boundary.geojson",
+  "boundary_sha256": "22680f5bcfdad0266eda35a889f78240f9d0187ec61b4cc6b99e31d976b00d17",
+  "params": {
+    "crs": 32626,
+    "origin": "bbox",
+    "centroid": "cell",
+    "spacing": 1000.0,
+    "land_frac": 0.5,
+    "dmin": 10.0,
+    "trio_limit": 50000000,
+    "trio_min": 10000,
+    "step": 250.0,
+    "max_spacing": 5000.0
+  },
+  "distance": "haversine on WGS84 lat/lon of projected centroids, R = 6371.0 km",
+  "threshold_rules": "keep cell iff land_frac >= land_frac; pair feasible iff D >= dmin (no epsilon)",
+  "mode": "fogo-check",
+  "boundary_features": 1,
+  "n_cells_total": 675,
+  "n_near_threshold": 0,
+  "n_cand": 473,
+  "expected": {
+    "n_cand": 473,
+    "n_adm": 389,
+    "n_trios": 1944653
+  },
+  "reference": {
+    "n_ref": 473,
+    "ref_matched_within_tol": 421,
+    "match_tol_m": 1.0,
+    "nearest_dist_m_quantiles": [
+      0.658,
+      0.736,
+      106.081,
+      242.712
+    ],
+    "cand_matched_by_ref": 421
+  },
+  "reference_csv_sha256": "8c88b3654f06a3008241a113fdaaceec5888c1aa71b333cb91805dbc5e99fd15",
+  "n_excl": 84,
+  "n_adm": 389,
+  "n_trios_adm": 1974552,
+  "n_pairs_adm": 46402,
+  "pairs_near_dmin": 0,
+  "exclude_sha256": "318e0a0baf17de48a7b75359ffcd92b7cf7aa5cdfbf688dc1cd859f9da15af3b",
+  "verdict": {
+    "n_cand_matches_473": true,
+    "n_adm_matches_389": true,
+    "n_trios_matches": false
+  },
+  "outputs": {
+    "candidates.csv": "9d7341e000a2ece2493f6d9485a9415d4db8c2ebfcff7870a9403d6a9a6df1bf",
+    "D_km.npy": "cdb023958420d8fabb804f9967b3650b36c8c86f5cee1f15544ffbfa98f7af6a"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "timestamp_utc": "2026-10-26T15:36:58.023156+00:00",
+  "git_head": "6b9c13d58d883705c55b7f198c6c9aba68a30686",
+  "git_status_clean": false,
+  "e1_weights_sha256": "bea05275e85bc6ddbd754c88c0a05c90a568374ff76eacfc8b522750a4aef487",
+  "e1_weights_sha256_expected": "bea05275e85bc6ddbd754c88c0a05c90a568374ff76eacfc8b522750a4aef487",
+  "e1_weights_match": true,
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "source": "existing data from fourthcell_consistent.csv + bootstrap_paired.csv",
+  "prespec_commit": "595a760"
+}

@@ -1,0 +1,9 @@
+agg,norm,mont,mean_R,se_R,mean_R_pp,se_R_pp,mean_R_raw,mean_V_mm,Q2_pct
+saw,minmax,greedy,0.0233,0.0012,2.33,0.12,0.0232,1.9976,86.0
+saw,minmax,optimal,0.0,0.0,0.0,0.0,0.0,2.0207,100.0
+saw,vector,greedy,0.0663,0.0014,6.63,0.14,0.0663,1.9544,66.2
+saw,vector,optimal,0.0527,0.0014,5.27,0.14,0.0528,1.9679,56.8
+topsis,minmax,greedy,0.0358,0.0012,3.58,0.12,0.0356,1.9852,94.4
+topsis,minmax,optimal,0.0272,0.0011,2.72,0.11,0.0269,1.9938,96.6
+topsis,vector,greedy,0.0851,0.0016,8.51,0.16,0.0849,1.9358,63.4
+topsis,vector,optimal,0.0635,0.0015,6.35,0.15,0.0638,1.957,52.4

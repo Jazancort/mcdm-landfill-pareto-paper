@@ -1,0 +1,161 @@
+{
+  "sha256": "c330ccc00640c966a871ef138df8d098c355c05d1d571a3b01fddb5b0fab121d",
+  "commit": "7bf7df3",
+  "stats": {
+    "All": {
+      "P1": {
+        "Hits": 48000,
+        "Total": 48000
+      },
+      "P2": {
+        "LossyN": 88,
+        "Mono": 85,
+        "Ties": 2,
+        "Reversal": 1,
+        "NDistinct3": 52,
+        "NDistinct2": 34,
+        "StrictOnly": 52,
+        "ExpNull": 20.0,
+        "P": 6.779664729906296e-55
+      },
+      "P3": {
+        "PreregN": 98,
+        "PreregDenom": 120,
+        "InfStrict": 36,
+        "InfDenom": 58,
+        "P": 0.04347444986495551
+      },
+      "P4": {
+        "Defl": 53,
+        "Infl": 34,
+        "NonTied": 87,
+        "Tied": 33,
+        "P": 0.05300311301096223
+      }
+    },
+    "Logn": {
+      "P1": {
+        "Hits": 12000,
+        "Total": 12000
+      },
+      "P2": {
+        "LossyN": 20,
+        "Mono": 19,
+        "Ties": 1,
+        "Reversal": 0,
+        "NDistinct3": 15,
+        "NDistinct2": 4,
+        "StrictOnly": 15,
+        "ExpNull": 3.833333333333333,
+        "P": 2.625706778679601e-14
+      },
+      "P3": {
+        "PreregN": 24,
+        "PreregDenom": 30,
+        "InfStrict": 13,
+        "InfDenom": 19,
+        "P": 0.08353424072265625
+      },
+      "P4": {
+        "Defl": 13,
+        "Infl": 12,
+        "NonTied": 25,
+        "Tied": 5,
+        "P": 1.0
+      }
+    },
+    "Beta": {
+      "P1": {
+        "Hits": 12000,
+        "Total": 12000
+      },
+      "P2": {
+        "LossyN": 18,
+        "Mono": 17,
+        "Ties": 0,
+        "Reversal": 1,
+        "NDistinct3": 6,
+        "NDistinct2": 12,
+        "StrictOnly": 6,
+        "ExpNull": 5.0,
+        "P": 2.2181970866285265e-09
+      },
+      "P3": {
+        "PreregN": 28,
+        "PreregDenom": 30,
+        "InfStrict": 7,
+        "InfDenom": 9,
+        "P": 0.08984375
+      },
+      "P4": {
+        "Defl": 12,
+        "Infl": 4,
+        "NonTied": 16,
+        "Tied": 14,
+        "P": 0.076812744140625
+      }
+    },
+    "Unif": {
+      "P1": {
+        "Hits": 12000,
+        "Total": 12000
+      },
+      "P2": {
+        "LossyN": 22,
+        "Mono": 22,
+        "Ties": 0,
+        "Reversal": 0,
+        "NDistinct3": 9,
+        "NDistinct2": 13,
+        "StrictOnly": 9,
+        "ExpNull": 5.833333333333333,
+        "P": 6.223897549462757e-14
+      },
+      "P3": {
+        "PreregN": 22,
+        "PreregDenom": 30,
+        "InfStrict": 8,
+        "InfDenom": 16,
+        "P": 0.5981903076171875
+      },
+      "P4": {
+        "Defl": 10,
+        "Infl": 8,
+        "NonTied": 18,
+        "Tied": 12,
+        "P": 0.8145294189453125
+      }
+    },
+    "Zinf": {
+      "P1": {
+        "Hits": 12000,
+        "Total": 12000
+      },
+      "P2": {
+        "LossyN": 28,
+        "Mono": 27,
+        "Ties": 1,
+        "Reversal": 0,
+        "NDistinct3": 22,
+        "NDistinct2": 5,
+        "StrictOnly": 22,
+        "ExpNull": 5.333333333333333,
+        "P": 3.1265560445716166e-20
+      },
+      "P3": {
+        "PreregN": 24,
+        "PreregDenom": 30,
+        "InfStrict": 8,
+        "InfDenom": 14,
+        "P": 0.395263671875
+      },
+      "P4": {
+        "Defl": 18,
+        "Infl": 10,
+        "NonTied": 28,
+        "Tied": 2,
+        "P": 0.1849333420395851
+      }
+    }
+  }
+}

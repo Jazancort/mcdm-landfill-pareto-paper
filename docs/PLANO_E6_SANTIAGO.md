@@ -1,5 +1,17 @@
 # Plano: E6 (mecanismo sintético) + Instância Santiago
 
+> **SUPERSEDED — historical draft, not binding.**
+> This document was a working draft written before PRESPEC_SANTIAGO.md was committed.
+> It is retained for audit trail only.
+> Authoritative protocol: PRESPEC_SANTIAGO.md (tag `prespec-santiago-f0-amend-final`)
+> + Amendments A5 (tag `prespec-santiago-a5`), A5a (tag `prespec-santiago-a5a`),
+> A5b (tag `prespec-santiago-a5b`).
+>
+> Known divergences from PRESPEC (do NOT follow this document):
+> - DEM: this draft mentions Copernicus GLO-30; PRESPEC declares ASTER GDEM v3.
+> - Wells: this draft says "omit from start"; PRESPEC uses contingency C-2 (omit only if OSM < 20 features).
+> - Seed 42: this draft does not mention seeds; PRESPEC_A5b forbids seed 42 for Santiago.
+
 Criado: 2026-10-XX  
 Revisto: incorpora correcções de validação (sign error P2, P3 reformulada, P4 nova,
 TV_W §6.4, family zero-inflated, 30 réplicas, regras Santiago)  
