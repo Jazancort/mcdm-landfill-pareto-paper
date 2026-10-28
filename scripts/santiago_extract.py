@@ -658,10 +658,295 @@ Download steps:
 
     return overall_pass
 
+# ---------------------------------------------------------------------------
+# 9b. B1 categorical criterion — P-C hydrogeological mapping (S-N)
+# ---------------------------------------------------------------------------
+
+# P-C unit → B1 score (PRESPEC_SANTIAGO §5.5, Annex A)
+# Base=1.000, Intermédia=0.472, Recente=0 (excluded from A')
+B1_SCORES = {"Base": 1.000, "Intermedia": 0.472, "Recente": 0.0}
+
+# Canonical P-C unit by cod_form (PRESPEC Annex A)
+_PC_UNIT = {
+    # Base unit (Ante-Miocénico + Miocénico médio)
+    "CA": "Base", "λρ": "Base", "λρ1": "Base", "CB": "Base", "CBm": "Base",
+    "B": "Base", "cb": "Base", "γ": "Base", "chb": "Base", "chy": "Base",
+    "chφ": "Base",
+    # Intermédia (PA main aquifer + Plio-Miocénico stratigraphic rule)
+    "PA": "Intermedia", "PA1": "Intermedia",
+    "A": "Intermedia", "A1": "Intermedia",   # Assomada = Intermédia (pre-registered)
+    "calc": "Intermedia", "cong": "Intermedia", "dφ": "Intermedia",
+    "φ": "Intermedia",
+    # null cod_form: submarine hyaloclastites → Intermédia by stratigraphic rule
+    # (Plio-Miocénico age)
+    # Recente / excluded
+    "MV": "Recente", "a": "Recente", "a dv": "Recente", "a e": "Recente",
+    "c": "Recente", "d": "Recente", "de": "Recente", "dv": "Recente",
+}
+
+def classify_b1_pc(cod_form: str | None) -> tuple[str, float]:
+    """Return (P-C unit, B1 score) for a geology polygon.
+
+    Null cod_form: submarine hyaloclastites → Intermédia (stratigraphic rule).
+    Unknown cod_form: Base (by group membership in Complexo eruptivo interno).
+
+    @param cod_form - cod_form field from IDECV geologia_santiago layer.
+    @returns tuple (unit_name, score): score in {1.000, 0.472, 0.000}.
+    """
+    if not cod_form or (isinstance(cod_form, float)):
+        return "Intermedia", B1_SCORES["Intermedia"]  # null/NaN → Plio-Miocénico rule
+    unit = _PC_UNIT.get(cod_form.strip())
+    if unit is None:
+        return "Base", B1_SCORES["Base"]   # default for unknown: Base (conservative)
+    return unit, B1_SCORES[unit]
+
 
 # ---------------------------------------------------------------------------
-# 10. Provenance report
+# 10. S-N extraction
 # ---------------------------------------------------------------------------
+
+# Cabral (2012) Annex C leaf weights — C-4 applied (A2 ZDTI omitted, 13 criteria)
+_W_CABRAL_ORIG = {
+    "A1": 3.85, "A2": 3.14,   # A2 omitted (C-4)
+    "A3": 2.62, "A4": 3.85, "A5": 1.58, "A6": 3.14, "A7": 2.62,
+    "B1": 20.30, "B2": 10.15, "B3": 10.15,
+    "C1": 7.35, "C2": 2.45,
+    "D1": 9.50, "D2": 19.30,
+}
+_W_CABRAL_C4 = {k: v for k, v in _W_CABRAL_ORIG.items() if k != "A2"}
+_TOTAL_C4 = sum(_W_CABRAL_C4.values())
+W_CABRAL = {k: v / _TOTAL_C4 for k, v in _W_CABRAL_C4.items()}  # renorm, sum=1
+
+# S-N data paths
+BAIRRO_CIDADE_FILE = PAPER / "data" / "santiago" / "bairro_cidade.geojson"
+BAIRRO_VILA_FILE   = PAPER / "data" / "santiago" / "bairro_vila.geojson"
+PATRIMONIO_FILE    = PAPER / "data" / "santiago" / "patrimonio_cultural.geojson"
+RIBEIRAS_FILE      = PAPER / "data" / "santiago" / "ribeiras_e_eixos_principais_agua0.geojson"
+CIDADE_FILE        = PAPER / "data" / "santiago" / "cidade.geojson"
+
+# S-N OSM tags
+OSM_TAGS_SN = {
+    "A3":  {"natural": ["coastline"]},
+    "A6":  {"aeroway": ["aerodrome"]},
+    "B2":  {"man_made": ["water_well","borehole","petroleum_well","water_tap","water_works"]},
+    "B3":  {"waterway": ["stream","river","canal"]},
+    "D1":  {"highway": ["motorway","trunk","primary","secondary"]},
+}
+
+
+def extract_sn(dry_run: bool = False) -> "pd.DataFrame":
+    """Extract S-N criteria for all candidate sites in the Southern Region.
+
+    Uses 13 criteria after C-4 (A2 ZDTI omitted). Cabral weights renormalised.
+    """
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    out_csv = RESULTS_DIR / "df_santiago_sn.csv"
+
+    if out_csv.exists() and out_csv.stat().st_size > 0:
+        existing = pd.read_csv(out_csv)
+        print(f"  Resume: {len(existing)} sites already computed")
+
+    # Check required files
+    missing = []
+    for f in [DEM_GEO_TIF, DEM_UTM_TIF, SLOPE_TIF, OSM_PBF, BOUNDARY_SN,
+              GEOL_GEOJSON, BAIRRO_CIDADE_FILE, CIDADE_FILE]:
+        if not f.exists():
+            missing.append(str(f))
+    if missing and not dry_run:
+        for f in missing:
+            print(f"  MISSING: {f}")
+        sys.exit(f"ABORT: {len(missing)} required file(s) missing.")
+    elif missing and dry_run:
+        print(f"  [DRY-RUN] {len(missing)} files missing — skipping S-N criterion extraction")
+        return pd.DataFrame()
+
+    # Build S-N grid (1.25 km, floor1m, land centroid, S-N boundary)
+    print(f"Building S-N grid (spacing={GRID_SPACING}m)...")
+    candidates = build_santiago_grid(BOUNDARY_SN, CRS_SANTIAGO)
+    print(f"  N_cand = {len(candidates)}")
+
+    # --- B1: Hydrogeological unit score (P-C, categorical) ---
+    print("Extracting B1 (hydrogeological unit, P-C mapping)...")
+    geol = gpd.read_file(GEOL_GEOJSON).to_crs(CRS_SANTIAGO)
+    b1_scores = np.full(len(candidates), 0.472)  # default Intermédia
+    b1_units  = np.full(len(candidates), "Intermedia", dtype=object)
+    for idx, pt in enumerate(candidates.geometry):
+        covering = geol[geol.geometry.covers(pt)]
+        if len(covering) == 0:
+            covering = geol[geol.geometry.intersects(pt.buffer(50))]
+        if len(covering) > 0:
+            row = covering.iloc[0]
+            unit, score = classify_b1_pc(row.get("cod_form"))
+            b1_scores[idx] = score
+            b1_units[idx]  = unit
+    n_recente = int(np.sum(b1_scores == 0.0))
+    n_base    = int(np.sum(b1_scores == 1.0))
+    n_inter   = int(np.sum(b1_scores == 0.472))
+    print(f"  Base={n_base}  Intermédia={n_inter}  Recente(excl)={n_recente}")
+
+    # --- DEM: slope + aspect ---
+    print("Extracting slope and C2 continuous aspect from ASTER GDEM v3...")
+    slope_vals, aspect_geo = extract_dem_values(candidates, DEM_GEO_TIF)
+    # C2 continuous: v(θ) = (1 - cos(θ - 22.5°)) / 2
+    # θ = geographic descent azimuth (0°=N, clockwise)
+    # aspect_geo = -1 for flat cells → v = 0.5 (neutral)
+    asp_rad_shift = np.radians(aspect_geo - 22.5)
+    c2_vals = np.where(aspect_geo == -1, 0.5, (1.0 - np.cos(asp_rad_shift)) / 2.0)
+    # c2_vals in [0,1], benefit=True (SSW = 1, NNE = 0)
+    flat_count = int(np.sum(aspect_geo == -1))
+    print(f"  Flat cells (aspect=-1): {flat_count}  C2 range=[{c2_vals.min():.3f},{c2_vals.max():.3f}]")
+
+    # --- A7: Protected areas ---
+    print("Extracting A7 (protected areas)...")
+    prot_gdf = gpd.read_file(PROTECTED_FILE).to_crs(CRS_SANTIAGO)
+    dist_A7 = compute_dist_to_polygons(candidates, prot_gdf)
+
+    # --- A5: Agriculture (DEV-SANT-A5-001: only Regadios excluded, not all tipos) ---
+    print("Extracting A5 (agriculture, Regadios exclusion only per DEV-SANT-A5-001)...")
+    agri_gdf = gpd.read_file(AGRI_GEOJSON).to_crs(CRS_SANTIAGO)
+    # Only Regadios (irrigated) are exclusion zones — other tipos are distance only
+    regadios = agri_gdf[agri_gdf["tipo_agric"] == "Regadios"].copy()
+    agri_all_utm = agri_gdf  # for distance criterion
+    regadios_gdf = regadios if len(regadios) > 0 else gpd.GeoDataFrame(geometry=[], crs=CRS_SANTIAGO)
+    dist_A5_criterion = compute_dist_to_polygons(candidates, regadios_gdf)
+    dist_A5_exclusion = dist_A5_criterion  # same: exclusion = inside Regadios
+    print(f"  {len(regadios)} Regadios polygons (exclusion); {len(agri_gdf)} total (distance)")
+
+    # --- A1: Built-up areas (bairro_cidade + bairro_vila) ---
+    print("Extracting A1 (built-up)...")
+    built_gdf = gpd.GeoDataFrame()
+    for f in [BAIRRO_CIDADE_FILE, BAIRRO_VILA_FILE]:
+        if f.exists():
+            g = gpd.read_file(f).to_crs(CRS_SANTIAGO)
+            built_gdf = pd.concat([built_gdf, g], ignore_index=True)
+    built_gdf = gpd.GeoDataFrame(built_gdf, crs=CRS_SANTIAGO)
+    dist_A1 = compute_dist_to_polygons(candidates, built_gdf)
+    print(f"  {len(built_gdf)} polygons")
+
+    # --- A4: Cultural heritage (patrimonio_cultural, filtered to Santiago) ---
+    print("Extracting A4 (cultural heritage)...")
+    if PATRIMONIO_FILE.exists():
+        pat_all = gpd.read_file(PATRIMONIO_FILE).to_crs(CRS_SANTIAGO)
+        # Filter to features within Santiago island + 5 km buffer
+        santiago_buf = gpd.read_file(BOUNDARY_ST).to_crs(CRS_SANTIAGO).geometry.union_all().buffer(5000)
+        pat_gdf = pat_all[pat_all.geometry.intersects(santiago_buf)].copy()
+        if len(pat_gdf) == 0:
+            print("  No patrimônio features on Santiago — using Cidade Velha point (14.922N, 23.605W)")
+            from shapely.geometry import Point
+            # Cidade Velha UNESCO WHC #1310 (Historic Centre of Ribeira Grande)
+            cv_utm = gpd.GeoDataFrame(
+                geometry=[Point(-23.605, 14.922)], crs="EPSG:4326"
+            ).to_crs(CRS_SANTIAGO).geometry.values[0].buffer(100)  # 100m point buffer
+            pat_gdf = gpd.GeoDataFrame(geometry=[cv_utm], crs=CRS_SANTIAGO)
+        print(f"  {len(pat_gdf)} A4 features (on Santiago)")
+        dist_A4 = compute_dist_to_polygons(candidates, pat_gdf)
+    else:
+        from shapely.geometry import Point
+        cv_utm = gpd.GeoDataFrame(
+            geometry=[Point(-23.605, 14.922)], crs="EPSG:4326"
+        ).to_crs(CRS_SANTIAGO).geometry.values[0].buffer(100)
+        pat_gdf = gpd.GeoDataFrame(geometry=[cv_utm], crs=CRS_SANTIAGO)
+        print("  Using Cidade Velha point fallback (14.922N, 23.605W)")
+        dist_A4 = compute_dist_to_polygons(candidates, pat_gdf)
+
+    # --- D2: Praia urban limit ---
+    print("Extracting D2 (Praia urban limit)...")
+    if CIDADE_FILE.exists():
+        cidade_gdf = gpd.read_file(CIDADE_FILE).to_crs(CRS_SANTIAGO)
+        # Filter to Praia: nom_zvc = 'Cidade da Praia' or similar
+        praia = cidade_gdf[cidade_gdf.apply(
+            lambda r: any("praia" in str(v).lower() for v in r.values), axis=1
+        )]
+        if len(praia) == 0:
+            praia = cidade_gdf  # fallback: use all city boundaries
+        print(f"  Praia features: {len(praia)}")
+        dist_D2 = compute_dist_to_polygons(candidates, praia)
+    else:
+        dist_D2 = np.full(len(candidates), 9999.0)
+
+    # --- OSM criteria ---
+    boundary_gdf = gpd.read_file(BOUNDARY_SN)
+    osm_dists = {}
+    if OSM_PBF.exists():
+        for crit, tags in OSM_TAGS_SN.items():
+            print(f"Extracting OSM {crit}...")
+            feats = load_osm_features(OSM_PBF, boundary_gdf, crit, tags, buffer_m=1000)
+            n_feat = len(feats)
+            print(f"  {crit}: {n_feat} features")
+            if crit == "B3" and n_feat < 20:
+                print(f"  [C-6] B3 streams < 20 OSM features — using IDECV ribeiras")
+                if RIBEIRAS_FILE.exists():
+                    rib = gpd.read_file(RIBEIRAS_FILE).to_crs(CRS_SANTIAGO)
+                    # Clip to S-N boundary
+                    sn_buf = boundary_gdf.to_crs(CRS_SANTIAGO).geometry.union_all().buffer(1000)
+                    rib = rib[rib.geometry.intersects(sn_buf)].copy()
+                    print(f"  IDECV ribeiras (S-N): {len(rib)} features")
+                    osm_dists[crit] = compute_osm_distances(candidates, rib)
+                else:
+                    osm_dists[crit] = compute_osm_distances(candidates, feats)
+            else:
+                osm_dists[crit] = compute_osm_distances(candidates, feats)
+    else:
+        for crit in OSM_TAGS_SN:
+            osm_dists[crit] = np.full(len(candidates), 9999.0)
+
+    # --- Exclusion rules (Cabral buffers, PRESPEC §5.3) ---
+    # Note: A3 < 80m (coast), A4 < 500m, A5 inside (dist=0), A7 < 500m, B1=Recente,
+    #       C1 > 20°, D2 < 500m, A1 < 500m, A6 < 3000m (but A6 is benefit so just distance)
+    adm = np.ones(len(candidates), dtype=bool)
+    # B1 Recente → excluded
+    adm &= (b1_scores > 0)
+    # A3 coast < 80m
+    adm &= (osm_dists.get("A3", np.full(len(candidates), 9999.0)) >= 80)
+    # A4 heritage < 500m
+    adm &= (dist_A4 >= 500)
+    # A5 agriculture: inside zones (dist=0) → excluded (DEV-SANT-A5-001: Regadios only)
+    adm &= (dist_A5_exclusion > 0)
+    # A7 protected < 500m
+    adm &= (dist_A7 >= 500)
+    # A1 built-up < 500m
+    adm &= (dist_A1 >= 500)
+    # C1 slope > 20°
+    adm &= (slope_vals <= 20.0)
+    # D2 Praia < 500m
+    adm &= (dist_D2 >= 500)
+
+    n_adm = int(np.sum(adm))
+    print(f"  N_adm = {n_adm}  (excl = {len(candidates) - n_adm})")
+    if n_adm < 100:
+        print("  [DEGENERATE] N_adm < 100 — branch S-N abandoned per PRESPEC §3")
+        return pd.DataFrame()
+
+    # --- Assemble DataFrame ---
+    lats_geo = candidates.to_crs("EPSG:4326").geometry.y.values
+    lons_geo = candidates.to_crs("EPSG:4326").geometry.x.values
+
+    df = pd.DataFrame({
+        "latitude (degrees)":  lats_geo,
+        "longitude (degrees)": lons_geo,
+        "B1_score":            b1_scores,
+        "B1_unit":             b1_units,
+        "slope (degrees)":     slope_vals,
+        "aspect_continuous":   c2_vals,
+        "dist_A1_buildup (m)":       dist_A1,
+        "dist_A3_coast (m)":         osm_dists.get("A3", np.full(len(candidates), 9999.0)),
+        "dist_A4_heritage (m)":      dist_A4,
+        "dist_A5_agriculture (m)":   dist_A5_criterion,
+        "dist_A6_aerodrome (m)":     osm_dists.get("A6", np.full(len(candidates), 9999.0)),
+        "dist_A7_protected (m)":     dist_A7,
+        "dist_B2_waterpoints (m)":   osm_dists.get("B2", np.full(len(candidates), 9999.0)),
+        "dist_B3_streams (m)":       osm_dists.get("B3", np.full(len(candidates), 9999.0)),
+        "dist_D1_mainroads (m)":     osm_dists.get("D1", np.full(len(candidates), 9999.0)),
+        "dist_D2_praia (m)":         dist_D2,
+        "admissible":                adm.astype(int),
+    })
+
+    df.to_csv(out_csv, index=False)
+    print(f"Saved S-N CSV: {out_csv}  ({len(df)} rows)")
+    return df
+
+
+
 
 def write_report(branch: str, df: pd.DataFrame, extra: dict | None = None) -> None:
     """Write JSON provenance report for the extraction run."""
@@ -726,7 +1011,12 @@ def main():
             write_report("ST", df_st)
 
     if args.branch in ("SN", "both"):
-        print("\n[S-N extraction not yet implemented — schedule for Stage 2 passo 2]")
+        print("\n" + "=" * 60)
+        print("S-N extraction (14 criteria, Cabral 2012 weights)")
+        print("=" * 60)
+        df_sn = extract_sn(dry_run=args.dry_run)
+        if len(df_sn) > 0:
+            write_report("SN", df_sn)
 
 
 if __name__ == "__main__":
