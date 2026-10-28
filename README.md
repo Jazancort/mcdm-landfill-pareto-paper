@@ -1,8 +1,11 @@
 <p align="center">
-  <h1 align="center">Normalisation as Implicit Re-weighting in Multi-Criteria Portfolio Selection<br>Landfill Site Selection on Fogo Island, Cabo Verde</h1>
-  <p align="center"><em>Closed Form and Cost Against an Exact Pareto Frontier</em></p>
+  <h1 align="center">MCDM Landfill Pareto</h1>
   <p align="center">
-    Replication package &middot; Omega (under review)
+    Source code, data, and manuscript for<br>
+    <strong>Normalisation as implicit re-weighting in MCDM portfolio selection:<br>
+    a factorial comparison on Fogo Island landfill siting</strong><br>
+    <em>Omega – The International Journal of Management Science</em><br>
+    <em>(under review)</em>
   </p>
 </p>
 
@@ -19,266 +22,206 @@
 
 ## Overview
 
-**How much does the choice of normalization and aggregation method matter in real MCDM problems?**
+This repository contains the full manuscript source and replication code for an article studying how the choice of normalisation method implicitly re-weights criteria in MCDM portfolio selection.
 
-We study the sensitivity of SAW and TOPSIS rankings to methodological choices — normalization rule (min-max vs vector), aggregation operator (weighted sum vs vector norm), and assembly method (greedy vs optimal) — using a pre-registered Pareto-based Monte Carlo design on **473 candidate landfill sites** on Fogo Island, Cabo Verde.
+**Central question:** how much Pareto efficiency does normalisation choice cost in multi-criteria portfolio siting, and why?
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-paper/main/paper/figs/final/fig_F4_map.png" width="700" alt="Study area: Fogo Island candidate sites">
-  <br><sub>Fig. F4 — Fogo Island, Cabo Verde. Candidate sites (N=473) after feasibility screening. Site attributes include slope, aspect, proximity to roads, rivers, coastline, protected areas, wells, and the airport.</sub>
-</p>
+We evaluate SAW and TOPSIS under min-max and vector normalisation across **1 944 653 feasible three-site portfolios** on Fogo Island, Cabo Verde. The Pareto frontier is computed exactly. Each cell's efficiency is measured as $Q_2$: the fraction of Monte Carlo draws in which the method's portfolio lies on the frontier.
 
-The key finding: **normalization is the dominant driver of Pareto attainment** — switching from min-max to vector normalization shifts Q2 retention by +29 to +33 pp regardless of all other choices. Aggregation and assembly have smaller, conditional effects.
+**Main finding:** min-max normalisation recovers **+25.4 pp** more of the frontier than vector normalisation under greedy assembly. The difference is traced analytically to within-group amplitude distortion via the effective-weight identity $w_j^{\mathrm{eff}} \propto w_j A_j$.
 
 ---
 
-## Main result: normalisation dominates
+## Key Results
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-paper/main/paper/figs/final/fig_F2_interaction.png" width="700" alt="Interaction: normalization × aggregation × assembly">
-  <br><sub>Fig. F2 — Bootstrap contrasts (95% CI, N=4000 Monte Carlo draws, &kappa;=200) for the main factorial effects and pairwise interactions. Normalization dominates across all cells. The aggregation contrast is not robust to &kappa; (see Table 6).</sub>
-</p>
+### $Q_2$ by cell ($\kappa = 200$, 500 draws)
 
-Across 4000 Monte Carlo draws (κ=200, pre-registered), we observe:
+| Aggregation | Normalisation | Assembly | $Q_2$ (%) | $Q_3$ (%) | Cond. gap (%) |
+|:-----------:|:-------------:|:--------:|----------:|----------:|--------------:|
+| SAW | min-max | greedy | 86.0 | 0.18 | 1.3 |
+| SAW | min-max | **optimal** | **100.0** | 0.00 | — |
+| SAW | vector | greedy | 66.2 | 0.86 | 2.5 |
+| SAW | vector | optimal | 56.8 | 0.87 | 2.0 |
+| TOPSIS | min-max | greedy | 94.4 | 0.09 | 1.6 |
+| TOPSIS | min-max | optimal | 96.6 | 0.05 | 1.4 |
+| TOPSIS | vector | greedy | 63.4 | 1.14 | 3.1 |
+| TOPSIS | vector | optimal | 52.4 | 1.11 | 2.3 |
 
-- **Normalization (greedy):** +29.2 pp [+25.7, +33.0] — the largest and most consistent effect
-- **Normalization (informative):** +33.2 pp [+29.4, +36.7] — significant across both κ values
-- **Aggregation (min-max vs vector, κ=200):** −0.4 pp [−3.4, +2.8] — not significant
-- **Assembly (exact, κ=200):** −10.2 pp [−13.0, −7.4] — significant but κ-sensitive
+SAW/min-max/optimal = 100% holds by Proposition 1 for any instance.  
+$Q_3$ = expected gap as % of attainable range; conditional gap = $Q_3 / (1 - Q_2)$.
 
-The aggregation and assembly contrasts depend on κ: at κ=50, aggregation reverses sign (+20.4 pp SIG) while assembly becomes non-significant. Pre-registration details in `paper/docs/prespec/`.
+### Main contrasts (all from a single run, `seed=42`, `B=10 000`)
 
----
+| Contrast | Effect (pp) | 95% CI |
+|:---------|------------:|:------:|
+| Normalisation, greedy | +25.4 | [+21.2, +29.7] |
+| Normalisation, informative cells | +31.7 | [+27.7, +35.7] |
+| Aggregation SAW − TOPSIS | −0.4 | [−2.1, +1.3] |
+| Assembly × normalisation (TOPSIS) | +13.2 | [+9.6, +17.0] |
+| Assembly, SAW/vector | −9.4 | [−12.4, −6.4] |
+| Assembly, TOPSIS/vector | −11.0 | [−14.2, −7.8] |
 
-## Pareto frontier structure
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-paper/main/paper/figs/final/fig_F3_pareto.png" width="700" alt="Pareto frontier: SAW vs TOPSIS under uncertainty">
-  <br><sub>Fig. F3 — Pareto-optimal triples under the 2×2×2 factorial. Each point is one (normalization, aggregation, assembly) combination evaluated over the 473 candidate sites. The exact frontier dominates greedy solutions in 8/8 cells for SAW.</sub>
-</p>
-
-The Pareto frontier is computed exactly (not approximated): for each weight draw, we enumerate all non-dominated site triples and count how often a candidate appears. This gives **rank-robust site recommendations** that are stable across the entire uncertainty space.
-
----
-
-## Aspect sensitivity (R-V analysis)
-
-| Metric | Greedy | Optimal | Contrast |
-|--------|--------|---------|----------|
-| R-asp (aspect regret, %) | 15.8% | 15.6% | +0.2 pp (n.s.) |
-| R-V (vector regret, %) | 6.4% | 6.2% | +0.2 pp (n.s.) |
-| R-asp − R-V | **+9.4 pp** | **+9.4 pp** | **[+6.6, +12.4] SIG** |
-
-Vector normalization systematically reduces regret by 9.4 pp compared to aspect normalization (geographic azimuth convention), confirming the normalization dominance finding from the main factorial.
+Aggregation equivalence: TOST $p = 0.010$, $\delta = 2.5$ pp.
 
 ---
 
-## Study design
+## Reproduction Pipeline
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Jazancort/mcdm-landfill-pareto-paper/main/paper/figs/final/fig_F1_slope_weights.png" width="700" alt="Criteria weight sampling and slope distribution">
-  <br><sub>Fig. F1 — Weight sampling scheme and slope distribution across the 473 candidate sites. Weights are drawn from a Dirichlet distribution with uniform concentration (&kappa;=200 primary, &kappa;=50 robustness check).</sub>
-</p>
-
-| Experiment | Description | N draws | Purpose |
-|-----------|-------------|---------|---------|
-| E1 | Normalization comparison (SAW only) | 4000 | Main normalization effect |
-| E2 | Grid search over κ | 100/cell | Concentration sensitivity |
-| E4 | Star test (v-star sites) | 1000 | Extreme-weight validation |
-| E5 | Synthetic grid (monotone profiles) | 100×100 | Theoretical boundary |
-| E6 | Spearman decomposition | 500 | Rank correlation structure |
-| Main MC | 2-cube (norm×agg) × 4th cell (assembly) | 4000 | Full factorial |
-
-**Total: 6 pre-registered experiments + main factorial**, all completed on a standard CPU (< 60 min). GPU not required.
+```mermaid
+graph LR
+    A["MCDM data\n(GIS, 389 sites)"] --> B["mc_unified.py\nseed=42, B=10000"]
+    B --> C["mc_unified_raw.csv\n4000 rows"]
+    C --> D["Bootstrap CIs\nTOST, Q3, gap"]
+    D --> E["mc_unified_macros.tex"]
+    E --> F["verify_macros_permanent.py\nALL CHECKS PASSED"]
+    F --> G["main.tex → main.pdf"]
+```
 
 ---
 
-## Reproducing the results (v1.6)
+## Quick Start
 
-### 1. Install dependencies
+### Requirements
 
-```bash
-pip install numpy scipy pandas geopandas matplotlib
-```
+- Python 3.12 with [uv](https://docs.astral.sh/uv/): `pip install uv`
+- XeLaTeX (TeX Live 2023+ or MiKTeX)
+- MCDM data (set `MCDM_DATA_DIR`; see below)
 
-Or with [uv](https://docs.astral.sh/uv/):
-
-```bash
-uv pip install numpy scipy pandas geopandas matplotlib
-```
-
-### 2. Run the main Monte Carlo experiment
-
-Generates `paper/results/fourthcell/mc_2cube_fixed_raw.csv` — the primary dataset for all contrasts in Tables 5–9.
+### Clone and run
 
 ```bash
-cd paper
-uv run python scripts/experiments/run_fourthcell_consistent.py
+git clone https://github.com/Jazancort/mcdm-landfill-pareto.git
+cd mcdm-landfill-pareto
 ```
 
-Expected runtime: 30–60 min on CPU.
-
-### 3. Compute bootstrap contrasts (κ=200 and κ=50)
+Set the data path (spatial dataset from [Azancort Neto 2026](https://zenodo.org/records/17704387)):
 
 ```bash
-uv run python scripts/analysis/bootstrap_contrasts.py
+# Linux / macOS
+export MCDM_DATA_DIR=/path/to/mcdm_data
+
+# Windows
+$env:MCDM_DATA_DIR = "C:\path\to\mcdm_data"
 ```
 
-Reads `results/fourthcell/mc_2cube_fixed_raw.csv`, writes `results/bootstrap_k50_k200.csv`.
-
-### 4. Run individual experiments
+Run the unified experiment (all results from one script, one seed):
 
 ```bash
-uv run python scripts/experiments/run_e1_v3.py      # E1 normalization
-uv run python scripts/experiments/run_e3_grid.py     # E2/E3 grid
-uv run python scripts/experiments/run_e4_vstar.py    # E4 star test
-uv run python scripts/experiments/run_e5_grid.py     # E5 synthetic
-uv run python scripts/experiments/run_e6.py          # E6 Spearman
+uv run python scripts/mc_unified.py
 ```
 
-### 5. Regenerate LaTeX macros
+Expected output:
+
+```
+Assertao frac_gap0>=Q2: PASSOU em todas as 8 celulas.
+TOST: mean=-0.40pp  90%CI=[-1.9,+1.1]  p=0.010
+CONCLUIDO.
+```
+
+Runtime: ~4 min on GPU, ~9 min on CPU.
+
+Verify all manuscript macros:
 
 ```bash
-uv run python scripts/analysis/generate_macros.py
-uv run python scripts/analysis/generate_macros_e6.py
-uv run python scripts/analysis/generate_macros_r1.py
+uv run python scripts/verify_macros_permanent.py
 ```
 
-Macro files are written to `results/*/` and must be copied to `manuscript/` before compiling.
-
-### 6. Regenerate figures
-
-```bash
-uv run python figs/src/fig_F1_slope_weights.py
-uv run python figs/src/fig_F2_interaction.py
-uv run python figs/src/fig_F3_pareto.py
-uv run python figs/src/fig_F4_map.py
-uv run python figs/src/fig_F5_binary_amplitude.py
-```
-
-Figures are written to `figs/final/` at 300 dpi.
-
-### 7. Compile the manuscript
-
-```bash
-cd manuscript
-xelatex main.tex
-bibtex main
-xelatex main.tex
-xelatex main.tex
-```
-
-Or `make` if the Makefile is configured for your LaTeX installation.
+Expected: `ALL CHECKS PASSED`
 
 ---
 
-## Repository structure
+## Import into Overleaf
+
+1. On GitHub, click **Code → Download ZIP**
+2. In Overleaf: **New Project → Upload Project** → select the ZIP
+3. Set compiler to **XeLaTeX** and main file to `main.tex`
+4. Click **Recompile**
+
+All figure files (`figures/*.pdf`), class files (`cas-dc.cls`), and bibliography (`refs.bib`) are included in the repository.
+
+---
+
+## What Gets Verified
+
+`verify_macros_permanent.py` recomputes every value from the raw data and asserts exact agreement (half-up rounding, 1 decimal place):
+
+| Macro | Value | Source |
+|:------|------:|:-------|
+| `NormMainEffect` | 34.6 pp | C1: mean(minmax − vector), 4 cells |
+| `NormGreedyContrast` | 25.4 pp | C6: greedy-only norm contrast |
+| `QtwommGreedy` | 86.0% | SAW/minmax/greedy cell mean |
+| `QtwommOptimal` | 100.0% | SAW/minmax/optimal (Prop. 1) |
+| `QtwovecGreedy` | 66.2% | SAW/vector/greedy cell mean |
+| `QtwovecOptimal` | 56.8% | SAW/vector/optimal cell mean |
+| `EoneWloss` | 35.8 pp | 100 − Q₂(E1-W/optimal) |
+| `EoneVloss` | 43.2 pp | 100 − Q₂(E1-V/optimal) |
+
+---
+
+## Key Assertions (enforced at runtime)
+
+```python
+# In mc_unified.py and q3_perdraw.py:
+assert not (q2 == 1 and gap > 1e-9)        # efficient => gap = 0
+assert frac_gap0[cell] >= Q2[cell]           # per cell
+
+# In scoring.py:
+# TOPSIS orientation test: dominant alternative scores 1.0 under both norms
+```
+
+---
+
+## Repository Structure
 
 ```
-.
-├── README.md
-├── CHANGELOG.md           <- version history
-├── .zenodo.json           <- Zenodo metadata (auto-read on release)
+mcdm-landfill-pareto/
+├── main.tex                        XeLaTeX article (Elsevier CAS double-column)
+├── macros.tex                      All numeric macros (auto-generated)
+├── refs.bib                        Bibliography
+├── supplementary.tex               Supplementary material
+├── cas-dc.cls, cas-common.sty      Elsevier class files
 │
-├── paper/                 <- replication package
-│   ├── data/
-│   │   ├── fogo_trios.npy              <- 473 candidate site triples
-│   │   ├── asp_correct_473.npy         <- corrected geographic aspect values
-│   │   ├── ok_matrix.npy               <- feasibility matrix
-│   │   ├── idecv_ilhas.geojson         <- island boundaries (IDECV)
-│   │   ├── fogo_boundary.geojson       <- Fogo Island boundary
-│   │   ├── e1_v3_rerun_20261002.log    <- provenance log for E1 rerun
-│   │   └── literature/                 <- extracted matrices from cited studies
-│   │
-│   ├── manuscript/
-│   │   ├── main.tex                    <- LaTeX source
-│   │   ├── supplementary.tex
-│   │   ├── refs.bib
-│   │   ├── macros*.tex                 <- auto-generated macros (do not edit)
-│   │   └── cas-dc.cls                  <- Elsevier CAS double-column class
-│   │
-│   ├── figs/
-│   │   ├── final/                      <- compiled figures (PDF + PNG, 300 dpi)
-│   │   │   ├── fig_F1_slope_weights.*
-│   │   │   ├── fig_F2_interaction.*
-│   │   │   ├── fig_F3_pareto.*
-│   │   │   ├── fig_F4_map.*
-│   │   │   └── fig_F5_binary_amplitude.*
-│   │   └── src/                        <- figure generation scripts
-│   │       ├── fig_F1_slope_weights.py
-│   │       ├── fig_F2_interaction.py
-│   │       └── ...
-│   │
-│   ├── scripts/
-│   │   ├── experiments/                <- one script per experiment
-│   │   │   ├── run_e1_v3.py            <- E1 normalization
-│   │   │   ├── run_e4_vstar.py         <- E4 star test
-│   │   │   ├── run_e5_grid.py          <- E5 synthetic
-│   │   │   ├── run_e6.py               <- E6 Spearman
-│   │   │   └── run_fourthcell_consistent.py  <- main 2-cube Monte Carlo
-│   │   ├── analysis/                   <- bootstrap, macros, sensitivity
-│   │   │   ├── bootstrap_contrasts.py
-│   │   │   ├── generate_macros.py
-│   │   │   ├── compute_regret.py
-│   │   │   └── ...
-│   │   └── utils/                      <- shared utilities
-│   │       ├── aspect_utils.py         <- geographic aspect convention
-│   │       ├── pareto_utils.py
-│   │       ├── scoring.py
-│   │       └── ...
-│   │
-│   ├── results/                        <- pre-computed output files
-│   │   ├── fourthcell/
-│   │   │   └── mc_2cube_fixed_raw.csv  <- main experiment output (4000 draws)
-│   │   ├── bootstrap_k50_k200.csv      <- bootstrap contrasts (kappa=200 vs kappa=50)
-│   │   ├── raw_sensitivity_4cells.csv  <- kappa sensitivity
-│   │   └── e1/ e2/ e4/ e5/ e6/ f8/ r1/ regret/
-│   │
-│   └── docs/
-│       ├── DATA_DICTIONARY.md          <- field definitions for all data files
-│       ├── MACRO_PROVENANCE.md         <- which script generates each macro
-│       ├── contamination-note.md       <- aspect convention correction history
-│       ├── provenance.csv              <- script-to-result traceability
-│       └── prespec/                    <- pre-registration documents
-│           ├── PRESPEC.md              <- master pre-registration
-│           ├── PRESPEC_E1.md .. PRESPEC_E6.md
-│           ├── PRESPEC_R1.md
-│           ├── PRESPEC_SANTIAGO.md     <- Santiago Island replication plan
-│           └── DEVIATIONS.md           <- documented protocol deviations
+├── figures/                        All figures (PDF + PNG)
+│   ├── fig_F1_slope_weights.pdf
+│   ├── fig_F2_interaction.pdf
+│   ├── fig_F3_pareto.pdf
+│   ├── fig_F4_map.pdf
+│   ├── fig_F5_binary_amplitude.pdf
+│   ├── fig_E5_synthetic.pdf
+│   └── fig_workflow.png
 │
-└── archive/                            <- development artifacts (not needed for replication)
-    ├── scripts/                        <- diagnostic and one-off scripts
-    ├── docs/                           <- internal planning documents
-    └── results/                        <- intermediate and diagnostic outputs
+├── scripts/
+│   ├── mc_unified.py               Canonical: factorial + Q3 + bootstrap + macros
+│   ├── scoring.py                  Single source of truth for SAW/TOPSIS scores
+│   ├── q3_perdraw.py               Q3 per draw with assertions
+│   ├── mcdm_experiment.py          Core MCDM module
+│   ├── pareto_utils.py             Pareto dominance utilities
+│   ├── verify_macros_permanent.py  CI: all macros vs raw data
+│   └── compute_f8_circularity.py   F8 benchmark robustness
+│
+├── results/
+│   ├── unified/                    Canonical results (mc_unified.py, seed=42)
+│   │   ├── mc_unified_raw.csv      4000 rows: 8 cells × 500 draws
+│   │   ├── mc_unified_contrasts.csv  Bootstrap CIs for 11 contrasts
+│   │   ├── mc_unified_q3.csv       Q3, frac_gap0, conditional gap
+│   │   └── mc_unified_macros.tex   Generated macros
+│   ├── e1/                         E1 per-draw data
+│   └── f8/                         F8 benchmark results
+│
+├── data/
+│   ├── fogo_trios.npy              Pre-built trio index (1 944 653 trios)
+│   └── ok_matrix.npy               Spatial feasibility matrix
+│
+└── corpus/
+    ├── PRESPEC.md                  Pre-registered analysis plan
+    └── PRESPEC_E1.md               E1 pre-specification
 ```
 
 ---
 
-## Data integrity
+## Pre-Registration
 
-The aspect convention used throughout is **geographic azimuth** (0° = North, clockwise). The conversion from the DEM notebook convention is `θ_geo = (270 − θ_nb) % 360`, implemented in `paper/scripts/utils/aspect_utils.py`. An earlier version of the analysis used a mixed convention; the correction is documented in `paper/docs/contamination-note.md` and in commit `c3db083` of the working repository.
-
-To verify that the key intermediate files match the values reported in the manuscript:
-
-```bash
-cd paper
-uv run python scripts/analysis/verify_macros_permanent.py
-```
-
----
-
-## Pre-registration
-
-All six sub-experiments and the main factorial were pre-registered before data analysis. The master document (`paper/docs/prespec/PRESPEC.md`) was timestamped via a git commit on 2026-09-30, before the main Monte Carlo was run. Deviations from the pre-registered protocol are documented in `paper/docs/prespec/DEVIATIONS.md`.
-
----
-
-## Zenodo archive
-
-| DOI type | Link | Resolves to |
-|----------|------|-------------|
-| **Concept** (always latest) | [10.5281/zenodo.23676428](https://doi.org/10.5281/zenodo.23676428) | Latest release |
-| **Version v1.1** (this submission) | [10.5281/zenodo.23676428](https://doi.org/10.5281/zenodo.23676428) | This exact snapshot |
+`corpus/PRESPEC.md` and `corpus/PRESPEC_E1.md` were committed before the experiments ran. They record the estimand, rounding policy, assertion chain, and expected file hash.
 
 ---
 
@@ -287,11 +230,9 @@ All six sub-experiments and the main factorial were pre-registered before data a
 ```bibtex
 @article{AzancortNeto2026omega,
   author  = {Azancort Neto, Julio L.},
-  title   = {Comparing {SAW} and {TOPSIS} under normalization and aggregation
-             uncertainty: a {Pareto}-based {Monte Carlo} study for landfill
-             site selection on {Fogo Island, Cabo Verde}},
+  title   = {Normalisation as implicit re-weighting in {MCDM} portfolio selection:
+             a factorial comparison on {F}ogo {I}sland landfill siting},
   journal = {Omega},
-  note    = {Under review},
   year    = {2026},
   doi     = {10.5281/zenodo.23676428},
   note    = {Under review}
@@ -302,8 +243,4 @@ All six sub-experiments and the main factorial were pre-registered before data a
 
 ## License
 
-| Component | License |
-|-----------|---------|
-| Scripts and figures | **MIT** — see [LICENSE](LICENSE) |
-| Manuscript LaTeX source | Provided for review; all rights reserved pending publication |
-| Geographic data (IDECV) | Public domain (Cabo Verde government) |
+Code and data are released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).

@@ -1,0 +1,9 @@
+{
+  "n_draws_pooled": 3000,
+  "pooled_slope": -0.053625,
+  "pooled_intercept": 0.493331,
+  "pooled_r": -0.233167,
+  "pooled_p": 2.5206423726563155e-38,
+  "pooled_se": 0.004085,
+  "neff_star": 9.2
+}

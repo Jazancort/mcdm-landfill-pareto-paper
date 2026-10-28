@@ -1,0 +1,269 @@
+Loading Fogo trios...
+  Trios: 1,944,653  Sites: 389
+
+[INSTANCES] 120 = 4 families × 30 replicates
+[DRAWS] 200 Dirichlet draws, κ=200, seed=42
+  [  1/120] lognormal_r00  62.1s  ETA 123min
+  [  2/120] lognormal_r01  62.1s  ETA 122min
+  [  3/120] lognormal_r02  62.1s  ETA 121min
+  [  4/120] lognormal_r03  62.8s  ETA 120min
+  [  5/120] lognormal_r04  62.3s  ETA 119min
+  [  6/120] lognormal_r05  66.0s  ETA 120min
+  [  7/120] lognormal_r06  65.1s  ETA 119min
+  [  8/120] lognormal_r07  62.4s  ETA 118min
+  [  9/120] lognormal_r08  66.4s  ETA 117min
+  [ 10/120] lognormal_r09  62.5s  ETA 116min
+  [ 11/120] lognormal_r10  62.5s  ETA 115min
+  [ 12/120] lognormal_r11  62.4s  ETA 114min
+  [ 13/120] lognormal_r12  62.5s  ETA 113min
+  [ 14/120] lognormal_r13  66.4s  ETA 112min
+  [ 15/120] lognormal_r14  62.5s  ETA 111min
+  [ 16/120] lognormal_r15  62.5s  ETA 110min
+  [ 17/120] lognormal_r16  62.4s  ETA 109min
+  [ 18/120] lognormal_r17  62.7s  ETA 107min
+  [ 19/120] lognormal_r18  62.1s  ETA 106min
+  [ 20/120] lognormal_r19  62.0s  ETA 105min
+  [ 21/120] lognormal_r20  62.1s  ETA 104min
+  [ 22/120] lognormal_r21  62.2s  ETA 103min
+  [ 23/120] lognormal_r22  62.0s  ETA 102min
+  [ 24/120] lognormal_r23  62.1s  ETA 101min
+  [ 25/120] lognormal_r24  62.0s  ETA 100min
+  [ 26/120] lognormal_r25  62.2s  ETA 98min
+  [ 27/120] lognormal_r26  62.2s  ETA 97min
+  [ 28/120] lognormal_r27  62.3s  ETA 96min
+  [ 29/120] lognormal_r28  62.1s  ETA 95min
+  [ 30/120] lognormal_r29  62.2s  ETA 94min
+  [ 31/120] beta13_r00  62.2s  ETA 93min
+  [ 32/120] beta13_r01  61.9s  ETA 92min
+  [ 33/120] beta13_r02  62.0s  ETA 91min
+  [ 34/120] beta13_r03  62.2s  ETA 90min
+  [ 35/120] beta13_r04  62.0s  ETA 89min
+  [ 36/120] beta13_r05  62.0s  ETA 88min
+  [ 37/120] beta13_r06  62.2s  ETA 87min
+  [ 38/120] beta13_r07  62.1s  ETA 86min
+  [ 39/120] beta13_r08  62.1s  ETA 85min
+  [ 40/120] beta13_r09  62.2s  ETA 83min
+  [ 41/120] beta13_r10  62.2s  ETA 82min
+  [ 42/120] beta13_r11  62.3s  ETA 81min
+  [ 43/120] beta13_r12  62.3s  ETA 80min
+  [ 44/120] beta13_r13  62.3s  ETA 79min
+  [ 45/120] beta13_r14  62.3s  ETA 78min
+  [ 46/120] beta13_r15  62.3s  ETA 77min
+  [ 47/120] beta13_r16  62.1s  ETA 76min
+  [ 48/120] beta13_r17  62.1s  ETA 75min
+  [ 49/120] beta13_r18  62.2s  ETA 74min
+  [ 50/120] beta13_r19  62.3s  ETA 73min
+  [ 51/120] beta13_r20  62.3s  ETA 72min
+  [ 52/120] beta13_r21  62.0s  ETA 71min
+  [ 53/120] beta13_r22  62.2s  ETA 70min
+  [ 54/120] beta13_r23  62.3s  ETA 69min
+  [ 55/120] beta13_r24  62.8s  ETA 68min
+  [ 56/120] beta13_r25  62.5s  ETA 67min
+  [ 57/120] beta13_r26  62.9s  ETA 66min
+  [ 58/120] beta13_r27  68.6s  ETA 65min
+  [ 59/120] beta13_r28  62.5s  ETA 64min
+  [ 60/120] beta13_r29  63.2s  ETA 63min
+  [ 61/120] uniform_r00  62.7s  ETA 62min
+  [ 62/120] uniform_r01  62.5s  ETA 61min
+  [ 63/120] uniform_r02  63.7s  ETA 60min
+  [ 64/120] uniform_r03  62.8s  ETA 58min
+  [ 65/120] uniform_r04  65.5s  ETA 57min
+  [ 66/120] uniform_r05  62.9s  ETA 56min
+  [ 67/120] uniform_r06  62.5s  ETA 55min
+  [ 68/120] uniform_r07  62.4s  ETA 54min
+  [ 69/120] uniform_r08  62.3s  ETA 53min
+  [ 70/120] uniform_r09  62.2s  ETA 52min
+  [ 71/120] uniform_r10  62.1s  ETA 51min
+  [ 72/120] uniform_r11  62.3s  ETA 50min
+  [ 73/120] uniform_r12  62.3s  ETA 49min
+  [ 74/120] uniform_r13  62.2s  ETA 48min
+  [ 75/120] uniform_r14  62.3s  ETA 47min
+  [ 76/120] uniform_r15  62.2s  ETA 46min
+  [ 77/120] uniform_r16  62.3s  ETA 45min
+  [ 78/120] uniform_r17  62.3s  ETA 44min
+  [ 79/120] uniform_r18  62.8s  ETA 43min
+  [ 80/120] uniform_r19  62.2s  ETA 42min
+  [ 81/120] uniform_r20  62.2s  ETA 41min
+  [ 82/120] uniform_r21  62.3s  ETA 40min
+  [ 83/120] uniform_r22  62.2s  ETA 39min
+  [ 84/120] uniform_r23  62.3s  ETA 38min
+  [ 85/120] uniform_r24  62.2s  ETA 37min
+  [ 86/120] uniform_r25  62.1s  ETA 35min
+  [ 87/120] uniform_r26  62.4s  ETA 34min
+  [ 88/120] uniform_r27  62.4s  ETA 33min
+  [ 89/120] uniform_r28  62.4s  ETA 32min
+  [ 90/120] uniform_r29  62.1s  ETA 31min
+  [ 91/120] zero_inflated_r00  62.1s  ETA 30min
+  [ 92/120] zero_inflated_r01  62.2s  ETA 29min
+  [ 93/120] zero_inflated_r02  62.2s  ETA 28min
+  [ 94/120] zero_inflated_r03  62.1s  ETA 27min
+  [ 95/120] zero_inflated_r04  62.3s  ETA 26min
+  [ 96/120] zero_inflated_r05  62.5s  ETA 25min
+  [ 97/120] zero_inflated_r06  62.8s  ETA 24min
+  [ 98/120] zero_inflated_r07  63.5s  ETA 23min
+  [ 99/120] zero_inflated_r08  62.9s  ETA 22min
+  [100/120] zero_inflated_r09  65.0s  ETA 21min
+  [101/120] zero_inflated_r10  63.0s  ETA 20min
+  [102/120] zero_inflated_r11  62.6s  ETA 19min
+  [103/120] zero_inflated_r12  62.1s  ETA 18min
+  [104/120] zero_inflated_r13  62.0s  ETA 17min
+  [105/120] zero_inflated_r14  62.0s  ETA 16min
+  [106/120] zero_inflated_r15  61.8s  ETA 15min
+  [107/120] zero_inflated_r16  61.8s  ETA 14min
+  [108/120] zero_inflated_r17  61.9s  ETA 13min
+  [109/120] zero_inflated_r18  62.0s  ETA 11min
+  [110/120] zero_inflated_r19  61.8s  ETA 10min
+  [111/120] zero_inflated_r20  62.0s  ETA 9min
+  [112/120] zero_inflated_r21  61.9s  ETA 8min
+  [113/120] zero_inflated_r22  61.8s  ETA 7min
+  [114/120] zero_inflated_r23  61.9s  ETA 6min
+  [115/120] zero_inflated_r24  62.1s  ETA 5min
+  [116/120] zero_inflated_r25  62.2s  ETA 4min
+  [117/120] zero_inflated_r26  62.2s  ETA 3min
+  [118/120] zero_inflated_r27  62.2s  ETA 2min
+  [119/120] zero_inflated_r28  62.2s  ETA 1min
+  [120/120] zero_inflated_r29  62.2s  ETA 0min
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+/home/julioazancort/scratch/mcdm-landfill-pareto/scripts/run_e6.py:409: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  rho, pval = spearmanr(tv_levels, q2_vals)
+
+[SAVED] /home/julioazancort/scratch/mcdm-landfill-pareto/results/e6/e6_raw_sensit_tvwF01954.csv  (168000 rows)
+[SAVED] /home/julioazancort/scratch/mcdm-landfill-pareto/results/e6/e6_instances_prespec.csv
+
+[P1 ASSERTION] Cells M and B must have Q2_optimal = 1.0 on ALL draws.
+  OK:   M: 100% on all 24000 draw-instance combinations
+  OK:   B: 100% on all 24000 draw-instance combinations
+[P1 PASSED] All M and B draws are Pareto-efficient.
+
+[SUMMARIES]
+  Saved: /home/julioazancort/scratch/mcdm-landfill-pareto/results/e6/e6_summary_prespec.csv
+  Saved: /home/julioazancort/scratch/mcdm-landfill-pareto/results/e6/e6_spearman_prespec.csv
+  Saved: /home/julioazancort/scratch/mcdm-landfill-pareto/results/e6/e6_report_prespec.txt
+
+=================================================================
+E6 PRESPEC RESULTS REPORT
+PRESPEC: corpus/PRESPEC_E6.md
+=================================================================
+
+POOLED Q2 BY FAMILY AND CELL (optimal assembly):
+
+  Family: lognormal
+    M           : 100.0% ±0.0 pp
+    B           : 100.0% ±0.0 pp
+    W_inf_L     :  99.5% ±0.1 pp
+    W_inf_F     :  97.7% ±0.2 pp
+    W_inf_H     :  95.1% ±0.3 pp
+    V_inf_F     :  97.0% ±0.2 pp
+    W_def_F     :  97.6% ±0.2 pp
+
+  Family: beta13
+    M           : 100.0% ±0.0 pp
+    B           : 100.0% ±0.0 pp
+    W_inf_L     : 100.0% ±0.0 pp
+    W_inf_F     :  99.7% ±0.1 pp
+    W_inf_H     :  98.4% ±0.2 pp
+    V_inf_F     :  99.7% ±0.1 pp
+    W_def_F     :  99.4% ±0.1 pp
+
+  Family: uniform
+    M           : 100.0% ±0.0 pp
+    B           : 100.0% ±0.0 pp
+    W_inf_L     :  99.9% ±0.0 pp
+    W_inf_F     :  99.7% ±0.1 pp
+    W_inf_H     :  98.2% ±0.2 pp
+    V_inf_F     :  99.6% ±0.1 pp
+    W_def_F     :  99.7% ±0.1 pp
+
+  Family: zero_inflated
+    M           : 100.0% ±0.0 pp
+    B           : 100.0% ±0.0 pp
+    W_inf_L     :  95.3% ±0.3 pp
+    W_inf_F     :  89.5% ±0.4 pp
+    W_inf_H     :  83.2% ±0.5 pp
+    V_inf_F     :  89.9% ±0.4 pp
+    W_def_F     :  84.5% ±0.5 pp
+
+
+P1 ASSERTION (M and B = 100%):
+  M: 100.00%  [OK]
+  B: 100.00%  [OK]
+
+P2 SPEARMAN (ρ < 0 criterion for each family):
+  lognormal       : 20/30 (67%) ρ<0  mean_ρ=-0.912  [FAIL]
+  beta13          : 18/30 (60%) ρ<0  mean_ρ=-0.824  [FAIL]
+  uniform         : 22/30 (73%) ρ<0  mean_ρ=-0.864  [FAIL]
+  zero_inflated   : 28/30 (93%) ρ<0  mean_ρ=-0.952  [OK]
+
+P3 CHECK (Q2_opt(V_inf_F) ≤ Q2_opt(W_inf_F) in ≥70% instances):
+  lognormal       : 25/30 (83%) V≤W  [OK]
+  beta13          : 27/30 (90%) V≤W  [OK]
+  uniform         : 23/30 (77%) V≤W  [OK]
+  zero_inflated   : 24/30 (80%) V≤W  [OK]
+
+P4 CHECK (Q2_opt(W_inf_F) < Q2_opt(W_def_F) in ≥70% instances):
+  lognormal       : 12/30 (40%) inf<def  [FAIL]
+  beta13          : 4/30 (13%) inf<def  [FAIL]
+  uniform         : 6/30 (20%) inf<def  [FAIL]
+  zero_inflated   : 10/30 (33%) inf<def  [FAIL]
+DONE
