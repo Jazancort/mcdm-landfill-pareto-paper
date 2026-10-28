@@ -198,9 +198,39 @@ Result: PASS (deciding criterion)
   NASA Earthdata (https://earthdata.nasa.gov/) before extraction.
 
 
-## Stage 3a: |T| and spacing rule (2026-10-28)
 
-### PRESPEC §3 Trio enumeration results
+## Stage 4 timing (Athena RTX 4000 Ada, CPU only — 2026-10-28)
+
+Script: `scripts/run_santiago_mc.py --branch both --timing` (5 draws/κ, python -u)
+Commit: 0755358
+
+### S-T (N_adm=601, n_trios=16,699,705, 3 objectives)
+
+| κ | 5 draws | s/draw | full run (500 draws) | K1 |
+|---|---------|--------|---------------------|----|
+| 25 | 47.4s | 9.47s | 78.9 min | 100% |
+| 50 | 47.9s | 9.57s | 79.8 min | 100% |
+| 100 | 46.7s | 9.33s | 77.8 min | 100% |
+| 200 (E1) | 96.8s | 19.36s | 161.4 min | 100% |
+| 400 | 47.2s | 9.43s | 78.6 min | 100% |
+| 1000 | 47.1s | 9.42s | 78.5 min | 100% |
+| ∞ (E1, 1 draw) | 19.3s | 19.3s | **19.3s** | 100% |
+
+**Total S-T: 392 + 161 + 0.3 ≈ 553 min ≈ 9.2 hours (one overnight run)**
+
+Bottleneck: check_dominated_raw reads F_mm_trios (400MB) × 8 cells per draw.
+Pareto pre-computation tested but slower for 16.7M trios (batch loop overhead).
+
+### S-N (N_adm=190, n_trios=77,995, 4 objectives)
+
+All κ: 0.04s/draw, E1 κ: 0.08s/draw, K1=100%.
+Full S-N: ~4 min.
+
+### Trio enumeration
+- S-T (N=601): 0.6s (numpy vectorised, chunk_size=2000)
+- S-N (N=190): 0.0s
+
+
 
 Computed from geometry only (boundary only; no criterion values used).
 d_min = 10 km; declared in PRESPEC_SANTIAGO_A5 §1.
