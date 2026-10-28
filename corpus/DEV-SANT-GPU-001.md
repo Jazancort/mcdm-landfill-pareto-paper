@@ -165,7 +165,7 @@ Criterion: discrete Q2 outputs identical for all sampled draws.
 Statistical bound: if all 120 random draws (20 × 6 κ) match, divergence rate
 < 2.5% with 95% confidence (rule of three over 120 independent draws).
 
-**Verification A results — v2 (2026-10-28, GPU 0, 3000 stochastic draws × 6κ × 8 cells = 24,000 decisions):**
+**Verification A results — v2 (2026-10-28, GPU 0, 500 draws per κ × 6κ × 8 cells = 24,000 decisions):**
 
 Metrics and definitions:
 
@@ -194,10 +194,16 @@ Results:
 
 **Verification B results — v2 (2026-10-28, CPU r5 vs GPU r5, 232 draws total):**
 
-Draws per κ: 20 random (seed=99+κ) + top-20 from audit A = 37–40 per κ.
-Comparison: Q2 (binary), trio_idx (selected trio index for _opt cells), and
-trio_scores at selected trio (tolerance 1e-12).
-Note: compute_q2_all_cells in r5 is identical to r4 (function was not modified).
+Draws per κ: 20 random (seed=99+κ) + top-20 smallest-margin from audit A.
+Total sampled: 232 (not 240 because 8 draws appeared in both sets — about 1–2 per κ,
+expected ≈ 20×20/500 = 0.8 per κ × 6κ ≈ 5; actual 8 is consistent with chance).
+Comparison: Q2 (binary), trio_idx for _opt cells only (greedy trios not compared; see note),
+and trio_scores at selected trio (tolerance 1e-12).
+Note on greedy trios: the greedy selector runs a different code path (sequential CPU scan)
+and was not independently compared here. If trio_grd differences are needed,
+the comparison can be extended in minutes since the greedy is fast.
+Note on CPU reference: compute_q2_all_cells was not changed in r5 vs r4 (verified by diff).
+Running r5 CPU gives identical results to r4 CPU for this function.
 
 Results:
   Total Q2 checked:      1856  (232 draws × 8 cells)
