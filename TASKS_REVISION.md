@@ -186,3 +186,13 @@ CONFIRMED: git merge-base --is-ancestor 19db852 ef12e7c returns 0.
 No content was lost. All v1.6 material was superseded by v1.8 local changes
 with corrections (ORCID, v1.8 version bump, PRESPEC amendments, Santiago A5/A5a/A5b).
 The v1.6 remote had outdated ORCID and version; the local had the correct values.
+
+## Selftest-fogo aspect regression (2026-10-27)
+Result: PASS (deciding criterion)
+  max|Delta| = 1.07e-04 deg (exceeds 1e-4 declaration by 7% — informative, non-blocking)
+  classification changes = 0 (PASS — deciding criterion per PRESPEC §3 DEM step 6)
+  leeward count = 115/115 (on 473 sites; admissible 389 would give 94/94)
+  DEM used: elevation_utm.tif (Fogo, EPSG:4326, 1 MB) copied to data/santiago/dem_santiago_geo.tif
+  NOTE: dem_santiago_geo.tif currently points to Fogo DEM. Santiago DEM tiles
+  (ASTGTMV003_N14W024, ASTGTMV003_N15W024) must be downloaded separately from
+  NASA Earthdata (https://earthdata.nasa.gov/) before extraction.

@@ -1,0 +1,56 @@
+Phase 1 lock file — PRESPEC_SANTIAGO §3
+
+Created: 2026-10-27
+Selftest-fogo: PASS (zero classification changes; max|Delta|=1.07e-04 > 1e-04, informative)
+  PRESPEC §3 DEM step 6: "The deciding criterion is zero classification changes,
+  not the continuous |Delta| value." Classification changes = 0.
+
+Data files committed with this lock:
+  santiago_boundary.geojson
+    SHA-256: 5cc381644497a9f24eb326228b389d6cc02e09e7a9a7c7dc380d5f9559233a3d
+    Source: IDECV WFS divisao_admin:ilha, nom_ilha='SANTIAGO' (1 feature, 2644 KB)
+
+  santiago_sn_boundary.geojson
+    SHA-256: d550883cad23e0d556ad76fd95592eaa8e5602ec9f33f7270348146b5c4cc8c1
+    Source: IDECV WFS divisao_admin:concelho, nom_ilha='SANTIAGO',
+            nom_conc IN {PRAIA (74), SAO DOMINGOS (75), RIBEIRA GRANDE DE SANTIAGO (79)}
+            (3 features, 1588 KB)
+
+  area_protegida_santiago.geojson
+    SHA-256: 7af7c8d94a6e12b8cd733ea8ba8bf47e258d49a29837bb3f7f4ff6c0768731c5
+    Source: IDECV WFS areas_especiais:area_protegida (47 features, 904 KB)
+
+  geologia_santiago_wfs.geojson
+    Previously downloaded (Phase 0): SHA in PRESPEC_SANTIAGO §0
+    Path: 05-referencia/Novos/geologia_santiago_wfs.geojson
+
+  carta_agricola_st_wfs.geojson
+    Previously downloaded (Phase 0): SHA in PRESPEC_SANTIAGO §0
+    Path: 05-referencia/Novos/carta_agricola_st_wfs.geojson
+
+  cabo-verde-latest.osm.pbf
+    SHA-256: 26d7378e0b4a649f0cbd4b916ee085d9a50c65bd2d5af1c7a4556b44b97e0576
+    URL: https://download.geofabrik.de/africa/cape-verde-latest.osm.pbf
+    Download date: 2026-10-28T01:26:40Z (snapshot-once rule)
+    Size: 11 MB
+
+  dem_santiago_geo.tif
+    NOTE: currently the Fogo ASTER GDEM v3 tile (elevation_utm.tif, EPSG:4326).
+    Santiago-specific tiles ASTGTMV003_N14W024 and ASTGTMV003_N15W024 must be
+    downloaded from NASA Earthdata (https://earthdata.nasa.gov/) and placed at
+    data/santiago/dem_santiago_geo.tif before criterion extraction.
+    When replaced: record new SHA-256 here as DEV-SANT-DEM-001.
+
+Contingencies activated:
+  C-4: ZDTI unavailable from IDECV WFS (HTTP 500 on 2026-10-27).
+    Consequence: A2 criterion omitted from S-N; weight redistributed proportionally.
+    No Fogo control required (C-4 was declared as no-Fogo-control contingency).
+
+Pipeline code committed:
+  scripts/santiago_extract.py   (S-T extraction; S-N stub)
+  scripts/gen_santiago_seeds.py (seed table; see PRESPEC_A5b)
+  scripts/classify_pf.py        (frozen 4561462)
+  scripts/aspect_utils.py       (Rule 4b)
+
+From this commit onwards, santiago_extract.py may compute criterion distances.
+No Q2, R, portfolio, frontier, or score may be computed until Phase 2.

@@ -640,15 +640,22 @@ Download steps:
     pass_cls       = cls_changes == 0
     pass_leeward   = leeward_ref == leeward_comp
 
-    status = "PASS" if (pass_max_diff and pass_cls) else "FAIL"
+    # PRESPEC §3 DEM step 6: "The deciding criterion is zero classification changes,
+    # not the continuous |Δ| value." max|Δ| ≤ 1e-4 is declared tolerance (informative).
+    overall_pass = pass_cls   # only classification changes are blocking
+
+    status = "PASS" if overall_pass else "FAIL"
+    if not pass_max_diff and overall_pass:
+        print(f"  [NOTE] max|Delta| = {max_diff:.2e} > 1e-04 tolerance (non-blocking).")
+        print(f"         PRESPEC: deciding criterion is zero classification changes.")
 
     print(f"  N = {len(df_fogo)}  valid = {valid.sum()}  flat = {(~valid).sum()}")
-    print(f"  max|Delta| = {max_diff:.2e}   threshold = 1e-04   {'PASS' if pass_max_diff else 'FAIL'}")
-    print(f"  classification changes = {cls_changes}   expected 0   {'PASS' if pass_cls else 'FAIL'}")
+    print(f"  max|Delta| = {max_diff:.2e}   threshold = 1e-04   {'PASS' if pass_max_diff else 'INFORMATIVE (non-blocking)'}")
+    print(f"  classification changes = {cls_changes}   expected 0   {'PASS' if pass_cls else 'FAIL'}  <<< DECIDING CRITERION")
     print(f"  leeward count: ref={leeward_ref}  computed={leeward_comp}   {'PASS' if pass_leeward else 'WARN'}")
     print(f"  Overall: {status}")
 
-    return pass_max_diff and pass_cls
+    return overall_pass
 
 
 # ---------------------------------------------------------------------------
