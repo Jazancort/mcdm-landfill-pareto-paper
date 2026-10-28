@@ -715,25 +715,53 @@ def prepare_gpu_data(data: dict) -> dict:
     Transfers trios, X_mm, rho_j once per branch (not per draw).
     Only the tiny w vector (M floats) is transferred per draw.
 
+    Falls back to CPU gracefully if GPU memory is insufficient (returns {}).
+    This is safe for shared GPUs (e.g. GPU 0 with llama-server): only runs
+    what fits in the available pool without OOM-ing other processes.
+
     @param data - dict from load_branch_data.
-    @returns gpu_data dict with cupy arrays, or empty dict if GPU unavailable.
+    @returns gpu_data dict with cupy arrays, or empty dict if GPU unavailable/OOM.
     """
     if not _USE_GPU:
         return {}
-    gd = {
-        "X_mm":  cp.ascontiguousarray(cp.asarray(data["X_mm"])),   # (N, M)
-        "trios": cp.ascontiguousarray(cp.asarray(data["trios"])),   # (n_trios, 3)
-        "rho_j": cp.asarray(data["rho_j"]),                         # (M,)
-        "groups": data["groups"],                                    # list of lists (CPU)
-        "M": data["X_mm"].shape[1],
-        "G": len(data["groups"]),
-        "N": data["N"],
-    }
-    # Pre-compute group index arrays on GPU for fast slicing
-    gd["group_idx"] = [cp.array(g, dtype=cp.int32) for g in data["groups"]]
-    vram_mb = (gd["X_mm"].nbytes + gd["trios"].nbytes + gd["rho_j"].nbytes) / 1e6
-    print(f"  [GPU] {vram_mb:.0f} MB transferred to device", flush=True)
-    return gd
+
+    # Estimate memory requirement before attempting allocation
+    need_mb    = (data["X_mm"].nbytes + data["trios"].nbytes + data["rho_j"].nbytes) / 1e6
+    free_mb    = cp.cuda.runtime.memGetInfo()[0] / 1e6
+    limit_mb   = cp.get_default_memory_pool().get_limit() / 1e6
+
+    if need_mb > limit_mb * 0.95:
+        print(
+            f"  [GPU] Not enough pooled memory"
+            f" (need={need_mb:.0f} MiB, pool_limit={limit_mb:.0f} MiB, free={free_mb:.0f} MiB)"
+            f" — falling back to CPU for this branch",
+            flush=True,
+        )
+        return {}
+
+    try:
+        gd = {
+            "X_mm":  cp.ascontiguousarray(cp.asarray(data["X_mm"])),
+            "trios": cp.ascontiguousarray(cp.asarray(data["trios"])),
+            "rho_j": cp.asarray(data["rho_j"]),
+            "groups": data["groups"],
+            "M": data["X_mm"].shape[1],
+            "G": len(data["groups"]),
+            "N": data["N"],
+        }
+        gd["group_idx"] = [cp.array(g, dtype=cp.int32) for g in data["groups"]]
+        vram_mb = (gd["X_mm"].nbytes + gd["trios"].nbytes + gd["rho_j"].nbytes) / 1e6
+        print(
+            f"  [GPU] {vram_mb:.0f} MB transferred"
+            f"  (pool_limit={limit_mb:.0f} MiB, free_now={free_mb:.0f} MiB)",
+            flush=True,
+        )
+        return gd
+    except (cp.cuda.memory.OutOfMemoryError, MemoryError) as _oom:
+        free_mb = cp.cuda.runtime.memGetInfo()[0] / 1e6
+        print(f"  [GPU] OOM during transfer (free={free_mb:.0f} MiB) — falling back to CPU", flush=True)
+        cp.get_default_memory_pool().free_all_blocks()
+        return {}
 
 
 def _f_trios_gpu(X_mm_gpu, trios_gpu, group_idx, w_cpu, A_j_cpu):
