@@ -1214,14 +1214,18 @@ def log_startup_provenance() -> None:
     print(f"    κ=∞       deterministic (w=w0)  n_draws=1  [DEV-SANT-KINF-001]")
     print(f"    Forbidden seed: {FORBIDDEN_SEED} (Fogo legacy)")
 
-    # w0 integrity check for each branch
+    # w0 integrity check for each branch (normalized sum must equal 1.0)
+    # Abort if check fails — a wrong-but-normalized w0 would pass, but sum≠1
+    # means the normalization step itself failed.
     print()
-    from run_santiago_mc import ST_W0, SN_W0
     for bname, w0 in [("ST", ST_W0), ("SN", SN_W0)]:
         wsum = float(w0.sum())
         ok = abs(wsum - 1.0) < 1e-6
-        print(f"  w0({bname}).sum() = {wsum:.12f}  [{'OK' if ok else 'FAIL — abort'}]")
-        assert ok, f"w0 sum check failed for {bname}: {wsum:.12f}"
+        print(f"  w0({bname}).sum() = {wsum:.12f}  repr={repr(wsum)}  [{'OK' if ok else 'FAIL — ABORT'}]")
+        if not ok:
+            print(f"\nABORT: w0({bname}) sum = {wsum:.12f}, expected 1.0 ± 1e-6.")
+            print("Check the W0_ST/W0_SN constant and the /sum normalization step.")
+            sys.exit(1)
 
     # pip freeze (abbreviated)
     print()

@@ -9,8 +9,18 @@ This file was first committed in ebf7dfe (2026-10-28T00:10:27-03:00 = 03:10 UTC)
 simultaneously with df_santiago_sn.csv (first S-N extraction at 1.25 km, N_cand=249).
 Stage 3b descriptors (stage3b_descriptors.json) were first committed in 00b1424,
 one minute later (2026-10-28T00:11:47-03:00 = 03:11 UTC).
-This file therefore predates stage3b_descriptors.json by 80 seconds. It does NOT
-predate df_santiago_sn.csv; both were committed in the same operation.
+
+This file therefore predates stage3b_descriptors.json. It does NOT predate
+df_santiago_sn.csv (simultaneous commit). The 80 second interval confirms commit
+order but does not demonstrate causal order of computations.
+
+The stronger argument for "this decision predates the analysis" is a content
+argument: the DEV was forced by the observation that N_adm = 0 under all-type
+exclusion (checked at the time of extraction, before any descriptor was computed).
+There was no choice among alternative exclusion sets that could have been
+guided by results, because no result existed — the only observation was degeneracy.
+The decision to use Regadios only is anchored in Cabral (2012), not in any
+data-driven consideration of the descriptors.
 
 ## Problem
 
@@ -133,3 +143,35 @@ Total additional runs: 3 (one per exclusion set at 500 m buffer).
 All five extra runs (SENS-AGR-1, SENS-AGR-2, SENS-AGR-BUF×3) are mandatory.
 They require separate S-N extractions (df_santiago_sn_sensAGR*.csv) with the
 modified exclusion criterion.
+
+## Per-step criterion definition for SENS-AGR
+
+For each SENS-AGR run, the A5 criterion is re-operationalised as follows:
+
+**Main (R only):**
+- Exclusion polygons: union of all Regadios polygons in carta_agricola_st
+- Exclusion threshold: dist(candidate, exclusion_union) == 0 (inside polygon)
+- A5 benefit value: dist(candidate, exclusion_union) in metres [same polygons]
+
+**SENS-AGR-1 (R + SH):**
+- Exclusion polygons: union of {Regadios, Sequeiro Húmido} polygons
+- Exclusion threshold: dist == 0
+- A5 benefit value: dist(candidate, new_exclusion_union) in metres
+- Normalisation: recalculated over the new admissible set A'_{AGR-1}
+
+**SENS-AGR-2 (R + SH + SSh):**
+- Exclusion polygons: union of {Regadios, Sequeiro Húmido, Sequeiro Sub-húmido}
+- Exclusion threshold: dist == 0
+- A5 benefit value: dist(candidate, new_exclusion_union) in metres
+- Normalisation: recalculated over the new admissible set A'_{AGR-2}
+
+**SENS-AGR-BUF (×3, one per exclusion set):**
+- Same exclusion polygon sets as Main / SENS-AGR-1 / SENS-AGR-2
+- Exclusion threshold: dist < 500 m (Cabral 2012 buffer specification)
+- A5 benefit value: dist(candidate, exclusion_union) in metres
+  (the distance is measured to the polygon itself, not to the 500 m buffer boundary)
+- Normalisation: recalculated over the new admissible set
+
+In all cases: the dist_A5 column is the Euclidean distance in metres from the
+candidate centroid to the nearest point on the exclusion polygon union (shapely
+distance, 0 for interior points per compute_dist_to_polygons convention).

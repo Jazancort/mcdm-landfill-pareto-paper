@@ -44,10 +44,13 @@ HTTP Date header: not captured.
 
 **Correction note:** The dates in the attempt labels above were originally written as
 "2026-10-29" due to a timezone/date error (UTC vs local time). Corrected to
-"2026-10-28 UTC" in commit r2 (stage4-launch-r2). The server response body and
-error code are unchanged. The HTTP Date header was not captured at the time of the
-request; its absence is noted here as it would have provided independent confirmation
-of the date. The diagnosis and conclusion are unaffected by the date correction.
+"2026-10-28 UTC" in commit r2. Commit 7f1028d — which first documented these retry
+attempts — was made at 2026-10-28T11:32:43Z UTC (= 2026-10-28T08:32:43 at UTC-3),
+firmly on 2026-10-28 in both UTC and local time. The "2026-10-29" label was a simple
+error, not a UTC vs. local ambiguity (UTC-3 could only produce day+1 UTC if the local
+time were after 21:00, which the commit timestamp rules out). The server response body
+and error code are unchanged. The HTTP Date header was not captured at the time of
+the request.
 
 **GetCapabilities (2026-10-28 UTC):**
 `areas_especiais:zdti` is still listed as a valid feature type in the WFS capabilities.
