@@ -698,10 +698,8 @@ def compute_q2_all_cells(X_mm, w, A_j_mm, groups, trios, D, scorers) -> dict:
     F_mm_site = compute_group_objectives(X_mm, w, A_j_mm, groups)  # (N, G)
     F_mm_trios = compute_trio_objectives(F_mm_site, trios)          # (n_trios, G)
 
-    # Pre-compute Pareto frontier once — O(n log n)
-    # Used by _opt cells for O(1) Q2 lookup. _grd cells still need O(n) check.
-    non_dom = compute_pareto_nd_fast(F_mm_trios)  # (n_trios,) bool
-
+    # Use direct O(n) domination checks (faster than Pareto pre-computation for S-T
+    # due to large frontier size and Python loop overhead in batch processing).
     result = {}
     for cell in CELLS_8:
         # Choose scorer
@@ -712,16 +710,14 @@ def compute_q2_all_cells(X_mm, w, A_j_mm, groups, trios, D, scorers) -> dict:
 
         # Select trio
         if "_grd" in cell:
-            # Sequential greedy: 3 sites chosen independently
-            trio = greedy_selector(sc, D)  # returns tuple of 3 indices
+            trio = greedy_selector(sc, D)
             f_sel = (F_mm_site[trio[0]] +
                      F_mm_site[trio[1]] +
                      F_mm_site[trio[2]])
             q2 = 0 if check_dominated_raw(F_mm_trios, f_sel) else 1
         else:
-            # Optimal: argmax over all valid trios; Q2 = O(1) lookup
             tidx = optimal_selector(sc, trios)
-            q2 = int(non_dom[tidx])
+            q2 = 0 if check_dominated_raw(F_mm_trios, F_mm_trios[tidx]) else 1
 
         result[cell] = q2
 
