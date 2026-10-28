@@ -804,13 +804,10 @@ def run_kappa(branch_key: str, kappa, rng, data: dict,
                 F_e1_site = compute_group_objectives(X_mm, w, A_e1, groups)
                 F_e1_trios = compute_trio_objectives(F_e1_site, trios)
 
-                # Pre-compute E1 Pareto frontier for O(1) lookup
-                non_dom_e1 = compute_pareto_nd_fast(F_e1_trios)
-
-                # Optimal selector on E1-specific objectives; Q2 = O(1) lookup
+                # Optimal selector on E1-specific objectives
                 sc_opt = (X_mm * A_e1 * w).sum(1)  # SAW score with E1 amplitude
                 tidx_opt = optimal_selector(sc_opt, trios)
-                q2_opt = int(non_dom_e1[tidx_opt])
+                q2_opt = 0 if check_dominated_raw(F_e1_trios, F_e1_trios[tidx_opt]) else 1
 
                 # Greedy (SAW score with E1 amplitude, sequential selection)
                 trio_grd = greedy_selector(sc_opt, data["D"])
