@@ -160,23 +160,40 @@ def haversine_matrix(lat, lon):
     return 2 * R * np.arcsin(np.sqrt(np.clip(a, 0, 1)))
 
 
-def build_trio_array(D, dmin):
+def build_trio_array(D: np.ndarray, dmin: float) -> np.ndarray:
     """Enumerate all valid trios (i < j < k) with all pairwise D >= dmin.
+
+    Uses a numpy-based approach: iterate over valid (i,j) pairs (vectorised),
+    then for each pair find valid k with numpy masking. Avoids Python tuple
+    creation, making it practical for N ~ 600 (up to ~20M trios).
 
     @param D - distance matrix (N, N).
     @param dmin - minimum separation in km.
     @returns np.ndarray shape (n_trios, 3), dtype int32.
     """
-    N = D.shape[0]
-    trios = []
-    for i in range(N):
-        for j in range(i+1, N):
-            if D[i, j] < dmin:
-                continue
-            for k in range(j+1, N):
-                if D[i, k] >= dmin and D[j, k] >= dmin:
-                    trios.append((i, j, k))
-    return np.array(trios, dtype=np.int32) if trios else np.empty((0, 3), dtype=np.int32)
+    valid = (D >= dmin)
+    # Valid pairs i < j
+    ii, jj = np.where(np.triu(valid, k=1))  # shapes (n_pairs,)
+
+    chunks = []
+    for idx in range(len(ii)):
+        p_i, p_j = int(ii[idx]), int(jj[idx])
+        # k > p_j, D[p_i,k] >= dmin, D[p_j,k] >= dmin
+        k_mask = valid[p_i] & valid[p_j]
+        k_cands = np.where(k_mask)[0]
+        k_cands = k_cands[k_cands > p_j]
+        if len(k_cands) == 0:
+            continue
+        n_k = len(k_cands)
+        chunk = np.empty((n_k, 3), dtype=np.int32)
+        chunk[:, 0] = p_i
+        chunk[:, 1] = p_j
+        chunk[:, 2] = k_cands
+        chunks.append(chunk)
+
+    if chunks:
+        return np.vstack(chunks)
+    return np.empty((0, 3), dtype=np.int32)
 
 
 def load_branch_data(branch: str) -> dict:
