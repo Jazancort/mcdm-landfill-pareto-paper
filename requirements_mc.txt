@@ -1,0 +1,17 @@
+# requirements_mc.txt — Stage 4 Monte Carlo dependencies
+# Pinned to Stage 1 environment (commit 3aa1143, results verified 2026-10-27)
+# Install on Athena (offline):
+#   pip install --no-index --find-links ~/scratch/wheels numpy pandas scipy
+#
+# Download wheels on Windows (before transfer to Athena):
+#   pip download --platform manylinux2014_x86_64 --only-binary=:all: \
+#     --python-version 3.12 -d wheels/ numpy==2.5.3 pandas==3.0.6 scipy==1.18.1
+#
+# Scripts requiring these packages:
+#   scripts/run_santiago_mc.py (Stage 4 MC)
+#   scripts/compute_stage3b.py (Stage 3b descriptors)
+#   scripts/gen_santiago_seeds.py (seed table)
+
+numpy==2.5.3
+pandas==3.0.6
+scipy==1.18.1

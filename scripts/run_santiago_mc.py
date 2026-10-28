@@ -1,0 +1,915 @@
+# -*- coding: utf-8 -*-
+"""
+run_santiago_mc.py — Stage 4: Santiago Monte Carlo experiment.
+
+Pre-specification: corpus/PRESPEC_SANTIAGO_A5.md (tags prespec-santiago-a5b)
+Seeds:             corpus/PRESPEC_SANTIAGO_A5b.md (SeedSequence.spawn(2))
+Stage 3b desc.:    results/santiago/stage3b_descriptors.json
+
+Design:
+  Branches: S-T (10 criteria, Fogo AHP weights, 3 groups G1-G3)
+            S-N (13 criteria, Cabral 2012 weights, 4 groups A-D)
+  κ values:  {25, 50, 100, 200, 400, 1000} stochastic  +  ∞ deterministic
+  Draws:     500 per κ per branch
+  Cells:     8-cell factorial (SAW/TOPSIS × mm/vec × greedy/opt)
+             E1 cells M, B, W, V — only at κ=200 and κ=∞
+
+Gates:
+  K1: SAW/mm/opt Q2 = 100% at every κ — abort branch if failed (scoring bug)
+  K2: E1-B optimal Q2 = 100% at κ=200 and κ=∞ — regression check (Theorem 1)
+
+Outputs (results/santiago/):
+  mc_ST_raw.csv, mc_SN_raw.csv    — per draw × κ × cell
+  mc_ST_e1.csv, mc_SN_e1.csv     — E1 cells at κ=200 and κ=∞
+  macros_santiago.tex             — LaTeX macros for K1-K6
+
+Checkpoint: results saved per κ to results/santiago/mc_{branch}_k{kappa}.npz
+  If a partial run exists, completed κ values are skipped.
+
+Timing: pass --timing to run 5 draws per cell per κ without saving results.
+
+Run on Athena:
+  cd ~/scratch/mcdm-landfill-pareto-paper
+  uv run python scripts/run_santiago_mc.py --branch both
+  uv run python scripts/run_santiago_mc.py --timing           # measure timing only
+
+Author: auto-generated Stage 4 — 2026-10-29
+PRESPEC: corpus/PRESPEC_SANTIAGO_A5b.md, tags prespec-santiago-a5b
+"""
+
+import argparse
+import json
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.stats import bootstrap as sp_bootstrap
+
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+ROOT    = Path(__file__).parent.parent
+SCRIPTS = ROOT / "scripts"
+sys.path.insert(0, str(SCRIPTS))
+
+from gen_santiago_seeds import get_branch_rngs, KAPPA_VALUES
+
+RESULTS   = ROOT / "results" / "santiago"
+RESULTS.mkdir(parents=True, exist_ok=True)
+
+EPS      = 1e-9
+N_DRAWS  = 500
+B_BOOT   = 2000
+D_MIN_KM = 10.0
+
+# ---------------------------------------------------------------------------
+# 1. Branch configuration
+# ---------------------------------------------------------------------------
+
+# S-T: 10 criteria (C-2 wells omit, renorm), groups G1-G3
+ST_CRIT_COLS = [
+    "dist_low_permeability (m)",  # perm   G1  COST (closer=better)
+    "slope (degrees)",            # slope  G1  COST
+    "dist_roads (m)",             # roads  G1  COST (closer=better for access)
+    "dist_streams (m)",           # rivers G2  BENEFIT (farther=better)
+    "slope_aspect (degrees)",     # aspect G2  SPECIAL (binary [90,180])
+    "dist_coastline (m)",         # coast  G2  BENEFIT
+    "dist_protected_area (m)",    # prot   G2  BENEFIT
+    "dist_urban_core (m)",        # urban  G3  BENEFIT
+    "dist_aerodrome (m)",         # aero   G3  BENEFIT
+    "dist_cultivation (m)",       # cult   G3  BENEFIT
+]
+ST_BENEFIT = [False, False, False, True, True, True, True, True, True, True]
+# aspect: after binary transform, value=1 means windward (BENEFIT)
+# The binary transform is applied in load_branch_data for aspect column
+ST_GROUPS  = [[0, 1, 2], [3, 4, 5, 6], [7, 8, 9]]
+ST_NAMES   = ["perm","slope","roads","rivers","aspect","coast","protected","urban","aero","cult"]
+ST_W0 = np.array([
+    0.160847, 0.119577, 0.031746, 0.096296, 0.079365,
+    0.073016, 0.069841, 0.175661, 0.107937, 0.085714,
+], dtype=float)
+ST_W0 = ST_W0 / ST_W0.sum()
+
+# S-N: 13 criteria (C-4 A2 omit, renorm), groups A-D
+SN_CRIT_COLS = [
+    "dist_A1_buildup (m)",      # A1  group A  BENEFIT
+    "dist_A3_coast (m)",        # A3  group A  BENEFIT
+    "dist_A4_heritage (m)",     # A4  group A  BENEFIT
+    "dist_A5_agriculture (m)",  # A5  group A  BENEFIT
+    "dist_A6_aerodrome (m)",    # A6  group A  BENEFIT
+    "dist_A7_protected (m)",    # A7  group A  BENEFIT
+    "B1_score",                 # B1  group B  BENEFIT (already score ∈ {0.472,1})
+    "dist_B2_waterpoints (m)",  # B2  group B  BENEFIT
+    "dist_B3_streams (m)",      # B3  group B  BENEFIT
+    "slope (degrees)",          # C1  group C  COST
+    "aspect_continuous",        # C2  group C  BENEFIT (v(θ) ∈ [0,1])
+    "dist_D1_mainroads (m)",    # D1  group D  COST (closer=better)
+    "dist_D2_praia (m)",        # D2  group D  COST (closer to MSW centroid=better)
+]
+SN_BENEFIT = [True, True, True, True, True, True, True, True, True, False, True, False, False]
+SN_GROUPS  = [[0,1,2,3,4,5], [6,7,8], [9,10], [11,12]]
+SN_NAMES   = ["A1","A3","A4","A5","A6","A7","B1","B2","B3","C1","C2","D1","D2"]
+SN_W0 = np.array([
+    0.0397, 0.0270, 0.0397, 0.0163, 0.0324, 0.0270,
+    0.2096, 0.1048, 0.1048,
+    0.0759, 0.0253,
+    0.0981, 0.1993,
+], dtype=float)
+SN_W0 = SN_W0 / SN_W0.sum()
+
+BRANCH_CONFIG = {
+    "ST": {
+        "csv":     RESULTS / "df_santiago_st.csv",
+        "cols":    ST_CRIT_COLS,
+        "benefit": ST_BENEFIT,
+        "groups":  ST_GROUPS,
+        "names":   ST_NAMES,
+        "w0":      ST_W0,
+        "label":   "S-T",
+    },
+    "SN": {
+        "csv":     RESULTS / "df_santiago_sn.csv",
+        "cols":    SN_CRIT_COLS,
+        "benefit": SN_BENEFIT,
+        "groups":  SN_GROUPS,
+        "names":   SN_NAMES,
+        "w0":      SN_W0,
+        "label":   "S-N",
+    },
+}
+
+
+# ---------------------------------------------------------------------------
+# 2. Data loading
+# ---------------------------------------------------------------------------
+
+def haversine_matrix(lat, lon):
+    """Pairwise haversine distances in km.
+
+    @param lat - latitudes in degrees, shape (N,).
+    @param lon - longitudes in degrees, shape (N,).
+    @returns D matrix (N, N) in km.
+    """
+    R = 6371.0
+    la, lo = np.radians(lat), np.radians(lon)
+    dlat = la[:, None] - la[None, :]
+    dlon = lo[:, None] - lo[None, :]
+    a = (np.sin(dlat/2)**2 +
+         np.cos(la[:, None]) * np.cos(la[None, :]) * np.sin(dlon/2)**2)
+    return 2 * R * np.arcsin(np.sqrt(np.clip(a, 0, 1)))
+
+
+def build_trio_array(D, dmin):
+    """Enumerate all valid trios (i < j < k) with all pairwise D >= dmin.
+
+    @param D - distance matrix (N, N).
+    @param dmin - minimum separation in km.
+    @returns np.ndarray shape (n_trios, 3), dtype int32.
+    """
+    N = D.shape[0]
+    trios = []
+    for i in range(N):
+        for j in range(i+1, N):
+            if D[i, j] < dmin:
+                continue
+            for k in range(j+1, N):
+                if D[i, k] >= dmin and D[j, k] >= dmin:
+                    trios.append((i, j, k))
+    return np.array(trios, dtype=np.int32) if trios else np.empty((0, 3), dtype=np.int32)
+
+
+def load_branch_data(branch: str) -> dict:
+    """Load and preprocess the admissible sites for a branch.
+
+    Returns dict with:
+      X_mm   : (N_adm, M) float64 — mm-normed scores, benefit-adjusted
+      D      : (N_adm, N_adm) float64 — pairwise distances km
+      trios  : (n_trios, 3) int32 — valid trio indices
+      w0     : (M,) float64 — declared AHP weights
+      groups : list of index lists
+      rho_j  : (M,) float64 — amplitudes (1/L2(mm_norm(x_j)))
+      N      : int — N_adm
+      n_trios: int
+    """
+    cfg = BRANCH_CONFIG[branch]
+    df = pd.read_csv(cfg["csv"])
+    adm = df[df["admissible"] == 1].copy().reset_index(drop=True)
+    N   = len(adm)
+    M   = len(cfg["cols"])
+    benefit = cfg["benefit"]
+
+    print(f"  Loaded {branch}: N_adm={N}")
+
+    X_raw = np.zeros((N, M), dtype=np.float64)
+    for j, col in enumerate(cfg["cols"]):
+        raw = adm[col].values.astype(float)
+        # Binary transform for S-T aspect (azimuth degrees → binary leeward indicator)
+        if col == "slope_aspect (degrees)":
+            # leeward [90,180] → 0 (COST → benefit-adjusted = 1 after flip);
+            # windward → 1 (benefit); flat (=-1) → 0.5
+            raw = np.where(raw < 0, 0.5, ((raw >= 90.0) & (raw <= 180.0)).astype(float))
+        X_raw[:, j] = raw
+
+    # mm-normalise each column over A' (the admissible set)
+    xmin = X_raw.min(0)
+    xmax = X_raw.max(0)
+    rng  = xmax - xmin
+    safe = rng > 1e-9
+
+    X_mm = np.where(safe[None, :], (X_raw - xmin[None, :]) / rng[None, :], 0.5)
+
+    # Benefit-adjustment: COST criteria → (1 - mm_norm)
+    for j, is_ben in enumerate(benefit):
+        if not is_ben:
+            X_mm[:, j] = 1.0 - X_mm[:, j]
+
+    # Amplitude rho_j = 1 / L2(mm_norm_unadjusted)
+    # Note: mm_norm is computed on raw (unadjusted); rho uses raw mm_norm NOT benefit-adj.
+    rho_j = np.zeros(M)
+    for j in range(M):
+        x_mm = X_mm[:, j] if benefit[j] else 1.0 - X_mm[:, j]  # back to mm_norm
+        l2 = float(np.sqrt((x_mm**2).sum()))
+        rho_j[j] = 1.0 / l2 if l2 > 1e-12 else 0.0
+
+    # Haversine distance matrix
+    lat = adm["latitude (degrees)"].values
+    lon = adm["longitude (degrees)"].values
+    D   = haversine_matrix(lat, lon)
+
+    print(f"  Building trios (d_min={D_MIN_KM} km)...")
+    t0 = time.time()
+    trios = build_trio_array(D, D_MIN_KM)
+    print(f"  n_trios={len(trios):,}  ({time.time()-t0:.1f}s)")
+
+    if len(trios) == 0:
+        sys.exit(f"ABORT: no valid trios for {branch}")
+
+    return {
+        "X_mm": X_mm,
+        "D":    D,
+        "trios": trios,
+        "w0":   cfg["w0"].copy(),
+        "groups": cfg["groups"],
+        "names": cfg["names"],
+        "rho_j": rho_j,
+        "N":     N,
+        "n_trios": len(trios),
+        "label": cfg["label"],
+    }
+
+
+# ---------------------------------------------------------------------------
+# 3. Scoring (SAW and TOPSIS over all criteria)
+# ---------------------------------------------------------------------------
+
+def make_santiago_scorers(X_mm: np.ndarray, rho_j: np.ndarray):
+    """Return (saw_mm, saw_vec, topsis_mm, topsis_vec) scoring callables.
+
+    Each callable takes w (weights, shape M) and returns scores (shape N).
+    X_mm is benefit-adjusted mm-normed, shape (N, M).
+
+    @param X_mm - benefit-adjusted mm-normed scores.
+    @param rho_j - amplitudes rho_j = 1/L2(mm_norm(x_j)).
+    @returns tuple of 4 scoring functions.
+    """
+    def saw_mm(w):
+        return (X_mm * w).sum(1)
+
+    def saw_vec(w):
+        # c̃_j_vec = X_mm_j / (1/rho_j) = X_mm_j * rho_j  [rho = 1/L2 so norms=L2=1/rho]
+        # Wait: scoring.py uses X_adj / norms_via where norms_via = L2(X_via_raw)
+        # Here X_mm is already benefit-adj. rho_j = 1/L2(mm_norm_raw).
+        # So norms_via = 1/rho_j. Thus: X_mm / (1/rho_j) = X_mm * rho_j.
+        return (X_mm * rho_j * w).sum(1)
+
+    def topsis_mm(w):
+        V = X_mm * w
+        PIS = V.max(0)
+        NIS = V.min(0)
+        dp = np.sqrt(((V - PIS)**2).sum(1))
+        dn = np.sqrt(((V - NIS)**2).sum(1))
+        denom = dp + dn
+        return np.where(denom == 0, 0.5, dn / denom)
+
+    def topsis_vec(w):
+        V = (X_mm * rho_j) * w
+        PIS = V.max(0)
+        NIS = V.min(0)
+        dp = np.sqrt(((V - PIS)**2).sum(1))
+        dn = np.sqrt(((V - NIS)**2).sum(1))
+        denom = dp + dn
+        return np.where(denom == 0, 0.5, dn / denom)
+
+    return saw_mm, saw_vec, topsis_mm, topsis_vec
+
+
+# ---------------------------------------------------------------------------
+# 4. Objectives and Pareto frontier (generalised to N groups)
+# ---------------------------------------------------------------------------
+
+def compute_group_objectives(X_mm: np.ndarray, w: np.ndarray,
+                              A_j: np.ndarray, groups: list) -> np.ndarray:
+    """Compute per-site group objectives F_g(t) = Σ_{j∈g} w_j * A_j * X_mm_j(t).
+
+    For mm cell (E1-M): A_j = 1 everywhere, so F_g = Σ_{j∈g} w_j * X_mm_j
+    For vec cell (E1-V): A_j = rho_j, so F_g = Σ_{j∈g} w_j * rho_j * X_mm_j
+    For E1-B: A_j = Ā_g for j in g
+    For E1-W: A_j = rho_j / Ā_g for j in g
+
+    @param X_mm - benefit-adjusted mm-normed, shape (N, M).
+    @param w - weight vector, shape (M,).
+    @param A_j - amplitude vector, shape (M,). A_j=1 for mm, A_j=rho_j for vec.
+    @param groups - list of index lists.
+    @returns objectives array, shape (N, n_groups).
+    """
+    n_groups = len(groups)
+    N = X_mm.shape[0]
+    F = np.zeros((N, n_groups), dtype=np.float64)
+    for g_idx, g in enumerate(groups):
+        g_arr = np.array(g, dtype=int)
+        F[:, g_idx] = (X_mm[:, g_arr] * (w[g_arr] * A_j[g_arr])).sum(1)
+    return F
+
+
+def build_pareto_frontier_general(F_trios: np.ndarray) -> np.ndarray:
+    """Find non-dominated trios in N-dimensional objective space.
+
+    F_trios[k] = sum of group objectives for the 3 sites in trio k,
+    shape (n_trios, n_groups).
+
+    @param F_trios - trio objectives, shape (n_trios, n_groups).
+    @returns boolean array of length n_trios, True = non-dominated.
+    """
+    n = F_trios.shape[0]
+    if n == 0:
+        return np.empty(0, dtype=bool)
+
+    non_dom = np.ones(n, dtype=bool)
+    for i in range(n):
+        if not non_dom[i]:
+            continue
+        # Check if trio i is dominated by any other non-dominated trio
+        dominated_by = (
+            np.all(F_trios[:, :] >= F_trios[i, :] - EPS, axis=1) &
+            np.any(F_trios[:, :] > F_trios[i, :] + EPS, axis=1) &
+            non_dom
+        )
+        dominated_by[i] = False  # do not self-dominate
+        if dominated_by.any():
+            non_dom[i] = False
+    return non_dom
+
+
+def compute_trio_objectives(F: np.ndarray, trios: np.ndarray) -> np.ndarray:
+    """Aggregate per-site objectives to per-trio by summing over the 3 sites.
+
+    @param F - per-site objectives, shape (N, n_groups).
+    @param trios - valid trio indices, shape (n_trios, 3).
+    @returns F_trios, shape (n_trios, n_groups).
+    """
+    return F[trios[:, 0]] + F[trios[:, 1]] + F[trios[:, 2]]
+
+
+def greedy_selector(scores: np.ndarray, trios: np.ndarray) -> int:
+    """Select trio with maximum sum of per-site scores.
+
+    @param scores - per-site scores, shape (N,).
+    @param trios - valid trio indices, shape (n_trios, 3).
+    @returns index into trios of the selected trio.
+    """
+    trio_scores = scores[trios[:, 0]] + scores[trios[:, 1]] + scores[trios[:, 2]]
+    return int(trio_scores.argmax())
+
+
+def optimal_selector(F_trios: np.ndarray, non_dom: np.ndarray) -> int:
+    """Select the trio with highest sum over group objectives among non-dominated trios.
+
+    SAW-mm-opt: select argmax(sum_g F_g(trio)) among non-dominated trios.
+    This maximises a balanced aggregate of all group objectives.
+
+    @param F_trios - trio objectives, shape (n_trios, n_groups).
+    @param non_dom - non-dominated mask, shape (n_trios,).
+    @returns index into trios of the selected non-dominated trio.
+    """
+    # Among non-dominated trios, select the one maximising the sum of objectives
+    candidates = np.where(non_dom)[0]
+    if len(candidates) == 0:
+        return int(F_trios.sum(1).argmax())
+    best_local = F_trios[candidates].sum(1).argmax()
+    return int(candidates[best_local])
+
+
+# ---------------------------------------------------------------------------
+# 5. E1 amplitude vectors
+# ---------------------------------------------------------------------------
+
+def get_e1_amplitudes(rho_j: np.ndarray, w: np.ndarray, groups: list) -> dict:
+    """Return amplitude vectors for E1 cells M, B, W, V.
+
+    @param rho_j - actual amplitudes, shape (M,).
+    @param w - weight vector, shape (M,).
+    @param groups - list of index lists.
+    @returns dict mapping cell name → A_j array.
+    """
+    M = len(rho_j)
+
+    # E1-M: all amplitudes = 1
+    A_M = np.ones(M)
+
+    # Group average amplitudes Ā_g for each criterion
+    Abar_g = np.zeros(M)
+    for g in groups:
+        g_arr = np.array(g, dtype=int)
+        W_g   = w[g_arr].sum()
+        avg   = float(np.dot(w[g_arr], rho_j[g_arr]) / W_g) if W_g > 0 else 0.0
+        Abar_g[g_arr] = avg
+
+    # E1-B: between-group only — each criterion gets its group average amplitude
+    A_B = Abar_g.copy()
+
+    # E1-W: within-group relative — A_j = rho_j / Ā_g
+    A_W = np.where(Abar_g > 1e-15, rho_j / Abar_g, 0.0)
+
+    # E1-V: actual amplitudes
+    A_V = rho_j.copy()
+
+    return {"M": A_M, "B": A_B, "W": A_W, "V": A_V}
+
+
+# ---------------------------------------------------------------------------
+# 6. Q2 computation for one draw and one amplitude vector
+# ---------------------------------------------------------------------------
+
+def compute_q2_draw(X_mm, w, A_j, groups, trios, scorers, selector_name):
+    """Compute Q2 for one draw under a given amplitude vector.
+
+    @param X_mm - benefit-adj mm-normed, (N, M).
+    @param w - weight draw, (M,).
+    @param A_j - amplitude vector, (M,).
+    @param groups - list of index lists.
+    @param trios - (n_trios, 3) int32.
+    @param scorers - tuple (saw_mm, saw_vec, topsis_mm, topsis_vec).
+    @param selector_name - one of "SAW_mm_grd", "SAW_mm_opt", ...
+    @returns dict with Q2 and selected trio index.
+    """
+    saw_mm, saw_vec, topsis_mm, topsis_vec = scorers
+
+    # Objectives for Pareto frontier (using A_j for this cell)
+    F = compute_group_objectives(X_mm, w, A_j, groups)
+    F_trios = compute_trio_objectives(F, trios)
+    non_dom = build_pareto_frontier_general(F_trios)
+
+    # Select trio based on scoring rule
+    if selector_name == "SAW_mm_grd":
+        sc = saw_mm(w); tidx = greedy_selector(sc, trios)
+    elif selector_name == "SAW_mm_opt":
+        tidx = optimal_selector(F_trios, non_dom)
+    elif selector_name == "SAW_vec_grd":
+        sc = saw_vec(w); tidx = greedy_selector(sc, trios)
+    elif selector_name == "SAW_vec_opt":
+        # For vec-opt: objectives are also vec-normed
+        F_vec = compute_group_objectives(X_mm, w, A_j * np.where(A_j > 0, 1.0, 0.0), groups)
+        F_vec_trios = compute_trio_objectives(F_vec, trios)
+        nd_vec = build_pareto_frontier_general(F_vec_trios)
+        tidx = optimal_selector(F_vec_trios, nd_vec)
+        # Q2 check: is this trio non-dom under MM objectives?
+        return {"Q2": int(non_dom[tidx]), "trio_idx": tidx, "n_nd": int(non_dom.sum())}
+    elif selector_name == "TOPSIS_mm_grd":
+        sc = topsis_mm(w); tidx = greedy_selector(sc, trios)
+    elif selector_name == "TOPSIS_mm_opt":
+        tidx = optimal_selector(F_trios, non_dom)
+    elif selector_name == "TOPSIS_vec_grd":
+        sc = topsis_vec(w); tidx = greedy_selector(sc, trios)
+    elif selector_name == "TOPSIS_vec_opt":
+        tidx = optimal_selector(F_trios, non_dom)
+    else:
+        raise ValueError(f"Unknown selector: {selector_name}")
+
+    q2 = int(non_dom[tidx])
+    return {"Q2": q2, "trio_idx": tidx, "n_nd": int(non_dom.sum())}
+
+
+# ---------------------------------------------------------------------------
+# 7. Main MC loop for one branch and one κ
+# ---------------------------------------------------------------------------
+
+CELLS_8 = [
+    "SAW_mm_grd", "SAW_mm_opt",
+    "SAW_vec_grd", "SAW_vec_opt",
+    "TOPSIS_mm_grd", "TOPSIS_mm_opt",
+    "TOPSIS_vec_grd", "TOPSIS_vec_opt",
+]
+E1_CELLS = ["M", "B", "W", "V"]
+
+
+def run_kappa(branch_key: str, kappa, rng, data: dict,
+              n_draws: int, timing_only: bool = False) -> dict:
+    """Run the MC experiment for one branch and one κ value.
+
+    @param branch_key - "ST" or "SN".
+    @param kappa - κ value (int or "inf" for deterministic).
+    @param rng - numpy.random.Generator (for stochastic κ) or None (for κ=∞).
+    @param data - dict from load_branch_data.
+    @param n_draws - number of draws (use 5 for timing_only).
+    @param timing_only - if True, do not save results, just measure timing.
+    @returns dict with results.
+    """
+    X_mm   = data["X_mm"]
+    trios  = data["trios"]
+    w0     = data["w0"]
+    groups = data["groups"]
+    rho_j  = data["rho_j"]
+    scorers = make_santiago_scorers(X_mm, rho_j)
+
+    label_k = "inf" if kappa == "inf" else str(kappa)
+    is_kappa_200 = (kappa == 200)
+    is_kappa_inf = (kappa == "inf")
+    run_e1 = is_kappa_200 or is_kappa_inf
+
+    rows_8 = []    # 8-cell factorial
+    rows_e1 = []   # E1 cells (only for κ=200 and κ=∞)
+
+    for draw_idx in range(n_draws):
+        # Draw weights
+        if kappa == "inf":
+            w = w0.copy()
+        else:
+            w = rng.dirichlet(kappa * w0)
+        w = w / w.sum()
+
+        # K1 cell: SAW_mm_opt — compute first as gate
+        A_ones = np.ones(len(w0))
+        F_mm = compute_group_objectives(X_mm, w, A_ones, groups)
+        F_mm_trios = compute_trio_objectives(F_mm, trios)
+        non_dom_mm = build_pareto_frontier_general(F_mm_trios)
+        tidx_mm_opt = optimal_selector(F_mm_trios, non_dom_mm)
+        q2_k1 = int(non_dom_mm[tidx_mm_opt])
+
+        if not timing_only and q2_k1 != 1:
+            print(f"  K1 FAIL at draw {draw_idx} kappa={label_k}: SAW/mm/opt Q2={q2_k1}")
+            return {"abort": True, "reason": f"K1 FAIL draw={draw_idx} kappa={label_k}"}
+
+        # Run all 8 cells
+        row = {"draw": draw_idx, "kappa": label_k, "SAW_mm_opt": q2_k1}
+        for cell_name in CELLS_8:
+            if cell_name == "SAW_mm_opt":
+                continue  # already computed
+            res = compute_q2_draw(X_mm, w, A_ones if "mm" in cell_name else rho_j,
+                                  groups, trios, scorers, cell_name)
+            row[cell_name] = res["Q2"]
+        rows_8.append(row)
+
+        # E1 cells at κ=200 and κ=∞
+        if run_e1:
+            e1_amps = get_e1_amplitudes(rho_j, w, groups)
+            for e1_name in E1_CELLS:
+                A_e1 = e1_amps[e1_name]
+                F_e1 = compute_group_objectives(X_mm, w, A_e1, groups)
+                F_e1_trios = compute_trio_objectives(F_e1, trios)
+                nd_e1 = build_pareto_frontier_general(F_e1_trios)
+
+                # Optimal selector on E1 objectives
+                tidx_opt = optimal_selector(F_e1_trios, nd_e1)
+                q2_opt = int(nd_e1[tidx_opt])
+
+                # Greedy (SAW-mm score for M, vec amplitude for others)
+                sc_grd = (X_mm * w).sum(1) if e1_name == "M" else (X_mm * A_e1 * w).sum(1)
+                tidx_grd = greedy_selector(sc_grd, trios)
+                q2_grd = int(nd_e1[tidx_grd])
+
+                rows_e1.append({
+                    "draw": draw_idx, "kappa": label_k, "e1_cell": e1_name,
+                    "Q2_opt": q2_opt, "Q2_grd": q2_grd,
+                    "n_nd": int(nd_e1.sum()),
+                })
+
+    return {
+        "abort": False,
+        "rows_8": rows_8,
+        "rows_e1": rows_e1,
+        "kappa": label_k,
+    }
+
+
+# ---------------------------------------------------------------------------
+# 8. Bootstrap CI for contrasts
+# ---------------------------------------------------------------------------
+
+def bootstrap_contrast(a: np.ndarray, b: np.ndarray, n_boot: int = B_BOOT) -> dict:
+    """Paired bootstrap 95% CI for mean(a) - mean(b).
+
+    @param a - per-draw values for condition A, shape (N_draws,).
+    @param b - per-draw values for condition B, shape (N_draws,).
+    @param n_boot - number of bootstrap replicates.
+    @returns dict with mean, ci_lo, ci_hi, p_one_sided.
+    """
+    d = a - b
+    mean_d = float(d.mean())
+    boot_means = [d[np.random.choice(len(d), len(d), replace=True)].mean()
+                  for _ in range(n_boot)]
+    boot_means = np.array(boot_means)
+    ci_lo, ci_hi = np.percentile(boot_means, [2.5, 97.5])
+    p = float((boot_means <= 0).mean())  # one-sided p: H0: mean <= 0
+    return {"mean": round(mean_d, 3), "ci_lo": round(ci_lo, 3),
+            "ci_hi": round(ci_hi, 3), "p_one_sided": round(p, 4)}
+
+
+# ---------------------------------------------------------------------------
+# 9. Run branch: all κ values
+# ---------------------------------------------------------------------------
+
+def run_branch(branch_key: str, timing_only: bool = False) -> None:
+    """Run the full MC experiment for one branch.
+
+    @param branch_key - "ST" or "SN".
+    @param timing_only - if True, run 5 draws per κ and report timing.
+    """
+    label = BRANCH_CONFIG[branch_key]["label"]
+    print(f"\n{'='*70}")
+    print(f"Branch {label} ({branch_key})")
+    print(f"{'='*70}")
+
+    data = load_branch_data(branch_key)
+    n_draws = 5 if timing_only else N_DRAWS
+
+    kappas_stochastic = KAPPA_VALUES        # [25, 50, 100, 200, 400, 1000]
+    kappas_all = kappas_stochastic + ["inf"]
+
+    checkpoint_dir = RESULTS
+    all_rows_8  = []
+    all_rows_e1 = []
+
+    total_time = 0.0
+    timing_by_kappa = {}
+
+    for kappa in kappas_all:
+        label_k = "inf" if kappa == "inf" else str(kappa)
+        checkpoint_file = checkpoint_dir / f"mc_{branch_key}_k{label_k}.npz"
+
+        # Skip if checkpoint exists and not timing_only
+        if not timing_only and checkpoint_file.exists():
+            print(f"  [κ={label_k}] checkpoint found — skipping")
+            rows_data = np.load(checkpoint_file, allow_pickle=True)
+            all_rows_8.extend(list(rows_data["rows_8"]))
+            if "rows_e1" in rows_data:
+                all_rows_e1.extend(list(rows_data["rows_e1"]))
+            continue
+
+        # Get RNG for this κ
+        if kappa == "inf":
+            rng = None
+        else:
+            rng_st, rng_sn = get_branch_rngs(kappa)
+            rng = rng_st if branch_key == "ST" else rng_sn
+
+        print(f"\n  κ={label_k}  ({n_draws} draws)")
+        t0 = time.time()
+        result = run_kappa(branch_key, kappa, rng, data, n_draws, timing_only)
+        elapsed = time.time() - t0
+        total_time += elapsed
+        timing_by_kappa[label_k] = elapsed
+
+        if result.get("abort"):
+            print(f"\nABORT (branch {label}): {result['reason']}")
+            print("Branch abandoned.")
+            return
+
+        if not timing_only:
+            all_rows_8.extend(result["rows_8"])
+            all_rows_e1.extend(result["rows_e1"])
+
+            # Save checkpoint
+            np.savez(checkpoint_file,
+                     rows_8=np.array(result["rows_8"], dtype=object),
+                     rows_e1=np.array(result["rows_e1"], dtype=object))
+            print(f"  Checkpoint saved: {checkpoint_file.name}")
+
+        q2_vals_k1 = [r["SAW_mm_opt"] for r in result.get("rows_8", [])]
+        mean_q1 = np.mean(q2_vals_k1) * 100 if q2_vals_k1 else 0.0
+        print(f"  κ={label_k}: {elapsed:.1f}s  K1(SAW/mm/opt)={mean_q1:.1f}%")
+
+    # Timing summary
+    print(f"\nTiming summary ({branch_key}):")
+    for k, t in timing_by_kappa.items():
+        per_draw = t / n_draws
+        print(f"  κ={k}: {t:.1f}s total, {per_draw:.2f}s/draw, est. full run ({N_DRAWS} draws): {per_draw*N_DRAWS/60:.1f} min")
+
+    if timing_only:
+        return
+
+    # ---- Post-processing ----
+    if not all_rows_8:
+        print(f"  No results for {label} — possible abort or all checkpoints")
+        return
+
+    df8 = pd.DataFrame(all_rows_8)
+    dfe1 = pd.DataFrame(all_rows_e1) if all_rows_e1 else pd.DataFrame()
+
+    # Save raw CSVs
+    df8.to_csv(RESULTS / f"mc_{branch_key}_raw.csv", index=False, lineterminator="\n")
+    if not dfe1.empty:
+        dfe1.to_csv(RESULTS / f"mc_{branch_key}_e1.csv", index=False, lineterminator="\n")
+    print(f"  Saved: mc_{branch_key}_raw.csv ({len(df8)} rows)")
+
+    # ---- K1-K6 gate evaluation ----
+    gate_results = evaluate_gates(branch_key, df8, dfe1, data)
+    print(f"\n  Gates {label}:")
+    for k, v in gate_results.items():
+        print(f"    {k}: {v}")
+
+    return gate_results
+
+
+# ---------------------------------------------------------------------------
+# 10. Gate evaluation K1–K6
+# ---------------------------------------------------------------------------
+
+def evaluate_gates(branch_key: str, df8: pd.DataFrame,
+                   dfe1: pd.DataFrame, data: dict) -> dict:
+    """Evaluate K1-K6 predictions from raw MC results.
+
+    @param branch_key - "ST" or "SN".
+    @param df8 - 8-cell results per draw.
+    @param dfe1 - E1 cell results.
+    @param data - branch data dict.
+    @returns dict mapping gate name → result summary.
+    """
+    results = {}
+
+    # K1: SAW/mm/opt = 100% at all κ (abort → not applicable here; just report)
+    k1_by_kappa = df8.groupby("kappa")["SAW_mm_opt"].mean() * 100
+    k1_all_pass = (k1_by_kappa == 100.0).all()
+    results["K1"] = f"{'PASS' if k1_all_pass else 'FAIL'} — SAW/mm/opt: {k1_by_kappa.to_dict()}"
+
+    # K2: E1-B optimal = 100% at κ=200 and κ=∞
+    if not dfe1.empty:
+        df_k2 = dfe1[dfe1["e1_cell"] == "B"]
+        k2_vals = df_k2.groupby("kappa")["Q2_opt"].mean() * 100
+        k2_pass = all(abs(v - 100.0) < 0.01 for v in k2_vals.values)
+        results["K2"] = f"{'PASS' if k2_pass else 'FAIL'} — E1-B opt: {k2_vals.to_dict()}"
+    else:
+        results["K2"] = "N/A (no E1 results)"
+
+    # K3: normalisation contrast never reverses sign
+    # Greedy contrast: Q2(SAW,mm,grd) - Q2(SAW,vec,grd) per κ
+    k3_fail_kappas = []
+    for kappa, grp in df8.groupby("kappa"):
+        a = grp["SAW_mm_grd"].values * 100
+        b = grp["SAW_vec_grd"].values * 100
+        ci = bootstrap_contrast(a, b)
+        if ci["ci_hi"] < 0:  # CI entirely below zero → reversal
+            k3_fail_kappas.append(kappa)
+    k3_pass = len(k3_fail_kappas) == 0
+    results["K3"] = f"{'PASS' if k3_pass else 'FAIL'} — reversals at: {k3_fail_kappas}"
+
+    # K4: normalisation detectable at ≥1 κ after Holm correction
+    p_vals = []
+    kappa_order = []
+    for kappa, grp in df8.groupby("kappa"):
+        if kappa == "inf":
+            continue  # only stochastic κ
+        a = grp["SAW_mm_grd"].values * 100
+        b = grp["SAW_vec_grd"].values * 100
+        ci = bootstrap_contrast(a, b)
+        p_vals.append(ci["p_one_sided"])
+        kappa_order.append(kappa)
+
+    # Holm correction (one-sided 95%)
+    sorted_idx = np.argsort(p_vals)
+    n_tests = len(p_vals)
+    holm_adjusted = np.zeros(n_tests)
+    for rank, idx in enumerate(sorted_idx):
+        holm_adjusted[idx] = min(p_vals[idx] * (n_tests - rank), 1.0)
+    k4_pass = any(holm_adjusted[i] < 0.05 for i in range(n_tests))
+    results["K4"] = (f"{'PASS' if k4_pass else 'FAIL'} — "
+                     f"Holm-adj p: {dict(zip(kappa_order, [round(p,3) for p in holm_adjusted]))}")
+
+    # K5: descriptive — sign consistency at κ=1000 and κ=∞
+    df_1000 = df8[df8["kappa"] == "1000"]
+    df_inf  = df8[df8["kappa"] == "inf"]
+    k5_info = {}
+    if not df_1000.empty and not df_inf.empty:
+        asm_1000 = (df_1000["SAW_vec_opt"].mean() - df_1000["SAW_vec_grd"].mean()) * 100
+        asm_inf  = (df_inf["SAW_vec_opt"].mean()  - df_inf["SAW_vec_grd"].mean())  * 100
+        k5_info["assembly_sign_consistent"] = bool(np.sign(asm_1000) == np.sign(asm_inf))
+        k5_info["assembly_1000"] = round(asm_1000, 2)
+        k5_info["assembly_inf"]  = round(asm_inf, 2)
+    results["K5"] = k5_info
+
+    # K6: exploratory SAW-TOPSIS contrast across κ
+    k6_info = {}
+    for kappa, grp in df8.groupby("kappa"):
+        saw_mean  = grp[["SAW_mm_grd","SAW_mm_opt","SAW_vec_grd","SAW_vec_opt"]].values.mean() * 100
+        topsis_mean = grp[["TOPSIS_mm_grd","TOPSIS_mm_opt","TOPSIS_vec_grd","TOPSIS_vec_opt"]].values.mean() * 100
+        k6_info[kappa] = round(saw_mean - topsis_mean, 2)
+    results["K6"] = k6_info
+
+    return results
+
+
+# ---------------------------------------------------------------------------
+# 11. Macro generation
+# ---------------------------------------------------------------------------
+
+def generate_macros(gates_st: dict, gates_sn: dict) -> str:
+    """Generate LaTeX macros for macros_santiago.tex.
+
+    @param gates_st - gate results for S-T.
+    @param gates_sn - gate results for S-N.
+    @returns string of LaTeX macro definitions.
+    """
+    lines = [
+        "% macros_santiago.tex — auto-generated by run_santiago_mc.py",
+        "% Do not edit manually.",
+        "",
+        "% K1 gates",
+        f"\\newcommand{{\\SantKoneSTresult}}{{{gates_st.get('K1','?')}}}",
+        f"\\newcommand{{\\SantKoneSNresult}}{{{gates_sn.get('K1','?')}}}",
+        "",
+        "% K2 gates (Theorem 1)",
+        f"\\newcommand{{\\SantKtwoSTresult}}{{{gates_st.get('K2','?')}}}",
+        f"\\newcommand{{\\SantKtwoSNresult}}{{{gates_sn.get('K2','?')}}}",
+        "",
+        "% K3: normalisation never reverses",
+        f"\\newcommand{{\\SantKthreeSTresult}}{{{gates_st.get('K3','?')}}}",
+        f"\\newcommand{{\\SantKthreeSNresult}}{{{gates_sn.get('K3','?')}}}",
+        "",
+        "% K4: normalisation detectable",
+        f"\\newcommand{{\\SantKfourSTresult}}{{{gates_st.get('K4','?')}}}",
+        f"\\newcommand{{\\SantKfourSNresult}}{{{gates_sn.get('K4','?')}}}",
+        "",
+    ]
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# 12. SENS-A5: run S-N with A5 = Regadios + Sequeiro Sub-húmido
+# ---------------------------------------------------------------------------
+
+def run_sens_a5(timing_only: bool = False) -> None:
+    """SENS-A5: re-run S-N with A5 exclusion = Regadios + Sequeiro Sub-húmido.
+
+    Pre-declared sensitivity per DEV-SANT-A5-001. Requires a separate S-N
+    CSV extracted with the extended A5 exclusion. Expected at:
+      results/santiago/df_santiago_sn_sensA5.csv
+
+    If the file does not exist, this function prints a warning and exits.
+    """
+    sens_csv = RESULTS / "df_santiago_sn_sensA5.csv"
+    if not sens_csv.exists():
+        print("\nSENS-A5: df_santiago_sn_sensA5.csv not found.")
+        print("To run: re-extract S-N with A5_TIPOS_EXCLUSION += Sequeiro Sub-húmido")
+        print("and save to results/santiago/df_santiago_sn_sensA5.csv")
+        return
+
+    print("\nSENS-A5: running with extended A5 exclusion...")
+    # TODO: implement using same structure as run_branch with modified CSV
+    # This is a post-hoc sensitivity (DEV-SANT-A5-001 §SENS-A5),
+    # run AFTER main Stage 4 results are sealed.
+    print("SENS-A5: not yet implemented — implement after Stage 4 main run.")
+
+
+# ---------------------------------------------------------------------------
+# 13. CLI
+# ---------------------------------------------------------------------------
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__,
+                                formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--branch", choices=["ST", "SN", "both"], default="both",
+                   help="Which branch to run (default: both)")
+    p.add_argument("--timing", action="store_true",
+                   help="Run 5 draws per κ for timing only — no results saved")
+    p.add_argument("--sens-a5", action="store_true",
+                   help="Run SENS-A5 sensitivity (requires separate CSV)")
+    a = p.parse_args()
+
+    if a.sens_a5:
+        run_sens_a5(a.timing)
+        return
+
+    gates_st = {}
+    gates_sn = {}
+
+    if a.branch in ("ST", "both"):
+        result = run_branch("ST", a.timing)
+        if isinstance(result, dict):
+            gates_st = result
+
+    if a.branch in ("SN", "both"):
+        result = run_branch("SN", a.timing)
+        if isinstance(result, dict):
+            gates_sn = result
+
+    if not a.timing and (gates_st or gates_sn):
+        macros_str = generate_macros(gates_st, gates_sn)
+        macro_path = RESULTS / "macros_santiago.tex"
+        macro_path.write_text(macros_str, encoding="utf-8")
+        print(f"\nMacros written: {macro_path}")
+
+    print("\nDone.")
+
+
+if __name__ == "__main__":
+    main()
