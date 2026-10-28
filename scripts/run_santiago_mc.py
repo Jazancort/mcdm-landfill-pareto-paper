@@ -65,6 +65,26 @@ D_MIN_KM = 10.0
 DELTA_PP = 2.5   # equivalence margin (pp) for TOST on S0-S7 (PRESPEC A5 §1); applied post-collection
 
 # ---------------------------------------------------------------------------
+# GPU setup — optional CuPy acceleration (fallback to numpy if unavailable)
+# ---------------------------------------------------------------------------
+
+try:
+    import cupy as cp
+    _N_GPU = cp.cuda.runtime.getDeviceCount()
+    _USE_GPU = _N_GPU > 0
+    if _USE_GPU:
+        # Device 0 is whatever CUDA_VISIBLE_DEVICES maps to.
+        # Launch with CUDA_VISIBLE_DEVICES=1 to pin to RTX 4000 Ada.
+        print(f"[GPU] CuPy {cp.__version__}  {_N_GPU} device(s) visible  → GPU acceleration ON",
+              flush=True)
+    else:
+        print("[GPU] CuPy imported but no GPU detected → CPU fallback", flush=True)
+except Exception as _e:
+    cp = None
+    _USE_GPU = False
+    print(f"[GPU] CuPy not available ({_e}) → CPU fallback", flush=True)
+
+# ---------------------------------------------------------------------------
 # 1. Branch configuration
 # ---------------------------------------------------------------------------
 
@@ -677,6 +697,158 @@ def check_dominated_raw(F_trios: np.ndarray, f: np.ndarray) -> bool:
     return bool(dom.any())
 
 
+# ---------------------------------------------------------------------------
+# GPU acceleration helpers (CuPy — no-op when _USE_GPU=False)
+# ---------------------------------------------------------------------------
+
+def prepare_gpu_data(data: dict) -> dict:
+    """Pre-load branch arrays to GPU for fast per-draw computation.
+
+    Transfers trios, X_mm, rho_j once per branch (not per draw).
+    Only the tiny w vector (M floats) is transferred per draw.
+
+    @param data - dict from load_branch_data.
+    @returns gpu_data dict with cupy arrays, or empty dict if GPU unavailable.
+    """
+    if not _USE_GPU:
+        return {}
+    gd = {
+        "X_mm":  cp.ascontiguousarray(cp.asarray(data["X_mm"])),   # (N, M)
+        "trios": cp.ascontiguousarray(cp.asarray(data["trios"])),   # (n_trios, 3)
+        "rho_j": cp.asarray(data["rho_j"]),                         # (M,)
+        "groups": data["groups"],                                    # list of lists (CPU)
+        "M": data["X_mm"].shape[1],
+        "G": len(data["groups"]),
+        "N": data["N"],
+    }
+    # Pre-compute group index arrays on GPU for fast slicing
+    gd["group_idx"] = [cp.array(g, dtype=cp.int32) for g in data["groups"]]
+    vram_mb = (gd["X_mm"].nbytes + gd["trios"].nbytes + gd["rho_j"].nbytes) / 1e6
+    print(f"  [GPU] {vram_mb:.0f} MB transferred to device", flush=True)
+    return gd
+
+
+def _f_trios_gpu(X_mm_gpu, trios_gpu, group_idx, w_cpu, A_j_cpu):
+    """Compute F_site and F_trios on GPU for one (w, A_j) pair.
+
+    @returns (F_site_gpu (N, G), F_trios_gpu (n_trios, G)).
+    """
+    wA = cp.asarray((w_cpu * A_j_cpu).astype(np.float64))   # (M,)
+    XwA = X_mm_gpu * wA                                       # (N, M)
+    G = len(group_idx)
+    N = X_mm_gpu.shape[0]
+    F_site = cp.empty((N, G), dtype=cp.float64)
+    for g_idx, gi in enumerate(group_idx):
+        F_site[:, g_idx] = XwA[:, gi].sum(1)
+    t0, t1, t2 = trios_gpu[:, 0], trios_gpu[:, 1], trios_gpu[:, 2]
+    F_trios = F_site[t0] + F_site[t1] + F_site[t2]          # (n_trios, G)
+    return F_site, F_trios
+
+
+def _check_dom_gpu(F_trios_gpu, f_gpu) -> bool:
+    """O(n_trios) domination check entirely on GPU."""
+    dom = (cp.all(F_trios_gpu >= f_gpu - EPS, axis=1) &
+           cp.any(F_trios_gpu >  f_gpu + EPS, axis=1))
+    return bool(dom.any())
+
+
+def _optimal_gpu(scores_gpu, trios_gpu) -> int:
+    """Argmax of trio sum scores using GPU gather."""
+    ts = scores_gpu[trios_gpu[:, 0]] + scores_gpu[trios_gpu[:, 1]] + scores_gpu[trios_gpu[:, 2]]
+    return int(ts.argmax())
+
+
+def compute_q2_all_cells_gpu(gd: dict, w_cpu: np.ndarray, D: np.ndarray) -> dict:
+    """All 8 factorial cells computed on GPU.
+
+    @param gd - gpu_data dict from prepare_gpu_data.
+    @param w_cpu - (M,) CPU weight draw.
+    @param D - (N, N) distance matrix, CPU (for greedy_selector only).
+    @returns (result dict, F_mm_trios_gpu) — F_mm_trios_gpu reused for K1.
+    """
+    X_mm_gpu   = gd["X_mm"]
+    trios_gpu  = gd["trios"]
+    rho_j_gpu  = gd["rho_j"]
+    group_idx  = gd["group_idx"]
+    M          = gd["M"]
+
+    A_ones_cpu = np.ones(M)
+
+    # Pre-compute F_mm_site and F_mm_trios once per draw (shared by all 8 cells)
+    F_site_gpu, F_mm_trios_gpu = _f_trios_gpu(
+        X_mm_gpu, trios_gpu, group_idx, w_cpu, A_ones_cpu
+    )
+
+    # All four scorers (GPU for optimal selector, CPU copy for greedy)
+    w_gpu  = cp.asarray(w_cpu)
+    s_mm_gpu  = (X_mm_gpu * w_gpu).sum(1)
+    s_vec_gpu = (X_mm_gpu * rho_j_gpu * w_gpu).sum(1)
+
+    def _topsis_gpu(V):
+        PIS = V.max(0); NIS = V.min(0)
+        dp = cp.sqrt(((V - PIS) ** 2).sum(1))
+        dn = cp.sqrt(((V - NIS) ** 2).sum(1))
+        denom = dp + dn
+        return cp.where(denom == 0, 0.5, dn / denom)
+
+    t_mm_gpu  = _topsis_gpu(X_mm_gpu * w_gpu)
+    t_vec_gpu = _topsis_gpu(X_mm_gpu * rho_j_gpu * w_gpu)
+
+    scorer_gpu = {
+        "SAW_mm": s_mm_gpu, "SAW_vec": s_vec_gpu,
+        "TOPSIS_mm": t_mm_gpu, "TOPSIS_vec": t_vec_gpu,
+    }
+    # CPU copies only for greedy_selector (tiny: N floats each)
+    scorer_cpu = {k: cp.asnumpy(v) for k, v in scorer_gpu.items()}
+
+    result = {}
+    for cell in CELLS_8:
+        key = next(k for k in scorer_gpu if k in cell)
+        if "_grd" in cell:
+            trio = greedy_selector(scorer_cpu[key], D)   # CPU
+            f_sel = F_site_gpu[trio[0]] + F_site_gpu[trio[1]] + F_site_gpu[trio[2]]
+            q2 = 0 if _check_dom_gpu(F_mm_trios_gpu, f_sel) else 1
+        else:
+            tidx = _optimal_gpu(scorer_gpu[key], trios_gpu)
+            q2 = 0 if _check_dom_gpu(F_mm_trios_gpu, F_mm_trios_gpu[tidx]) else 1
+        result[cell] = q2
+
+    return result, F_mm_trios_gpu  # return F_mm_trios_gpu for K1 reuse
+
+
+def compute_e1_cells_gpu(gd: dict, w_cpu: np.ndarray, rho_j_cpu: np.ndarray,
+                          groups: list, D: np.ndarray) -> list:
+    """E1 cells (M, B, W, V) on GPU for one draw.
+
+    @returns list of dicts {e1_cell, Q2_opt, Q2_grd}.
+    """
+    X_mm_gpu  = gd["X_mm"]
+    trios_gpu = gd["trios"]
+    group_idx = gd["group_idx"]
+
+    e1_amps = get_e1_amplitudes(rho_j_cpu, w_cpu, groups)  # CPU dict
+
+    rows = []
+    for e1_name in E1_CELLS:
+        A_j_cpu = e1_amps[e1_name]
+        F_site_gpu, F_e1_trios_gpu = _f_trios_gpu(
+            X_mm_gpu, trios_gpu, group_idx, w_cpu, A_j_cpu
+        )
+        # SAW score for E1 selector (CPU-weighted, GPU gather)
+        sc_gpu = (X_mm_gpu * cp.asarray((w_cpu * A_j_cpu).astype(np.float64))).sum(1)
+        sc_cpu = cp.asnumpy(sc_gpu)
+
+        tidx   = _optimal_gpu(sc_gpu, trios_gpu)
+        q2_opt = 0 if _check_dom_gpu(F_e1_trios_gpu, F_e1_trios_gpu[tidx]) else 1
+
+        trio_grd = greedy_selector(sc_cpu, D)
+        f_grd = F_site_gpu[trio_grd[0]] + F_site_gpu[trio_grd[1]] + F_site_gpu[trio_grd[2]]
+        q2_grd = 0 if _check_dom_gpu(F_e1_trios_gpu, f_grd) else 1
+
+        rows.append({"e1_cell": e1_name, "Q2_opt": q2_opt, "Q2_grd": q2_grd})
+    return rows
+
+
 def compute_q2_all_cells(X_mm, w, A_j_mm, groups, trios, D, scorers) -> dict:
     """Compute Q2 for all 8 factorial cells for one draw.
 
@@ -739,7 +911,8 @@ E1_CELLS = ["M", "B", "W", "V"]
 
 
 def run_kappa(branch_key: str, kappa, rng, data: dict,
-              n_draws: int, timing_only: bool = False) -> dict:
+              n_draws: int, timing_only: bool = False,
+              gpu_data: dict = None) -> dict:
     """Run the MC experiment for one branch and one κ value.
 
     @param branch_key - "ST" or "SN".
@@ -748,6 +921,7 @@ def run_kappa(branch_key: str, kappa, rng, data: dict,
     @param data - dict from load_branch_data.
     @param n_draws - number of draws (use 5 for timing_only).
     @param timing_only - if True, do not save results, just measure timing.
+    @param gpu_data - pre-loaded GPU arrays from prepare_gpu_data (None=CPU).
     @returns dict with results.
     """
     X_mm   = data["X_mm"]
@@ -756,6 +930,7 @@ def run_kappa(branch_key: str, kappa, rng, data: dict,
     groups = data["groups"]
     rho_j  = data["rho_j"]
     scorers = make_santiago_scorers(X_mm, rho_j)
+    use_gpu = _USE_GPU and bool(gpu_data)
 
     label_k = "inf" if kappa == "inf" else str(kappa)
     is_kappa_200 = (kappa == 200)
@@ -775,48 +950,58 @@ def run_kappa(branch_key: str, kappa, rng, data: dict,
             w = rng.dirichlet(kappa * w0)
         w = w / w.sum()
 
-        # K1 cell: SAW_mm_opt — compute first as gate
-        A_ones = np.ones(len(w0))
-        saw_mm_scores = scorers[0](w)
-        tidx_mm_opt = optimal_selector(saw_mm_scores, trios)
-        F_mm_site_k1 = compute_group_objectives(X_mm, w, A_ones, groups)
-        F_mm_trios_k1 = compute_trio_objectives(F_mm_site_k1, trios)
-        q2_k1 = 0 if check_dominated_raw(F_mm_trios_k1, F_mm_trios_k1[tidx_mm_opt]) else 1
+        if use_gpu:
+            # ---- GPU path: K1 + 8 cells in one GPU call ----
+            q2_all, F_mm_trios_gpu = compute_q2_all_cells_gpu(gpu_data, w, data["D"])
+            q2_k1 = q2_all["SAW_mm_opt"]
+            if not timing_only and q2_k1 != 1:
+                print(f"  K1 FAIL at draw {draw_idx} kappa={label_k}: SAW/mm/opt Q2={q2_k1}")
+                return {"abort": True, "reason": f"K1 FAIL draw={draw_idx} kappa={label_k}"}
+            row = {"draw": draw_idx, "kappa": label_k}
+            row.update(q2_all)
+            rows_8.append(row)
 
-        if not timing_only and q2_k1 != 1:
-            print(f"  K1 FAIL at draw {draw_idx} kappa={label_k}: SAW/mm/opt Q2={q2_k1}")
-            return {"abort": True, "reason": f"K1 FAIL draw={draw_idx} kappa={label_k}"}
+            if run_e1:
+                e1_rows = compute_e1_cells_gpu(gpu_data, w, rho_j, groups, data["D"])
+                for r in e1_rows:
+                    rows_e1.append({"draw": draw_idx, "kappa": label_k, **r})
 
-        # Run all 8 cells using the unified function
-        q2_all = compute_q2_all_cells(X_mm, w, A_ones, groups, trios, data["D"], scorers)
-        row = {"draw": draw_idx, "kappa": label_k}
-        row.update(q2_all)
-        rows_8.append(row)
+        else:
+            # ---- CPU path (original) ----
+            A_ones = np.ones(len(w0))
+            saw_mm_scores = scorers[0](w)
+            tidx_mm_opt = optimal_selector(saw_mm_scores, trios)
+            F_mm_site_k1 = compute_group_objectives(X_mm, w, A_ones, groups)
+            F_mm_trios_k1 = compute_trio_objectives(F_mm_site_k1, trios)
+            q2_k1 = 0 if check_dominated_raw(F_mm_trios_k1, F_mm_trios_k1[tidx_mm_opt]) else 1
 
-        # E1 cells at κ=200 and κ=∞
-        if run_e1:
-            e1_amps = get_e1_amplitudes(rho_j, w, groups)
-            for e1_name in E1_CELLS:
-                A_e1 = e1_amps[e1_name]
-                F_e1_site = compute_group_objectives(X_mm, w, A_e1, groups)
-                F_e1_trios = compute_trio_objectives(F_e1_site, trios)
+            if not timing_only and q2_k1 != 1:
+                print(f"  K1 FAIL at draw {draw_idx} kappa={label_k}: SAW/mm/opt Q2={q2_k1}")
+                return {"abort": True, "reason": f"K1 FAIL draw={draw_idx} kappa={label_k}"}
 
-                # Optimal selector on E1-specific objectives
-                sc_opt = (X_mm * A_e1 * w).sum(1)  # SAW score with E1 amplitude
-                tidx_opt = optimal_selector(sc_opt, trios)
-                q2_opt = 0 if check_dominated_raw(F_e1_trios, F_e1_trios[tidx_opt]) else 1
+            q2_all = compute_q2_all_cells(X_mm, w, A_ones, groups, trios, data["D"], scorers)
+            row = {"draw": draw_idx, "kappa": label_k}
+            row.update(q2_all)
+            rows_8.append(row)
 
-                # Greedy (SAW score with E1 amplitude, sequential selection)
-                trio_grd = greedy_selector(sc_opt, data["D"])
-                f_grd = (F_e1_site[trio_grd[0]] +
-                         F_e1_site[trio_grd[1]] +
-                         F_e1_site[trio_grd[2]])
-                q2_grd = 0 if check_dominated_raw(F_e1_trios, f_grd) else 1
-
-                rows_e1.append({
-                    "draw": draw_idx, "kappa": label_k, "e1_cell": e1_name,
-                    "Q2_opt": q2_opt, "Q2_grd": q2_grd,
-                })
+            if run_e1:
+                e1_amps = get_e1_amplitudes(rho_j, w, groups)
+                for e1_name in E1_CELLS:
+                    A_e1 = e1_amps[e1_name]
+                    F_e1_site = compute_group_objectives(X_mm, w, A_e1, groups)
+                    F_e1_trios = compute_trio_objectives(F_e1_site, trios)
+                    sc_opt = (X_mm * A_e1 * w).sum(1)
+                    tidx_opt = optimal_selector(sc_opt, trios)
+                    q2_opt = 0 if check_dominated_raw(F_e1_trios, F_e1_trios[tidx_opt]) else 1
+                    trio_grd = greedy_selector(sc_opt, data["D"])
+                    f_grd = (F_e1_site[trio_grd[0]] +
+                             F_e1_site[trio_grd[1]] +
+                             F_e1_site[trio_grd[2]])
+                    q2_grd = 0 if check_dominated_raw(F_e1_trios, f_grd) else 1
+                    rows_e1.append({
+                        "draw": draw_idx, "kappa": label_k, "e1_cell": e1_name,
+                        "Q2_opt": q2_opt, "Q2_grd": q2_grd,
+                    })
 
     return {
         "abort": False,
@@ -866,6 +1051,13 @@ def run_branch(branch_key: str, timing_only: bool = False) -> None:
 
     data = load_branch_data(branch_key)
     n_draws = 5 if timing_only else N_DRAWS
+
+    # Pre-load branch data to GPU once (not per draw, not per κ)
+    gpu_data = prepare_gpu_data(data) if _USE_GPU else {}
+    if _USE_GPU and gpu_data:
+        print(f"  [GPU] Branch {label}: GPU acceleration active", flush=True)
+    else:
+        print(f"  [GPU] Branch {label}: CPU mode", flush=True)
 
     kappas_stochastic = KAPPA_VALUES        # [25, 50, 100, 200, 400, 1000]
     kappas_all = kappas_stochastic + ["inf"]
@@ -941,7 +1133,8 @@ def run_branch(branch_key: str, timing_only: bool = False) -> None:
 
         print(f"\n  κ={label_k}  ({n_draws} draws)")
         t0 = time.time()
-        result = run_kappa(branch_key, kappa, rng, data, n_draws, timing_only)
+        result = run_kappa(branch_key, kappa, rng, data, n_draws, timing_only,
+                           gpu_data=gpu_data)
         elapsed = time.time() - t0
         total_time += elapsed
         timing_by_kappa[label_k] = elapsed
