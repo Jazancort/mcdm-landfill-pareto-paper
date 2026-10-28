@@ -54,9 +54,11 @@ of the date. The diagnosis and conclusion are unaffected by the date correction.
 
 **Diagnosis:** The layer exists in GeoServer's layer configuration but the underlying
 database schema/table `zdti` does not exist in the PostGIS database. This is a
-permanent server-side misconfiguration, not a transient HTTP error. The layer will
-continue to return HTTP 500 on every GetFeature request until the DBA creates the
-database table.
+server-side misconfiguration that was persistent across all attempts between
+2026-10-27 and 2026-10-28. The layer will return HTTP 500 on every GetFeature request
+until the DBA creates the database table. Email to INGT/IDECV is the only recourse;
+if data is received after the Stage 4 results are sealed, it enters the analysis only
+as a post-hoc sensitivity (not as a replacement for the C-4 result).
 
 **Conclusion:** C-4 is permanently triggered for this criterion. The ZDTI data is
 not recoverable via this service. Email to IDECV/INGT would be the only recourse,
@@ -92,14 +94,24 @@ Cabral (2012) assigns the following leaf weights to the 14 S-N criteria:
 | D1 — Roads            | 0.0945 | 0.0981 |
 | D2 — MSW centre       | 0.1921 | 0.1993 |
 
-Redistribution formula: w_j_new = w_j_old / (1 − w_A2_old) for j ≠ A2.
-Original A2 weight from Cabral (2012) Tab. 14/16: 0.0383 (rounded).
-Denominator: 1 − 0.0383 = 0.9617.
-Sum of renormalized 13 weights: 1.0000 (verified).
+Redistribution formula: w_j_new = w_j_old / (Σ_{k≠A2} w_k_old) for j ≠ A2.
+Original A2 weight from Cabral (2012) Tab. 14/16: 0.0383 (rounded to 4 d.p.).
+Note: the 14 Cabral leaf weights (Tab. 14, rounded) sum to 1.0020, not 1.0000.
+The correct denominator for C-4 renormalization is therefore 1.0020 − 0.0383 = 0.9637,
+not 0.9617 (which would be 1.0000 − 0.0383). Using 0.9637 reproduces 12 of 13
+renormalized values in the "C-4 w₀" column above. Exception: A6 = 0.0313/0.9637
+= 0.0325, but the code has 0.0324. This one-unit discrepancy in the last decimal
+place indicates that the code was derived from the unrounded Cabral leaf weights
+(more decimal places than the Tab. 14 summary), not from the 4 d.p. rounded values.
+The weights in the "C-4 w₀" column above are copied directly from the code constant
+W0_SN in run_santiago_mc.py (before the `/ sum` normalization step, sum = 0.9999),
+which represents the actual weights used in Stage 4.
 
-Note: the exact original Cabral weights may differ by ≤0.001 from the values above
-(rounding in Tab. 14). The renormalized w₀ above are the values used in extraction
-and Stage 4 Monte Carlo. Any discrepancy is below the Dirichlet SD at κ=25 (~0.04).
+w0 integrity: the startup log includes `assert abs(w0.sum() - 1) < 1e-6` for each
+branch via log_startup_provenance(), confirming the normalized sum before use.
+
+Sum of renormalized 13 weights (from code): 0.9999 before normalization → 1.0000
+after `W0_SN / W0_SN.sum()`. Any residual is at the level of floating-point rounding.
 
 ## Group weights after C-4
 
@@ -112,8 +124,12 @@ Groups follow PRESPEC_SANTIAGO §5.6 (A, B, C, D) after A2 removal:
 | C     | C1, C2                 | 0.1012 |
 | D     | D1, D2                 | 0.2974 |
 
-Original W_A (14 criteria, A2 included) = 0.1821 + 0.0383 = 0.2204.
-After C-4: W_A = 0.1821 (A2 weight absorbed proportionally across all groups).
+Original W_A (14 criteria, A2 included) = sum(A1+A2+A3+A4+A5+A6+A7)
+  = 0.0383+0.0383+0.0260+0.0383+0.0157+0.0313+0.0260 = 0.2139.
+After C-4: W_A (renormalized 6 criteria, A2 removed) = (0.2139−0.0383)/0.9637 = 0.1822 ≈ 0.1821.
+The expression "0.1821 + 0.0383 = 0.2204" in earlier versions of this DEV was incorrect:
+it added the renormalized C-4 W_A to the original A2 weight — the two quantities
+are from different normalization contexts and cannot be summed directly.
 
 ## Fogo control
 
@@ -132,6 +148,13 @@ on the spatial distribution of ZDTI zones relative to the S-N admissible sites.
 
 ## Source reference
 
-Cabral, V. F. S. (2012). Localização de Aterros Sanitários na Ilha de Santiago usando
-SIG e Análise Multi-Critério. MSc dissertation. Universidade Nova de Lisboa.
-hdl.handle.net/10362/8627. AHP weights: Table 14 (leaf) and Table 16 (final).
+Cabral (2012) hdl.handle.net/10362/8627. AHP weights: Table 14 (leaf) and Table 16 (final).
+
+Author name discrepancy: the repository metadata at hdl.handle.net/10362/8627 lists
+the author as "Adilson Vaz Cabral" with title "Análise multicritério em Sistema de
+Informação Geográfica para localização de aterros sanitários. O caso da região sul da
+Ilha de Santiago, Cabo Verde." The earlier DEV versions cited "Cabral, V. F. S.,
+Localização de Aterros Sanitários na Ilha de Santiago usando SIG e Análise Multi-Critério."
+These do not match. Confirm the correct author name and title from the PDF before
+adding to refs.bib and citing in the paper. Until confirmed, cite as
+"Cabral (2012)" with the hdl.handle.net DOI only.

@@ -1,5 +1,5 @@
 # DEV-SANT-SPACING-001 — S-N grid spacing corrected from 1250 m to 1000 m
-Date: 2026-10-29
+Date: 2026-10-28
 Type: pipeline correction — spacing rule applied per-branch (no criterion values involved)
 
 ## PRESPEC declaration (§3 Common pipeline)
@@ -12,11 +12,29 @@ PRESPEC_SANTIAGO §3 declares the spacing algorithm:
 >
 > "The trio limit (50 000 000) applies to n_trios(N_cand)."
 
-The algorithm is defined once in the Common pipeline section and applies to
-each branch independently (S-T and S-N use different boundaries and produce
-different candidate counts).
+The algorithm is defined once in the Common pipeline section. PRESPEC_SANTIAGO §3
+does not use the word "independently" or "per branch", but the rule references
+N_cand (the number of candidate sites) and n_trios(N_cand), both of which are
+branch-specific quantities. Both PRESPEC-declared outcomes — n_trios ≤ limit and
+"branch abandoned" — are clearly branch-local. The correct reading is per-branch.
 
-## What happened
+If the PRESPEC meant a single global grid spacing, it would have said "choose the
+spacing that satisfies both branches" — it does not. The text implies each branch
+is resolved independently: S-T and S-N use different boundaries and produce
+different candidate counts.
+
+## How the error was discovered
+
+The error was discovered during a code review of santiago_extract.py carried out
+as part of Stage 3b preparation, before any descriptor value was examined. The
+reviewer noticed that GRID_SPACING was a single constant applied to both branches,
+and checked the PRESPEC rule for S-N independently.
+
+The TV_B = 0.037 (S-N at 1.25 km, from commit 00b1424 stage3b descriptors) was
+seen BEFORE this review. The decision to re-run the S-N extraction was NOT triggered
+by observing TV_B < 0.05. It was triggered by the code review revealing that the
+per-branch spacing rule had not been applied. The testability consequence (TV_B going
+from 0.037 to 0.057) is an incidental result, not the reason for the correction.
 
 Stage 3a (commit b9650cd) applied the spacing rule to S-T only. The S-T grid at
 1 km gave n_trios_Ncand = 76,124,767 (> 50M), triggering the increase to 1.25 km.
@@ -65,10 +83,22 @@ step allowed by the spacing algorithm.
 
 S-N extraction re-run at 1000 m (commit following this DEV file).
 df_santiago_sn.csv, extract_report_sn.json, and stage3b_descriptors.json
-updated with the corrected N_cand=387, N_adm≥100 (verified post-extraction).
+updated with the corrected N_cand=387, N_adm=190 (verified post-extraction).
 
 GRID_SPACING_SN = 1000.0 in santiago_extract.py (was: GRID_SPACING = 1250.0 global).
 GRID_SPACING_ST = 1250.0 unchanged (spacing rule correctly triggered at 1 km for S-T).
+
+## Pre-declared comparison: S-N at 1.25 km (for supplementary reporting)
+
+The S-N extraction at 1.25 km (N_cand=249, N_adm=135, sha=a481df71, commit ebf7dfe) was
+computed and its descriptors committed before this correction. S3b (TV_B=0.037) and
+S7b were NOT testable at that spacing.
+
+The Stage 4 main run uses the 1.0 km spacing (principal branch). The 1.25 km results
+(mc_SN_raw.csv from a hypothetical re-run at 1.25 km, or the descriptors from 00b1424)
+are reported descriptively in a supplementary table, showing both spacings side by side.
+This pre-declaration ensures that comparison is not triggered post-hoc if the 1.0 km
+result is surprising. The 1.25 km run is a sensitivity, not an alternative result.
 
 ## No criterion-value bias
 

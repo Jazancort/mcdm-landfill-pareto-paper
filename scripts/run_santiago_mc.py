@@ -1214,6 +1214,15 @@ def log_startup_provenance() -> None:
     print(f"    κ=∞       deterministic (w=w0)  n_draws=1  [DEV-SANT-KINF-001]")
     print(f"    Forbidden seed: {FORBIDDEN_SEED} (Fogo legacy)")
 
+    # w0 integrity check for each branch
+    print()
+    from run_santiago_mc import ST_W0, SN_W0
+    for bname, w0 in [("ST", ST_W0), ("SN", SN_W0)]:
+        wsum = float(w0.sum())
+        ok = abs(wsum - 1.0) < 1e-6
+        print(f"  w0({bname}).sum() = {wsum:.12f}  [{'OK' if ok else 'FAIL — abort'}]")
+        assert ok, f"w0 sum check failed for {bname}: {wsum:.12f}"
+
     # pip freeze (abbreviated)
     print()
     try:

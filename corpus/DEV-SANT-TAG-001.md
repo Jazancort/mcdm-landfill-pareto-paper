@@ -1,26 +1,36 @@
-# DEV-SANT-TAG-001 — Historial de tags de lançamento (stage4-launch → r1 → r2)
+# DEV-SANT-TAG-001 — Historial de tags de lançamento (stage4-launch → r1 → r2 → r3)
 Date: 2026-10-28 UTC
 Type: nota de integridade pré-dados (sem resultado de MC calculado antes deste registo)
 
-## O que aconteceu (r1)
+## Estado actual das tags no remote (git ls-remote --tags)
 
-A tag `stage4-launch` foi criada e publicada em 7f1028d:
-  "pre-stage4: gate tolerances tightened; negative test; DEV-SANT-TIMING/KINF/ZDTI-retry;
-   startup logging; DELTA_PP=2.5; S5 table per criterion"
+```
+de7d9d7c  refs/tags/stage4-launch         (tag object)
+d0635a32  refs/tags/stage4-launch^{}       (commit: add verify_stage4_sha.py)
+8252fb81  refs/tags/stage4-launch-r1      (tag object)
+bc41fd57  refs/tags/stage4-launch-r1^{}   (commit: stage4-prelaunch all 5 blockers)
+460a1cca  refs/tags/stage4-launch-r2      (tag object)
+fae83f0b  refs/tags/stage4-launch-r2^{}   (commit: hash annotation in TAG-001)
+```
 
-Em seguida, foi adicionado `scripts/verify_stage4_sha.py` no commit d0635a3:
-  "add verify_stage4_sha.py for pre-run data integrity check"
+Nota: `stage4-launch` ficou em d0635a3 (add verify_stage4_sha.py). Não deve ser
+usada como referência de lançamento; existe apenas para registo histórico.
 
-A tag foi deletada e recriada em d0635a3. No entanto, commits adicionais foram
-necessários para resolver todos os bloqueadores pré-lançamento, levando a bc41fd5:
-  "stage4-prelaunch: TAG-001; gate perm=[2.855,2.865] correct; neg test
-   near-boundary; checkpoint SHA/commit verify; .gitignore npz/meta;
-   timing explanation; launch cmds revised"
+## Historial completo
 
-A tag `stage4-launch-r1` foi finalmente colocada em bc41fd5 e verificada na Athena.
+### stage4-launch → 7f1028d → d0635a3
 
-## diff --stat 7f1028d..bc41fd5 (intervalo correcto para r1)
+A tag `stage4-launch` foi criada em 7f1028d ("pre-stage4: gate tolerances tightened,
+DEV files, startup logging, DELTA_PP=2.5"), depois movida para d0635a3 ("add
+verify_stage4_sha.py"). A tag ficou no remote a apontar para d0635a3.
 
+### stage4-launch-r1 → bc41fd5
+
+Tag criada após resolver os 5 bloqueadores pré-lançamento. Commit bc41fd5:
+"stage4-prelaunch: TAG-001; gate perm=[2.855,2.865] correct; neg test near-boundary;
+checkpoint SHA/commit verify; .gitignore npz/meta; timing explanation; launch cmds revised"
+
+diff --stat 7f1028d..bc41fd5 (real — git diff --stat 7f1028d bc41fd5):
 ```
  .gitignore                   |  9 +++++++-
  TASKS_REVISION.md            | 46 +++++++++++++++++++++++++++++++++++++++-
@@ -32,83 +42,76 @@ A tag `stage4-launch-r1` foi finalmente colocada em bc41fd5 e verificada na Athe
  7 files changed, 201 insertions(+), 18 deletions(-)
 ```
 
-Nota: `scripts/run_santiago_mc.py` FOI alterado entre 7f1028d e bc41fd5 (42 linhas).
-A afirmação anterior ("NÃO foi alterado entre 7f1028d e d0635a3") era correcta apenas
-para o intervalo mais curto 7f1028d..d0635a3; não descreve o intervalo correcto r1.
+Nota: run_santiago_mc.py FOI alterado entre 7f1028d e bc41fd5 (42 linhas).
+A checklist A5 foi re-verificada sobre bc41fd5 — as alterações em run_santiago_mc.py
+adicionaram apenas log_startup_provenance(), checkpoint SHA verify, DELTA_PP=2.5 e κ=∞=1 draw.
+Nenhuma destas alterações modifica Q2, Pareto, bootstrap ou macros. Checklist válida.
 
-## Checklist A5 sobre bc41fd5
+### stage4-launch-r2 → fae83f0
 
-A checklist da PRESPEC_SANTIAGO_A5 foi re-verificada sobre scripts/run_santiago_mc.py
-em bc41fd5. As alterações entre 7f1028d e bc41fd5 em run_santiago_mc.py adicionaram:
-- log_startup_provenance() com --untracked-files=no e SHA-256 dos CSVs
-- _stage4_run_meta.json: verificação de commit hash + SHAs na retoma
-- DELTA_PP = 2.5 (margem TOST, PRESPEC §1)
-- κ=∞ = 1 draw (DEV-SANT-KINF-001)
-Nenhuma destas alterações modifica a lógica de Q2, Pareto, bootstrap ou macros_santiago.
-A checklist A5 (sementes, células, κ, thresholds, bootstrap B=2000, Holm K4) mantém-se
-válida para bc41fd5. Verificado em 2026-10-28.
+Tag criada após correcções r2: gate perm repr/1e-9/boundary±0.0001; mc_full log
+gitignore; SHA-256 completo + uv.lock hash; DEV-A5 reescrita; DEV-TAG hash fix;
+DEV-SPACING regra pré-fixada; DEV-ZDTI datas.
+
+diff --stat bc41fd5..fae83f0 (real — git diff --stat bc41fd5 fae83f0):
+```
+ .gitignore                     |   1 +
+ corpus/DEV-SANT-A5-001.md      | 153 +++++++++++++++++++++++++++++------------
+ corpus/DEV-SANT-SPACING-001.md |  12 ++++
+ corpus/DEV-SANT-TAG-001.md     | 112 +++++++++++++++++++++++-------
+ corpus/DEV-SANT-ZDTI-001.md    |  15 +++-
+ scripts/compute_stage3b.py     |  95 +++++++++++++++++--------
+ scripts/run_santiago_mc.py     |  16 ++++-
+ 7 files changed, 300 insertions(+), 104 deletions(-)
+```
+
+### stage4-launch-r3 → [a criar neste commit]
+
+Tag a criar após correcções r3: DEV-A5 buffer/proveniência/SENS-AGR; DEV-SPACING
+data/descoberta/sensibilidade-1.25km; DEV-ZDTI pesos/autor/persistente/email;
+DEV-TAG diff real; run_santiago_mc.py w0 assert.
+
+O diff fae83f0..[r3] e a checklist A5 vão na mensagem da tag anotada (não neste ficheiro,
+que não consegue conter o hash do commit em que está). Usar:
+```bash
+git tag -a stage4-launch-r3 --no-sign -m "
+r3: DEV-A5 buffer PRESPEC explicit (0m, not deviation); SENS-AGR-1/2/BUF mandatory;
+provenance 249 not 387; DEV-SPACING date/discovery/1.25km sensitivity;
+DEV-ZDTI weights denom 0.9637, author discrepancy, persistent, email;
+DEV-TAG real diffs; mc.py w0 assert in log
+
+diff --stat fae83f0..[r3_hash]: [to be filled]
+
+A5 checklist on r3:
+- seeds KAPPA_VALUES=[25,50,100,200,400,1000] parent=[1,4,15,17,28,30] SeedSequence.spawn(2) PASS
+- N_DRAWS=500, B_BOOT=2000 PASS
+- K1 abort (K1 FAIL → return abort) PASS
+- kappa=inf = 1 draw (DEV-SANT-KINF-001) PASS
+- E1 cells at κ=200 and κ=inf only PASS
+- Bootstrap paired, Holm K4 PASS
+- DELTA_PP=2.5 PASS
+- git status --untracked-files=no in log PASS
+- SHA-256 full (64 hex) for CSVs + uv.lock hash PASS
+- w0 assert in log_startup_provenance() PASS
+"
+git push origin stage4-launch-r3
+```
+
+## v1.7 tag state
+
+A tag v1.7 local é lightweight (aponta directamente para o commit a7092642).
+A tag v1.7 remota é annotated (objecto 92b98e50 → commit a7092642).
+Ambas apontam para o MESMO commit. A rejeição no push --tags foi porque os objectos
+de tag são diferentes (lightweight vs annotated). Não é uma divergência de conteúdo.
+Resolução: apagar v1.7 local e fazer fetch do remote.
+```bash
+git tag -d v1.7
+git fetch origin refs/tags/v1.7:refs/tags/v1.7
+git push origin <tag> para publicar tags futuras (nunca --tags global)
+```
 
 ## Não houve contaminação de resultados
 
-Entre 7f1028d e bc41fd5:
-- Nenhum cálculo de Q2, R, score ou fronteira para Santiago foi executado.
-- O log de timing (DEV-SANT-TIMING-001) guardou apenas duração e K1; sem Q2 guardado.
-- Nenhuma decisão de análise dependeu dos dados de Santiago.
-
-## Tag correcta (r1)
-
-A tag canónica para Stage 4 é `stage4-launch-r1` em bc41fd5.
-A tag `stage4-launch` (7f1028d) e a versão intermédia em d0635a3 existem na história
-git mas não devem ser usadas como referência de lançamento.
-
-## Como verificar na Athena
-
-```bash
-git fetch --tags --force origin
-git describe --exact-match --tags bc41fd5   # deve devolver stage4-launch-r1
-git log --oneline 7f1028d^..bc41fd5         # deve mostrar os 3 commits acima
-git diff --stat 7f1028d bc41fd5             # deve corresponder ao diff acima
-```
-
----
-
-## Adenda: tag stage4-launch-r2
-
-Date: 2026-10-28 UTC (adenda criada durante revisão pré-lançamento)
-Commit r2: 3f069e7
-
-A revisão pré-lançamento identificou problemas bloqueadores adicionais que requerem
-um novo commit antes do lançamento. A tag `stage4-launch-r2` será criada após este
-commit ser verificado na Athena.
-
-### diff --stat bc41fd5..r2 (antecipado)
-
-```
- .gitignore                       |  1 +   # mc_full_*.log adicionado
- corpus/DEV-SANT-A5-001.md        | +180   # reescrita completa (a-h + SENS ladder)
- corpus/DEV-SANT-TAG-001.md       | +50    # este adendo
- corpus/DEV-SANT-SPACING-001.md   | +15    # nota regra pré-fixada independente de TV_B
- corpus/DEV-SANT-ZDTI-001.md      |  +5    # datas corrigidas 2026-10-29 → 2026-10-28 UTC
- scripts/compute_stage3b.py       | +30    # repr perm, check 1e-9, boundary ±0.0001, PRESPEC §6 cite
- scripts/run_santiago_mc.py       | +10    # SHA-256 completo (64 hex) + uv.lock hash no log
-```
-
-### Razão de r2
-
-1. Perm w_eff/w = 2.86488... impresso apenas com 4 d.p.; print com repr() + check 1e-9
-   vs amplitudes.json["perm_inflation"] adicionado.
-2. Boundary tests no gate negativo a ±0.005 dos limites (2.870/2.850) — substituídos
-   por testes a ±0.0001 (2.8649/2.8651/2.8551/2.8549).
-3. Log de lançamento (mc_full_*.log) não estava em .gitignore; adicionado.
-4. SHA-256 no log do arranque reportado como [:8]; actualizado para 64 hex + uv.lock hash.
-5. DEV-SANT-A5-001.md tinha erros: área tabela (ilha vs S-N), 249 candidatos (1.25km),
-   critério distância ambíguo, buffer 500m não declarado, S-T ausente, SENS-A5 com ordem
-   inválida (SSh sem SH), reframing "PRESPEC intent", sem hash de commit.
-6. DEV-SANT-SPACING-001.md sem nota explícita de que 1.0km vem de regra geométrica
-   pré-fixada, independente de TV_B.
-7. DEV-SANT-ZDTI-001.md com datas 2026-10-29 nos labels de tentativa (corrigido).
-
-### Checklist SENS-A5 sobre r2
-
-git show stage4-launch-r2:corpus/DEV-SANT-A5-001.md | grep -c "SENS-A5"
-  Deve devolver ≥ 3 (referências à SENS pre-declarada no ficheiro)
+Em nenhum dos commits r1, r2, r3: nenhum cálculo de Q2, R, score ou fronteira para
+Santiago foi executado. Os logs de timing (DEV-SANT-TIMING-001) guardaram apenas
+duração e K1; sem Q2 guardado. Nenhuma decisão de análise dependeu dos dados de Santiago.
