@@ -73,10 +73,18 @@ try:
     _N_GPU = cp.cuda.runtime.getDeviceCount()
     _USE_GPU = _N_GPU > 0
     if _USE_GPU:
-        # Device 0 is whatever CUDA_VISIBLE_DEVICES maps to.
-        # Launch with CUDA_VISIBLE_DEVICES=1 to pin to RTX 4000 Ada.
-        print(f"[GPU] CuPy {cp.__version__}  {_N_GPU} device(s) visible  → GPU acceleration ON",
-              flush=True)
+        # Query free memory and cap the pool to 85% of what is currently available.
+        # This prevents OOM when the GPU is shared with other processes (e.g. llama-server).
+        _free_mem, _total_mem = cp.cuda.runtime.memGetInfo()
+        _POOL_LIMIT = int(_free_mem * 0.85)
+        cp.get_default_memory_pool().set_limit(size=_POOL_LIMIT)
+        print(
+            f"[GPU] CuPy {cp.__version__}  devices={_N_GPU}"
+            f"  free={_free_mem // 1024**2} MiB"
+            f"  pool_limit={_POOL_LIMIT // 1024**2} MiB"
+            f"  → GPU acceleration ON",
+            flush=True,
+        )
     else:
         print("[GPU] CuPy imported but no GPU detected → CPU fallback", flush=True)
 except Exception as _e:
