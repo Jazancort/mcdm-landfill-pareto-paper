@@ -87,7 +87,7 @@ if not FOGO_CACHE.exists():
                       "/Tentativa de dados via GIS/results_cache/df_real_data_cached.csv")
 
 # Grid parameters (from PRESPEC §3 PRE-A — validated 473/473)
-GRID_SPACING  = 1000.0   # 1 km
+GRID_SPACING  = 1250.0   # 1.25 km — spacing rule triggered (n_trios=76M at 1km > 50M; 1.25km gives 21M OK)
 LAND_FRAC     = 0.50     # >= 50% land coverage
 ORIGIN        = "floor1m"
 CENTROID      = "land"
@@ -489,11 +489,12 @@ def extract_st(candidates_path: Path | None = None,
         print("  [WARN] protected areas file missing — setting all distances to 9999")
         dist_prot = np.full(len(candidates), 9999.0)
 
-    # OSM distances
+    # OSM distances — wells OMITTED (C-2: only 7 OSM features, INGRH unavailable)
     osm_dists = {}
+    OSM_CRITERIA = {k: v for k, v in OSM_TAGS.items() if k != "wells"}  # C-2 applied
     if OSM_PBF.exists():
         boundary_gdf = gpd.read_file(BOUNDARY_ST)
-        for crit, tags in OSM_TAGS.items():
+        for crit, tags in OSM_CRITERIA.items():
             print(f"Extracting OSM {crit}...")
             feats = load_osm_features(OSM_PBF, boundary_gdf, crit, tags, buffer_m=1000)
             n_feat = len(feats)
@@ -508,7 +509,7 @@ def extract_st(candidates_path: Path | None = None,
             osm_dists[crit] = compute_osm_distances(candidates, feats)
     else:
         print("  [WARN] OSM PBF not found — OSM distances set to 9999")
-        for crit in OSM_TAGS:
+        for crit in OSM_CRITERIA:
             osm_dists[crit] = np.full(len(candidates), 9999.0)
 
     # Exclusion
@@ -532,7 +533,7 @@ def extract_st(candidates_path: Path | None = None,
         "dist_aerodrome (m)":          osm_dists.get("aero",   np.full(len(candidates), 9999.0)),
         "dist_streams (m)":            osm_dists.get("rivers", np.full(len(candidates), 9999.0)),
         "dist_roads (m)":              osm_dists.get("roads",  np.full(len(candidates), 9999.0)),
-        "dist_wells (m)":              osm_dists.get("wells",  np.full(len(candidates), 9999.0)),
+        # dist_wells omitted (C-2: only 7 OSM features, INGRH unavailable)
         "dist_cultivation (m)":        osm_dists.get("cult",   np.full(len(candidates), 9999.0)),
         "dist_coastline (m)":          osm_dists.get("coast",  np.full(len(candidates), 9999.0)),
         "dist_low_permeability (m)":   dist_perm,

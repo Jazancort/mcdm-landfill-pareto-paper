@@ -54,3 +54,36 @@ Pipeline code committed:
 
 From this commit onwards, santiago_extract.py may compute criterion distances.
 No Q2, R, portfolio, frontier, or score may be computed until Phase 2.
+
+--- ASTER GDEM v3 update (2026-10-28) ---
+
+ASTER GDEM v3 tiles downloaded via earthaccess (user: jazancort, NASA Earthdata).
+DOI: 10.5067/ASTER/ASTGTM.003
+
+  ASTGTMV003_N14W024_dem.tif
+    SHA-256: d77c85d68c1148298a29858e1aefb943a8093f8bdcd0252672cfef55d40b437a
+    Coverage: 14-15N, 23-24W  (southern tip of Santiago)
+    Size: 748219 bytes
+
+  ASTGTMV003_N15W024_dem.tif
+    SHA-256: dc54bbbe7f96539bbbb0cb77f0570e0ea3b6b6dcc3f039b001c9c2d5de109eda
+    Coverage: 15-16N, 23-24W  (main body of Santiago)
+    Size: 2429413 bytes
+
+  dem_santiago_geo.tif  (merged, EPSG:4326)
+    SHA-256: 714c465f07e1ca86b6852694373317c45f2bc16d352e3de885634a81fdf48605
+
+  dem_santiago_utm27.tif  (reprojected EPSG:32627, 30m)
+    SHA-256: 52c39d1e08b1c6ee80ed78b861a07a70445e370ec231ecdfa987eb43f7b38511
+
+  slope_santiago.tif  (Horn algorithm on UTM DEM)
+    SHA-256: 81a1c29ec4409383315a639267c050b574ecce38fbe9185ad31b50ad605784a1
+
+DEV-SANT-DEM-001 closed: GLO-30 replaced by ASTER GDEM v3 (same source as Fogo).
+
+Selftest-fogo with Fogo DEM (elevation_utm.tif, EPSG:4326):
+  max|Delta| = 1.07e-04 (non-blocking per PRESPEC; deciding criterion = 0 class changes)
+  classification changes = 0  PASS
+
+Spacing: 1250 m (n_trios = 21,112,677 at 1 km was 76M OVER limit; 1.25 km OK).
+C-2 wells: INGRH unavailable; omit wells; 10 criteria; renorm w0 committed.

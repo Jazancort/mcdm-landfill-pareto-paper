@@ -1,0 +1,15 @@
+{
+  "ASTGTMV003_N14W024_dem.tif": "d77c85d68c1148298a29858e1aefb943a8093f8bdcd0252672cfef55d40b437a",
+  "ASTGTMV003_N15W024_dem.tif": "dc54bbbe7f96539bbbb0cb77f0570e0ea3b6b6dcc3f039b001c9c2d5de109eda",
+  "dem_santiago_geo.tif": "714c465f07e1ca86b6852694373317c45f2bc16d352e3de885634a81fdf48605",
+  "dem_santiago_utm27.tif": "52c39d1e08b1c6ee80ed78b861a07a70445e370ec231ecdfa987eb43f7b38511",
+  "slope_santiago.tif": "81a1c29ec4409383315a639267c050b574ecce38fbe9185ad31b50ad605784a1",
+  "source": "ASTER GDEM v3 (doi: 10.5067/ASTER/ASTGTM.003)",
+  "processed": "2026-10-28",
+  "tiles": [
+    "ASTGTMV003_N14W024",
+    "ASTGTMV003_N15W024"
+  ],
+  "crs_geo": "EPSG:4326",
+  "crs_utm": "EPSG:32627"
+}
