@@ -849,37 +849,47 @@ def compute_q2_all_cells_gpu(gd: dict, w_cpu: np.ndarray, D: np.ndarray) -> dict
             q2 = 0 if _check_dom_gpu(F_mm_trios_gpu, F_mm_trios_gpu[tidx]) else 1
         result[cell] = q2
 
-    return result, F_mm_trios_gpu  # return F_mm_trios_gpu for K1 reuse
+    return result, F_mm_trios_gpu, F_site_gpu  # F_site_gpu needed for E1 mm-frontier check
 
 
 def compute_e1_cells_gpu(gd: dict, w_cpu: np.ndarray, rho_j_cpu: np.ndarray,
-                          groups: list, D: np.ndarray) -> list:
+                          groups: list, D: np.ndarray,
+                          F_mm_site_gpu=None, F_mm_trios_gpu=None) -> list:
     """E1 cells (M, B, W, V) on GPU for one draw.
 
+    Q2 is evaluated against the mm Pareto frontier (F_mm_trios_gpu), consistent
+    with the Fogo E1 experiment (PRESPEC §7.7; DEV-SANT-E1-001).  The E1-specific
+    frontier is used only for score-based portfolio selection (argmax of E1 score),
+    NOT for the Q2 dominance check.
+
+    @param F_mm_site_gpu - (N, G) mm group objectives per site, from compute_q2_all_cells_gpu.
+    @param F_mm_trios_gpu - (n_trios, G) mm trio objectives, the reference Pareto frontier.
     @returns list of dicts {e1_cell, Q2_opt, Q2_grd}.
     """
     X_mm_gpu  = gd["X_mm"]
     trios_gpu = gd["trios"]
-    group_idx = gd["group_idx"]
 
     e1_amps = get_e1_amplitudes(rho_j_cpu, w_cpu, groups)  # CPU dict
 
     rows = []
     for e1_name in E1_CELLS:
         A_j_cpu = e1_amps[e1_name]
-        F_site_gpu, F_e1_trios_gpu = _f_trios_gpu(
-            X_mm_gpu, trios_gpu, group_idx, w_cpu, A_j_cpu
-        )
-        # SAW score for E1 selector (CPU-weighted, GPU gather)
+        # E1 SAW score for portfolio selection (no need for E1 group objectives)
         sc_gpu = (X_mm_gpu * cp.asarray((w_cpu * A_j_cpu).astype(np.float64))).sum(1)
         sc_cpu = cp.asnumpy(sc_gpu)
 
-        tidx   = _optimal_gpu(sc_gpu, trios_gpu)
-        q2_opt = 0 if _check_dom_gpu(F_e1_trios_gpu, F_e1_trios_gpu[tidx]) else 1
+        # Select optimal and greedy portfolios using E1 score
+        tidx     = _optimal_gpu(sc_gpu, trios_gpu)
+        trio_opt = trios_gpu[tidx]   # (3,) GPU tensor — site indices
+        trio_grd = greedy_selector(sc_cpu, D)  # CPU list
 
-        trio_grd = greedy_selector(sc_cpu, D)
-        f_grd = F_site_gpu[trio_grd[0]] + F_site_gpu[trio_grd[1]] + F_site_gpu[trio_grd[2]]
-        q2_grd = 0 if _check_dom_gpu(F_e1_trios_gpu, f_grd) else 1
+        # Evaluate mm-group objectives of the selected portfolios against mm-frontier
+        # (DEV-SANT-E1-001: must use mm-frontier, not E1-specific frontier)
+        f_mm_opt = F_mm_site_gpu[trio_opt[0]] + F_mm_site_gpu[trio_opt[1]] + F_mm_site_gpu[trio_opt[2]]
+        q2_opt = 0 if _check_dom_gpu(F_mm_trios_gpu, f_mm_opt) else 1
+
+        f_mm_grd = F_mm_site_gpu[trio_grd[0]] + F_mm_site_gpu[trio_grd[1]] + F_mm_site_gpu[trio_grd[2]]
+        q2_grd = 0 if _check_dom_gpu(F_mm_trios_gpu, f_mm_grd) else 1
 
         rows.append({"e1_cell": e1_name, "Q2_opt": q2_opt, "Q2_grd": q2_grd})
     return rows
@@ -988,7 +998,7 @@ def run_kappa(branch_key: str, kappa, rng, data: dict,
 
         if use_gpu:
             # ---- GPU path: K1 + 8 cells in one GPU call ----
-            q2_all, F_mm_trios_gpu = compute_q2_all_cells_gpu(gpu_data, w, data["D"])
+            q2_all, F_mm_trios_gpu, F_mm_site_gpu = compute_q2_all_cells_gpu(gpu_data, w, data["D"])
             q2_k1 = q2_all["SAW_mm_opt"]
             if not timing_only and q2_k1 != 1:
                 print(f"  K1 FAIL at draw {draw_idx} kappa={label_k}: SAW/mm/opt Q2={q2_k1}")
@@ -998,7 +1008,9 @@ def run_kappa(branch_key: str, kappa, rng, data: dict,
             rows_8.append(row)
 
             if run_e1:
-                e1_rows = compute_e1_cells_gpu(gpu_data, w, rho_j, groups, data["D"])
+                e1_rows = compute_e1_cells_gpu(gpu_data, w, rho_j, groups, data["D"],
+                                               F_mm_site_gpu=F_mm_site_gpu,
+                                               F_mm_trios_gpu=F_mm_trios_gpu)
                 for r in e1_rows:
                     rows_e1.append({"draw": draw_idx, "kappa": label_k, **r})
 
@@ -1024,16 +1036,20 @@ def run_kappa(branch_key: str, kappa, rng, data: dict,
                 e1_amps = get_e1_amplitudes(rho_j, w, groups)
                 for e1_name in E1_CELLS:
                     A_e1 = e1_amps[e1_name]
-                    F_e1_site = compute_group_objectives(X_mm, w, A_e1, groups)
-                    F_e1_trios = compute_trio_objectives(F_e1_site, trios)
+                    # E1 SAW score for portfolio selection (group objectives not needed)
                     sc_opt = (X_mm * A_e1 * w).sum(1)
                     tidx_opt = optimal_selector(sc_opt, trios)
-                    q2_opt = 0 if check_dominated_raw(F_e1_trios, F_e1_trios[tidx_opt]) else 1
+                    trio_opt = trios[tidx_opt]
+                    # Q2 against mm-frontier (DEV-SANT-E1-001: consistent with Fogo §7.7)
+                    f_mm_opt = (F_mm_site_k1[trio_opt[0]] +
+                                F_mm_site_k1[trio_opt[1]] +
+                                F_mm_site_k1[trio_opt[2]])
+                    q2_opt = 0 if check_dominated_raw(F_mm_trios_k1, f_mm_opt) else 1
                     trio_grd = greedy_selector(sc_opt, data["D"])
-                    f_grd = (F_e1_site[trio_grd[0]] +
-                             F_e1_site[trio_grd[1]] +
-                             F_e1_site[trio_grd[2]])
-                    q2_grd = 0 if check_dominated_raw(F_e1_trios, f_grd) else 1
+                    f_mm_grd = (F_mm_site_k1[trio_grd[0]] +
+                                F_mm_site_k1[trio_grd[1]] +
+                                F_mm_site_k1[trio_grd[2]])
+                    q2_grd = 0 if check_dominated_raw(F_mm_trios_k1, f_mm_grd) else 1
                     rows_e1.append({
                         "draw": draw_idx, "kappa": label_k, "e1_cell": e1_name,
                         "Q2_opt": q2_opt, "Q2_grd": q2_grd,
