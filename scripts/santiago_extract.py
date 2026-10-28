@@ -344,18 +344,18 @@ def load_osm_features(pbf_path: Path, boundary: gpd.GeoDataFrame,
     except ImportError:
         sys.exit("ABORT: pyrosm not installed. Run: uv pip install pyrosm")
 
-    osm = pyrosm.OSM(str(pbf_path))
-
-    # Build bbox for initial filter (faster than full island)
+    # Build bbox in geographic CRS for pyrosm constructor
     b = boundary.to_crs(CRS_GEO)
     minx, miny, maxx, maxy = b.total_bounds
     buf_deg = buffer_m / 111_000
-    bbox = (miny - buf_deg, minx - buf_deg, maxy + buf_deg, maxx + buf_deg)
+    # pyrosm bounding_box: [left, bottom, right, top] = [minx, miny, maxx, maxy]
+    bbox = [minx - buf_deg, miny - buf_deg, maxx + buf_deg, maxy + buf_deg]
 
     try:
+        osm = pyrosm.OSM(str(pbf_path), bounding_box=bbox)
         feats = osm.get_data_by_custom_criteria(
-            custom_filter=tags, keep_nodes=True, keep_ways=True, keep_relations=True,
-            bounding_box=bbox,
+            custom_filter=tags,
+            keep_nodes=True, keep_ways=True, keep_relations=True,
         )
     except Exception as exc:
         print(f"  [WARN] OSM {key}: {exc} — returning empty")
@@ -365,7 +365,7 @@ def load_osm_features(pbf_path: Path, boundary: gpd.GeoDataFrame,
         return gpd.GeoDataFrame(geometry=[], crs=CRS_SANTIAGO)
 
     feats = feats.to_crs(CRS_SANTIAGO)
-    # Clip to island + buffer
+    # Additional spatial clip to island + buffer
     buf_geom = boundary.to_crs(CRS_SANTIAGO).geometry.union_all().buffer(buffer_m)
     feats = feats[feats.geometry.intersects(buf_geom)].copy()
     return feats
