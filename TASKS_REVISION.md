@@ -196,3 +196,56 @@ Result: PASS (deciding criterion)
   NOTE: dem_santiago_geo.tif currently points to Fogo DEM. Santiago DEM tiles
   (ASTGTMV003_N14W024, ASTGTMV003_N15W024) must be downloaded separately from
   NASA Earthdata (https://earthdata.nasa.gov/) before extraction.
+
+
+## Stage 3a: |T| and spacing rule (2026-10-28)
+
+### PRESPEC §3 Trio enumeration results
+
+Computed from geometry only (boundary only; no criterion values used).
+d_min = 10 km; declared in PRESPEC_SANTIAGO_A5 §1.
+
+| spacing | N_cand | n_trios | status |
+|---------|--------|---------|--------|
+| 1000 m  | 1001   | 76,124,767 | OVER (> 50M) |
+| 1250 m  | 650    | 21,112,677 | OK          |
+
+Spacing rule triggered: increase from 1000 m to 1250 m.
+**FINAL SPACING: 1250 m.**
+
+### Consequences
+
+- Official Stage 2 extraction (after ASTER DEM) uses 1250 m grid.
+- Exploratory extraction at 1000 m (df_santiago_st.csv, DEV-SANT-ORDER-001) NOT used.
+- n_trios = 21,112,677 is 42% of the 50M limit (comfortable margin).
+
+### C-2 Wells decision
+
+INGRH data not found in IDECV WFS (103 layers searched; no water point inventory).
+OSM has 7 features (all water_works), below the 20-feature threshold.
+
+Decision: omit wells criterion; renormalise 10 remaining weights proportionally.
+
+Renormalised w0 (10 criteria, wells omitted):
+  perm 0.160847 | slope 0.119577 | roads 0.031746
+  rivers 0.096296 | aspect 0.079365 | coast 0.073016 | protected 0.069841
+  urban 0.175661 | aero 0.107937 | cult 0.085714
+
+Groups after C-2 (wells removed from G2):
+  G1: perm, slope, roads (W=0.3122)
+  G2: rivers, aspect, coast, protected (W=0.3185) -- wells removed
+  G3: urban, aero, cult (W=0.3693)
+
+Fogo control: run Fogo factorial without wells; renorm 10 weights; report Q2 change.
+
+### Aero verification
+
+1 OSM feature: Aeroporto Internacional Nelson Mandela (IATA=RAI, ICAO=GVNP, Praia).
+aerodrome:type=international. Confirmed correct. Criterion valid.
+Note: range will be strongly concentrated around Praia (high A_j expected).
+
+### ASTER DEM pending
+
+data/santiago/dem_santiago_geo.tif = Copernicus GLO-30 (DEV-SANT-DEM-001).
+Official Stage 2 requires ASTER GDEM v3 tiles N14W024 and N15W024.
+Download via NASA Earthdata (free account) or earthaccess with credentials.
