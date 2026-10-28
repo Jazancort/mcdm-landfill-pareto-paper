@@ -75,6 +75,7 @@ git diff --stat 7f1028d bc41fd5             # deve corresponder ao diff acima
 ## Adenda: tag stage4-launch-r2
 
 Date: 2026-10-28 UTC (adenda criada durante revisão pré-lançamento)
+Commit r2: 3f069e7
 
 A revisão pré-lançamento identificou problemas bloqueadores adicionais que requerem
 um novo commit antes do lançamento. A tag `stage4-launch-r2` será criada após este
