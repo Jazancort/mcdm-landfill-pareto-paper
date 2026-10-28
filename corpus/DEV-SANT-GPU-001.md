@@ -165,26 +165,60 @@ Criterion: discrete Q2 outputs identical for all sampled draws.
 Statistical bound: if all 120 random draws (20 × 6 κ) match, divergence rate
 < 2.5% with 95% confidence (rule of three over 120 independent draws).
 
-**Verification A results (2026-10-28, GPU 0, 3000 draws × 6κ × 8 cells):**
-  min_argmax_gap = 1.250e-07  (>> τ=1e-9; safety factor ×125 over τ, ×1.25M over float64 error)
-  min_dom_gap    = 2.716e-04  (>> τ=1e-9; safety factor ×270,000)
-  total_fragile (gap < τ) = 0
-  Elapsed: 238.6 s
-  PASS: no fragile decisions — rounding cannot change any Q2 or argmax in S-T.
+**Verification A results — v2 (2026-10-28, GPU 0, 3000 stochastic draws × 6κ × 8 cells = 24,000 decisions):**
 
-**Verification B results (2026-10-28, CPU r4 worktree, 6κ in parallel, ~3 min wall time):**
-  20 random draws × 8 cells × 6κ = 960 Q2 values
-  Draws selected: numpy.default_rng(99+kappa).choice(500, 20) per κ (seed 99, not canonical)
-  Weight regeneration: advance get_branch_rngs(κ) exactly draw_idx steps
-  Fragile draws (from A): 0 — none added
-  Total Q2 differences: 0
-  PASS: all 960 sampled Q2 values agree between CPU r4 and GPU r5.
+Metrics and definitions:
 
-Statistical bound: 0 failures in 120 independent draws → divergence rate < 3/120 = 2.5%
-with 95% confidence (rule of three). Same order as Δ=2.5pp TOST margin.
+  argmax_gap (per draw, per _opt cell):
+    = trio_scores[rank1] − trio_scores[rank2]
+    A gap of 0 means two trios tie exactly → argmax order is undefined.
+    τ = 1e-9 (absolute). Float64 rounding for sums of ~600 terms ≈ 1e-13.
 
-**Conclusion (S-T):** GPU r5 ACCEPTED as equivalent to CPU r4 for S-T.
-Criterion A satisfied (0 fragile). Criterion B satisfied (0 differences in 960 Q2).
+  dom_gap (per draw, per _opt cell):
+    For selected trio f_sel, a "near-dominator" is any trio t with
+    max_g(F_t[g] − f_sel[g]) > 0 AND min_g(F_t[g] − f_sel[g]) ≥ −EPS.
+    dom_gap = min over near-dominators of max_g(F_t[g] − f_sel[g]).
+    Measures: how far the selected trio is from being dominated.
+    (This is NOT the smallest difference between any two objective values;
+    it is the distance from the selected trio to the domination boundary.)
+
+Results:
+  min_argmax_gap:          1.250e-07  (τ=1e-9; safety factor ×125 over τ, ×1.25M over float64 error)
+  min_dom_gap:             2.716e-04  (×270,000 over τ)
+  exact_ties (argmax==0):  0          (no draws where two trios tie exactly)
+  exact_ties (dom==0):     0          (no draws where selected trio is dominated — consistent with K1=100%)
+  total_fragile (gap<τ):   0
+  Top-20 smallest margins per κ: recorded in st_margin_audit_v2.json
+
+  PASS: no fragile decisions in 24,000 cells; rounding cannot change any Q2, argmax, or domination result.
+
+**Verification B results — v2 (2026-10-28, CPU r5 vs GPU r5, 232 draws total):**
+
+Draws per κ: 20 random (seed=99+κ) + top-20 from audit A = 37–40 per κ.
+Comparison: Q2 (binary), trio_idx (selected trio index for _opt cells), and
+trio_scores at selected trio (tolerance 1e-12).
+Note: compute_q2_all_cells in r5 is identical to r4 (function was not modified).
+
+Results:
+  Total Q2 checked:      1856  (232 draws × 8 cells)
+  Q2 diffs (cpu≠gpu):    0
+  Trio idx diffs:        0
+  Score diffs (>1e-12):  0
+
+  Q2 counts per cell in sample (shows test had power — not all 1s):
+    SAW_mm_grd/opt:    232/0   (ceiling — consistent with K1=100%)
+    SAW_vec_grd/opt:   204/28
+    TOPSIS_mm_grd/opt: 209/23
+    TOPSIS_vec_grd/opt:109/123  (← most variable; includes Q2=0 cases)
+
+  PASS: zero Q2 diffs, zero trio_idx diffs, zero score diffs.
+
+Statistical bound: 0 failures in 232 independent draws →
+  divergence rate < 3/232 = 1.3% with 95% confidence (rule of three).
+
+**Conclusion (S-T): GPU r5 ACCEPTED as equivalent to CPU r4 for S-T.**
+Criterion A: satisfied (0 fragile, 0 exact ties).
+Criterion B: satisfied (0 differences in Q2, trio_idx, and scores).
 S-T results are no longer provisional.
 
 ## κ=∞ K6=0 in S-T: diagnostic complete
