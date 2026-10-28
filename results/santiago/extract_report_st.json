@@ -1,0 +1,21 @@
+{
+  "branch": "ST",
+  "timestamp": "2026-10-28T01:50:54Z",
+  "n_cand": 1001,
+  "n_adm": 930,
+  "flat_cells_aspect": null,
+  "source_sha256": {
+    "geologia_santiago_wfs.geojson": "23158bc940efbf6f9e6f4be01c88e8ca332fe8a7bf14e185cc64eb48b4becd33",
+    "carta_agricola_st_wfs.geojson": "b3b155c6db081eefe8288d2efea2337cacb30d5b1c126f54dce77524de568a47",
+    "santiago_boundary.geojson": "5cc381644497a9f24eb326228b389d6cc02e09e7a9a7c7dc380d5f9559233a3d",
+    "area_protegida_santiago.geojson": "7af7c8d94a6e12b8cd733ea8ba8bf47e258d49a29837bb3f7f4ff6c0768731c5",
+    "cabo-verde-latest.osm.pbf": "26d7378e0b4a649f0cbd4b916ee085d9a50c65bd2d5af1c7a4556b44b97e0576"
+  },
+  "grid_params": {
+    "spacing_m": 1000.0,
+    "land_frac": 0.5,
+    "origin": "floor1m",
+    "centroid": "land",
+    "crs": "EPSG:32627"
+  }
+}

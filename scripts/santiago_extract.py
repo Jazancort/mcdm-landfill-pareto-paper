@@ -98,10 +98,10 @@ OSM_TAGS = {
     "roads":  {"highway": ["motorway","trunk","primary","secondary","tertiary",
                             "unclassified","residential","service","road","track","path"]},
     "rivers": {"waterway": ["stream","river","canal"]},          # NO ditch/drain
-    "coast":  {"natural": "coastline"},
+    "coast":  {"natural": ["coastline"]},                        # must be list for pyrosm
     "wells":  {"man_made": ["water_well","borehole","petroleum_well","water_tap","water_works"]},
     "urban":  {"landuse": ["residential","commercial","retail","industrial"]},
-    "aero":   {"aeroway": "aerodrome"},
+    "aero":   {"aeroway": ["aerodrome"]},                        # must be list for pyrosm
     "cult":   {"landuse": ["farmland","farmyard","orchard","vineyard","allotments"]},
 }
 
