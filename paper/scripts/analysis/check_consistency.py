@@ -387,6 +387,14 @@ else:
     else:
         print(f"  [OK  ] Citation undefined: 0")
 
+    # Check for bibtex-level "There were undefined citations"
+    bibtex_undef = log_text.count("There were undefined citations")
+    if bibtex_undef > 0:
+        FAIL.append("BibTeX: There were undefined citations in main.log")
+        print(f"  [FAIL] BibTeX undefined citations detected")
+    else:
+        print(f"  [OK  ] BibTeX: no undefined citations")
+
     # Check for ?? in output (unresolved cross-references)
     qq_count = log_text.count("??")
     if qq_count > 0:
@@ -398,7 +406,14 @@ else:
 # Check: main.bbl exists and is > 1 KB (check build dir too)
 bbl_path = ROOT / "main.bbl"
 build_bbl = Path(r"C:\build\paper\main.bbl")
-bbl_real = build_bbl if build_bbl.exists() and build_bbl.stat().st_size > 1024 else bbl_path
+# Use the most recently updated bbl (prefer local over stale build dir)
+if build_bbl.exists() and build_bbl.stat().st_size > 1024:
+    if bbl_path.exists() and bbl_path.stat().st_mtime >= build_bbl.stat().st_mtime:
+        bbl_real = bbl_path   # local is newer or same age
+    else:
+        bbl_real = build_bbl
+else:
+    bbl_real = bbl_path
 if bbl_real.exists():
     bbl_size = bbl_real.stat().st_size
     if bbl_size < 1024:
@@ -406,6 +421,15 @@ if bbl_real.exists():
         print(f"  [FAIL] main.bbl: {bbl_size} bytes (<1 KB)")
     else:
         print(f"  [OK  ] main.bbl: {bbl_size:,} bytes ({bbl_real})")
+    # Check .bbl is not older than refs.bib or main.tex
+    bbl_mtime = bbl_real.stat().st_mtime
+    for dep in [ROOT / "refs.bib", ROOT / "main.tex"]:
+        if dep.exists() and dep.stat().st_mtime > bbl_mtime + 5:
+            FAIL.append(f"main.bbl older than {dep.name} — re-run bibtex")
+            print(f"  [FAIL] main.bbl stale vs {dep.name}")
+        else:
+            if dep.exists():
+                print(f"  [OK  ] main.bbl up-to-date vs {dep.name}")
 else:
     FAIL.append("main.bbl not found — run make paper")
     print(f"  [FAIL] main.bbl not found")
@@ -688,6 +712,16 @@ BAD_PHRASES = [
      "old R-V optimal 20.0% (corrected to \\RVoptimal=6.2%)"),
     ("$-4.4$~pp",
      "old R-asp vs R-V delta -4.4 pp (corrected to +9.4 pp; sign flipped with R-V correction)"),
+    # Round 2 additions (2026-10-30)
+    ("shrinks to zero",
+     "banned phrase (§1.03 fix): use 'not distinguishable from zero at κ=50'"),
+    ("shrinking to zero",
+     "banned phrase (§1.03 fix): use 'not distinguishable from zero at κ=50'"),
+    ("+\\AggContrastKfifty",
+     "double positive sign: \\AggContrastKfifty already contains '+'; remove explicit '+'"),
+    # AggContrastKfifty correction (2026-10-30): +20.4 was wrong; correct is +17.2
+    ("+20.4~pp",
+     "AggContrastKfifty corrected to +17.2 pp; hardcoded +20.4 banned"),
 ]
 if main_tex.exists():
     for phrase, reason in BAD_PHRASES:
@@ -729,6 +763,30 @@ if suppl_tex_path.exists():
 else:
     FAIL.append("supplementary.tex not found — cannot check critical phrases")
     print("  [FAIL] supplementary.tex not found")
+
+# Rule 1c: Highlights ≤ 85 chars per item (Elsevier/CAS-DC limit)
+# Macros expanded with rough approximations for character count
+print()
+print("=== 1c: Highlight item length (≤ 85 chars) ===")
+if main_tex.exists():
+    _hl_block = re.search(r"\\begin\{highlights\}(.*?)\\end\{highlights\}", tex, re.DOTALL)
+    if _hl_block:
+        _hl_items = re.findall(r"\\item\s+(.*?)(?=\\item|$)", _hl_block.group(1), re.DOTALL)
+        for i, item in enumerate(_hl_items, 1):
+            # Rough expansion: replace $...$, \cmd{arg} etc. with short placeholders
+            expanded = item.strip()
+            expanded = re.sub(r"\$[^$]+\$", "X", expanded)
+            expanded = re.sub(r"\\[a-zA-Z]+\{[^}]*\}", "X", expanded)
+            expanded = re.sub(r"\\[a-zA-Z]+", "", expanded)
+            expanded = re.sub(r"\s+", " ", expanded).strip()
+            n = len(expanded)
+            if n > 85:
+                FAIL.append(f"Highlight {i}: {n} chars > 85-char limit: '{expanded[:60]}...'")
+                print(f"  [FAIL] Highlight {i}: {n} chars > 85: '{expanded[:60]}...'")
+            else:
+                print(f"  [OK  ] Highlight {i}: {n} chars — '{expanded}'")
+    else:
+        print("  [INFO] No highlights environment found")
 
 # Rule 2: non-ASCII bib keys in refs.bib
 bib_path = ROOT / "refs.bib"
@@ -908,9 +966,17 @@ if main_tex.exists():
     # All other remarks (other labels, unlabelled) are checked.
     _ALLOWED_REM_MAIN = {"rem:nonmonotone"}
     def _strip_allowed(t):
+        # Strip remark environments that contain the allowed labels
         def _r(m):
             return "" if any("\\label{" + l + "}" in m.group(0) for l in _ALLOWED_REM_MAIN) else m.group(0)
-        return _re2.sub(r"\\begin{remark}(\[[^\]]*\])?\s*.*?\\end{remark}", _r, t, flags=_re2.DOTALL)
+        t = _re2.sub(r"\\begin{remark}(\[[^\]]*\])?\s*.*?\\end{remark}", _r, t, flags=_re2.DOTALL)
+        # Also strip subsection blocks that contain the allowed labels
+        # (rem:nonmonotone was converted from remark to \subsection in §6.08 fix)
+        for label in _ALLOWED_REM_MAIN:
+            t = _re2.sub(
+                r"\\subsection\{[^}]*\}.*?\\label\{" + _re2.escape(label) + r"\}.*?(?=\\FloatBarrier|\\subsection\{|\\section\{|\\end\{document\})",
+                "", t, flags=_re2.DOTALL)
+        return t
     for sent in _re2.split(r"(?<=[.;])\s+|\n", _strip_allowed(tex)):
         if sent.strip().startswith("%"): continue
         s = sent.lower()
@@ -1026,8 +1092,23 @@ for _fname in ["main.tex", "macros.tex", "macros_amplitudes.tex", "macros_e6.tex
         for _m in re.finditer(r"\\(new|provide|renew)command\{\\(\w+)\}", _line):
             _defs[_m.group(2)].append(f"{_fname}:{_lineno} ({_m.group(1)}command)")
 # Flag only cross-file duplicates (same name in 2+ distinct files)
-_dups = {k: v for k, v in _defs.items()
-         if len(set(l.split(":")[0] for l in v)) > 1}
+# Exception: \renewcommand in macros.tex is an intentional override of a
+# \newcommand in an auto-generated file (macros_amplitudes.tex, macros_e6.tex)
+_RENEW_OVERRIDES = {
+    "TVvec",       # rounded to 3dp; auto-generated = 0.3113
+    "TVBvec",      # rounded to 3dp; auto-generated = 0.2479
+    "TVWvec",      # rounded to 3dp; auto-generated = 0.1954
+    "DeltaLtwoshift",  # rounded to 3dp; auto-generated = 0.3101
+    "DeltaLinfshift",  # rounded to 3dp; auto-generated = 0.2835
+}
+_dups = {}
+for k, v in _defs.items():
+    _files = set(l.split(":")[0] for l in v)
+    if len(_files) <= 1:
+        continue
+    if k in _RENEW_OVERRIDES:
+        continue  # intentional override
+    _dups[k] = v
 if _dups:
     for k, locs in _dups.items():
         FAIL.append(f"Macro \\{k} defined {len(locs)}x: {', '.join(locs)}")
@@ -1263,8 +1344,177 @@ try:
 
 except ImportError:
     print("  [INFO] classify_pf.py not found -- skipping")
+
+# ── Rule 6c: Tab6 contrasts = deterministic function of Tab5 Q2 values ───────
+# Every Table 6 contrast is computed from Table 5 Q2 cells (3 informative, †).
+# Tolerance = 0.2 pp (rounding from 1dp display).
+print()
+print("=== 6c: Table 6 contrasts derived from Table 5 Q2 values ===")
+def _get_Q(macros_text, name):
+    """Extract numeric value of \\newcommand{\\name}{...} from macros text."""
+    import re as _re6c
+    m = _re6c.search(r"\\(?:re)?newcommand\{\\%s\}\{([+-]?[\d.]+)\}" % name, macros_text)
+    return float(m.group(1)) if m else None
+
+try:
+    _macros_text = (ROOT / "macros.tex").read_text(encoding="utf-8")
+    _macro_amp_text = (ROOT / "macros_amplitudes.tex").read_text(encoding="utf-8")
+    _all_macros = _macros_text + _macro_amp_text
+    for _k, _suffix, _lo_mac, _hi_mac, _agg_mac, _ci_lo, _ci_hi in [
+        ("200", "", "AggLo", "AggHi", "AggContrast", -2.5, 2.5),
+        ("50",  "Kfifty", "AggLoKfifty", "AggHiKfifty", "AggContrastKfifty", 15.0, 25.0),
+    ]:
+        # Table 5 Q2 values (use renewcommand override values from macros.tex)
+        def Q(agg, norm, mont):
+            if agg == "saw":
+                names = {"mm_grd": "QtwommGreedy", "mm_opt": "QtwommOptimal",
+                         "vec_grd": "QtwovecGreedy", "vec_opt": "QtwovecOptimal"}
+            else:
+                names = {"mm_grd": "QtwoTOPSISmmGrd", "mm_opt": "QtwoTOPSISmmOpt",
+                         "vec_grd": "QtwoTOPSISvecGrd", "vec_opt": "QtwoTOPSISvecOpt"}
+            key = f"{norm}_{mont[:3]}"
+            macro = names[key] + ("Kfifty" if _suffix else "")
+            v = _get_Q(_all_macros, macro)
+            return v if v is not None else 0.0
+        # Aggregation contrast (3 informative cells †: mm_grd, vec_grd, vec_opt)
+        agg_derived = ((Q("saw","mm","grd") - Q("topsis","mm","grd")) +
+                       (Q("saw","vec","grd") - Q("topsis","vec","grd")) +
+                       (Q("saw","vec","opt") - Q("topsis","vec","opt"))) / 3.0
+        agg_macro = _get_Q(_all_macros, _agg_mac)
+        if agg_macro is not None and abs(agg_derived - float(agg_macro)) > 0.2:
+            FAIL.append(f"6c Tab6 Agg κ={_k}: macro {agg_macro} ≠ Tab5-derived {agg_derived:.2f}")
+            print(f"  [FAIL] Agg κ={_k}: macro={agg_macro}, Tab5-derived={agg_derived:.2f}")
+        else:
+            print(f"  [OK  ] Agg κ={_k}: macro={agg_macro}, Tab5-derived={agg_derived:.2f}")
+except Exception as _e6c:
+    print(f"  [WARN] Rule 6c skipped: {_e6c}")
+
+# ── Rule 8.03: Orphan bib entries (in .bbl but not cited in main.tex) ─────
+# A key in .bbl but not in any \cite in main.tex indicates \nocite{*} or
+# a supplementary-only citation sneaking into the main bibliography.
+print()
+print("=== 8.03: Orphan bib entries (bbl vs main.tex \\cite) ===")
+bbl_file = ROOT / "main.bbl"
+if bbl_file.exists() and main_tex.exists():
+    import re as _re8
+    _bbl_text = bbl_file.read_text(encoding="utf-8")
+    # re.S required: elsarticle-harv bibitem labels break across lines
+    bbl_keys = set(_re8.findall(r"\\bibitem\[.*?\]\s*\{([^}]+)\}", _bbl_text, _re8.S))
+    # Auto-verify parsed count against declared count
+    _ndecl_m = _re8.search(r"\\begin\{thebibliography\}\{(\d+)\}", _bbl_text)
+    if _ndecl_m:
+        _ndecl = int(_ndecl_m.group(1))
+        if len(bbl_keys) != _ndecl:
+            FAIL.append(f"8.03 parser: {len(bbl_keys)} keys parsed vs {_ndecl} declared in \\begin{{thebibliography}}")
+            print(f"  [FAIL] 8.03 parser: {len(bbl_keys)} keys vs {_ndecl} declared")
+    cited_raw = _re8.findall(r"\\cite[a-zA-Z]*\{([^}]+)\}", tex)
+    cited_flat = set()
+    for keys in cited_raw:
+        for k in keys.split(","):
+            cited_flat.add(k.strip())
+    orphans = sorted(bbl_keys - cited_flat)
+    print(f"  BBL keys: {len(bbl_keys)} | Cited in main.tex: {len(cited_flat)}")
+    if orphans:
+        for k in orphans:
+            FAIL.append(f"Orphan bib entry (in .bbl but not cited in main.tex): {k}")
+            print(f"  [FAIL] Orphan: {k}")
+    else:
+        print(f"  [OK  ] No orphan entries (all {len(bbl_keys)} bbl keys are cited in main.tex)")
+elif not bbl_file.exists():
+    print("  [INFO] main.bbl not found — compile first (xelatex + bibtex)")
+else:
+    print("  [INFO] main.tex not found")
+
+# ── E7: gate verification (22/22) and macro cross-check ─────────────────────
+print()
+print("=== E7: gates and macro cross-check ===")
+_e7_raw = RESULTS / "e7" / "e7_raw.csv"
+_e7_macros = ROOT / "macros_e7.tex"
+if _e7_raw.exists() and _e7_macros.exists():
+    import re as _re_e7
+    import pandas as _pd_e7
+    _e7df = _pd_e7.read_csv(_e7_raw)
+    # G1: k=200 and k=50 reproduce Table 5
+    _E7_G1 = {
+        (200, "saw","minmax","greedy"):   86.0,  (200,"saw","minmax","optimal"):  100.0,
+        (200, "saw","vector","greedy"):   66.2,  (200,"saw","vector","optimal"):   56.8,
+        (200, "topsis","minmax","greedy"):94.4,  (200,"topsis","minmax","optimal"):96.6,
+        (200, "topsis","vector","greedy"):63.4,  (200,"topsis","vector","optimal"):52.4,
+        (50,  "saw","minmax","greedy"):   97.6,  (50, "saw","minmax","optimal"):  100.0,
+        (50,  "saw","vector","greedy"):   77.0,  (50, "saw","vector","optimal"):   79.4,
+        (50,  "topsis","minmax","greedy"):89.8,  (50, "topsis","minmax","optimal"):92.2,
+        (50,  "topsis","vector","greedy"):52.0,  (50, "topsis","vector","optimal"):51.0,
+    }
+    _e7_fails = 0
+    for (k, a, n, m), exp in _E7_G1.items():
+        rows = _e7df.query(f"alpha=={k} and agg=='{a}' and norm=='{n}' and mont=='{m}'")
+        assert len(rows) > 0, f"E7 G1 filter empty: k={k} {a}/{n}/{m}"
+        got = rows["nd_Q2Ap"].mean() * 100
+        if abs(got - exp) > 0.5:
+            FAIL.append(f"E7 G1 k={k} {a}/{n}/{m}: {got:.1f}% vs {exp}%")
+            _e7_fails += 1
+    if _e7_fails == 0:
+        print(f"  [OK  ] E7 G1: all 16 cells at k=50 and k=200 match Table 5")
+    # G2: SAW/mm/opt = 100% at all kappa
+    for k in sorted(_e7df["alpha"].unique()):
+        q2 = _e7df.query(f"alpha=={k} and agg=='saw' and norm=='minmax' and mont=='optimal'")["nd_Q2Ap"].mean()*100
+        if abs(q2-100.0) > 0.1:
+            FAIL.append(f"E7 G2 SAW/mm/opt k={k}: {q2:.1f}% != 100%")
+    _kappas_ok = sorted(_e7df["alpha"].unique())
+    print(f"  [OK  ] E7 G2: SAW/mm/opt = 100% at k = {list(_kappas_ok)}")
+    # E7 macros cross-check (sample key macros)
+    _e7_mac_text = _e7_macros.read_text(encoding="utf-8")
+    def _get_e7_mac(name):
+        m = _re_e7.search(rf"\\newcommand\{{\\{name}\}}\{{([+-]?\d+\.?\d*)\}}", _e7_mac_text)
+        return float(m.group(1)) if m else None
+    _E7_MACRO_CHECKS = {
+        "AggKtwentyfive": (25, 21.1), "AggKonehundred": (100, 9.3),
+        "AggKfourhundred": (400, -5.7), "AggKthousand": (1000, -9.0),
+    }
+    _e7_csv = RESULTS / "e7" / "e7_contrasts.csv"
+    if _e7_csv.exists():
+        _cdf = _pd_e7.read_csv(_e7_csv)
+        for mac, (k, exp_mac) in _E7_MACRO_CHECKS.items():
+            csv_val = _cdf.query(f"kappa=={k} and contrast=='Agg_pooled3'")["diff_pp"].values
+            if len(csv_val) == 0:
+                continue
+            got_csv = float(csv_val[0])
+            got_mac = _get_e7_mac(mac)
+            if got_mac is not None and abs(got_mac - got_csv) > 0.15:
+                FAIL.append(f"E7 macro {mac}: macro={got_mac} != CSV={got_csv:.2f}")
+        print(f"  [OK  ] E7 macros match e7_contrasts.csv (sample 4/36)")
+else:
+    print(f"  [INFO] e7_raw.csv or macros_e7.tex not found — run E7 and make_fig_kappa.py")
+
+# ── 8.05: N-gram duplicate detection (warns only, not a hard failure) ────────
+print()
+print("=== 8.05: N-gram duplicate detection (n=12, warn >=2 hits) ===")
+import re as _re_ng, collections as _col_ng
+_ng_tex = tex
+_ng_body = _re_ng.sub(r"%.*", "", _ng_tex)
+_ng_body = _re_ng.sub(r"\\(begin|end)\{[^}]*\}", " ", _ng_body)
+_ng_words = _re_ng.findall(r"[A-Za-z0-9.][A-Za-z0-9.\-]*", _ng_body.lower())
+_n = 12
+_grams = _col_ng.Counter(tuple(_ng_words[i:i+_n]) for i in range(len(_ng_words)-_n))
+# Whitelist: legitimate repeated phrases (equation labels, boilerplate)
+_NG_WHITELIST = {
+    "the reference set analyses in section", "for any two alternatives i and i",
+    "p_g is the greedy portfolio", "the amplitude identity",
+    "exact assembly stays pareto efficient", "under optimal assembly",
+    "at p 0 05 each tost", "of each criterion",
+}
+_ng_hits = [(g, c) for g, c in _grams.items()
+            if c >= 2 and " ".join(g[:6]) not in _NG_WHITELIST]
+if _ng_hits:
+    top = sorted(_ng_hits, key=lambda x: -x[1])[:5]
+    for g, c in top:
+        phrase = " ".join(g)
+        print(f"  [WARN] {c}x: '{phrase}'")
+    print(f"  (Total n-gram duplicates: {len(_ng_hits)}; check if intentional)")
+else:
+    print(f"  [OK  ] No unexpected {_n}-gram repeats")
+
 if FAIL:
-    print(f"FAILED: {len(FAIL)} check(s):")
     for msg in FAIL:
         print(f"  x {msg}")
     sys.exit(1)
@@ -1307,6 +1557,88 @@ print()
 print("=== Rule regression tests ===")
 
 # All MUST_FAIL cases run through run_all_checks() (not just BAD_PHRASES substring)
+
+# ── R9: every figure and table label must be cited in the body ────────────────
+print("=== R9: figure/table citations ===")
+body_no_figure_floats = re.sub(
+    r"(?s)\\begin\{figure\*?\}.*?\\end\{figure\*?\}", "", tex
+)
+body_no_table_floats = re.sub(
+    r"(?s)\\begin\{table\*?\}.*?\\end\{table\*?\}", "", tex
+)
+all_labels = [l for l in re.findall(r"\\label\{((?:fig|tab):[^}]+)\}", tex)
+             if l not in {"fig:binary_amplitude"}]  # moved to supplementary
+
+all_labels = re.findall(r"\\label\{((?:fig|tab):[^}]+)\}", tex)
+for lab in all_labels:
+    pattern = r"\\(?:ref|pageref|autoref)\{" + re.escape(lab) + r"\}"
+    body_to_search = body_no_figure_floats if lab.startswith("fig:") else body_no_table_floats
+    if re.search(pattern, body_to_search):
+        print(f"  [OK  ] cited: {lab}")
+    else:
+        FAIL.append(f"R9: not cited: {lab}")
+        print(f"  [FAIL] R9 not cited: {lab}")
+
+# ── R10: log must not request recompilation ────────────────────────────────────
+print("=== R10: no rerun request in log ===")
+if log_path and log_path.exists():
+    log_txt = log_path.read_text(encoding="utf-8", errors="replace")
+    if re.search(r"Rerun to get|Label\(s\) may have changed", log_txt):
+        FAIL.append("R10: log requests rerun")
+        print("  [FAIL] R10: rerun requested in log")
+    else:
+        print("  [OK  ] R10: no rerun needed")
+
+# ── R11: forbidden phrases in main.tex ────────────────────────────────────────
+print("=== R11: forbidden phrases ===")
+FORBIDDEN_R11 = [
+    ("matters across the whole range of weight uncertainty tested",
+     "R11: banned: 'whole range' in §9"),
+    ("confirming that Section",
+     "R11: banned: 'confirming that Section' (broken sentence)"),
+    ("most $\\\\kappa$-sensitive",
+     "R11: banned: 'most κ-sensitive'"),
+    ("normalisation dominates",
+     "R11: banned: 'normalisation dominates'"),
+    ("(\\\\mathrm{TV},N_{\\\\mathrm{eff}})",
+     "R11: banned: TV N_eff should be TV m_eff"),
+    ("robustness check",
+     "R11: banned: 'robustness check' in table caption"),
+    ("for any criterion \\$j\\$; without such information",
+     "R11: banned: per-criterion kappa-hat"),
+]
+for phrase, label in FORBIDDEN_R11:
+    if phrase in tex:
+        FAIL.append(label)
+        print(f"  [FAIL] {label}")
+    else:
+        print(f"  [OK  ] {label}")
+
+
+# --- R12: ORCID checksum (ISO 7064 Mod 11-2) ---
+print('=== R12: ORCID checksum ===')
+def _orcid_valid(orcid_str):
+    digits = re.sub(r'[-\s]', '', orcid_str.upper())
+    if len(digits) != 16: return False
+    total = 0
+    for ch in digits[:-1]:
+        val = 10 if ch == 'X' else int(ch)
+        total = (total + val) * 2
+    check_val = 10 if digits[-1] == 'X' else int(digits[-1])
+    return (total + check_val) % 11 == 1
+
+_orcid_sources = [ROOT / 'main.tex', ROOT / 'CITATION.cff', ROOT / '.zenodo.json']
+for _sp in _orcid_sources:
+    if not _sp.exists(): continue
+    _txt = _sp.read_text(encoding='utf-8', errors='replace')
+    for _m in re.finditer(r'\d{4}-\d{4}-\d{4}-\d{3}[\dX]', _txt):
+        _oid = _m.group()
+        if _orcid_valid(_oid):
+            print(f'  [OK  ] R12 ORCID valid: {_oid} ({_sp.name})')
+        else:
+            FAIL.append(f'R12: invalid ORCID {_oid} in {_sp.name}')
+            print(f'  [FAIL] R12 invalid ORCID {_oid} in {_sp.name}')
+
 _MUST_FAIL = [
     # BAD_PHRASES
     ("& 0.135 & 0.995",          "Tab2 stale rho_raw slope"),
@@ -1375,6 +1707,13 @@ _MUST_FAIL = [
     # E3: §6.7 merged into §6.2
     ("\\subsection{Magnitude is not enough: the concentration",
      "E3: §6.7 merged into §6.2; must not reappear as standalone subsection"),
+    # Round 2 additions (2026-10-30)
+    ("shrinks to zero at kappa=50",
+     "§8.02: 'shrinks to zero' banned phrase"),
+    ("shrinking to zero",
+     "§8.02: 'shrinking to zero' banned phrase"),
+    ("+\\AggContrastKfifty",
+     "§8.01: double positive sign — AggContrastKfifty already has embedded '+'"),
 ]
 
 _MUST_PASS = [

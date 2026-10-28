@@ -1,14 +1,15 @@
 {
   "title": "Replication package: Normalisation as implicit re-weighting in multi-criteria portfolio selection: closed form and cost against an exact Pareto frontier",
-  "version": "v1.6",
+  "version": "v1.7",
   "upload_type": "software",
-  "publication_date": "2026-10-30",
+  "publication_date": "2026-11-01",
   "license": "MIT",
   "access_right": "open",
   "creators": [
     {
       "name": "Azancort Neto, Julio Leite",
-      "affiliation": "Instituto de Tecnologia, Universidade Federal do Para (UFPA), Belem, PA, Brazil"
+      "affiliation": "Instituto de Tecnologia, Universidade Federal do Para (UFPA), Belem, PA, Brazil",
+      "orcid": "https://orcid.org/0000-0003-2866-5445"
     }
   ],
   "keywords": [
@@ -32,5 +33,5 @@
       "scheme": "url"
     }
   ],
-  "description": "<p>Replication package for <em>Normalisation as implicit re-weighting in multi-criteria portfolio selection: closed form and cost against an exact Pareto frontier</em> (under review at Omega, Elsevier).</p><p><strong>Contents:</strong> (i) input data for 389 admissible landfill sites on Fogo Island, Cabo Verde; (ii) pre-registration documents for six sub-experiments and the main factorial (PRESPEC_E1-E6, PRESPEC_R1, PRESPEC_SANTIAGO); (iii) pre-computed Monte Carlo results (4,000 draws, kappa=200 primary; kappa=50 robustness check); (iv) bootstrap contrast files; (v) Python scripts to reproduce all experiments, bootstrap analyses, LaTeX macros, and manuscript figures; (vi) LaTeX manuscript source (v1.6, post-review editorial revision).</p><p><strong>Key finding:</strong> Normalisation is the dominant driver of Pareto attainment. Switching from min-max to vector normalisation shifts greedy attainment by +25.4 pp (kappa=200) and +29.2 pp (kappa=50); the SAW-TOPSIS contrast is equivalent to zero at kappa=200 but rises to +20.4 pp at kappa=50.</p><p><strong>Changelog v1.6</strong> (2026-10-30): Editorial revision rounds 1-5 applied to manuscript (sections 3-8): kappa chronology corrected; Remark 7 N&S condition clarified; abstract trimmed to 245 words (PDF); highlight character limit enforced; TV macro rounded to 3dp globally; Zenodo concept DOI corrected to 10.5281/zenodo.23676428; Andrade2015 author name and journal corrected; Costa2020 DOI added; Marti2022 corrigendum note restored; structural repetition reduced (sections 6.02, 6.03, 6.09, 6.10).</p>"
+  "description": "<p>Replication package for <em>Normalisation as implicit re-weighting in multi-criteria portfolio selection: closed form and cost against an exact Pareto frontier</em> (under review at Omega, Elsevier).</p><p><strong>Contents:</strong> (i) input data for 389 admissible landfill sites on Fogo Island, Cabo Verde; (ii) pre-registration documents for six sub-experiments and the main factorial including E7 kappa sweep (PRESPEC_E1-E6, PRESPEC_R1, PRESPEC_E7_KAPPA, PRESPEC_E7_KAPPA_A1); (iii) pre-computed Monte Carlo results (6 kappa values: 25, 50, 100, 200, 400, 1000; 500 draws per kappa; 22/22 gates PASS); (iv) bootstrap contrast files; (v) Python scripts to reproduce all experiments, bootstrap analyses, LaTeX macros, and manuscript figures; (vi) LaTeX manuscript source (v1.7, §7.x kappa sensitivity added).</p><p><strong>Key finding:</strong> Normalisation is the dominant driver of Pareto attainment. The SAW-TOPSIS aggregation contrast decreases monotonically with kappa (+21.1 pp at kappa=25, equivalent to zero at kappa=200, -9.0 pp at kappa=1000); the crossover falls in [170, 240].</p><p><strong>Changelog v1.7</strong> (2026-11-01): E7 kappa sweep completed (6 values, 500 draws, 22/22 gates); §7.x on dependence on weight-draw dispersion added; DEV-E7-001 closed (mc_2cube_fixed.py confirmed correct source for Table 5; Gate G1 failure was a seed issue, not a scorer bug); gate code fixed (pandas StringDtype astype guard + assert); mc_2cube_and_4thcell.py deprecated (raise RuntimeError); macros_e7.tex added (36 bootstrap intervals); PRESPEC_E7_KAPPA.md amended with TOST margin delta=2.5 pp.</p>"
 }

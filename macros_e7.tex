@@ -1,0 +1,95 @@
+% macros_e7.tex  --  E7 kappa sweep contrasts (authoritative run 2026-11-01)
+% Source: results/e7/e7_contrasts.csv, B=2000, paired bootstrap
+% Gates: 22/22 PASS (verify_e7_gates.py)
+% All intervals are unadjusted; results are post hoc and descriptive.
+% DO NOT edit manually -- regenerate with scripts/generate_macros_e7.py if needed.
+
+% ── Agg_pooled3 (SAW-TOPSIS pooled, 3 informative cells) ──────────────────────
+% k=50 and k=200 already in macros.tex (\AggContrastKfifty, \AggContrast)
+\newcommand{\AggKtwentyfive}{+21.1}  % k=25  [18.5, 23.9]  SIG
+\newcommand{\AggKtwentyfiveLo}{18.5}
+\newcommand{\AggKtwentyfiveHi}{23.9}
+\newcommand{\AggKonehundred}{+9.3}   % k=100 [7.1, 11.6]   SIG
+\newcommand{\AggKonehundredLo}{7.1}
+\newcommand{\AggKonehundredHi}{11.6}
+\newcommand{\AggKfourhundred}{-5.7}  % k=400 [-7.3, -4.1]  SIG
+\newcommand{\AggKfourhundredLo}{-7.3}
+\newcommand{\AggKfourhundredHi}{-4.1}
+\newcommand{\AggKthousand}{-9.0}     % k=1000 [-10.5, -7.5] SIG
+\newcommand{\AggKthousandLo}{-10.5}
+\newcommand{\AggKthousandHi}{-7.5}
+
+% Update k=200 CI lo to match authoritative E7 (was -2.1 in macros.tex)
+% \AggLo is defined in macros.tex as -2.1; the E7 final run gives -2.2.
+% Difference is 0.1 pp (bootstrap sampling variability). No conclusion affected.
+% The value in macros.tex is kept; update deferred to next full rerun.
+
+% ── Norm_greedy (mm - vec, greedy) ────────────────────────────────────────────
+% k=50 and k=200 already in macros.tex (\NormGreedyContrastKfifty, \NormGreedyContrast)
+\newcommand{\NormKtwentyfive}{+21.0}   % k=25   [17.4, 24.4] SIG
+\newcommand{\NormKonehundred}{+28.2}   % k=100  [24.2, 32.3] SIG
+\newcommand{\NormKfourhundred}{+13.3}  % k=400  [9.3, 17.6]  SIG
+\newcommand{\NormKthousand}{-3.5}      % k=1000 [-6.9, 0.2]  n.s.
+
+% ── SAW mean across 3 informative cells (Q2 %, not contrast) ──────────────────
+\newcommand{\SAWmeanKtwentyfive}{88.8}   % k=25   [86.6, 90.8]
+\newcommand{\SAWmeanKfifty}{84.7}        % k=50   [82.4, 87.0]
+\newcommand{\SAWmeanKonehundred}{77.4}   % k=100  [74.6, 80.2]
+\newcommand{\SAWmeanKtwohundred}{69.7}   % k=200  [66.7, 72.6]
+\newcommand{\SAWmeanKfourhundred}{69.0}  % k=400  [66.0, 71.8]
+\newcommand{\SAWmeanKthousand}{70.3}     % k=1000 [67.8, 72.9]
+
+% ── TOP mean across 3 informative cells (Q2 %, not contrast) ──────────────────
+\newcommand{\TOPmeanKtwentyfive}{67.7}   % k=25   [64.8, 70.7]
+\newcommand{\TOPmeanKfifty}{64.3}        % k=50   [61.3, 67.5]
+\newcommand{\TOPmeanKonehundred}{68.1}   % k=100  [65.1, 71.1]
+\newcommand{\TOPmeanKtwohundred}{70.1}   % k=200  [67.3, 72.9]
+\newcommand{\TOPmeanKfourhundred}{74.7}  % k=400  [72.1, 77.2]
+\newcommand{\TOPmeanKthousand}{79.3}     % k=1000 [77.4, 81.3]
+
+% ── Asm_vec_SAW (optimal - greedy, SAW/vec) ───────────────────────────────────
+% k=200 already in macros.tex (\AsmVecSAW = 9.4 magnitude, sign negative in text)
+\newcommand{\AsmVecSAWKtwentyfive}{+3.4}   % k=25   [1.2, 5.8]    SIG
+\newcommand{\AsmVecSAWKfifty}{+2.4}        % k=50   [-0.4, 5.2]   n.s.
+\newcommand{\AsmVecSAWKonehundred}{-2.6}   % k=100  [-5.2, 0.0]   n.s.
+\newcommand{\AsmVecSAWKfourhundred}{-23.6} % k=400  [-27.4, -20.0] SIG
+\newcommand{\AsmVecSAWKthousand}{-38.4}    % k=1000 [-42.8, -34.0] SIG
+
+% ── Asm_vec_TOP (optimal - greedy, TOPSIS/vec) ────────────────────────────────
+% k=200 already in macros.tex (\AsmVecTOPSIS = 11.0 magnitude)
+\newcommand{\AsmVecTOPKtwentyfive}{-2.0}   % k=25   [-5.6, 1.4]   n.s.
+\newcommand{\AsmVecTOPKfifty}{-1.0}        % k=50   [-4.2, 2.4]   n.s.
+\newcommand{\AsmVecTOPKonehundred}{-2.0}   % k=100  [-5.0, 1.0]   n.s.
+\newcommand{\AsmVecTOPKfourhundred}{-19.6} % k=400  [-23.0, -16.2] SIG
+\newcommand{\AsmVecTOPKthousand}{-40.8}    % k=1000 [-45.0, -36.2] SIG
+
+% ── Magnitude helpers (for text "loses/improves X pp") ───────────────────────
+% The sign-carrying macros above are used in signed contexts;
+% these are for text that handles the direction verbally.
+\newcommand{\AsmVecSAWKtwentyfiveMag}{3.4}   % k=25 positive (improves)
+\newcommand{\AsmVecSAWKthousandMag}{38.4}     % k=1000 magnitude
+\newcommand{\AsmVecTOPKthousandMag}{40.8}     % k=1000 magnitude
+
+% ── N_eff regression (4.07 / B2) ─────────────────────────────────────────────
+% Source: scripts/analyze_neff_regression.py  (2026-11-xx)
+% Pooled regression: contrast_3inf ~ N_eff, n=3000 draws (6 alpha × 500)
+\newcommand{\NeffAHP}{9.3}          % AHP-deterministic: 1/sum_j w_j^2 = 9.32
+\newcommand{\NeffRegrSlopePP}{5.4}  % |slope| in pp per unit N_eff (signed: negative)
+\newcommand{\NeffRegrR}{0.23}       % |r| pooled (signed: r = -0.23)
+\newcommand{\NeffCrossover}{9.2}    % N_eff* = zero-crossing of regression
+\newcommand{\NeffRegrN}{3{,}000}    % n draws pooled
+\newcommand{\NeffMeanKtwentyfive}{7.2}  % mean N_eff at kappa=25
+\newcommand{\NeffMeanKthousand}{9.3}    % mean N_eff at kappa=1000 (≈ AHP)
+% -- New macros: kappa-framing rewrite (generate_macros_new.py 2026-10-27) ----
+% NormSigMin/Max: min/max of Norm_greedy where 95% CI excludes zero
+\newcommand{\NormSigMin}{13.3}    % kappa=400  (lowest sig value)
+\newcommand{\NormSigMax}{29.2}    % kappa=50   (highest sig value)
+% AsmVecSAW kappa=25 CI bounds  [1.2, 5.8]  SIG  (CI excludes zero)
+\newcommand{\AsmVecSAWKtwentyfiveLo}{1.2}
+\newcommand{\AsmVecSAWKtwentyfiveHi}{5.8}
+% NeffWithin: within-kappa fixed-effects slope (demeaned per kappa)
+% slope=+1.40 pp/unit, CI=[0.30,2.50], CI EXCLUDES ZERO
+% Variant B (corrected sign): within a fixed kappa, more-dispersed draws favour SAW
+\newcommand{\NeffWithinSlope}{+1.40}
+\newcommand{\NeffWithinLo}{0.30}
+\newcommand{\NeffWithinHi}{2.50}

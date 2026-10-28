@@ -4,8 +4,8 @@ type: software
 title: >-
   Normalisation as implicit re-weighting in multi-criteria portfolio
   selection: closed form and cost against an exact Pareto frontier
-version: "v1.6"
-date-released: "2026-10-30"
+version: "v1.8"
+date-released: "2026-10-27"
 license: MIT
 repository-code: "https://github.com/Jazancort/mcdm-landfill-pareto-paper"
 url: "https://doi.org/10.5281/zenodo.23676428"
@@ -21,7 +21,7 @@ abstract: >
 authors:
   - family-names: "Azancort Neto"
     given-names: "Julio Leite"
-    orcid: "https://orcid.org/0009-0000-2754-8503"
+    orcid: "https://orcid.org/0000-0003-2866-5445"
     affiliation: "Instituto de Tecnologia, Universidade Federal do Para (UFPA), Belem, PA, Brazil"
 keywords:
   - MCDM

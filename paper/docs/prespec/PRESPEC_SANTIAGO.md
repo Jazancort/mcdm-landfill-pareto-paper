@@ -3,7 +3,7 @@
 ```
 Status:       DRAFT — not yet committed
 Immutability: starts at git tag `prespec-santiago-f0` (not at any specific commit)
-Phase 0 hash: [HASH_F0]   (fill in TASKS.md after the tag is created)
+Phase 0 hash: 06fc1e76a3e33a2d6aaa069936cc6552918c6026
 Code hash:    94b5baf     (includes new R denominator from 5da02ab; scoring algorithm frozen at 022931e)
 Written:      2026-10-26
 ```
@@ -515,7 +515,7 @@ Phase 1 commit [HASH_F1] contains, and only contains:
 
 ## 10. Deviation policy
 
-Any change after [HASH_F0] that modifies a prediction, threshold, criterion definition,
+Any change after 06fc1e76a3e33a2d6aaa069936cc6552918c6026 that modifies a prediction, threshold, criterion definition,
 or weight in §3–§6 must be logged as DEV-S-NNN with date, reason, and expected direction
 of effect. No prediction, threshold, or definition in §3–§6 may be changed after Phase 1
 commit [HASH_F1].
@@ -842,7 +842,7 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 - [x] Run `scripts/santiago_grid.py --mode fogo-check` (replaces deprecated `_verify_fogo_grid.py`): **CONFIRMED** 473/473 coordinates at 0.0 m, N_adm=389, n_trios=1,944,653. Convention: 32626+floor1m+land+geol_dissolved. All trials documented in §3 PRE-A table. (2026-10-25–26)
 - [x] Note: did NOT choose between boundary sources based on which reproduces 473. Convention (floor1m+land) read from `Landfill_NSGA2_Paper_Final.ipynb` and confirmed by 473/473 coordinate match.
 - [x] Complete Annex B: source confirmed as `Landfill_NSGA2_Paper_Final.ipynb` (SHA documented in §0). Queries identical to Zenodo script (same tags, same dist=30000). Source citation updated from L271-287 to notebook.
-- [ ] Fill `[HASH_F0]` (this commit's hash — fill after `git commit`, before push)
+- [x] Fill `[HASH_F0]` → `06fc1e76a3e33a2d6aaa069936cc6552918c6026` (tag prespec-santiago-f0-amend-final)
 - [x] Fill `[HASH_CODE]` = 94b5baf (includes new R denominator; scoring algorithm frozen at 022931e)
 - [x] Fill boundary source and version for S-T: IDECV `divisao_admin:ilha`, nom_ilha='SANTIAGO', EPSG:32627
 - [x] Fill boundary source and version for S-N: IDECV `divisao_admin:concelho`, 3 concelhos, EPSG:32627
@@ -872,7 +872,8 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 | `prespec-santiago-f0-amend3` | `fe2e362` | 2026-10-26T15:05Z | Cone test oracle (0.805 vs −0.102); geotransform assert; [90°,180°] declared closed; no justification found in notebook; non-access declaration |
 | `prespec-santiago-f0-amend4` | `b20df70` | 2026-10-26 | Date fixed to 2026-10-26T15:05Z; Andrade (2015) not inspected (stated explicitly); caldera-ash speculation removed |
 | `prespec-santiago-f0-amend4b` | `6143c88` | 2026-10-26 | (**Errata:** this tag incorrectly stated -compute_edges confirmed and ocean = nodata −32768. Both were wrong; corrected in amend-final.) |
-| `prespec-santiago-f0-amend-final` | this commit | 2026-10-26 | **Ocean coding corrected:** ocean in hell.tif = VALUE 0 (not nodata); nodata = 2.27% corner triangles only; -compute_edges irrelevant; Python Horn gives max\|Δ\| = 0.000° on 7241 coastal cells; amend3 "10837 border cells" explained as UTM corner triangles. PRESPEC technically frozen after this commit. |
+| `prespec-santiago-f0-amend-final` | `06fc1e76` | 2026-10-26 | **Ocean coding corrected:** ocean in hell.tif = VALUE 0 (not nodata); nodata = 2.27% corner triangles only; -compute_edges irrelevant; Python Horn gives max\|Δ\| = 0.000° on 7241 coastal cells; amend3 "10837 border cells" explained as UTM corner triangles. PRESPEC technically frozen after this commit. |
+| `prespec-santiago-a5` | `fa2f9a2` | 2026-10-27 | κ grid {25,50,100,200,400,1000,∞}; predictions K1–K6; d_min = 10 km fixed; S-N objectives 4D confirmed (groups A–D); seed convention from PRESPEC_E7_KAPPA_A2 §Seeds confirmation; Assomada rule fixed pre-data. **Note:** the body of PRESPEC_SANTIAGO_A5.md cites commit `475c3eb` which no longer exists (overwritten by amend before tagging). The authoritative reference is tag `prespec-santiago-a5` → commit `fa2f9a2`. |
 
 Note: amend4b contained an incorrect statement (ocean = nodata, -compute_edges confirmed). That tag is retained for audit trail; the correction is in amend-final.
 ---
