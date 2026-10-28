@@ -224,7 +224,11 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict) -> dic
           "per_kappa": kappa_results_s6,
           "holm_adj_p": {str(int(k)): round(h,4) for k,h in zip(kappa_vals,holm_s6)},
           "result": ("CONFIRMED" if s6_pass else "NOT CONFIRMED") if testable_s6 else "NOT TESTABLE",
-          "note": "R = 1-Q2 (fraction of non-efficient draws). S6 and S2 are equivalent statements."}
+          "note": ("R = 1-Q2 (fraction of non-efficient draws). "
+                   "S6 and S2 make OPPOSITE predictions: S2 predicts grd > opt (greedy reversal); "
+                   "S6 predicts R(grd) > R(opt) = opt > grd. "
+                   "Fogo reference shows S6 CONFIRMED (R_grd=6.63 > R_opt=5.27pp), not S2. "
+                   "In Santiago S-N: S6 confirmed (opt >> grd). In Santiago S-T: both ≈ 0 (neutral).")}
 
     # ── S7a ─────────────────────────────────────────────────────────────────
     # R(E1-B, opt) > 0, 95% CI excludes 0 | TV_B ≥ 0.05
@@ -313,10 +317,35 @@ def analyze_k5_greedy(branch_key: str) -> dict:
         for draw_idx in range(N_DRAWS):
             w = rng.dirichlet(kappa * w0); w /= w.sum()
             A_ones_l = np.ones(len(w0))
-            F_site = compute_group_objectives(X_mm, w, A_ones_l, groups)
-            F_trios = compute_trio_objectives(F_site, trios)
 
-            # CPU scores for greedy (always CPU)
+            if use_gpu:
+                # GPU path: compute F_site and F_trios on GPU
+                F_site_gpu, F_trios_gpu = _f_trios_gpu(
+                    gd["X_mm"], gd["trios"], gd["group_idx"], w, A_ones_l
+                )
+                F_site  = cp.asnumpy(F_site_gpu)   # (N, G) for grd check
+                F_trios_np = cp.asnumpy(F_trios_gpu)  # (n_trios, G) for dom check
+                # GPU scorers
+                w_gpu = cp.asarray(w)
+                rj    = gd["rho_j"]
+                X_gpu = gd["X_mm"]
+                V_mm  = X_gpu * w_gpu
+                V_vec = X_gpu * rj * w_gpu
+                def _t(V):
+                    PIS=V.max(0); NIS=V.min(0)
+                    dp=cp.sqrt(((V-PIS)**2).sum(1)); dn=cp.sqrt(((V-NIS)**2).sum(1))
+                    d=dp+dn; return cp.where(d==0, 0.5, dn/d)
+                scorers_gpu_d = {
+                    "SAW_mm":    (X_gpu * w_gpu).sum(1),
+                    "SAW_vec":   (X_gpu * rj * w_gpu).sum(1),
+                    "TOPSIS_mm": _t(V_mm),
+                    "TOPSIS_vec":_t(V_vec),
+                }
+            else:
+                F_site  = compute_group_objectives(X_mm, w, A_ones_l, groups)
+                F_trios_np = compute_trio_objectives(F_site, trios)
+
+            # CPU scores for greedy (greedy is always CPU)
             sc_cpu = {
                 "SAW_mm":    scorers_cpu[0](w),
                 "SAW_vec":   scorers_cpu[1](w),
@@ -328,11 +357,14 @@ def analyze_k5_greedy(branch_key: str) -> dict:
                 sc_key = next(k for k in sc_cpu if k in cell)
                 sc = sc_cpu[sc_key]
 
-                opt_idx = optimal_selector(sc, trios)
+                # Optimal: GPU if available
+                if use_gpu:
+                    opt_idx = _optimal_gpu(scorers_gpu_d[sc_key], gd["trios"])
+                else:
+                    opt_idx = optimal_selector(sc, trios)
+
                 grd_trio = greedy_selector(sc, D)
 
-                # Check if grd selected one of the 3 sites in the optimal trio
-                # (greedy returns 3 sites; optimal returns one trio index)
                 opt_sites = set(int(x) for x in trios[opt_idx])
                 grd_sites = set(grd_trio)
                 same_trio = (opt_sites == grd_sites)
@@ -340,11 +372,10 @@ def analyze_k5_greedy(branch_key: str) -> dict:
                 if same_trio:
                     agree_per_cell[cell] += 1
                 else:
-                    # Q2 for greedy trio under mm frontier
                     from run_santiago_mc import check_dominated_raw
                     f_grd = F_site[grd_trio[0]] + F_site[grd_trio[1]] + F_site[grd_trio[2]]
-                    q2_grd = 0 if check_dominated_raw(F_trios, f_grd) else 1
-                    q2_opt = 0 if check_dominated_raw(F_trios, F_trios[opt_idx]) else 1
+                    q2_grd = 0 if check_dominated_raw(F_trios_np, f_grd) else 1
+                    q2_opt = 0 if check_dominated_raw(F_trios_np, F_trios_np[opt_idx]) else 1
                     q2_grd_when_diff[cell].append(q2_grd)
                     q2_opt_when_diff[cell].append(q2_opt)
 
