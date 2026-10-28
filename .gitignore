@@ -55,3 +55,7 @@ docs/estado-atual.md
 Thumbs.db
 .vscode/
 *.swp
+
+# Santiago data (large files — SHA recorded in osm_snapshot_meta.json and lock file)
+data/santiago/*.pbf
+data/santiago/*.tif
