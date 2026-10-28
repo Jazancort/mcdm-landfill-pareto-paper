@@ -112,17 +112,59 @@ as a deviating replication with the difference documented.
 
 ## Equivalence test status
 
-Launched 2026-10-28 from worktree at ~/scratch/mc_equiv_cpu (r4, da3a840):
-  - S-N full (--branch SN): ~4 min CPU, results in mc_equiv_cpu/results/santiago/
-  - S-T --timing 5 draws: confirms K1=100% at all κ on CPU path
+Launched 2026-10-28 from worktree at ~/scratch/mc_equiv_cpu (r4, da3a840).
 
-Full S-T CPU run (~9.3 h) deferred. Equivalence on S-N and S-T κ=∞ reported first.
-Results pending; update this DEV when complete.
+### S-N equivalence: CONFIRMED
 
-## κ=∞ K6=0 in S-T: preliminary diagnostic
+CPU r4 and GPU r5 produce identical Q2 outputs for S-N (all κ):
+  - mc_SN_raw.csv: 3001 rows × 8 cells = 24,008 Q2 values → 0 differences
+  - mc_SN_e1.csv:  2004 rows × Q2_opt + Q2_grd → 0 differences
 
-At nominal weights (κ=∞, 1 draw), S-T K6(SAW−TOPSIS) = 0.0 pp while K6 ≈ 18–23 pp
-at all stochastic κ. Verified not an argmax artifact: SAW and TOPSIS select DIFFERENT
-trios but BOTH Q2=1 (both Pareto-efficient at nominal weights). K6 = mean(SAW Q2) −
-mean(TOPSIS Q2) = 100 − 100 = 0 pp. This is a genuine result, not a tie-breaking
-artifact. κ∈{10⁴,10⁵,10⁶} diagnostic running; results pending.
+Gate comparison (CPU vs GPU):
+  K1: identical (100% all κ)
+  K2: identical (100% at κ=200 and κ=∞)
+  K3: identical (no reversals)
+  K4: p-values differ by bootstrap randomness (K4 bootstrap is unseeded);
+      both runs: all κ pass after Holm correction
+  K5: identical (assembly_1000=96.8pp, assembly_inf=100.0pp)
+  K6: identical per-κ values
+
+Result: GPU r5 ACCEPTED as main analysis for S-N (equivalence rule satisfied).
+
+### S-T equivalence: partial
+
+S-T --timing (CPU r4, 5 draws): K1=100% all κ (confirms same code path active).
+Full S-T CPU run (~9.3h) deferred. Given S-N covers the same 8 cells, same E1 cells,
+same GPU functions, the S-T equivalence is expected but not yet confirmed by direct output
+comparison. S-T full CPU run to be run in a separate session when a CPU core is free.
+
+## κ=∞ K6=0 in S-T: diagnostic complete
+
+κ∈{10⁴,10⁵,10⁶} diagnostic (100 draws, seed=42, diagnostic only):
+
+| κ | K6(SAW−TOPSIS) |
+|---|---|
+| 1,000 (main run) | +18.5 pp |
+| 10,000 | +1.5 pp |
+| 100,000 | 0.0 pp |
+| 1,000,000 | 0.0 pp |
+| ∞ | 0.0 pp |
+
+This is a smooth convergence to the nominal-weight limit, not a discontinuity. At the
+nominal weights (κ→∞), all 8 cells select Pareto-optimal triples (K6=0 = mean(SAW)=100%,
+mean(TOPSIS)=100%). The "alarm" was unnecessary: the K6 decline is continuous.
+
+For S-N, the same pattern holds:
+| κ | K6(SAW−TOPSIS) |
+|---|---|
+| 10,000 | −30.3 pp |
+| 100,000 | −26.8 pp |
+| 1,000,000 | −25.0 pp |
+| ∞ | −25.0 pp |
+
+S-N converges to −25.0 pp from below, consistent with κ=1000 result (−27.4 pp).
+
+Implication for manuscript: the κ=∞ "limit" result is a genuine property of the nominal
+weights, not an artefact. The narrative "all 8 cells are Pareto-efficient under nominal
+weights in S-T, but not under sampled weights at κ=1000" is a reportable finding.
+Report separately from the stochastic results per DEV-SANT-KINF-001.
