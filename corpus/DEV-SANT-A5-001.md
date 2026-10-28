@@ -43,3 +43,36 @@ cover only 3.6% of the S-N area).
 
 This deviation was triggered by data inspection BEFORE any descriptor computation,
 and does not constitute a post-hoc adjustment to analysis results.
+
+## Justification from Cabral (2012)
+
+Cabral (2012, p. 63 and Tab. 18) defines A5 ("Usos do Solo") as exclusion from
+"áreas de regadio" (irrigated perimeters). The operational definition in the
+thesis is specifically irrigated agriculture, not all agricultural land use.
+The carta_agricola_st layer includes pastagens (pastures), afloramentos rochosos
+(rocky outcrops), and sequeiro (rain-fed dryland farming), which are not covered
+by the Cabral definition of A5. Using only "Regadios" operationalises the
+declared exclusion criterion faithfully.
+
+Source: Cabral (2012) hdl.handle.net/10362/8627, p. 63:
+"Áreas de Regadio (buffer de proteção de 500 m)".
+
+## Pre-declared sensitivity SENS-A5
+
+To bound the effect of this interpretation, a sensitivity run is pre-declared
+here before any Stage 4 result is seen:
+
+**SENS-A5**: repeat Stage 4 S-N with A5 exclusion applied to:
+  tipo_agric IN {"Regadios", "Sequeiro Sub-húmido"}
+
+Rationale: "Sequeiro Sub-húmido" (5.2% of S-N area) is the next most
+plausible regulatory protection category after Regadios. Including it
+increases the exclusion area slightly; sites in this zone are removed
+from A'.
+
+Expected direction: N_adm decreases moderately; TV and descriptor values
+may shift; S1/S2 tests remain unchanged in structure.
+
+This sensitivity is run AFTER Stage 4 main results are sealed, and reported
+descriptively without a separate prediction block. It does not constitute a
+new prediction and cannot be used to select among conflicting Stage 4 outcomes.
