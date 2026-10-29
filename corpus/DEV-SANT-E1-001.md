@@ -301,3 +301,77 @@ não validaram a fórmula de E1-W.
 
 Descoberto 2026-10-29 ao analisar o output do gate v2 (E1-W = 63.6% ≠ 64.2%).
 Escrito 2026-10-29, antes de qualquer alteração ao código.
+
+---
+
+## Adenda 2026-10-29 (segunda): correcções de proveniência e origem do código
+
+### run_e1_v3.py: oracle está no repositório desde 74c7205
+
+O script `run_e1_v3.py` foi commitado em `74c7205` (2026-10-01, "marco-a: stage
+scripts from Athena pre-merge"). A adenda anterior disse "nunca commitado" — incorrecto.
+
+SHA-256 idêntico nas duas cópias locais Windows e na Athena:
+  `65802b50e36041cf5b61ff8e351881d1ffaecfe5a5ad6fba7513bc9a821b0b64`
+
+As duas cópias Windows (`scripts/` e `paper/scripts/experiments/`) são idênticas.
+Canónica: `scripts/run_e1_v3.py`.
+
+A corrida oracle de 2026-10-29 foi feita com o HEAD (`b93b3cb`, que contém os
+mesmos bytes do run_e1_v3.py). O commit `c9ed285` (2026-10-21) mudou só o assert
+(ver abaixo) — os resultados Q2 não foram afectados.
+
+### A2 e A3: referências WP3 obsoletas, confirmado
+
+`\QtwommGreedy{86.0}` no manuscrito actual = 86.0% = E1-M greedy do oracle.
+`\QtwovecGreedy{66.2}` no manuscrito actual = 66.2% = E1-V greedy do oracle.
+
+A2 falhou: WP3=65.8% era o valor da SAW/mm/greedy antes de um bug fix no pipeline WP3
+que actualizou o resultado de 65.8% para 86.0%. A referência no run_e1_v3.py não foi
+actualizada quando o WP3 foi corrigido.
+
+A3 falhou: WP3=54.0% era o valor antigo da SAW/vec/greedy; actual é 66.2%.
+
+Nenhum número publicado na E1 é inválido. Os resultados Q2 foram impressos antes
+do assert. O assert `a1` (E1-M optimal=100%) passou em ambas as corridas.
+
+### Commit c9ed285 (2026-10-21): remoção do assert a1 and a2
+
+Mudança exacta:
+```
+-assert a1 and a2, "Pipeline broken: E1-M fails. Stop."
++# A2/A3 compare greedy against WP3 (different estimand: per-draw vs fixed objectives).
++assert a1, "Pipeline broken: E1-M optimal != 100%. Stop."
+```
+
+A explicação no comentário ("different estimand: per-draw vs fixed objectives") é correcta:
+run_e1_v3.py recomputa os objectivos por sorteio; a referência WP3 vinha de uma versão
+com objectivos fixos. O problema foi reconhecido e a mudança foi feita explicitamente.
+
+### Origem do código E1 no Santiago
+
+Commit `380ee1a` (2026-09-30, mesmo dia que `7fb70fc`):
+"exp(E1) DEV-E1-001 INVALID: fixed objectives bug — fails tab:factorial regression
+(E1-V greedy=100% vs 54.2% in WP3; E1-W optimal=100% vs predicted ~57%)"
+
+No próprio dia em que run_e1.py foi commitado, um DEV marcou-o como inválido. O
+"fixed objectives bug" produzia E1-W/V = 100% — mesma manifestação que o E1-FRONT
+no Santiago.
+
+O run_e1.py v2 (corrigido do fixed objectives bug) ainda usa:
+  `check_dominated_raw(F_e1_trios, F_e1_trios[tidx_opt])`  ← amplitude-specific frontier
+
+O commit `67a71b8` (Santiago, 2026-10-28) replica exactamente este padrão.
+A origem provável do E1-FRONT é o run_e1.py v2, não o run_e1_v3.py.
+
+O E1-ABAR segue a mesma origem: run_e1.py v2 calcula Ā_g com pesos do sorteio
+(igual ao `get_e1_amplitudes` do Santiago), enquanto run_e1_v3.py usa `w_ahp` fixo.
+
+Os dois bugs do Santiago (E1-FRONT e E1-ABAR) parecem ter a mesma causa raiz:
+o código E1 foi derivado do run_e1.py v2 em vez do run_e1_v3.py (o oracle correcto).
+
+### 0.2024 vs 0.2034 no manuscrito
+
+O §7.7 não reporta o valor de scale_EW directamente. O PRESPEC_E1.md menciona
+"rescale factor 0.2024" como nota interna. O manuscrito não imprime este valor.
+Confirmar no suplementar antes de submeter. Se aparecer, usar o valor do oracle (0.2034).
