@@ -204,6 +204,13 @@ real não era "convenção de direcção" mas sim o rho_j errado (np.std em
 vez de 1/L2(mm_norm)). Esse erro foi corrigido no v2, que revelou o segundo
 problema: Ā_g com pesos do sorteio.
 
+### Citação do manuscrito §7.7 (main.tex, linha 2405)
+
+> "B sets $A_j=\bar A_g$, the weighted mean of $\rho_j$ within the group of j, which reproduces the between-group distortion of vector normalisation with none within groups."
+> "W sets $A_j\propto\rho_j/\bar A_g$, which equalises group totals while leaving within-group shares exactly as under vector normalisation."
+
+"The weighted mean" no contexto do manuscrito refere os pesos AHP (w₀ fixos), não os pesos do sorteio de Dirichlet. Se Ā_g fosse calculado por sorteio, a frase "equalises group totals" seria falsa (os totais variariam com cada sorteio). A definição não é ambígua.
+
 ### Confirmação da fórmula correcta
 
 O log v3 (data/e1_v3_rerun_20261002.log, SHA e05cd8a4, commitado em 44f7ff5)
