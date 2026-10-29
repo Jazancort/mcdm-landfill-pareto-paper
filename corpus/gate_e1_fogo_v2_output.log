@@ -1,0 +1,36 @@
+rho_j from amplitudes.json:
+  perm        : 0.582735
+  slope       : 0.138818
+  roads       : 0.205836
+  rivers      : 0.264920
+  aspect      : 0.103142
+  coast       : 0.131205
+  protected   : 0.105055
+  wells       : 0.083795
+  urban       : 0.106889
+  aero        : 0.087798
+  cult        : 0.170755
+
+Loading Fogo data...
+  N_adm=389  X_mm shape=(389, 11)  benefit_flags=[False, False, False, True, True, True, True, True, True, True, True]
+  n_trios=1,944,653
+  E1 weights: shape=(500, 11)  SHA OK
+[GPU] CuPy 14.2.0  devices=2  free=13529 MiB  pool_limit=11499 MiB  → GPU acceleration ON
+
+Running 500 draws (CPU)...
+  100/500
+  200/500
+  300/500
+  400/500
+  500/500
+
+============================================================
+GATE — Fogo E1 regression (v2, correct rho_j from amplitudes.json)
+============================================================
+  E1-M  opt: 100.0%  ref: 100.0%  diff: +0.0pp  OK
+  E1-B  opt: 100.0%  ref: 100.0%  diff: +0.0pp  OK
+  E1-W  opt: 63.6%  ref: 64.2%  diff: -0.6pp  FAIL
+  E1-V  opt: 56.8%  ref: 56.8%  diff: +0.0pp  OK
+
+GATE FAIL — E1 computation does not match Fogo oracle.
+DONE

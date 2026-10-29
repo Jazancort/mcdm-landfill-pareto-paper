@@ -1,0 +1,25 @@
+E1-W rescale check: weighted mean E1-W = 1.0000, E1-V = 0.2034
+  Ratio (should be 1.0 if properly scaled): 4.9163
+  Published rescale factor: 0.2024
+
+Fogo X_mm: shape=(389, 11)  N_adm=389
+n_trios=1,944,653  weights shape=(500, 11)  SHA OK
+
+[GPU] CuPy 14.2.0  devices=2  free=13529 MiB  pool_limit=11499 MiB  → GPU acceleration ON
+Running 500 draws (CPU, fixed w0 for Ā_g)...
+  100/500
+  200/500
+  300/500
+  400/500
+  500/500
+
+============================================================
+GATE v3 — fixed w0 for Ā_g
+============================================================
+  E1-M  100.0%  ref 100.0%  diff +0.0pp  OK
+  E1-B  100.0%  ref 100.0%  diff +0.0pp  OK
+  E1-W  64.2%  ref 64.2%  diff +0.0pp  OK
+  E1-V  56.8%  ref 56.8%  diff +0.0pp  OK
+
+GATE PASS (fixed w0). Conclusion: get_e1_amplitudes must use w0 for Ā_g.
+DONE

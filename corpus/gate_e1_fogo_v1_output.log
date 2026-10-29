@@ -1,0 +1,24 @@
+Loading Fogo data...
+  Sites: 389  Trios: 1944653
+  Weights: (500, 11)  SHA OK
+[GPU] CuPy 14.2.0  devices=2  free=13213 MiB  pool_limit=11231 MiB  → GPU acceleration ON
+Running 500 draws...
+  100/500
+  200/500
+  300/500
+  400/500
+  500/500
+
+============================================================
+GATE 1 — Fogo E1 regression (corrected mm-frontier code)
+============================================================
+  E1-M  opt: 100.0% (ref 100.0%)  OK
+  E1-B  opt: 100.0% (ref 100.0%)  OK
+  E1-W  opt: 100.0% (ref 64.2%)  FAIL
+  E1-V  opt: 100.0% (ref 56.8%)  FAIL
+
+  E1-V opt = SAW/vec/opt drawwise: SAW/vec/opt=100.0%  E1-V=100.0%  OK (exact)
+  E1-V opt == SAW/vec/opt per draw: ALL MATCH
+
+GATE 1: FAIL — Do NOT run Santiago until this is resolved.
+DONE
