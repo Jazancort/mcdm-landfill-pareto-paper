@@ -179,3 +179,118 @@ Based on Fogo analogy. Not predictions; direction only.
 - S3b: expected to confirm
 
 No magnitude predictions are made for Santiago.
+
+---
+
+## Adenda 2026-10-29: segundo bug — fórmula de Ā_g em get_e1_amplitudes
+
+### O que foi encontrado
+
+Depois de a stage4-e1fix-sealed ser criada, o gate do Fogo revelou que
+`get_e1_amplitudes` usa os pesos do sorteio w para calcular Ā_g (média
+dentro do grupo), enquanto o oracle (run_e1_v3.py, log 44f7ff5) usa os
+pesos fixos w₀.
+
+Sequência dos gates:
+
+| Gate | Resultado | Causa |
+|------|-----------|-------|
+| v1 (gate_e1_fogo.py) | FAIL — E1-W = 100% | rho_j = np.std(X_mm) ≈ uniforme → E1-W ≡ E1-M |
+| v2 (gate_e1_fogo_v2.py) | FAIL — E1-W = 63,6% | Ā_g com pesos do sorteio |
+| v3 (gate_e1_fogo_v3.py) | PASS — 100/100/64,2/56,8 | Ā_g com pesos fixos w₀ |
+
+O gate v1 foi substituído incorrectamente antes de ser resolvido. A causa
+real não era "convenção de direcção" mas sim o rho_j errado (np.std em
+vez de 1/L2(mm_norm)). Esse erro foi corrigido no v2, que revelou o segundo
+problema: Ā_g com pesos do sorteio.
+
+### Confirmação da fórmula correcta
+
+O log v3 (data/e1_v3_rerun_20261002.log, SHA e05cd8a4, commitado em 44f7ff5)
+contém:
+
+```
+Aj_bar_g: G1=0.3744  G2=0.1473  G3=0.1161
+E1-W rescale: 0.2034 (published 0.2024)
+```
+
+Estes são três valores fixos (não por sorteio). A aritmética confirma que
+saem de FOGO_W0 (pesos AHP fixos):
+
+  Ā_G1 = (0.152×0.5827 + 0.113×0.1388 + 0.030×0.2058) / 0.295 = 0.3744 ✓
+
+O script que produziu o log v3 é run_e1_v3.py (path Windows G:\...) —
+nunca commitado no repositório. O log foi commitado em 44f7ff5 a partir
+de uma corrida que terminou em crash (assertions A2/A3 falham após os
+resultados estarem completos). Os valores Q2 são válidos.
+
+O discrepância "0.2034 vs 0.2024 (published)" deve-se a arredondamento dos
+pesos AHP: FOGO_W0/FOGO_W0.sum() vs FOGO_W0 sem renormalização. O gate v3
+usa FOGO_W0/FOGO_W0.sum() e reproduz 64.2% exactamente.
+
+### Origem do oracle
+
+A origin dos números 64.2%/56.8% é:
+- script: run_e1_v3.py (Windows, não commitado)
+- log commitado: data/e1_v3_rerun_20261002.log (44f7ff5, 2026-10-03)
+- macros gerados por: scripts/generate_macros_e1.py
+
+O run_e1.py no repositório nunca foi o script correcto. O commit 7fb70fc
+(2026-09-30) documenta explicitamente "E1-W/E1-V optimal=100% (estimand
+differs from WP3 56.8%)". O run_e1.py está actualmente quebrado (E1-B=81.8%
+em vez de 100%) por razão independente do Bug 1 e deste Bug 2.
+
+### Consequência para stage4-e1fix-sealed
+
+Os ficheiros mc_ST_e1_fix.csv e mc_SN_e1_fix.csv (tag stage4-e1fix-sealed)
+foram produzidos com Ā_g por sorteio. Os valores de E1-W são provisórios:
+
+| | E1-W opt (por sorteio, e1fix-sealed) | E1-W opt (w₀ fixo, e1fix2) |
+|---|---|---|
+| S-T κ=200 | 80,0% | a calcular |
+| S-N κ=200 | 99,2% | a calcular |
+
+E1-M, E1-B e E1-V não são afectados (independentes de Ā_g).
+
+O veredicto de S3a (E1-W < 100%) provavelmente mantém-se com a fórmula
+correcta, mas não pode ser declarado antes da corrida com w₀ fixo.
+A direcção de S3b (E1-V < E1-W) no S-T INVERTE-SE com os valores actuais
+(84.2% vs 80.0%): com a fórmula correcta pode inverter novamente se E1-W
+subir acima de E1-V. Este é o risco principal da correcção.
+
+Tags afectadas: stage4-e1fix-sealed. Os raw CSVs principais permanecem
+válidos (SHA 123a5421 e dbfa2f00 confirmados por Gate 3).
+
+### Correcção
+
+A correcção é: passar w₀ fixo (ST_W0 ou SN_W0) a get_e1_amplitudes em vez
+de w (pesos do sorteio). Apenas o cálculo de Abar_g muda; o portfolio
+continua a ser seleccionado com w (pesos do sorteio).
+
+A correcção só avança depois de:
+1. Confirmar a fórmula no §7.7 do manuscrito.
+2. Verificar que o §7.7 não é ambíguo ou, se for, documentar a decisão.
+3. Escrever o commit exclusivamente com a correcção (sem outros diffs).
+
+### Verificação embutida para κ=∞
+
+Em κ=∞, w = w₀ (determinístico). Portanto a fórmula antiga (pesos do
+sorteio) e a nova (pesos fixos) são idênticas para κ=∞. A coluna κ=∞ dos
+mc_*_e1_fix.csv é válida para E1-W e não precisa de nova corrida.
+
+### Nota sobre o gate v1 e a explicação anterior
+
+A explicação dada para o v1 ("convenção de direcção diferente") estava
+errada. A causa real foi o rho_j = np.std(X_mm) ≈ uniforme, que colapsa
+E1-W para E1-M. Este engano deveu-se a não ter verificado os valores de
+rho_j antes de elaborar a explicação.
+
+O gate v1 foi substituído por gates internos (gate_e1_internal.py) sem o
+gate do Fogo ter passado. Isso foi incorrecto per os critérios de aceitação
+do DEV. Os gates internos provaram que o código usa a mm-fronteira, mas
+não validaram a fórmula de E1-W.
+
+### Data
+
+Descoberto 2026-10-29 ao analisar o output do gate v2 (E1-W = 63.6% ≠ 64.2%).
+Escrito 2026-10-29, antes de qualquer alteração ao código.
