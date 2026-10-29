@@ -1,0 +1,31 @@
+[GPU] CuPy 14.2.0  devices=2  free=13529 MiB  pool_limit=11499 MiB  → GPU acceleration ON
+=== Check 1: Ā_g values ===
+  G1 Ā_g: got=0.3744  oracle=0.3744  OK
+  G2 Ā_g: got=0.1473  oracle=0.1473  OK
+  G3 Ā_g: got=0.1161  oracle=0.1161  OK
+
+=== Check 2: E1-W amplitude vector ===
+  Max |A_W_production - A_W_oracle|: 0.00e+00  OK
+  scale_EW: 0.2034  (oracle log: 0.2034)
+
+=== Loading data ===
+  X_mm: (389, 11)  n_trios: 1,944,653  weights: (500, 11)  SHA OK
+
+Running 500 draws (CPU)...
+  100/500
+  200/500
+  300/500
+  400/500
+  500/500
+
+=== Check 3: Q2_opt vs oracle (100/100/64.2/56.8) ===
+  E1-M: 100.0%  ref 100.0%  diff +0.0pp  OK
+  E1-B: 100.0%  ref 100.0%  diff +0.0pp  OK
+  E1-W: 64.2%  ref 64.2%  diff +0.0pp  OK
+  E1-V: 56.8%  ref 56.8%  diff +0.0pp  OK
+
+=== Check 4: E1-V aggregate == oracle (56.8% exact) ===
+  E1-V: 56.8%  oracle: 56.8%  OK
+
+ALL CHECKS PASS — E1-ABAR fix verified with production code.
+DONE
