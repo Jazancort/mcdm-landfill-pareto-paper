@@ -654,32 +654,49 @@ def optimal_selector(scores: np.ndarray, trios: np.ndarray) -> int:
 # 5. E1 amplitude vectors
 # ---------------------------------------------------------------------------
 
-def get_e1_amplitudes(rho_j: np.ndarray, w: np.ndarray, groups: list) -> dict:
+def get_e1_amplitudes(rho_j: np.ndarray, groups: list, w0: np.ndarray) -> dict:
     """Return amplitude vectors for E1 cells M, B, W, V.
 
-    @param rho_j - actual amplitudes, shape (M,).
-    @param w - weight vector, shape (M,).
-    @param groups - list of index lists.
-    @returns dict mapping cell name → A_j array.
+    Ā_g is computed from the FIXED declared AHP weights w0, not per-draw weights.
+    This matches the oracle run_e1_v3.py (see DEV-SANT-E1-001, E1-ABAR):
+      for g in GROUPS:
+          Ajbar_g = dot(w_ahp[g], rho_j[g]) / w_ahp[g].sum()
+
+    A global rescale is applied to E1-W so that
+      dot(w0, A_W) == dot(w0, rho_j)  (weighted mean of E1-W = weighted mean of E1-V).
+    This matches run_e1_v3.py: scale_EW = dot(w_ahp,rho_j) / dot(w_ahp, rho_j/Abar_g).
+    The global scale does NOT affect Q2 (argmax invariant to positive scalar).
+
+    Signature note: w (per-draw) is intentionally absent to prevent the E1-ABAR bug
+    from re-entering. Pass the fixed declared AHP weight vector as w0.
+
+    @param rho_j - amplitude vector, shape (M,).
+    @param groups - list of index lists per group.
+    @param w0 - FIXED declared AHP weights, shape (M,). Must sum to 1.
+    @returns dict {"M": A_M, "B": A_B, "W": A_W, "V": A_V}.
     """
     M = len(rho_j)
 
     # E1-M: all amplitudes = 1
     A_M = np.ones(M)
 
-    # Group average amplitudes Ā_g for each criterion
+    # Group average amplitudes Ā_g with FIXED w0 (not per-draw weights)
     Abar_g = np.zeros(M)
     for g in groups:
         g_arr = np.array(g, dtype=int)
-        W_g   = w[g_arr].sum()
-        avg   = float(np.dot(w[g_arr], rho_j[g_arr]) / W_g) if W_g > 0 else 0.0
+        W_g   = w0[g_arr].sum()
+        avg   = float(np.dot(w0[g_arr], rho_j[g_arr]) / W_g) if W_g > 0 else 0.0
         Abar_g[g_arr] = avg
 
     # E1-B: between-group only — each criterion gets its group average amplitude
     A_B = Abar_g.copy()
 
-    # E1-W: within-group relative — A_j = rho_j / Ā_g
-    A_W = np.where(Abar_g > 1e-15, rho_j / Abar_g, 0.0)
+    # E1-W: within-group relative — A_j = rho_j / Ā_g, with global rescale
+    A_W_raw = np.where(Abar_g > 1e-15, rho_j / Abar_g, 0.0)
+    s_V = float(np.dot(w0, rho_j))          # weighted mean of E1-V amplitudes
+    s_W = float(np.dot(w0, A_W_raw))        # weighted mean of E1-W raw amplitudes
+    scale = s_V / s_W if s_W > 1e-15 else 1.0
+    A_W = A_W_raw * scale
 
     # E1-V: actual amplitudes
     A_V = rho_j.copy()
@@ -854,7 +871,8 @@ def compute_q2_all_cells_gpu(gd: dict, w_cpu: np.ndarray, D: np.ndarray) -> dict
 
 def compute_e1_cells_gpu(gd: dict, w_cpu: np.ndarray, rho_j_cpu: np.ndarray,
                           groups: list, D: np.ndarray,
-                          F_mm_site_gpu=None, F_mm_trios_gpu=None) -> list:
+                          F_mm_site_gpu=None, F_mm_trios_gpu=None,
+                          w0: np.ndarray = None) -> list:
     """E1 cells (M, B, W, V) on GPU for one draw.
 
     Q2 is evaluated against the mm Pareto frontier (F_mm_trios_gpu), consistent
@@ -869,7 +887,7 @@ def compute_e1_cells_gpu(gd: dict, w_cpu: np.ndarray, rho_j_cpu: np.ndarray,
     X_mm_gpu  = gd["X_mm"]
     trios_gpu = gd["trios"]
 
-    e1_amps = get_e1_amplitudes(rho_j_cpu, w_cpu, groups)  # CPU dict
+    e1_amps = get_e1_amplitudes(rho_j_cpu, groups, w0=w0)
 
     rows = []
     for e1_name in E1_CELLS:
@@ -1010,7 +1028,8 @@ def run_kappa(branch_key: str, kappa, rng, data: dict,
             if run_e1:
                 e1_rows = compute_e1_cells_gpu(gpu_data, w, rho_j, groups, data["D"],
                                                F_mm_site_gpu=F_mm_site_gpu,
-                                               F_mm_trios_gpu=F_mm_trios_gpu)
+                                               F_mm_trios_gpu=F_mm_trios_gpu,
+                                               w0=w0)
                 for r in e1_rows:
                     rows_e1.append({"draw": draw_idx, "kappa": label_k, **r})
 
@@ -1033,7 +1052,7 @@ def run_kappa(branch_key: str, kappa, rng, data: dict,
             rows_8.append(row)
 
             if run_e1:
-                e1_amps = get_e1_amplitudes(rho_j, w, groups)
+                e1_amps = get_e1_amplitudes(rho_j, groups, w0)
                 for e1_name in E1_CELLS:
                     A_e1 = e1_amps[e1_name]
                     # E1 SAW score for portfolio selection (group objectives not needed)
