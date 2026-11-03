@@ -162,19 +162,8 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
     print(f"  Functions imported from run_santiago_mc: "
           f"compute_q2_all_cells_gpu, compute_e1_cells_gpu, "
           f"get_e1_amplitudes, greedy_selector", flush=True)
-    print(f"  Comparison mode: Q2 ∈ {{0,1}} — exact integer equality (==), no tolerance",
+    print(f"  Comparison mode: Q2 {{0,1}} — exact integer equality (==), no tolerance",
           flush=True)
-            compute_group_objectives, compute_trio_objectives,
-            check_dominated_raw, optimal_selector, greedy_selector,
-            get_e1_amplitudes,
-            ST_W0, SN_W0, ST_GROUPS, SN_GROUPS, CELLS_8,
-            _optimal_gpu,
-        )
-        from gen_santiago_seeds import get_branch_rngs, KAPPA_VALUES
-    except (ImportError, FileNotFoundError) as exc:
-        raise RuntimeError(
-            f"Gate 3 FAIL: Santiago modules not importable ({exc}). Requires Athena."
-        )
 
     data   = load_branch_data(branch_key)
     X_mm   = np.asarray(data["X_mm"],   dtype=np.float64)
