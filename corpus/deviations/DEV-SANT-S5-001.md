@@ -54,6 +54,14 @@ A distance is a continuous measurement even when clustered. Perm is NOT categori
 Consequence for S5 in S-T: perm is the criterion with the highest point mass
 (0.617 > 0.5), so S5 condition is NOT met → S5 is NOT testable in S-T.
 
+Alternative classification (sensitivity, pre-declared commit da3a840 / stage4-launch-r4,
+2026-10-28T09:23, before Stage 4 results): if perm were classified as categorical
+(because many sites share distance=0), perm would be excluded from the S5 check.
+The next highest pm in S-T is [to be filled from Stage 3b output — see compute_stage3b.py
+S5 summary]. If that pm < 0.5, S5 WOULD be testable under the alternative.
+Primary classification (perm = continuous) is definitive per PRESPEC §6 text;
+this alternative is reported descriptively only.
+
 ## S-N: criterion classification
 
 S-N uses 13 criteria (C-4 A2 omit, renorm from Cabral 2012 weights).
@@ -101,3 +109,14 @@ No inconsistency with the Fogo treatment.
 | Fogo (reference) | perm = continuous (included) | 0.90 (perm) | NO |
 | S-T | perm = continuous (included) | 0.617 (perm) | NO |
 | S-N | B1 = categorical (excluded) | 0.016 (C1) | YES |
+
+## Errata
+
+### 2026-11-03 (commit f7516c5, corrected in current commit)
+
+**E1 — Perm sensitivity removed (f7516c5; restored in current commit):**
+f7516c5 removed the "Alternative classification (sensitivity)" paragraph. This was an
+error: the paragraph was first committed in da3a840 (stage4-launch-r4, 2026-10-28),
+before Stage 4 results were sealed (stage4-results-sealed, stage4-e1fix2-sealed).
+Removing a pre-declared sensitivity after data are available violates the
+pre-registration protocol. Paragraph restored with added provenance note.

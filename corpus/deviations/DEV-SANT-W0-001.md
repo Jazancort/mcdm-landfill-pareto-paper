@@ -40,7 +40,7 @@ against the PDF (2026-11-02).
 | B3 | 0.1048 | 0.1015 | 0.1048 |
 | C1 | 0.0759 | 0.0735 | 0.0759 |
 | C2 | 0.0253 | 0.0245 | 0.0253 |
-| D1 | 0.0981 | 0.0949 | 0.0981 |
+| D1 | 0.0981 | 0.0950 | 0.0981 |
 | D2 | 0.1993 | 0.1930 | 0.1993 |
 
 Denominator: A2 (ZDTI) weight = 0.0314 (Annex C, PDF-verified; same leaf weight as A6).
@@ -87,3 +87,21 @@ C=9.8%, D=28.8%. After C-4 renormalization: F_A=0.182, F_B=0.419, F_C=0.101,
 F_D=0.297. Both the criterion-level and group-level verifications are passed.
 
 **W0-001 status: VERIFIED. All S-N verdicts stand without re-run.**
+
+## Errata
+
+### 2026-11-03 (commits f7516c5 and subsequent)
+
+**E1 — Cabral Annex C column (introduced in f7516c5; corrected in current commit):**
+f7516c5 introduced a "Cabral Annex C (PDF-verified)" column that was in fact
+back-calculated as `code_value × 0.9686` — circular. Corrected in the current commit
+to direct Annex C transcription. Practical effect: D1 changed from 0.0949
+(rounding residual of back-calculation) to 0.0950 (direct reading). Source: Cabral
+(2012) Annex C.
+
+**E2 — Earlier versions (pre-f7516c5):**
+Earlier versions of this DEV claimed denominator 0.9637 ("Tab. 14/16 sum = 1.0020",
+A2 = 0.0383) and "12 of 13" coincidences. Source of error: A2 was incorrectly read
+as 0.0383 instead of 0.0314. f7516c5 corrected this from PDF verification (2026-11-02).
+The git history contains the incorrect values; this errata note documents the chain
+of corrections for archive transparency.

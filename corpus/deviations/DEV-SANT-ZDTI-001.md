@@ -78,27 +78,27 @@ extraction) applies.
 
 ## Consequence: weight redistribution
 
-Cabral (2012) assigns the following leaf weights to the 14 S-N criteria (Annex C,
-PDF-verified 2026-11-02). A2 is the "Zona Demarcada de Interesse Turístico Integrado"
-criterion. "Original w₀" values are back-calculated as C-4_code_value × 0.9686 and
-confirmed against the PDF; they are presented to 4 d.p. with small rounding residuals.
+Cabral (2012) assigns the following leaf weights to the 14 S-N criteria. "Original w₀"
+values are directly transcribed from Annex C of the dissertation (PDF-verified
+2026-11-02). A2 is the "Zona de Desenvolvimento Turístico Integral" (ZDTI,
+Decreto-Regulamentar n.º 7/94); Cabral's text uses "Integrado" (pp. 24, 57, 60).
 
 | Criterion | Original w₀ (Annex C) | C-4 w₀ (renorm) |
 |-----------|----------------------|-----------------|
-| A1 — Built-up area    | 0.0385 | 0.0397 |
-| A2 — ZDTI (Integrado) | 0.0314 | **omitted** |
-| A3 — Coastline        | 0.0262 | 0.0270 |
-| A4 — Cultural heritage| 0.0385 | 0.0397 |
-| A5 — Agriculture      | 0.0158 | 0.0163 |
-| A6 — Airport          | 0.0314 | 0.0324 |
-| A7 — Protected areas  | 0.0262 | 0.0270 |
-| B1 — Hydrogeological  | 0.2030 | 0.2096 |
-| B2 — Water points     | 0.1015 | 0.1048 |
-| B3 — Streams          | 0.1015 | 0.1048 |
-| C1 — Slope            | 0.0735 | 0.0759 |
-| C2 — Aspect           | 0.0245 | 0.0253 |
-| D1 — Roads            | 0.0949 | 0.0981 |
-| D2 — MSW centre       | 0.1930 | 0.1993 |
+| A1 — Built-up area             | 0.0385 | 0.0397 |
+| A2 — ZDTI (Desenv. Turístico Integral) | 0.0314 | **omitted** |
+| A3 — Coastline                 | 0.0262 | 0.0270 |
+| A4 — Cultural heritage         | 0.0385 | 0.0397 |
+| A5 — Agriculture               | 0.0158 | 0.0163 |
+| A6 — Airport                   | 0.0314 | 0.0324 |
+| A7 — Protected areas           | 0.0262 | 0.0270 |
+| B1 — Hydrogeological           | 0.2030 | 0.2096 |
+| B2 — Water points              | 0.1015 | 0.1048 |
+| B3 — Streams                   | 0.1015 | 0.1048 |
+| C1 — Slope                     | 0.0735 | 0.0759 |
+| C2 — Aspect                    | 0.0245 | 0.0253 |
+| D1 — Roads                     | 0.0950 | 0.0981 |
+| D2 — MSW centre                | 0.1930 | 0.1993 |
 
 Note: A2 and A6 share the same AHP leaf weight (0.0314 = 3.14%). The 14 Annex C
 values sum to ≈ 1.0000 (sum of 13 remaining: ≈ 0.9686; plus A2: 0.0314 = 1.0000).
@@ -124,16 +124,26 @@ pre-analysis sensitivity SENS-ZDTI-DISTRIB.
 
 ### SENS-ZDTI-DISTRIB — within-Group-A redistribution
 
-**Pre-declared before any SENS computation (2026-11-02).**
+**Declared 2026-11-02 (POST-DATA; S-N results sealed 2026-10-28, stage4-e1fix2-sealed).**
+
+Historical context: a pre-freeze draft of PRESPEC_SANTIAGO (commits 77b8977 and
+950064b, 2026-10-25/26, before frozen tag prespec-santiago-f0-amend-final at
+06fc1e7, 2026-10-26T12:17) specified C-4 redistribution "proportionally to the
+remaining 6 Group A criteria". That specification was removed before the PRESPEC was
+frozen, because at freeze time ZDTI was assumed available (C-4 not expected). The
+DEV-ZDTI (committed before data at stage4-launch-r4/r5) chose global redistribution
+without referencing the draft's different approach. This sensitivity is declared
+post-data to bound the effect; the primary analysis (global redistribution) stands.
+Testability of S-N predictions is evaluated on the primary analysis only.
 
 Repeat Stage 4 S-N with C-4 weight redistribution confined to the 6 remaining Group A
 criteria only (A1, A3, A4, A5, A6, A7). A2's weight (0.0314) is distributed
 proportionally among these 6, preserving the original Cabral group weights for
 B (0.406), C (0.098), D (0.288) and restoring F_A = 0.208.
 
-This affects TV_B and potentially the testability of S3b in S-N (current TV_B = 0.057,
-close to the 0.05 threshold). If any prediction verdict changes relative to the main
-run, record in DEVIATIONS.md and consult PRESPEC §11.
+This affects TV_B and potentially the testability of S3b in S-N (primary TV_B = 0.057,
+close to the 0.05 threshold). Results of both versions are reported side by side;
+if any prediction verdict changes, record in DEVIATIONS.md and consult PRESPEC §11.
 
 w0 integrity: the startup log includes `assert abs(w0.sum() - 1) < 1e-6` for each
 branch via log_startup_provenance(), confirming the normalized sum before use.
@@ -185,3 +195,27 @@ Note: the repository metadata at hdl.handle.net/10362/8627 uses "Sistema" (singu
 the correct title from the PDF is "Sistemas" (plural) as cited above.
 Earlier DEV versions cited an incorrect author name and title (confirmed by PDF
 2026-11-02). Added to refs.bib as @mastersthesis{Cabral2012}.
+
+## Errata
+
+### 2026-11-03 (commits f7516c5 and subsequent)
+
+**E1 — Original w₀ column (introduced in f7516c5; corrected in current commit):**
+f7516c5 filled the "Original w₀" column with values back-calculated as
+`code_value × 0.9686`. This is circular: values derived from the code cannot confirm
+that the code is correct. Corrected in the current commit to direct Annex C
+transcription. Practical effect: D1 changed from 0.0949 (rounding artefact of
+back-calculation) to 0.0950 (direct Annex C reading). Source: Cabral (2012) Annex C.
+
+**E2 — ZDTI full name (introduced in f7516c5; corrected in current commit):**
+f7516c5 introduced "Zona Demarcada de Interesse Turístico Integrado". This form does
+not appear in the dissertation or in Cape Verde law. Correct form from
+Decreto-Regulamentar n.º 7/94: "Zona de Desenvolvimento Turístico Integral".
+Cabral's text uses "Integrado" (pp. 24, 57, 60); Cabral's list of abbreviations
+(p. viii) and the decree use "Integral".
+
+**E3 — SENS-ZDTI-DISTRIB timing (introduced in f7516c5; corrected in current commit):**
+f7516c5 labelled SENS-ZDTI-DISTRIB as "Pre-declared before any SENS computation".
+Incorrect: it was declared 2026-11-02, after S-N results were sealed 2026-10-28.
+Corrected to POST-DATA with historical context (pre-freeze draft commits 77b8977
+and 950064b).

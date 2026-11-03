@@ -92,6 +92,20 @@ classification table — neither contains the agriculture text. Earlier versions
 this DEV cited "p. 63" and "Tab. 18" for A5; both were incorrect. Citation confirmed
 from PDF (2026-11-02). Author and full title: see refs.bib Cabral2012.
 
+## Limitation: spatial coverage vs Cabral
+
+Cabral (2012, p. 52) reports that agricultural areas derive from the PDM (Plano
+Director Municipal) documents in PDF format. Figs. 23 and 27 show zero-value zones
+covering a substantially larger portion of the study region than the 3.6% share of
+the Regadios class in carta_agricola_st. Without precise georeferenced data, the
+comparison cannot be quantified, but the excluded area in the S-N run is likely
+smaller than in Cabral's original analysis.
+
+The SENS-AGR-1 and SENS-AGR-2 runs (adding Sequeiro Húmido and Sequeiro Sub-húmido)
+partially bridge this difference. SENS-AGR-BUF (500 m buffer) corresponds to
+Cabral's own method (p. 61, alínea a), not a re-interpretation. These together
+bound the sensitivity of the admissible set to the class-selection choice.
+
 ## Applicability to S-T branch
 
 This deviation applies to the S-N branch only. S-T uses criterion "cult" (dist_cultivation
@@ -173,3 +187,23 @@ For each SENS-AGR run, the A5 criterion is re-operationalised as follows:
 In all cases: the dist_A5 column is the Euclidean distance in metres from the
 candidate centroid to the nearest point on the exclusion polygon union (shapely
 distance, 0 for interior points per compute_dist_to_polygons convention).
+
+## Errata
+
+### 2026-11-03 (commits f7516c5 and subsequent)
+
+**E1 — Page citation (corrected in f7516c5):**
+Earlier versions cited Cabral (2012) p. 63 and Tab. 18 for the A5 exclusion criterion.
+p. 63 covers the aerodrome (A6); Tab. 18 (p. 57) is the generic distance table.
+Correct citation is p. 61. Fixed in f7516c5.
+
+**Clarification — SENS-AGR-BUF (current commit):**
+SENS-AGR-BUF tests the 500 m buffer from Cabral p. 61 (alínea a): "dentro destas
+áreas, assim como a área envolvente (500 m)". This is Cabral's own operationalisation,
+not a new interpretation. The PRESPEC chose the 0 m (inside zone only) variant as
+primary.
+
+**Clarification — coverage limitation (current commit):**
+Cabral derives agricultural zones from PDM documents (p. 52, Figs. 23/27), which
+appear to cover substantially more of the study region than the 3.6% Regadios share
+in carta_agricola_st. The SENS-AGR sequence bounds this uncertainty.
