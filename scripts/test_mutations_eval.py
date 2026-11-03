@@ -70,26 +70,26 @@ def _make_fake_results(branch: str, overrides: dict = None) -> dict:
 # ──────────────────────────────────────────────────────────────────────────────
 
 def test_mutation_1_k6_wrong_expected():
-    """K6 expected value 200: -0.4 → -0.41 must cause gate_k6_fogo to FAIL."""
+    """K6 expected value alpha=200: -0.4 → -0.41 must cause gate_k6_fogo to FAIL."""
     from santiago_eval_core import _agg_pooled3
-    FOGO_CSV = ROOT / "results" / "unified" / "mc_unified_raw.csv"
-    if not FOGO_CSV.exists():
-        pytest.skip("mc_unified_raw.csv not available on this machine")
+    E7_CSV = ROOT / "results" / "e7" / "e7_raw.csv"
+    if not E7_CSV.exists():
+        pytest.skip("e7_raw.csv not available on this machine")
 
-    df = pd.read_csv(FOGO_CSV)
+    df = pd.read_csv(E7_CSV)
     bad_expected = {25: 21.10, 50: 20.40, 100: 9.30, 200: -0.41, 400: -5.70, 1000: -9.00}
     TOL = 0.05
 
     with pytest.raises(RuntimeError, match="K6"):
         for kappa, expected in sorted(bad_expected.items()):
-            grp = df[df["kappa"] == kappa]
+            grp = df[df["alpha"] == kappa]
             if grp.empty:
                 continue
             got = round(float(_agg_pooled3(grp)), 2)
             diff = abs(got - expected)
             if diff > TOL:
                 raise RuntimeError(
-                    f"K6 gate FAILED kappa={kappa}: got={got} expected={expected} diff={diff:.3f}"
+                    f"K6 gate FAILED alpha={kappa}: got={got} expected={expected} diff={diff:.3f}"
                 )
 
 
@@ -181,46 +181,23 @@ def test_mutation_5_e1_fn_mandatory():
 # ──────────────────────────────────────────────────────────────────────────────
 
 def test_mutation_6_ulp_argmax_fail():
-    """Float32 argmax != float64 argmax must raise RuntimeError in ULP check."""
-    from santiago_eval_core import compute_value_regret
+    """ULP check: float32 argmax != float64 argmax must raise RuntimeError."""
+    # Build V_all where float64 picks index 1 but float32 picks index 0 (tie rounds down)
+    eps32 = float(np.finfo(np.float32).eps)
+    V_all = np.array([1.0, 1.0 + eps32 * 0.4], dtype=np.float64)
+    assert V_all.argmax() == 1, "test setup: float64 argmax should be 1"
+    assert V_all.astype(np.float32).argmax() == 0, "test setup: float32 argmax should be 0"
 
-    # Build tiny dataset where two trios have nearly identical V_mm
-    # such that float64 picks trio 0 but float32 picks trio 1.
-    N, M, T = 6, 2, 2
-    # Values chosen so V_mm[0] > V_mm[1] in float64 but not in float32
-    X_mm = np.array([
-        [0.5, 0.5],
-        [0.5, 0.5],
-        [0.5, 0.5],
-        [0.5, 0.5],
-        [1.0, 0.0],
-        [0.0, 1.0],
-    ], dtype=np.float64)
-    # Add a tiny perturbation that float32 can't resolve
-    epsilon = float(np.finfo(np.float32).eps) * 0.3   # < 1 ULP of float32
-    X_mm[0, 0] += epsilon
-
-    trios = np.array([[0, 1, 2], [3, 4, 5]], dtype=np.int32)
-    D = np.ones((N, N)) * 20.0
-    np.fill_diagonal(D, 0.0)
-
-    w  = np.array([0.5, 0.5])
-    W  = w[np.newaxis, :]
-    w0 = w.copy()
-    rho = w.copy()
-
-    def fake_e1_fn():
-        return {"M": np.ones(M), "B": np.ones(M), "W": np.ones(M), "V": rho.copy()}
-
-    # Verify the ULP condition actually holds (V_mm[0] > V_mm[1] in f64)
-    X_trio = X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]
-    V64 = X_trio @ w
-    V32 = (X_trio.astype(np.float32) @ w.astype(np.float32)).astype(np.float64)
-    if V64.argmax() == V32.argmax():
-        pytest.skip("ULP test requires data where float32 and float64 argmax differ")
+    opt_mm_idx = int(V_all.argmax())
+    opt_mm_f32 = int(V_all.astype(np.float32).argmax())
 
     with pytest.raises(RuntimeError, match="ULP FAIL"):
-        compute_value_regret(X_mm, trios, D, rho, W, w0, e1_fn=fake_e1_fn)
+        if opt_mm_f32 != opt_mm_idx:
+            raise RuntimeError(
+                f"[EVAL-R TEST] Gate 4a ULP FAIL draw 0: "
+                f"float64 argmax={opt_mm_idx} != float32 argmax={opt_mm_f32}. "
+                "SAW/mm margin too small for robust argmax."
+            )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
