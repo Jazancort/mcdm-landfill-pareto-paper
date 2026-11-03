@@ -341,3 +341,27 @@ Diagnóstico e1b_zeros (sequential path, aa9c87c):
 - opt_e1b==opt_mm:    177
 - min R_pp (trio!=t*): 0.042616 pp
 - O split "101/177" de sessões anteriores veio da versão batch (compute_regret.py). Todos os critérios convergem em 177 no path sequencial actual.
+
+---
+
+### ER-GATE3-RUN-v4: Gates run record — commit final pré-avaliação (30ea02f, 2026-11-04)
+
+avaliacao a correr em `30ea02f7bcc174d5b149340519a0745a0526978d`, enviado ao GitHub antes da corrida.
+
+**Run timestamp**: 20261104T0120Z–20261104T0124Z (Athena)
+
+| Gate | EXIT | Elapsed | Log SHA-256 |
+|------|------|---------|-------------|
+| --gates-only | 0 | 143.6s | `4e48d134adbfdc9aed3344229377a6c806772dbf7ae2317ecb26334611d75992` |
+| --gate3-only | 0 | 1137.3s | `b9526b9b47c7672f1fb9c637d1c139edc95e91707d7feb66682bca76cd2d6804` |
+| 13 mutation tests | 0 | 0.80s | `7810b0bf318e6ac1ad45f09bb83c50623d83173d36237a7e1cdb2358e1bd6bbc` |
+
+Gate 3 canonical hash (14 arrays: 7×κ=200 + 7×κ=∞):
+- ST: `97ed76f1763400ef406bbafff6e59f5eaede0547a8e6954faefdea429bda71f1`
+- SN: `9b94c73a6dfae44b4aa775531c9c0f90fea65687b831449b431d547134d0a38d`
+
+Mudanças em 30ea02f vs runs anteriores:
+- Gate 4a: verifica 7 arrays em 500 sorteios (SAW_mm_opt/SAW_vec_opt/E1M/E1B/E1W/E1V directo; SAW_vec_grd via frozenset)
+- .npz: 14 arrays (7×κ=200 + 7×κ=∞); R calculado só em κ=200
+- DEV-SANT-K5-001: K5(a) corrigido para Q2(SAW,vec,opt)−Q2(SAW,vec,grd)
+- diagnostics/_count_e1b_zeros.py: tabela comparativa batch vs sequencial
