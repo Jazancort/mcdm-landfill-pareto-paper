@@ -145,6 +145,58 @@ This affects TV_B and potentially the testability of S3b in S-N (primary TV_B = 
 close to the 0.05 threshold). Results of both versions are reported side by side;
 if any prediction verdict changes, record in DEVIATIONS.md and consult PRESPEC §11.
 
+### Weight vector W0_DISTRIB (fixed before any computation, 2026-11-03)
+
+Scale factor = W_A / (W_A − w_A2) = 0.208 / (0.208 − 0.0314) = 0.208 / 0.1766 = 1.17780
+applied to the 6 remaining Group A criteria. B, C, D unchanged from Annex C.
+
+| Criterion | W0_DISTRIB (5 d.p.) |
+|---|---|
+| A1 | 0.04535 |
+| A3 | 0.03086 |
+| A4 | 0.04535 |
+| A5 | 0.01861 |
+| A6 | 0.03698 |
+| A7 | 0.03086 |
+| B1 | 0.20300 |
+| B2 | 0.10150 |
+| B3 | 0.10150 |
+| C1 | 0.07350 |
+| C2 | 0.02450 |
+| D1 | 0.09500 |
+| D2 | 0.19300 |
+
+Group sums: F_A=0.208, F_B=0.406, F_C=0.098, F_D=0.288 (= original Cabral). Total ≈ 1.0000.
+
+### Protocol rules
+
+1. **Descriptors 3b before MC**: compute_stage3b.py is run with w0=W0_DISTRIB on
+   `df_santiago_sn.csv` (SHA-256 c09b61f7bfb31b2aa118d972b9776ad1b055bc1f9d03abe04eb8b7fc2bbc484d,
+   N_cand=387, N_adm=190; note: user cited SHA 65160166 — discrepancy pending
+   verification) before any MC run, to check whether TV_B changes under the
+   alternative vector.
+
+2. **No rounding**: W0_DISTRIB is used at full float64 precision (not 5 d.p. above).
+   Implementation: `w0_d = np.array([0.04535, 0.03086, ...]) / np.array([...]).sum()`
+   (divide by exact sum to ensure normalization).
+
+3. **Assert sum = 1**: `assert abs(w0_distrib.sum() - 1) < 1e-6` before run; execution
+   halts if violated.
+
+4. **Input CSV**: same `df_santiago_sn.csv` as primary S-N analysis. Exclusions do not
+   depend on weights; N_adm = 190 unchanged.
+
+5. **Seeds**: canonical Santiago S-N seeds from gen_santiago_seeds.py
+   (SeedSequence.spawn(2) per κ, parent seeds [1,4,15,17,28,30]).
+
+6. **Ā_g for E1-W**: Cabral group-mean vector is computed from W0_DISTRIB on the
+   same admissible set (N_adm=190).
+
+7. **Testability**: evaluated on primary analysis only (primary TV_B=0.057 at W0_SN).
+
+8. **Side-by-side reporting**: all prediction verdicts (K1–K6, S1–S7) reported for
+   both primary (W0_SN, global redistrib) and DISTRIB (W0_DISTRIB, within-Group-A).
+
 w0 integrity: the startup log includes `assert abs(w0.sum() - 1) < 1e-6` for each
 branch via log_startup_provenance(), confirming the normalized sum before use.
 
