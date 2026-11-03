@@ -126,11 +126,13 @@ pre-analysis sensitivity SENS-ZDTI-DISTRIB.
 
 **Declared 2026-11-02 (POST-DATA; S-N results sealed 2026-10-28, stage4-e1fix2-sealed).**
 
-Historical context: a pre-freeze draft of PRESPEC_SANTIAGO (commits 77b8977 and
-950064b, 2026-10-25/26, before frozen tag prespec-santiago-f0-amend-final at
-06fc1e7, 2026-10-26T12:17) specified C-4 redistribution "proportionally to the
-remaining 6 Group A criteria". That specification was removed before the PRESPEC was
-frozen, because at freeze time ZDTI was assumed available (C-4 not expected). The
+Historical context: a pre-freeze draft of PRESPEC_SANTIAGO (commits 77b8977 through
+1ac8450, 2026-10-25T17:32 to 2026-10-26T00:14, before frozen tag
+prespec-santiago-f0-amend-final at 06fc1e7, 2026-10-26T12:17) specified C-4
+redistribution "proportionally to the remaining 6 Group A criteria". That text was
+removed in commit 950064b (2026-10-26T00:27) — the same commit that also split S7
+into S7a/S7b. The frozen version omitted the redistribution rule because at freeze
+time ZDTI was assumed available (C-4 not expected). The
 DEV-ZDTI (committed before data at stage4-launch-r4/r5) chose global redistribution
 without referencing the draft's different approach. This sensitivity is declared
 post-data to bound the effect; the primary analysis (global redistribution) stands.
