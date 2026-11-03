@@ -226,9 +226,8 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                 s_vec_gpu   = (gd["X_mm"] * gd["rho_j"] * w_gpu).sum(1)
                 opt_mm_idx  = int(_optimal_gpu(s_mm_gpu,  gd["trios"]))
                 opt_vec_idx = int(_optimal_gpu(s_vec_gpu, gd["trios"]))
-                # ULP margin: V_mm of best vs second-best trio (float64)
-                V_mm_gpu = (gd["X_trio"] * w_gpu).sum(1)
-                V_mm_cpu = cp.asnumpy(V_mm_gpu)
+                # V_mm for ULP check: F_mm_trios_gpu is the SAW/mm trio scores
+                V_mm_cpu = cp.asnumpy(F_mm_trios_gpu.astype(cp.float64))
             else:
                 F_mm_site  = compute_group_objectives(X_mm, w_cpu, A_ones_cpu, groups)
                 F_mm_trios = compute_trio_objectives(F_mm_site, trios)
@@ -236,7 +235,8 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                                                   trios, D, scorers_cpu)
                 opt_mm_idx  = optimal_selector(scorers_cpu[0](w_cpu), trios)
                 opt_vec_idx = optimal_selector(scorers_cpu[1](w_cpu), trios)
-                V_mm_cpu = (X_trio * w_cpu).sum(1)  # float64
+                # V_mm for ULP check: already computed as F_mm_trios
+                V_mm_cpu = np.array(F_mm_trios, dtype=np.float64)
 
             # ULP margin check
             if len(V_mm_cpu) >= 2:
