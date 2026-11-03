@@ -98,14 +98,19 @@ def _holm(p_vals):
 
 
 def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
-    """Gate 3: Reconstruct Q2 for 12 cells at κ=200; compare draw-by-draw to sealed CSV.
+    """Gate 3: Reconstruct Q2 for ALL κ (3001 raw + 2004 E1 lines) and compare
+    draw-by-draw to sealed CSVs.
+
+    Coverage:
+      raw  : 6 stochastic κ × 500 draws × 8 cells  +  κ=∞ × 1 draw × 8 cells = 3001 rows
+      E1   : κ=200 × 500 draws × 4 cells  +  κ=∞ × 1 draw × 4 cells           = 2004 rows
 
     Uses compute_q2_all_cells_gpu / compute_e1_cells_gpu from run_santiago_mc directly
     (no reimplementation). GPU path bit-for-bit identical to original sealed-CSV run.
     CPU fallback available for S-N (78K trios); S-T (16.7M) requires GPU.
 
-    n_check=500 by default (all draws at κ=200, pre-registered scope, spec §3).
-    Returns {draw_idx: {"SAW_mm_opt": idx, "SAW_vec_opt": idx}} for Gate 4a.
+    n_check applies only to the stochastic κ draws (max 500). κ=∞ always uses 1 draw.
+    Returns {draw_idx: {"SAW_mm_opt": idx, "SAW_vec_opt": idx}} for κ=200 (Gate 4a).
     Raises RuntimeError on any mismatch or missing modules.
     """
     import hashlib as _hl
@@ -125,13 +130,19 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
             )
     print(f"  Sealed CSV SHA verified: {raw_csv.name}, {e1_csv.name}", flush=True)
 
-    df_raw  = pd.read_csv(raw_csv)
-    df_e1   = pd.read_csv(e1_csv)
-    df_k200 = df_raw[df_raw["kappa"] == 200].sort_values("draw").reset_index(drop=True)
-    df_e1_k = df_e1[df_e1["kappa"] == 200].sort_values(["draw","e1_cell"]).reset_index(drop=True)
+    df_raw = pd.read_csv(raw_csv)
+    df_e1  = pd.read_csv(e1_csv)
 
-    print(f"=== Gate 3: Q2 reconstruction ({label}, n_check={n_check}, κ=200) ===",
-          flush=True)
+    # Verify row counts match spec
+    if len(df_raw) != 3001:
+        raise RuntimeError(
+            f"Gate 3 FAIL: {raw_csv.name} has {len(df_raw)} rows, expected 3001"
+        )
+    if len(df_e1) != 2004:
+        raise RuntimeError(
+            f"Gate 3 FAIL: {e1_csv.name} has {len(df_e1)} rows, expected 2004"
+        )
+    print(f"  Row counts verified: raw={len(df_raw)}, e1={len(df_e1)}", flush=True)
 
     try:
         from run_santiago_mc import (
@@ -144,7 +155,7 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
             ST_W0, SN_W0, ST_GROUPS, SN_GROUPS, CELLS_8,
             _optimal_gpu,
         )
-        from gen_santiago_seeds import get_branch_rngs
+        from gen_santiago_seeds import get_branch_rngs, KAPPA_VALUES
     except (ImportError, FileNotFoundError) as exc:
         raise RuntimeError(
             f"Gate 3 FAIL: Santiago modules not importable ({exc}). Requires Athena."
@@ -161,17 +172,8 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
     trios_sha = _hl.sha256(trios.tobytes()).hexdigest()[:16]
     print(f"  trios SHA-256[:16]: {trios_sha}  n_trios: {len(trios)}", flush=True)
 
-    # Pre-generate all 500 draws from canonical seeds
-    kappa = 200
-    rng_st, rng_sn = get_branch_rngs(kappa)
-    rng = rng_st if branch_key == "ST" else rng_sn
-    W_all = np.array([rng.dirichlet(kappa * w0) for _ in range(500)])
-    W_all = W_all / W_all.sum(axis=1, keepdims=True)
-
-    # Constant E1 amplitudes from fixed w0
     e1_amps = get_e1_amplitudes(rho_j, groups, w0=w0)
 
-    # GPU setup
     gd = prepare_gpu_data(data)
     use_gpu = bool(gd)
     print(f"  device: {'GPU' if use_gpu else 'CPU'}", flush=True)
@@ -179,96 +181,176 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
     if use_gpu:
         import cupy as cp
 
-    # Scorers for CPU path
     scorers_cpu = make_santiago_scorers(X_mm, rho_j) if not use_gpu else None
     A_ones_cpu  = np.ones(len(w0))
 
-    trio_indices: dict = {}
-    n_fail = 0
+    # Gate 4a trio indices — filled only for κ=200
+    trio_indices_k200: dict = {}
 
-    for di in range(n_check):
-        w_cpu = W_all[di]   # float64
+    n_fail     = 0
+    total_raw  = 0
+    total_e1   = 0
 
-        # ── Compute Q2 for 8 raw cells ──────────────────────────────────
-        if use_gpu:
-            raw_result, F_mm_trios_gpu, F_mm_site_gpu = compute_q2_all_cells_gpu(
-                gd, w_cpu, D
+    # ── Stochastic κ (500 draws each) ───────────────────────────────────────
+    for kappa in KAPPA_VALUES:
+        rng_st, rng_sn = get_branch_rngs(kappa)
+        rng = rng_st if branch_key == "ST" else rng_sn
+        W_k = np.array([rng.dirichlet(kappa * w0) for _ in range(500)])
+        W_k = W_k / W_k.sum(axis=1, keepdims=True)
+
+        df_raw_k = df_raw[df_raw["kappa"] == kappa].sort_values("draw").reset_index(drop=True)
+        df_e1_k  = df_e1[df_e1["kappa"] == kappa].sort_values(
+            ["draw", "e1_cell"]).reset_index(drop=True) if kappa == 200 else None
+
+        n_draws_k = min(n_check, len(df_raw_k))
+        print(f"  κ={kappa:4d}: {n_draws_k} draws × 8 raw"
+              f"{' + 4 E1' if df_e1_k is not None else ''}...", flush=True)
+
+        for di in range(n_draws_k):
+            w_cpu = W_k[di]
+
+            # raw Q2
+            if use_gpu:
+                raw_result, F_mm_trios_gpu, F_mm_site_gpu = compute_q2_all_cells_gpu(
+                    gd, w_cpu, D
+                )
+                w_gpu       = cp.asarray(w_cpu)
+                s_mm_gpu    = (gd["X_mm"] * w_gpu).sum(1)
+                s_vec_gpu   = (gd["X_mm"] * gd["rho_j"] * w_gpu).sum(1)
+                opt_mm_idx  = int(_optimal_gpu(s_mm_gpu,  gd["trios"]))
+                opt_vec_idx = int(_optimal_gpu(s_vec_gpu, gd["trios"]))
+            else:
+                F_mm_site  = compute_group_objectives(X_mm, w_cpu, A_ones_cpu, groups)
+                F_mm_trios = compute_trio_objectives(F_mm_site, trios)
+                raw_result = compute_q2_all_cells(X_mm, w_cpu, A_ones_cpu, groups,
+                                                  trios, D, scorers_cpu)
+                opt_mm_idx  = optimal_selector(scorers_cpu[0](w_cpu), trios)
+                opt_vec_idx = optimal_selector(scorers_cpu[1](w_cpu), trios)
+
+            if kappa == 200:
+                trio_indices_k200[di] = {
+                    "SAW_mm_opt":  opt_mm_idx,
+                    "SAW_vec_opt": opt_vec_idx,
+                }
+
+            row = df_raw_k[df_raw_k["draw"] == di]
+            if row.empty:
+                raise RuntimeError(
+                    f"Gate 3 FAIL: κ={kappa} draw {di} missing from {raw_csv.name}"
+                )
+            for cell in CELLS_8:
+                got = raw_result[cell]
+                exp = int(row[cell].values[0])
+                if got != exp:
+                    print(f"  FAIL κ={kappa} draw {di} {cell}: got {got} exp {exp}",
+                          flush=True)
+                    n_fail += 1
+                total_raw += 1
+
+            # E1 cells (only κ=200)
+            if df_e1_k is not None:
+                if use_gpu:
+                    e1_rows = compute_e1_cells_gpu(
+                        gd, w_cpu, rho_j, groups, D,
+                        F_mm_site_gpu, F_mm_trios_gpu, w0=w0,
+                    )
+                else:
+                    e1_rows = []
+                    for e1_name in ["M", "B", "W", "V"]:
+                        A_j  = np.asarray(e1_amps[e1_name], dtype=np.float64)
+                        sc   = (X_mm * (w_cpu * A_j)).sum(1)
+                        tidx = optimal_selector(sc, trios)
+                        f_grd = (F_mm_site[greedy_selector(sc, D)[0]] +
+                                 F_mm_site[greedy_selector(sc, D)[1]] +
+                                 F_mm_site[greedy_selector(sc, D)[2]])
+                        q2_opt = 0 if check_dominated_raw(F_mm_trios, F_mm_trios[tidx]) else 1
+                        q2_grd = 0 if check_dominated_raw(F_mm_trios, f_grd) else 1
+                        e1_rows.append({"e1_cell": e1_name, "Q2_opt": q2_opt,
+                                        "Q2_grd": q2_grd})
+                for r in e1_rows:
+                    e1_row = df_e1_k[
+                        (df_e1_k["draw"] == di) & (df_e1_k["e1_cell"] == r["e1_cell"])
+                    ]
+                    if e1_row.empty:
+                        raise RuntimeError(
+                            f"Gate 3 FAIL: κ=200 draw {di} E1-{r['e1_cell']} missing"
+                        )
+                    exp_e1 = int(e1_row["Q2_opt"].values[0])
+                    if r["Q2_opt"] != exp_e1:
+                        print(f"  FAIL κ=200 draw {di} E1-{r['e1_cell']}: "
+                              f"got {r['Q2_opt']} exp {exp_e1}", flush=True)
+                        n_fail += 1
+                    total_e1 += 1
+
+        print(f"    κ={kappa:4d} OK ({n_fail} fails so far)", flush=True)
+
+    # ── κ=∞ (1 draw — deterministic w0) ─────────────────────────────────────
+    print(f"  κ=∞: 1 draw × 8 raw + 4 E1...", flush=True)
+    w_inf = w0 / w0.sum()
+
+    if use_gpu:
+        raw_inf, F_mm_trios_inf, F_mm_site_inf = compute_q2_all_cells_gpu(gd, w_inf, D)
+        e1_inf = compute_e1_cells_gpu(
+            gd, w_inf, rho_j, groups, D, F_mm_site_inf, F_mm_trios_inf, w0=w0
+        )
+    else:
+        F_mm_site_inf  = compute_group_objectives(X_mm, w_inf, A_ones_cpu, groups)
+        F_mm_trios_inf = compute_trio_objectives(F_mm_site_inf, trios)
+        raw_inf = compute_q2_all_cells(X_mm, w_inf, A_ones_cpu, groups,
+                                       trios, D, scorers_cpu)
+        e1_inf = []
+        for e1_name in ["M", "B", "W", "V"]:
+            A_j  = np.asarray(e1_amps[e1_name], dtype=np.float64)
+            sc   = (X_mm * (w_inf * A_j)).sum(1)
+            tidx = optimal_selector(sc, trios)
+            trio_grd = greedy_selector(sc, D)
+            f_grd = sum(F_mm_site_inf[trio_grd[i]] for i in range(3))
+            q2_opt = 0 if check_dominated_raw(F_mm_trios_inf, F_mm_trios_inf[tidx]) else 1
+            q2_grd = 0 if check_dominated_raw(F_mm_trios_inf, f_grd) else 1
+            e1_inf.append({"e1_cell": e1_name, "Q2_opt": q2_opt, "Q2_grd": q2_grd})
+
+    df_raw_inf = df_raw[df_raw["kappa"] == np.inf]
+    df_e1_inf  = df_e1[df_e1["kappa"] == np.inf].sort_values("e1_cell")
+
+    if len(df_raw_inf) != 1:
+        raise RuntimeError(
+            f"Gate 3 FAIL: expected 1 κ=∞ raw row, got {len(df_raw_inf)}"
+        )
+    for cell in CELLS_8:
+        got = raw_inf[cell]
+        exp = int(df_raw_inf[cell].values[0])
+        if got != exp:
+            print(f"  FAIL κ=∞ {cell}: got {got} exp {exp}", flush=True)
+            n_fail += 1
+        total_raw += 1
+
+    for r in e1_inf:
+        e1_row = df_e1_inf[df_e1_inf["e1_cell"] == r["e1_cell"]]
+        if e1_row.empty:
+            raise RuntimeError(
+                f"Gate 3 FAIL: κ=∞ E1-{r['e1_cell']} missing from {e1_csv.name}"
             )
-            # Trio indices for Gate 4a — compute from same GPU scorers
-            w_gpu     = cp.asarray(w_cpu)
-            s_mm_gpu  = (gd["X_mm"] * w_gpu).sum(1)
-            s_vec_gpu = (gd["X_mm"] * gd["rho_j"] * w_gpu).sum(1)
-            opt_mm_idx  = int(_optimal_gpu(s_mm_gpu,  gd["trios"]))
-            opt_vec_idx = int(_optimal_gpu(s_vec_gpu, gd["trios"]))
-        else:
-            F_mm_site  = compute_group_objectives(X_mm, w_cpu, A_ones_cpu, groups)
-            F_mm_trios = compute_trio_objectives(F_mm_site, trios)
-            raw_result = compute_q2_all_cells(X_mm, w_cpu, A_ones_cpu, groups,
-                                              trios, D, scorers_cpu)
-            opt_mm_idx  = optimal_selector(scorers_cpu[0](w_cpu), trios)
-            opt_vec_idx = optimal_selector(scorers_cpu[1](w_cpu), trios)
+        exp_e1 = int(e1_row["Q2_opt"].values[0])
+        if r["Q2_opt"] != exp_e1:
+            print(f"  FAIL κ=∞ E1-{r['e1_cell']}: got {r['Q2_opt']} exp {exp_e1}",
+                  flush=True)
+            n_fail += 1
+        total_e1 += 1
 
-        trio_indices[di] = {
-            "SAW_mm_opt":  opt_mm_idx,
-            "SAW_vec_opt": opt_vec_idx,
-        }
-
-        # Compare 8 raw cells to sealed CSV
-        row = df_k200[df_k200["draw"] == di]
-        if row.empty:
-            raise RuntimeError(f"Gate 3 FAIL: draw {di} missing from {raw_csv.name}")
-        for cell in CELLS_8:
-            got = raw_result[cell]
-            exp = int(row[cell].values[0])
-            if got != exp:
-                print(f"  FAIL draw {di} {cell}: got {got} exp {exp}", flush=True)
-                n_fail += 1
-
-        # ── Compute Q2 for 4 E1 cells ───────────────────────────────────
-        if use_gpu:
-            e1_rows = compute_e1_cells_gpu(
-                gd, w_cpu, rho_j, groups, D,
-                F_mm_site_gpu, F_mm_trios_gpu, w0=w0,
-            )
-        else:
-            # CPU E1: replicate compute_e1_cells_gpu logic
-            e1_rows = []
-            for e1_name in ["M", "B", "W", "V"]:
-                A_j = np.asarray(e1_amps[e1_name], dtype=np.float64)
-                sc  = (X_mm * (w_cpu * A_j)).sum(1)
-                tidx     = optimal_selector(sc, trios)
-                trio_grd = greedy_selector(sc, D)
-                q2_opt = 0 if check_dominated_raw(F_mm_trios, F_mm_trios[tidx]) else 1
-                f_grd  = (F_mm_site[trio_grd[0]] + F_mm_site[trio_grd[1]] +
-                          F_mm_site[trio_grd[2]])
-                q2_grd = 0 if check_dominated_raw(F_mm_trios, f_grd) else 1
-                e1_rows.append({"e1_cell": e1_name, "Q2_opt": q2_opt,
-                                 "Q2_grd": q2_grd})
-
-        for row_e1 in e1_rows:
-            cell_char = row_e1["e1_cell"]
-            got_e1    = row_e1["Q2_opt"]
-            e1_row    = df_e1_k[(df_e1_k["draw"] == di) & (df_e1_k["e1_cell"] == cell_char)]
-            if e1_row.empty:
-                raise RuntimeError(f"Gate 3 FAIL: draw {di} E1-{cell_char} missing")
-            exp_e1 = int(e1_row["Q2_opt"].values[0])
-            if got_e1 != exp_e1:
-                print(f"  FAIL draw {di} E1-{cell_char}_opt: got {got_e1} exp {exp_e1}",
-                      flush=True)
-                n_fail += 1
-
-        if di % 50 == 49 or di == n_check - 1:
-            print(f"  draws 0-{di}: {n_fail} failures so far", flush=True)
+    print(f"  κ=∞ OK", flush=True)
 
     if n_fail:
         raise RuntimeError(
-            f"Gate 3 FAIL ({label}): {n_fail} cell mismatches in {n_check} draws. "
-            "Seeds or computation path diverged from sealed CSV."
+            f"Gate 3 FAIL ({label}): {n_fail} mismatches. "
+            f"({total_raw} raw + {total_e1} E1 cells checked)"
         )
 
-    print(f"  Gate 3 ({label}): {n_check} draws x 12 cells ALL MATCH sealed CSV\n",
-          flush=True)
-    return trio_indices
+    print(
+        f"  Gate 3 ({label}): {total_raw} raw + {total_e1} E1 cells ALL MATCH "
+        f"({total_raw + total_e1} total)\n",
+        flush=True,
+    )
+    return trio_indices_k200
 
 
 def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
