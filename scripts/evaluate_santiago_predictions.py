@@ -100,21 +100,21 @@ def _holm(p_vals):
 def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
     """Gate 3: Reconstruct Q2 for 12 cells at κ=200; compare draw-by-draw to sealed CSV.
 
-    Verifies all 500 draws by default (spec §3: exact binary match, zero differences).
-    Logs trios SHA, device, and hash of trios per κ for Gate 4a audit trail.
+    Uses compute_q2_all_cells_gpu / compute_e1_cells_gpu from run_santiago_mc directly
+    (no reimplementation). GPU path bit-for-bit identical to original sealed-CSV run.
+    CPU fallback available for S-N (78K trios); S-T (16.7M) requires GPU.
 
-    Returns {draw_idx: {cell: trio_idx}} for Gate 4a identity check.
-    Raises RuntimeError on mismatch or if Santiago modules not importable.
-    Only runs in full evaluation mode or --gate3-only.
+    n_check=500 by default (all draws at κ=200, pre-registered scope, spec §3).
+    Returns {draw_idx: {"SAW_mm_opt": idx, "SAW_vec_opt": idx}} for Gate 4a.
+    Raises RuntimeError on any mismatch or missing modules.
     """
     import hashlib as _hl
 
-    tag     = branch_key                   # "ST" or "SN"
+    tag     = branch_key
     raw_csv = SEALED / f"mc_{tag}_raw.csv"
     e1_csv  = SEALED / f"mc_{tag}_e1_fix2.csv"
     label   = "S-T" if tag == "ST" else "S-N"
 
-    # SHA verification of sealed CSVs (spec §3)
     for f in [raw_csv, e1_csv]:
         sha_exp = SHA_SEALED[f.name]
         sha_got = _hl.sha256(f.read_bytes()).hexdigest()
@@ -125,21 +125,24 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
             )
     print(f"  Sealed CSV SHA verified: {raw_csv.name}, {e1_csv.name}", flush=True)
 
-    df_raw = pd.read_csv(raw_csv)
-    df_e1  = pd.read_csv(e1_csv)
+    df_raw  = pd.read_csv(raw_csv)
+    df_e1   = pd.read_csv(e1_csv)
     df_k200 = df_raw[df_raw["kappa"] == 200].sort_values("draw").reset_index(drop=True)
-    df_e1_k = df_e1[df_e1["kappa"]   == 200].sort_values(["draw","e1_cell"]).reset_index(drop=True)
+    df_e1_k = df_e1[df_e1["kappa"] == 200].sort_values(["draw","e1_cell"]).reset_index(drop=True)
 
-    print(f"=== Gate 3: Q2 reconstruction ({label}, n_check={n_check}) ===", flush=True)
+    print(f"=== Gate 3: Q2 reconstruction ({label}, n_check={n_check}, κ=200) ===",
+          flush=True)
 
     try:
         from run_santiago_mc import (
-            load_branch_data, make_santiago_scorers,
-            optimal_selector, greedy_selector,
+            load_branch_data, prepare_gpu_data,
+            compute_q2_all_cells_gpu, compute_e1_cells_gpu,
+            compute_q2_all_cells, make_santiago_scorers,
             compute_group_objectives, compute_trio_objectives,
-            check_dominated_raw,
-            ST_W0, SN_W0, ST_GROUPS, SN_GROUPS,
+            check_dominated_raw, optimal_selector, greedy_selector,
             get_e1_amplitudes,
+            ST_W0, SN_W0, ST_GROUPS, SN_GROUPS, CELLS_8,
+            _optimal_gpu,
         )
         from gen_santiago_seeds import get_branch_rngs
     except (ImportError, FileNotFoundError) as exc:
@@ -148,101 +151,104 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
         )
 
     data   = load_branch_data(branch_key)
-    X_mm   = np.asarray(data["X_mm"],  dtype=np.float32)
-    trios  = np.asarray(data["trios"], dtype=np.int32)
+    X_mm   = np.asarray(data["X_mm"],   dtype=np.float64)
+    trios  = np.asarray(data["trios"],  dtype=np.int32)
     D      = data["D"]
-    rho_j  = data["rho_j"]
+    rho_j  = np.asarray(data["rho_j"],  dtype=np.float64)
     groups = ST_GROUPS if branch_key == "ST" else SN_GROUPS
     w0     = np.asarray(ST_W0 if branch_key == "ST" else SN_W0, dtype=np.float64)
 
     trios_sha = _hl.sha256(trios.tobytes()).hexdigest()[:16]
     print(f"  trios SHA-256[:16]: {trios_sha}  n_trios: {len(trios)}", flush=True)
 
-    # Pre-generate all 500 draws at κ=200 from canonical seeds
+    # Pre-generate all 500 draws from canonical seeds
     kappa = 200
     rng_st, rng_sn = get_branch_rngs(kappa)
     rng = rng_st if branch_key == "ST" else rng_sn
     W_all = np.array([rng.dirichlet(kappa * w0) for _ in range(500)])
     W_all = W_all / W_all.sum(axis=1, keepdims=True)
 
-    scorers_cpu = make_santiago_scorers(X_mm, rho_j)
-    A_ones      = np.ones(len(w0))
-    X_trio_arr  = X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]  # (T, M)
+    # Constant E1 amplitudes from fixed w0
+    e1_amps = get_e1_amplitudes(rho_j, groups, w0=w0)
 
-    trio_indices: dict = {}   # {draw_idx: {"SAW_mm_opt": idx, ...}} for Gate 4a
+    # GPU setup
+    gd = prepare_gpu_data(data)
+    use_gpu = bool(gd)
+    print(f"  device: {'GPU' if use_gpu else 'CPU'}", flush=True)
+
+    if use_gpu:
+        import cupy as cp
+
+    # Scorers for CPU path
+    scorers_cpu = make_santiago_scorers(X_mm, rho_j) if not use_gpu else None
+    A_ones_cpu  = np.ones(len(w0))
+
+    trio_indices: dict = {}
     n_fail = 0
 
     for di in range(n_check):
-        w  = W_all[di].astype(np.float64)
-        wf = w.astype(np.float32)
+        w_cpu = W_all[di]   # float64
 
-        # Group objectives (same call as run_santiago_mc)
-        F_site  = compute_group_objectives(X_mm, w, A_ones, groups)
-        F_trios = compute_trio_objectives(F_site, trios)
+        # ── Compute Q2 for 8 raw cells ──────────────────────────────────
+        if use_gpu:
+            raw_result, F_mm_trios_gpu, F_mm_site_gpu = compute_q2_all_cells_gpu(
+                gd, w_cpu, D
+            )
+            # Trio indices for Gate 4a — compute from same GPU scorers
+            w_gpu     = cp.asarray(w_cpu)
+            s_mm_gpu  = (gd["X_mm"] * w_gpu).sum(1)
+            s_vec_gpu = (gd["X_mm"] * gd["rho_j"] * w_gpu).sum(1)
+            opt_mm_idx  = int(_optimal_gpu(s_mm_gpu,  gd["trios"]))
+            opt_vec_idx = int(_optimal_gpu(s_vec_gpu, gd["trios"]))
+        else:
+            F_mm_site  = compute_group_objectives(X_mm, w_cpu, A_ones_cpu, groups)
+            F_mm_trios = compute_trio_objectives(F_mm_site, trios)
+            raw_result = compute_q2_all_cells(X_mm, w_cpu, A_ones_cpu, groups,
+                                              trios, D, scorers_cpu)
+            opt_mm_idx  = optimal_selector(scorers_cpu[0](w_cpu), trios)
+            opt_vec_idx = optimal_selector(scorers_cpu[1](w_cpu), trios)
 
-        def _q2_trio(idx: int) -> int:
-            return 0 if check_dominated_raw(F_trios, F_trios[idx]) else 1
+        trio_indices[di] = {
+            "SAW_mm_opt":  opt_mm_idx,
+            "SAW_vec_opt": opt_vec_idx,
+        }
 
-        def _q2_grd(grd: list) -> int:
-            f = F_site[grd[0]] + F_site[grd[1]] + F_site[grd[2]]
-            return 0 if check_dominated_raw(F_trios, f) else 1
-
-        sc_mm   = scorers_cpu[0](wf)
-        sc_vec  = scorers_cpu[1](wf)
-        sc_tmm  = scorers_cpu[2](wf)
-        sc_tvec = scorers_cpu[3](wf)
-
-        opt_mm   = optimal_selector(sc_mm,   trios)
-        opt_vec  = optimal_selector(sc_vec,  trios)
-        opt_tmm  = optimal_selector(sc_tmm,  trios)
-        opt_tvec = optimal_selector(sc_tvec, trios)
-        grd_mm   = greedy_selector(sc_mm,   D)
-        grd_vec  = greedy_selector(sc_vec,  D)
-        grd_tmm  = greedy_selector(sc_tmm,  D)
-        grd_tvec = greedy_selector(sc_tvec, D)
-
-        trio_indices[di] = {"SAW_mm_opt": opt_mm, "SAW_vec_opt": opt_vec}
-
-        raw_cells = [
-            ("SAW_mm_grd",     _q2_grd(grd_mm)),
-            ("SAW_mm_opt",     _q2_trio(opt_mm)),
-            ("SAW_vec_grd",    _q2_grd(grd_vec)),
-            ("SAW_vec_opt",    _q2_trio(opt_vec)),
-            ("TOPSIS_mm_grd",  _q2_grd(grd_tmm)),
-            ("TOPSIS_mm_opt",  _q2_trio(opt_tmm)),
-            ("TOPSIS_vec_grd", _q2_grd(grd_tvec)),
-            ("TOPSIS_vec_opt", _q2_trio(opt_tvec)),
-        ]
-
+        # Compare 8 raw cells to sealed CSV
         row = df_k200[df_k200["draw"] == di]
         if row.empty:
             raise RuntimeError(f"Gate 3 FAIL: draw {di} missing from {raw_csv.name}")
-
-        for cell, got in raw_cells:
+        for cell in CELLS_8:
+            got = raw_result[cell]
             exp = int(row[cell].values[0])
             if got != exp:
                 print(f"  FAIL draw {di} {cell}: got {got} exp {exp}", flush=True)
                 n_fail += 1
 
-        # E1 cells: M, B, W, V
-        rho_B, rho_W = get_e1_amplitudes(rho_j, groups, w)
-        V_e1b = X_trio_arr @ np.asarray(rho_B, dtype=np.float64)
-        V_e1w = X_trio_arr @ np.asarray(rho_W, dtype=np.float64)
-        V_e1v = X_trio_arr @ (rho_j * w)                        # rho_V = rho_j
-        V_e1m = (X_trio_arr.astype(np.float64) * wf).sum(1)     # same as SAW_mm
+        # ── Compute Q2 for 4 E1 cells ───────────────────────────────────
+        if use_gpu:
+            e1_rows = compute_e1_cells_gpu(
+                gd, w_cpu, rho_j, groups, D,
+                F_mm_site_gpu, F_mm_trios_gpu, w0=w0,
+            )
+        else:
+            # CPU E1: replicate compute_e1_cells_gpu logic
+            e1_rows = []
+            for e1_name in ["M", "B", "W", "V"]:
+                A_j = np.asarray(e1_amps[e1_name], dtype=np.float64)
+                sc  = (X_mm * (w_cpu * A_j)).sum(1)
+                tidx     = optimal_selector(sc, trios)
+                trio_grd = greedy_selector(sc, D)
+                q2_opt = 0 if check_dominated_raw(F_mm_trios, F_mm_trios[tidx]) else 1
+                f_grd  = (F_mm_site[trio_grd[0]] + F_mm_site[trio_grd[1]] +
+                          F_mm_site[trio_grd[2]])
+                q2_grd = 0 if check_dominated_raw(F_mm_trios, f_grd) else 1
+                e1_rows.append({"e1_cell": e1_name, "Q2_opt": q2_opt,
+                                 "Q2_grd": q2_grd})
 
-        e1_opts = {
-            "M": int(V_e1m.argmax()),
-            "B": int(V_e1b.argmax()),
-            "W": int(V_e1w.argmax()),
-            "V": int(V_e1v.argmax()),
-        }
-        trio_indices[di]["E1_M_opt"] = e1_opts["M"]
-        trio_indices[di]["E1_V_opt"] = e1_opts["V"]
-
-        for cell_char, opt_idx in e1_opts.items():
-            got_e1 = _q2_trio(opt_idx)
-            e1_row = df_e1_k[(df_e1_k["draw"] == di) & (df_e1_k["e1_cell"] == cell_char)]
+        for row_e1 in e1_rows:
+            cell_char = row_e1["e1_cell"]
+            got_e1    = row_e1["Q2_opt"]
+            e1_row    = df_e1_k[(df_e1_k["draw"] == di) & (df_e1_k["e1_cell"] == cell_char)]
             if e1_row.empty:
                 raise RuntimeError(f"Gate 3 FAIL: draw {di} E1-{cell_char} missing")
             exp_e1 = int(e1_row["Q2_opt"].values[0])
@@ -252,7 +258,7 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                 n_fail += 1
 
         if di % 50 == 49 or di == n_check - 1:
-            print(f"  draws 0-{di}: OK so far (0 failures)", flush=True)
+            print(f"  draws 0-{di}: {n_fail} failures so far", flush=True)
 
     if n_fail:
         raise RuntimeError(
@@ -260,8 +266,9 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
             "Seeds or computation path diverged from sealed CSV."
         )
 
-    print(f"  Gate 3 ({label}): {n_check} draws x 12 cells ALL MATCH sealed CSV\n", flush=True)
-    return trio_indices   # {draw_idx: {cell: trio_idx}} for Gate 4a
+    print(f"  Gate 3 ({label}): {n_check} draws x 12 cells ALL MATCH sealed CSV\n",
+          flush=True)
+    return trio_indices
 
 
 def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,

@@ -4,10 +4,9 @@
 No branch-specific constants. No _fogo_override parameter. No global state.
 Callers pass explicit data dicts from load_fogo_data() or load_santiago_data().
 
-Precision contract (matches oracle compute_regret.py):
-  V_all     : float32  (X_trio * wf, wf = w.astype(float32))
-  V_vec     : float64  (X_mm * rho_j) @ w, w is float64)
-  R values  : float64  (computed from float32-derived v_max, v_rng)
+Precision contract (matches oracle compute_regret.py and run_santiago_mc.py GPU path):
+  All arrays kept as float64 (load_branch_data() returns float64 X_mm).
+  TOL_DRAW = 1e-12 in Gate 1 is achievable because both paths use float64.
 """
 import sys
 import numpy as np
@@ -53,20 +52,25 @@ def compute_value_regret(
 
     Pure function: no branch names, no global state, no fallback.
 
-    Precision contract (must match oracle compute_regret.py):
-      V_all computed in float32 via w_f = w.astype(float32).
-      V_vec computed in float64 via (X_mm * rho_j) @ w (w is float64).
+    Precision contract: float64 throughout (matches oracle compute_regret.py).
+      X_mm stays float64 (load_branch_data returns float64).
+      w (per-draw) is float64 (dirichlet samples are float64).
+      V_all = X_trio @ w — float64.
+      V_vec = X_trio @ (rho_j * w) — float64.
 
     Parameters
     ----------
-    X_mm      : (N, M) array  -- min-max normalised decision matrix
-    trios     : (T, 3) int    -- feasible trio indices
-    D         : (N, N) array  -- pairwise distance matrix (km), used by greedy_fn
-    rho_j     : (M,) array    -- between-group amplitude vector
-    W_draws   : (B, M) array  -- weight samples; Fogo: from e1_weights_k200.npy;
-                                 Santiago: pre-generated from canonical seeds
-    w0        : (M,) array    -- nominal weights (for logging/validation only)
-    e1_fn     : callable(w: ndarray) -> (rho_B: ndarray, rho_W: ndarray), optional
+    X_mm      : (N, M) float64  -- min-max normalised decision matrix
+    trios     : (T, 3) int32    -- feasible trio indices
+    D         : (N, N) float64  -- pairwise distance matrix (km)
+    rho_j     : (M,) float64    -- between-group amplitude vector (E1-V)
+    W_draws   : (B, M) float64  -- weight samples; Fogo: from e1_weights_k200.npy;
+                                   Santiago: pre-generated from canonical seeds
+    w0        : (M,) float64    -- fixed nominal AHP weights
+    e1_fn     : callable() -> dict{"M","B","W","V"}, optional.
+                Takes NO arguments. Returns E1 amplitude vectors (constant across
+                draws; amplitudes computed from fixed w0 via get_e1_amplitudes).
+                If None, E1 cells are omitted and the gate raises RuntimeError.
     greedy_fn : callable(V_sites: ndarray, D: ndarray) -> [i0, i1, i2], optional
     label     : str
     verbose   : bool
@@ -77,7 +81,7 @@ def compute_value_regret(
       R_mm_opt_pp        : list[float]  -- R(SAW/mm/opt) per draw in pp; all 0
       R_sawvec_grd_pp    : list[float]
       R_sawvec_opt_pp    : list[float]
-      R_e1b_opt_pp       : list[float] or None
+      R_e1b_opt_pp       : list[float] or None  (None only if e1_fn is None)
       R_e1w_opt_pp       : list[float] or None
       trio_idx_mm_opt    : list[int]   -- argmax(V_mm) per draw  [Gate 4a identity]
       trio_idx_vec_opt   : list[int]   -- argmax(V_vec) per draw [Gate 4d identity]
@@ -85,22 +89,19 @@ def compute_value_regret(
       n_same_trio_sawvec : int
       summary            : dict
     """
-    X_mm  = np.asarray(X_mm,  dtype=np.float32)
+    X_mm  = np.asarray(X_mm,  dtype=np.float64)
     trios = np.asarray(trios, dtype=np.int32)
-    rho_j = np.asarray(rho_j, dtype=np.float32)
+    rho_j = np.asarray(rho_j, dtype=np.float64)
     w0    = np.asarray(w0,    dtype=np.float64)
 
-    N, M  = X_mm.shape
-    T     = len(trios)
-    B     = len(W_draws)
+    T = len(trios)
+    B = len(W_draws)
 
-    # X_trio: (T, M) float32 — sum of rows for each trio
-    X_trio = (X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]])
+    # Pre-compute trio sums (float64)
+    X_trio     = X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]  # (T, M)
+    X_trio_rho = X_trio * rho_j                                                 # (T, M)
 
-    # X_trio_rho: (T, M) float32 — for V_vec_trios (float64 via @ w)
-    X_trio_rho = X_trio * rho_j
-
-    # GPU setup
+    # GPU setup — X_mm is float64, preserved on GPU
     use_gpu = False
     _gd: dict = {}
     try:
@@ -126,10 +127,31 @@ def compute_value_regret(
             flush=True,
         )
 
+    # E1 amplitudes — constant across draws (computed from fixed w0)
+    # Mandatory when any E1-dependent gate is active; caller controls e1_fn.
+    e1_avail = e1_fn is not None
+    e1_amps: dict = {}
+    if e1_avail:
+        e1_amps = e1_fn()  # {"M": A_M, "B": A_B, "W": A_W, "V": A_V} — no per-draw arg
+        A_B = np.asarray(e1_amps["B"], dtype=np.float64)
+        A_W = np.asarray(e1_amps["W"], dtype=np.float64)
+        A_V = np.asarray(e1_amps["V"], dtype=np.float64)  # = rho_j by definition
+        A_M = np.asarray(e1_amps["M"], dtype=np.float64)  # = ones by definition
+        # Gate 4d pre-check: E1-V amplitude must equal rho_j (definition)
+        assert np.allclose(A_V, rho_j, rtol=1e-12, atol=1e-15), (
+            f"[EVAL-R {label}] Gate 4d PRE: E1-V amplitude A_V != rho_j. "
+            "Check get_e1_amplitudes return."
+        )
+        # E1-M amplitude must be ones (definition)
+        assert np.allclose(A_M, np.ones_like(A_M), rtol=1e-12, atol=1e-15), (
+            f"[EVAL-R {label}] Gate 4e PRE: E1-M amplitude A_M != ones."
+        )
+        X_trio_e1b = X_trio * A_B   # (T, M)
+        X_trio_e1w = X_trio * A_W   # (T, M)
+
     R_mm_opt  = np.zeros(B, dtype=np.float64)
     R_vec_grd = np.zeros(B, dtype=np.float64)
     R_vec_opt = np.zeros(B, dtype=np.float64)
-    e1_avail  = e1_fn is not None
     R_e1b_opt = np.full(B, np.nan, dtype=np.float64) if e1_avail else None
     R_e1w_opt = np.full(B, np.nan, dtype=np.float64) if e1_avail else None
 
@@ -139,74 +161,59 @@ def compute_value_regret(
     n_same_trio      = 0
 
     for di in range(B):
-        w  = np.asarray(W_draws[di], dtype=np.float64)
-        w  = w / w.sum()
-        wf = w.astype(np.float32)     # float32 for V_all (precision contract)
+        w = np.asarray(W_draws[di], dtype=np.float64)
+        w = w / w.sum()
 
-        # ── V_all (float32): used for opt_mm_idx and R_mm_opt ───────────
+        # ── V_mm (float64): used for opt_mm_idx and R_mm_opt ────────────
         if use_gpu:
             import cupy as cp
-            wf_gpu      = cp.asarray(wf)
-            V_all_gpu   = (_gd["X_trio"] * wf_gpu).sum(1)     # float32
-            V_all_f32   = cp.asnumpy(V_all_gpu)               # float32 ndarray
+            w_gpu = cp.asarray(w)
+            V_all_gpu = (_gd["X_trio"] * w_gpu).sum(1)   # float64 on GPU
+            V_all     = cp.asnumpy(V_all_gpu)             # float64 ndarray
         else:
-            V_all_f32   = (X_trio * wf).sum(1)                # float32 ndarray
+            V_all = (X_trio * w).sum(1)                   # float64 ndarray
 
-        v_max      = float(V_all_f32.max())
-        v_min      = float(V_all_f32.min())
+        v_max      = float(V_all.max())
+        v_min      = float(V_all.min())
         v_rng      = max(v_max - v_min, 1e-12)
-        opt_mm_idx = int(V_all_f32.argmax())
+        opt_mm_idx = int(V_all.argmax())
 
-        # Gate 4a uniqueness: use float64 to avoid float32 precision at ~1e-7
-        v_second_f64 = float(np.partition(V_all_f32.astype(np.float64), -2)[-2])
-        margin       = v_max - v_second_f64
-        if margin < min_v_margin_mm:
-            min_v_margin_mm = margin
-
-        # Gate 4a ULP check: if margin < 10 ulps of float32, re-verify argmax in float64
-        _ULP_F32 = np.finfo(np.float32).eps  # 1.19e-7
-        if margin < 10 * _ULP_F32:
-            V_all_f64 = (X_trio.astype(np.float64) * w).sum(1)
-            opt_mm_f64 = int(V_all_f64.argmax())
-            assert opt_mm_f64 == opt_mm_idx, (
-                f"[EVAL-R {label}] draw {di}: float32/float64 argmax DIFFER "
-                f"margin={margin:.3e} ({margin/_ULP_F32:.1f} ulps). "
-                "Tie in V_mm — investigate precision of run_santiago_mc.py GPU path."
-            )
+        # Gate 4a uniqueness: record smallest gap to second-best
+        if T >= 2:
+            v_second = float(np.partition(V_all, -2)[-2])
+            margin   = v_max - v_second
+            if margin < min_v_margin_mm:
+                min_v_margin_mm = margin
 
         trio_idx_mm_opt[di] = opt_mm_idx
 
         # R_mm_opt: argmax -> V_all[opt_mm_idx] == v_max -> R == 0.0 exactly
-        R_mm_opt[di] = max(0.0, (v_max - float(V_all_f32[opt_mm_idx])) / v_rng)
+        R_mm_opt[di] = max(0.0, (v_max - float(V_all[opt_mm_idx])) / v_rng)
         assert R_mm_opt[di] == 0.0, (
             f"[EVAL-R {label}] draw {di}: R_mm_opt={R_mm_opt[di]:.3e} != 0.0"
         )
 
         # ── V_vec (float64): used for opt_vec_idx and R_vec ─────────────
-        # Precision contract: (X_mm * rho_j) @ w  where w is float64
         if use_gpu:
             import cupy as cp
-            wf_gpu_v       = cp.asarray(wf)
-            V_vec_sites_gpu = (_gd["X_mm"] * _gd["rho_j"] * wf_gpu_v).sum(1)
-            V_vec_sites     = cp.asnumpy(V_vec_sites_gpu).astype(np.float64)
-            # For opt_vec_idx use trio-level scores in float64
-            V_vec_trios_f64 = X_trio_rho.astype(np.float64) @ w
-            opt_vec_idx     = int(V_vec_trios_f64.argmax())
+            V_vec_sites_gpu  = (_gd["X_mm"] * _gd["rho_j"] * w_gpu).sum(1)
+            V_vec_sites      = cp.asnumpy(V_vec_sites_gpu)
+            V_vec_trios      = (_gd["X_trio_rho"] * w_gpu).sum(1)
+            opt_vec_idx      = int(cp.argmax(V_vec_trios))
         else:
-            # (X_mm * rho_j) @ w: X_mm*rho_j is float32, w is float64 -> float64
-            V_vec_sites     = (X_mm * rho_j) @ w
-            V_vec_trios_f64 = X_trio_rho.astype(np.float64) @ w
-            opt_vec_idx     = int(V_vec_trios_f64.argmax())
+            V_vec_sites = (X_mm * rho_j * w).sum(1)        # (N,)
+            V_vec_trios = (X_trio_rho * w).sum(1)           # (T,) float64
+            opt_vec_idx = int(V_vec_trios.argmax())
 
         trio_idx_vec_opt[di] = opt_vec_idx
 
-        v_opt_vec      = float(V_all_f32[opt_vec_idx])
-        R_vec_opt[di]  = max(0.0, (v_max - v_opt_vec) / v_rng)
+        v_opt_vec     = float(V_all[opt_vec_idx])
+        R_vec_opt[di] = max(0.0, (v_max - v_opt_vec) / v_rng)
 
         # ── Greedy R ─────────────────────────────────────────────────────
         if greedy_fn is not None:
-            grd_trio = greedy_fn(V_vec_sites, D)
-            v_grd    = float(sum(X_mm[s] for s in grd_trio) @ w)
+            grd_trio      = greedy_fn(V_vec_sites, D)
+            v_grd         = float(sum(X_mm[s] for s in grd_trio) @ w)
             R_vec_grd[di] = max(0.0, (v_max - v_grd) / v_rng)
             # Gate 4c: same trio => R_grd == R_opt
             if frozenset(grd_trio) == frozenset(trios[opt_vec_idx]):
@@ -216,31 +223,33 @@ def compute_value_regret(
                     f"R_grd={R_vec_grd[di]:.3e} != R_opt={R_vec_opt[di]:.3e}"
                 )
 
-        # ── E1-B and E1-W ─────────────────────────────────────────────────
+        # ── E1 (constant amplitudes, per-draw w) ────────────────────────
         if e1_avail:
-            rho_B_f64, rho_W_f64 = e1_fn(w)
-            rho_B_f64 = np.asarray(rho_B_f64, dtype=np.float64)
-            rho_W_f64 = np.asarray(rho_W_f64, dtype=np.float64)
-            # (X_trio * rho_B).sum(1): replicate original dtype path
-            V_e1b     = (X_trio.astype(np.float64) * rho_B_f64).sum(1)
-            V_e1w     = (X_trio.astype(np.float64) * rho_W_f64).sum(1)
+            V_e1b = (X_trio_e1b * w).sum(1)     # (T,) float64 — E1-B
+            V_e1w = (X_trio_e1w * w).sum(1)     # (T,) float64 — E1-W
+            V_e1v = (X_trio_rho  * w).sum(1)    # (T,) float64 — E1-V = SAW_vec
+            V_e1m = V_all                        # (T,) float64 — E1-M = SAW_mm
+
             opt_e1b_idx = int(np.argmax(V_e1b))
             opt_e1w_idx = int(np.argmax(V_e1w))
-            R_e1b_opt[di] = max(0.0, (v_max - float(V_all_f32[opt_e1b_idx])) / v_rng)
-            R_e1w_opt[di] = max(0.0, (v_max - float(V_all_f32[opt_e1w_idx])) / v_rng)
-
-            # Gate 4d: E1-V ≡ SAW_vec (rho_V = rho_j by E1-V definition)
-            # NOT tautological: V_e1v uses float64(X) @ float64(rho*w);
-            # V_vec_trios_f64 uses float32(X*rho) @ float64(w).
-            # Different precision at intermediate products; can disagree for
-            # margins near float32 eps (~1.19e-7). 500/500 draws confirmed in
-            # sealed CSV (Q2 comparison); trio identity is stronger than Q2.
-            V_e1v       = X_trio.astype(np.float64) @ (rho_j.astype(np.float64) * w)
             opt_e1v_idx = int(np.argmax(V_e1v))
+            opt_e1m_idx = int(np.argmax(V_e1m))
+
+            R_e1b_opt[di] = max(0.0, (v_max - float(V_all[opt_e1b_idx])) / v_rng)
+            R_e1w_opt[di] = max(0.0, (v_max - float(V_all[opt_e1w_idx])) / v_rng)
+
+            # Gate 4d: E1-V ≡ SAW_vec (A_V = rho_j, so V_e1v = V_vec_trios)
+            # Both use identical float64 computation; must agree exactly.
             assert opt_e1v_idx == opt_vec_idx, (
                 f"[EVAL-R {label}] Gate 4d draw {di}: "
-                f"E1-V opt trio {opt_e1v_idx} != SAW_vec opt trio {opt_vec_idx}. "
-                "Float32 rounding may have changed argmax — check margin for this draw."
+                f"E1-V opt={opt_e1v_idx} != SAW_vec opt={opt_vec_idx}. "
+                "A_V != rho_j or floating-point disagrees."
+            )
+            # Gate 4e: E1-M ≡ SAW_mm (A_M = ones, so V_e1m = V_all)
+            assert opt_e1m_idx == opt_mm_idx, (
+                f"[EVAL-R {label}] Gate 4e draw {di}: "
+                f"E1-M opt={opt_e1m_idx} != SAW_mm opt={opt_mm_idx}. "
+                "A_M != ones or floating-point disagrees."
             )
 
         if verbose and di % 100 == 0:
@@ -259,6 +268,9 @@ def compute_value_regret(
         print("  Gate 4a (R_mm==0 exact, unique argmax): PASS", flush=True)
         print("  Gate 4b (0<=R<=1): PASS", flush=True)
         print("  Gate 4c (same_trio=>R_grd==R_opt): PASS", flush=True)
+        if e1_avail:
+            print("  Gate 4d (E1-V==SAW_vec): PASS", flush=True)
+            print("  Gate 4e (E1-M==SAW_mm):  PASS", flush=True)
         print(f"  min_v_margin_mm = {min_v_margin_mm:.3e}", flush=True)
         print(f"  same-trio SAW/vec: {n_same_trio}/{B}", flush=True)
 
@@ -305,9 +317,10 @@ def compute_value_regret(
 def load_fogo_data() -> dict:
     """Load Fogo data from disk. Requires Athena (Fogo modules not on Windows).
 
-    Returns dict with keys: X_mm, trios, D, rho_j, W_draws, w0,
-                            greedy_fn, e1_fn, label.
+    Returns dict with keys: X_mm, trios, D, rho_j, W_draws, w0, greedy_fn, e1_fn, label.
     Raises RuntimeError if Fogo modules are not importable.
+
+    NOTE: e1_fn takes NO arguments. Returns constant E1 amplitude dict from w0.
     """
     import os
     sys.path.insert(0, str(ROOT / "scripts"))
@@ -345,21 +358,23 @@ def load_fogo_data() -> dict:
     D   = haversine_km(lat, lon)
 
     trios   = np.load(ROOT / "data"    / "fogo_trios.npy").astype(np.int32)
-    W_draws = np.load(ROOT / "results" / "e1" / "e1_weights_k200.npy")  # (500, 11)
+    W_draws = np.load(ROOT / "results" / "e1" / "e1_weights_k200.npy")  # (500, 11) float64
 
-    groups = [OBJ_GROUPS[g] for g in sorted(OBJ_GROUPS.keys())]
+    # OBJ_GROUPS is a list of lists: [[0,1,2],[3,4,5,6,7],[8,9,10]]
+    groups = OBJ_GROUPS   # already a list — no .keys()
     w0     = np.asarray(W_raw, dtype=np.float64)
     w0     = w0 / w0.sum()
 
-    rho_j_arr = np.asarray(rho_j_fogo, dtype=np.float32)
+    rho_j_arr = np.asarray(rho_j_fogo, dtype=np.float64)
 
-    def _e1_fn(w: np.ndarray):
-        return get_e1_amplitudes(rho_j_fogo, groups, w)
+    def _e1_fn():
+        """Return constant E1 amplitudes from fixed w0 (no per-draw arg)."""
+        return get_e1_amplitudes(rho_j_arr, groups, w0=w0)
 
     return {
-        "X_mm":      X_adj.astype(np.float32),
+        "X_mm":      np.asarray(X_adj,      dtype=np.float64),
         "trios":     trios,
-        "D":         D.astype(np.float32),
+        "D":         np.asarray(D,          dtype=np.float64),
         "rho_j":     rho_j_arr,
         "W_draws":   W_draws,
         "w0":        w0,
@@ -372,11 +387,9 @@ def load_fogo_data() -> dict:
 def load_santiago_data(branch_key: str, kappa: int = 200) -> dict:
     """Load Santiago branch data + pre-generate canonical weight draws.
 
-    W_draws are generated in the SAME sequence as the MC run
-    (one rng.dirichlet call per draw, matching gen_santiago_seeds.py seeds).
+    W_draws are generated in the SAME sequence as the MC run.
+    e1_fn takes NO arguments (returns constant amplitudes from fixed w0).
 
-    Returns dict with keys: X_mm, trios, D, rho_j, W_draws, w0,
-                            greedy_fn, e1_fn, label.
     Requires Athena (Santiago modules not on Windows).
     """
     sys.path.insert(0, str(ROOT / "scripts"))
@@ -403,15 +416,16 @@ def load_santiago_data(branch_key: str, kappa: int = 200) -> dict:
 
     data   = load_branch_data(branch_key)
     groups = ST_GROUPS if branch_key == "ST" else SN_GROUPS
-    rho_j  = np.asarray(data["rho_j"], dtype=np.float32)
+    rho_j  = np.asarray(data["rho_j"], dtype=np.float64)
 
-    def _e1_fn(w: np.ndarray):
-        return get_e1_amplitudes(data["rho_j"], groups, w)
+    def _e1_fn():
+        """Return constant E1 amplitudes from fixed w0 (no per-draw arg)."""
+        return get_e1_amplitudes(rho_j, groups, w0=w0)
 
     return {
-        "X_mm":      np.asarray(data["X_mm"],   dtype=np.float32),
+        "X_mm":      np.asarray(data["X_mm"],   dtype=np.float64),
         "trios":     np.asarray(data["trios"],  dtype=np.int32),
-        "D":         np.asarray(data["D"],      dtype=np.float32),
+        "D":         np.asarray(data["D"],      dtype=np.float64),
         "rho_j":     rho_j,
         "W_draws":   W_draws,
         "w0":        w0,
