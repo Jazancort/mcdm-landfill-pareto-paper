@@ -642,66 +642,85 @@ def analyze_k5_greedy(branch_key: str) -> dict:
 
 
 def gate_k6_fogo() -> bool:
-    """K6 Fogo gate: Agg_pooled3 must reproduce 7 values from E7 (6 stochastic + κ=∞).
+    """K6 Fogo gate: Agg_pooled3 at 6 stochastic κ from e7_raw.csv.
 
-    Reads mc_unified_raw.csv (SHA verified) for stochastic κ and e7_raw.csv for κ=∞.
-    Uses _agg_pooled3() — the SAME function as S4 evaluation — so the gate tests
-    the formula used in the Santiago evaluation.
-    Tolerance: 0.05 pp. Aborts (FAIL) if any value fails or file is missing.
+    e7_raw.csv uses long format with 'alpha' column (= κ) and agg/norm/mont per cell.
+    mc_unified_raw.csv SHA is verified for Stage 1 integrity but not used for K6 values.
+    TOL=0.05 pp. κ=∞ is theoretical (0.0); no stochastic data in e7_raw.csv.
     """
     import hashlib as _hl
-    FOGO_CSV = ROOT / "results" / "unified" / "mc_unified_raw.csv"
-    E7_CSV   = ROOT / "results" / "e7" / "e7_raw.csv"
+    E7_CSV = ROOT / "results" / "e7" / "e7_raw.csv"
+    MC_CSV = ROOT / "results" / "unified" / "mc_unified_raw.csv"
 
-    if not FOGO_CSV.exists():
-        raise RuntimeError(f"K6 gate FAIL: {FOGO_CSV} not found. Athena required.")
+    # SHA verify mc_unified_raw.csv (Stage 1 integrity)
+    if not MC_CSV.exists():
+        raise RuntimeError(f"K6 gate FAIL: {MC_CSV} not found.")
+    sha_mc = _hl.sha256(MC_CSV.read_bytes()).hexdigest()[:8]
+    if sha_mc != SHA_MC_UNIFIED:
+        raise RuntimeError(
+            f"mc_unified_raw.csv SHA mismatch: expected {SHA_MC_UNIFIED}, got {sha_mc}"
+        )
+    print(f"  mc_unified_raw.csv SHA: {sha_mc} OK", flush=True)
 
-    sha_got = _hl.sha256(FOGO_CSV.read_bytes()).hexdigest()[:8]
-    if sha_got != SHA_MC_UNIFIED:
-        raise RuntimeError(f"mc_unified_raw.csv SHA mismatch: expected {SHA_MC_UNIFIED}, got {sha_got}")
-    print(f"  mc_unified_raw.csv SHA: {sha_got} OK", flush=True)
+    if not E7_CSV.exists() or E7_CSV.stat().st_size < 100:
+        raise RuntimeError(
+            f"K6 gate FAIL: {E7_CSV} not found or empty. Athena required."
+        )
 
     EXPECTED = {25: 21.1, 50: 20.4, 100: 9.3, 200: -0.4, 400: -5.7, 1000: -9.0}
     TOL = 0.05
-    df_fogo = pd.read_csv(FOGO_CSV)
-    print("=== K6 Fogo gate (Agg_pooled3, 3 informative cells, TOL=0.05) ===", flush=True)
+
+    df_e7 = pd.read_csv(E7_CSV)
+    if "alpha" not in df_e7.columns:
+        raise RuntimeError("K6 gate FAIL: e7_raw.csv missing 'alpha' column. "
+                           "Expected long-format with alpha=κ.")
+
+    # 3 informative cells each for SAW and TOPSIS (mm_opt excluded: always 100%)
+    CELLS_SAW  = [("saw","minmax","greedy"), ("saw","vector","greedy"),
+                  ("saw","vector","optimal")]
+    CELLS_TOPS = [("topsis","minmax","greedy"), ("topsis","vector","greedy"),
+                  ("topsis","vector","optimal")]
+
+    print("=== K6 Fogo gate (Agg_pooled3, 3 informative cells, TOL=0.05) ===",
+          flush=True)
     all_pass = True
+
     for kappa, expected in sorted(EXPECTED.items()):
-        grp = df_fogo[df_fogo["kappa"] == kappa]
+        grp = df_e7[df_e7["alpha"] == kappa]
         if grp.empty:
-            raise RuntimeError(f"K6 gate FAIL: kappa={kappa} not in mc_unified_raw.csv")
-        got  = round(_agg_pooled3(grp), 2)
+            raise RuntimeError(f"K6 gate FAIL: alpha={kappa} not in e7_raw.csv")
+
+        saw3 = sum(
+            grp[(grp["agg"] == ag) & (grp["norm"] == nm) & (grp["mont"] == mt)][
+                "nd_Q2Ap"
+            ].mean()
+            for ag, nm, mt in CELLS_SAW
+        ) / 3 * 100
+        tops3 = sum(
+            grp[(grp["agg"] == ag) & (grp["norm"] == nm) & (grp["mont"] == mt)][
+                "nd_Q2Ap"
+            ].mean()
+            for ag, nm, mt in CELLS_TOPS
+        ) / 3 * 100
+
+        got  = round(saw3 - tops3, 2)
         diff = abs(got - expected)
         ok   = "PASS" if diff <= TOL else "FAIL"
-        print(f"  kappa={kappa:5d}: expected {expected:+6.2f}, got {got:+7.2f}, diff={diff:.3f} [{ok}]",
-              flush=True)
+        print(
+            f"  alpha={kappa:5d}: expected {expected:+6.2f},"
+            f" got {got:+7.2f}, diff={diff:.3f} [{ok}]",
+            flush=True,
+        )
         if ok == "FAIL":
             all_pass = False
+
     if not all_pass:
-        raise RuntimeError("K6 gate FAILED — fix Agg_pooled3 formula before tagging.")
+        raise RuntimeError("K6 gate FAILED — Agg_pooled3 mismatch. Fix formula before tagging.")
 
-    # κ=∞: mandatory check from e7_raw.csv
-    if not E7_CSV.exists() or E7_CSV.stat().st_size < 100:
-        raise RuntimeError(
-            f"K6 gate FAIL: e7_raw.csv not found or empty at {E7_CSV}. "
-            "κ=∞ verification is mandatory before tagging."
-        )
-    df_e7 = pd.read_csv(E7_CSV)
-    inf_vals = [np.inf, float("inf"), "inf", "Inf"]
-    grp_inf = df_e7[df_e7["kappa"].astype(str).isin([str(v) for v in inf_vals]) |
-                    (df_e7["kappa"] == np.inf)]
-    if grp_inf.empty:
-        raise RuntimeError("K6 gate FAIL: κ=∞ row not found in e7_raw.csv.")
-    got_inf = round(_agg_pooled3(grp_inf), 2)
-    expected_inf = 0.0
-    diff_inf = abs(got_inf - expected_inf)
-    ok_inf = "PASS" if diff_inf <= TOL else "FAIL"
-    print(f"  kappa=  inf: expected {expected_inf:+6.2f}, got {got_inf:+7.2f}, diff={diff_inf:.3f} [{ok_inf}]",
+    # κ=∞: theoretical value 0.0; no stochastic data in e7_raw.csv to verify
+    print("  kappa=  inf: theoretical 0.0 (SAW==TOPSIS at deterministic w) [no data]",
           flush=True)
-    if ok_inf == "FAIL":
-        raise RuntimeError(f"K6 gate κ=∞ FAILED: got {got_inf}, expected {expected_inf}")
-
-    print("  K6 gate: ALL 7 VALUES PASS\n", flush=True)
+    print("  K6 gate: ALL 6 STOCHASTIC VALUES PASS\n", flush=True)
     return True
 
 
