@@ -49,9 +49,9 @@ FOGO_Q2_SAW_VEC_OPT = 56.8   # Fogo reference for S5 (pp)
 KAPPAS_STOCH = [25, 50, 100, 200, 400, 1000]
 BOOTSTRAP_SEED = 20261104      # fixed per PRESPEC A5b; used for S6/S7 bootstrap
 # Oracle SHA-256 prefixes for Fogo regret files (stage1 verified)
-SHA_REGRET_AGG   = "bc364ce3"  # results/regret/regret_aggregate.csv
-SHA_MC_UNIFIED   = "b02df727"  # results/unified/mc_unified_raw.csv
-SHA_REGRET_PERDRAW = "282445c4b5c5ccd5"  # results/regret/regret_perdraw.csv (stage1 verified)
+SHA_REGRET_AGG     = "bc364ce312ce9772f06d41fc63f0fc0b0991f6cc8665a52d82515283df952bd1"
+SHA_MC_UNIFIED     = "b02df727"  # results/unified/mc_unified_raw.csv
+SHA_REGRET_PERDRAW = "282445c4b5c5ccd593963ae1073210385da465b93fa45408e97ba3f5c99201ca"
 
 
 def _agg_pooled3(grp: "pd.DataFrame") -> float:
@@ -264,7 +264,7 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     # ── S6 ──────────────────────────────────────────────────────────────────
     # R(SAW,vec,grd) > R(SAW,vec,opt), 95% CI excludes 0 | TV_W ≥ 0.05
     # R = VALUE REGRET (not 1-Q2). Computed by compute_value_regret_santiago().
-    # If regret_data is not provided, S6 result is PENDING.
+    # branch_regret must always be provided; S6 raises RuntimeError otherwise.
     testable_s6 = cond["TV_W"] >= 0.05
     regret = branch_regret or {}
     R_vec_grd_pp = np.array(regret.get("R_sawvec_grd_pp") or [])
@@ -305,16 +305,16 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     R_e1b_pp = np.array(regret.get("R_e1b_opt_pp") or [])
     if testable_s7a and len(R_e1b_pp) == 500 and not np.isnan(R_e1b_pp).any():
         zeros_e1b = np.zeros_like(R_e1b_pp)
-        md7a, lo7a, hi7a, p7a = _bs_ci(R_e1b_pp, zeros_e1b, seed=70_000)
+        _, lo7a, hi7a, _ = _bs_ci(R_e1b_pp, zeros_e1b, seed=70_000)
         s7a_pass = testable_s7a and lo7a > 0
         frac_zero_e1b = round(float((R_e1b_pp < 1e-12).mean()), 4)
         s7a_status = "CONFIRMED" if s7a_pass else "NOT CONFIRMED"
     else:
-        md7a = lo7a = hi7a = p7a = None
+        lo7a = hi7a = None
         frac_zero_e1b = None
         s7a_pass = False
         s7a_status = "NOT CONFIRMED (no regret data)"
-    if not e1_available and len(R_e1b_pp) == 0:
+    if e1.empty and len(R_e1b_pp) == 0:
         raise RuntimeError(
             f"S7a evaluation for {branch} requires E1-B regret data."
         )
@@ -336,14 +336,14 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     if (testable_s7b and len(R_e1b_pp) == 500 and len(R_e1w_pp) == 500
             and not np.isnan(R_e1b_pp).any() and not np.isnan(R_e1w_pp).any()):
         n = min(len(R_e1b_pp), len(R_e1w_pp))
-        md7b, lo7b, hi7b, p7b = _bs_ci(R_e1w_pp[:n], R_e1b_pp[:n], seed=70_001)
+        _, lo7b, hi7b, _ = _bs_ci(R_e1w_pp[:n], R_e1b_pp[:n], seed=70_001)
         s7b_pass = testable_s7b and R_e1b_pp.mean() < R_e1w_pp.mean()
         s7b_status = "CONFIRMED" if s7b_pass else "NOT CONFIRMED"
     else:
-        md7b = lo7b = hi7b = p7b = None
+        lo7b = hi7b = None
         s7b_pass = False
         s7b_status = "NOT CONFIRMED (no regret data)"
-    if not e1_available and len(R_e1w_pp) == 0:
+    if e1.empty and len(R_e1w_pp) == 0:
         raise RuntimeError(
             f"S7b evaluation for {branch} requires E1-W regret data."
         )
@@ -371,9 +371,9 @@ def analyze_k5_greedy(branch_key: str) -> dict:
         load_branch_data, prepare_gpu_data, make_santiago_scorers,
         optimal_selector, greedy_selector,
         compute_group_objectives, compute_trio_objectives,
-        ST_W0, SN_W0, ST_GROUPS, SN_GROUPS,
+        ST_W0, SN_W0,
         _USE_GPU, _f_trios_gpu, _optimal_gpu,
-        CELLS_8, N_DRAWS, D_MIN_KM,
+        CELLS_8, N_DRAWS,
     )
     from gen_santiago_seeds import get_branch_rngs, KAPPA_VALUES
     import cupy as cp
@@ -385,7 +385,6 @@ def analyze_k5_greedy(branch_key: str) -> dict:
     X_mm, trios, D = data["X_mm"], data["trios"], data["D"]
     groups, rho_j  = data["groups"], data["rho_j"]
     scorers_cpu    = make_santiago_scorers(X_mm, rho_j)
-    A_ones         = np.ones(len(w0))
 
     results = {}
 
@@ -544,407 +543,129 @@ def gate_k6_fogo() -> bool:
 
 
 def gate_1_fogo_oracle() -> bool:
-    """Gate 1: Call compute_value_regret_santiago() on Fogo data; compare draw-by-draw.
+    """Gate 1: Call compute_value_regret() on Fogo data; compare draw-by-draw.
 
-    NON-CIRCULAR: calls the SAME function object (compute_value_regret_santiago with
-    _fogo_override) and compares its per-draw output against SHA-verified oracle files
-    (regret_perdraw.csv from compute_regret.py; regret_macros.tex from _compute_e1_regret.py).
+    NON-CIRCULAR: calls compute_value_regret() from santiago_eval_core (no _fogo_override)
+    and compares its per-draw output against SHA-verified oracle files.
 
     FAILS if Fogo modules are not importable (no Windows fallback).
-    FAILS if any per-draw R value differs > 1e-4 from oracle.
+    FAILS if any per-draw R value differs > 1e-12 from oracle.
     FAILS if n_e1b_zero count != 140 (exact, = 28% of 500 draws).
 
-    SHA verification: regret_aggregate.csv (bc364ce3), regret_perdraw.csv (282445c4b5c5ccd5).
+    SHA verification: full 64-char SHA-256 for both oracle files.
     """
     import hashlib as _hl, re
-    TOL_PP = 0.05
-    TOL_DRAW = 1e-4  # tolerance for per-draw R comparison
-    PERDRAW = ROOT / "results" / "regret" / "regret_perdraw.csv"
-    AGG     = ROOT / "results" / "regret" / "regret_aggregate.csv"
-    MAC     = ROOT / "results" / "regret" / "regret_macros.tex"
+    from santiago_eval_core import load_fogo_data, compute_value_regret as _cvr
+
+    TOL_PP   = 0.05
+    TOL_DRAW = 1e-12   # per-draw tolerance: same code + data -> difference == 0
+    PERDRAW  = ROOT / "results" / "regret" / "regret_perdraw.csv"
+    AGG      = ROOT / "results" / "regret" / "regret_aggregate.csv"
+    MAC      = ROOT / "results" / "regret" / "regret_macros.tex"
 
     for f in [PERDRAW, AGG, MAC]:
         if not f.exists():
             raise RuntimeError(f"Gate 1 FAIL: {f.name} not found. Run compute_regret.py first.")
 
-    sha_agg = _hl.sha256(AGG.read_bytes()).hexdigest()[:8]
+    sha_agg = _hl.sha256(AGG.read_bytes()).hexdigest()
     if sha_agg != SHA_REGRET_AGG:
-        raise RuntimeError(f"regret_aggregate.csv SHA mismatch: expected {SHA_REGRET_AGG}, got {sha_agg}")
-
-    sha_pd = _hl.sha256(PERDRAW.read_bytes()).hexdigest()[:16]
+        raise RuntimeError(
+            f"regret_aggregate.csv SHA mismatch:\n"
+            f"  expected {SHA_REGRET_AGG}\n  got      {sha_agg}"
+        )
+    sha_pd = _hl.sha256(PERDRAW.read_bytes()).hexdigest()
     if sha_pd != SHA_REGRET_PERDRAW:
-        raise RuntimeError(f"regret_perdraw.csv SHA mismatch: expected {SHA_REGRET_PERDRAW}, got {sha_pd}")
-    print(f"  Oracle SHA: regret_aggregate {sha_agg} OK; regret_perdraw {sha_pd} OK", flush=True)
+        raise RuntimeError(
+            f"regret_perdraw.csv SHA mismatch:\n"
+            f"  expected {SHA_REGRET_PERDRAW}\n  got      {sha_pd}"
+        )
+    print("  Oracle SHA: regret_aggregate OK; regret_perdraw OK", flush=True)
 
     # ── Load oracle per-draw R values ────────────────────────────────────────
     df_pd = pd.read_csv(PERDRAW)
+
     def _oracle_r(agg, norm, mont):
-        mask = (df_pd["agg"]==agg) & (df_pd["norm"]==norm) & (df_pd["mont"]==mont)
-        sub = df_pd[mask].sort_values("draw")
+        mask = (df_pd["agg"] == agg) & (df_pd["norm"] == norm) & (df_pd["mont"] == mont)
+        sub  = df_pd[mask].sort_values("draw")
         if len(sub) != 500:
-            raise RuntimeError(f"Gate 1: expected 500 rows for {agg}/{norm}/{mont}, got {len(sub)}")
+            raise RuntimeError(
+                f"Gate 1: expected 500 rows for {agg}/{norm}/{mont}, got {len(sub)}"
+            )
         return sub["R"].values  # shape (500,), values in [0, 1]
 
     R_vec_grd_oracle = _oracle_r("saw", "vector", "greedy")
     R_vec_opt_oracle = _oracle_r("saw", "vector", "optimal")
 
-    # ── Load Fogo data and call compute_value_regret_santiago ────────────────
-    try:
-        import os
-        if "MCDM_DATA_DIR" not in os.environ:
-            _a = "/home/julioazancort/scratch/mcdm"
-            if os.path.exists(_a):
-                os.environ["MCDM_DATA_DIR"] = _a
-
-        from mcdm_experiment import (
-            load_data, impute_nan, COL, _build_decision_matrix, haversine_km
-        )
-        from fogo_constants import OBJ_GROUPS, AJ_VEC as rho_j_fogo, MIN_DIST_KM
-        from run_santiago_mc import greedy_selector as _grd_sel, get_e1_amplitudes as _e1_amp
-
-        # Verify SHA of E1 weight file (Stage 1 verified)
-        W_PATH = ROOT / "results" / "e1" / "e1_weights_k200.npy"
-        if not W_PATH.exists():
-            raise FileNotFoundError(f"e1_weights_k200.npy not found at {W_PATH}")
-
-        # Load Fogo data
-        df_all, _, _ = load_data()
-        df_imp = impute_nan(df_all)
-        df_via = df_imp[df_imp[COL["protected"]] > 0].copy().reset_index(drop=True)
-        assert len(df_via) == 389, f"Expected 389 Fogo sites, got {len(df_via)}"
-
-        X_via, benefit = _build_decision_matrix(df_via)
-        X_adj_f = X_via.copy()
-        for j, b in enumerate(benefit):
-            if not b:
-                X_adj_f[:, j] = 1.0 - X_via[:, j]
-
-        lat = df_via["latitude (degrees)"].values
-        lon = df_via["longitude (degrees)"].values
-        D_f = haversine_km(lat, lon)
-
-        trios_f  = np.load(ROOT / "data" / "fogo_trios.npy").astype(int)
-        W_draws  = np.load(W_PATH)  # (500, 11)
-        groups_f = [OBJ_GROUPS[g] for g in sorted(OBJ_GROUPS.keys())]
-        # Fogo nominal weights (AHP, normalized)
-        from fogo_constants import W as w_fogo_raw
-        w0_f = w_fogo_raw / w_fogo_raw.sum()
-
-        fogo_data = {
-            "X_mm": X_adj_f, "trios": trios_f, "D": D_f,
-            "rho_j": rho_j_fogo, "groups": groups_f, "W_draws": W_draws,
-            "w0": w0_f,
-            "greedy_selector": _grd_sel,
-            "get_e1_amplitudes": _e1_amp,
-        }
-
-    except (ImportError, FileNotFoundError) as exc:
-        raise RuntimeError(
-            f"Gate 1 FAIL: Fogo modules/data not available ({exc}). "
-            "This gate MUST run on Athena. No fallback."
-        )
-
-    # ── Call the SAME function used for Santiago evaluation ──────────────────
-    print("  Gate 1: calling compute_value_regret_santiago(_fogo_override=fogo_data)...", flush=True)
-    result = compute_value_regret_santiago(_fogo_override=fogo_data)
+    # ── Call the SAME function as Santiago evaluation ────────────────────────
+    print("  Gate 1: calling load_fogo_data() + compute_value_regret()...", flush=True)
+    result = _cvr(**load_fogo_data())
 
     R_vec_grd_f = np.array(result["R_sawvec_grd_pp"]) / 100
     R_vec_opt_f = np.array(result["R_sawvec_opt_pp"]) / 100
-    R_e1b_f     = np.array(result["R_e1b_opt_pp"]) / 100 if result["R_e1b_opt_pp"] else None
 
-    # ── Per-draw comparison against oracle ────────────────────────────────────
-    print("  Comparing per-draw R against oracle...", flush=True)
+    # ── Per-draw comparison ──────────────────────────────────────────────────
     diff_grd = np.abs(R_vec_grd_f - R_vec_grd_oracle)
     diff_opt = np.abs(R_vec_opt_f - R_vec_opt_oracle)
 
     if diff_grd.max() > TOL_DRAW:
         raise RuntimeError(
-            f"Gate 1 FAIL: R_vec_grd per-draw max diff = {diff_grd.max():.6f} > {TOL_DRAW}. "
-            "compute_value_regret_santiago() gives different results than compute_regret.py."
+            f"Gate 1 FAIL: R_vec_grd per-draw max diff = {diff_grd.max():.3e} > {TOL_DRAW}. "
+            "compute_value_regret() diverges from oracle compute_regret.py."
         )
     if diff_opt.max() > TOL_DRAW:
         raise RuntimeError(
-            f"Gate 1 FAIL: R_vec_opt per-draw max diff = {diff_opt.max():.6f} > {TOL_DRAW}."
+            f"Gate 1 FAIL: R_vec_opt per-draw max diff = {diff_opt.max():.3e} > {TOL_DRAW}."
         )
-    print(f"  Per-draw comparison: max diff grd={diff_grd.max():.2e}, opt={diff_opt.max():.2e} PASS",
-          flush=True)
+    print(
+        f"  Per-draw: max diff grd={diff_grd.max():.2e} opt={diff_opt.max():.2e} PASS",
+        flush=True,
+    )
 
-    # ── Mean comparison against oracle (from regret_aggregate.csv / macros.tex) ──
+    # ── Mean/median comparison against macros.tex ────────────────────────────
     def _mac(name):
-        m = re.search(r"\\newcommand\{\\"+name+r"\}\{([0-9.]+)\}", MAC.read_text(encoding="utf-8"))
+        txt = MAC.read_text(encoding="utf-8")
+        m   = re.search(r"\\newcommand\{\\"+name+r"\}\{([0-9.]+)\}", txt)
         if not m:
-            raise RuntimeError(f"Gate 1: macro \\{name} not found")
+            raise RuntimeError(f"Gate 1: macro \\{name} not found in regret_macros.tex")
         return float(m.group(1))
 
     summ = result["summary"]
     oracle_means = {
-        "R_vec_grd_mean": (summ["R_vec_grd_mean"],  6.63),
-        "R_vec_opt_mean": (summ["R_vec_opt_mean"],  5.27),
-        "diff_grd-opt":   (summ["R_diff_mean_pp"],  1.36),
-        "R_e1b_mean":     (summ["R_e1b_mean_pp"],   _mac("RegretEoneB")),
-        "R_e1b_median":   (None,                    _mac("RegretEoneBMed")),  # not in summary
-        "R_e1w_mean":     (summ["R_e1w_mean_pp"],   _mac("RegretEoneW")),
+        "R_vec_grd_mean":   (summ["R_vec_grd_mean"],   6.63),
+        "R_vec_opt_mean":   (summ["R_vec_opt_mean"],   5.27),
+        "diff_grd-opt":     (summ["R_diff_mean_pp"],   1.36),
+        "R_e1b_mean":       (summ["R_e1b_mean_pp"],    _mac("RegretEoneB")),
+        "R_e1b_median":     (summ["R_e1b_median_pp"],  _mac("RegretEoneBMed")),
+        "R_e1w_mean":       (summ["R_e1w_mean_pp"],    _mac("RegretEoneW")),
     }
-    print("=== Gate 1: mean comparison ===", flush=True)
-    for label, (got, exp) in oracle_means.items():
-        if got is None:
-            print(f"  {label:20s}: oracle={exp:.2f} [SKIP — not in summary dict]", flush=True)
-            continue
+    print("=== Gate 1: mean/median comparison ===", flush=True)
+    for lbl, (got, exp) in oracle_means.items():
         diff = abs(got - exp)
-        ok = "PASS" if diff <= TOL_PP else "FAIL"
-        print(f"  {label:20s}: oracle={exp:.2f}, recomputed={got:.2f}, diff={diff:.3f} [{ok}]",
+        ok   = "PASS" if diff <= TOL_PP else "FAIL"
+        print(f"  {lbl:20s}: oracle={exp:.2f}, got={got:.2f}, diff={diff:.3f} [{ok}]",
               flush=True)
         if ok == "FAIL":
-            raise RuntimeError(f"Gate 1 FAIL: {label} diff={diff:.3f} > {TOL_PP}")
+            raise RuntimeError(f"Gate 1 FAIL: {lbl} diff={diff:.3f} > {TOL_PP}")
 
-    # ── Exact count: frac_zero of R(E1-B) = 140/500 (28%) ───────────────────
-    n_e1b_zero = result["summary"].get("n_e1b_zero_exact")
-    if n_e1b_zero is not None:
-        if n_e1b_zero != 140:
-            raise RuntimeError(
-                f"Gate 1 FAIL: n_e1b_zero = {n_e1b_zero} != 140 (expected 28% of 500)"
-            )
-        print(f"  n_e1b_zero count: {n_e1b_zero}/500 = 28% PASS", flush=True)
-
-    print("  Gate 1: ALL PASS (per-draw + means + count)\n", flush=True)
+    # ── Exact count ──────────────────────────────────────────────────────────
+    n_e1b_zero = summ.get("n_e1b_zero_exact")
+    if n_e1b_zero != 140:
+        raise RuntimeError(
+            f"Gate 1 FAIL: n_e1b_zero = {n_e1b_zero} != 140 (expected 28% of 500)"
+        )
+    print(f"  n_e1b_zero: {n_e1b_zero}/500 = 28% PASS", flush=True)
+    print("  Gate 1: ALL PASS\n", flush=True)
     return True
 
 
-def compute_value_regret_santiago(branch_key: str = None, kappa: int = 200,
-                                   _fogo_override: dict = None) -> dict:
-    """Compute value regret R(t; w) for SAW/vec/grd, SAW/vec/opt (S6),
-    SAW/mm/opt (S0 assert), and E1-B/opt, E1-W/opt (S7a, S7b).
+def compute_value_regret_santiago(branch_key: str, kappa: int = 200) -> dict:
+    """Thin wrapper: delegates to santiago_eval_core.compute_value_regret().
 
-    _fogo_override: if provided, use Fogo data instead of loading Santiago.
-      Keys: X_mm, trios, D, rho_j, groups, W_draws, w0
-      Used by gate_1_fogo_oracle() to call the SAME function on Fogo data.
+    gate_1_fogo_oracle() uses load_fogo_data() + compute_value_regret() directly.
+    This wrapper is called for the Santiago branches in main() only.
     """
-    if _fogo_override:
-        # Fogo data path (used by Gate 1 only)
-        X_mm   = _fogo_override["X_mm"]
-        trios  = _fogo_override["trios"]
-        D      = _fogo_override["D"]
-        rho_j  = _fogo_override["rho_j"]
-        groups = _fogo_override["groups"]
-        W_draws = _fogo_override["W_draws"]
-        w0     = _fogo_override["w0"]
-        N_DRAWS_use = len(W_draws)
-        use_gpu = False
-        greedy_selector_fn = _fogo_override["greedy_selector"]
-        get_e1_amplitudes_fn = _fogo_override["get_e1_amplitudes"]
-        e1_available = True
-        label = "FOGO"
-    else:
-        # Normal Santiago path
-        try:
-            from run_santiago_mc import (
-                load_branch_data, prepare_gpu_data, make_santiago_scorers,
-                optimal_selector, greedy_selector as greedy_selector_fn,
-                ST_W0, SN_W0,
-                _USE_GPU, _optimal_gpu,
-                N_DRAWS as N_DRAWS_use, D_MIN_KM,
-            )
-            from gen_santiago_seeds import get_branch_rngs
-        except ImportError as exc:
-            raise RuntimeError(f"[EVAL-R] Cannot import Santiago modules: {exc}")
-
-        try:
-            import cupy as cp
-            use_gpu = bool(_USE_GPU)
-        except ImportError:
-            use_gpu = False
-
-        w0   = ST_W0 if branch_key == "ST" else SN_W0
-        data = load_branch_data(branch_key)
-        gd   = prepare_gpu_data(data) if use_gpu else {}
-        X_mm  = data["X_mm"]
-        trios = data["trios"]
-        D     = data["D"]
-        rho_j = data["rho_j"]
-
-        try:
-            from run_santiago_mc import get_e1_amplitudes as get_e1_amplitudes_fn, ST_GROUPS, SN_GROUPS
-            groups = ST_GROUPS if branch_key == "ST" else SN_GROUPS
-            e1_available = True
-        except ImportError:
-            e1_available = False
-            print("[EVAL-R] E1 functions not available; S7a/S7b set to NaN.", flush=True)
-
-        label = branch_key
-
-    # ── Shared core setup ───────────────────────────────────────────────────
-    n_trios = len(trios)
-    X_trio = X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]  # (n_trios, M)
-
-    if not _fogo_override:
-        # Santiago path: set up GPU and seed generation
-        gd = {}
-        try:
-            import cupy as cp
-            from run_santiago_mc import prepare_gpu_data
-            data_gpu = {"X_mm": X_mm, "trios": trios, "D": D, "rho_j": rho_j, "groups": groups}
-            gd = prepare_gpu_data(data_gpu)
-            use_gpu = bool(gd)
-        except (ImportError, Exception):
-            use_gpu = False
-
-        rng_st, rng_sn = get_branch_rngs(kappa)
-        rng = rng_st if branch_key == "ST" else rng_sn
-
-        from run_santiago_mc import make_santiago_scorers, optimal_selector
-        scorers_cpu = make_santiago_scorers(X_mm, rho_j)
-
-        if use_gpu:
-            import cupy as cp
-            from run_santiago_mc import _optimal_gpu
-            X_trio_gpu = cp.asarray(X_trio.astype(np.float32))
-            X_mm_gpu   = cp.asarray(X_mm.astype(np.float32))
-            rho_j_gpu  = cp.asarray(rho_j.astype(np.float32))
-            trios_gpu  = cp.asarray(trios.astype(np.int32))
-    else:
-        use_gpu = False
-        scorers_cpu = None  # Fogo path uses direct matrix multiply
-
-    if not use_gpu and not _fogo_override:
-        if n_trios > 200_000:
-            raise RuntimeError(
-                f"CPU path requires n_trios<=200k (S-T has {n_trios}); use GPU on Athena."
-            )
-
-    R_mm_opt  = np.zeros(N_DRAWS_use)
-    R_vec_grd = np.zeros(N_DRAWS_use)
-    R_vec_opt = np.zeros(N_DRAWS_use)
-    R_e1b_opt = np.full(N_DRAWS_use, np.nan) if e1_available else None
-    R_e1w_opt = np.full(N_DRAWS_use, np.nan) if e1_available else None
-    n_same_trio_per_kappa: dict = {}  # only for Santiago multi-kappa; κ=200 stored in n_same_trio
-    n_same_trio = 0
-
-    print(f"=== EVAL-R {label} κ={kappa} ({'GPU' if use_gpu else 'CPU'}) ===", flush=True)
-
-    for draw_idx in range(N_DRAWS_use):
-        # ── Weight draw ───────────────────────────────────────────────────
-        if _fogo_override:
-            w = W_draws[draw_idx] / W_draws[draw_idx].sum()
-        else:
-            w = rng.dirichlet(kappa * w0); w /= w.sum()
-
-        # ── V_mm for all trios ────────────────────────────────────────────
-        if use_gpu:
-            import cupy as cp
-            w_gpu = cp.asarray(w.astype(np.float32))
-            V_all_gpu = (X_trio_gpu * w_gpu).sum(1)
-            v_max = float(V_all_gpu.max())
-            v_min = float(V_all_gpu.min())
-            v_rng = max(v_max - v_min, 1e-12)
-            opt_mm_idx = int(V_all_gpu.argmax())
-            # SAW/vec scores
-            V_vec_gpu = (X_mm_gpu * rho_j_gpu * w_gpu).sum(1)
-            opt_vec_idx = int(_optimal_gpu(V_vec_gpu, trios_gpu))
-            V_vec_cpu = cp.asnumpy(V_vec_gpu)
-            V_all = cp.asnumpy(V_all_gpu)  # for R computation
-        else:
-            w_f = w.astype(np.float32)
-            V_all = (X_trio * w_f).sum(1)  # (n_trios,)
-            v_max = float(V_all.max())
-            v_min = float(V_all.min())
-            v_rng = max(v_max - v_min, 1e-12)
-            opt_mm_idx = int(V_all.argmax())
-            if _fogo_override:
-                # Fogo: direct multiply; no scorers object
-                V_vec_sites = (X_mm * rho_j) @ w
-                V_vec_trios = (X_mm[trios[:, 0]] * rho_j + X_mm[trios[:, 1]] * rho_j +
-                               X_mm[trios[:, 2]] * rho_j) @ w
-                opt_vec_idx = int(V_vec_trios.argmax())
-                V_vec_cpu   = V_vec_sites
-            else:
-                V_vec_cpu   = scorers_cpu[1](w)   # SAW/vec site scores
-                opt_vec_idx = optimal_selector(V_vec_cpu, trios)
-
-        # ── Gate 4a: SAW_mm_opt selects t* (argmax of V_mm) ──────────────
-        v_opt_mm_check = float(V_all[opt_mm_idx])
-        assert abs(v_opt_mm_check - v_max) < 1e-6, \
-            f"Gate 4a draw {draw_idx}: V_mm[opt_mm_idx]={v_opt_mm_check} != v_max={v_max}"
-        R_mm_opt[draw_idx] = max(0.0, (v_max - v_opt_mm_check) / v_rng)
-        assert R_mm_opt[draw_idx] < 1e-12, \
-            f"Gate 4a draw {draw_idx}: R_mm_opt={R_mm_opt[draw_idx]} != 0"
-
-        # ── SAW/vec greedy ────────────────────────────────────────────────
-        grd_trio_vec = greedy_selector_fn(V_vec_cpu, D)
-        v_grd = float(sum(X_mm[s] for s in grd_trio_vec) @ w)
-        v_opt_vec = float(V_all[opt_vec_idx])
-
-        R_vec_grd[draw_idx] = max(0.0, (v_max - v_grd)     / v_rng)
-        R_vec_opt[draw_idx] = max(0.0, (v_max - v_opt_vec) / v_rng)
-
-        # ── Same-trio count ───────────────────────────────────────────────
-        grd_set = frozenset(grd_trio_vec)
-        opt_set = frozenset(trios[opt_vec_idx])
-        if grd_set == opt_set:
-            n_same_trio += 1
-            assert abs(R_vec_grd[draw_idx] - R_vec_opt[draw_idx]) < 1e-12, \
-                f"Gate 4c draw {draw_idx}: same trio but R_grd={R_vec_grd[draw_idx]} != R_opt={R_vec_opt[draw_idx]}"
-
-        # ── E1-B and E1-W ─────────────────────────────────────────────────
-        if e1_available:
-            rho_B, rho_W = get_e1_amplitudes_fn(rho_j, groups, w)
-            V_e1b = (X_trio * rho_B).sum(1)  # E1-B uses between-group weights
-            opt_e1b_idx = int(np.argmax(V_e1b))
-            R_e1b_opt[draw_idx] = max(0.0, (v_max - float(V_all[opt_e1b_idx])) / v_rng)
-
-            V_e1w = (X_trio * rho_W).sum(1)  # E1-W uses within-group weights
-            opt_e1w_idx = int(np.argmax(V_e1w))
-            R_e1w_opt[draw_idx] = max(0.0, (v_max - float(V_all[opt_e1w_idx])) / v_rng)
-
-            # ── Gate 4d: E1-V ≡ SAW_vec (same optimal trio and same R) ───
-            # E1-V = full TV = same weights as SAW_vec for this draw
-            # rho_V = rho_j (unchanged), so V_e1v = V_vec_trios
-            if not _fogo_override:
-                V_e1v = V_all  # NOT correct — see note below
-                # NOTE: E1-V uses rho_j with actual w, same as SAW_vec_opt
-                # opt_e1v should equal opt_vec_idx; if E1 functions are imported,
-                # verify explicitly. For now: assert draw-level equality when E1-V available.
-
-        if draw_idx % 100 == 0:
-            print(f"  draw {draw_idx}/{N_DRAWS_use}", flush=True)
-
-    # ── Post-loop gates ────────────────────────────────────────────────────
-    assert (R_mm_opt < 1e-12).all(), \
-        f"Gate 4a (post): R_mm_opt != 0 in {(R_mm_opt >= 1e-12).sum()} draws"
-    print(f"  Gate 4a (R_mm_opt==0, trio=t*): PASS ({N_DRAWS_use}/{N_DRAWS_use} draws)", flush=True)
-
-    for name, arr in [("R_vec_grd", R_vec_grd), ("R_vec_opt", R_vec_opt)]:
-        assert (arr >= -1e-9).all() and (arr <= 1 + 1e-9).all(), \
-            f"Gate 4b: {name} out of [0,1]"
-    if e1_available:
-        for name, arr in [("R_e1b_opt", R_e1b_opt), ("R_e1w_opt", R_e1w_opt)]:
-            finite = arr[~np.isnan(arr)]
-            if len(finite):
-                assert (finite >= -1e-9).all() and (finite <= 1 + 1e-9).all(), \
-                    f"Gate 4b: {name} out of [0,1]"
-    print(f"  Gate 4b (0<=R<=1): PASS", flush=True)
-    print(f"  Gate 4c (same_trio=>R_grd==R_opt): PASS (enforced per-draw)", flush=True)
-    print(f"  Same trio (SAW_vec grd==opt) at kappa={kappa}: {n_same_trio}/{N_DRAWS_use}", flush=True)
-
-    R_diff = (R_vec_grd - R_vec_opt) * 100   # in pp
-    return {
-        "branch": branch_key or "FOGO",
-        "kappa": kappa,
-        "N_DRAWS": N_DRAWS_use,
-        "n_same_trio_sawvec": n_same_trio,
-        "R_sawvec_grd_pp": (R_vec_grd * 100).tolist(),
-        "R_sawvec_opt_pp": (R_vec_opt * 100).tolist(),
-        "R_e1b_opt_pp": (R_e1b_opt * 100).tolist() if e1_available else None,
-        "R_e1w_opt_pp": (R_e1w_opt * 100).tolist() if e1_available else None,
-        "summary": {
-            "R_vec_grd_mean": round(float(R_vec_grd.mean() * 100), 2),
-            "R_vec_opt_mean": round(float(R_vec_opt.mean() * 100), 2),
-            "R_diff_mean_pp": round(float(R_diff.mean()), 2),
-            "R_e1b_mean_pp":  round(float(R_e1b_opt.mean() * 100), 2) if e1_available else None,
-            "R_e1w_mean_pp":  round(float(R_e1w_opt.mean() * 100), 2) if e1_available else None,
-            "frac_R_e1b_zero": round(float((R_e1b_opt < 1e-12).mean()), 4) if e1_available else None,
-            "n_e1b_zero_exact": int((R_e1b_opt < 1e-12).sum()) if e1_available else None,
-        },
-    }
+    from santiago_eval_core import load_santiago_data, compute_value_regret as _cvr
+    return _cvr(**load_santiago_data(branch_key, kappa))
 
 
 def assert_regression(results_st: dict, results_sn: dict) -> None:
@@ -1041,7 +762,6 @@ def main():
 
     # Gate 3: Q2 self-consistency (runs before any verdict; full reconstruction in EVAL-R)
     from run_santiago_mc import ST_W0, SN_W0, ST_GROUPS, SN_GROUPS
-    from run_santiago_mc import rho_j as ST_RJ  # placeholder; full via load_branch_data
     gate_3_q2_reconstruction("S-T", SEALED/"mc_ST_raw.csv", SEALED/"mc_ST_e1_fix2.csv",
                               ST_W0, ST_GROUPS, ST_W0)  # rho_j loaded inside
     gate_3_q2_reconstruction("S-N", SEALED/"mc_SN_raw.csv", SEALED/"mc_SN_e1_fix2.csv",
