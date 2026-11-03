@@ -186,10 +186,18 @@ ends at line 193 without printing the fraction. The value 28% was written manual
 probably from a version using the E1-ABAR bug (per-draw amplitudes instead of fixed w0).
 
 **Impact**:
-- `regret_macros.tex` line 41 must be updated: `\RegretEoneBfracZero{35}` (35% = 177/500)
+- `regret_macros.tex` line 41 must be updated: `\RegretEoneBfracZero{35.4}` (35.4% = 177/500). **DONE** (commit 96ff26a).
 - PRESPEC_SANTIAGO.md §S7a: "28% of draws R = 0" → "35% of draws R = 0"
 - Gate 1 expected: `n_e1b_zero != 177` (corrected from 140)
 - S7a `frac_R_e1b_zero` in JSON output: 0.354 (not 0.28)
+
+**Definition of "zero" for S7a and n_nonzero**:
+A draw has R = 0 iff the selected E1-B trio equals t* (SAW/mm/opt trio). In production
+code this is exact (integer argmax): `opt_e1b_idx == opt_mm_idx`. Numerically equivalent
+criterion: R_pp < 1e-12 (minimum non-zero R is 0.042616 pp >> 1e-12 pp, from oracle CSV).
+- n_zero_trio = 177 (Fogo), n_nonzero = 323 (satisfies `n_nonzero >= 4` trivially).
+- S7a code in evaluate_santiago_predictions.py uses `R_e1b_pp > 1e-12` for n_nonzero,
+  which is semantically "trio != t*". Comment updated to reflect this.
 
 **Evidence**: `results/regret/e1b_R_pp_oracle_rerun.npy` (saved on Athena, commit `56dc283`).
 Mean R_e1b = 4.5275 pp matches oracle macro 4.53 pp to 2 decimal places.

@@ -463,8 +463,12 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     if testable_s7a and len(R_e1b_pp) == 500 and not np.isnan(R_e1b_pp).any():
         zeros_e1b      = np.zeros_like(R_e1b_pp)
         md7a, lo7a, hi7a, p7a = _bs_ci(R_e1b_pp, zeros_e1b, seed=70_000)
-        n_nonzero_e1b  = int((R_e1b_pp > 1e-12).sum())
-        frac_zero_e1b  = round(float((R_e1b_pp < 1e-12).mean()), 4)
+        # "Zero" = trio_sel == t* (SAW/mm/opt trio). In production code,
+        # R == 0.0 exactly iff opt_e1b_idx == opt_mm_idx (integer argmax).
+        # Threshold 1e-12 pp is a guard; min non-zero R is 0.042616 pp >> 1e-12.
+        # DEV-FOGO-E1B-001: 177/500 Fogo draws have trio==t* (35.4%).
+        n_nonzero_e1b  = int((R_e1b_pp > 1e-12).sum())   # draws where trio != t*
+        frac_zero_e1b  = round(float((R_e1b_pp < 1e-12).mean()), 4)  # frac trio==t*
         # Pre-registered rule: CI_lo > 0  AND  n_nonzero >= 4 (spec §5 S7a)
         s7a_pass   = testable_s7a and lo7a > 0 and n_nonzero_e1b >= 4
         s7a_status = "CONFIRMED" if s7a_pass else "NOT CONFIRMED"
