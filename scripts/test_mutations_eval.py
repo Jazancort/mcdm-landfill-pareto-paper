@@ -77,7 +77,7 @@ def test_mutation_1_k6_wrong_expected():
 
     df = pd.read_csv(E7_CSV)
     # Mutation: alpha=200 expected -0.4 → -0.41 (delta > TOL=0.05)
-    bad_expected = {25: 21.10, 50: 20.40, 100: 9.30, 200: -0.41, 400: -5.70, 1000: -9.00}
+    bad_expected = {25: 21.10, 50: 20.40, 100: 9.30, 200: -0.51, 400: -5.70, 1000: -9.00}
     TOL = 0.05
 
     CELLS_SAW  = [("saw","minmax","greedy"), ("saw","vector","greedy"),
