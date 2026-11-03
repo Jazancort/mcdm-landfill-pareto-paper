@@ -1,0 +1,3360 @@
+=== PAGE 1 ===
+Canadian Metallurgical Quarterly
+The Canadian Journal of Metallurgy and Materials Science
+ISSN: 0008-4433 (Print) 1879-1395 (Online) Journal homepage: www.tandfonline.com/journals/ycmq20
+Investigation for the optimum selection of hybrid
+AA2024 – ceramic particulate alloy composite
+materials prepared through stir casting using the
+hybrid AHP-TOPSIS MCDM technique
+Sourabh Bhaskar, Mukesh Kumar & Amar Patnaik
+To cite this article: Sourabh Bhaskar, Mukesh Kumar & Amar Patnaik (2024) Investigation
+for the optimum selection of hybrid AA2024 – ceramic particulate alloy composite materials
+prepared through stir casting using the hybrid AHP-TOPSIS MCDM technique, Canadian
+Metallurgical Quarterly, 63:4, 1183-1211, DOI: 10.1080/00084433.2023.2294546
+To link to this article:  https://doi.org/10.1080/00084433.2023.2294546
+Published online: 21 Dec 2023.
+Submit your article to this journal 
+Article views: 122
+View related articles 
+View Crossmark data
+Citing articles: 5 View citing articles 
+Full Terms & Conditions of access and use can be found at
+https://www.tandfonline.com/action/journalInformation?journalCode=ycmq20
+
+=== PAGE 2 ===
+Investigation for the optimum selection of hybrid AA2024 – ceramic particulate
+alloy composite materials prepared through stir casting using the hybrid AHP-
+TOPSIS MCDM technique
+Sourabh Bhaskar
+a, Mukesh Kumarb and Amar Patnaikb
+aMechanical Engineering Department, Arya College of Engineering & IT, Jaipur, India; bMechanical Engineering Department, Malaviya National
+Institute of Tech., Jaipur, India
+ABSTRACT
+In most of the manufacturing industries, the selection of optimal material among the ﬁnite
+available alternatives becomes more diﬃcult with the more required performance criteria to
+satisfy certain objectives. In such scenarios, Multi-Criteria-Decision-Making (MCDM) techniques,
+such as hybrid AHP (Analytical hierarchy process) – TOPSIS (Technique for Order Preferences by
+Similarity to Ideal Solution) and others assist in quantitative decision-making by accounting for
+qualitative human judgments. The present work illustrates the application of a hybrid AHP-
+TOPSIS technique to the ranking of alloy composites. The properties deﬁning data such as
+physical, mechanical, thermal, thermo-mechanical, etc. are weighted using the AHP technique;
+thereafter, relative weights are used to rank the alloy composite compositions by the TOPSIS
+method. The compositions comprise the AA2024 alloy as the matrix phase and the reinforcing
+phase consists of silicon carbide, silicon nitride and graphite particulates. The ranking analysis
+orders are consistent with subjective analysis.
+Dans la plupart des industries manufacturières, la sélection du matériau optimal parmi les choix
+disponibles limités devient plus diﬃcile avec l’augmentation du nombre de critères de
+performance requis pour satisfaire certains objectifs. Dans de tels scénarios, les techniques de
+prise de décision multicritères (MCDM) telles que l’hybride AHP (processus de hiérarchie
+analytique) – TOPSIS (technique de préférence de commande par similarité avec la solution
+idéale) et d’autres aident à la prise de décision quantitative en tenant compte des jugements
+humains qualitatifs. Le travail courant illustre l’application d’une technique hybride AHP –
+TOPSIS au classement d’alliages composites. Les propriétés déﬁnissant les données telles que
+physiques, mécaniques, thermiques, thermomécaniques, etc. sont pondérées à l’aide de la
+technique AHP, par la suite, les poids relatifs sont utilisés pour classer les compositions
+composites de l’alliage avec la méthode TOPSIS. Les compositions comprennent l’alliage
+AA2024 comme phase de matrice et une phase de renforcement constituée de particules de
+carbure de silicium, de nitrure de silicium et de graphite. Les ordres d’analyse du classement
+s’avèrent cohérents avec l’analyse subjective.
+ARTICLE HISTORY
+Received 20 July 2023
+Accepted 5 December 2023
+KEYWORDS
+AA2024; stir casting; multi-
+criteria decision-making
+technique (MCDM);
+performance determining
+attributes (PDA); AHP
+(analytical hierarchy
+process); TOPSIS (technique
+for order preferences by
+similarity to ideal solution)
+1. Introduction
+Metal matrix composites, especially aluminium metal
+alloy composites reinforced with ceramic particulates
+SiC, Al2O3, Si3N4, AlN, TiC, TiO2, etc, are the superior
+candidates for the manufacturing of the diﬀerent automo-
+tive and structural components such as gears, pistons,
+cylinder liners, etc. owing to their light weight and high
+strength to weight ratio [1]. Among the various grades
+of wrought Al alloys, the AA2024 alloy comprising Cu
+element provides a booster to its mechanical and tribolo-
+gical characteristics and owing to that it is frequently
+applied for the construction of components like drum
+and rotor discs having a dry sliding wear phenomenon [2].
+The addition of ceramic particulates in the Al alloy
+matrix improved the ultimate tensile strength and
+yield strength of the matrix alloy but, it may reduce its
+ductility characteristic. The degree of improvement in
+the properties depends upon the nature of the reinforce-
+ment particulates and the fabrication method used
+which could also aﬀect the interfacial bonding between
+the two constituents of the composite [1]. To obtain the
+positive eﬀects of the addition of ceramic particulates
+while facing the above-mentioned diﬃculties simul-
+taneously, a secondary reinforcement can be used for
+the above-said applications. The addition of this sec-
+ondary reinforcement could make a more ﬂexible and
+© 2023 Canadian Institute of Mining, Metallurgy and Petroleum
+CONTACT Sourabh Bhaskar
+sourabhbhaskar007@gmail.com
+Mechanical Engineering Department, Arya College of Engineering & IT, Jaipur 302028,
+Rajasthan, India
+CANADIAN METALLURGICAL QUARTERLY
+2024, VOL. 63, NO. 4, 1183–1211
+https://doi.org/10.1080/00084433.2023.2294546
+
+=== PAGE 3 ===
+reliable option for designing aluminium metal alloy
+composites. The addition of multiple reinforcements
+in the Al alloy matrix produces hybrid Al alloy compo-
+sites. Diﬀerent secondary reinforcements, such as soft
+solid lubricants like graphite particulates and boron
+nitride, are frequently used to enhance the wear resist-
+ance of the composites. The products of agro/industrial
+waste materials such as ﬂy ash, red mud, rice husk ash,
+and bamboo leaf ash are also used in the Al alloy matrix
+to prepare low-cost and low-weight materials for var-
+ious structural applications [3].
+The experimental work is ongoing continuously by
+the material scholars for the improvement in the speciﬁc
+characteristics such as physical, thermal, mechanical
+and tribological properties of the above-picked alloy
+through the incorporation of hybrid reinforcement.
+Kok [4] examined the abrasive wear phenomenon of
+Al2O3 particles reinforced AA2024 alloy composite and
+observed that the wear resistance of aluminium matrix
+composite was enhanced by incorporating alumina par-
+ticles (10, 20, 30 wt.%). Zhiqiang et al. [5] evaluated the
+improved wear performance in dry sliding conditions of
+the Al-Cu-Mg alloy matrix reinforced with silicon par-
+ticles (9 vol. fraction) with increasing magnitude of slid-
+ing speed and normal load for base alloy as well as for
+the composite.
+Y. Sahin [6] found improved wear resistance under
+various sliding conditions (reinforcement size, applied
+load, abrasive grain size, and sliding distance) on the
+wear behaviour of the AA2014 alloy composites having
+10 wt.% SiC particulates of size (50 and 100 μm). Patel
+et al. [7] observed superior abrasive wear resistance
+characteristics of AA2024 alloy composites reinforced
+with (9, 6 and 3 wt.%) SiC and (3, 6 and 9 wt.%)
+ZrSiO4 particles. Zheng et al. [8] obtained improved
+mechanical properties due to the grain reﬁnement of
+the AA2024 alloy matrix having homogeneous dis-
+persion of B4C particulates.
+Bahrami et al. [9] evaluated the eﬀect of SiC particle
+addition to enhance the mechanical characteristics of
+the friction stir welded AA7075 alloy matrix. The ulti-
+mate tensile strength, toughness and fatigue life of pre-
+pared composites were improved due to the ﬁne grain
+size of the Al matrix which consequently increased the
+toughness of the composite. Miranda et al. [10] exam-
+ined the damping properties of Al–Si-based MMCs
+ﬁlled with 5 wt.% SiC particles and 2 wt.% CNT at
+high temperature. A three-point bending position has
+been used with a bending length of 40 mm. The damp-
+ing capacity of the hybrid composite was enhanced with
+the temperature for 1 and 50 Hz frequency but it
+decreased with temperature for 100 Hz frequency. Lu
+et al. [11] fabricated the AA7075 alloy hybrid composite
+ﬁlled with 50 vol.% SiC particles and 5 vol.% Cr par-
+ticles through the squeeze casting method and various
+thermal characteristics have been investigated and com-
+pared with AA7075/50 vol.% SiCp, AA7075/55 vol.%
+SiCp. The thermal conductivity of the hybrid composite
+was achieved more than a single-ﬁlled composite. A
+lowered value of the coeﬃcient of thermal expansion
+was obtained for AA7075/(50SiC + 5Cr) in comparison
+to AA7075/50 vol.% SiC and AA7075/55 vol.% Cr.
+Past work has shown various combinations of alu-
+minium alloys reinforced with diﬀerent reinforcements,
+especially ceramic particulates. The varying impact of
+diﬀerent reinforcement particulates on the physical,
+mechanical, thermal and tribological properties of the
+prepared Al alloy composites has already been shown
+by various authors, so it is diﬃcult to select any particu-
+lar material reported in the above literature. Hence, the
+selection of appropriate materials among diﬀerent
+options on the basis of their performance is a tedious
+task for a material scholar when there are so many
+material properties involved. Hence this can be easily
+done with the help of Multi-Criteria-Decision-Making
+(MCDM) techniques [12]. The selection of material
+for optimum product design also depends upon the fac-
+tors such as performance (maximum), environmental
+sensitivity and the minimum cost of the end product.
+But some situations of conﬂicting nature are frequently
+observed between the attributes/characteristics of the
+materials and proposed objectives. In these kinds of
+situations, it is required to identify the properties/attri-
+butes having more impact or inﬂuence on the selection
+of material for a speciﬁc engineering application than
+others. Hence for the selection of appropriate material
+best suited to the required component application,
+many scholars of the related ﬁeld have studied and
+applied numerous techniques of material selection
+[13]. Jahan et al. [14] summarised diﬀerent Multi-Cri-
+teria Decision Making (MCDM) techniques including
+TOPSIS, AHP, fuzzy MCDM, ELECTRE, SAW, Goal
+Programming, etc. for the evaluation of problems
+associated
+with
+real-time
+industrial
+environment.
+Some quantitative tools, such as chart method, materials
+in product selection tools, cost per unit property
+method, Neutral networks knowledge-based systems,
+etc. of the initial screening for the material selection
+are also reported. Ishizaka et al. [15] suggested a novel
+technique known as the Group AHP Ordering Method
+for the new production facilities selection.
+Xuebin [16] applied a technique known as Non-
+dominated Sorting Genetic Algorithm (NSGA-II) for
+evaluating Pareto sets. TOPSIS technique was also
+used with entropy weights to select the optimum sol-
+ution for environmental and economic power dispatch
+1184
+S. BHASKAR ET AL.
+
+=== PAGE 4 ===
+problems. Satapathy et al. [17] evaluated the perform-
+ance assessment and ranking optimisation of ﬁbre-inﬁl-
+trated
+organic
+friction
+materials
+having
+diﬀerent
+conﬂicting performance-determining attributes using
+the balancing and ranking method. Maleque et al. [18]
+suggested two diﬀerent methods for the selection of
+optimum material for the manufacturing of brake rotors
+in any automotive. Cost per property and digital logic
+methods were used to ﬁnd out the performance require-
+ments and alternative options among the studied
+materials. Maniya et al. [19] implemented the PSI (pre-
+ference selection index) method to select the optimum
+material for a speciﬁed application by performing a
+ranking methodology. Kumar [20] used the hybrid
+AHP-GRA method to evaluate the raking for mechan-
+ical and sliding wear performance of AA356/Al2O3/
+SiC/Gr hybrid composite materials.
+Zhu et al. [21] evaluated the optimum tribological
+characteristics
+of
+non-metallic
+friction
+composite
+materials incorporated with aramid ﬁbre and CaSO4
+whiskers. A combination of analytical hierarchy process
+and preference ranking organisation method for enrich-
+ment evaluations was applied for the optimisation
+purpose.
+Literature suggested a wide variety of reports using
+MCDM techniques viz. AHP-TOPSIS was implemented
+by Shyur et al. [22] for the Vendor selection process as
+well as by Lin et al. [23] to perform a product designing
+process according to the requirements of the customer.
+Joshi et al. [24] also implemented a technique called
+Delphi-AHP-TOPSIS for the performance improve-
+ment of a cold chain. Satapathy et al. [25] performed
+the ranking optimisation for frictional characteristics
+of ﬂy-ash-based composite materials.
+The neural network technique is eﬀective and
+eﬃcient by Kranthi et al. [26] for the parametric design
+to simulate the dry sliding wear behaviour of epoxy
+composites under diﬀerent test conditions. Multi-objec-
+tive genetic algorithms along with the Pareto fronts were
+used by Mohanty et al. [27] to ﬁnd out the production
+quantity and quality of iron in optimum order from
+an iron-forming rotary kiln. Gopal and Prakash [28]
+suggested the Grey Relational Analysis and TOPSIS
+techniques for ranking out the materials evaluated
+under various parameters such as size of particles and
+amount of particles, tool diameter, feed, speed and
+depth of cut. The preference selection index method
+was used by Singh et al. [29] to evaluate the wear and
+frictional characteristics of multi-walled carbon nano-
+tube and nano-clay reinforced composite materials for
+brake friction performance. It was observed from the
+Preference selection index method that the incorpor-
+ation of nano reinforcements signiﬁcantly inﬂuenced
+the Tribological performance of prepared composite
+materials.
+Hence from the above discussion, it has been
+observed that very limited works have been done for
+the optimal selection of AA2024 hybrid alloy composite
+formulations using the hybrid AHP-TOPSIS method-
+ology. The work elaborated here mainly focused on
+synthesising the hybrid composite formulations con-
+taining the AA2024 alloy as a matrix and diﬀerent
+amounts of micro-size ceramic particulates like SiC
+and Si3N4 along with graphite micro-size particulates
+as secondary reinforcement. The various properties,
+such as physical, mechanical and tribological of the pre-
+pared metal alloy composites, were evaluated through
+experimentation followed by the determination of the
+performance ranking order using the hybrid AHP-
+TOPSIS methodology under diﬀerent performance
+determining criteria of conﬂicting nature.
+2. Material preparation and experimental
+details
+The investigation was done for two diﬀerent hybrid
+composite materials comprising a common base alloy
+matrix of the wrought AA2024, alloy as shown in Figure
+1(a). The ceramic particulates such as Silicon Carbide
+(SiC) and Silicon Nitride (Si3N4) along with Graphite
+(Gr) solid lubricant particulates are used as reinforcing
+phases, as shown in Figure 1. The compositional detail
+of the base alloy matrix AA2024 is given in Table 1
+[30] and was also veriﬁed from ‘Batra Metallurgical &
+Spectro Station’, New Delhi. The magnitude of the phys-
+ical and mechanical properties of both matrix material
+and reinforcements are mentioned in Table 2 [30].
+The compositional details along with the fabrication
+methodology of prepared AA2024 alloy composite
+materials are elaborated in Figure 2.
+2.1. Fabrication procedure and designing details
+of AA2024 hybrid alloy composites
+The designing and fabrication details of hybrid alloy
+composites are provided in Figure 2 [31].
+2.2. Experimentation methodology to perform
+characterisation
+Theoretical density was computed assuming the perfect
+ideal condition in which all the amount of the reinforce-
+ment was supposed to be contributed in the preparation
+of composites (Figure 3). It was calculated through the
+rule of the mixture using Equation (1), suggested by
+Aggarwal and Broutman. To evaluate the actual or
+CANADIAN METALLURGICAL QUARTERLY
+1185
+
+=== PAGE 5 ===
+experimental density of the prepared composite, the
+water immersion technique was used as per the Archi-
+medes principle through ASTM D-79 [32].
+The porosity (void content) in the prepared composite
+was obtained by subtracting the experimental density
+value from the theoretical density value by Equation (2)
+rth =
+1
+Wm
+rm
++ WSiC
+rSiC
++ WSi3N4
+rSi3N4
++ WGr
+rGr
+(1)
+Voids content
+= Theoretical density −Experimental density
+Theoretical density
+(2)
+The Vickers hardness number (VHN) of the prepared
+composites was evaluated using a ‘C’ scale on Walter
+Uhltesting micro-hardness tester as per the ASTM E92
+standard. The micro-hardness test was done through a
+diamond indenter with the shape of a right pyramid
+having a square base comprising an angle of 136°
+Figure 1. Materials used for the fabrication of hybrid alloy composites: (a) AA2024 alloy, (b) SiC particulates, (c) Si3N4 particulates, (d)
+Gr particulates.
+Table 1. The compositional detail of the AA2024 alloy.
+Elements
+Al
+Cr
+Cu
+Fe
+Mg
+Mn
+Si
+Ti
+Zn
+Pb
+Content (wt.%)
+Bal
+0.02
+4.11
+0.21
+1.48
+0.55
+0.33
+0.02
+0.13
+0.01
+Table 2. Physical and mechanical characteristics of the materials used for composite preparation.
+Materials/
+properties
+Melting point
+(°C)
+Density
+(g/cc)
+Tensile strength
+(MPa)
+Flexural strength
+(MPa)
+Young’s modulus
+(GPa)
+Thermal conductivity (W/
+mk)
+AA2024
+500
+2.78
+185
+237
+70–80
+193
+Graphite (Gr)
+3600
+2.28
+115
+50
+4.8
+24
+Silicon carbide (SiC)
+2830
+3.21
+310
+324
+476
+41
+Silicon nitride
+(Si3N4)
+1900
+3.31
+360
+679
+317
+27
+1186
+S. BHASKAR ET AL.
+
+=== PAGE 6 ===
+between opposite faces. The experimentations were per-
+formed under a force of 200 g for 15 s [33]. The tensile
+strength and ductility characteristics of prepared alloy
+composites were measured as per ASTM E-8 standard
+on a universal testing machine using a ﬂat specimen
+of rectangular type with a dimension 90 × 15 × 4 mm³.
+All the tensile test observations were performed using
+a span length of 50 mm and a cross-head velocity of
+1 mm/min [33]. The bending strength was evaluated
+on a ﬂat specimen having dimensions 60 × 10 ×
+10 mm³; a span length of 40 mm; a cross-head speed
+of 1 mm/min as per the ASTM E290 standard [33].
+The impact toughness of the alloy composites was com-
+puted by the magnitude of energy (J) absorbed by the
+specimen having speciﬁcations of 55 × 10 × 10 mm³;
+notch at 45° and a depth of 2 mm at the time of fracture
+under sudden impact load as per the ASTM E-23 stan-
+dard [34].
+Figure 2. Ingredients of the alloy composites and fabrication procedure.
+CANADIAN METALLURGICAL QUARTERLY
+1187
+
+=== PAGE 7 ===
+The stress intensity factor (K) was evaluated on the
+universal testing machine to show the fracture tough-
+ness characteristic of prepared alloy composites. The
+experimentations were performed as per the ASTM-
+E399 standard on the composite samples having dimen-
+sions of 3.5 × 13 × 60 mm3 (thickness × width × height)
+through Single Edge Notched Tension (SENT) test at
+various crack lengths of 0.1, 0.3, 0.5 mm.
+The following Equations (3) and (4) are utilised to
+compute the stress intensity factor (K) [35].
+K =
+P
+B
+
+W
+√
+g(b)
+(3)
+g(b)
+=
+
+2 tan pa
+2W
+
+Cos pa
+2W
+0.75 + 2.02 a
+W
+
+
++ 0.37 1 −Sin pa
+3W
+
+3
+
+
+(4)
+where ‘P’ is the maximum load (N) at the point of fracture, ‘B’
+is the thickness of the specimen (m), ‘W’ is the width of the
+specimen (m) and ‘a’ is the crack length.
+The sliding wear and friction performance of the pre-
+pared hybrid composites under dry conditions was eval-
+uated as per the ASTM G99 by using a pin-on-disc
+tribometer
+(Model
+TR-20,
+DUCOM,
+Bangalore,
+India). The composite specimens were shaped in the
+form
+of
+rectangular
+pins
+having
+size
+(25 × 10 ×
+10 mm3) and rubbed against hardened steel discs (EN-
+31; 60–70 HRC). The varying operating conditions
+along with their levels are shown in Table 3. The
+material loss due to sliding wear was computed using
+an electronic balance (accuracy of ±0.0001 mg) and
+the speciﬁc wear rate (SWR) (mm3/Nm) was calculated
+using Equation (5) [36].
+Ws =
+Dm
+r × Vs × t × Fn
+(5)
+where Ws is the speciﬁc wear rate (mm3/Nm), Dm is
+the mass loss (g), r is the density (g/cm3), Vs is the slid-
+ing velocity (m/s), t is the test duration (s) and Fn is the
+normal load (N).
+The conductivity property signiﬁes materials’ ability
+to conduct heat readily keeping the same cross-sectional
+area and temperature gradient under test. Its lower
+value signiﬁes a lower/slow rate of heat transfer through
+it, hence such materials could be used for thermal insu-
+lation purposes, while a higher value signiﬁes a faster
+rate of heat transfer, hence could possibly be used for
+heat sink applications. The specimen size of 25 mm ×
+25 mm × 2 mm as per the ASTM E-1530 standard, was
+prepared for investigation using a hot disc method on
+a thermal constant analyser (Hot disk TPS 500, Gothen-
+burg, Sweden). It has a thermal conductivity range of
+10–200 W/mK; a temperature range of 80–140°C; a
+thermal resistance range of 0.01–0.05 m2K/W. The
+TGA/DTG measures the diﬀerence between the heat
+ﬂow from the sample (it happens whenever, the sample
+absorbs or releases heat due to thermal eﬀects such as
+melting, crystallisation, chemical reactions, oxidation,
+decomposition,
+vaporisation,
+etc.)
+and
+reference
+material specimens as a function of temperature or
+time. It enables the measurement of weight loss of the
+material with respect to temperature/time in a con-
+trolled inert atmosphere. Both the characterisations
+were performed on the same instrument (STA 6000
+Model supplied by PerkinElmer, Inc. USA). The appar-
+atus follows ASTM E1131 standard and has a tempera-
+ture range from ambient to ∼800°C; uses horizontal
+diﬀerential
+balance;
+TG
+measurement
+range
+of
+±200 mg; DTA measurement range of ±1000 μV; Pro-
+grammable
+rate
+of
+0.01–100°C/min.;
+sample
+pan
+material of Platinum, Alumina, Aluminium; the atmos-
+phere of air, inert gas at a vacuum of 10−2 torr. The
+samples were characterised under inert nitrogen (N2)
+atmosphere;
+10–20 mg
+powder
+alloy
+composite
+samples; a heating rate of 10°C/min, a temperature pro-
+gramme of 30–600°C using an alumina pan and
+Figure 3. Stir-casting apparatus used for fabrication of compo-
+site materials.
+1188
+S. BHASKAR ET AL.
+
+=== PAGE 8 ===
+alumina powder as a reference [37]. The thermo-mech-
+anical characteristics of any material could be deter-
+mined by the DMA study. It aids in characterising the
+storage-modulus (E′), loss-modulus (E′′) and loss-tan-
+gent (Tan δ) relative to the temperature scan range.
+This determines any qualitative/quantitative shift like
+the moduli decay/build-up, in the alloy composites
+(the test specimen size of 40 × 10 × 1 mm3) within the
+temperature scan of 25–300°C at a frequency of
+1.0 Hz, a displacement of 0.05 mm, a heating rate of
+5°C/min.,
+under
+three-point
+bending
+deformation
+mode. The apparatus used was the DMA 8000 instru-
+ment of PerkinElmer, Inc. USA following the ASTM
+E1867 standard [38].
+2.3. Ranking optimisation using hybrid AHP-
+TOPSIS
+The hybrid AHP-TOPSIS approach could be used to
+determine the optimal composite composition among
+other prepared composites that overall optimises the
+required criteria of multi-criteria and multi-alternative
+nature i.e. Multi-Criteria-Decision-Making (MCDM)
+methods
+like
+hybrid
+AHP-TOPSIS
+[39].
+Such
+decision-making tools aid in eﬀective decision-making
+whenever the criteria are conﬂicting [40]. In the present
+work, the hybrid AHP-TOPSIS technique is used to ﬁnd
+out the ranking of composites prepared under diﬀerent
+evaluated performance-deﬁning criteria. Such decision-
+making tools are frequently applied in many areas such
+as the military, management, society, etc. and obtaining
+more and more attention [31].
+The AHP was proposed by Thomas L. Saaty [22–
+25,41] around the 1970s. It provides relative prioritisa-
+tion of criteria to decide. The basic steps involved are
+the identiﬁcation of PDCs, material alternatives and
+decision goals. After that, all the collected information
+is represented in the form of a hierarchy chart which
+needs priority examination and assurance of relative
+weights with consistency veriﬁcation. The description
+of the algorithm is as follows [42]:
+Step 1: PDCs determination and preparation of hierar-
+chy structure:
+Here, the obtained results of diﬀerent characteristics
+like physical, mechanical, etc. are used as performance-
+deﬁning criteria, as shown in Table 3 [31]. Also, the
+obtained information is represented in a hierarchy
+structure, as shown in Figure 4.
+Step 2: Pair-wise comparison matrix generation and
+computation of relative weight:
+The pair-wise comparison matrix is generated on the
+basis of human judgement and Sattay’s 1–9 scale, as
+Table 3. Description of PDCs for the evaluation/ranking of alloy composites.
+PDCs
+No.
+Performance determining
+criteria (PDC)
+Implications of diﬀerent PDCs
+on performance
+Brief description of PDCs.
+PDC-1
+Ultimate tensile strength
+Higher-the-better
+The strength of the material that resists any deformation along the axis subjected to
+externally applied tensile load perpendicular to the cross-section.
+PDC-2
+Elongation %
+Higher-the-better
+The degree to which a material may be bent stretched or compressed before it
+ruptures.
+PDC-3
+Flexural strength
+Higher-the-better
+The strength of the material resists any deformation against externally applied lateral
+load in a ﬂexure test.
+PDC-4
+Impact strength
+Higher-the-better
+It is the strength measured as the energy absorbed by a material during a fracture test.
+Higher impact strength is preferred for the composite to attain higher toughness.
+PDC-5
+Hardness
+Higher-the-better
+It is the resistance of a material against plastic deformation usually by penetration/
+scratch. Higher hardness improves wear resistance.
+PDC-6
+Thermal conductivity
+Higher-the-better
+It is the material ability to conduct heat to ﬂow through it for its unit thickness in a
+direction normal to the surface of the unit area.
+PDC-7
+Material stability (TGA)
+Higher-the-better
+It is deﬁned as the measurement of weight loss with respect to temperature/time in a
+controlled inert atmosphere.
+PDC-8
+Fracture toughness
+Higher-the-better
+It refers to the property of a material that describes the ability of a material containing
+a crack to resist further fracture.
+PDC-9
+Storage modulus
+Higher-the-better
+It is the ability of a material to return or store energy.
+PDC-10
+Tan δ
+Higher-the-better
+It is deﬁned as the ability of a material how eﬃciently the material lose energy to
+molecular rearrangements and internal friction.
+PDC-11
+Void content
+Lower-the-better
+It is the presence of voids or pores in a material that may result due to fabrication
+error. It signiﬁcantly aﬀects material behaviour in actual situations.
+PDC-12
+Actual density
+Lower-the-better
+It is deﬁned as mass per unit volume of a material. Low density with higher strength is
+needed for higher stiﬀness of material for light-weight applications.
+PDC-13
+Wear
+Lower-the-better
+It is deﬁned as the material loss from the surface due to thermo-mechanical-physical
+phenomena as a result of frictional interactions during sliding. The minimum is the
+wear; the maximum will be the operational life expectancy.
+PDC-14
+Coeﬃcient-of-Friction
+Lower-the-better
+It is deﬁned as a measure of the amount of resistance that a surface exerts during the
+sliding contact with another surface. The lower the coeﬃcient of friction, the higher
+the operational life expectancy.
+PDC-15
+Cost
+Lower-the-better
+It is the cost of ingredients (matrix and reinforcement) used for the fabrication of
+composite specimens.
+CANADIAN METALLURGICAL QUARTERLY
+1189
+
+=== PAGE 9 ===
+shown in Table 4 [31]. Let the obtained pair-wise com-
+parison matrix be C, it appears like this:
+C1
+C2
+· · ·
+Cn
+Cn×n =
+C1
+C2
+...
+Cn
+1
+C12
+· · ·
+C1n
+C21
+1
+· · ·
+C2n
+...
+...
+..
+.
+...
+Cn1
+Cn2
+· · ·
+1
+⎡
+⎢⎢⎢⎢⎣
+⎤
+⎥⎥⎥⎥⎦
+where Cij indicates the degree of preference of ith cri-
+teria as row over jth criteria as column (i, j = 1, 2, 3,
+… , n, for n number of PDCs). Hence for the n number
+of PDCs, there are n(n −1)
+2
+numbers of pair-wise com-
+parisons such that Cij = 1
+C ji
+. The perfect consistency
+condition
+for
+a
+pair-wise
+comparison
+matrix
+C
+= [Cij]n×n is given by Cij = Cik ×Ckj for any i, j, k [ (1,
+2 … n). But if the above condition is not fulﬁlled, then
+the matrix is said to be inconsistent.
+The consistency of a pair-wise comparison matrix is
+determined using the characteristic equation: C.w =
+λmax.w. In this equation, w represents the weight vector
+or Eigen vector, λmax represents the maximum Eigen
+value of matrix C. Thus for perfect consistency, λmax=
+n or rank = 1. Thus for a given pair-wise comparison
+matrix C, the weight vector w can be determined by sol-
+ving the characteristic equation: C.w = λmax.w, where w
+is the weight vector of the actual absolute weights or
+Eigen vector associated with the Eigen value and λmax
+is the maximal Eigen value of matrix C. It has been
+proved that for perfect consistency λmax= n or rank =
+1. The above-mentioned point was suggested by Saaty,
+1980 [22–25,41], Table 4. Consistency is evaluated
+using the Consistency Index (CI) with the help of
+Equation (6):
+(CI) = (lmax −n)
+(n −1)
+(6)
+For perfect consistency, λmax = n or rank = 1 or CI = 0.
+Figure 4. Hierarchy structure of the investigated problem using the AHP algorithm.
+Table 4. Fundamental relational scale (Saaty’s 1–9 scale) for
+pair-wise comparison.
+Intensity of importance on
+an absolute scale
+Verbal judgement of preferences
+1
+‘A’ is equally preferred to ‘B’
+2
+‘A’ is equally to moderately preferred over ‘B’
+3
+‘A’ is moderately preferred over ‘B’
+4
+‘A’ is moderately to strongly preferred over
+‘B’
+5
+‘A’ is strongly preferred over ‘B’
+6
+‘A’ is strongly to very strongly preferred over
+‘B’
+7
+‘A’ is very strongly preferred over ‘B’
+8
+‘A’ is very strongly to extremely preferred
+over ‘B’
+9
+‘A’ is extremely preferred over ‘B’
+Reciprocals
+If activity ‘A’ has one of the above numbers
+assigned to it when compared with
+activity ‘B’, then ‘B’ has the reciprocal value
+when compared with ‘A’
+1190
+S. BHASKAR ET AL.
+
+=== PAGE 10 ===
+Finally, the consistency veriﬁcation is done by com-
+puting the Consistency Ratio (CR) using Equation (7):
+(CR) = CI(Consistency Index)
+RI(Random Index)
+(7)
+For a consistent matrix, CR ≤0.1 or 10%, otherwise, it
+needs to be reconstructed to minimise the inconsis-
+tency. Table 5 [31] provides random index (RI) magni-
+tudes for the pair-wise comparison matrices with the
+order from 1 to 15. After obtaining consistent relative
+weights of PDCs, it could be applied as an input to
+the TOPSIS for obtaining the rank of the alternatives
+of prepared materials.
+The fundamental concept of TOPSIS is suggested by
+Hwang and Yoon [23–25,43]. The diﬀerent steps
+involved in performing the ranking analysis using TOP-
+SIS are as follows:
+Step 1: Decision matrix generation: it is created by
+multi-alternative (say m-alternatives) and multi-criteria
+(say n-criteria) identiﬁed from the study and are
+expressed in the form of matrix (m × n order).
+C1
+C2
+· · ·
+Cn
+Dm×n =
+A1
+A2
+...
+Am
+p11
+p12
+· · ·
+p1n
+p21
+p22
+· · ·
+p2n
+...
+...
+..
+.
+...
+pm1
+pm2
+· · ·
+pmn
+⎡
+⎢⎢⎢⎢⎣
+⎤
+⎥⎥⎥⎥⎦
+where C1,C2,...,Cnare the n-criteria and
+A1,A2,...,Amare the m-alternatives
+Here, pij represents the performance magnitude of the
+ith alternative Ai with respect to the jth attribute Cj
+where i = 1, 2 … m and j = 1, 2 … n.
+Step 2: Conversion into normalised decision matrix: to
+perform inter-attribute comparisons, all the criteria’s
+performance magnitudes should be converted into
+dimensionless units i.e. to normalise the decision matrix
+using Equation (8). Hence normalised decision matrix is
+obtained as R = {rij} (of the order m × n).
+rij =
+pij
+
+m
+i=1
+pij2
+
+1
+2
+where j = 1, 2, . . . , n
+(8)
+Step 3: Conversion into weighted normalised decision
+matrix: it is obtained by multiplying the relative weights
+evaluated from AHP with the normalised decision
+matrix and can be computed using Equation (9).
+Vij = wj × rij
+where, i = 1, 2, . . . , m; j
+= 1, 2, . . . , n; wj ≥0;
+
+n
+j=1
+wj = 1
+(9)
+where wj is the relative weight of jth criteria.
+Step 4: Obtaining positive ideal solution (A+) and
+negative ideal solution (A−):
+PIS (A+) and NIS (A−) could be obtained based on
+the
+weighted
+normalised
+matrix
+as
+obtained
+by
+Equation (10).
+A+ = (v+
+1 , v+
+2 , . . . . . . . . . . . . .., v+
+J )
+A−= (v−
+1 , v−
+2 , . . . . . . . . . . . . .., v−
+J )
+whereas
+v+
+j =
+max Vij, if j is a benefit criteria or larger-the-better
+min Vij, if j is a cost criteria or smaller-the-better
+
+whereas j = 1, ..., n
+(10)
+v−
+j =
+max Vij, if j is a benefit criteria or larger-the-better
+min Vij, if j is a cost criteria or smaller-the-better
+
+Step 5: Computation of euclidian distance (D): Eucli-
+dian distance (D) is computed between each of the
+alternatives and PIS (A+) and NIS (A−) using Equation
+(11).
+D+
+i =
+
+
+n
+j=1
+(v+
+j −vij)2
+
+
+
+
+where i = 1, 2, . . . ., m
+D−
+i =
+
+
+n
+j=1
+(v−
+j −vij)2
+
+
+
+
+(11)
+Step 6: Determining closeness coeﬃcient (CC): Relative
+closeness or Closeness Coeﬃcient is obtained for each
+alternative with the help of Equation (12). Since
+D+
+i and D−
+i are greater than zero, hence CC[(0,1).
+CCi =
+D−
+i
+D+
+i + D−
+i
+for i = 1, 2, . . . , m
+(12)
+Step 7: Ranking order observation: At the end, all the
+alternatives are assigned rank according to the descend-
+ing magnitudes of closeness coeﬃcient (CC).
+Table 5. Random Index (RI) for the pair-wise comparison matrix.
+n
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+RI
+0.58
+0.9
+1.12
+1.24
+1.32
+1.41
+1.45
+1.51
+1.52
+1.54
+1.56
+1.58
+1.59
+CANADIAN METALLURGICAL QUARTERLY
+1191
+
+=== PAGE 11 ===
+3. Result and discussions
+The current section includes the magnitude analysis of
+diﬀerent performance-determining criteria (physical,
+mechanical, wear, etc.) for two diﬀerent composite
+materials
+(alternatives)
+considered
+for
+this
+study
+through experimentation techniques mentioned in sec-
+tion 2.2. After the determination of diﬀerent PDCs
+through experimentations for both material alterna-
+tives, the best material among diﬀerent alternatives
+has
+been
+found
+through
+AHP-TOPSIS
+ranking
+optimisation.
+3.1. Magnitude evaluation of the performance
+determining criterion for ASN alloy composites
+The characteristics of alloy composites are dependent
+upon the type/content of matrix and reinforcement,
+the distribution of reinforcement into the matrix and
+the strength of interface thus developed between
+matrix-reinforcement. All these depend upon careful
+design and fabrication procedures.
+3.1.1. Physical characterisation of ASN alloy
+composites
+Table 6 shows the calculation of void content, actual or
+experimental density evaluated through Archimedes
+principle and theoretical density via the rule of mixture.
+There is a diﬀerence between both densities because
+of some void content that is always present as a result of
+insuﬃcient wettability between particulates and matrix.
+But void content is reduced as the weight content of
+Si3N4 particulates increased from 0 to 6 wt.%, The
+void content shows a diminishing trend with the con-
+tent of the harder phases such as SiC and Si3N4; there-
+fore, it seems that the presence of SiC and Si3N4
+phases in the matrix-enhanced interfacial bonding
+between the constituents of the composite, consequently
+void content reduces. The increment in the experimen-
+tal density from 2.690 g/cc for ASN-0 to 2.750 g/cc for
+ASN-6 of the prepared composites was due to the higher
+density of the Si3N4 particulates (3.31 g/cc) than that of
+the AA2024 (2.78 g/cc). The occurrence of impurities in
+the constituents of the composite (matrix and ﬁller
+particulates) might also be the reason for the presence
+of a small amount of porosity [44].
+3.1.2. Mechanical characterisation of ASN alloy
+composites
+Table 7 shows the eﬀect of Si3N4 particulate content on
+diﬀerent mechanical characteristics of prepared ASN
+alloy composites.
+The magnitude of micro-hardness, ﬂexural and
+impact strength is signiﬁcantly enhanced with a weight
+content of Si3N4 particulates. The maximum value of
+micro-hardness (127 HV) is obtained corresponding
+to the ASN-6 composition. The minimum value of
+ﬂexural strength is achieved at 283.91 MPa for the
+ASN-0 composite. The maximum magnitude of ﬂexural
+strength (645.16 MPa) is obtained corresponding to the
+ASN-6 composition (6 wt.% Si3N4 content). The mini-
+mum value of impact strength is 26.7 J for ASN-0 com-
+position and the maximum value of impact strength is
+84.5 J for ASN-6 composition. The UTS of ASN compo-
+sites is signiﬁcantly enhanced with the amount of Si3N4
+particulates. The minimum value of UTS is 139.65 MPa
+for ASN-0 composite. The maximum improvement in
+UTS by 51.63% to 211.75 MPa is obtained correspond-
+ing
+to
+the
+ASN-6
+composition.
+The
+percentage
+elongation or ductility is increased with the amount of
+Si3N4 particulates. The minimum value of percentage
+elongation is found to be 8.10% for the ASN-0 compo-
+site but the maximum value of percentage elongation is
+12.86% for the ASN-6 composite. Table 8 shows the
+eﬀect of Si3N4 particulate content on fracture toughness
+behaviour evaluated through stress intensity of prepared
+ASN alloy composites.
+The value of the ‘stress intensity factor’ as shown in
+Table 8, enhances with crack length due to the alteration
+in the net-section area of the crack; also with the aspect
+ratio (a/W) that leads to an increase with crack length,
+Table 6. Density and void content of ASN alloy composites.
+ASN alloy
+composites
+Theoretical
+density (ρt) (g/
+cc)
+Experimental
+density (ρe) (g/cc)
+Void content (%)
+Vc = 100 × rt −re
+rt
+ASN-0
+2.770
+2.690
+2.89
+ASN-2
+2.780
+2.710
+2.52
+ASN-4
+2.790
+2.730
+2.15
+ASN-6
+2.800
+2.750
+1.79
+Table 7. Mechanical characteristics of ASN alloy composites.
+Characteristics
+ASN-0
+ASN-2
+ASN-4
+ASN-6
+Ultimate tensile strength (MPa)
+139.65
+149.05
+174.60
+211.75
+Elongation (%)
+8.10
+9.07
+10.25
+12.86
+Flexural strength (MPa)
+283.91
+314.68
+336.62
+645.16
+Micro-hardness (HV)
+95
+108
+121
+127
+Impact strength (J)
+26.7
+48.4
+71.6
+84.5
+Table 8. Stress intensity factor (K) of ASN alloy composites.
+Crack length (mm)
+Stress intensity factor (K)
+ASN-0
+ASN-2
+ASN-4
+ASN-6
+0.1
+7.41
+9.45
+11.14
+12.42
+0.3
+19.09
+21.56
+24.39
+26.27
+0.5
+30.12
+33.98
+36.28
+39.52
+1192
+S. BHASKAR ET AL.
+
+=== PAGE 12 ===
+hence the magnitude of fracture toughness increases.
+For diﬀerent crack lengths, the order of ‘K’ is ASN-6
+> ASN-4 > ASN-2 > ASN-0.
+From the above analysis of the mechanical properties
+of prepared composites, it has been obtained that the
+addition of Si3N4 ceramic particulates improves the var-
+ious mechanical properties of the prepared composites
+but, a partial eﬀect of solid lubricant (graphite) provides
+a balance between the strength and hardness of the com-
+posite and makes the material suitable for machining
+purpose. Diﬀerent factors are responsible for the
+improvement in mechanical properties. These factors
+include the nature of reinforced particulates, the distri-
+bution of particulates in the matrix and the interface
+formed between the matrix and reinforcement. Strain
+ﬁelds are generated due to the thermal mismatch between
+the AA2024 alloy and Si3N4 particulates because there is a
+diﬀerence in the coeﬃcients of thermal expansion of two
+constituents (matrix and reinforcement). The motion of
+dislocations gets restricted through the strain ﬁelds gen-
+erated and Si3N4 particulates are distributed uniformly in
+the aluminium matrix. The Orowan strengthening mech-
+anism has played an important role by which Si3N4 par-
+ticulates are homogeneously scattered in the matrix,
+impeding the motion of dislocations [45]. One more
+reason for improvement in the mechanical characteristics
+was the grain size reduction of the aluminium matrix due
+to the uniform dispersion of ﬁne-size SiC particles
+according to the Hall-Petch relationship. Hence, grain
+size reduction provides the path of dislocation to be
+changed so that the interface can eﬀectively transfer the
+load and hard particles can eﬀectively restrict the crack-
+ing and deformation. The impact of the above factors
+was enhanced as the content of hard ceramic particles
+increased which consequently enhanced the hardness
+and strength of the fabricated composite materials.
+3.1.3. Fracture morphology of ASN composites
+after mechanical characterisation
+Figure 5(a) demonstrates the fracture morphology of
+the fractured surface during tensile tests of the ASN-0
+composite. From the fractured surface, some equiaxed
+Figure 5. (a) Fractograph of ASN-0 composite; (b) Fractograph of ASN-2 composite; (c) Fractograph of ASN-4 composite.
+CANADIAN METALLURGICAL QUARTERLY
+1193
+
+=== PAGE 13 ===
+dimples have been observed which show the presence of
+large plastic deformation just before the breakage of the
+composite sample. Hence ductile fracture has been
+obtained due to the formation of micro-voids which
+can be attributed to being formed by a state of stress
+in all three directions and increased with the load. At
+last, fracture will occur as the voids reach their maxi-
+mum or critical size by the uniﬁcation of micro-voids.
+The fracture surface of the ASN-2 composite has
+shown some deep dimples, indicating a large value of
+plastic deformation before failure. Hence from Figure
+5(b), it can be observed that the cracks, which were
+started from the interface, will reach the boundary by
+propagation. Figure 5(c) shows the fracture surface of
+ASN-4 particles which indicates some short deep dim-
+ples compared with the ASN-2 composite. Hence
+small value of plastic deformation was obtained which
+indicates the ductile characteristics of the AA2024
+alloy matrix. From the above discussion, it can be said
+that the ductility of the prepared composite has been
+increased with increasing content of Si3N4 particles [46].
+Fracture morphologies of the fractred surfaces of
+diﬀerent fabricated composite specimens after ﬂexural
+testing are shown in Figure 6. It is shown in Figure 6
+(a) that the absence of Si3N4 particles (ASN-0) and the
+presence of SiC and graphite particles make the inter-
+face more brittle because SiC particles acquire more
+hardness than Si3N4 particles. As the weight content
+of Si3N4 particles has been increased from 0 to 2 wt.%
+(ASN-2), small improvement was observed in ﬂexural
+strength due to the increasing interfacial bonding
+between the particles and matrix, also soft nature of
+graphite softens the interface, which enhanced the
+ﬂexural strength of the composite. As shown in Figure
+6(b), reinforcement particles were agglomerated at one
+place and as a result, weak interface bonding was
+achieved. Maximum ﬂexural strength was obtained for
+6 wt.% Si3N4 (ASN-6) addition due to the superior
+Figure 6. (a) Flexural test morphology of ASN-0; (b) Flexural test morphology of ASN-2; (c) Flexural test morphology of ASN-4.
+1194
+S. BHASKAR ET AL.
+
+=== PAGE 14 ===
+interfacial bonding between the ceramic particles and
+matrix, as shown in Figure 6(c), which conﬁrms the
+absence of voids and agglomeration of diﬀerent ceramic
+particulates. Grain size reduction of the matrix element
+is another factor which can directly inﬂuence the bend-
+ing strength of the prepared composite. As the weight
+content of hard Si3N4 particles increased, the free
+growth of aluminium grains got restricted and sub-
+sequently grain size will be reduced because distributed
+ceramic particulates act as nucleating sites for the matrix
+grains. Hence as the weight percentage of Si3N4 particles
+increases, the nucleating sites will also increase, which
+further restricts the grain growth and reduces the
+grain size of the Al alloy matrix [47].
+The role of solid lubricants such as graphite was also
+very much signiﬁcant because graphite was the only
+element which provides a balance between the hardness
+and fracture strength of the composite by forming a soft
+sticky layer on the interface of the matrix and reinforce-
+ment. This layer protects the interface from brittle
+deformation but it could be possible when the solid
+lubricant is taken as a partial reinforcement up to a cer-
+tain limit.
+3.1.4. Evaluation of thermal, thermo-mechanical
+and wear characterisation of ASN composites
+The analysis was also done to evaluate the thermal and
+thermo-mechanical characteristics of the prepared alloy
+composites and the following results were obtained. The
+thermal conductivity reduced from 178 W/mK to
+169 W/mK, a ∼5% decrease with the addition of
+2 wt.% Si3N4 hard ceramic particulates. Furthermore,
+it reduced by ∼5% to 160 W/mK with the addition of
+4 wt.% Si3N4 hard ceramic particulates. It further
+reduced by ∼10% to 144 W/mK with the addition of
+6 wt.% Si3N4 hard ceramic phases. Hence, more weight
+content of the Si3N4 phase in the alloy composites
+enhances the thermal barrier conductance, as suggested
+by Kawai et al. [48]. There is a slight enhancement in the
+material stability with the increasing amount of Si3N4
+particulates for the temperature, so the overall material
+stability order is ASN-6 > ASN-4 > ASN-2 > ASN-0 with
+the applicable temperature range. The alloy composite
+with ASN-6 composition has shown more than 100%
+material stability from room temperature of 25°C to
+596°C maximum temperature of the experiment.
+The storage modulus (E′) of the prepared alloy com-
+posite shows a diminishing trend with the entire temp-
+erature range. The reason for enhancement in storage
+modulus with the amount of Si3N4 particulates is the
+improvement in the mechanical characteristics of the
+alloy composites as discussed earlier. At a particular
+temperature, the order of E′ was: ASN-6 > ASN-4 >
+ASN-2 > ASN-0. Also, the uniform dispersion of the
+particulate phase in the matrix improves the damping
+vibration capacity of alloy composites [49]. The loss
+modulus (E′′) of the alloy composite increased with
+the entire temperature range. The order of E′′ is
+observed as ASN-0 > ASN-2 > ASN-4 > ASN-6, in the
+temperature range of 25–250°C. Tan δ or damping
+capacity of the alloy composite is increased for the entire
+temperature range irrespective of the composition but at
+a particular temperature, the order is as follows ASN-6
+> ASN-4 > ASN-2 > ASN-0. It follows that damping
+capacity is enhanced with Si3N4 particulates as the dis-
+sipation rate of energy increases with an increasing
+amount of Si3N4 particulates which leads to an increase
+in the mechanical characteristics when composites are
+subjected to external load conditions [50].
+The speciﬁc wear rate of ASN alloy composites is
+reduced with respect to all the controllable factors
+except temperature. The coeﬃcient of friction is
+decreased with normal load and sliding velocity but
+the magnitude of the coeﬃcient of friction is increased
+with respect to sliding distance and environment temp-
+erature. In terms of the amount of the Si3N4 particulates,
+the order of speciﬁc wear rate and coeﬃcient of friction
+at a particular level of all the respective factors is : ASN-
+0 > ASN-2 > ASN-4 > ASN-6. It means the speciﬁc wear
+rate and coeﬃcient of friction have a decreasing trend
+with the increasing amount of Si3N4 particulates. A
+detailed analysis of speciﬁc wear rate and coeﬃcient of
+friction of ASN alloy composites has been reported by
+Bhaskar et al. [51].
+3.1.5. Microstructural analysis of ASN alloy
+composites
+Figure 7 shows the microstructures of the prepared alloy
+composites containing varying (0, 2, 4, 6 wt.%) amounts
+of Si3N4 particulates and ﬁxed 2 wt.% amount of SiC
+and graphite particulates achieved from an optical
+microscope. Figure 7(a) shows the absence of Si3N4 par-
+ticulates (i.e. ASN-0 composition) but an indication of
+some ﬁner particulates is visible. These might be rep-
+resented by graphite and SiC particulates and distribu-
+ted uniformly within the alloy matrix. Figure 7(b)
+shows the microstructure of the ASN-2 composite that
+conﬁrms the presence of coarser Si3N4 particulates dis-
+tributed uniformly. Also, a higher magniﬁed view of this
+ﬁgure clearly shows the excellent bonding between the
+matrix and particulates at the interface. Similarly, Figure
+7(c) and Figure 7(d) show the microstructures of ASN-4
+and ASN-6 composites, respectively. Both the micro-
+structures depicted the incremented amount of Si3N4
+particulates without any segregation and agglomeration.
+The silicon nitride particulates were distributed in such
+CANADIAN METALLURGICAL QUARTERLY
+1195
+
+=== PAGE 15 ===
+Figure 7. Optical micrographs representing micro-structures of alloy composites: (a) ASN-0, (b) ASN-2, (c) ASN-4, (d) ASN-6.
+1196
+S. BHASKAR ET AL.
+
+=== PAGE 16 ===
+a way that some of them are visualised towards the
+region of the grain boundary, especially for the ASN-4
+composite but beyond this weight content of Si3N4 par-
+ticulates i.e. for the ASN-6 composite; large clusters are
+obtained and some of them are trapped at the grain
+boundary. This might be due to the large diﬀerences
+between the coeﬃcient of thermal expansions of the
+molten Al alloy matrix and reinforced particulates
+[52]. All the physical and mechanical characteristics
+have been signiﬁcantly enhanced as uniform distri-
+bution of Si3N4 particulates is achieved from micro-
+structural observations.
+3.2. Magnitude evaluation of performance
+determining criterion for AGR alloy composites
+Both the physical characteristics, such as experimental
+density and void content of the prepared alloy compo-
+sites, are described in Table 9.
+3.2.1. Physical characterisation of AGR alloy
+composites
+Both the theoretical and experimental density of the
+AGR composites decreased with the weight content of
+graphite particulates, as shown in Figure 8. This may
+be due to the lower density of the graphite particulates
+(2.28 g/cc) compared to the SiC (3.21 g/cc), Si3N4
+(3.31 g/cc) particulates and the AA2024 alloy matrix
+(2.78 g/cc). Hence, the incorporation of a higher num-
+ber of graphite particulates in the alloy matrix reduces
+the overall actual density of the composite. Similar
+results were obtained by Ravindran et al. [53].
+3.2.2. Mechanical characterisation of AGR alloy
+composites
+The impact of graphite particulate addition in the
+AA2024 alloy on the mechanical characteristics of the
+prepared composites is shown in Table 10. The magni-
+tudes of micro-hardness, ﬂexural and impact strength of
+the AGR alloy composites are signiﬁcantly decreased
+with the weight content of Gr particulates, as shown
+in Figure 9. The maximum value of micro-hardness is
+108 HV for the AGR-0 composite. The minimum
+value of micro-hardness is 83 HV corresponding to
+AGR-6 composition. The maximum value of ﬂexural
+strength is obtained at 339.71 MPa for the AGR-0 com-
+posite, whereas the minimum magnitude of ﬂexural
+strength is 239.67 MPa corresponding to the AGR-6
+composite. The maximum impact energy is 81.7 J for
+the AGR-0 composite and the minimum impact energy
+is 33.5 J for the AGR-6 composition. The ultimate ten-
+sile strength (UTS) of fabricated AGR alloy composite
+is decreased as the graphite particulate content is
+increased. The maximum value of UTS is215.14 MPa
+for the AGR-0 and the minimum magnitude of UTS
+is 134.43 MPa corresponding to AGR-6 composition,
+as shown in Figure 10. The percentage elongation is
+decreased as the weight content of graphite particulates
+increases from 0 to 6 wt.%. The maximum elongation
+(11.63%) is achieved for the AGR-0 composite i.e. with-
+out the presence of graphite particulates and for the
+AGR-6 composite; the elongation is reduced to 2.67%.
+3.2.3. Fracture toughness of AGR composites
+The fracture toughness of AGR alloy composites is eval-
+uated as stress intensity factor (K) at diﬀerent crack
+lengths of 0.1, 0.3 and 0.5 mm, as shown in Table 11
+and Figure 11. For diﬀerent crack lengths, the order of
+‘K’ is AGR-0 > AGR-2 > AGR-4 > AGR-6. The fracture
+toughness for a particular crack length is reduced as
+the weight content of graphite particulates increases
+from 0 to 6 wt.%. The lowered magnitude of the stress
+intensity factor is due to the eﬀect of the higher brittle-
+ness of graphite particulates compared to the ductile Al
+alloy matrix. The lower density of graphite particulates
+compared to the Al alloy allowed it to be suspended in
+the melt and non-uniform dispersion of graphite parti-
+culates is observed that further enhanced with the
+higher amount of addition of graphite particulates.
+Hence the combined eﬀect of lower density and brittle-
+ness decreased the physical and mechanical character-
+istics of alloy composites [3].
+3.2.4. Evaluation of thermal, thermo-mechanical
+and wear characterisation of AGR composites
+Thermal and thermo-mechanical properties of AGR
+alloy composites were also determined and the follow-
+ing key observations were obtained. The thermal con-
+ductivity of alloy composite has shown a decreasing
+trend with the increasing amount of Gr particulates,
+as shown in Figure 12. The thermal conductivity of pre-
+pared alloy composites reduced from 161.34 W/mK to
+144.28 W/mK, ∼10% decrease with the addition of
+2 wt.% Gr particulates. Furthermore, it reduced by ∼
+19% to 130.39 W/mK with the addition of 4 wt.% Gr
+particulates. It further reduced by ∼26% to 119.20 W/
+mK with the addition of 6 wt.% Gr particulates. The
+Table 9. Density and void content of AGR alloy composites.
+AGR alloy
+composite
+Theoretical
+density (ρt) (g/
+cc)
+Experimental
+density (ρe) (g/cc)
+Void content (%)
+Vc = 100 × rt −re
+rt
+AGR-0
+2.7966
+2.7880
+0.3075
+AGR-2
+2.7844
+2.7649
+0.7003
+AGR-4
+2.7723
+2.7312
+1.4825
+AGR-6
+2.7603
+2.6646
+3.467
+CANADIAN METALLURGICAL QUARTERLY
+1197
+
+=== PAGE 17 ===
+diminishing trend of thermal conductivity is due to the
+lower thermal conductivity of soft Gr particulates
+(24 W/mK) [30] relative to the AA2024 alloy (193 W/
+mK) [30] which signiﬁcantly enhances as the presence
+of such particulates increases in the matrix [48].
+Hence, more weight content of Gr particulates in the
+alloy composites increases the thermal barrier conduc-
+tance [48]. As the higher brittleness of the graphite par-
+ticulates increases the probability of cracks at the
+interface, the poor bonding strength between the matrix
+and reinforcement is achieved. Hence consequently the
+lower density and higher void content decreased the
+overall thermal conductance of the alloy composites.
+The TGA/DTG observations of AA2024-Gr alloy
+composites are shown in Figure 13. All the compo-
+sitions have shown 100% material stability in between
+the temperature range of 25°C and 60°C. All the compo-
+sitions have shown 100% material stability in between
+the temperature range of 25°C and 60°C. The material
+stability of all the composites has been reduced to 99%
+up to the temperature of 225°C. Furthermore, the
+material stability of all the composites except AGR-6
+is decreased by up to 98% for the temperature range
+between 225 and 350°C. But the material stability of
+AGR-6 composite has been reduced to 98% between
+the temperature ranges of 225–295°C. Beyond this
+temperature, the material stability of all the composites
+except AGR-6 retains up to 97% till the maximum con-
+sidered temperature up to 600°C, whereas the material
+stability of AGR-6 composite is decreased up to 96%
+within the same temperature range. This may be
+because increasing the weight content of graphite parti-
+culates in the Al matrix decreased the eﬃciency of
+resisting the thermal loads of the alloy composite as
+more voids have been generated caused by varying
+coeﬃcients of thermal expansion of both the constitu-
+ents leads to poorer interfacial bonding between the
+matrix and particulates. Various micro-peaks are also
+observed for the DTG plots that correspond to the
+slope change of the TGA plot [37]. There is a decrement
+in the material stability with respect to the temperature
+with the increasing weight content of graphite particu-
+lates, hence the overall material stability order is:
+AGR-0 > AGR-2 > AGR-4 > AGR-6 across the entire
+temperature range i.e. the material stability is related
+directly to the proportion of Gr reinforcing phase.
+The storage modulus (E′), loss modulus (E′′) and
+loss-tangent or Tan δ characteristics of Gr-reinforced
+Al alloy composites are analysed using the DMA tech-
+nique and described in Figure 14. The storage modulus
+Figure 8. Density and void content of AGR alloy composites.
+Table 10. Mechanical characteristics of AGR alloy composites.
+Characteristics
+AGR-0
+AGR-2
+AGR-4
+AGR-6
+Ultimate tensile strength (MPa)
+215.14
+164.63
+147.18
+134.43
+Elongation (%)
+11.63
+9.47
+6.41
+2.67
+Flexural strength (MPa)
+339.71
+314.68
+305.96
+239.67
+Micro-hardness (HV)
+108
+97
+86
+83
+Impact strength (J)
+81.7
+62.4
+49.7
+33.5
+1198
+S. BHASKAR ET AL.
+
+=== PAGE 18 ===
+(E′) of alloy composites shows a diminishing trend with
+the entire temperature range. At a particular tempera-
+ture, the order of E′ was AGR-0 > AGR-2 > AGR-4 >
+AGR-6, as shown in Figure 14(a). The decrement in sto-
+rage modulus may be attributed to the reduction in
+Figure 9. Flexural strength, micro-hardness and impact strength of AGR alloy composites.
+Figure 10. Tensile strength and elongation (%) of AGR alloy composites.
+Table 11. Stress intensity factor (K) of AGR alloy composites.
+Crack length (mm)
+Stress intensity factor (K)
+AGR-0
+AGR-2
+AGR-4
+AGR-6
+0.1
+16.50
+13.95
+11.59
+8.45
+0.3
+21.32
+18.86
+16.45
+13.74
+0.5
+26.80
+22.92
+19.45
+17.63
+CANADIAN METALLURGICAL QUARTERLY
+1199
+
+=== PAGE 19 ===
+Figure 11. Stress intensity factor (K) of AGR alloy composites.
+Figure 12. Thermal conductivity of AGR alloy composites.
+1200
+S. BHASKAR ET AL.
+
+=== PAGE 20 ===
+interfacial bonding between both the constituents of the
+composite as the relative softening of matrix alloy
+enhanced due to an increase in the temperature. The
+reason for the deterioration in the storage modulus
+with the amount of graphite particulates isthe poor
+mechanical characteristics with the addition of a higher
+amount of graphite particulates, as discussed in earlier
+sections. Lower resistance against external load due to
+the higher brittleness of these particulates enhances
+the probability of crack generation and propagation at
+the matrix-reinforcement interface. The above phenom-
+enon is dominant as the amount of graphite particulates
+increased, hence consequently reducing the storage
+modulus capacity of composites. The loss-modulus
+(E′′) property of the alloy composites is shown in Figure
+14(b).
+The loss-modulus (E′′) property of the alloy compo-
+sites increased with the entire temperature range. The
+order of E′′ is observed as AGR-6 > AGR-4 > AGR-2 >
+AGR-0, in the temperature range of 25–300°C. It is
+observed from the analysis that as the loss modulus
+increases, there is a decrement in the storage modulus
+simultaneously; it may be because the addition of both
+the characteristics (storage modulus and loss modulus)
+must represent a constant value for a composite [54].
+The order of E′′ is observed as AGR-6 > AGR-4 >
+AGR-2 > AGR-0, in the temperature range of 25–300°
+C [49]. The Tan δ or damping capacity of the alloy com-
+posite is shown in Figure 14(c). The damping capacity
+characteristic is increased for the entire temperature
+range irrespective of the composition but at a particular
+temperature, the order is as follows: AGR-0 > AGR-2 >
+AGR-4 > AGR-6. It follows that damping capacity
+decreases with Gr particulates as the dissipation rate
+of energy is reduced with the increasing amount of Gr
+particulates which leads to a decrease in the mechanical
+characteristics when composites are subjected to exter-
+nal load conditions [50].
+The speciﬁc wear rate and coeﬃcient of friction of
+AGR alloy composites have shown a reducing trend
+with respect to sliding velocity and sliding distance
+but both characteristics have shown an increasing
+trend with respect to normal load and environment
+temperature irrespective of the weight content of the
+graphite particulates. At a particular level of all the
+controllable factors, the order of speciﬁc wear rate
+and coeﬃcient of friction is: AGR-0 > AGR-2 >
+AGR-4 > AGR-6. It means both properties have
+shown a decreasing trend with the increasing weight
+content of graphite particulates. A detailed analysis
+of speciﬁc wear rate and coeﬃcient of friction of
+AGR alloy composites has been reported by Bhaskar
+et al. [55].
+3.2.5. Energy-dispersive X-ray analysis of AGR alloy
+composites
+Energy-dispersive X-ray analysis shown in Figure 15 has
+conﬁrmed
+the
+distribution
+and
+dispersion
+of
+Figure 13. TGA/DTG of AGR alloy composites.
+CANADIAN METALLURGICAL QUARTERLY
+1201
+
+=== PAGE 21 ===
+Figure 14. (a) Storage modulus (b) loss modulus (c) Tan δ of AGR alloy composites.
+1202
+S. BHASKAR ET AL.
+
+=== PAGE 22 ===
+reinforcement particulates and other elements present
+in the AGR alloy composites. Diﬀerent elements com-
+prising the alloy composite such as Al, C, O, Cu, Mg,
+Si, Mn, Fe, Zn, N, Ti and Cr, are signiﬁcantly identiﬁed.
+As the amount of graphite particulates increased from
+0–6 wt.%, the elemental proportion of carbon was also
+increased.
+3.3. Relative weight evaluation of PDCs using the
+AHP algorithm
+All the required information associated with the pro-
+blem of investigation is organised in the form of a hier-
+archy chart as shown in Figure 16. The various PDCs
+along with their description and implications are
+already listed in Table 3.
+In the present study, 15 material characteristics are
+selected as performance-determining criteria (PDCs)
+for the selection of optimum material alternatives. The
+pair-wise comparison matrix and computed relative
+weights (wi) are shown in Table 12 [31]. The relative
+weights as per the procedure are obtained in the follow-
+ing order: PDC-14 (COF; 0.114) > PDC-13 (Speciﬁc
+wear rate; 0.104) > PDC-1 (Tensile strength; 0.096) ∼
+PDC-15 (Cost; 0.096) > PDC-5 (Hardness; 0.091) >
+PDC-4 (Impact strength; 0.085) > PDC-2 (Elongation;
+0.082) ∼PDC-3 (Flexural strength; 0.082) > PDC-11
+(Void content; 0.048) ∼PDC-12 (Actual density;
+0.048) > PDC-8 (Fracture toughness; 0.046) > PDC-9
+(Storage modulus; 0.029) > PDC-6 (Thermal conduc-
+tivity; 0.026) ∼PDC-7 (TGA; 0.026) > PDC-10 (Tan δ;
+0.025) [31].
+From consistency veriﬁcation, it is observed that
+maximum Eigen value (λmax) ∼15; Consistency Index
+(CI) = 0.0150 and Consistency Ratio (CR) = 0.0094
+which is less than 0.1.
+The above analysis proves that the obtained relative
+weights from the pair-wise comparison matrix are con-
+sistent. Furthermore, the relative weights will be used in
+the TOPSIS algorithm to perform the ranking analysis
+of prepared composite formulations.
+3.4. Ranking optimisation of alloy composites
+using the TOPSIS algorithm
+The Technique for Order Preferences by Similarity to
+Ideal Solution (TOPSIS) algorithm is powerful to rank
+the material alternatives. The TOPSIS is an excellent
+approach among various MCDM techniques to select
+the desired material based on various performance
+Figure 15. EDAX spectra showing elements present in AGR-6 alloy composite.
+CANADIAN METALLURGICAL QUARTERLY
+1203
+
+=== PAGE 23 ===
+criteria as this technique allows the user to explore sev-
+eral alternatives (materials) and attributes (material
+characteristics) for material selection. The response of
+this technique is based on the ranking methodology
+and the ranking selection is based upon the quantitative
+magnitude (weighting criteria) of each alternative that
+could be deﬁned by the engineer or analyst. The idea
+of the best alternative is based on the fact that the
+selected alternative or material should possess the mini-
+mum distance from the positive ideal solution and the
+maximum distance from the negative ideal solution
+[49]. It begins with normalising the magnitudes of
+values correspondence to PDCs to omit the diﬀerences
+in their measuring units for relative comparison. Sub-
+sequently, applying the weights achieved from the
+AHP technique, the weighted normalised decision
+matrix can be generated. After that, the positive ideal
+solution and negative ideal solution are evaluated e.g.
+if the PDCs are beneﬁt criteria such as tensile strength,
+then the maximum value would be ideal; however, if the
+criteria are cost or non-beneﬁt criteria like speciﬁc wear
+rate, then the minimum value would be ideal. There-
+after, Euclidian distance is measured and relative close-
+ness to the ideal solution is computed. Alternatives,
+having higher closeness are ranked ﬁrst relative to
+others.
+3.4.1. Ranking optimisation of ASN alloy
+composites
+The computations as per the algorithm are as follows:
+Step 1: Construction of decision matrix: The evaluated
+performance of ASN alloy composites could be used for
+the construction of a decision matrix as shown in
+Table 13.
+Step 2: Computation of normalised decision matrix:
+Following the algorithm methodology, the decision
+matrix is transformed into a normalised decision
+matrix, as shown in Table 14. The normalisation enables
+relative comparison of data across diﬀerent matrics hav-
+ing diﬀerent measuring units by converting them in the
+range zero to one.
+Step 3: Computation of weighted normalised decision
+matrix: The relative weights of selecting criteria as
+shown in Table 12 (as determined from the AHP
+method) are used to assign weights to the normalised
+decision matrix. The computed weighted normalised
+decision matrix is shown in Table 15.
+Step 4–7: As the data in the weighted normalised
+decision matrix are normalised to the interval (0, 1),
+positive ideal solution (A+) and negative ideal solution
+(A−) are computed as per method and shown in Table
+16. Finally, relative closeness or the overall preference
+or Closeness Coeﬃcient (CC) to the ideal solution for
+Figure 16. Hierarchy chart of the present investigation.
+1204
+S. BHASKAR ET AL.
+
+=== PAGE 24 ===
+Table 12. Pair-wise comparison matrix of PDCs and their relative weights.
+Attributes
+↓
+Tensile
+strength
+Elongation
+%
+Flexural
+strength
+Impact
+strength
+Hardness
+Thermal
+conductivity
+TGA
+FT at
+0.5 mm
+Storage
+modulus
+Tan δ
+Void
+content
+Actual
+density
+Speciﬁc
+Wear Rate
+COF
+Cost
+PDCs →
+↓
+PDC-1
+PDC-2
+PDC-3
+PDC-4
+PDC-5
+PDC-6
+PDC-
+7
+PDC-8
+PDC-9
+PDC-
+10
+PDC-11
+PDC-12
+PDC-13
+PDC-
+14
+PDC-
+15
+Relative
+weights ↓
+PDC-1
+1
+1
+1
+1
+1
+4
+4
+2
+4
+4
+2
+2
+1
+1
+1
+0.096
+PDC-2
+1
+1
+1
+1
+1
+3
+3
+2
+3
+3
+2
+2
+1/2
+1/2
+1
+0.082
+PDC-3
+1
+1
+1
+1
+1
+3
+3
+2
+3
+3
+2
+2
+1/2
+1/2
+1
+0.082
+PDC-4
+1
+1
+1
+1
+1
+3
+3
+2
+3
+3
+2
+2
+1
+1/2
+1
+0.085
+PDC-5
+1
+1
+1
+1
+1
+3
+3
+2
+3
+4
+2
+2
+1
+1
+1
+0.091
+PDC-6
+1/4
+1/3
+1/3
+1/3
+1/3
+1
+1
+1/2
+1
+1
+1/2
+1/2
+1/4
+1/4
+1/4
+0.026
+PDC-7
+1/4
+1/3
+1/3
+1/3
+1/3
+1
+1
+1/2
+1
+1
+1/2
+1/2
+1/4
+1/4
+1/4
+0.026
+PDC-8
+1/2
+1/2
+1/2
+1/2
+1/2
+2
+2
+1
+2
+2
+1
+1
+1/2
+1/4
+1/2
+0.046
+PDC-9
+1/4
+1/3
+1/3
+1/3
+1/3
+1
+1
+1/2
+1
+1
+1/2
+1/2
+1/2
+1/2
+1/4
+0.029
+PDC-10
+1/4
+1/3
+1/3
+1/3
+1/4
+1
+1
+1/2
+1
+1
+1/2
+1/2
+1/5
+1/4
+1/4
+0.025
+PDC-11
+1/2
+1/2
+1/2
+1/2
+1/2
+2
+2
+1
+2
+2
+1
+1
+1/2
+1/2
+1/2
+0.048
+PDC-12
+1/2
+1/2
+1/2
+1/2
+1/2
+2
+2
+1
+2
+2
+1
+1
+1/2
+1/2
+1/2
+0.048
+PDC-13
+1
+2
+2
+1
+1
+4
+4
+2
+2
+5
+2
+2
+1
+1
+1
+0.104
+PDC-14
+1
+2
+2
+2
+1
+4
+4
+4
+2
+4
+2
+2
+1
+1
+1
+0.114
+PDC-15
+1
+1
+1
+1
+1
+4
+4
+2
+4
+4
+2
+2
+1
+1
+1
+0.096
+Sum of relative weights =
+0.998
+Table 13. Decision matrix for ASN alloy composites
+PDC/Attribute/ASN
+alloy composites
+PDC-1
+PDC-2
+PDC-3
+PDC-4
+PDC-5
+PDC-6
+PDC-7
+PDC-8
+PDC-9
+PDC-10
+PDC-11
+PDC-12
+PDC-13
+PDC-
+14
+PDC-
+15
+Tensile
+strength
+Elongation
+%
+Flexural
+strength
+Impact
+strength
+Hardness
+Thermal
+conductivity
+TGA
+FT at
+0.5 mm
+Storage
+modulus
+Tan δ
+Void
+content
+Actual
+density
+Speciﬁc
+Wear Rate
+COF
+Cost
+ASN-0
+139.65
+8.1
+283.91
+26.7
+95
+178
+99.847
+30.12
+31114
+0.00155
+2.89
+2.69
+0.00199
+0.385
+354.5
+ASN-2
+149.05
+9.07
+314.68
+48.4
+108
+169
+99.839
+33.98
+35754
+0.00591
+2.52
+2.71
+0.00141
+0.312
+432.5
+ASN-4
+174.6
+10.25
+336.62
+71.6
+121
+160
+99.656
+36.28
+43958
+0.00926
+2.15
+2.73
+0.000887
+0.251
+510.5
+ASN-6
+211.75
+12.86
+645.16
+84.5
+127
+144
+99.835
+39.52
+45411
+0.02088
+1.79
+2.75
+0.000556
+0.176
+588.5
+CANADIAN METALLURGICAL QUARTERLY
+1205
+
+=== PAGE 25 ===
+Table 14. Normalised decision matrix for ASN alloy composites.
+PDC/Attribute/ASN
+alloy composites
+PDC-1
+PDC-2
+PDC-3
+PDC-4
+PDC-5
+PDC-6
+PDC-7
+PDC-8
+PDC-9
+PDC-
+10
+PDC-11
+PDC-12
+PDC-13
+PDC-
+14
+PDC-
+15
+Tensile
+strength
+Elongation
+%
+Flexural
+strength
+Impact
+strength
+Hardness
+Thermal
+conductivity
+TGA
+FT at
+0.5 mm
+Storage
+modulus
+Tan δ
+Void
+content
+Actual
+density
+Speciﬁc
+Wear Rate
+COF
+Cost
+ASN-0
+0.4082
+0.3960
+0.3371
+0.2157
+0.4188
+0.5452
+0.5003
+0.4285
+0.3939
+0.0656
+0.6089
+0.4945
+0.7498
+0.6607
+0.3697
+ASN-2
+0.4357
+0.4435
+0.3737
+0.3910
+0.4761
+0.5177
+0.5002
+0.4835
+0.4526
+0.2500
+0.5309
+0.4981
+0.5313
+0.5354
+0.4510
+ASN-4
+0.5104
+0.5012
+0.3997
+0.5784
+0.5334
+0.4901
+0.4993
+0.5162
+0.5564
+0.3916
+0.4530
+0.5018
+0.3341
+0.4307
+0.5323
+ASN-6
+0.6189
+0.6288
+0.7661
+0.6826
+0.5599
+0.4411
+0.5002
+0.5623
+0.5748
+0.8831
+0.3771
+0.5055
+0.2095
+0.3020
+0.6137
+Table 15. Weighted normalised decision matrix for ASN alloy composites.
+PDC/Attribute/ASN
+alloy composites
+PDC-1
+PDC-2
+PDC-3
+PDC-4
+PDC-5
+PDC-6
+PDC-7
+PDC-8
+PDC-9
+PDC-
+10
+PDC-11
+PDC-12
+PDC-13
+PDC-
+14
+PDC-
+15
+Tensile
+strength
+Elongation
+%
+Flexural
+strength
+Impact
+strength
+Hardness
+Thermal
+conductivity
+TGA
+FT at
+0.5 mm
+Storage
+modulus
+Tan δ
+Voids
+content
+Actual
+density
+Speciﬁc
+Wear Rate
+COF
+Cost
+ASN-0
+0.0392
+0.0325
+0.0276
+0.0183
+0.0381
+0.0142
+0.0130
+0.0197
+0.0114
+0.0016
+0.0292
+0.0237
+0.0780
+0.0753
+0.0355
+ASN-2
+0.0418
+0.0364
+0.0306
+0.0332
+0.0433
+0.0135
+0.0130
+0.0222
+0.0131
+0.0062
+0.0255
+0.0239
+0.0553
+0.0610
+0.0433
+ASN-4
+0.0490
+0.0411
+0.0328
+0.0492
+0.0485
+0.0127
+0.0130
+0.0237
+0.0161
+0.0098
+0.0217
+0.0241
+0.0348
+0.0491
+0.0511
+ASN-6
+0.0594
+0.0516
+0.0628
+0.0580
+0.0509
+0.0115
+0.0130
+0.0259
+0.0167
+0.0221
+0.0181
+0.0243
+0.0218
+0.0344
+0.0589
+Table 16. Positive Ideal Solution (PIS) A+ and Negative Ideal Solution (NIS) A−for ASN alloy composites.
+A+ =
+0.0594
+0.0516
+0.0628
+0.0580
+0.0509
+0.0142
+0.0130
+0.0259
+0.0167
+0.0221
+0.0181
+0.0237
+0.0218
+0.0344
+0.0355
+A−=
+0.0392
+0.0325
+0.0276
+0.0183
+0.0381
+0.0115
+0.0130
+0.0197
+0.0114
+0.0016
+0.0292
+0.0243
+0.0780
+0.0753
+0.0589
+1206
+S. BHASKAR ET AL.
+
+=== PAGE 26 ===
+each alternative is computed and summarised in Table
+17. Thereafter, the ranking order of ASN alloy compo-
+sites is determined as per the descending order of the
+closeness coeﬃcient.
+3.4.2. Ranking optimisation of AGR alloy
+composites
+The computations as per the algorithm are as follows:
+Step 1: Construction of decision matrix: The evaluated
+performance of AGR alloy composites could be used for
+the construction of a decision matrix as shown in
+Table 18.
+Step 2: Computations of normalised decision matrix:
+Following the algorithm methodology the decision
+matrix is transformed into a normalised decision
+matrix, as shown in Table 19. The normalisation enables
+relative comparison of data across diﬀerent matrics hav-
+ing diﬀerent measuring units by converting them in the
+range zero to one.
+Step 3: Computations of weighted normalised decision
+matrix: The relative weights of selecting criteria as
+shown in Table 12 (as determined from the AHP
+method) are used to assign weights to the normalised
+decision matrix. The computed weighted normalised
+decision matrix is shown in Table 20.
+Step 4–7: As the data in the weighted normalised
+decision matrix are normalised to the interval (0, 1),
+positive ideal solution (A+) and negative ideal solution
+(A-) are computed as per the method and shown in
+Table 21. Finally, relative closeness or the overall prefer-
+ence or Closeness Coeﬃcient (CC) to the ideal solution
+for each alternative is computed and summarised in
+Table 22. Thereafter, the ranking order of AGR alloy
+composites is determined as per the descending order
+of the closeness coeﬃcient.
+4. Conclusions
+The study of the ranking analysis of ASN and AGR alloy
+composites using hybrid AHP-TOPSIS techniques
+reveals the following salient observations:
+The performance-based ranking of the ASN alloy
+composites using the hybrid AHP-TOPSIS technique
+for evaluation of physical, mechanical, thermo-mechan-
+ical, thermal and sliding wear behaviour was done and
+Table 17. Closeness coeﬃcient and ranking of ASN alloy
+composites.
+ASN alloy composites
+D+
+D-
+CC
+Ranking
+ASN-0
+0.0959
+0.0236
+0.1975
+4
+ASN-2
+0.0668
+0.0360
+0.3498
+3
+ASN-4
+0.0448
+0.0635
+0.5867
+2
+ASN-6
+0.0236
+0.0959
+0.8025
+1
+Table 18. Decision matrix for AGR alloy composites.
+PDC/Attribute/AGR
+alloy composites
+PDC-1
+PDC-2
+PDC-3
+PDC-4
+PDC-5
+PDC-6
+PDC-7
+PDC-8
+PDC-9
+PDC-10
+PDC-11
+PDC-12
+PDC-13
+PDC-
+14
+PDC-
+15
+Tensile
+strength
+Elongation
+%
+Flexural
+strength
+Impact
+strength
+Hardness
+Thermal
+conductivity
+TGA
+FT at
+0.5 mm
+Storage
+modulus
+Tan δ
+Voids
+content
+Actual
+density
+Speciﬁc Wear
+Rate
+COF
+Cost
+AGR-0
+215.14
+11.63
+339.71
+81.7
+108
+161.34
+99.601
+26.8
+36874
+0.02973
+0.31
+2.78
+0.000958
+0.238
+435.4
+AGR-2
+164.63
+9.47
+314.68
+62.4
+97
+144.28
+99.642
+22.92
+25925
+0.02646
+0.7
+2.76
+0.000506
+0.219
+432.5
+AGR-4
+147.18
+6.41
+305.96
+49.7
+86
+130.39
+99.265
+19.45
+18010
+0.00859
+1.48
+2.73
+0.000187
+0.168
+429.6
+AGR-6
+134.43
+2.67
+239.67
+33.5
+83
+119.2
+99.177
+17.63
+14578
+0.00691
+3.46
+2.66
+0.0000596
+0.15
+426.7
+CANADIAN METALLURGICAL QUARTERLY
+1207
+
+=== PAGE 27 ===
+Table 19. Normalised decision matrix for AGR alloy composites.
+PDC/attribute/AGR
+alloy composites
+PDC-1
+PDC-2
+PDC-3
+PDC-4
+PDC-5
+PDC-6
+PDC-7
+PDC-8
+PDC-9
+PDC-
+10
+PDC-11
+PDC-12
+PDC-13
+PDC-
+14
+PDC-
+15
+Tensile
+strength
+Elongation
+%
+Flexural
+strength
+Impact
+strength
+Hardness
+Thermal
+conductivity
+TGA
+FT at
+0.5 mm
+Storage
+modulus
+Tan δ
+Voids
+content
+Actual
+density
+Speciﬁc
+wear rate
+COF
+Cost
+AGR-0
+0.6397
+0.7037
+0.5619
+0.6866
+0.5744
+0.5775
+0.5009
+0.6096
+0.7276
+0.7199
+0.0807
+0.5086
+0.8701
+0.6039
+0.5050
+AGR-2
+0.4895
+0.5730
+0.5205
+0.5244
+0.5159
+0.5164
+0.5011
+0.5214
+0.5115
+0.6407
+0.1823
+0.5050
+0.4596
+0.5557
+0.5017
+AGR-4
+0.4376
+0.3878
+0.5061
+0.4176
+0.4574
+0.4667
+0.4992
+0.4424
+0.3554
+0.2080
+0.3854
+0.4995
+0.1698
+0.4263
+0.4983
+AGR-6
+0.3997
+0.1615
+0.3964
+0.2815
+0.4414
+0.4266
+0.4988
+0.4010
+0.2876
+0.1673
+0.9010
+0.4867
+0.0541
+0.3806
+0.4949
+Table 20. Weighted normalised decision matrix for AGR alloy composites.
+PDC/Attribute/AGR
+alloy composites
+PDC-1
+PDC-2
+PDC-3
+PDC-4
+PDC-5
+PDC-6
+PDC-7
+PDC-8
+PDC-9
+PDC-
+10
+PDC-11
+PDC-12
+PDC-13
+PDC-
+14
+PDC-
+15
+Tensile
+strength
+Elongation
+%
+Flexural
+strength
+Impact
+strength
+Hardness
+Thermal
+conductivity
+TGA
+FT at
+0.5 mm
+Storage
+modulus
+Tan δ
+Voids
+content
+Actual
+density
+Speciﬁc
+Wear Rate
+COF
+Cost
+AGR-0
+0.0614
+0.0577
+0.0461
+0.0584
+0.0523
+0.0150
+0.0130
+0.0280
+0.0211
+0.0180
+0.0039
+0.0244
+0.0905
+0.0688
+0.0485
+AGR-2
+0.0470
+0.0470
+0.0427
+0.0446
+0.0469
+0.0134
+0.0130
+0.0240
+0.0148
+0.0160
+0.0087
+0.0242
+0.0478
+0.0633
+0.0482
+AGR-4
+0.0420
+0.0318
+0.0415
+0.0355
+0.0416
+0.0121
+0.0130
+0.0204
+0.0103
+0.0052
+0.0185
+0.0240
+0.0177
+0.0486
+0.0478
+AGR-6
+0.0384
+0.0132
+0.0325
+0.0239
+0.0402
+0.0111
+0.0130
+0.0184
+0.0083
+0.0042
+0.0432
+0.0234
+0.0056
+0.0434
+0.0475
+Table 21. Positive Ideal Solution (PIS) A+ and Negative Ideal Solution (NIS) A- for AGR alloy composites.
+A+ =
+0.0614
+0.0577
+0.0461
+0.0584
+0.0523
+0.0150
+0.0130
+0.0280
+0.0211
+0.0180
+0.0039
+0.0234
+0.0056
+0.0434
+0.0475
+A- =
+0.0384
+0.0132
+0.0325
+0.0239
+0.0402
+0.0111
+0.0130
+0.0184
+0.0083
+0.0042
+0.0432
+0.0244
+0.0905
+0.0688
+0.0485
+1208
+S. BHASKAR ET AL.
+
+=== PAGE 28 ===
+found in the order: ASN-6 > ASN-4 > ASN-2 > ASN-0.
+Hence from the above analysis, it has been observed
+that ASN-6 composite has shown the optimum per-
+formance among all the composites reinforced with
+Si3N4 particulates. The performance-based ranking
+order of AGR alloy composites is in the following
+order: AGR-4 > AGR-2 > AGR-6 > AGR-0. Thus, the
+alloy composites having 4 wt.% Gr particulates tend to
+optimise the overall performance criteria under investi-
+gation. The trend of ranking order for both the compo-
+sitions i.e. ASN and AGR alloy composites are in-tuned
+with the subjective analysis done through experimen-
+tation. The ranking analysis exercise, thus, is useful
+whenever ﬁnite material alternatives are to be ranked
+against the ﬁnite set of performance criteria of a conﬂ-
+icting nature.
+Acknowledgement
+The authors express their sincere gratitude to the Department
+of Mechanical Engineering of Malaviya National Institute of
+Technology Jaipur, Jaipur-302017, Rajasthan, INDIA for
+their all ﬁnancial and other miscellaneous infrastructural sup-
+port. The authors also acknowledge the aid and facilities pro-
+vided by the Advanced Research Lab for Tribology and
+Material Research Centre for the experimentation and charac-
+terisation work.
+Disclosure statement
+No potential conﬂict of interest was reported by the author(s).
+Author contribution
+Sourabh Bhaskar wrote the whole manuscript, Mukesh
+Kumar reported the methodology used in this research
+work and Amar Patnaik reviewed the manuscript.
+ORCID
+Sourabh Bhaskar
+http://orcid.org/0000-0002-0793-2236
+References
+[1] Bhaskar S, Kumar M, Patnaik A. Mechanical and tribo-
+logical overview of ceramic particulates reinforced
+aluminium alloy composites. Rev Adv Mater Sci.
+2019;58:280–294. doi:10.1515/rams-2019-0033
+[2] Ravindran P, Manisekar K, Rathika P, et al. Tribological
+properties of powder metallurgy - processed aluminium
+self lubricating hybrid composites with SiC additions.
+Mater
+Des.
+2013;45:561–570.
+doi:10.1016/j.matdes.
+2012.09.015
+[3] Guo MLT, Tsao CYA. Tribological behavior of self-
+lubricating aluminium/SiC/graphite hybrid composites
+synthesized by the semi-solid powder-densiﬁcation
+method. Compos Sci Technol. 2000;60:65–74. doi:10.
+1016/S0266-3538(99)00106-2
+[4] Kök M. Abrasive wear of Al2O3 particle reinforced 2024
+aluminium
+alloy
+composites
+fabricated
+by
+vortex
+method.
+Compos
+Part
+A
+Appl
+Sci
+Manuf.
+2006;37:457–464.
+doi:10.1016/j.compositesa.2005.05.
+038
+[5] Zhiqiang S, Di Z, Guobin L. Evaluation of dry sliding
+wear behavior of silicon particles reinforced aluminum
+matrix
+composites.
+Mater
+Des.
+2005;26:454–458.
+doi:10.1016/j.matdes.2004.07.026
+[6] Sahin Y. Optimization of testing parameters on the wear
+behaviour of metal matrix composites based on the
+Taguchi method. Mater Sci Eng A. 2005;408:1–8.
+doi:10.1016/j.msea.2004.11.012
+[7] Patel SK, Kuriachen B, Kumar N, et al. The slurry abra-
+sive wear behaviour and microstructural analysis of
+A2024-SiC-ZrSiO4 metal matrix composite. Ceram Int.
+2018;44:6426–6432. doi:10.1016/j.ceramint.2018.01.037
+[8] Zheng R, Hao X, Yuan Y, et al. Eﬀect of high volume
+fraction of B4C particles on the microstructure and
+mechanical properties of aluminum alloy based compo-
+sites. J Alloys Compd. 2013;576:291–298. doi:10.1016/j.
+jallcom.2013.04.141
+[9] Bahrami M, Helmi N, Dehghani K, et al. Exploring the
+eﬀects of SiC reinforcement incorporation on mechan-
+ical properties of friction stir welded 7075 aluminum
+alloy: fatigue life, impact energy, tensile strength.
+Mater Sci Eng A. 2014;595:173–178. doi:10.1016/j.
+msea.2013.11.068
+[10] Carvalho O, Miranda G, Buciumeanu M, et al. High
+temperature damping behavior and dynamic Young’s
+modulus
+of
+AlSi-CNT-SiCp
+hybrid
+composite.
+Compos
+Struct.
+2016;141:155–162.
+doi:10.1016/j.
+compstruct.2016.01.046
+[11] Lu TW, Chen WP, Wang P, et al. Enhanced mechanical
+properties and thermo-physical properties of 7075Al
+hybrid composites reinforced by the mixture of Cr par-
+ticles and SiCp. J Alloys Compd. 2018;735:1137–1144.
+doi:10.1016/j.jallcom.2017.11.227
+[12] Kolluri DK, Satapathy BK, Bijwe J, et al. Analysis of load
+and temperature dependence of tribo-performance of
+graphite ﬁlled phenolic composites. Mater Sci Eng A.
+2007;456:162–169. doi:10.1016/j.msea.2006.12.027
+[13] Çalişkan H, Kurşuncu B, Kurbanoĝlu C, et al. Material
+selection for the tool holder working under hard milling
+conditions using diﬀerent multi criteria decision making
+methods. Mater Des. 2013;45:473–479. doi:10.1016/j.
+matdes.2012.09.042
+[14] Jahan A, Ismail MY, Sapuan SM, et al. Material screen-
+ing and choosing methods - a review. Mater Des.
+2010;31:696–705. doi:10.1016/j.matdes.2009.08.013
+Table 22. Closeness coeﬃcient and ranking of AGR alloy
+composites.
+AGR alloy composites
+D+
+D-
+CC
+Ranking
+AGR-0
+0.0886
+0.0777
+0.4671
+4
+AGR-2
+0.0531
+0.0711
+0.5725
+2
+AGR-4
+0.0494
+0.0831
+0.6274
+1
+AGR-6
+0.0777
+0.0886
+0.5329
+3
+CANADIAN METALLURGICAL QUARTERLY
+1209
+
+=== PAGE 29 ===
+[15] Ishizaka A, Labib A. Selection of new production facili-
+ties with the group analytic hierarchy process ordering
+method. Expert Syst Appl. 2011;38:7317–7325. doi:10.
+1016/j.eswa.2010.12.004
+[16] Xuebin L. Study of multi-objective optimization and
+multi-attribute decision-making
+for economic and
+environmental power dispatch. Electr Power Syst Res.
+2009;79:789–795. doi:10.1016/j.epsr.2008.10.016
+[17] Satapathy BK, Bijwe J. Performance of friction materials
+based on variation in nature of organic ﬁbres Part II.
+Optimisation by balancing and ranking using multiple
+criteria
+decision
+model
+(MCDM).
+Wear.
+2004;257:585–589. doi:10.1016/j.wear.2004.03.004
+[18] Maleque MA, Dyuti S, Rahman MM. Material selection
+method in design of automotive brake disc. Proc World
+Congr Eng III. 2010: 1–5.
+[19] Maniya K, Bhatt MG. A selection of material using a
+novel type decision-making method: preference selec-
+tion index method. Mater Des. 2010;31:1785–1789.
+doi:10.1016/j.matdes.2009.11.020
+[20] Kumar M. Mechanical and sliding wear performance of
+AA356-Al2O3/SiC/graphite alloy composite materials:
+parametric and ranking optimization using Taguchi
+DOE
+and
+hybrid
+AHP-GRA
+method.
+Silicon.
+2021;13:2461–2477. doi:10.1007/s12633-020-00544-9
+[21] Zhu Z, Xu L, Chen G, et al. Optimization on tribological
+properties of aramid ﬁbre and CaSO4 whisker reinforced
+non-metallic friction material with analytic hierarchy
+process and preference ranking organization method
+for enrichment evaluations. Mater Des. 2010;31:551–
+555. doi:10.1016/j.matdes.2009.07.015
+[22] Shyur HJ, Shih HS. A hybrid MCDM model for strategic
+vendor selection. Math Comput Model. 2006;44:749–
+761. doi:10.1016/j.mcm.2005.04.018
+[23] Lin MC, Wang CC, Chen MS, et al. Using AHP and
+TOPSIS approaches in customer-driven product design
+process. Comput Ind. 2008;59:17–31. doi:10.1016/j.
+compind.2007.05.013
+[24] Joshi R, Banwet DK, Shankar R. A Delphi-AHP-TOPSIS
+based
+benchmarking
+framework
+for
+performance
+improvement of a cold chain. Expert Syst Appl.
+2011;38:10170–10182. doi:10.1016/j.eswa.2011.02.072
+[25] Satapathy BK, Majumdar A, Tomar BS. Optimal design
+of ﬂyash ﬁlled composite friction materials using com-
+bined analytical hierarchy process and technique for
+order
+preference
+by
+similarity
+to
+ideal
+solutions
+approach. Mater Des. 2010;31:1937–1944. doi:10.1016/
+j.matdes.2009.10.047
+[26] Kranthi G, Satapathy A. Evaluation and prediction of
+wear response of pine wood dust ﬁlled epoxy compo-
+sites using neural computation. Comput Mater Sci.
+2010;49:609–614.
+doi:10.1016/j.commatsci.2010.06.
+001
+[27] Mohanty D, Chandra A, Chakraborti N. Genetic algor-
+ithms based multi-objective optimization of an iron
+making rotary kiln. Comput Mater Sci. 2009;45:181–
+188. doi:10.1016/j.commatsci.2008.03.056
+[28] Gopal PM, Soorya Prakash K. Minimization of cutting
+force, temperature and surface roughness through
+GRA, TOPSIS and Taguchi techniques in end milling
+of Mg hybrid MMC. Measurement. 2018;116:178–192.
+doi:10.1016/j.measurement.2017.11.011
+[29] Singh T, Patnaik A, Gangil B, et al. Optimization of
+tribo-performance of brake friction materials: eﬀect of
+nano ﬁller. Wear. 2015;324–325:10–16. doi:10.1016/j.
+wear.2014.11.020
+[30] Bhaskar S, Kumar M, Patnaik A. Silicon carbide ceramic
+particulate reinforced AA2024 alloy composite - Part I:
+evaluation of mechanical and sliding tribology perform-
+ance. Silicon. 2020;12(4):843–865. doi:10.1007/s12633-
+019-00181-x
+[31] Bhaskar S, Kumar M, Patnaik A. Application of hybrid
+AHP-TOPSIS technique in analyzing material perform-
+ance of silicon carbide ceramic particulate reinforced
+AA2024 alloy composite. Silicon. 2020;12(5):1075–
+1084. doi:10.1007/s12633-019-00211-8
+[32] Agarwal
+BD,
+Broutman
+LJ,
+Chandrashekhara
+K.
+Analysis and performance of ﬁber composites. New
+Delhi: Wiley India Pvt. Ltd; 2006. doi:10.1002/pol.
+1980.130181011
+[33] https://www.astm.org/Standards/physical-and-mechanical-
+testing-standards.html.
+[34] Goswami C, Bhat IK, Bathula S, et al. Physico-mechanical
+and surface wear assessment of magnesium oxide ﬁlled
+ceramic composites for hip implant application. Silicon.
+2019;11(1):39–49. doi:10.1007/s12633-018-9880-6
+[35] Mamatha TG. Thermo-mechanical, fracture and erosive
+wear analysis of particulate ﬁlled hybrid metal alloy
+composites [PhD thesis]. Hamirpur: National Institute
+of Technology; 2012.
+[36] Sharma S, Patnaik A, Bhatt AD. Mechanical and dry
+sliding wear characterization of epoxy-TiO2 particulate
+ﬁlled functionally graded composites materials using
+Taguchi
+design
+of
+experiment.
+Mater
+Des.
+2011;32:615–627. doi:10.1016/j.matdes.2010.08.011
+[37] Földvári M.. Handbook of thermogravimetric system of
+minerals and its use in geological practice: Occasional
+Papers of the Geological Institute of Hungary. Vol.
+213. Budapest2011. ISBN 978-963-671-288-4.
+[38] Gangwar S, Patnaik A, Bhat IK. Tribological and ther-
+momechanical analysis of CaO (quicklime) particulates
+ﬁlled ZA-27 alloy composites for bearing application.
+Proc Inst Mech Eng Part L J Mater Des Appl.
+2018;232:20–34.
+[39] Pohekar SD, Ramachandran M. Application of multi-
+criteria decision making to sustainable energy planning
+- a review. Renew Sustain Energy Rev. 2004;8:365–381.
+doi:10.1016/j.rser.2003.12.007
+[40] Chamoli S. Hybrid FAHP (fuzzy analytical hierarchy
+process)-FTOPSIS (fuzzy technique for order preference
+by similarity of an ideal solution) approach for perform-
+ance evaluation of the V down perforated baﬄe rough-
+ened rectangular channel. Energy. 2015;84:432–442.
+doi:10.1016/j.energy.2015.03.007
+[41] Kiliç Delice E, Güngör Z. The usability analysis with
+heuristic evaluation and analytic hierarchy process. Int
+J Ind Ergon. 2009;39:934–939. doi:10.1016/j.ergon.
+2009.08.005
+[42] Chen Z, Yang W. An MAGDM based on constrained
+FAHP
+and
+FTOPSIS
+and
+its
+application.
+Math
+Comput
+Model.
+2011;54:2802–2815.
+doi:10.1016/j.
+mcm.2011.06.068
+[43] Mohanty I, Bhattacharjee D, Datta S. Designing cold rolled
+IF steel sheets with optimized tensile properties using
+1210
+S. BHASKAR ET AL.
+
+=== PAGE 30 ===
+ANN and GA. Comput Mater Sci. 2011;50:2331–2337.
+doi:10.1016/j.commatsci.2011.03.007
+[44] Sharma P, Sharma S, Khanduja D. Production and some
+properties of Si3N4 reinforced aluminium alloy compo-
+sites. J Asian Ceram Soc. 2015;3:352–359. doi:10.1016/j.
+jascer.2015.07.002
+[45] David Raja Selvam J, Dinaharan I, Vibin Philip S, et al.
+Microstructure and mechanical characterization of in
+situ synthesized AA6061/(TiB2+ Al2O3) hybrid alumi-
+num
+matrix
+composites.
+J
+Alloys
+Compd.
+2018;740:529–535. doi:10.1016/j.jallcom.2018.01.016
+[46] David Raja Selvam J, Robinson Smart DS, Dinaharan I.
+Microstructure and some mechanical properties of ﬂy
+ash particulate reinforced AA6061 aluminum alloy com-
+posites
+prepared
+by
+compocasting.
+Mater
+Des.
+2013;49:28–34. doi:10.1016/j.matdes.2013.01.053
+[47] Han G,ZhangW,Zhang G,et al. High-temperature mech-
+anical properties and fracture mechanisms of Al-Si piston
+alloy reinforced with in situ TiB2 particles. Mater Sci Eng
+A. 2015;633:161–168. doi:10.1016/j.msea.2015.03.021
+[48] Kawai C. Eﬀect of interfacial reaction on the thermal
+conductivity of Al-SiC composites with SiC dispersions.
+J Am Ceram Soc. 2001;84:896–898. doi:10.1111/j.1151-
+2916.2001.tb00764.x
+[49] Sastry S, Krishna M, Uchil J. Damping behaviour of
+alminite particulate reinforced ZA-27 alloy metal matrix
+composites. Proc Second Int Conf Process Mater Prop.
+2000;314:268–274.
+[50] Mdcanique
+DDG,
+Diego
+S.
+Dynamic
+mechanical
+analysis of prestrained Al2O3-Al metal-matrix compo-
+site. J Mater Sci. 1995;30:3037–3044. doi:10.1007/
+BF01209214
+[51] Bhaskar S, Kumar M, Patnaik A. Eﬀect of Si3N4 ceramic
+particulates on mechanical, thermal, thermo-mechan-
+ical and sliding wear performance of AA2024 alloy com-
+posites. Silicon. 2022;14:239–262. doi:10.1007/s12633-
+020-00810-w
+[52] Muralidharan N, Chockalingam K, Dinaharan I, et al.
+Microstructure and mechanical behavior of AA2024
+aluminum matrix composites reinforced with in situ
+synthesized
+ZrB2
+particles.
+J
+Alloys
+Compd.
+2018;735:2167–2174. doi:10.1016/j.jallcom.2017.11.371
+[53] Ravindran P, Manisekar K, Narayanasamy P, et al.
+Application of factorial techniques to study the wear
+of Al hybrid composites with graphite addition. Mater
+Des. 2012;39:42–54. doi:10.1016/j.matdes.2012.02.013
+[54] Menard KP. Dynamic mechanical analysis: a practical
+introduction; 1999. www.crcpress.com.
+[55] Bhaskar S, Kumar M. Eﬀect of graphite particulates on
+sliding wear performance of hybrid AA2024 alloy com-
+posites. J Mater Eng Perform. 2021;30:3976–3989.
+doi:10.1007/s11665-021-05677-5
+CANADIAN METALLURGICAL QUARTERLY
+1211

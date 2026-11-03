@@ -1,0 +1,180 @@
+each alternative is computed and summarised in Table
+17. Thereafter, the ranking order of ASN alloy compo-
+sites is determined as per the descending order of the
+closeness coeﬃcient.
+3.4.2. Ranking optimisation of AGR alloy
+composites
+The computations as per the algorithm are as follows:
+Step 1: Construction of decision matrix: The evaluated
+performance of AGR alloy composites could be used for
+the construction of a decision matrix as shown in
+Table 18.
+Step 2: Computations of normalised decision matrix:
+Following the algorithm methodology the decision
+matrix is transformed into a normalised decision
+matrix, as shown in Table 19. The normalisation enables
+relative comparison of data across diﬀerent matrics hav-
+ing diﬀerent measuring units by converting them in the
+range zero to one.
+Step 3: Computations of weighted normalised decision
+matrix: The relative weights of selecting criteria as
+shown in Table 12 (as determined from the AHP
+method) are used to assign weights to the normalised
+decision matrix. The computed weighted normalised
+decision matrix is shown in Table 20.
+Step 4–7: As the data in the weighted normalised
+decision matrix are normalised to the interval (0, 1),
+positive ideal solution (A+) and negative ideal solution
+(A-) are computed as per the method and shown in
+Table 21. Finally, relative closeness or the overall prefer-
+ence or Closeness Coeﬃcient (CC) to the ideal solution
+for each alternative is computed and summarised in
+Table 22. Thereafter, the ranking order of AGR alloy
+composites is determined as per the descending order
+of the closeness coeﬃcient.
+4. Conclusions
+The study of the ranking analysis of ASN and AGR alloy
+composites using hybrid AHP-TOPSIS techniques
+reveals the following salient observations:
+The performance-based ranking of the ASN alloy
+composites using the hybrid AHP-TOPSIS technique
+for evaluation of physical, mechanical, thermo-mechan-
+ical, thermal and sliding wear behaviour was done and
+Table 17. Closeness coeﬃcient and ranking of ASN alloy
+composites.
+ASN alloy composites
+D+
+D-
+CC
+Ranking
+ASN-0
+0.0959
+0.0236
+0.1975
+4
+ASN-2
+0.0668
+0.0360
+0.3498
+3
+ASN-4
+0.0448
+0.0635
+0.5867
+2
+ASN-6
+0.0236
+0.0959
+0.8025
+1
+Table 18. Decision matrix for AGR alloy composites.
+PDC/Attribute/AGR
+alloy composites
+PDC-1
+PDC-2
+PDC-3
+PDC-4
+PDC-5
+PDC-6
+PDC-7
+PDC-8
+PDC-9
+PDC-10
+PDC-11
+PDC-12
+PDC-13
+PDC-
+14
+PDC-
+15
+Tensile
+strength
+Elongation
+%
+Flexural
+strength
+Impact
+strength
+Hardness
+Thermal
+conductivity
+TGA
+FT at
+0.5 mm
+Storage
+modulus
+Tan δ
+Voids
+content
+Actual
+density
+Speciﬁc Wear
+Rate
+COF
+Cost
+AGR-0
+215.14
+11.63
+339.71
+81.7
+108
+161.34
+99.601
+26.8
+36874
+0.02973
+0.31
+2.78
+0.000958
+0.238
+435.4
+AGR-2
+164.63
+9.47
+314.68
+62.4
+97
+144.28
+99.642
+22.92
+25925
+0.02646
+0.7
+2.76
+0.000506
+0.219
+432.5
+AGR-4
+147.18
+6.41
+305.96
+49.7
+86
+130.39
+99.265
+19.45
+18010
+0.00859
+1.48
+2.73
+0.000187
+0.168
+429.6
+AGR-6
+134.43
+2.67
+239.67
+33.5
+83
+119.2
+99.177
+17.63
+14578
+0.00691
+3.46
+2.66
+0.0000596
+0.15
+426.7
+CANADIAN METALLURGICAL QUARTERLY
+1207
