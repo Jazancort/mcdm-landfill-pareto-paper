@@ -261,4 +261,18 @@ Key outputs:
 **R do Santiago**: NOT computed at ceec82a. Will be computed after next gate run
 on the corrected commit, with hash registered below when available.
 
-avaliacao corrida em <hash-pendente>, enviado antes da corrida; tag criada depois, a apontar para o mesmo commit.
+avaliacao corrida em `5414bbbee0c696092d1b08ff238f521e5bfeb48b`, enviado às 17:27 UTC antes da corrida; tag criada depois, a apontar para o mesmo commit.
+
+**Run final: `5414bbb`, TS=20261103T1727Z**
+
+Gates sequenciais no hash enviado antes da corrida:
+
+| Gate | EXIT | Elapsed | Log SHA-64 |
+|------|------|---------|-----------|
+| --gates-only | 0 | 143.0s | `782efe7f1e7f5372600fe6b14279e1a97fa0b33896e7326d56e01cc5fa3bc608` |
+| --gate3-only | 0 | ~360s  | `194ed7a8c134bdd0860ab840b29ab5ea288505ab5379565d8700d105aa5292e0` |
+| 8 mutation tests | 0 | 0.31s  | `fef8a9c1cb7a8d33974d41c396e917c673d0c356307c38a035966efd835be27c` |
+
+Gate 3 trios content-hash (deterministic, não depende da hora do zip):
+- ST: `6b69cd591b5ea1d4e4b96230818188aa7c8ed3c3e95cdc258605c100b45bb071`
+- SN: `b53af22b3b0ebb5b688b53a1261bd299d7af19fe332954123eeb7fda210d3f55`
