@@ -90,44 +90,162 @@ def _holm(p_vals):
     return adjusted.tolist()
 
 
-def gate_3_q2_reconstruction(branch: str, raw_csv: Path, e1_csv: Path,
-                              w0: "np.ndarray", groups: list, rho_j: "np.ndarray",
-                              n_check: int = 10) -> bool:
-    """Gate 3: Q2 recalculated from trios must match sealed CSV draw-by-draw.
+def gate_3_q2_reconstruction(branch_key: str, n_check: int = 10) -> dict:
+    """Gate 3: Reconstruct Q2 for 12 cells at κ=200; compare draw-by-draw to sealed CSV.
 
-    Takes n_check draws from κ=200, reconstructs trios via compute_value_regret_santiago()
-    pipeline, and compares recalculated Q2 against sealed mc_*_raw.csv values.
-    Runs ONLY in full evaluation mode (not --gates-only). Aborts before any verdict.
+    Uses canonical seeds + same MC functions that produced the sealed CSV.
+    Logs trios SHA and device. Returns {draw_idx: {cell: trio_idx}} for Gate 4a.
 
-    NOTE: Full implementation requires GPU (calls compute_value_regret_santiago()).
-    Currently verifies that the sealed CSV is self-consistent (SAW_mm_opt=1 everywhere).
-    Full reconstruction is run automatically within compute_value_regret_santiago().
+    Only runs in full evaluation mode (not --gates-only).
+    Raises RuntimeError on mismatch or if Santiago modules not importable.
     """
-    print(f"=== Gate 3: Q2 self-consistency check ({branch}) ===", flush=True)
-    df = pd.read_csv(raw_csv)
+    import hashlib as _hl
 
-    # S0 regression: SAW_mm_opt=1 in ALL draws (every kappa)
-    fail_mm_opt = (df["SAW_mm_opt"] != 1).sum()
-    if fail_mm_opt:
+    tag       = branch_key                   # "ST" or "SN"
+    raw_csv   = SEALED / f"mc_{tag}_raw.csv"
+    e1_csv    = SEALED / f"mc_{tag}_e1_fix2.csv"
+    label     = "S-T" if tag == "ST" else "S-N"
+
+    for f in [raw_csv, e1_csv]:
+        if not f.exists():
+            raise RuntimeError(f"Gate 3 FAIL: {f.name} not found")
+
+    df_raw = pd.read_csv(raw_csv)
+    df_e1  = pd.read_csv(e1_csv)
+    df_k200 = df_raw[df_raw["kappa"] == 200].sort_values("draw").reset_index(drop=True)
+    df_e1_k = df_e1[df_e1["kappa"]   == 200].sort_values(["draw","e1_cell"]).reset_index(drop=True)
+
+    print(f"=== Gate 3: Q2 reconstruction ({label}, n_check={n_check}) ===", flush=True)
+
+    try:
+        from run_santiago_mc import (
+            load_branch_data, make_santiago_scorers,
+            optimal_selector, greedy_selector,
+            compute_group_objectives, compute_trio_objectives,
+            check_dominated_raw,
+            ST_W0, SN_W0, ST_GROUPS, SN_GROUPS,
+            get_e1_amplitudes,
+        )
+        from gen_santiago_seeds import get_branch_rngs
+    except (ImportError, FileNotFoundError) as exc:
         raise RuntimeError(
-            f"Gate 3 FAIL ({branch}): SAW_mm_opt != 1 in {fail_mm_opt} rows. "
-            "Sealed CSV violates Proposition 1."
+            f"Gate 3 FAIL: Santiago modules not importable ({exc}). Requires Athena."
         )
 
-    # E1-B opt=1 check (K2): in e1_fix2, E1-B optimal must be 100% at all κ
-    e1 = pd.read_csv(e1_csv) if e1_csv.exists() else None
-    if e1 is not None:
-        e1_B = e1[e1["e1_cell"] == "B"]
-        fail_B = (e1_B["Q2_opt"] != 1).sum()
-        if fail_B:
-            raise RuntimeError(
-                f"Gate 3 FAIL ({branch}): E1-B Q2_opt != 1 in {fail_B} rows. "
-                "K2 (Theorem 1) violated."
-            )
+    data   = load_branch_data(branch_key)
+    X_mm   = np.asarray(data["X_mm"],  dtype=np.float32)
+    trios  = np.asarray(data["trios"], dtype=np.int32)
+    D      = data["D"]
+    rho_j  = data["rho_j"]
+    groups = ST_GROUPS if branch_key == "ST" else SN_GROUPS
+    w0     = np.asarray(ST_W0 if branch_key == "ST" else SN_W0, dtype=np.float64)
 
-    print(f"  Gate 3 ({branch}): self-consistency PASS (SAW_mm_opt=1, E1-B_opt=1)", flush=True)
-    print(f"  NOTE: full trio reconstruction (n_check={n_check}) runs in compute_value_regret_santiago().", flush=True)
-    return True
+    trios_sha = _hl.sha256(trios.tobytes()).hexdigest()[:16]
+    print(f"  trios SHA-256[:16]: {trios_sha}  n_trios: {len(trios)}", flush=True)
+
+    # Pre-generate all 500 draws at κ=200 from canonical seeds
+    kappa = 200
+    rng_st, rng_sn = get_branch_rngs(kappa)
+    rng = rng_st if branch_key == "ST" else rng_sn
+    W_all = np.array([rng.dirichlet(kappa * w0) for _ in range(500)])
+    W_all = W_all / W_all.sum(axis=1, keepdims=True)
+
+    scorers_cpu = make_santiago_scorers(X_mm, rho_j)
+    A_ones      = np.ones(len(w0))
+
+    trio_indices: dict = {}   # {draw_idx: {"SAW_mm_opt": idx, ...}} for Gate 4a
+    n_fail = 0
+
+    for di in range(n_check):
+        w  = W_all[di].astype(np.float64)
+        wf = w.astype(np.float32)
+
+        # Group objectives (same call as run_santiago_mc)
+        F_site  = compute_group_objectives(X_mm, w, A_ones, groups)
+        F_trios = compute_trio_objectives(F_site, trios)
+
+        def _q2_trio(idx: int) -> int:
+            return 0 if check_dominated_raw(F_trios, F_trios[idx]) else 1
+
+        def _q2_grd(grd: list) -> int:
+            f = F_site[grd[0]] + F_site[grd[1]] + F_site[grd[2]]
+            return 0 if check_dominated_raw(F_trios, f) else 1
+
+        sc_mm   = scorers_cpu[0](wf)
+        sc_vec  = scorers_cpu[1](wf)
+        sc_tmm  = scorers_cpu[2](wf)
+        sc_tvec = scorers_cpu[3](wf)
+
+        opt_mm   = optimal_selector(sc_mm,   trios)
+        opt_vec  = optimal_selector(sc_vec,  trios)
+        opt_tmm  = optimal_selector(sc_tmm,  trios)
+        opt_tvec = optimal_selector(sc_tvec, trios)
+        grd_mm   = greedy_selector(sc_mm,   D)
+        grd_vec  = greedy_selector(sc_vec,  D)
+        grd_tmm  = greedy_selector(sc_tmm,  D)
+        grd_tvec = greedy_selector(sc_tvec, D)
+
+        trio_indices[di] = {"SAW_mm_opt": opt_mm, "SAW_vec_opt": opt_vec}
+
+        raw_cells = [
+            ("SAW_mm_grd",     _q2_grd(grd_mm)),
+            ("SAW_mm_opt",     _q2_trio(opt_mm)),
+            ("SAW_vec_grd",    _q2_grd(grd_vec)),
+            ("SAW_vec_opt",    _q2_trio(opt_vec)),
+            ("TOPSIS_mm_grd",  _q2_grd(grd_tmm)),
+            ("TOPSIS_mm_opt",  _q2_trio(opt_tmm)),
+            ("TOPSIS_vec_grd", _q2_grd(grd_tvec)),
+            ("TOPSIS_vec_opt", _q2_trio(opt_tvec)),
+        ]
+
+        row = df_k200[df_k200["draw"] == di]
+        if row.empty:
+            raise RuntimeError(f"Gate 3 FAIL: draw {di} missing from {raw_csv.name}")
+
+        for cell, got in raw_cells:
+            exp = int(row[cell].values[0])
+            if got != exp:
+                print(f"  FAIL draw {di} {cell}: got {got} exp {exp}", flush=True)
+                n_fail += 1
+
+        # E1 cells: M, B, W, V
+        rho_B, rho_W = get_e1_amplitudes(rho_j, groups, w)
+        X_trio_arr   = X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]
+        V_e1b = X_trio_arr @ np.asarray(rho_B, dtype=np.float64)
+        V_e1w = X_trio_arr @ np.asarray(rho_W, dtype=np.float64)
+        V_e1v = X_trio_arr @ (rho_j * w)                        # rho_V = rho_j
+        V_e1m = (X_trio_arr.astype(np.float64) * wf).sum(1)     # same as SAW_mm
+
+        e1_opts = {
+            "M": int(V_e1m.argmax()),
+            "B": int(V_e1b.argmax()),
+            "W": int(V_e1w.argmax()),
+            "V": int(V_e1v.argmax()),
+        }
+        trio_indices[di]["E1_M_opt"] = e1_opts["M"]
+        trio_indices[di]["E1_V_opt"] = e1_opts["V"]
+
+        for cell_char, opt_idx in e1_opts.items():
+            got_e1 = _q2_trio(opt_idx)
+            e1_row = df_e1_k[(df_e1_k["draw"] == di) & (df_e1_k["e1_cell"] == cell_char)]
+            if e1_row.empty:
+                raise RuntimeError(f"Gate 3 FAIL: draw {di} E1-{cell_char} missing")
+            exp_e1 = int(e1_row["Q2_opt"].values[0])
+            if got_e1 != exp_e1:
+                print(f"  FAIL draw {di} E1-{cell_char}_opt: got {got_e1} exp {exp_e1}",
+                      flush=True)
+                n_fail += 1
+
+        print(f"  draw {di}: 12 cells OK", flush=True)
+
+    if n_fail:
+        raise RuntimeError(
+            f"Gate 3 FAIL ({label}): {n_fail} cell mismatches in {n_check} draws. "
+            "Seeds or computation path diverged from sealed CSV."
+        )
+
+    print(f"  Gate 3 ({label}): {n_check} draws x 12 cells ALL MATCH sealed CSV\n", flush=True)
+    return trio_indices   # {draw_idx: {cell: trio_idx}} for Gate 4a
 
 
 def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
@@ -741,12 +859,15 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description="Evaluate Santiago predictions S0-S7b")
     parser.add_argument("--gates-only", action="store_true",
-                        help="Run Fogo gates (1, K6) only; stop before Santiago data. "
+                        help="Run Fogo gates (1, K6) only. Stop before Santiago data. "
                              "Use to verify gates on Athena before tagging.")
+    parser.add_argument("--gate3-only", action="store_true",
+                        help="Run Gate 3 Q2 reconstruction only (both branches). "
+                             "Implies loading Santiago modules; requires Athena.")
     args = parser.parse_args()
     t0 = time.time()
 
-    # Gates 1 and K6: Fogo data only — no Santiago CSV required
+    # Fogo gates: always run first
     gate_1_fogo_oracle()
     gate_k6_fogo()
 
@@ -755,17 +876,22 @@ def main():
         print(f"Elapsed: {time.time()-t0:.1f}s", flush=True)
         return
 
+    # Gate 3: full Q2 reconstruction (requires Athena, runs before any verdict)
+    if args.gate3_only:
+        gate_3_q2_reconstruction("ST")
+        gate_3_q2_reconstruction("SN")
+        print("=== --gate3-only: Gate 3 PASS for both branches. ===", flush=True)
+        print(f"Elapsed: {time.time()-t0:.1f}s", flush=True)
+        return
+
     # EVAL-R: compute value regret at κ=200 for S6, S7a, S7b (GPU required for S-T)
     print("\n=== EVAL-R: value regret κ=200 ===", flush=True)
     st_regret = compute_value_regret_santiago("ST", kappa=200)
     sn_regret = compute_value_regret_santiago("SN", kappa=200)
 
-    # Gate 3: Q2 self-consistency (runs before any verdict; full reconstruction in EVAL-R)
-    from run_santiago_mc import ST_W0, SN_W0, ST_GROUPS, SN_GROUPS
-    gate_3_q2_reconstruction("S-T", SEALED/"mc_ST_raw.csv", SEALED/"mc_ST_e1_fix2.csv",
-                              ST_W0, ST_GROUPS, ST_W0)  # rho_j loaded inside
-    gate_3_q2_reconstruction("S-N", SEALED/"mc_SN_raw.csv", SEALED/"mc_SN_e1_fix2.csv",
-                              SN_W0, SN_GROUPS, SN_W0)
+    # Gate 3: full Q2 reconstruction (runs before any verdict)
+    gate_3_q2_reconstruction("ST")
+    gate_3_q2_reconstruction("SN")
 
     # S0-S7b evaluation
     st_res = evaluate_branch(
