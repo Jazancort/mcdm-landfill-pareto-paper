@@ -1,13 +1,25 @@
 # -*- coding: utf-8 -*-
-"""test_mutations_eval.py — 7 mutation tests for evaluate_santiago_predictions.py.
+"""test_mutations_eval.py — 8 mutation tests for evaluate_santiago_predictions.py.
 
-Each test mutates ONE thing and asserts the affected gate/assert raises.
-All tests call actual production functions (no mocks that skip the real logic).
+Mutation table (one mutation per test, one function call, pytest.raises):
 
-Run on Athena (full suite):
-    .venv/bin/python3 -m pytest scripts/test_mutations_eval.py -v
+| # | Gate / assert           | Mutation                                  | Expected raise    |
+|---|-------------------------|-------------------------------------------|-------------------|
+| 1 | gate_k6_fogo (REAL)     | K6_FOGO_EXPECTED[100]: 9.3 → 9.4 (via monkeypatch)  | RuntimeError      |
+| 2 | Gate 1 per-draw         | diff[17] += 2e-12 > TOL_DRAW=1e-12        | RuntimeError      |
+| 3 | assert_regression       | solo_V S-T: 69 → 70                       | AssertionError    |
+| 4 | assert_regression       | solo_W S-T: 49 → 50                       | AssertionError    |
+| 5 | assert_regression       | E1-B opt count: 500 → 499                 | AssertionError    |
+| 6 | compute_value_regret    | e1_fn=None (mandatory)                    | RuntimeError      |
+| 7 | compute_value_regret    | ULP: float32 argmax != float64 argmax     | RuntimeError      |
+| 8 | Gate 3 row count        | raw CSV rows: 3000 instead of 3001        | RuntimeError      |
 
-Run locally (synthetic-only tests):
+Tests 1 and 8 require Athena data; tests 2-7 are fully synthetic.
+
+Run on Athena (full suite, 0 skipped):
+    uv run --with pytest pytest scripts/test_mutations_eval.py -v
+
+Run locally (synthetic-only, skips test 1 if e7_raw.csv absent):
     uv run python -m pytest scripts/test_mutations_eval.py -v -k "not k6"
 """
 import numpy as np
@@ -16,20 +28,13 @@ import pytest
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-sys = __import__("sys")
-sys.path.insert(0, str(ROOT / "scripts"))
+import sys as _sys
+_sys.path.insert(0, str(ROOT / "scripts"))
 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Helpers shared across tests
 # ──────────────────────────────────────────────────────────────────────────────
-
-def _pred(branch_res: dict, pid: str) -> dict:
-    for p in branch_res["predictions"]:
-        if p["prediction"] == pid:
-            return p
-    raise KeyError(pid)
-
 
 def _make_fake_results(branch: str, overrides: dict = None) -> dict:
     """Minimal evaluate_branch() result for assert_regression testing."""
@@ -64,55 +69,29 @@ def _make_fake_results(branch: str, overrides: dict = None) -> dict:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Mutation 1 — K6 oracle value off by 0.01 pp
-# Calls gate_k6_fogo() via the actual _agg_pooled3 on the real CSV.
-# Requires mc_unified_raw.csv (Athena only).
+# Mutation 1 — K6: call REAL gate_k6_fogo() with monkeypatched K6_FOGO_EXPECTED
+# κ=100 expected 9.3 → 9.4; real value is 9.33; diff=0.07 > TOL=0.05.
+# Requires e7_raw.csv (Athena); skips locally if absent.
 # ──────────────────────────────────────────────────────────────────────────────
 
-def test_mutation_1_k6_wrong_expected():
-    """K6: expected value for alpha=200 changed -0.4 → -0.41 must raise RuntimeError."""
+def test_mutation_1_k6_gate_real(monkeypatch):
+    """K6_FOGO_EXPECTED[100] 9.3→9.4: real gate_k6_fogo() must raise RuntimeError."""
+    import evaluate_santiago_predictions as ev
     E7_CSV = ROOT / "results" / "e7" / "e7_raw.csv"
     if not E7_CSV.exists():
         pytest.skip("e7_raw.csv not available on this machine")
 
-    df = pd.read_csv(E7_CSV)
-    # Mutation: alpha=200 expected -0.4 → -0.41 (delta > TOL=0.05)
-    bad_expected = {25: 21.10, 50: 20.40, 100: 9.30, 200: -0.51, 400: -5.70, 1000: -9.00}
-    TOL = 0.05
+    # Mutation: κ=100 expected 9.3 → 9.4 (real value ~9.33; diff 0.07 > TOL 0.05)
+    mutated = dict(ev.K6_FOGO_EXPECTED)
+    mutated[100] = 9.4
+    monkeypatch.setattr(ev, "K6_FOGO_EXPECTED", mutated)
 
-    CELLS_SAW  = [("saw","minmax","greedy"), ("saw","vector","greedy"),
-                  ("saw","vector","optimal")]
-    CELLS_TOPS = [("topsis","minmax","greedy"), ("topsis","vector","greedy"),
-                  ("topsis","vector","optimal")]
-
-    with pytest.raises(RuntimeError, match="K6"):
-        for kappa, expected in sorted(bad_expected.items()):
-            grp = df[df["alpha"] == kappa]
-            if grp.empty:
-                continue
-            saw3 = sum(
-                grp[(grp["agg"] == ag) & (grp["norm"] == nm) & (grp["mont"] == mt)][
-                    "nd_Q2Ap"
-                ].mean()
-                for ag, nm, mt in CELLS_SAW
-            ) / 3 * 100
-            tops3 = sum(
-                grp[(grp["agg"] == ag) & (grp["norm"] == nm) & (grp["mont"] == mt)][
-                    "nd_Q2Ap"
-                ].mean()
-                for ag, nm, mt in CELLS_TOPS
-            ) / 3 * 100
-            got  = round(float(saw3 - tops3), 2)
-            diff = abs(got - expected)
-            if diff > TOL:
-                raise RuntimeError(
-                    f"K6 gate FAILED alpha={kappa}: got={got} expected={expected} diff={diff:.3f}"
-                )
+    with pytest.raises(RuntimeError, match="K6.*FAILED"):
+        ev.gate_k6_fogo()
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Mutation 2 — Gate 1 per-draw tolerance: one draw off by 2e-12
-# Calls the actual per-draw comparison logic (tolerance TOL_DRAW=1e-12).
+# Mutation 2 — Gate 1 per-draw tolerance: diff > TOL_DRAW=1e-12
 # ──────────────────────────────────────────────────────────────────────────────
 
 def test_mutation_2_gate1_perdraw_tol():
@@ -133,8 +112,7 @@ def test_mutation_2_gate1_perdraw_tol():
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Mutation 3 — assert_regression: solo_V S-T 69 → 70
-# Calls assert_regression() from evaluate_santiago_predictions directly.
+# Mutations 3–5 — assert_regression: three counts mutated
 # ──────────────────────────────────────────────────────────────────────────────
 
 def test_mutation_3_regression_solo_v_70():
@@ -148,11 +126,18 @@ def test_mutation_3_regression_solo_v_70():
         assert_regression(st, sn)
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Mutation 4 — assert_regression: E1-B opt count 500 → 499
-# ──────────────────────────────────────────────────────────────────────────────
+def test_mutation_4_regression_solo_w_50():
+    """solo_W S-T 49→50 must cause assert_regression to raise AssertionError."""
+    from evaluate_santiago_predictions import assert_regression
+    st = _make_fake_results(
+        "S-T", overrides={"S3b": {"solo_V_k200": 69, "solo_W_k200": 50}}
+    )
+    sn = _make_fake_results("S-N")
+    with pytest.raises(AssertionError, match="solo_W"):
+        assert_regression(st, sn)
 
-def test_mutation_4_regression_e1b_count_499():
+
+def test_mutation_5_regression_e1b_count_499():
     """E1-B opt count 500→499 must cause assert_regression to raise AssertionError."""
     from evaluate_santiago_predictions import assert_regression
     st = _make_fake_results(
@@ -166,11 +151,10 @@ def test_mutation_4_regression_e1b_count_499():
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Mutation 5 — compute_value_regret: e1_fn=None must raise RuntimeError
-# Calls the actual compute_value_regret from santiago_eval_core.
+# Mutation 6 — compute_value_regret: e1_fn=None must raise RuntimeError
 # ──────────────────────────────────────────────────────────────────────────────
 
-def test_mutation_5_e1_fn_mandatory():
+def test_mutation_6_e1_fn_mandatory():
     """Passing e1_fn=None to compute_value_regret must raise RuntimeError."""
     from santiago_eval_core import compute_value_regret
     rng = np.random.default_rng(0)
@@ -193,11 +177,10 @@ def test_mutation_5_e1_fn_mandatory():
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Mutation 6 — compute_value_regret: ULP tie (float32 argmax != float64 argmax)
-# Manufactures a near-tie in V_mm so float32 picks a different winner.
+# Mutation 7 — ULP check: float32 argmax != float64 argmax must raise RuntimeError
 # ──────────────────────────────────────────────────────────────────────────────
 
-def test_mutation_6_ulp_argmax_fail():
+def test_mutation_7_ulp_argmax_fail():
     """ULP check: float32 argmax != float64 argmax must raise RuntimeError."""
     # Build V_all where float64 picks index 1 but float32 picks index 0 (tie rounds down)
     eps32 = float(np.finfo(np.float32).eps)
@@ -218,16 +201,14 @@ def test_mutation_6_ulp_argmax_fail():
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Mutation 7 — Gate 3 row count check: wrong number of rows in sealed CSV
-# Calls the row-count assertion added to gate_3_q2_reconstruction.
-# Uses synthetic DataFrames — no real sealed CSVs needed.
+# Mutation 8 — Gate 3 row count: 3000 rows instead of 3001 must raise RuntimeError
 # ──────────────────────────────────────────────────────────────────────────────
 
-def test_mutation_7_gate3_wrong_row_count():
+def test_mutation_8_gate3_wrong_row_count():
     """gate_3_q2_reconstruction must raise if raw CSV has wrong row count (3001 expected)."""
     CELLS = ["SAW_mm_grd","SAW_mm_opt","SAW_vec_grd","SAW_vec_opt",
              "TOPSIS_mm_grd","TOPSIS_mm_opt","TOPSIS_vec_grd","TOPSIS_vec_opt"]
-    # Build a DataFrame with 3000 rows instead of 3001 (mutation: -1 row)
+    # Build a DataFrame with 3000 rows instead of 3001 (mutation: κ=∞ row missing)
     rows = []
     for kappa in [25, 50, 100, 200, 400, 1000]:
         for draw in range(500):

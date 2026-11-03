@@ -21,13 +21,41 @@ ROOT = Path(__file__).parent.parent
 # ---------------------------------------------------------------------------
 
 def _agg_pooled3(grp: pd.DataFrame) -> float:
-    """Agg_pooled3: mean(SAW-TOPSIS) for 3 informative cells.
+    """Agg_pooled3: mean(SAW-TOPSIS) for 3 informative cells (wide format).
 
-    mm_opt excluded: SAW_mm_opt=100% by Proposition 1.
+    grp: one-row DataFrame with columns SAW_mm_grd, SAW_vec_grd, SAW_vec_opt,
+         TOPSIS_mm_grd, TOPSIS_vec_grd, TOPSIS_vec_opt (values in [0,1]).
+    mm_opt excluded: SAW_mm_opt=100% by Proposition 1 — not informative.
     Reference: run_e7_kappa_sweep.py; PRESPEC_SANTIAGO_A5 §3 K6.
     """
     saw3  = grp[["SAW_mm_grd",    "SAW_vec_grd",    "SAW_vec_opt"]].values.mean() * 100
     tops3 = grp[["TOPSIS_mm_grd", "TOPSIS_vec_grd", "TOPSIS_vec_opt"]].values.mean() * 100
+    return float(saw3 - tops3)
+
+
+def _agg_pooled3_long(grp_long: pd.DataFrame) -> float:
+    """Agg_pooled3 from long-format DataFrame (one κ, all draws).
+
+    grp_long: long-format rows with columns agg, norm, mont, nd_Q2Ap.
+    Equivalent to _agg_pooled3 on wide format; both compute the same formula.
+    Used by gate_k6_fogo for stochastic κ (e7_raw.csv long-format).
+    """
+    CELLS_SAW  = [("saw","minmax","greedy"), ("saw","vector","greedy"),
+                  ("saw","vector","optimal")]
+    CELLS_TOPS = [("topsis","minmax","greedy"), ("topsis","vector","greedy"),
+                  ("topsis","vector","optimal")]
+    saw3 = sum(
+        grp_long[(grp_long["agg"] == ag) & (grp_long["norm"] == nm) & (grp_long["mont"] == mt)][
+            "nd_Q2Ap"
+        ].mean()
+        for ag, nm, mt in CELLS_SAW
+    ) / 3 * 100
+    tops3 = sum(
+        grp_long[(grp_long["agg"] == ag) & (grp_long["norm"] == nm) & (grp_long["mont"] == mt)][
+            "nd_Q2Ap"
+        ].mean()
+        for ag, nm, mt in CELLS_TOPS
+    ) / 3 * 100
     return float(saw3 - tops3)
 
 

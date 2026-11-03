@@ -60,16 +60,15 @@ SHA_SEALED = {
     "mc_SN_e1_fix2.csv":  "357904c04d9d863b40c3cb448cb3b58e4615321cf5ac25f24c84a228312c1593",
 }
 
+# K6 Fogo expected values — module constant so tests can monkeypatch.
+# Verified against e7_raw.csv on Athena; tolerance TOL=0.05 pp.
+K6_FOGO_EXPECTED: dict = {25: 21.1, 50: 20.4, 100: 9.3, 200: -0.4, 400: -5.7, 1000: -9.0}
 
-def _agg_pooled3(grp: "pd.DataFrame") -> float:
-    """Agg_pooled3: mean(SAW-TOPSIS) for 3 informative cells (mm_grd, vec_grd, vec_opt).
-
-    mm_opt excluded: SAW_mm_opt=100% by Proposition 1 — not informative.
-    Reference: run_e7_kappa_sweep.py; PRESPEC_SANTIAGO_A5 §3 K6.
-    """
-    saw3  = grp[["SAW_mm_grd",    "SAW_vec_grd",    "SAW_vec_opt"]].values.mean() * 100
-    tops3 = grp[["TOPSIS_mm_grd", "TOPSIS_vec_grd", "TOPSIS_vec_opt"]].values.mean() * 100
-    return float(saw3 - tops3)
+# Import shared aggregation functions from santiago_eval_core.
+# _agg_pooled3     : wide-format DataFrame (mc_*_raw.csv columns)
+# _agg_pooled3_long: long-format DataFrame (e7_raw.csv with agg/norm/mont columns)
+# Both implement the same formula: mean(SAW 3-cell) - mean(TOPSIS 3-cell) [pp].
+from santiago_eval_core import _agg_pooled3, _agg_pooled3_long  # noqa: E402
 
 def _bs_ci(a, b, seed, n=B_BOOT, alpha=0.05):
     """Paired bootstrap CI for mean(a-b). Returns (mean_diff, ci_lo, ci_hi, p_one_sided).
@@ -477,9 +476,7 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     k6 = {}
     for k in kappa_vals:
         grp = df[df["kappa"] == k]
-        saw_3  = grp[["SAW_mm_grd","SAW_vec_grd","SAW_vec_opt"]].values.mean()*100
-        tops_3 = grp[["TOPSIS_mm_grd","TOPSIS_vec_grd","TOPSIS_vec_opt"]].values.mean()*100
-        k6[str(int(k))] = round(saw_3 - tops_3, 2)
+        k6[str(int(k))] = round(_agg_pooled3(grp), 2)
     s4 = {"prediction": "S4", "text": "SAW-TOPSIS Agg_pooled3 per kappa (3 informative cells)",
           "condition": "none (descriptive)", "testable": True,
           "K6_per_kappa": k6, "result": "DESCRIPTIVE"}
@@ -762,7 +759,8 @@ def gate_k6_fogo() -> bool:
             f"K6 gate FAIL: {E7_CSV} not found or empty. Athena required."
         )
 
-    EXPECTED = {25: 21.1, 50: 20.4, 100: 9.3, 200: -0.4, 400: -5.7, 1000: -9.0}
+    # K6_FOGO_EXPECTED is a module constant — tests can monkeypatch it.
+    # _agg_pooled3_long is the shared aggregation function (long format, e7_raw.csv).
     TOL = 0.05
 
     df_e7 = pd.read_csv(E7_CSV)
@@ -770,34 +768,15 @@ def gate_k6_fogo() -> bool:
         raise RuntimeError("K6 gate FAIL: e7_raw.csv missing 'alpha' column. "
                            "Expected long-format with alpha=κ.")
 
-    # 3 informative cells each for SAW and TOPSIS (mm_opt excluded: always 100%)
-    CELLS_SAW  = [("saw","minmax","greedy"), ("saw","vector","greedy"),
-                  ("saw","vector","optimal")]
-    CELLS_TOPS = [("topsis","minmax","greedy"), ("topsis","vector","greedy"),
-                  ("topsis","vector","optimal")]
-
     print("=== K6 Fogo gate (Agg_pooled3, 3 informative cells, TOL=0.05) ===",
           flush=True)
 
-    for kappa, expected in sorted(EXPECTED.items()):
+    for kappa, expected in sorted(K6_FOGO_EXPECTED.items()):
         grp = df_e7[df_e7["alpha"] == kappa]
         if grp.empty:
             raise RuntimeError(f"K6 gate FAIL: alpha={kappa} not in e7_raw.csv")
 
-        saw3 = sum(
-            grp[(grp["agg"] == ag) & (grp["norm"] == nm) & (grp["mont"] == mt)][
-                "nd_Q2Ap"
-            ].mean()
-            for ag, nm, mt in CELLS_SAW
-        ) / 3 * 100
-        tops3 = sum(
-            grp[(grp["agg"] == ag) & (grp["norm"] == nm) & (grp["mont"] == mt)][
-                "nd_Q2Ap"
-            ].mean()
-            for ag, nm, mt in CELLS_TOPS
-        ) / 3 * 100
-
-        got  = round(saw3 - tops3, 2)
+        got  = round(_agg_pooled3_long(grp), 2)
         diff = abs(got - expected)
         ok   = "PASS" if diff <= TOL else "FAIL"
         print(
