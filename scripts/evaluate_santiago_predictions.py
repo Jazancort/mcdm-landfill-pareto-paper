@@ -68,9 +68,10 @@ K6_FOGO_EXPECTED: dict = {25: 21.1, 50: 20.4, 100: 9.3, 200: -0.4, 400: -5.7, 10
 # Hash covers: name + shape + dtype.str + raw bytes for each array, sorted by name.
 # Now includes 14 arrays: 7×κ=200 (shape (500,)) + 7×{key}_inf κ=∞ (shape (1,)).
 # PENDING: set after running --gate3-only on this commit (format changed with κ=∞).
+# Set from --gate3-only run on commit 03d62a0 (TS=20261103T2345Z).
 SHA_NPZ_GATE3: dict = {
-    "ST": "PENDING_UPDATE_AFTER_GATE3_RERUN",
-    "SN": "PENDING_UPDATE_AFTER_GATE3_RERUN",
+    "ST": "97ed76f1763400ef406bbafff6e59f5eaede0547a8e6954faefdea429bda71f1",
+    "SN": "9b94c73a6dfae44b4aa775531c9c0f90fea65687b831449b431d547134d0a38d",
 }
 
 # Import shared aggregation functions from santiago_eval_core.
