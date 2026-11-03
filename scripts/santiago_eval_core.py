@@ -218,6 +218,14 @@ def compute_value_regret(
             R_e1b_opt[di] = max(0.0, (v_max - float(V_all_f32[opt_e1b_idx])) / v_rng)
             R_e1w_opt[di] = max(0.0, (v_max - float(V_all_f32[opt_e1w_idx])) / v_rng)
 
+            # Gate 4d: E1-V ≡ SAW_vec (rho_V = rho_j, so V_e1v = V_vec_trios)
+            V_e1v       = X_trio.astype(np.float64) @ (rho_j.astype(np.float64) * w)
+            opt_e1v_idx = int(np.argmax(V_e1v))
+            assert opt_e1v_idx == opt_vec_idx, (
+                f"[EVAL-R {label}] Gate 4d draw {di}: "
+                f"E1-V opt trio {opt_e1v_idx} != SAW_vec opt trio {opt_vec_idx}"
+            )
+
         if verbose and di % 100 == 0:
             print(f"  draw {di}/{B}", flush=True)
 

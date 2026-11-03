@@ -889,9 +889,21 @@ def main():
     st_regret = compute_value_regret_santiago("ST", kappa=200)
     sn_regret = compute_value_regret_santiago("SN", kappa=200)
 
-    # Gate 3: full Q2 reconstruction (runs before any verdict)
-    gate_3_q2_reconstruction("ST")
-    gate_3_q2_reconstruction("SN")
+    # Gate 3: full Q2 reconstruction (runs before any verdict); returns trio_indices
+    g3_st = gate_3_q2_reconstruction("ST")
+    g3_sn = gate_3_q2_reconstruction("SN")
+
+    # Gate 4a identity: trio from Gate 3 must match argmax(V_mm) from EVAL-R
+    print("=== Gate 4a identity (Gate 3 vs EVAL-R) ===", flush=True)
+    for branch_key, g3, regret in [("ST", g3_st, st_regret), ("SN", g3_sn, sn_regret)]:
+        for di, cell_dict in g3.items():
+            opt_g3   = cell_dict["SAW_mm_opt"]
+            opt_evalr = regret["trio_idx_mm_opt"][di]
+            assert opt_g3 == opt_evalr, (
+                f"Gate 4a identity FAIL ({branch_key} draw {di}): "
+                f"Gate3 trio={opt_g3} != EVAL-R argmax={opt_evalr}"
+            )
+    print("  Gate 4a identity (Gate 3 vs EVAL-R): PASS\n", flush=True)
 
     # S0-S7b evaluation
     st_res = evaluate_branch(
