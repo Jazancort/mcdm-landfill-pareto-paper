@@ -159,6 +159,7 @@ def compute_value_regret(
     trio_idx_vec_opt = np.zeros(B, dtype=np.int32)
     min_v_margin_mm  = np.inf
     n_same_trio      = 0
+    n_nonzero_e1b_trio = 0  # draws where opt_e1b_idx != opt_mm_idx (trio != t*)
 
     for di in range(B):
         w = np.asarray(W_draws[di], dtype=np.float64)
@@ -238,6 +239,18 @@ def compute_value_regret(
             R_e1b_opt[di] = max(0.0, (v_max - float(V_all[opt_e1b_idx])) / v_rng)
             R_e1w_opt[di] = max(0.0, (v_max - float(V_all[opt_e1w_idx])) / v_rng)
 
+            # Assert: (trio_sel != t*) <==> (R > 0)
+            # In production code R == 0.0 exactly iff opt_e1b_idx == opt_mm_idx.
+            # If this assert fires, there is a floating-point mismatch or a bug.
+            trio_neq_tstar = (opt_e1b_idx != opt_mm_idx)
+            r_e1b_pos      = (R_e1b_opt[di] > 0.0)
+            assert trio_neq_tstar == r_e1b_pos, (
+                f"[EVAL-R {label}] draw {di}: "
+                f"trio_neq_tstar={trio_neq_tstar} but R_e1b>0={r_e1b_pos} "
+                f"(R_e1b={R_e1b_opt[di]:.3e}); min non-zero R must be >> 1e-12"
+            )
+            n_nonzero_e1b_trio += int(trio_neq_tstar)
+
             # Gate 4d: E1-V ≡ SAW_vec (A_V = rho_j, so V_e1v = V_vec_trios)
             # Both use identical float64 computation; must agree exactly.
             assert opt_e1v_idx == opt_vec_idx, (
@@ -286,12 +299,15 @@ def compute_value_regret(
     }
     if e1_avail:
         summary.update({
-            "R_e1b_mean_pp":    round(float(np.nanmean(R_e1b_opt)   * 100), 2),
-            "R_e1b_median_pp":  round(float(np.nanmedian(R_e1b_opt) * 100), 2),
-            "R_e1w_mean_pp":    round(float(np.nanmean(R_e1w_opt)   * 100), 2),
-            "R_e1w_median_pp":  round(float(np.nanmedian(R_e1w_opt) * 100), 2),
-            "frac_R_e1b_zero":  round(float((R_e1b_opt < 1e-12).mean()), 4),
-            "n_e1b_zero_exact": int((R_e1b_opt < 1e-12).sum()),
+            "R_e1b_mean_pp":       round(float(np.nanmean(R_e1b_opt)   * 100), 2),
+            "R_e1b_median_pp":     round(float(np.nanmedian(R_e1b_opt) * 100), 2),
+            "R_e1w_mean_pp":       round(float(np.nanmean(R_e1w_opt)   * 100), 2),
+            "R_e1w_median_pp":     round(float(np.nanmedian(R_e1w_opt) * 100), 2),
+            "frac_R_e1b_zero":     round(float((R_e1b_opt < 1e-12).mean()), 4),
+            "n_e1b_zero_exact":    int((R_e1b_opt < 1e-12).sum()),
+            # Trio-based count (primary): n_nonzero = sum(trio_sel != t*)
+            # Equivalent to R>0 by assertion; trio comparison is the definition.
+            "n_nonzero_e1b_trio":  n_nonzero_e1b_trio,
         })
 
     return {

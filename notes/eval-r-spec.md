@@ -1,4 +1,14 @@
 # EVAL-R Specification
+
+> **NOTA DE PRÉ-REGISTO**: Este documento é uma especificação de implementação escrita
+> em 2026-11-03, DEPOIS dos dados estarem selados (mc_ST_e1_fix2.csv e mc_SN_e1_fix2.csv,
+> commits em 2026-10-29). NÃO é um pré-registo. O texto pré-registado é
+> `PRESPEC_SANTIAGO.md` (tag `prespec-santiago-f0-amend-final`, 2026-10-26).
+>
+> Qualquer condição neste documento que VAI ALÉM do texto congelado do PRESPEC
+> está identificada com `[POST-DATA]`. Essas condições são escolhas de implementação,
+> não compromisos pré-registados. Ver tabela em DEV-SANT-EVALR-001.md §ER-POST.
+
 Pre-commit: 2026-11-03 (tagged predictions-eval-v2)
 Governing text: PRESPEC_SANTIAGO.md §6 (frozen tag prespec-santiago-f0-amend-final)
 
@@ -99,7 +109,9 @@ d. `0 ≤ R ≤ 1 + 1e-9` in every draw (tolerance for floating-point).
 - Bootstrap CI of mean R(E1-B_opt) vs 0. Confirmed if CI_lo > 0.
 - Condition: TV_B ≥ 0.05.
 - Always report: fraction of draws with R = 0.
-- Low-risk (R ≥ 0 by construction; confirmed if ≥ 4 draws have R > 0 at B = 2000).
+- **[POST-DATA]** Low-risk note: "confirmed if ≥ 4 draws have R > 0 at B = 2000."
+  This is a diagnostic note, not part of the PRESPEC pass criterion.
+  The PRESPEC criterion is: testable AND CI_lo > 0.
 
 ### S7b: R(E1-B, opt) < R(E1-W, opt)
 - Rule: sign of the point estimate (R_E1B_mean < R_E1W_mean). No IC required.

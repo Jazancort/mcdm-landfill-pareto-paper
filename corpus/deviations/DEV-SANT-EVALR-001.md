@@ -201,3 +201,33 @@ criterion: R_pp < 1e-12 (minimum non-zero R is 0.042616 pp >> 1e-12 pp, from ora
 
 **Evidence**: `results/regret/e1b_R_pp_oracle_rerun.npy` (saved on Athena, commit `56dc283`).
 Mean R_e1b = 4.5275 pp matches oracle macro 4.53 pp to 2 decimal places.
+
+---
+
+### ER-POST: Conditions in eval-r-spec.md that go beyond the PRESPEC (post-data)
+
+`eval-r-spec.md` was written on 2026-11-03, after data sealing (mc_*_e1_fix2.csv,
+2026-10-29). It is an implementation specification, not a pre-registration.
+The frozen pre-registered text is in `PRESPEC_SANTIAGO.md`
+(tag `prespec-santiago-f0-amend-final`, 2026-10-26).
+
+Conditions added by `eval-r-spec.md` that are NOT in PRESPEC_SANTIAGO.md:
+
+| Prediction | PRESPEC (frozen) | eval-r-spec.md addition | Action |
+|---|---|---|---|
+| S0 | "SAW/mm/opt Q2=100% and R=0 on every draw; E1-B Q2=100%" | — | No extra condition |
+| S6 | "R(SAW,vec,grd) > R(SAW,vec,opt), 95% CI excludes 0 \| TV_W≥0.05" | Bootstrap seed: "A5b ou SeedSequence(20261104)" | **[POST-DATA]** Seed is implementation choice. Report seed with result. |
+| S7a | "R(E1-B,opt) > 0, 95% CI excludes 0 \| TV_B≥0.05" | "confirmed if ≥ 4 draws have R > 0 at B = 2000" | **REMOVED from pass criterion.** n_nonzero is diagnostic only. Pass = `testable AND CI_lo > 0`. |
+| S7b | "R(E1-B,opt) < R(E1-W,opt) \| TV_B≥0.05 AND TV_W≥0.05" | "Rule: sign of point estimate. No CI required." | **[POST-DATA]** Simplification: sign only. CI reported as descriptive. |
+
+**Correction applied (commit after 004131b)**:
+`s7a_pass = testable_s7a and lo7a > 0` (removed `and n_nonzero_e1b >= 4`).
+The `n_nonzero_e1b` field remains in JSON output as diagnostic.
+
+**Bootstrap implementation choices (all post-data, not pre-registered)**:
+- B = 2000 replicates (PRESPEC says "B = 2000" for paired tests but does not specify
+  for S7a mean CI)
+- Method: percentile bootstrap, one-sided (lo_xx > 0)
+- Seeds: `SeedSequence(20261104)` for all S7 bootstrap draws (replaces interim `seed=70_000`)
+
+These choices are reported with results. They do not affect the PRESPEC verdict.

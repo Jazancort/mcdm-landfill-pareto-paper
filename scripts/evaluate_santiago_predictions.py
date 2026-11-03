@@ -467,10 +467,15 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
         # R == 0.0 exactly iff opt_e1b_idx == opt_mm_idx (integer argmax).
         # Threshold 1e-12 pp is a guard; min non-zero R is 0.042616 pp >> 1e-12.
         # DEV-FOGO-E1B-001: 177/500 Fogo draws have trio==t* (35.4%).
-        n_nonzero_e1b  = int((R_e1b_pp > 1e-12).sum())   # draws where trio != t*
+        n_nonzero_e1b  = regret.get("summary", {}).get("n_nonzero_e1b_trio")
+        if n_nonzero_e1b is None:
+            # fallback: count from R (equivalent in production code)
+            n_nonzero_e1b = int((R_e1b_pp > 1e-12).sum())
         frac_zero_e1b  = round(float((R_e1b_pp < 1e-12).mean()), 4)  # frac trio==t*
-        # Pre-registered rule: CI_lo > 0  AND  n_nonzero >= 4 (spec §5 S7a)
-        s7a_pass   = testable_s7a and lo7a > 0 and n_nonzero_e1b >= 4
+        # PRESPEC pass criterion: testable AND CI_lo > 0 (no n_nonzero condition).
+        # n_nonzero is diagnostic only — reported but not part of the verdict.
+        # The eval-r-spec.md ">=4" was post-data, not pre-registered.
+        s7a_pass   = testable_s7a and lo7a > 0
         s7a_status = "CONFIRMED" if s7a_pass else "NOT CONFIRMED"
     else:
         md7a = lo7a = hi7a = p7a = None
@@ -493,8 +498,9 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
            "n_nonzero_e1b": n_nonzero_e1b,
            "frac_R_e1b_zero": frac_zero_e1b,
            "result": s7a_status,
-           "note": ("Low-risk: R>=0 by construction; confirmed if CI_lo>0 AND n_nonzero>=4. "
-                    "See eval-r-spec.md §5 S7a.")}
+           "note": ("PRESPEC criterion: testable AND CI_lo > 0. "
+                    "n_nonzero reported as diagnostic (not part of verdict). "
+                    "See PRESPEC_SANTIAGO.md S7a.")}
 
     # ── S7b ─────────────────────────────────────────────────────────────────
     # R(E1-B,opt) < R(E1-W,opt) | TV_B ≥ 0.05 AND TV_W ≥ 0.05
