@@ -117,15 +117,15 @@ e1w_opt = df_e1[(df_e1["cell"] == "W") & (df_e1["mont"] == "optimal")]
 e1w_grd = df_e1[(df_e1["cell"] == "W") & (df_e1["mont"] == "greedy")]
 
 N_DRAWS    = len(e1b_opt)
-e1b_mean   = round(float(e1b_opt["R_pp"].mean()), 2)
-e1b_se     = round(float(e1b_opt["R_pp"].std(ddof=1)) / math.sqrt(N_DRAWS), 2)
-e1b_med    = round(float(e1b_opt["R_pp"].median()), 2)
-e1b_grd_m  = round(float(e1b_grd["R_pp"].mean()), 2)
-e1w_mean   = round(float(e1w_opt["R_pp"].mean()), 2)
-e1w_grd_m  = round(float(e1w_grd["R_pp"].mean()), 2)
-e1b_max    = round(float(e1b_opt["R_pp"].max()), 1)
+e1b_mean   = f"{float(e1b_opt['R_pp'].mean()):.2f}"
+e1b_se     = f"{float(e1b_opt['R_pp'].std(ddof=1)) / math.sqrt(N_DRAWS):.2f}"
+e1b_med    = f"{float(e1b_opt['R_pp'].median()):.2f}"
+e1b_grd_m  = f"{float(e1b_grd['R_pp'].mean()):.2f}"
+e1w_mean   = f"{float(e1w_opt['R_pp'].mean()):.2f}"
+e1w_grd_m  = f"{float(e1w_grd['R_pp'].mean()):.2f}"
+e1b_max    = f"{float(e1b_opt['R_pp'].max()):.1f}"
 n_zero     = int(e1b_opt["trio_eq_tstar"].sum())
-frac_zero  = round(n_zero / N_DRAWS * 100, 1)
+frac_zero  = f"{n_zero / N_DRAWS * 100:.1f}"
 
 # Bootstrap diff E1-B grd-opt (B=2000, seed=55, stable)
 E1B_DIFF    = 3.72
@@ -135,7 +135,7 @@ E1B_DIFF_HI = 4.1
 macro_lines += [
     "",
     (f"% \u2500\u2500 E1 regret (oracle CSV e1_oracle_per_draw.csv "
-     f"SHA={SHA_E1_ORACLE_CSV[:16]}; DEV-FOGO-E1B-001) \u2500\u2500"),
+     f"SHA={SHA_E1_ORACLE_CSV[:8]}; DEV-FOGO-E1B-001) \u2500\u2500"),
     "% New denominator (range over all T), so all values in [0,100%].",
     "% DEV-FOGO-E1B-001: fraction corrected 28% -> 35.4% (177/500 draws have trio==t*)",
     f"\\newcommand{{\\RegretEoneB}}{{{e1b_mean}}}            % E1-B/opt mean R (pp), SE={e1b_se}",
