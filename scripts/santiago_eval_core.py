@@ -94,6 +94,14 @@ def compute_value_regret(
     rho_j = np.asarray(rho_j, dtype=np.float64)
     w0    = np.asarray(w0,    dtype=np.float64)
 
+    # e1_fn is MANDATORY: missing it is a caller error, not a skip.
+    if e1_fn is None:
+        raise RuntimeError(
+            f"[EVAL-R {label}] e1_fn is required — pass e1_fn from "
+            "load_fogo_data() or load_santiago_data(). "
+            "e1_fn() must return dict{{'M','B','W','V'}} of amplitude vectors."
+        )
+
     T = len(trios)
     B = len(W_draws)
 
@@ -128,32 +136,34 @@ def compute_value_regret(
         )
 
     # E1 amplitudes — constant across draws (computed from fixed w0)
-    # Mandatory when any E1-dependent gate is active; caller controls e1_fn.
-    e1_avail = e1_fn is not None
-    e1_amps: dict = {}
-    if e1_avail:
-        e1_amps = e1_fn()  # {"M": A_M, "B": A_B, "W": A_W, "V": A_V} — no per-draw arg
-        A_B = np.asarray(e1_amps["B"], dtype=np.float64)
-        A_W = np.asarray(e1_amps["W"], dtype=np.float64)
-        A_V = np.asarray(e1_amps["V"], dtype=np.float64)  # = rho_j by definition
-        A_M = np.asarray(e1_amps["M"], dtype=np.float64)  # = ones by definition
-        # Gate 4d pre-check: E1-V amplitude must equal rho_j (definition)
-        assert np.allclose(A_V, rho_j, rtol=1e-12, atol=1e-15), (
-            f"[EVAL-R {label}] Gate 4d PRE: E1-V amplitude A_V != rho_j. "
-            "Check get_e1_amplitudes return."
-        )
-        # E1-M amplitude must be ones (definition)
-        assert np.allclose(A_M, np.ones_like(A_M), rtol=1e-12, atol=1e-15), (
-            f"[EVAL-R {label}] Gate 4e PRE: E1-M amplitude A_M != ones."
-        )
-        X_trio_e1b = X_trio * A_B   # (T, M)
-        X_trio_e1w = X_trio * A_W   # (T, M)
+    # Mandatory: e1_fn is not None (checked above).
+    e1_avail = True
+    e1_amps  = e1_fn()  # {"M": A_M, "B": A_B, "W": A_W, "V": A_V} — no per-draw arg
+    A_B = np.asarray(e1_amps["B"], dtype=np.float64)
+    A_W = np.asarray(e1_amps["W"], dtype=np.float64)
+    A_V = np.asarray(e1_amps["V"], dtype=np.float64)  # = rho_j by definition
+    A_M = np.asarray(e1_amps["M"], dtype=np.float64)  # = ones by definition
+    # Gate 4d pre-check: E1-V amplitude must equal rho_j (definition)
+    assert np.allclose(A_V, rho_j, rtol=1e-12, atol=1e-15), (
+        f"[EVAL-R {label}] Gate 4d PRE: E1-V amplitude A_V != rho_j. "
+        "Check get_e1_amplitudes return."
+    )
+    # Gate 4e pre-check: E1-M amplitude must be ones (definition)
+    assert np.allclose(A_M, np.ones_like(A_M), rtol=1e-12, atol=1e-15), (
+        f"[EVAL-R {label}] Gate 4e PRE: E1-M amplitude A_M != ones."
+    )
+    # Precompute trio-level E1 amplitude matrices (float64)
+    X_trio_e1b = X_trio * A_B   # (T, M) — E1-B
+    X_trio_e1w = X_trio * A_W   # (T, M) — E1-W
+    # Gate 4d: E1-V uses A_V from e1_fn(), NOT X_trio_rho directly.
+    # X_trio_e1v = X_trio * A_V; must agree with X_trio_rho since A_V == rho_j.
+    X_trio_e1v = X_trio * A_V   # (T, M) — E1-V: uses e1_fn()["V"] explicitly
 
     R_mm_opt  = np.zeros(B, dtype=np.float64)
     R_vec_grd = np.zeros(B, dtype=np.float64)
     R_vec_opt = np.zeros(B, dtype=np.float64)
-    R_e1b_opt = np.full(B, np.nan, dtype=np.float64) if e1_avail else None
-    R_e1w_opt = np.full(B, np.nan, dtype=np.float64) if e1_avail else None
+    R_e1b_opt = np.full(B, np.nan, dtype=np.float64)
+    R_e1w_opt = np.full(B, np.nan, dtype=np.float64)
 
     trio_idx_mm_opt  = np.zeros(B, dtype=np.int32)
     trio_idx_vec_opt = np.zeros(B, dtype=np.int32)
@@ -178,6 +188,17 @@ def compute_value_regret(
         v_min      = float(V_all.min())
         v_rng      = max(v_max - v_min, 1e-12)
         opt_mm_idx = int(V_all.argmax())
+
+        # ULP check: argmax must be stable under float32 precision.
+        # If float32 and float64 disagree, the winning margin is < ULP(float32),
+        # meaning the result is not robust. This is Gate 4a ULP FAIL.
+        opt_mm_f32 = int(V_all.astype(np.float32).argmax())
+        if opt_mm_f32 != opt_mm_idx:
+            raise RuntimeError(
+                f"[EVAL-R {label}] Gate 4a ULP FAIL draw {di}: "
+                f"float64 argmax={opt_mm_idx} != float32 argmax={opt_mm_f32}. "
+                "SAW/mm margin too small for robust argmax."
+            )
 
         # Gate 4a uniqueness: record smallest gap to second-best
         if T >= 2:
@@ -228,7 +249,9 @@ def compute_value_regret(
         if e1_avail:
             V_e1b = (X_trio_e1b * w).sum(1)     # (T,) float64 — E1-B
             V_e1w = (X_trio_e1w * w).sum(1)     # (T,) float64 — E1-W
-            V_e1v = (X_trio_rho  * w).sum(1)    # (T,) float64 — E1-V = SAW_vec
+            # Gate 4d: E1-V uses X_trio_e1v (= X_trio * A_V from e1_fn()["V"])
+            # Must agree with V_vec_trios since A_V == rho_j (checked pre-loop).
+            V_e1v = (X_trio_e1v * w).sum(1)     # (T,) float64 — E1-V (via e1_fn["V"])
             V_e1m = V_all                        # (T,) float64 — E1-M = SAW_mm
 
             opt_e1b_idx = int(np.argmax(V_e1b))
@@ -309,15 +332,14 @@ def compute_value_regret(
             # Equivalent to R>0 by assertion; trio comparison is the definition.
             "n_nonzero_e1b_trio":  n_nonzero_e1b_trio,
         })
-
     return {
         "label":             label,
         "N_DRAWS":           B,
         "R_mm_opt_pp":       (R_mm_opt  * 100).tolist(),
         "R_sawvec_grd_pp":   (R_vec_grd * 100).tolist(),
         "R_sawvec_opt_pp":   (R_vec_opt * 100).tolist(),
-        "R_e1b_opt_pp":      (R_e1b_opt * 100).tolist() if e1_avail else None,
-        "R_e1w_opt_pp":      (R_e1w_opt * 100).tolist() if e1_avail else None,
+        "R_e1b_opt_pp":      (R_e1b_opt * 100).tolist(),
+        "R_e1w_opt_pp":      (R_e1w_opt * 100).tolist(),
         "trio_idx_mm_opt":   trio_idx_mm_opt.tolist(),
         "trio_idx_vec_opt":  trio_idx_vec_opt.tolist(),
         "min_v_margin_mm":   float(min_v_margin_mm),

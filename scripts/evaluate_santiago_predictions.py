@@ -462,7 +462,10 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     R_e1b_pp = np.array(regret.get("R_e1b_opt_pp") or [])
     if testable_s7a and len(R_e1b_pp) == 500 and not np.isnan(R_e1b_pp).any():
         zeros_e1b      = np.zeros_like(R_e1b_pp)
-        md7a, lo7a, hi7a, p7a = _bs_ci(R_e1b_pp, zeros_e1b, seed=70_000)
+        # SeedSequence(20261104): reproducible seeds for S7a/S7b (spawn index 0/1)
+        from numpy.random import SeedSequence as _SS7
+        _ss7 = _SS7(20261104).spawn(2)
+        md7a, lo7a, hi7a, p7a = _bs_ci(R_e1b_pp, zeros_e1b, seed=_ss7[0])
         # "Zero" = trio_sel == t* (SAW/mm/opt trio). In production code,
         # R == 0.0 exactly iff opt_e1b_idx == opt_mm_idx (integer argmax).
         # Threshold 1e-12 pp is a guard; min non-zero R is 0.042616 pp >> 1e-12.
@@ -509,7 +512,7 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     if (testable_s7b and len(R_e1b_pp) == 500 and len(R_e1w_pp) == 500
             and not np.isnan(R_e1b_pp).any() and not np.isnan(R_e1w_pp).any()):
         n = min(len(R_e1b_pp), len(R_e1w_pp))
-        _, lo7b, hi7b, _ = _bs_ci(R_e1w_pp[:n], R_e1b_pp[:n], seed=70_001)
+        _, lo7b, hi7b, _ = _bs_ci(R_e1w_pp[:n], R_e1b_pp[:n], seed=_ss7[1])
         s7b_pass = testable_s7b and R_e1b_pp.mean() < R_e1w_pp.mean()
         s7b_status = "CONFIRMED" if s7b_pass else "NOT CONFIRMED"
     else:
