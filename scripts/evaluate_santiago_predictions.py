@@ -159,6 +159,22 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
         raise RuntimeError(
             f"Gate 3 FAIL: Santiago modules not importable ({exc}). Requires Athena."
         )
+    print(f"  Functions imported from run_santiago_mc: "
+          f"compute_q2_all_cells_gpu, compute_e1_cells_gpu, "
+          f"get_e1_amplitudes, greedy_selector", flush=True)
+    print(f"  Comparison mode: Q2 ∈ {{0,1}} — exact integer equality (==), no tolerance",
+          flush=True)
+            compute_group_objectives, compute_trio_objectives,
+            check_dominated_raw, optimal_selector, greedy_selector,
+            get_e1_amplitudes,
+            ST_W0, SN_W0, ST_GROUPS, SN_GROUPS, CELLS_8,
+            _optimal_gpu,
+        )
+        from gen_santiago_seeds import get_branch_rngs, KAPPA_VALUES
+    except (ImportError, FileNotFoundError) as exc:
+        raise RuntimeError(
+            f"Gate 3 FAIL: Santiago modules not importable ({exc}). Requires Athena."
+        )
 
     data   = load_branch_data(branch_key)
     X_mm   = np.asarray(data["X_mm"],   dtype=np.float64)
@@ -189,6 +205,7 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
     n_fail     = 0
     total_raw  = 0
     total_e1   = 0
+    _eps32     = float(np.finfo(np.float32).eps)
 
     # ── Stochastic κ (500 draws each) ───────────────────────────────────────
     for kappa in KAPPA_VALUES:
@@ -201,7 +218,9 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
         df_e1_k  = df_e1[df_e1["kappa"] == kappa].sort_values(
             ["draw", "e1_cell"]).reset_index(drop=True) if kappa == 200 else None
 
-        n_draws_k = min(n_check, len(df_raw_k))
+        n_draws_k      = min(n_check, len(df_raw_k))
+        n_below_10ulp  = 0   # draws where V_mm margin < 10 * eps32 * V_max
+        n_same_mm_grd  = 0   # draws where SAW_mm_grd == SAW_mm_opt (greedy==opt for mm)
         print(f"  κ={kappa:4d}: {n_draws_k} draws × 8 raw"
               f"{' + 4 E1' if df_e1_k is not None else ''}...", flush=True)
 
@@ -218,6 +237,9 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                 s_vec_gpu   = (gd["X_mm"] * gd["rho_j"] * w_gpu).sum(1)
                 opt_mm_idx  = int(_optimal_gpu(s_mm_gpu,  gd["trios"]))
                 opt_vec_idx = int(_optimal_gpu(s_vec_gpu, gd["trios"]))
+                # ULP margin: V_mm of best vs second-best trio (float64)
+                V_mm_gpu = (gd["X_trio"] * w_gpu).sum(1)
+                V_mm_cpu = cp.asnumpy(V_mm_gpu)
             else:
                 F_mm_site  = compute_group_objectives(X_mm, w_cpu, A_ones_cpu, groups)
                 F_mm_trios = compute_trio_objectives(F_mm_site, trios)
@@ -225,12 +247,27 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                                                   trios, D, scorers_cpu)
                 opt_mm_idx  = optimal_selector(scorers_cpu[0](w_cpu), trios)
                 opt_vec_idx = optimal_selector(scorers_cpu[1](w_cpu), trios)
+                V_mm_cpu = (X_trio * w_cpu).sum(1)  # float64
+
+            # ULP margin check
+            if len(V_mm_cpu) >= 2:
+                v_max_d  = float(V_mm_cpu.max())
+                v_sec    = float(np.partition(V_mm_cpu, -2)[-2])
+                margin   = v_max_d - v_sec
+                if v_max_d > 0:
+                    ulp_units = margin / (_eps32 * v_max_d)
+                    if ulp_units < 10.0:
+                        n_below_10ulp += 1
 
             if kappa == 200:
                 trio_indices_k200[di] = {
                     "SAW_mm_opt":  opt_mm_idx,
                     "SAW_vec_opt": opt_vec_idx,
                 }
+
+            # Same-trio proxy: greedy and optimal both at Q2=1 for SAW_mm
+            if raw_result.get("SAW_mm_grd") == raw_result.get("SAW_mm_opt"):
+                n_same_mm_grd += 1
 
             row = df_raw_k[df_raw_k["draw"] == di]
             if row.empty:
@@ -281,7 +318,8 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                         n_fail += 1
                     total_e1 += 1
 
-        print(f"    κ={kappa:4d} OK ({n_fail} fails so far)", flush=True)
+        print(f"    κ={kappa:4d} OK  same-mm(grd==opt)={n_same_mm_grd}/{n_draws_k} "
+              f"below-10ulp={n_below_10ulp}/{n_draws_k}", flush=True)
 
     # ── κ=∞ (1 draw — deterministic w0) ─────────────────────────────────────
     print(f"  κ=∞: 1 draw × 8 raw + 4 E1...", flush=True)
@@ -337,6 +375,15 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
         total_e1 += 1
 
     print(f"  κ=∞ OK", flush=True)
+
+    # ── Save trio indices (κ=200) as npz and log SHA-64 ──────────────────────
+    npz_path = ROOT / "results" / "santiago" / f"gate3_trios_{tag}.npz"
+    SAW_mm_arr  = np.array([trio_indices_k200[d]["SAW_mm_opt"]  for d in range(len(trio_indices_k200))], dtype=np.int32)
+    SAW_vec_arr = np.array([trio_indices_k200[d]["SAW_vec_opt"] for d in range(len(trio_indices_k200))], dtype=np.int32)
+    np.savez(npz_path, SAW_mm_opt=SAW_mm_arr, SAW_vec_opt=SAW_vec_arr)
+    import hashlib as _hl2
+    sha_npz = _hl2.sha256(npz_path.read_bytes()).hexdigest()
+    print(f"  Saved: {npz_path.name}  SHA-256: {sha_npz}", flush=True)
 
     if n_fail:
         raise RuntimeError(
