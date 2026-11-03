@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Replace effect-phrase sentences with calibrated versions (PLANO_ESTILO §5)."""
 
-TEX = "main.tex"
+TEX = "src/main.tex"
 
 with open(TEX, "r", encoding="utf-8") as f:
     text = f.read()

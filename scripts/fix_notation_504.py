@@ -3,7 +3,7 @@
 import re
 from pathlib import Path
 
-tex = Path("main.tex").read_text(encoding="utf-8")
+tex = Path("src/main.tex").read_text(encoding="utf-8")
 
 replacements = [
     # space~$A$ -> space~$\Aspace$
@@ -25,5 +25,5 @@ for old, new in replacements:
     print(f"  {old!r:50} -> {n} replacements")
     count += n
 
-Path("main.tex").write_text(tex, encoding="utf-8")
+Path("src/main.tex").write_text(tex, encoding="utf-8")
 print(f"\nTotal: {count} replacements")

@@ -160,11 +160,11 @@ check("tvorder: optimal rnk > vec",
       88.2 - 56.8, tol=0.1)
 
 # These hardcoded values must match what's in the LaTeX source
-main_tex = ROOT / "main.tex"
+main_tex = ROOT / "src" / "main.tex"
 if main_tex.exists():
     tex = main_tex.read_text(encoding="utf-8")
 
-suppl_tex_path = ROOT / "supplementary.tex"
+suppl_tex_path = ROOT / "src" / "supplementary.tex"
 suppl_tex = suppl_tex_path.read_text(encoding="utf-8") if suppl_tex_path.exists() else ""
 
 # tab:tvorder rows — accept hardcoded literal OR macro reference
@@ -404,8 +404,8 @@ else:
         print(f"  [OK  ] ?? in log: 0")
 
 # Check: main.bbl exists and is > 1 KB (check build dir too)
-bbl_path = ROOT / "main.bbl"
-build_bbl = Path(r"C:\build\paper\main.bbl")
+bbl_path = ROOT / "src" / "main.bbl"
+build_bbl = Path(r"C:\build\paper\src\main.bbl")
 # Use the most recently updated bbl (prefer local over stale build dir)
 if build_bbl.exists() and build_bbl.stat().st_size > 1024:
     if bbl_path.exists() and bbl_path.stat().st_mtime >= build_bbl.stat().st_mtime:
@@ -423,7 +423,7 @@ if bbl_real.exists():
         print(f"  [OK  ] main.bbl: {bbl_size:,} bytes ({bbl_real})")
     # Check .bbl is not older than refs.bib or main.tex
     bbl_mtime = bbl_real.stat().st_mtime
-    for dep in [ROOT / "refs.bib", ROOT / "main.tex"]:
+    for dep in [ROOT / "src" / "refs.bib", ROOT / "src" / "main.tex"]:
         if dep.exists() and dep.stat().st_mtime > bbl_mtime + 5:
             FAIL.append(f"main.bbl older than {dep.name} — re-run bibtex")
             print(f"  [FAIL] main.bbl stale vs {dep.name}")
@@ -789,7 +789,7 @@ if main_tex.exists():
         print("  [INFO] No highlights environment found")
 
 # Rule 2: non-ASCII bib keys in refs.bib
-bib_path = ROOT / "refs.bib"
+bib_path = ROOT / "src" / "refs.bib"
 if bib_path.exists():
     bib_text = bib_path.read_text(encoding="utf-8", errors="replace")
     import re as _re
@@ -997,8 +997,8 @@ if main_tex.exists():
 print()
 print("=== A7: PDF integrity (pdftotext) ===")
 pdf_candidates = [
-    Path(r"C:\build\paper\main.pdf"),
-    ROOT / "main.pdf",
+    Path(r"C:\build\paper\src\main.pdf"),
+    ROOT / "src" / "main.pdf",
 ]
 pdf_path = next((p for p in pdf_candidates if p.exists() and p.stat().st_size > 100_000), None)
 if pdf_path is None:
@@ -1048,9 +1048,9 @@ else:
 print()
 print("=== A8: Supplementary PDF integrity (pdftotext) ===")
 suppl_pdf_candidates = [
-    Path(r"C:\build\paper\suppl_wrapper.pdf"),
-    ROOT / "suppl_wrapper.pdf",
-    ROOT / "supplementary.pdf",
+    Path(r"C:\build\paper\src\suppl_wrapper.pdf"),
+    ROOT / "src" / "suppl_wrapper.pdf",
+    ROOT / "src" / "supplementary.pdf",
 ]
 suppl_pdf = next((p for p in suppl_pdf_candidates if p.exists() and p.stat().st_size > 10_000), None)
 if suppl_pdf is None:
@@ -1080,7 +1080,7 @@ print()
 print("=== A9: No duplicate macro definitions ===")
 import collections as _col
 _defs = _col.defaultdict(list)
-for _fname in ["main.tex", "macros/macros.tex", "macros/macros_amplitudes.tex", "macros/macros_e6.tex", "macros/macros_structural.tex"]:
+for _fname in ["src/main.tex", "macros/macros.tex", "macros/macros_amplitudes.tex", "macros/macros_e6.tex", "macros/macros_structural.tex"]:
     _fpath = ROOT / _fname
     if not _fpath.exists():
         continue
@@ -1394,7 +1394,7 @@ except Exception as _e6c:
 # a supplementary-only citation sneaking into the main bibliography.
 print()
 print("=== 8.03: Orphan bib entries (bbl vs main.tex \\cite) ===")
-bbl_file = ROOT / "main.bbl"
+bbl_file = ROOT / "src" / "main.bbl"
 if bbl_file.exists() and main_tex.exists():
     import re as _re8
     _bbl_text = bbl_file.read_text(encoding="utf-8")

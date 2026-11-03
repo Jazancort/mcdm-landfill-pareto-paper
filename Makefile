@@ -31,15 +31,15 @@ check: macros
 paper:
 	if not exist "$(BUILDDIR)" mkdir "$(BUILDDIR)"
 	xcopy /E /Y /Q "$(SRCDIR)\*" "$(BUILDDIR)\" >nul 2>&1
-	cd "$(BUILDDIR)" && set "TEXINPUTS=.;template;;" && $(XELATEX) main.tex
-	cd "$(BUILDDIR)" && set "BSTINPUTS=.;template;;" && bibtex main
-	cd "$(BUILDDIR)" && set "TEXINPUTS=.;template;;" && $(XELATEX) suppl_wrapper.tex
-	cd "$(BUILDDIR)" && set "TEXINPUTS=.;template;;" && $(XELATEX) main.tex
-	cd "$(BUILDDIR)" && set "TEXINPUTS=.;template;;" && $(XELATEX) main.tex
-	copy /Y "$(BUILDDIR)\main.bbl" "$(SRCDIR)\main.bbl"
-	copy /Y "$(BUILDDIR)\main.pdf" "$(SRCDIR)\main.pdf"
-	copy /Y "$(BUILDDIR)\suppl_wrapper.aux" "$(SRCDIR)\suppl_wrapper.aux"
-	copy /Y "$(BUILDDIR)\suppl_wrapper.pdf" "$(SRCDIR)\suppl_wrapper.pdf"
+	cd "$(BUILDDIR)\src" && set "TEXINPUTS=.;..\template;;" && $(XELATEX) main.tex
+	cd "$(BUILDDIR)\src" && set "BSTINPUTS=.;..\template;;" && bibtex main
+	cd "$(BUILDDIR)\src" && set "TEXINPUTS=.;..\template;;" && $(XELATEX) suppl_wrapper.tex
+	cd "$(BUILDDIR)\src" && set "TEXINPUTS=.;..\template;;" && $(XELATEX) main.tex
+	cd "$(BUILDDIR)\src" && set "TEXINPUTS=.;..\template;;" && $(XELATEX) main.tex
+	copy /Y "$(BUILDDIR)\src\main.bbl" "$(SRCDIR)\src\main.bbl"
+	copy /Y "$(BUILDDIR)\src\main.pdf" "$(SRCDIR)\src\main.pdf"
+	copy /Y "$(BUILDDIR)\src\suppl_wrapper.aux" "$(SRCDIR)\src\suppl_wrapper.aux"
+	copy /Y "$(BUILDDIR)\src\suppl_wrapper.pdf" "$(SRCDIR)\src\suppl_wrapper.pdf"
 
 clean:
 	del /Q *.aux *.log *.out *.toc *.blg *.fls *.fdb_latexmk 2>nul || true

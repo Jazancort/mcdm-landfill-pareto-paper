@@ -7,7 +7,7 @@ patch_main.py — applies 4 surgical edits to main.tex:
 """
 import re
 
-SRC = "main.tex"
+SRC = "src/main.tex"
 
 with open(SRC, encoding="utf-8") as f:
     txt = f.read()

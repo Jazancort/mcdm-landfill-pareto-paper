@@ -107,7 +107,7 @@ NUM = re.compile(
 )
 
 rows = []
-for fname in ["main.tex"] + list(ROOT.glob("supplementary*.tex")):
+for fname in ["src/main.tex"] + list(ROOT.glob("src/supplementary*.tex")):
     fpath = ROOT / fname if not Path(fname).is_absolute() else Path(fname)
     if not fpath.exists():
         continue

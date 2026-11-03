@@ -3,7 +3,7 @@
 
 import re, sys
 
-TEX = "main.tex"
+TEX = "src/main.tex"
 
 with open(TEX, "r", encoding="utf-8") as f:
     text = f.read()

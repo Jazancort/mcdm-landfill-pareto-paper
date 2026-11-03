@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Patch 2: remaining effect phrases (exact text confirmed from file)."""
 
-TEX = "main.tex"
+TEX = "src/main.tex"
 
 with open(TEX, "r", encoding="utf-8") as f:
     text = f.read()
