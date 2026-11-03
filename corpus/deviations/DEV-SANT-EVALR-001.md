@@ -306,3 +306,38 @@ Key gate results:
 - 13/13 mutation tests PASS (test 1 with real e7_raw.csv on Athena)
 
 Note on K5 (96.8pp in DEV-SANT-GPU-001): that value was from the pre-K6-fix formula (4 cells including mm_opt). With the corrected 3-cell formula, K5 = S4.K6_per_kappa[1000]. For S-T κ=1000 (same-mm=500/500), the correct 3-cell value will be determined by the full evaluation.
+
+---
+
+### ER-GATE3-RUN-v3: Gates run record — commit final pré-avaliação (aa9c87c, 2026-11-03)
+
+avaliacao a correr em `aa9c87ca22be05bbc41a2b473c64b5c59ba8654d`, enviado ao GitHub antes da corrida; tag a criar depois.
+
+**Run timestamp**: 20261103T2230Z–20261103T2233Z (Athena)
+
+Gates sequenciais no hash enviado antes da corrida:
+
+| Gate | EXIT | Elapsed | Log SHA-256 |
+|------|------|---------|-------------|
+| --gates-only | 0 | 142.5s | `194bfb29819cec9138d8714354652672ee103d3d2ea568d7b7227cae2ad4a3e0` |
+| --gate3-only | 0 | 1149.0s | `dcb367ffd364b25db7c442f7c40ee9af54b3f9199e0a59d081251d7ebdccc9df` |
+| 13 mutation tests | 0 | 0.74s | `4627ef7c2fcc0c8f6b4838286991f7462b559d989faa3bf3bd00bea2dd7a67d3` |
+
+Gate 3 canonical hash (7 arrays, 500 rows, κ=200):
+- ST: `612a8833d1db85802703b2235aed94a3f5207422829bad9b03b151eedc80f40c` (idêntico ao run ER-GATE3-RUN-v2)
+- SN: `09d0fcffc2d98728a2a8ea341541d2c1e26702f5aa822601bf8d21fcda69331e` (idêntico)
+
+SHA_NPZ_GATE3 remains valid for aa9c87c (K5 fix only affects evaluate_branch, not gate_3_q2_reconstruction).
+
+Correcções em aa9c87c vs runs anteriores:
+- S4: K5(a) assembly = Q2(SAW,vec,opt) − Q2(SAW,vec,grd) per κ (PRESPEC K5(a); Fogo≈−12pp)
+- S4: K5(b) sign check = sign(K6[1000]) == sign(K6[inf])
+- test_mutation_9: FAIL (not skip) quando oracle CSV ausente
+- diagnostics/_count_e1b_zeros.py: contagem explícita de R<0; run output em diagnostics/run_20261103_e1b_zeros.txt
+
+Diagnóstico e1b_zeros (sequential path, aa9c87c):
+- R < 0:              0 (sem negativos; o "44 negativos" era da computação batch de uma versão anterior)
+- R==0.0 exact:       177
+- opt_e1b==opt_mm:    177
+- min R_pp (trio!=t*): 0.042616 pp
+- O split "101/177" de sessões anteriores veio da versão batch (compute_regret.py). Todos os critérios convergem em 177 no path sequencial actual.
