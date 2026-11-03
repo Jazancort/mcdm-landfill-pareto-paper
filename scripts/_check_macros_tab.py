@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 ROOT = Path(__file__).parent.parent
 suppl = (ROOT / 'supplementary.tex').read_text(encoding='utf-8')
-macros_e6 = (ROOT / 'macros_e6.tex').read_text(encoding='utf-8')
+macros_e6 = (ROOT / 'macros' / 'macros_e6.tex').read_text(encoding='utf-8')
 block_start = suppl.find(r'\label{sec:e6-sensit}')
 block_end   = suppl.find('% S0  Pre-registration')
 block = suppl[block_start:block_end]

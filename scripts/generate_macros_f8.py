@@ -25,7 +25,7 @@ import pandas as pd
 REPO = Path(__file__).parent.parent
 COINC_CSV  = REPO / "results" / "f8" / "f8_coincidence_v2.csv"
 FRONT_CSV  = REPO / "results" / "f8" / "f8_vec_frontier.csv"
-OUT_TEX    = REPO / "macros_f8.tex"   # separate file, included by main.tex
+OUT_TEX    = REPO / "macros" / "macros_f8.tex"   # separate file, included by main.tex
 
 # ── Load and verify ──────────────────────────────────────────────────────────
 print("generate_macros_f8.py")

@@ -25,7 +25,7 @@ tv_total    = float(tv_half.sum())
 perm_tv_pct = float(tv_half[perm_idx] / tv_total * 100)
 
 # Macros
-mamp = (ROOT / 'macros_amplitudes.tex').read_text(encoding='utf-8')
+mamp = (ROOT / 'macros' / 'macros_amplitudes.tex').read_text(encoding='utf-8')
 meff_macro = re.search(r'meff\}\{([0-9.]+)', mamp)
 sxx_macro  = re.search(r'SxxPctVecOpt\}\{([0-9]+)', mamp)
 

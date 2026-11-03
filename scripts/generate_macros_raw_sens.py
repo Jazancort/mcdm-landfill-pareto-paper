@@ -25,7 +25,7 @@ import pandas as pd
 REPO = Path(__file__).parent.parent
 CSV      = REPO / "results" / "raw_sensitivity_4cells.csv"
 Q2_JSON  = REPO / "results" / "raw_sensitivity_q2.json"
-OUT      = REPO / "macros_raw_sens.tex"
+OUT      = REPO / "macros" / "macros_raw_sens.tex"
 
 if not CSV.exists():
     sys.exit(f"Missing: {CSV}. Run scripts/raw_sensitivity_4cells.py first.")

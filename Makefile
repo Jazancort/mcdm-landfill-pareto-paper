@@ -31,11 +31,11 @@ check: macros
 paper:
 	if not exist "$(BUILDDIR)" mkdir "$(BUILDDIR)"
 	xcopy /E /Y /Q "$(SRCDIR)\*" "$(BUILDDIR)\" >nul 2>&1
-	cd "$(BUILDDIR)" && $(XELATEX) main.tex
-	cd "$(BUILDDIR)" && bibtex main
-	cd "$(BUILDDIR)" && $(XELATEX) suppl_wrapper.tex
-	cd "$(BUILDDIR)" && $(XELATEX) main.tex
-	cd "$(BUILDDIR)" && $(XELATEX) main.tex
+	cd "$(BUILDDIR)" && set "TEXINPUTS=.;template;;" && $(XELATEX) main.tex
+	cd "$(BUILDDIR)" && set "BSTINPUTS=.;template;;" && bibtex main
+	cd "$(BUILDDIR)" && set "TEXINPUTS=.;template;;" && $(XELATEX) suppl_wrapper.tex
+	cd "$(BUILDDIR)" && set "TEXINPUTS=.;template;;" && $(XELATEX) main.tex
+	cd "$(BUILDDIR)" && set "TEXINPUTS=.;template;;" && $(XELATEX) main.tex
 	copy /Y "$(BUILDDIR)\main.bbl" "$(SRCDIR)\main.bbl"
 	copy /Y "$(BUILDDIR)\main.pdf" "$(SRCDIR)\main.pdf"
 	copy /Y "$(BUILDDIR)\suppl_wrapper.aux" "$(SRCDIR)\suppl_wrapper.aux"

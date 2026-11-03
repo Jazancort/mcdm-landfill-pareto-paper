@@ -23,7 +23,7 @@ agg = df[df.contrast == "Agg_pooled3"].copy()
 agg = agg.sort_values("kappa").reset_index(drop=True)
 
 # ── Verify against macros_e7.tex ──────────────────────────────────────────────
-macros_file = ROOT / "macros_e7.tex"
+macros_file = ROOT / "macros" / "macros_e7.tex"
 macro_src = macros_file.read_text(encoding="utf-8")
 
 EXPECTED_MACROS = {

@@ -34,7 +34,7 @@ from e6_stats import (
 REPO = Path(__file__).parent.parent
 SRC_CSV  = REPO / "results" / "e6" / "e6_raw_prespec.csv"
 SENS_CSV = REPO / "results" / "e6" / "sensit" / "e6_raw_sensit_tvwF01954.csv"
-OUT_TEX  = REPO / "macros_e6.tex"
+OUT_TEX  = REPO / "macros" / "macros_e6.tex"
 OUT_JSON = REPO / "results" / "e6" / "e6_stats.json"
 
 FAMILIES = ["lognormal", "beta13", "uniform", "zero_inflated"]

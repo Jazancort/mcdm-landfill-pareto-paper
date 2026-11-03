@@ -18,7 +18,7 @@ from scipy import stats
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-OUT_MACROS = ROOT / "macros_e7.tex"
+OUT_MACROS = ROOT / "macros" / "macros_e7.tex"
 
 # ── Load e7_contrasts.csv ────────────────────────────────────────────────────
 df_c = pd.read_csv(ROOT / "results" / "e7" / "e7_contrasts.csv")

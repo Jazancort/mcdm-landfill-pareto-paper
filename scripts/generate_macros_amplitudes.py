@@ -321,7 +321,7 @@ def main():
     print(f"Source SHA-256: {res['source_sha256'][:16]}")
 
     # ── Write macros_amplitudes.tex ───────────────────────────────────────────
-    write_macros_amplitudes_tex(res, REPO / "macros_amplitudes.tex")
+    write_macros_amplitudes_tex(res, REPO / "macros" / "macros_amplitudes.tex")
 
     # ── Print macro values ────────────────────────────────────────────────────
     print()

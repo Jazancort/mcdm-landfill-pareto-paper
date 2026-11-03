@@ -116,7 +116,7 @@ print(f"Wrote {OUT}")
 # Print diff against what is in macros.tex
 print("\n=== Values vs macros.tex entries ===")
 import re
-macros_tex = (REPO / "macros.tex").read_text(encoding="utf-8")
+macros_tex = (REPO / "macros" / "macros.tex").read_text(encoding="utf-8")
 checks = [
     ("RaspOptimal", rasp_opt),
     ("RaspLoss",    int(round(100-rasp_opt))),

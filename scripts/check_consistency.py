@@ -84,7 +84,7 @@ def run_all_checks(tex: str) -> list:
 # ── 0. macros_amplitudes.tex vs amplitudes.json ─────────────────────────────
 print("=== macros_amplitudes.tex vs amplitudes.json ===")
 amp_json_path = RESULTS / "amplitudes" / "amplitudes.json"
-macros_amp_path = ROOT / "macros_amplitudes.tex"
+macros_amp_path = ROOT / "macros" / "macros_amplitudes.tex"
 
 if amp_json_path.exists() and macros_amp_path.exists():
     import json as _json
@@ -1080,7 +1080,7 @@ print()
 print("=== A9: No duplicate macro definitions ===")
 import collections as _col
 _defs = _col.defaultdict(list)
-for _fname in ["main.tex", "macros.tex", "macros_amplitudes.tex", "macros_e6.tex", "macros_structural.tex"]:
+for _fname in ["main.tex", "macros/macros.tex", "macros/macros_amplitudes.tex", "macros/macros_e6.tex", "macros/macros_structural.tex"]:
     _fpath = ROOT / _fname
     if not _fpath.exists():
         continue
@@ -1120,7 +1120,7 @@ else:
 print()
 print("=== A10: EoneVloss == 100 - QtwovecOptimal ===")
 _macros_all = {}
-for _fname in ["macros.tex", "macros_amplitudes.tex", "macros_e6.tex",
+for _fname in ["macros/macros.tex", "macros/macros_amplitudes.tex", "macros/macros_e6.tex",
                "results/e1/e1_macros.tex"]:
     _fp = ROOT / _fname
     if _fp.exists():
@@ -1157,7 +1157,7 @@ _apc_json = RESULTS / "amplitudes" / "aspect_polecoding.json"
 if _apc_json.exists():
     import json as _json3
     _apc = _json3.loads(_apc_json.read_text(encoding="utf-8"))
-    _mac_tex = (ROOT / "macros.tex").read_text(encoding="utf-8")
+    _mac_tex = (ROOT / "macros" / "macros.tex").read_text(encoding="utf-8")
     def _read_macro(name, tex=_mac_tex):
         m = re.search(rf'\\newcommand\{{\\{name}\}}\{{([0-9.]+)\}}', tex)
         return float(m.group(1)) if m else None
@@ -1183,7 +1183,7 @@ print()
 print("=== C6: F8 alignment matrix — macros vs f8_circularity CSVs ===")
 _f8_vec_csv = RESULTS / "f8" / "f8_circularity.csv"
 _f8_mm_csv  = RESULTS / "f8" / "f8_circularity_mm.csv"
-_f8_tex     = ROOT / "macros_f8.tex"
+_f8_tex     = ROOT / "macros" / "macros_f8.tex"
 if _f8_vec_csv.exists() and _f8_mm_csv.exists() and _f8_tex.exists():
     import pandas as _pd2
     import json as _json4
@@ -1229,7 +1229,7 @@ else:
 # Both measure the same thing: SAW/vec score, mm frontier, optimal assembly.
 print()
 print("=== C0 invariant: FEightMmVecOptQ == QtwovecOptimal ===")
-_main_macro_tex = (ROOT / "macros.tex").read_text(encoding="utf-8")
+_main_macro_tex = (ROOT / "macros" / "macros.tex").read_text(encoding="utf-8")
 def _main_macro(name):
     m = re.search(rf'\\newcommand\{{\\{name}\}}\{{([0-9.]+)\}}', _main_macro_tex)
     return float(m.group(1)) if m else None
@@ -1357,8 +1357,8 @@ def _get_Q(macros_text, name):
     return float(m.group(1)) if m else None
 
 try:
-    _macros_text = (ROOT / "macros.tex").read_text(encoding="utf-8")
-    _macro_amp_text = (ROOT / "macros_amplitudes.tex").read_text(encoding="utf-8")
+    _macros_text = (ROOT / "macros" / "macros.tex").read_text(encoding="utf-8")
+    _macro_amp_text = (ROOT / "macros" / "macros_amplitudes.tex").read_text(encoding="utf-8")
     _all_macros = _macros_text + _macro_amp_text
     for _k, _suffix, _lo_mac, _hi_mac, _agg_mac, _ci_lo, _ci_hi in [
         ("200", "", "AggLo", "AggHi", "AggContrast", -2.5, 2.5),
@@ -1429,7 +1429,7 @@ else:
 print()
 print("=== E7: gates and macro cross-check ===")
 _e7_raw = RESULTS / "e7" / "e7_raw.csv"
-_e7_macros = ROOT / "macros_e7.tex"
+_e7_macros = ROOT / "macros" / "macros_e7.tex"
 if _e7_raw.exists() and _e7_macros.exists():
     import re as _re_e7
     import pandas as _pd_e7
