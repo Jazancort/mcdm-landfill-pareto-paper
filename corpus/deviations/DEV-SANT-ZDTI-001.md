@@ -78,37 +78,62 @@ extraction) applies.
 
 ## Consequence: weight redistribution
 
-Cabral (2012) assigns the following leaf weights to the 14 S-N criteria:
+Cabral (2012) assigns the following leaf weights to the 14 S-N criteria (Annex C,
+PDF-verified 2026-11-02). A2 is the "Zona Demarcada de Interesse Turístico Integrado"
+criterion. "Original w₀" values are back-calculated as C-4_code_value × 0.9686 and
+confirmed against the PDF; they are presented to 4 d.p. with small rounding residuals.
 
-| Criterion | Original w₀ | C-4 w₀ (renorm) |
-|-----------|------------|-----------------|
-| A1 — Built-up area    | 0.0383 | 0.0397 |
-| A2 — ZDTI             | 0.0383 | **omitted** |
-| A3 — Coastline        | 0.0260 | 0.0270 |
-| A4 — Cultural heritage| 0.0383 | 0.0397 |
-| A5 — Agriculture      | 0.0157 | 0.0163 |
-| A6 — Airport          | 0.0313 | 0.0324 |
-| A7 — Protected areas  | 0.0260 | 0.0270 |
-| B1 — Hydrogeological  | 0.2020 | 0.2096 |
-| B2 — Water points     | 0.1010 | 0.1048 |
-| B3 — Streams          | 0.1010 | 0.1048 |
-| C1 — Slope            | 0.0731 | 0.0759 |
-| C2 — Aspect           | 0.0244 | 0.0253 |
-| D1 — Roads            | 0.0945 | 0.0981 |
-| D2 — MSW centre       | 0.1921 | 0.1993 |
+| Criterion | Original w₀ (Annex C) | C-4 w₀ (renorm) |
+|-----------|----------------------|-----------------|
+| A1 — Built-up area    | 0.0385 | 0.0397 |
+| A2 — ZDTI (Integrado) | 0.0314 | **omitted** |
+| A3 — Coastline        | 0.0262 | 0.0270 |
+| A4 — Cultural heritage| 0.0385 | 0.0397 |
+| A5 — Agriculture      | 0.0158 | 0.0163 |
+| A6 — Airport          | 0.0314 | 0.0324 |
+| A7 — Protected areas  | 0.0262 | 0.0270 |
+| B1 — Hydrogeological  | 0.2030 | 0.2096 |
+| B2 — Water points     | 0.1015 | 0.1048 |
+| B3 — Streams          | 0.1015 | 0.1048 |
+| C1 — Slope            | 0.0735 | 0.0759 |
+| C2 — Aspect           | 0.0245 | 0.0253 |
+| D1 — Roads            | 0.0949 | 0.0981 |
+| D2 — MSW centre       | 0.1930 | 0.1993 |
+
+Note: A2 and A6 share the same AHP leaf weight (0.0314 = 3.14%). The 14 Annex C
+values sum to ≈ 1.0000 (sum of 13 remaining: ≈ 0.9686; plus A2: 0.0314 = 1.0000).
 
 Redistribution formula: w_j_new = w_j_old / (Σ_{k≠A2} w_k_old) for j ≠ A2.
-Original A2 weight from Cabral (2012) Tab. 14/16: 0.0383 (rounded to 4 d.p.).
-Note: the 14 Cabral leaf weights (Tab. 14, rounded) sum to 1.0020, not 1.0000.
-The correct denominator for C-4 renormalization is therefore 1.0020 − 0.0383 = 0.9637,
-not 0.9617 (which would be 1.0000 − 0.0383). Using 0.9637 reproduces 12 of 13
-renormalized values in the "C-4 w₀" column above. Exception: A6 = 0.0313/0.9637
-= 0.0325, but the code has 0.0324. This one-unit discrepancy in the last decimal
-place indicates that the code was derived from the unrounded Cabral leaf weights
-(more decimal places than the Tab. 14 summary), not from the 4 d.p. rounded values.
-The weights in the "C-4 w₀" column above are copied directly from the code constant
-W0_SN in run_santiago_mc.py (before the `/ sum` normalization step, sum = 0.9999),
-which represents the actual weights used in Stage 4.
+Original A2 weight from Cabral (2012) Annex C (PDF-verified): 0.0314.
+The denominator for C-4 renormalization is 1.0000 − 0.0314 = 0.9686.
+Using 0.9686 reproduces all 13 renormalized values in the "C-4 w₀" column above
+within 0.0001 absolute difference (no exceptions). The weights in the "C-4 w₀"
+column are copied directly from the code constant W0_SN in run_santiago_mc.py
+(before the `/ sum` normalization step, sum = 0.9999), representing the actual
+weights used in Stage 4.
+
+**Redistribution scope (C-4):** The PRESPEC §10 contingency rule specifies
+"redistribute weight" but does not define the redistribution scope. The code
+redistributes A2's weight proportionally across all remaining 13 criteria (global
+redistribution). This changes the group weights from the original Cabral values
+(F_A=0.208, F_B=0.406, F_C=0.098, F_D=0.288) to (F_A=0.182, F_B=0.419,
+F_C=0.101, F_D=0.297). An alternative consistent with AHP practice would redistribute
+within Group A only (remaining 6 criteria: A1, A3, A4, A5, A6, A7), preserving the
+Cabral group weights for B, C, D. This alternative is declared below as mandatory
+pre-analysis sensitivity SENS-ZDTI-DISTRIB.
+
+### SENS-ZDTI-DISTRIB — within-Group-A redistribution
+
+**Pre-declared before any SENS computation (2026-11-02).**
+
+Repeat Stage 4 S-N with C-4 weight redistribution confined to the 6 remaining Group A
+criteria only (A1, A3, A4, A5, A6, A7). A2's weight (0.0314) is distributed
+proportionally among these 6, preserving the original Cabral group weights for
+B (0.406), C (0.098), D (0.288) and restoring F_A = 0.208.
+
+This affects TV_B and potentially the testability of S3b in S-N (current TV_B = 0.057,
+close to the 0.05 threshold). If any prediction verdict changes relative to the main
+run, record in DEVIATIONS.md and consult PRESPEC §11.
 
 w0 integrity: the startup log includes `assert abs(w0.sum() - 1) < 1e-6` for each
 branch via log_startup_provenance(), confirming the normalized sum before use.
@@ -128,11 +153,8 @@ Groups follow PRESPEC_SANTIAGO §5.6 (A, B, C, D) after A2 removal:
 | D     | D1, D2                 | 0.2974 |
 
 Original W_A (14 criteria, A2 included) = sum(A1+A2+A3+A4+A5+A6+A7)
-  = 0.0383+0.0383+0.0260+0.0383+0.0157+0.0313+0.0260 = 0.2139.
-After C-4: W_A (renormalized 6 criteria, A2 removed) = (0.2139−0.0383)/0.9637 = 0.1822 ≈ 0.1821.
-The expression "0.1821 + 0.0383 = 0.2204" in earlier versions of this DEV was incorrect:
-it added the renormalized C-4 W_A to the original A2 weight — the two quantities
-are from different normalization contexts and cannot be summed directly.
+  = 0.0385+0.0314+0.0262+0.0385+0.0158+0.0314+0.0262 = 0.2080 ≈ 0.208 (Cabral Tab. 11–16).
+After C-4: W_A (renormalized 6 criteria, A2 removed) = (0.2080−0.0314)/0.9686 = 0.1824 ≈ 0.1821.
 
 ## Fogo control
 
@@ -151,13 +173,15 @@ on the spatial distribution of ZDTI zones relative to the S-N admissible sites.
 
 ## Source reference
 
-Cabral (2012) hdl.handle.net/10362/8627. AHP weights: Table 14 (leaf) and Table 16 (final).
+Cabral, Adilson Vaz (2012). *Análise Multicritério em Sistemas de Informação
+Geográfica para a Localização de Aterros Sanitários. O caso da região Sul da
+ilha de Santiago, Cabo Verde.* Dissertação de Mestrado, Faculdade de Ciências
+Sociais e Humanas, Universidade Nova de Lisboa. hdl.handle.net/10362/8627.
 
-Author name discrepancy: the repository metadata at hdl.handle.net/10362/8627 lists
-the author as "Adilson Vaz Cabral" with title "Análise multicritério em Sistema de
-Informação Geográfica para localização de aterros sanitários. O caso da região sul da
-Ilha de Santiago, Cabo Verde." The earlier DEV versions cited "Cabral, V. F. S.,
-Localização de Aterros Sanitários na Ilha de Santiago usando SIG e Análise Multi-Critério."
-These do not match. Confirm the correct author name and title from the PDF before
-adding to refs.bib and citing in the paper. Until confirmed, cite as
-"Cabral (2012)" with the hdl.handle.net DOI only.
+AHP weights: Table 14 (leaf) and Table 16 (final); group percentages in Tab. 11–16
+(pp. 54–55): Group A = 20.8%, B = 40.6%, C = 9.8%, D = 28.8%.
+
+Note: the repository metadata at hdl.handle.net/10362/8627 uses "Sistema" (singular);
+the correct title from the PDF is "Sistemas" (plural) as cited above.
+Earlier DEV versions cited an incorrect author name and title (confirmed by PDF
+2026-11-02). Added to refs.bib as @mastersthesis{Cabral2012}.

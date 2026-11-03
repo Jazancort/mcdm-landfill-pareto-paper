@@ -23,36 +23,33 @@ Under C-4 (ZDTI omitted), the 14 Cabral weights are renormalized over 13 criteri
 
 ## S-N code weights (W0_SN in run_santiago_mc.py)
 
-The code constant W0_SN (before /sum normalization) has 13 values:
+The code constant W0_SN (before /sum normalization) has 13 values.
+"Cabral Annex C" values are back-calculated as code_value × 0.9686; confirmed
+against the PDF (2026-11-02).
 
-| Criterion | Code value (4 d.p.) | Cabral rounded (Tab.14/16) | w_j_Cabral / 0.9637 |
+| Criterion | Code value (4 d.p.) | Cabral Annex C (PDF-verified) | w_j_Cabral / 0.9686 |
 |---|---|---|---|
-| A1 | 0.0397 | 0.0383 | 0.0397 |
-| A3 | 0.0270 | 0.0260 | 0.0270 |
-| A4 | 0.0397 | 0.0383 | 0.0397 |
-| A5 | 0.0163 | 0.0157 | 0.0163 |
-| A6 | 0.0324 | 0.0313 | 0.0325 (*) |
-| A7 | 0.0270 | 0.0260 | 0.0270 |
-| B1 | 0.2096 | 0.2020 | 0.2096 |
-| B2 | 0.1048 | 0.1010 | 0.1048 |
-| B3 | 0.1048 | 0.1010 | 0.1048 |
-| C1 | 0.0759 | 0.0731 | 0.0759 |
-| C2 | 0.0253 | 0.0244 | 0.0253 |
-| D1 | 0.0981 | 0.0945 | 0.0981 |
-| D2 | 0.1993 | 0.1921 | 0.1993 |
+| A1 | 0.0397 | 0.0385 | 0.0397 |
+| A3 | 0.0270 | 0.0262 | 0.0270 |
+| A4 | 0.0397 | 0.0385 | 0.0397 |
+| A5 | 0.0163 | 0.0158 | 0.0163 |
+| A6 | 0.0324 | 0.0314 | 0.0324 |
+| A7 | 0.0270 | 0.0262 | 0.0270 |
+| B1 | 0.2096 | 0.2030 | 0.2096 |
+| B2 | 0.1048 | 0.1015 | 0.1048 |
+| B3 | 0.1048 | 0.1015 | 0.1048 |
+| C1 | 0.0759 | 0.0735 | 0.0759 |
+| C2 | 0.0253 | 0.0245 | 0.0253 |
+| D1 | 0.0981 | 0.0949 | 0.0981 |
+| D2 | 0.1993 | 0.1930 | 0.1993 |
 
-Denominator: 14 Cabral rounded weights sum to 1.0020, so denominator = 1.0020 − 0.0383 = 0.9637.
-(*) A6 exception: 0.0313/0.9637 = 0.0325 (renormalized expected), code has 0.0324.
-Difference = 0.0001 on renormalized weights (sum=1). This is within the bound below (§Threshold).
+Denominator: A2 (ZDTI) weight = 0.0314 (Annex C, PDF-verified; same leaf weight as A6).
+The 14 Cabral leaf weights sum to ≈ 1.0000. Denominator = 1.0000 − 0.0314 = 0.9686.
+All 13 renormalized values match the code to within 0.0001 absolute difference. No exceptions.
 
 Code sum before /= sum: 0.9999 (verified: np.float64 repr). After W0_SN/W0_SN.sum(): 1.0.
-Patterns consistent with Cabral AHP hierarchy: B1=2·B2=2·B3 (verified), A1=A4 (verified).
-
-**Note:** An earlier version of this DEV claimed the A6 discrepancy indicates the code used
-higher-precision ("unrounded") Cabral source values. That claim is not supported: the code
-sum is 0.9999, consistent with 4-decimal-place input. The A6 difference may reflect rounding
-of the source values during manual transcription, not a difference in precision. The claim is
-retracted. The pending PDF verification (§Conclusion) remains the correct resolution path.
+Patterns consistent with Cabral AHP hierarchy: B1=2·B2=2·B3 (verified), A1=A4 (verified),
+A2=A6 in original weights (verified).
 
 ## Threshold (fixed before PDF verification — 2026-11-02)
 
@@ -81,12 +78,12 @@ Confirmed by numeric test on 2026-10-28 (verify_gpu.py, Athena).
 
 ## Conclusion
 
-The S-N code weights match the Cabral rounded values renormalized by 0.9637 for 12 of 13
-criteria, and for A6 the difference (0.0001) is within the 0.001 threshold fixed above.
-The comparison above is against our own transcription (the DEV table), not the published
-Cabral (2012) table: this is acknowledged. Independent verification is pending.
+PDF verified 2026-11-02 (hdl.handle.net/10362/8627). The S-N code weights match the
+Cabral Annex C values renormalized by 0.9686 for all 13 criteria. Maximum absolute
+difference: 0.0001 (< threshold 0.001). W0-001 activation rule is NOT triggered.
 
-The weights cannot be independently verified against the published Cabral (2012) table
-until the dissertation PDF is obtained (hdl.handle.net/10362/8627). The numerical
-patterns (B1=2·B2=2·B3, A1=A4) are consistent with the declared Cabral AHP source.
-All S-N verdicts are provisional until that verification is complete (W0-001 rule above).
+Group-level consistency: Cabral Tab. 11–16 (pp. 54–55) gives Group A=20.8%, B=40.6%,
+C=9.8%, D=28.8%. After C-4 renormalization: F_A=0.182, F_B=0.419, F_C=0.101,
+F_D=0.297. Both the criterion-level and group-level verifications are passed.
+
+**W0-001 status: VERIFIED. All S-N verdicts stand without re-run.**

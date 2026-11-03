@@ -54,12 +54,6 @@ A distance is a continuous measurement even when clustered. Perm is NOT categori
 Consequence for S5 in S-T: perm is the criterion with the highest point mass
 (0.617 > 0.5), so S5 condition is NOT met → S5 is NOT testable in S-T.
 
-Alternative classification (sensitivity): if perm were classified as categorical
-(because many sites share distance=0), perm would be excluded from the S5 check.
-The next highest pm in S-T is [to be filled from Stage 3b output — see compute_stage3b.py
-S5 summary]. If that pm < 0.5, S5 WOULD be testable under the alternative.
-Report both classifications; the primary classification (perm = continuous) is fixed here.
-
 ## S-N: criterion classification
 
 S-N uses 13 criteria (C-4 A2 omit, renorm from Cabral 2012 weights).

@@ -81,18 +81,16 @@ Operationalisation:
 
 ## Justification from source
 
-Cabral (2012) hdl.handle.net/10362/8627, p. 63: "Áreas de Regadio (buffer de
-proteção de 500 m)".
+Cabral (2012) hdl.handle.net/10362/8627, p. 61. The text establishes: "as áreas de
+protecção agrícola abrangem os solos com aptidão para a prática da agricultura de
+regadio", and alínea a) declares the value 0 for "dentro destas áreas, assim como a
+área envolvente (500 m)". This justifies both the class selection (Regadios only) and
+the SENS-AGR-BUF sensitivity (500 m buffer operationalisation of Cabral's rule).
 
-Note: the author's name in the repository metadata is "Adilson Vaz Cabral" with
-title "Análise multicritério em Sistema de Informação Geográfica para localização
-de aterros sanitários. O caso da região sul da Ilha de Santiago, Cabo Verde." This
-does not match the DEV-SANT-ZDTI-001 citation ("Cabral, V. F. S., Localização de
-Aterros Sanitários…"). The correct author name and title need to be confirmed
-against the dissertation PDF before submission and updated in refs.bib.
-
-Page 63 and Table 18 citations have not been independently verified against the
-PDF (access to hdl.handle.net/10362/8627 is not automated). Confirm before submission.
+Note: p. 63 treats the aerodrome (A6); Tab. 18 (p. 57) is the general distance
+classification table — neither contains the agriculture text. Earlier versions of
+this DEV cited "p. 63" and "Tab. 18" for A5; both were incorrect. Citation confirmed
+from PDF (2026-11-02). Author and full title: see refs.bib Cabral2012.
 
 ## Applicability to S-T branch
 
