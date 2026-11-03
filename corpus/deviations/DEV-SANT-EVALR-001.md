@@ -165,3 +165,31 @@ Full SHA-256 constants for the 4 sealed Stage 4 prediction CSVs added to
 `evaluate_santiago_predictions.py` as `SHA_SEALED` dict. Gate 3 now verifies these
 SHAs before reading the CSVs. The JSON output includes `provenance.sealed_csvs` with
 SHA-256 hashes verified at run time.
+
+### ER-7: Fogo E1-B zero-regret fraction corrected from 28% to 35.4% (2026-11-03)
+
+**Previous value**: `\RegretEoneBfracZero{28}` = 28% = 140/500 draws.
+
+**Correct value**: 177/500 = 35.4% — verified by `_count_e1b_zeros.py` on Athena
+(commit `56dc283`) with all 5 criteria simultaneously:
+
+| Criterion | Count / 500 |
+|---|---|
+| `R_vals == 0.0` (exact, pp) | 177 |
+| `R_vals < 1e-12` pp | 177 |
+| `R_vals < 1e-9` pp | 177 |
+| `round(R_vals, 2) == 0.00` | 177 |
+| `opt_e1b_idx == opt_mm_idx` (trio = t*) | 177 |
+
+All criteria agree. The 140 was never produced by `_compute_e1_regret.py` — that script
+ends at line 193 without printing the fraction. The value 28% was written manually,
+probably from a version using the E1-ABAR bug (per-draw amplitudes instead of fixed w0).
+
+**Impact**:
+- `regret_macros.tex` line 41 must be updated: `\RegretEoneBfracZero{35}` (35% = 177/500)
+- PRESPEC_SANTIAGO.md §S7a: "28% of draws R = 0" → "35% of draws R = 0"
+- Gate 1 expected: `n_e1b_zero != 177` (corrected from 140)
+- S7a `frac_R_e1b_zero` in JSON output: 0.354 (not 0.28)
+
+**Evidence**: `results/regret/e1b_R_pp_oracle_rerun.npy` (saved on Athena, commit `56dc283`).
+Mean R_e1b = 4.5275 pp matches oracle macro 4.53 pp to 2 decimal places.
