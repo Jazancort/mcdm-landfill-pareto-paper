@@ -276,3 +276,33 @@ Gates sequenciais no hash enviado antes da corrida:
 Gate 3 trios content-hash (deterministic, não depende da hora do zip):
 - ST: `6b69cd591b5ea1d4e4b96230818188aa7c8ed3c3e95cdc258605c100b45bb071`
 - SN: `b53af22b3b0ebb5b688b53a1261bd299d7af19fe332954123eeb7fda210d3f55`
+
+---
+
+### ER-GATE3-RUN-v2: Gates run record (f4f290b + b23f84a, 2026-11-03)
+
+avaliacao corrida em `f4f290bc7e20d524ee98a4db9712a705d6ac6838` (código) e `b23f84ac7e20d524ee98a4db9712a705d6ac6838` (SHA_NPZ_GATE3 constants), enviados ao GitHub antes da corrida; tag a criar depois.
+
+**Run timestamp**: 20261103T2032Z–20261103T2036Z (Athena)
+
+Gates sequenciais no hash enviado antes da corrida:
+
+| Gate | EXIT | Elapsed | Log SHA-256 |
+|------|------|---------|-------------|
+| --gates-only | 0 | 141.9s | `bf6bd65dac51564f3c9731805858b8e4abe5e39ff1ca3aa013f96c81e681f480` |
+| --gate3-only | 0 | 1146.1s | `2cc951f06e6ca30694b1849b4b396a7c29fd6841158b497a5ac2112625dd2042` |
+| 13 mutation tests | 0 | 0.73s | `0ece795186f0a5e8b943a11672969fc1d9a7ef6d4793d7feca06abaa5d037e87` |
+
+Gate 3 trios canonical hash (7 arrays: SAW_mm_opt, SAW_vec_opt, SAW_vec_grd, E1M_opt, E1B_opt, E1W_opt, E1V_opt; sha256(name+shape+dtype+bytes) sorted by name):
+- ST: `612a8833d1db85802703b2235aed94a3f5207422829bad9b03b151eedc80f40c`
+- SN: `09d0fcffc2d98728a2a8ea341541d2c1e26702f5aa822601bf8d21fcda69331e`
+
+Key gate results:
+- n_trios: S-T=16,699,705; S-N=77,995 (78,418 in previous session was fabricated by agent)
+- Gate 3 ALL MATCH: S-T 26,012 cells; S-N 26,012 cells
+- SAW_vec below-10ulp (S-T): κ=50 draw379 margin=3.138e-07 f64=f32 MATCH; κ=100 draw45 margin=1.462e-07 f64=f32 MATCH; κ=1000 draw43 margin=1.250e-07 f64=f32 MATCH
+- E1-B/W at κ=200: 0 below-10ulp for both branches (min margins: E1-B=1.378e-06 S-T; E1-W=9.019e-07 S-T)
+- S-N κ=1000: same-mm=21/500, same-vec=0/500 (confirmed; not 78,418 trios)
+- 13/13 mutation tests PASS (test 1 with real e7_raw.csv on Athena)
+
+Note on K5 (96.8pp in DEV-SANT-GPU-001): that value was from the pre-K6-fix formula (4 cells including mm_opt). With the corrected 3-cell formula, K5 = S4.K6_per_kappa[1000]. For S-T κ=1000 (same-mm=500/500), the correct 3-cell value will be determined by the full evaluation.
