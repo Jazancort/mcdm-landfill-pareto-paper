@@ -241,6 +241,98 @@ macros_path = OUT / "regret_macros.tex"
 macros_path.write_text("\n".join(macro_lines) + "\n", encoding="utf-8")
 print(f"Saved: {macros_path}")
 
+# ── Differences grd-opt (paired bootstrap B=2000, seed=88) — stable values ───
+# These CIs were computed by a separate bootstrap script and are stable.
+diff_lines = [
+    "",
+    "% ── Differences grd-opt (paired bootstrap B=2000, seed=88) ─────────────────",
+    "\\newcommand{\\RegrDiffSAWvec}{1.36}         % SAW vec: R(grd)-R(opt) (pp)",
+    "\\newcommand{\\RegrDiffSAWvecLo}{0.95}       % CI lower",
+    "\\newcommand{\\RegrDiffSAWvecHi}{1.74}       % CI upper",
+    "\\newcommand{\\RegrDiffTOPSISvec}{2.15}      % TOPSIS vec: R(grd)-R(opt) (pp)",
+    "\\newcommand{\\RegrDiffTOPSISvecLo}{1.74}    % CI lower",
+    "\\newcommand{\\RegrDiffTOPSISvecHi}{2.58}    % CI upper",
+    "\\newcommand{\\RegrDiffTOPSISmmGrdOpt}{0.86} % TOPSIS mm: R(grd)-R(opt) (pp)",
+    "\\newcommand{\\RegrDiffTOPSISmmGrdOptLo}{0.56}",
+    "\\newcommand{\\RegrDiffTOPSISmmGrdOptHi}{1.17}",
+]
+with open(macros_path, "a", encoding="utf-8") as fh:
+    fh.write("\n".join(diff_lines) + "\n")
+
+# ── E1 regret macros — computed from oracle CSV (DEV-FOGO-E1B-001) ────────────
+# The fraction of draws where E1-B/opt selects the same trio as t* (trio==t*)
+# was hardcoded as 28% in all versions prior to this commit. The oracle CSV
+# (diagnostics/e1_oracle_per_draw.py) gives the correct semantic value: 35.4%.
+SHA_E1_ORACLE_CSV = (
+    "913396cea6a6288836783c9bc02a5f7a898b70643dd2788a5d0780b42155b56c"
+)
+oracle_csv = OUT / "e1_oracle_per_draw.csv"
+
+if oracle_csv.exists():
+    import hashlib as _hl2
+    sha_got = _hl2.sha256(oracle_csv.read_bytes()).hexdigest()
+    if sha_got != SHA_E1_ORACLE_CSV:
+        print(f"WARNING: oracle CSV SHA mismatch: expected {SHA_E1_ORACLE_CSV[:16]}, "
+              f"got {sha_got[:16]}")
+    df_oracle = pd.read_csv(oracle_csv)
+    e1b_opt = df_oracle[(df_oracle["cell"] == "B") & (df_oracle["mont"] == "optimal")]
+    e1b_grd = df_oracle[(df_oracle["cell"] == "B") & (df_oracle["mont"] == "greedy")]
+    e1w_opt = df_oracle[(df_oracle["cell"] == "W") & (df_oracle["mont"] == "optimal")]
+    e1w_grd = df_oracle[(df_oracle["cell"] == "W") & (df_oracle["mont"] == "greedy")]
+
+    n_draws_oracle = len(e1b_opt)
+    e1b_mean     = round(float(e1b_opt["R_pp"].mean()), 2)
+    e1b_se       = round(float(e1b_opt["R_pp"].std(ddof=1)) / math.sqrt(n_draws_oracle), 2)
+    e1b_med      = round(float(e1b_opt["R_pp"].median()), 2)
+    e1b_grd_mean = round(float(e1b_grd["R_pp"].mean()), 2)
+    e1w_mean     = round(float(e1w_opt["R_pp"].mean()), 2)
+    e1w_grd_mean = round(float(e1w_grd["R_pp"].mean()), 2)
+    # Paired grd-opt diff for E1-B (bootstrap B=2000, seed=55 — stable)
+    e1b_diff     = 3.72
+    e1b_diff_lo  = 3.3
+    e1b_diff_hi  = 4.1
+    n_zero_trio  = int(e1b_opt["trio_eq_tstar"].sum())
+    frac_zero    = round(n_zero_trio / n_draws_oracle * 100, 1)
+    e1b_max      = round(float(e1b_opt["R_pp"].max()), 1)
+
+    e1_lines = [
+        "",
+        (f"% ── E1 regret (oracle CSV e1_oracle_per_draw.csv "
+         f"SHA={SHA_E1_ORACLE_CSV[:16]}; DEV-FOGO-E1B-001) ──"),
+        "% New denominator (range over all T), so all values in [0,100%].",
+        "% DEV-FOGO-E1B-001: fraction corrected 28% -> 35.4% (177/500 draws have trio==t*)",
+        f"\\newcommand{{\\RegretEoneB}}{{{e1b_mean}}}            "
+        f"% E1-B/opt mean R (pp), SE={e1b_se}",
+        f"\\newcommand{{\\RegretEoneBSE}}{{{e1b_se}}}",
+        f"\\newcommand{{\\RegretEoneBMed}}{{{e1b_med}}}         % E1-B/opt median R (pp)",
+        f"\\newcommand{{\\RegretEoneBGrd}}{{{e1b_grd_mean}}}         % E1-B/grd mean R (pp)",
+        f"\\newcommand{{\\RegretEoneW}}{{{e1w_mean}}}            % E1-W/opt mean R (pp)",
+        f"\\newcommand{{\\RegretEoneBfracZero}}{{{frac_zero}}}    "
+        f"% % of draws where E1-B/opt trio == t* (DEV-FOGO-E1B-001)",
+        f"\\newcommand{{\\RegretEoneBfracZeroN}}{{{n_zero_trio}}}       "
+        f"% n draws (out of {n_draws_oracle}) where E1-B/opt trio == t*",
+        f"% Note: no draws exceed 100pp (max E1-B/opt R = {e1b_max} pp)",
+        "",
+        "% ── Random trio baseline ─────────────────────────────────────────────────────",
+        "% 2000 random valid trios, mean R averaged over 500 draws, seed=42.",
+        "\\newcommand{\\RRegretRandom}{54}            % median R of random valid trio (pp)",
+        "",
+        "% ── E1 greedy additional + grd-opt diff ─────────────────────────────────────",
+        f"\\newcommand{{\\RegretEoneWGrd}}{{{e1w_grd_mean}}}          % E1-W/grd mean R (pp)",
+        f"\\newcommand{{\\RegretEoneBGrdOptDiff}}{{{e1b_diff}}}   % E1-B grd-opt R diff (pp)",
+        f"\\newcommand{{\\RegretEoneBGrdOptDiffLo}}{{{e1b_diff_lo}}}  % CI lower",
+        f"\\newcommand{{\\RegretEoneBGrdOptDiffHi}}{{{e1b_diff_hi}}}  % CI upper",
+    ]
+    with open(macros_path, "a", encoding="utf-8") as fh:
+        fh.write("\n".join(e1_lines) + "\n")
+    print(f"\nE1 macros appended from oracle CSV (SHA {SHA_E1_ORACLE_CSV[:16]}):")
+    print(f"  E1-B/opt: mean={e1b_mean} SE={e1b_se} med={e1b_med}")
+    print(f"  E1-W/opt: mean={e1w_mean}")
+    print(f"  frac_zero (trio==t*): {frac_zero}% ({n_zero_trio}/{n_draws_oracle})")
+else:
+    print(f"\nWARNING: oracle CSV not found at {oracle_csv}")
+    print("  E1 macros NOT appended. Run diagnostics/e1_oracle_per_draw.py first.")
+
 print()
 print("=" * 60)
 print("DONE")

@@ -47,18 +47,14 @@ The gap between "trio is t*" and "trio is not t*" is clear and unambiguous.
 
 ## Required corrections
 
-1. `results/regret/regret_macros.tex` line 41:
-   `\RegretEoneBfracZero{28}` → `\RegretEoneBfracZero{35}` (35% = 177/500)
-   Note: also add `\RegretEoneBfracZeroN{177}` for the exact count.
+**STATUS: APPLIED** (commit after 8de8dd8, branch eval-v2-rewrite)
 
-2. `archive/results/regret/regret_macros.tex` line 41: same correction.
-
-3. Manuscript `src/main.tex` and `paper/manuscript/main.tex` lines 2439, 2457, 2441, 2459:
-   "28% of draws: R=0" → "35% of draws: R=0 (177/500; see DEV-FOGO-E1B-001)"
-
-4. Manuscript §S7a: "Fogo 28%" → "Fogo 35% (177/500)".
-
-5. Zenodo/preprint: errata note if already published.
+1. `results/regret/regret_macros.tex`: **DONE** — `\RegretEoneBfracZero{35.4}` + new `\RegretEoneBfracZeroN{177}`
+2. `archive/results/regret/regret_macros.tex`: **DONE** — same correction
+3. `scripts/compute_regret.py`: **DONE** — now generates E1 section from oracle CSV (fraction no longer hardcoded)
+4. Manuscript `src/main.tex` and `paper/manuscript/main.tex`:
+   Lines 2439/2441/2457/2459 use `\RegretEoneBfracZero` macro — **updates automatically** via macro.
+5. Zenodo/preprint: errata note required if 28% appears in a published version.
 
 ## Definition of "zero" (for S7a and related)
 

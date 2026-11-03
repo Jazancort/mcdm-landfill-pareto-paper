@@ -783,7 +783,7 @@ def gate_1_fogo_oracle() -> bool:
 
     FAILS if Fogo modules are not importable (no Windows fallback).
     FAILS if any per-draw R value differs > 1e-12 from oracle.
-    FAILS if n_e1b_zero count != 140 (exact, = 28% of 500 draws).
+    FAILS if n_e1b_zero count != 177 (trio==t* criterion = 35.4% of 500 draws; DEV-FOGO-E1B-001).
 
     SHA verification: full 64-char SHA-256 for both oracle files.
     """

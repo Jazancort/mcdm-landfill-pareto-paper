@@ -31,14 +31,16 @@
 \newcommand{\RegrDiffTOPSISmmGrdOptLo}{0.56}
 \newcommand{\RegrDiffTOPSISmmGrdOptHi}{1.17}
 
-% ── E1 regret (scripts/_compute_e1_regret.py, B=2000, seed=55) ───────────────
+% ── E1 regret (oracle CSV e1_oracle_per_draw.csv SHA=913396ce; DEV-FOGO-E1B-001) ──
 % New denominator (range over all T), so all values in [0,100%].
+% DEV-FOGO-E1B-001: fraction corrected 28% -> 35.4% (177/500 draws have trio==t*)
 \newcommand{\RegretEoneB}{4.53}            % E1-B/opt mean R (pp), SE=0.17
 \newcommand{\RegretEoneBSE}{0.17}
 \newcommand{\RegretEoneBMed}{5.50}         % E1-B/opt median R (pp)
 \newcommand{\RegretEoneBGrd}{8.25}         % E1-B/grd mean R (pp)
 \newcommand{\RegretEoneW}{6.47}            % E1-W/opt mean R (pp)
-\newcommand{\RegretEoneBfracZero}{28}      % % of draws where E1-B/opt = reference (R=0)
+\newcommand{\RegretEoneBfracZero}{35.4}    % % of draws where E1-B/opt trio == t* (DEV-FOGO-E1B-001)
+\newcommand{\RegretEoneBfracZeroN}{177}    % n draws (out of 500) where E1-B/opt trio == t*
 % Note: no draws exceed 100pp (max E1-B/opt R = 13.1 pp with new denominator)
 
 % ── Random trio baseline ─────────────────────────────────────────────────────

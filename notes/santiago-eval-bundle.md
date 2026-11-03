@@ -13,7 +13,7 @@ Propósito: tudo o que foi pedido para fazer S3a/S3b por regra, gate interno sor
 5. [gate_e1_fogo_v4.py — código completo + análise per-draw](#5-gate_e1_fogo_v4py)
 6. [git diff stage4-launch-r5 → stage4-e1fix2-sealed](#6-git-diff)
 7. [evaluate_santiago_predictions.py — código completo](#7-evaluate_santiago_predictionspy)
-8. [Regret oracle — 4.53 / 6.63 / 5.27 / 28%](#8-regret-oracle)
+8. [Regret oracle — 4.53 / 6.63 / 5.27 / 35.4%](#8-regret-oracle)
 9. [_compute_e1_regret.py — código completo](#9-_compute_e1_regretpy)
 10. [PRESPEC K-predictions (A5 §2)](#10-prespec-k-predictions)
 11. [DEV-SANT-E1-001](#11-dev-sant-e1-001)
@@ -114,7 +114,7 @@ Get-FileHash "results\santiago\mc_SN_e1_fix2.csv" -Algorithm SHA256
 | `evaluate_santiago_predictions.py` | ✓ `scripts/` | — | ver §7; atenção §16 |
 | `compute_regret.py` | ✓ `scripts/` | — | oracle em §8 |
 | `_compute_e1_regret.py` | ✓ `scripts/` | — | oracle em §9 |
-| `regret_macros.tex` | ✓ `results/regret/` | — | contém 4.53/28% |
+| `regret_macros.tex` | ✓ `results/regret/` | — | contém 4.53/35.4% (DEV-FOGO-E1B-001) |
 | `regret_aggregate.csv` | ✓ `results/regret/` | — | contém 6.63/5.27 |
 | `DEV-SANT-E1-001.md` | ✓ `corpus/deviations/` | — | ver §11 |
 | `DEV-SANT-GPU-001.md` | ✓ `corpus/deviations/` | — | ver §12 |
@@ -425,7 +425,7 @@ Origem dos quatro valores usados como gate de EVAL-R:
 | **4.53 pp** | `scripts/_compute_e1_regret.py` | `results/regret/regret_macros.tex` | `\RegretEoneB` (E1-B/opt mean R) |
 | **6.63 pp** | `scripts/compute_regret.py` | `results/regret/regret_aggregate.csv` | `\RegrSAWvecGrd` |
 | **5.27 pp** | `scripts/compute_regret.py` | `results/regret/regret_aggregate.csv` | `\RegrSAWvecOpt` |
-| **28%** | `scripts/_compute_e1_regret.py` | `results/regret/regret_macros.tex` | `\RegretEoneBfracZero` (draws com R=0 em E1-B/opt) |
+| **35.4%** | `oracle CSV e1_oracle_per_draw.csv` | `results/regret/regret_macros.tex` | `\RegretEoneBfracZero` (177/500 draws trio==t*; DEV-FOGO-E1B-001) |
 
 `regret_aggregate.csv` (confirmado):
 ```
@@ -450,7 +450,7 @@ Fórmula idêntica mas aplicada às 8 células E1 (M/B/W/V × greedy/optimal).
 1. Adaptar `compute_regret.py` para ler `mc_ST_raw.csv`
 2. Verificar que reproduz 6.63 / 5.27 no Fogo antes de correr no Santiago
 3. Adaptar `_compute_e1_regret.py` para E1 fix2 do Santiago
-4. Verificar 4.53 / 28% no Fogo
+4. Verificar 4.53 / 35.4% no Fogo (DEV-FOGO-E1B-001)
 
 ---
 
@@ -481,7 +481,7 @@ R in [0,1]; independent of which cells are compared.
 #   E1-V greedy: Q2=66.2  R=6.63 pp  ← oracle (igual a SAW/vec/grd)
 #   E1-V optimal: Q2=56.8 R=5.27 pp  ← oracle (igual a SAW/vec/opt)
 # Paired bootstrap B=2000, seed=55 → E1-B grd-opt = 3.72 pp [3.3, 4.1]
-# RegretEoneBfracZero = 28 (% de sorteios onde E1-B/opt R=0)
+# RegretEoneBfracZero = 35.4 (% de sorteios onde E1-B/opt trio==t*; DEV-FOGO-E1B-001: corrigido de 28)
 # RegretEoneB = 4.53 pp (média)
 ```
 
