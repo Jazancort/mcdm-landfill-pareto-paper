@@ -70,22 +70,39 @@ def _make_fake_results(branch: str, overrides: dict = None) -> dict:
 # ──────────────────────────────────────────────────────────────────────────────
 
 def test_mutation_1_k6_wrong_expected():
-    """K6 expected value alpha=200: -0.4 → -0.41 must cause gate_k6_fogo to FAIL."""
-    from santiago_eval_core import _agg_pooled3
+    """K6: expected value for alpha=200 changed -0.4 → -0.41 must raise RuntimeError."""
     E7_CSV = ROOT / "results" / "e7" / "e7_raw.csv"
     if not E7_CSV.exists():
         pytest.skip("e7_raw.csv not available on this machine")
 
     df = pd.read_csv(E7_CSV)
+    # Mutation: alpha=200 expected -0.4 → -0.41 (delta > TOL=0.05)
     bad_expected = {25: 21.10, 50: 20.40, 100: 9.30, 200: -0.41, 400: -5.70, 1000: -9.00}
     TOL = 0.05
+
+    CELLS_SAW  = [("saw","minmax","greedy"), ("saw","vector","greedy"),
+                  ("saw","vector","optimal")]
+    CELLS_TOPS = [("topsis","minmax","greedy"), ("topsis","vector","greedy"),
+                  ("topsis","vector","optimal")]
 
     with pytest.raises(RuntimeError, match="K6"):
         for kappa, expected in sorted(bad_expected.items()):
             grp = df[df["alpha"] == kappa]
             if grp.empty:
                 continue
-            got = round(float(_agg_pooled3(grp)), 2)
+            saw3 = sum(
+                grp[(grp["agg"] == ag) & (grp["norm"] == nm) & (grp["mont"] == mt)][
+                    "nd_Q2Ap"
+                ].mean()
+                for ag, nm, mt in CELLS_SAW
+            ) / 3 * 100
+            tops3 = sum(
+                grp[(grp["agg"] == ag) & (grp["norm"] == nm) & (grp["mont"] == mt)][
+                    "nd_Q2Ap"
+                ].mean()
+                for ag, nm, mt in CELLS_TOPS
+            ) / 3 * 100
+            got  = round(float(saw3 - tops3), 2)
             diff = abs(got - expected)
             if diff > TOL:
                 raise RuntimeError(
