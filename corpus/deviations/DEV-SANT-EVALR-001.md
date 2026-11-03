@@ -90,3 +90,78 @@ document to explicitly name the deviation (R=1−Q2 is wrong).
 
 The code in 12b57d3 introduced compute_value_regret_santiago() with the correct formula.
 The DEV in 36a2f1d documents that the formula was wrong in earlier versions.
+
+
+---
+
+## Errata — eval-v2-rewrite (2026-11-02, commits A–F on branch eval-v2-rewrite)
+
+### E1: Core module extracted (Commit A)
+
+`compute_value_regret_santiago()` (the original monolithic function) has been replaced by:
+
+- `scripts/santiago_eval_core.py`: pure function `compute_value_regret(X_mm, trios, D, rho_j, W_draws, w0, *, e1_fn, greedy_fn, label)` plus data loaders `load_fogo_data()` and `load_santiago_data(branch_key, kappa)`.
+- `compute_value_regret_santiago(branch_key, kappa)` in `evaluate_santiago_predictions.py` is now a thin wrapper calling the core.
+- Gate 1 uses `load_fogo_data() + compute_value_regret()` directly (non-circular: no `_fogo_override`).
+
+### E2: Precision contract (Commits A, F)
+
+Two precisions are used inside `compute_value_regret()`:
+
+| Quantity | Precision | Rationale |
+|---|---|---|
+| V_all (SAW_mm per trio) | float32 | Matches original GPU path of run_santiago_mc.py |
+| V_vec (SAW_vec per trio for opt_vec_idx) | float64 | Matches Fogo CPU path of compute_regret.py |
+| R values stored | float64 | Accumulator precision |
+
+The GPU path of run_santiago_mc.py uses float32 for V_vec (wf_gpu). This creates a
+potential discrepancy between opt_vec_idx computed in `compute_value_regret()` (float64)
+and the opt_vec_idx that generated the sealed Santiago CSV (float32 GPU).
+
+**Unresolved pending Athena verification**: the actual precision of run_santiago_mc.py
+GPU path and compute_regret.py Fogo path must be confirmed by reading those files on
+Athena. If run_santiago_mc.py GPU uses float32 for V_vec, Gate 4a identity may fail
+for draws where float32 vs float64 argmax differs. This must be investigated before
+merging to main.
+
+**Gate 1 tolerance**: TOL_DRAW = 1e-12 applies to R(SAW_vec_grd) and R(SAW_vec_opt)
+against regret_perdraw.csv. If Fogo compute_regret.py uses float64 for V_vec (CPU path),
+the tolerance is correct. If the actual diff exceeds 1e-12, the tolerance must be derived
+from float32 eps × expected_R (approximately 1e-8 for R ~ 0.05) and declared here
+before running — not chosen after a failure.
+
+### E3: Gate 3 coverage (Commits C, F)
+
+Gate 3 now verifies all 500 draws (n_check=500 by default). The original stub
+(n_check=10) was insufficient per spec §3 (draw-by-draw, zero differences).
+
+Gate 3 is CPU-only in the current implementation. For S-T (16.7M trios), this requires
+GPU path via `_f_trios_gpu` from run_santiago_mc.py. Without GPU, S-T Gate 3 will be
+very slow. Gate 3 must run on Athena.
+
+Trios SHA-256[:16] will be printed at runtime; record here after the first successful run.
+
+### E4: Gate 4d — E1-V ≡ SAW_vec (Commit D)
+
+The Gate 4d assertion `opt_e1v_idx == opt_vec_idx` is NOT tautological. V_e1v uses
+`float64(X_trio) @ float64(rho_j * w)` while V_vec_trios_f64 uses
+`float32(X_trio * rho_j) @ float64(w)`. Different precision at intermediate products.
+Can disagree for draws with V_mm margins near float32 eps (~1.19e-7).
+
+The 500/500 Q2 match in sealed CSV supports the identity but does not prove trio-level
+identity (two distinct non-dominated trios could both have Q2=1). The trio-level check
+in Gate 4d is stronger.
+
+### E5: S7a pass criterion (Commit F)
+
+Pre-registered rule (eval-r-spec.md §5): "confirmed if CI_lo > 0 AND n_nonzero >= 4."
+The code before Commit F used only `lo7a > 0`, missing the `n_nonzero >= 4` condition.
+Corrected in Commit F. The decision variable `p7a` (one-sided bootstrap p-value) has
+been restored as a named variable and stored in the output dict for transparency.
+
+### E6: Sealed CSV SHA constants (Commit F)
+
+Full SHA-256 constants for the 4 sealed Stage 4 prediction CSVs added to
+`evaluate_santiago_predictions.py` as `SHA_SEALED` dict. Gate 3 now verifies these
+SHAs before reading the CSVs. The JSON output includes `provenance.sealed_csvs` with
+SHA-256 hashes verified at run time.
