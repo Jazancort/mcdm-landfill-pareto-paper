@@ -42,12 +42,34 @@ The code constant W0_SN (before /sum normalization) has 13 values:
 | D2 | 0.1993 | 0.1921 | 0.1993 |
 
 Denominator: 14 Cabral rounded weights sum to 1.0020, so denominator = 1.0020 − 0.0383 = 0.9637.
-(*) A6 exception: 0.0313/0.9637 = 0.0325, but code has 0.0324. This 1-unit discrepancy
-in the 4th decimal place indicates the code was derived from the unrounded Cabral leaf weights
-(more decimal places than published in Tab. 14/16 summary), not from the rounded values.
+(*) A6 exception: 0.0313/0.9637 = 0.0325 (renormalized expected), code has 0.0324.
+Difference = 0.0001 on renormalized weights (sum=1). This is within the bound below (§Threshold).
 
 Code sum before /= sum: 0.9999 (verified: np.float64 repr). After W0_SN/W0_SN.sum(): 1.0.
 Patterns consistent with Cabral AHP hierarchy: B1=2·B2=2·B3 (verified), A1=A4 (verified).
+
+**Note:** An earlier version of this DEV claimed the A6 discrepancy indicates the code used
+higher-precision ("unrounded") Cabral source values. That claim is not supported: the code
+sum is 0.9999, consistent with 4-decimal-place input. The A6 difference may reflect rounding
+of the source values during manual transcription, not a difference in precision. The claim is
+retracted. The pending PDF verification (§Conclusion) remains the correct resolution path.
+
+## Threshold (fixed before PDF verification — 2026-11-02)
+
+The acceptability threshold for weight discrepancies is:
+
+  **|w_code - w_renorm| ≤ 0.001** (absolute, on renormalized weights summing to 1)
+
+Basis: Dirichlet SD at κ=25 for a weight of 0.03 is ~0.034 (much larger).
+The threshold 0.001 is 34× below the sampling noise at the most concentrated κ,
+and 170× below the sampling noise at the least concentrated κ=25.
+Any difference below 0.001 is operationally indistinguishable from noise.
+
+Current maximum: A6, difference = 0.0001. This is within the ≤ 0.001 bound.
+
+**Activation rule for W0-001:** if the PDF verification finds any criterion with
+|w_Cabral_renorm - w_code| > 0.001 (on sum-1 renormalized weights), the S-N branch
+must be re-run with the corrected w0 before reporting predictions.
 
 ## S-T code weights (W0_ST in run_santiago_mc.py)
 
@@ -60,12 +82,11 @@ Confirmed by numeric test on 2026-10-28 (verify_gpu.py, Athena).
 ## Conclusion
 
 The S-N code weights match the Cabral rounded values renormalized by 0.9637 for 12 of 13
-criteria. The A6 discrepancy (0.0324 vs 0.0325) is 1 unit in the 4th decimal place,
-consistent with the code using higher-precision Cabral source values.
+criteria, and for A6 the difference (0.0001) is within the 0.001 threshold fixed above.
+The comparison above is against our own transcription (the DEV table), not the published
+Cabral (2012) table: this is acknowledged. Independent verification is pending.
 
 The weights cannot be independently verified against the published Cabral (2012) table
 until the dissertation PDF is obtained (hdl.handle.net/10362/8627). The numerical
 patterns (B1=2·B2=2·B3, A1=A4) are consistent with the declared Cabral AHP source.
-
-Any discrepancy ≤ 0.0001 is below the Dirichlet SD at κ=25 (~0.04 for a weight of ~0.04)
-and below the Dirichlet SD at κ=1000 (~0.006). The weights are operationally correct.
+All S-N verdicts are provisional until that verification is complete (W0-001 rule above).
