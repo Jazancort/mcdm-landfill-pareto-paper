@@ -163,6 +163,17 @@ def compute_value_regret(
         if margin < min_v_margin_mm:
             min_v_margin_mm = margin
 
+        # Gate 4a ULP check: if margin < 10 ulps of float32, re-verify argmax in float64
+        _ULP_F32 = np.finfo(np.float32).eps  # 1.19e-7
+        if margin < 10 * _ULP_F32:
+            V_all_f64 = (X_trio.astype(np.float64) * w).sum(1)
+            opt_mm_f64 = int(V_all_f64.argmax())
+            assert opt_mm_f64 == opt_mm_idx, (
+                f"[EVAL-R {label}] draw {di}: float32/float64 argmax DIFFER "
+                f"margin={margin:.3e} ({margin/_ULP_F32:.1f} ulps). "
+                "Tie in V_mm — investigate precision of run_santiago_mc.py GPU path."
+            )
+
         trio_idx_mm_opt[di] = opt_mm_idx
 
         # R_mm_opt: argmax -> V_all[opt_mm_idx] == v_max -> R == 0.0 exactly
@@ -218,12 +229,18 @@ def compute_value_regret(
             R_e1b_opt[di] = max(0.0, (v_max - float(V_all_f32[opt_e1b_idx])) / v_rng)
             R_e1w_opt[di] = max(0.0, (v_max - float(V_all_f32[opt_e1w_idx])) / v_rng)
 
-            # Gate 4d: E1-V ≡ SAW_vec (rho_V = rho_j, so V_e1v = V_vec_trios)
+            # Gate 4d: E1-V ≡ SAW_vec (rho_V = rho_j by E1-V definition)
+            # NOT tautological: V_e1v uses float64(X) @ float64(rho*w);
+            # V_vec_trios_f64 uses float32(X*rho) @ float64(w).
+            # Different precision at intermediate products; can disagree for
+            # margins near float32 eps (~1.19e-7). 500/500 draws confirmed in
+            # sealed CSV (Q2 comparison); trio identity is stronger than Q2.
             V_e1v       = X_trio.astype(np.float64) @ (rho_j.astype(np.float64) * w)
             opt_e1v_idx = int(np.argmax(V_e1v))
             assert opt_e1v_idx == opt_vec_idx, (
                 f"[EVAL-R {label}] Gate 4d draw {di}: "
-                f"E1-V opt trio {opt_e1v_idx} != SAW_vec opt trio {opt_vec_idx}"
+                f"E1-V opt trio {opt_e1v_idx} != SAW_vec opt trio {opt_vec_idx}. "
+                "Float32 rounding may have changed argmax — check margin for this draw."
             )
 
         if verbose and di % 100 == 0:

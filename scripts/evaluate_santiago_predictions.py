@@ -52,6 +52,13 @@ BOOTSTRAP_SEED = 20261104      # fixed per PRESPEC A5b; used for S6/S7 bootstrap
 SHA_REGRET_AGG     = "bc364ce312ce9772f06d41fc63f0fc0b0991f6cc8665a52d82515283df952bd1"
 SHA_MC_UNIFIED     = "b02df727"  # results/unified/mc_unified_raw.csv
 SHA_REGRET_PERDRAW = "282445c4b5c5ccd593963ae1073210385da465b93fa45408e97ba3f5c99201ca"
+# Sealed Stage 4 prediction CSVs (verified at commit stage4-results-sealed)
+SHA_SEALED = {
+    "mc_ST_raw.csv":      "123a5421d81b7bdd5d405ddb4a60edde1eeaa2f7da5cefbb640812aeed67bd80",
+    "mc_SN_raw.csv":      "dbfa2f00b6f3f98e3a900f9020f98ecb55ef98dfdeed199a334f7b299013d492",
+    "mc_ST_e1_fix2.csv":  "7806db5da3e78246e2707ef7df3e4980b445f9b7e04e751e65dbfeefd2b07507",
+    "mc_SN_e1_fix2.csv":  "357904c04d9d863b40c3cb448cb3b58e4615321cf5ac25f24c84a228312c1593",
+}
 
 
 def _agg_pooled3(grp: "pd.DataFrame") -> float:
@@ -90,25 +97,33 @@ def _holm(p_vals):
     return adjusted.tolist()
 
 
-def gate_3_q2_reconstruction(branch_key: str, n_check: int = 10) -> dict:
+def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
     """Gate 3: Reconstruct Q2 for 12 cells at κ=200; compare draw-by-draw to sealed CSV.
 
-    Uses canonical seeds + same MC functions that produced the sealed CSV.
-    Logs trios SHA and device. Returns {draw_idx: {cell: trio_idx}} for Gate 4a.
+    Verifies all 500 draws by default (spec §3: exact binary match, zero differences).
+    Logs trios SHA, device, and hash of trios per κ for Gate 4a audit trail.
 
-    Only runs in full evaluation mode (not --gates-only).
+    Returns {draw_idx: {cell: trio_idx}} for Gate 4a identity check.
     Raises RuntimeError on mismatch or if Santiago modules not importable.
+    Only runs in full evaluation mode or --gate3-only.
     """
     import hashlib as _hl
 
-    tag       = branch_key                   # "ST" or "SN"
-    raw_csv   = SEALED / f"mc_{tag}_raw.csv"
-    e1_csv    = SEALED / f"mc_{tag}_e1_fix2.csv"
-    label     = "S-T" if tag == "ST" else "S-N"
+    tag     = branch_key                   # "ST" or "SN"
+    raw_csv = SEALED / f"mc_{tag}_raw.csv"
+    e1_csv  = SEALED / f"mc_{tag}_e1_fix2.csv"
+    label   = "S-T" if tag == "ST" else "S-N"
 
+    # SHA verification of sealed CSVs (spec §3)
     for f in [raw_csv, e1_csv]:
-        if not f.exists():
-            raise RuntimeError(f"Gate 3 FAIL: {f.name} not found")
+        sha_exp = SHA_SEALED[f.name]
+        sha_got = _hl.sha256(f.read_bytes()).hexdigest()
+        if sha_got != sha_exp:
+            raise RuntimeError(
+                f"Gate 3 FAIL: {f.name} SHA mismatch.\n"
+                f"  expected {sha_exp}\n  got      {sha_got}"
+            )
+    print(f"  Sealed CSV SHA verified: {raw_csv.name}, {e1_csv.name}", flush=True)
 
     df_raw = pd.read_csv(raw_csv)
     df_e1  = pd.read_csv(e1_csv)
@@ -152,6 +167,7 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 10) -> dict:
 
     scorers_cpu = make_santiago_scorers(X_mm, rho_j)
     A_ones      = np.ones(len(w0))
+    X_trio_arr  = X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]  # (T, M)
 
     trio_indices: dict = {}   # {draw_idx: {"SAW_mm_opt": idx, ...}} for Gate 4a
     n_fail = 0
@@ -210,7 +226,6 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 10) -> dict:
 
         # E1 cells: M, B, W, V
         rho_B, rho_W = get_e1_amplitudes(rho_j, groups, w)
-        X_trio_arr   = X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]
         V_e1b = X_trio_arr @ np.asarray(rho_B, dtype=np.float64)
         V_e1w = X_trio_arr @ np.asarray(rho_W, dtype=np.float64)
         V_e1v = X_trio_arr @ (rho_j * w)                        # rho_V = rho_j
@@ -236,7 +251,8 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 10) -> dict:
                       flush=True)
                 n_fail += 1
 
-        print(f"  draw {di}: 12 cells OK", flush=True)
+        if di % 50 == 49 or di == n_check - 1:
+            print(f"  draws 0-{di}: OK so far (0 failures)", flush=True)
 
     if n_fail:
         raise RuntimeError(
@@ -251,7 +267,8 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 10) -> dict:
 def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
                     branch_regret: dict = None) -> dict:
     """Evaluate all S predictions for one branch.
-    branch_regret: dict from compute_value_regret_santiago(), or None (S6/S7 pending).
+    branch_regret: dict from compute_value_regret_santiago(), required for S6/S7.
+    Raises RuntimeError if branch_regret is absent and S6 is testable.
     """
     print(f"\n=== {branch} ===", flush=True)
     df  = pd.read_csv(raw_csv)
@@ -437,16 +454,19 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     testable_s7a = cond["TV_B"] >= 0.05
     R_e1b_pp = np.array(regret.get("R_e1b_opt_pp") or [])
     if testable_s7a and len(R_e1b_pp) == 500 and not np.isnan(R_e1b_pp).any():
-        zeros_e1b = np.zeros_like(R_e1b_pp)
-        _, lo7a, hi7a, _ = _bs_ci(R_e1b_pp, zeros_e1b, seed=70_000)
-        s7a_pass = testable_s7a and lo7a > 0
-        frac_zero_e1b = round(float((R_e1b_pp < 1e-12).mean()), 4)
+        zeros_e1b      = np.zeros_like(R_e1b_pp)
+        md7a, lo7a, hi7a, p7a = _bs_ci(R_e1b_pp, zeros_e1b, seed=70_000)
+        n_nonzero_e1b  = int((R_e1b_pp > 1e-12).sum())
+        frac_zero_e1b  = round(float((R_e1b_pp < 1e-12).mean()), 4)
+        # Pre-registered rule: CI_lo > 0  AND  n_nonzero >= 4 (spec §5 S7a)
+        s7a_pass   = testable_s7a and lo7a > 0 and n_nonzero_e1b >= 4
         s7a_status = "CONFIRMED" if s7a_pass else "NOT CONFIRMED"
     else:
-        lo7a = hi7a = None
+        md7a = lo7a = hi7a = p7a = None
+        n_nonzero_e1b = None
         frac_zero_e1b = None
-        s7a_pass = False
-        s7a_status = "NOT CONFIRMED (no regret data)"
+        s7a_pass      = False
+        s7a_status    = "NOT CONFIRMED (no regret data)"
     if e1.empty and len(R_e1b_pp) == 0:
         raise RuntimeError(
             f"S7a evaluation for {branch} requires E1-B regret data."
@@ -456,11 +476,14 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
            "condition": f"TV_B>=0.05: {cond['TV_B']:.3f} {'✓' if testable_s7a else '✗'}",
            "testable": testable_s7a,
            "R_E1B_opt_mean_pp": round(float(R_e1b_pp.mean()), 2) if len(R_e1b_pp)==500 else None,
+           "R_E1B_opt_mean_diff_pp": round(float(md7a), 2) if md7a is not None else None,
            "ci": [round(lo7a,2), round(hi7a,2)] if lo7a is not None else None,
+           "p_one_sided": round(float(p7a), 4) if p7a is not None else None,
+           "n_nonzero_e1b": n_nonzero_e1b,
            "frac_R_e1b_zero": frac_zero_e1b,
            "result": s7a_status,
-           "note": "Low-risk prediction (R>=0 by construction; fails only if all draws have R=0). "
-                   "Report frac_R_e1b_zero always."}
+           "note": ("Low-risk: R>=0 by construction; confirmed if CI_lo>0 AND n_nonzero>=4. "
+                    "See eval-r-spec.md §5 S7a.")}
 
     # ── S7b ─────────────────────────────────────────────────────────────────
     # R(E1-B,opt) < R(E1-W,opt) | TV_B ≥ 0.05 AND TV_W ≥ 0.05
@@ -956,10 +979,21 @@ def main():
     assert_regression(st_res, sn_res)
 
     out = SEALED / "santiago_predictions.json"
+    import hashlib as _hl, subprocess as _sp
+    _git_sha = _sp.check_output(["git","rev-parse","HEAD"], cwd=ROOT).decode().strip()
+    _repo_clean = not _sp.check_output(["git","status","--porcelain"], cwd=ROOT).decode().strip()
     with open(out, "w") as f:
         json.dump({"S-T": st_res, "S-N": sn_res,
-                   "B_BOOT": B_BOOT, "elapsed_s": round(time.time()-t0, 1)},
-                  f, indent=2)
+                   "B_BOOT": B_BOOT, "elapsed_s": round(time.time()-t0, 1),
+                   "provenance": {
+                       "script": "evaluate_santiago_predictions.py",
+                       "git_commit": _git_sha,
+                       "repo_clean": bool(_repo_clean),
+                       "sealed_csvs": {
+                           fn: _hl.sha256((SEALED/fn).read_bytes()).hexdigest()
+                           for fn in SHA_SEALED
+                       },
+                   }}, f, indent=2)
     print(f"\nPredictions written: {out}")
 
     # K5 greedy analysis
