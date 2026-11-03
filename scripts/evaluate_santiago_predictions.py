@@ -746,15 +746,47 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     # ── S4 ──────────────────────────────────────────────────────────────────
     # SAW minus TOPSIS per cell: no sign predicted (descriptive)
     # K6 = Agg_pooled3 = mean of 3 informative cells (mm_grd, vec_grd, vec_opt).
-    # mm_opt excluded: SAW_mm_opt = 100% by Proposition 1 (not informative).
+    # mm_opt excluded: SAW_mm_opt = 100% by Proposition 1 — not informative.
     # Reference: run_e7_kappa_sweep.py Agg_pooled3; PRESPEC_SANTIAGO_A5 §3 K6.
-    k6 = {}
+    # K5(a) = Q2(SAW,vec,opt) − Q2(SAW,vec,grd) per κ (A5 §3 K5 vector-assembly effect).
+    # K5(b) = pooled SAW–TOPSIS aggregation contrast (=K6) — sign check at κ=1000 vs κ=∞.
+    k6    = {}
+    k5a   = {}   # vector-assembly effect per κ (PRESPEC K5(a))
     for k in kappa_vals:
         grp = df[df["kappa"] == k]
-        k6[str(int(k))] = round(_agg_pooled3(grp), 2)
-    s4 = {"prediction": "S4", "text": "SAW-TOPSIS Agg_pooled3 per kappa (3 informative cells)",
+        k6[str(int(k))]  = round(_agg_pooled3(grp), 2)
+        q2_opt_vec = float(grp["SAW_vec_opt"].mean() * 100)
+        q2_grd_vec = float(grp["SAW_vec_grd"].mean() * 100)
+        k5a[str(int(k))] = round(q2_opt_vec - q2_grd_vec, 2)   # >0 = opt better (Fogo: -12pp)
+
+    # κ=∞ assembly contrast (needed for K5 sign check)
+    df_inf_k5 = df[df["kappa"] == np.inf]
+    if not df_inf_k5.empty:
+        k6_inf  = round(_agg_pooled3(df_inf_k5.reset_index(drop=True)), 2)
+        k5a_inf = round(float(df_inf_k5["SAW_vec_opt"].mean()*100
+                               - df_inf_k5["SAW_vec_grd"].mean()*100), 2)
+    else:
+        k6_inf = k5a_inf = None
+
+    # K5 sign checks (descriptive, no verdict)
+    def _sign(x): return 1 if x > 0 else (-1 if x < 0 else 0)
+    k5a_sign_1000 = _sign(k5a.get("1000", 0))
+    k5a_sign_inf  = _sign(k5a_inf) if k5a_inf is not None else 0
+    k5b_sign_1000 = _sign(float(k6.get("1000", 0)))
+    k5b_sign_inf  = _sign(k6_inf) if k6_inf is not None else 0
+    k5a_same_sign = (k5a_sign_1000 == k5a_sign_inf) if k5a_sign_inf != 0 else None
+    k5b_same_sign = (k5b_sign_1000 == k5b_sign_inf) if k5b_sign_inf != 0 else None
+
+    s4 = {"prediction": "S4",
+          "text": "SAW-TOPSIS Agg_pooled3 per kappa (3 informative cells; K5 descriptive sign check)",
           "condition": "none (descriptive)", "testable": True,
-          "K6_per_kappa": k6, "result": "DESCRIPTIVE"}
+          "K6_per_kappa": k6,          # K6 per κ (Agg_pooled3, used for PRESPEC K5(b))
+          "K6_inf":       k6_inf,      # κ=∞ K6 value
+          "K5a_assembly_per_kappa": k5a,   # PRESPEC K5(a): Q2(SAW,vec,opt)−Q2(SAW,vec,grd)
+          "K5a_assembly_inf":       k5a_inf,
+          "K5a_same_sign_1000_inf": k5a_same_sign,  # True/False/None
+          "K5b_same_sign_1000_inf": k5b_same_sign,
+          "result": "DESCRIPTIVE"}
 
     # ── S5 ──────────────────────────────────────────────────────────────────
     # Q2(SAW,vec,opt) > 56.8% | max_pm_continuous < 0.5

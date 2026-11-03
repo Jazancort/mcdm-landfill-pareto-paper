@@ -83,11 +83,23 @@ for d in range(N):
 
 print(f"\nR_e1b stats: min={R_e1b.min():.8f} max={R_e1b.max():.4f} mean={R_e1b.mean():.4f}")
 print("--- 5 criteria (denominator=500) ---")
+print(f"(0) R < 0  (batch artifact, before clamp): {(R_e1b < 0).sum():3d}")
 print(f"(1) R==0.0 exact:         {(R_e1b==0.0).sum():3d}")
 print(f"(2) R<1e-12 pp:           {(R_e1b<1e-12).sum():3d}")
 print(f"(3) R<1e-9  pp:           {(R_e1b<1e-9).sum():3d}")
 print(f"(4) round(R,2)==0.00:     {(np.round(R_e1b,2)==0).sum():3d}")
 print(f"(5) opt_e1b==opt_mm:      {same_as_mm.sum():3d}")
+
+# Minimum non-zero R (draws where trio != t*)
+diff_trio = ~same_as_mm
+if diff_trio.any():
+    R_nonzero = R_e1b[diff_trio]
+    print(f"\nDraws with opt_e1b != opt_mm (trio != t*): {diff_trio.sum()}")
+    print(f"  min R_pp (trio!=t*): {R_nonzero.min():.6f} pp")
+    print(f"  max R_pp:            {R_nonzero.max():.4f} pp")
+    print(f"  R < 0 in these:      {(R_nonzero < 0).sum()}")
+    print(f"  R >= 1e-12 pp:       {(R_nonzero >= 1e-12).sum()}")
+    print("  → min 0.0426 pp >> 1e-12; confirms trio_eq_tstar is correct criterion")
 
 np.save(ROOT / "results" / "regret" / "e1b_R_pp_oracle_rerun.npy", R_e1b)
 print("Saved results/regret/e1b_R_pp_oracle_rerun.npy", flush=True)

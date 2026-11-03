@@ -240,11 +240,17 @@ def test_mutation_8_gate3_wrong_row_count():
 # ──────────────────────────────────────────────────────────────────────────────
 
 def test_mutation_9_oracle_fogo_shift(tmp_path):
-    """Oracle Fogo R[draw 6, grd] + 0.01pp shift must raise via _check_perdraw_tol."""
+    """Oracle Fogo R[draw 6, grd] + 0.01pp shift must raise via _check_perdraw_tol.
+
+    Requires results/regret/regret_perdraw.csv. FAILS (not skips) if absent.
+    """
     from evaluate_santiago_predictions import _check_perdraw_tol
     PERDRAW = ROOT / "results" / "regret" / "regret_perdraw.csv"
     if not PERDRAW.exists():
-        pytest.skip("regret_perdraw.csv not available on this machine")
+        pytest.fail(
+            f"regret_perdraw.csv not found at {PERDRAW}. "
+            "This file must exist; run compute_regret.py on Athena first."
+        )
 
     df = pd.read_csv(PERDRAW)
     mask = (df["agg"] == "saw") & (df["norm"] == "vector") & (df["mont"] == "greedy")
