@@ -231,3 +231,34 @@ The `n_nonzero_e1b` field remains in JSON output as diagnostic.
 - Seeds: `SeedSequence(20261104)` for all S7 bootstrap draws (replaces interim `seed=70_000`)
 
 These choices are reported with results. They do not affect the PRESPEC verdict.
+
+---
+
+### ER-GATE3-RUN: Gates run record (ceec82a, 2026-11-03)
+
+**Commit**: `ceec82a83fc607bc35ee94ea41e993e58b6499a8`
+**Pushed to origin/eval-v2-rewrite**: 2026-11-03 before the run
+**Run timestamp**: 20261103T1649Z (Athena)
+
+Gates ran sequentially in this order:
+1. `--gates-only` (Gate 1 + K6): EXIT=0, Elapsed=142.5s
+2. `--gate3-only` (Gate 3 ST+SN): EXIT=0, Elapsed ~350s
+3. Mutation tests (8 tests): EXIT=0, 0.35s
+
+Key outputs:
+- Gate 3 (S-T): 26012 cells ALL MATCH; same-mm=500/500 at κ=200 (TRUE trio comparison NOT used; Q2-proxy was wrong — corrected in next commit)
+- Gate 3 (S-N): 26012 cells ALL MATCH; same-mm=297/500 at κ=200 (Q2-proxy)
+- n_trios S-N: 77,995 (MATCHES sealed log mc_full_20261028T1237Z_gpu.log)
+- No Santiago R computed in --gate3-only (EVAL-R not called in that path)
+- Fogo R values in gate3 log are from Gate 1 (Fogo), not Santiago
+
+**Correction applied after this run** (next commit):
+- same-trio proxy (Q2-equality) replaced by TRUE greedy_selector comparison
+- ULP tracking added for SAW_mm and SAW_vec
+- κ=∞ same-trio count added
+- content hash for .npz (not file SHA, because zip records timestamp)
+
+**R do Santiago**: NOT computed at ceec82a. Will be computed after next gate run
+on the corrected commit, with hash registered below when available.
+
+avaliacao corrida em <hash-pendente>, enviado antes da corrida; tag criada depois, a apontar para o mesmo commit.

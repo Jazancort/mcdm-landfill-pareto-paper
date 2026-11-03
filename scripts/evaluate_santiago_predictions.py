@@ -207,9 +207,13 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
         df_e1_k  = df_e1[df_e1["kappa"] == kappa].sort_values(
             ["draw", "e1_cell"]).reset_index(drop=True) if kappa == 200 else None
 
-        n_draws_k      = min(n_check, len(df_raw_k))
-        n_below_10ulp  = 0   # draws where V_mm margin < 10 * eps32 * V_max
-        n_same_mm_grd  = 0   # draws where SAW_mm_grd == SAW_mm_opt (greedy==opt for mm)
+        n_draws_k       = min(n_check, len(df_raw_k))
+        n_same_mm_k     = 0   # draws where greedy SAW_mm == optimal SAW_mm (TRUE trio compare)
+        n_same_vec_k    = 0   # draws where greedy SAW_vec == optimal SAW_vec (TRUE trio compare)
+        n_below_10ulp_mm  = 0   # draws where SAW_mm margin < 10 ULPs of float32
+        n_below_10ulp_vec = 0   # draws where SAW_vec margin < 10 ULPs of float32
+        min_margin_mm_k = float("inf")
+        min_margin_vec_k = float("inf")
         print(f"  κ={kappa:4d}: {n_draws_k} draws × 8 raw"
               f"{' + 4 E1' if df_e1_k is not None else ''}...", flush=True)
 
@@ -221,15 +225,20 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                 raw_result, F_mm_trios_gpu, F_mm_site_gpu = compute_q2_all_cells_gpu(
                     gd, w_cpu, D
                 )
-                w_gpu       = cp.asarray(w_cpu)
-                s_mm_gpu    = (gd["X_mm"] * w_gpu).sum(1)
-                s_vec_gpu   = (gd["X_mm"] * gd["rho_j"] * w_gpu).sum(1)
-                opt_mm_idx  = int(_optimal_gpu(s_mm_gpu,  gd["trios"]))
-                opt_vec_idx = int(_optimal_gpu(s_vec_gpu, gd["trios"]))
-                # V_mm per trio for ULP check (same formula as in compute_q2_all_cells_gpu)
+                w_gpu        = cp.asarray(w_cpu)
+                s_mm_gpu     = (gd["X_mm"] * w_gpu).sum(1)
+                s_vec_gpu    = (gd["X_mm"] * gd["rho_j"] * w_gpu).sum(1)
+                opt_mm_idx   = int(_optimal_gpu(s_mm_gpu,  gd["trios"]))
+                opt_vec_idx  = int(_optimal_gpu(s_vec_gpu, gd["trios"]))
+                # V_mm per trio (float64) — same formula used by compute_q2_all_cells_gpu
                 t = gd["trios"]
-                v_trios_gpu = s_mm_gpu[t[:, 0]] + s_mm_gpu[t[:, 1]] + s_mm_gpu[t[:, 2]]
-                V_mm_cpu = cp.asnumpy(v_trios_gpu.astype(cp.float64))
+                v_mm_gpu  = s_mm_gpu[t[:, 0]] + s_mm_gpu[t[:, 1]] + s_mm_gpu[t[:, 2]]
+                v_vec_gpu = s_vec_gpu[t[:, 0]] + s_vec_gpu[t[:, 1]] + s_vec_gpu[t[:, 2]]
+                V_mm_cpu  = cp.asnumpy(v_mm_gpu.astype(cp.float64))
+                V_vec_cpu = cp.asnumpy(v_vec_gpu.astype(cp.float64))
+                # Per-site scores for greedy (CPU)
+                s_mm_cpu  = cp.asnumpy(s_mm_gpu)
+                s_vec_cpu = cp.asnumpy(s_vec_gpu)
             else:
                 F_mm_site  = compute_group_objectives(X_mm, w_cpu, A_ones_cpu, groups)
                 F_mm_trios = compute_trio_objectives(F_mm_site, trios)
@@ -237,28 +246,45 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                                                   trios, D, scorers_cpu)
                 opt_mm_idx  = optimal_selector(scorers_cpu[0](w_cpu), trios)
                 opt_vec_idx = optimal_selector(scorers_cpu[1](w_cpu), trios)
-                # V_mm for ULP check: already computed as F_mm_trios
-                V_mm_cpu = np.array(F_mm_trios, dtype=np.float64)
+                s_mm_cpu  = (X_mm * w_cpu).sum(1)
+                s_vec_cpu = (X_mm * rho_j * w_cpu).sum(1)
+                V_mm_cpu  = np.array(F_mm_trios, dtype=np.float64)
+                # V_vec per trio for ULP
+                V_vec_cpu = (
+                    X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]
+                ) @ (rho_j * w_cpu)
 
-            # ULP margin check
-            if len(V_mm_cpu) >= 2:
-                v_max_d  = float(V_mm_cpu.max())
-                v_sec    = float(np.partition(V_mm_cpu, -2)[-2])
-                margin   = v_max_d - v_sec
-                if v_max_d > 0:
-                    ulp_units = margin / (_eps32 * v_max_d)
-                    if ulp_units < 10.0:
-                        n_below_10ulp += 1
+            # TRUE same-trio: call greedy_selector and compare to optimal trio index
+            grd_mm  = greedy_selector(s_mm_cpu,  D)
+            grd_vec = greedy_selector(s_vec_cpu, D)
+            n_same_mm_k  += int(frozenset(grd_mm)  == frozenset(trios[opt_mm_idx]))
+            n_same_vec_k += int(frozenset(grd_vec) == frozenset(trios[opt_vec_idx]))
+
+            # ULP margin: best vs second-best for SAW_mm and SAW_vec
+            for V_arr, n_below_ref, min_margin_ref, label_ulp in [
+                (V_mm_cpu,  "mm",  min_margin_mm_k,  "mm"),
+                (V_vec_cpu, "vec", min_margin_vec_k, "vec"),
+            ]:
+                if len(V_arr) >= 2:
+                    v_mx = float(V_arr.max())
+                    v_2  = float(np.partition(V_arr, -2)[-2])
+                    marg = v_mx - v_2
+                    if label_ulp == "mm":
+                        if marg < min_margin_mm_k:
+                            min_margin_mm_k = marg
+                        if v_mx > 0 and marg / (_eps32 * v_mx) < 10.0:
+                            n_below_10ulp_mm += 1
+                    else:
+                        if marg < min_margin_vec_k:
+                            min_margin_vec_k = marg
+                        if v_mx > 0 and marg / (_eps32 * v_mx) < 10.0:
+                            n_below_10ulp_vec += 1
 
             if kappa == 200:
                 trio_indices_k200[di] = {
                     "SAW_mm_opt":  opt_mm_idx,
                     "SAW_vec_opt": opt_vec_idx,
                 }
-
-            # Same-trio proxy: greedy and optimal both at Q2=1 for SAW_mm
-            if raw_result.get("SAW_mm_grd") == raw_result.get("SAW_mm_opt"):
-                n_same_mm_grd += 1
 
             row = df_raw_k[df_raw_k["draw"] == di]
             if row.empty:
@@ -309,8 +335,16 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                         n_fail += 1
                     total_e1 += 1
 
-        print(f"    κ={kappa:4d} OK  same-mm(grd==opt)={n_same_mm_grd}/{n_draws_k} "
-              f"below-10ulp={n_below_10ulp}/{n_draws_k}", flush=True)
+        mm_ulp  = f"{min_margin_mm_k:.3e}"  if min_margin_mm_k < float("inf") else "n/a"
+        vec_ulp = f"{min_margin_vec_k:.3e}" if min_margin_vec_k < float("inf") else "n/a"
+        print(
+            f"    κ={kappa:4d} OK  "
+            f"same-mm={n_same_mm_k}/{n_draws_k}  "
+            f"same-vec={n_same_vec_k}/{n_draws_k}  "
+            f"below-10ulp-mm={n_below_10ulp_mm}/{n_draws_k}({mm_ulp})  "
+            f"below-10ulp-vec={n_below_10ulp_vec}/{n_draws_k}({vec_ulp})",
+            flush=True,
+        )
 
     # ── κ=∞ (1 draw — deterministic w0) ─────────────────────────────────────
     print(f"  κ=∞: 1 draw × 8 raw + 4 E1...", flush=True)
@@ -321,11 +355,22 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
         e1_inf = compute_e1_cells_gpu(
             gd, w_inf, rho_j, groups, D, F_mm_site_inf, F_mm_trios_inf, w0=w0
         )
+        w_inf_gpu   = cp.asarray(w_inf)
+        s_mm_inf    = (gd["X_mm"] * w_inf_gpu).sum(1)
+        s_vec_inf   = (gd["X_mm"] * gd["rho_j"] * w_inf_gpu).sum(1)
+        opt_mm_inf  = int(_optimal_gpu(s_mm_inf,  gd["trios"]))
+        opt_vec_inf = int(_optimal_gpu(s_vec_inf, gd["trios"]))
+        s_mm_cpu_inf  = cp.asnumpy(s_mm_inf)
+        s_vec_cpu_inf = cp.asnumpy(s_vec_inf)
     else:
         F_mm_site_inf  = compute_group_objectives(X_mm, w_inf, A_ones_cpu, groups)
         F_mm_trios_inf = compute_trio_objectives(F_mm_site_inf, trios)
         raw_inf = compute_q2_all_cells(X_mm, w_inf, A_ones_cpu, groups,
                                        trios, D, scorers_cpu)
+        opt_mm_inf  = optimal_selector(scorers_cpu[0](w_inf), trios)
+        opt_vec_inf = optimal_selector(scorers_cpu[1](w_inf), trios)
+        s_mm_cpu_inf  = (X_mm * w_inf).sum(1)
+        s_vec_cpu_inf = (X_mm * rho_j * w_inf).sum(1)
         e1_inf = []
         for e1_name in ["M", "B", "W", "V"]:
             A_j  = np.asarray(e1_amps[e1_name], dtype=np.float64)
@@ -336,6 +381,11 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
             q2_opt = 0 if check_dominated_raw(F_mm_trios_inf, F_mm_trios_inf[tidx]) else 1
             q2_grd = 0 if check_dominated_raw(F_mm_trios_inf, f_grd) else 1
             e1_inf.append({"e1_cell": e1_name, "Q2_opt": q2_opt, "Q2_grd": q2_grd})
+
+    grd_mm_inf  = greedy_selector(s_mm_cpu_inf,  D)
+    grd_vec_inf = greedy_selector(s_vec_cpu_inf, D)
+    same_mm_inf  = int(frozenset(grd_mm_inf)  == frozenset(trios[opt_mm_inf]))
+    same_vec_inf = int(frozenset(grd_vec_inf) == frozenset(trios[opt_vec_inf]))
 
     df_raw_inf = df_raw[df_raw["kappa"] == np.inf]
     df_e1_inf  = df_e1[df_e1["kappa"] == np.inf].sort_values("e1_cell")
@@ -365,16 +415,20 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
             n_fail += 1
         total_e1 += 1
 
-    print(f"  κ=∞ OK", flush=True)
+    print(f"  κ=∞ OK  same-mm={same_mm_inf}/1  same-vec={same_vec_inf}/1", flush=True)
 
-    # ── Save trio indices (κ=200) as npz and log SHA-64 ──────────────────────
+    # ── Save trio indices (κ=200) as npz + content hash ────────────────────
+    # NOTE: .npz is a zip; file SHA changes with timestamp. Use content hash instead.
     npz_path = ROOT / "results" / "santiago" / f"gate3_trios_{tag}.npz"
     SAW_mm_arr  = np.array([trio_indices_k200[d]["SAW_mm_opt"]  for d in range(len(trio_indices_k200))], dtype=np.int32)
     SAW_vec_arr = np.array([trio_indices_k200[d]["SAW_vec_opt"] for d in range(len(trio_indices_k200))], dtype=np.int32)
     np.savez(npz_path, SAW_mm_opt=SAW_mm_arr, SAW_vec_opt=SAW_vec_arr)
     import hashlib as _hl2
-    sha_npz = _hl2.sha256(npz_path.read_bytes()).hexdigest()
-    print(f"  Saved: {npz_path.name}  SHA-256: {sha_npz}", flush=True)
+    content_hash = _hl2.sha256(SAW_mm_arr.tobytes() + SAW_vec_arr.tobytes()).hexdigest()
+    file_sha = _hl2.sha256(npz_path.read_bytes()).hexdigest()
+    print(f"  Saved: {npz_path.name}", flush=True)
+    print(f"    content-hash (arrays): {content_hash}", flush=True)
+    print(f"    file-sha256 (zip):     {file_sha}", flush=True)
 
     if n_fail:
         raise RuntimeError(
@@ -1191,6 +1245,28 @@ def main():
     # Gate 3: full Q2 reconstruction (runs before any verdict); returns trio_indices
     g3_st = gate_3_q2_reconstruction("ST")
     g3_sn = gate_3_q2_reconstruction("SN")
+
+    # Verify that the evaluation uses the SAME trios as Gate 3 (content hash check)
+    import hashlib as _hlg3
+    for tag, g3 in [("ST", g3_st), ("SN", g3_sn)]:
+        npz_p = ROOT / "results" / "santiago" / f"gate3_trios_{tag}.npz"
+        if npz_p.exists():
+            data_npz = np.load(npz_p)
+            mm_a  = data_npz["SAW_mm_opt"].astype(np.int32)
+            vec_a = data_npz["SAW_vec_opt"].astype(np.int32)
+            stored_hash = _hlg3.sha256(mm_a.tobytes() + vec_a.tobytes()).hexdigest()
+            # Recompute from in-memory dict
+            B = len(g3)
+            mm_b  = np.array([g3[d]["SAW_mm_opt"]  for d in range(B)], dtype=np.int32)
+            vec_b = np.array([g3[d]["SAW_vec_opt"] for d in range(B)], dtype=np.int32)
+            mem_hash = _hlg3.sha256(mm_b.tobytes() + vec_b.tobytes()).hexdigest()
+            if stored_hash != mem_hash:
+                raise RuntimeError(
+                    f"Gate 4a: trio content-hash mismatch for {tag}.\n"
+                    f"  disk:   {stored_hash[:16]}\n  memory: {mem_hash[:16]}"
+                )
+            print(f"  Gate 4a trio hash ({tag}): disk==memory ({stored_hash[:16]}) PASS",
+                  flush=True)
 
     # Gate 4a identity: trio from Gate 3 must match argmax(V_mm) from EVAL-R
     print("=== Gate 4a identity (Gate 3 vs EVAL-R) ===", flush=True)
