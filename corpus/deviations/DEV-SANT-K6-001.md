@@ -122,3 +122,56 @@ Santiago and Fogo uses Agg_pooled3 in both cases.
 PRESPEC_SANTIAGO_A5 §3 K6: "corresponds to the aggregation row of the Fogo E7 table (§7.10)"
 Fogo E7: run_e7_kappa_sweep.py line 344 (Agg_pooled3 = 3-cell mean)
 Santiago MC: run_santiago_mc.py lines 1341–1345 (4-cell mean — WRONG)
+
+## A5 citation (confirms 3-cell interpretation)
+
+PRESPEC_SANTIAGO_A5 §3 K6 (verbatim):
+
+> "Report the **pooled SAW–TOPSIS contrast (mean of informative-cell Q2 values**, SAW minus
+>  TOPSIS) at each κ, with 95% CI from bootstrap. Report sign changes, monotonicity, and
+>  TOST result at each κ. No directional prediction is made. **K6 corresponds to the
+>  aggregation row of the Fogo E7 table (§7.10)**; the sign reversal observed in Fogo was
+>  unexplained theoretically and is registered here as exploratory only."
+
+"Informative-cell" = cells where the SAW Q2 is not 100% by theorem. SAW_mm_opt = 100% by
+Proposition 1 in every draw. Including it would inflate saw_mean mechanically. The A5 phrase
+"informative cells" unambiguously refers to Agg_pooled3 (3 cells). This is an implementation
+error, not an ambiguity.
+
+## Gate: reproduce Fogo Agg_pooled3 values
+
+Before reporting any Santiago K6 value, the evaluation script must reproduce the 6 Fogo
+reference values using the same 3-cell formula on the Fogo mc_unified_raw.csv:
+
+| κ   | Expected Agg_pooled3 |
+|-----|---------------------|
+| 25  | +21.1 pp            |
+| 50  | +20.4 pp            |
+| 100 | +9.3 pp             |
+| 200 | −0.4 pp             |
+| 400 | −5.7 pp             |
+| 1000| −9.0 pp             |
+
+Tolerance: ≤ 0.1 pp (one half-unit in the reported decimal). Abort if any value fails.
+
+## K5(b): same fix required
+
+K5 (b): "whether the pooled SAW–TOPSIS aggregation contrast (informative cells) has the
+same sign in both cases" (A5 §3 K5).
+
+With 3-cell formula, κ=∞ values (one draw each):
+- S-T: (0 + 0 + 0)/3 = 0.0 pp → sign indeterminate (zero)
+- S-N: (SAW_mm_grd − TOPSIS_mm_grd + SAW_vec_grd − TOPSIS_vec_grd + SAW_vec_opt − TOPSIS_vec_opt)/3
+
+At κ=∞, S-N greedy cells: SAW_mm_grd=0 (user verified), SAW_vec_grd=0.
+SAW_vec_opt=1, TOPSIS_vec_opt=1 → vec_opt diff = 0.
+Then Agg_pooled3 ≈ (−100 + −25 + 0)/3 = −41.7 pp. User computed −33.3; verify.
+
+K5(b) sign consistent in S-N (both κ=1000 and κ=∞ are negative). S-T sign is indeterminate
+at κ=∞ (zero result). Report as: "consistent where defined (S-N); undefined at κ=∞ S-T."
+
+## Log note: 4-cell values sealed
+
+The MC log (run_santiago_mc.py output) contains the 4-cell K6 values. These are not reported
+in the paper. The log is not modified. The table in §7 uses the 3-cell (Agg_pooled3) values,
+computed in evaluate_santiago_predictions.py from the sealed CSV cells.
