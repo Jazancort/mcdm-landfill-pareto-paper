@@ -47,6 +47,10 @@ FOGO_Q2_SAW_VEC_OPT = 56.8   # Fogo reference for S5 (pp)
 
 # Stochastic κ values (excludes inf)
 KAPPAS_STOCH = [25, 50, 100, 200, 400, 1000]
+BOOTSTRAP_SEED = 20261104      # fixed per PRESPEC A5b; used for S6/S7 bootstrap
+# Oracle SHA-256 prefixes for Fogo regret files (stage1 verified)
+SHA_REGRET_AGG   = "bc364ce3"  # results/regret/regret_aggregate.csv
+SHA_MC_UNIFIED   = "b02df727"  # results/unified/mc_unified_raw.csv
 
 def _bs_ci(a, b, seed, n=B_BOOT, alpha=0.05):
     """Paired bootstrap CI for mean(a-b). Returns (mean_diff, ci_lo, ci_hi, p_one_sided).
@@ -229,8 +233,11 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
         s6_pass = testable_s6 and lo_s6 > 0
         s6_status = "CONFIRMED" if s6_pass else "NOT CONFIRMED"
     else:
-        s6_status = "PENDING EVAL-R"
-        kappa_results_s6["200"] = {"note": "EVAL-R not yet run; R from compute_value_regret_santiago()"}
+        # No regret data — abort (compute_value_regret_santiago() must run first)
+        raise RuntimeError(
+            f"S6 evaluation for {branch} requires value regret data from "
+            "compute_value_regret_santiago(). R_vec_grd_pp not available."
+        )
     s6 = {"prediction": "S6",
           "text": "R(SAW,vec,grd) > R(SAW,vec,opt), 95% CI excludes 0 (value regret)",
           "condition": f"TV_W>=0.05: {cond['TV_W']:.3f} {'✓' if testable_s6 else '✗'}",
@@ -254,7 +261,11 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
         md7a = lo7a = hi7a = p7a = None
         frac_zero_e1b = None
         s7a_pass = False
-        s7a_status = "PENDING EVAL-R"
+        s7a_status = "NOT CONFIRMED (no regret data)"
+    if not e1_available and len(R_e1b_pp) == 0:
+        raise RuntimeError(
+            f"S7a evaluation for {branch} requires E1-B regret data."
+        )
     s7a = {"prediction": "S7a",
            "text": "R(E1-B,opt) > 0, 95% CI excludes 0 (value regret, E1-B vs SAW/mm/opt)",
            "condition": f"TV_B>=0.05: {cond['TV_B']:.3f} {'✓' if testable_s7a else '✗'}",
@@ -279,7 +290,11 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     else:
         md7b = lo7b = hi7b = p7b = None
         s7b_pass = False
-        s7b_status = "PENDING EVAL-R"
+        s7b_status = "NOT CONFIRMED (no regret data)"
+    if not e1_available and len(R_e1w_pp) == 0:
+        raise RuntimeError(
+            f"S7b evaluation for {branch} requires E1-W regret data."
+        )
     s7b = {"prediction": "S7b",
            "text": "R(E1-B,opt) < R(E1-W,opt) — Fogo ordering (4.53 < 6.47 pp)",
            "condition": (f"TV_B>=0.05: {cond['TV_B']:.3f} {'✓' if cond['TV_B']>=0.05 else '✗'}"
@@ -420,10 +435,18 @@ def gate_k6_fogo() -> bool:
     Tolerance: <=0.1 pp (half a unit in the reported decimal).
     Aborts if any kappa fails.
     """
+    import hashlib as _hl
     FOGO_CSV = ROOT / "results" / "unified" / "mc_unified_raw.csv"
     if not FOGO_CSV.exists():
         print(f"[K6-GATE] WARNING: {FOGO_CSV} not found. Gate skipped.", flush=True)
         return False
+
+    sha_got = _hl.sha256(FOGO_CSV.read_bytes()).hexdigest()[:8]
+    if sha_got != SHA_MC_UNIFIED:
+        raise RuntimeError(
+            f"mc_unified_raw.csv SHA mismatch: expected {SHA_MC_UNIFIED}, got {sha_got}"
+        )
+    print(f"  mc_unified_raw.csv SHA: {sha_got} OK", flush=True)
 
     EXPECTED = {25: 21.1, 50: 20.4, 100: 9.3, 200: -0.4, 400: -5.7, 1000: -9.0}
     TOL = 0.1
@@ -451,6 +474,83 @@ def gate_k6_fogo() -> bool:
             "Fix before tagging predictions-eval-v2."
         )
     print("  K6 gate: ALL PASS\n", flush=True)
+    return True
+
+
+def gate_1_fogo_oracle() -> bool:
+    """Gate 1: Verify Fogo value regret oracle from pre-computed output files.
+
+    Checks results/regret/regret_aggregate.csv and results/regret/regret_macros.tex
+    against expected values. These files are produced by compute_regret.py and
+    _compute_e1_regret.py (verified in Stage 1 regression, commit 3aa1143).
+
+    Expected (tolerance 0.05 pp for continuous, 0 for counts):
+        R(SAW, vec, grd) = 6.63 pp
+        R(SAW, vec, opt) = 5.27 pp
+        diff (grd - opt) = 1.36 pp
+        R(E1-B, opt) mean = 4.53 pp
+        R(E1-B, opt) median = 5.50 pp
+        frac R(E1-B) = 0: 28%
+        R(E1-W, opt) mean = 6.47 pp
+    """
+    import hashlib as _hl, re
+    TOL = 0.05
+    AGG = ROOT / "results" / "regret" / "regret_aggregate.csv"
+    MAC = ROOT / "results" / "regret" / "regret_macros.tex"
+
+    if not AGG.exists():
+        raise RuntimeError(f"Gate 1: {AGG} not found. Run compute_regret.py first.")
+    if not MAC.exists():
+        raise RuntimeError(f"Gate 1: {MAC} not found. Run _compute_e1_regret.py first.")
+
+    sha_agg = _hl.sha256(AGG.read_bytes()).hexdigest()[:8]
+    if sha_agg != SHA_REGRET_AGG:
+        raise RuntimeError(
+            f"regret_aggregate.csv SHA mismatch: expected {SHA_REGRET_AGG}, got {sha_agg}"
+        )
+    print(f"  regret_aggregate.csv SHA: {sha_agg} OK", flush=True)
+
+    df_agg = pd.read_csv(AGG)
+    def _r(agg, norm, mont):
+        row = df_agg[(df_agg.agg==agg)&(df_agg.norm==norm)&(df_agg.mont==mont)]
+        return float(row["mean_R_pp"].iloc[0])
+
+    checks = [
+        ("R(SAW,vec,grd)",     _r("saw","vector","greedy"),  6.63),
+        ("R(SAW,vec,opt)",     _r("saw","vector","optimal"), 5.27),
+        ("diff grd-opt",       _r("saw","vector","greedy") - _r("saw","vector","optimal"), 1.36),
+    ]
+
+    mac_text = MAC.read_text(encoding="utf-8")
+    def _m(name):
+        m = re.search(r"\\newcommand\{\\"+name+r"\}\{([0-9.]+)\}", mac_text)
+        if not m:
+            raise RuntimeError(f"Gate 1: macro \\{name} not found in regret_macros.tex")
+        return float(m.group(1))
+
+    checks += [
+        ("R(E1-B,opt) mean",   _m("RegretEoneB"),         4.53),
+        ("R(E1-B,opt) median", _m("RegretEoneBMed"),       5.50),
+        ("frac R(E1-B)=0 (%)", _m("RegretEoneBfracZero"),  28.0),
+        ("R(E1-W,opt) mean",   _m("RegretEoneW"),          6.47),
+    ]
+
+    print("=== Gate 1: Fogo regret oracle ===", flush=True)
+    all_pass = True
+    for label, got, expected in checks:
+        tol = 0.5 if "frac" in label else TOL
+        diff = abs(got - expected)
+        ok = "PASS" if diff <= tol else "FAIL"
+        print(f"  {label:30s}: expected {expected:6.2f}, got {got:7.2f} [{ok}]", flush=True)
+        if ok == "FAIL":
+            all_pass = False
+
+    if not all_pass:
+        raise RuntimeError(
+            "Gate 1 FAILED — Fogo regret oracle mismatch. "
+            "compute_regret.py or _compute_e1_regret.py may need re-run on Athena."
+        )
+    print("  Gate 1: ALL PASS\n", flush=True)
     return True
 
 
@@ -599,7 +699,23 @@ def compute_value_regret_santiago(branch_key: str, kappa: int = 200) -> dict:
     assert (R_mm_opt == 0).all(), \
         f"R(SAW_mm_opt) != 0 in {(R_mm_opt != 0).sum()} draws — Proposition 1 violated"
     print(f"  Gate 4a (R_mm_opt==0): PASS", flush=True)
-    print(f"  Same trio (SAW_vec grd==opt): {n_same_trio}/{N_DRAWS}", flush=True)
+
+    # Gate 4b: 0 <= R <= 1 in every draw
+    for name, arr in [("R_vec_grd", R_vec_grd), ("R_vec_opt", R_vec_opt),
+                       ("R_e1b_opt", R_e1b_opt), ("R_e1w_opt", R_e1w_opt)]:
+        finite = arr[~np.isnan(arr)]
+        if len(finite):
+            assert (finite >= -1e-9).all() and (finite <= 1 + 1e-9).all(), \
+                f"Gate 4b: {name} out of [0,1]: min={finite.min():.6f} max={finite.max():.6f}"
+    print(f"  Gate 4b (0<=R<=1): PASS", flush=True)
+    print(f"  Same trio (SAW_vec grd==opt) at kappa={kappa}: {n_same_trio}/{N_DRAWS}", flush=True)
+
+    # Gate 4c: when trio_grd == trio_opt, R_grd == R_opt (exact)
+    # (verified per-draw inside the loop; n_same_trio counts them)
+    print(f"  Gate 4c (same_trio=>R_grd==R_opt): verified per draw in loop", flush=True)
+
+    # Note: Gate 4d (E1-V==SAW_vec, E1-M==SAW_mm) requires compute_e1_cells_gpu
+    # with explicit trio reconstruction; will be asserted in the full Athena run.
 
     R_diff = (R_vec_grd - R_vec_opt) * 100   # in pp
     return {
@@ -622,19 +738,87 @@ def compute_value_regret_santiago(branch_key: str, kappa: int = 200) -> dict:
     }
 
 
+def assert_regression(results_st: dict, results_sn: dict) -> None:
+    """Regression check: point estimates must match this conversation's cross-check.
+
+    Tolerance: 0.05 pp for continuous values; 0 for integer counts.
+    If any value fails: script aborts. Values from seed 20261103 cross-check
+    (source: conversation 2026-11-03, predictions S0-S5 + K6).
+    """
+    TOL = 0.05
+
+    def _pred(branch_res, pid):
+        for p in branch_res["predictions"]:
+            if p["prediction"] == pid:
+                return p
+        raise KeyError(pid)
+
+    def _ck(label, got, expected, tol=TOL):
+        diff = abs(got - expected)
+        if diff > tol:
+            raise AssertionError(
+                f"Regression FAIL [{label}]: expected {expected}, got {got}, diff={diff:.4f}"
+            )
+        print(f"  REG OK [{label}]: {got}", flush=True)
+
+    print("=== Regression check against conversation cross-check ===", flush=True)
+    k200 = "200"
+
+    # ── S-T κ=200 ─────────────────────────────────────────────────────────
+    p1st = _pred(results_st, "S1")
+    _ck("S-T S1 mm-vec diff",      p1st["per_kappa"][k200]["mean_diff"], 15.8)
+    p2st = _pred(results_st, "S2")
+    _ck("S-T S2 vec grd-opt diff", p2st["per_kappa"][k200]["mean_grd_minus_opt"], 0.0)
+    p3a = _pred(results_st, "S3a")
+    _ck("S-T E1-W opt %",  p3a["Q2_E1W_opt_k200"], 80.2)
+    _ck("S-T E1-V opt %",  p3a["Q2_E1V_opt_k200"], 84.2)
+    p5st = _pred(results_st, "S5")
+    _ck("S-T S5 vec_opt %", p5st["per_kappa"][k200]["Q2_SAW_vec_opt"], 84.2)
+    k6st = _pred(results_st, "S4")["K6_per_kappa"].get(k200)
+    if k6st is not None:
+        _ck("S-T K6 3-cell", k6st, 26.2)
+
+    # ── S-N κ=200 ─────────────────────────────────────────────────────────
+    p1sn = _pred(results_sn, "S1")
+    _ck("S-N S1 mm-vec diff",      p1sn["per_kappa"][k200]["mean_diff"], 25.2)
+    p2sn = _pred(results_sn, "S2")
+    _ck("S-N S2 vec grd-opt diff", p2sn["per_kappa"][k200]["mean_grd_minus_opt"], -64.4)
+    p3a_sn = _pred(results_sn, "S3a")
+    _ck("S-N E1-W opt %",  p3a_sn["Q2_E1W_opt_k200"], 99.2)
+    _ck("S-N E1-V opt %",  p3a_sn["Q2_E1V_opt_k200"], 98.6)
+    p5sn = _pred(results_sn, "S5")
+    _ck("S-N S5 vec_opt %", p5sn["per_kappa"][k200]["Q2_SAW_vec_opt"], 98.6)
+    k6sn = _pred(results_sn, "S4")["K6_per_kappa"].get(k200)
+    if k6sn is not None:
+        _ck("S-N K6 3-cell", k6sn, -11.9)
+
+    print("  Regression: ALL PASS\n", flush=True)
+
+
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Evaluate Santiago predictions S0-S7b")
+    parser.add_argument("--gates-only", action="store_true",
+                        help="Run Fogo gates (1, K6) only; stop before Santiago data. "
+                             "Use to verify gates on Athena before tagging.")
+    args = parser.parse_args()
     t0 = time.time()
 
-    # Gate 2: K6 Fogo reproduction (must pass before any Santiago evaluation)
+    # Gates 1 and K6: Fogo data only — no Santiago CSV required
+    gate_1_fogo_oracle()
     gate_k6_fogo()
 
-    # EVAL-R: compute value regret at κ=200 for S6, S7a, S7b
-    # Runs on GPU (Athena). Falls back gracefully if GPU/data not available.
+    if args.gates_only:
+        print("=== --gates-only: Fogo gates passed. Stop. ===", flush=True)
+        print(f"Elapsed: {time.time()-t0:.1f}s", flush=True)
+        return
+
+    # EVAL-R: compute value regret at κ=200 for S6, S7a, S7b (GPU required for S-T)
     print("\n=== EVAL-R: value regret κ=200 ===", flush=True)
     st_regret = compute_value_regret_santiago("ST", kappa=200)
     sn_regret = compute_value_regret_santiago("SN", kappa=200)
 
-    # Evaluate S0-S7b for both branches (uses regret for S6/S7)
+    # S0-S7b evaluation
     st_res = evaluate_branch(
         "S-T",
         SEALED / "mc_ST_raw.csv",
@@ -649,6 +833,9 @@ def main():
         COND_SN,
         branch_regret=sn_regret,
     )
+
+    # Regression check against manual cross-check (seed 20261103)
+    assert_regression(st_res, sn_res)
 
     out = SEALED / "santiago_predictions.json"
     with open(out, "w") as f:
