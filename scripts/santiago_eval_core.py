@@ -37,26 +37,28 @@ def _agg_pooled3_long(grp_long: pd.DataFrame) -> float:
     """Agg_pooled3 from long-format DataFrame (one κ, all draws).
 
     grp_long: long-format rows with columns agg, norm, mont, nd_Q2Ap.
-    Equivalent to _agg_pooled3 on wide format; both compute the same formula.
+    Converts to a one-row wide DataFrame (per-cell means) and delegates to
+    _agg_pooled3(). Guarantees formula identity with the wide-format path.
     Used by gate_k6_fogo for stochastic κ (e7_raw.csv long-format).
     """
-    CELLS_SAW  = [("saw","minmax","greedy"), ("saw","vector","greedy"),
-                  ("saw","vector","optimal")]
-    CELLS_TOPS = [("topsis","minmax","greedy"), ("topsis","vector","greedy"),
-                  ("topsis","vector","optimal")]
-    saw3 = sum(
-        grp_long[(grp_long["agg"] == ag) & (grp_long["norm"] == nm) & (grp_long["mont"] == mt)][
-            "nd_Q2Ap"
-        ].mean()
-        for ag, nm, mt in CELLS_SAW
-    ) / 3 * 100
-    tops3 = sum(
-        grp_long[(grp_long["agg"] == ag) & (grp_long["norm"] == nm) & (grp_long["mont"] == mt)][
-            "nd_Q2Ap"
-        ].mean()
-        for ag, nm, mt in CELLS_TOPS
-    ) / 3 * 100
-    return float(saw3 - tops3)
+    CELL_MAP = {
+        "SAW_mm_grd":     ("saw",    "minmax", "greedy"),
+        "SAW_vec_grd":    ("saw",    "vector", "greedy"),
+        "SAW_vec_opt":    ("saw",    "vector", "optimal"),
+        "TOPSIS_mm_grd":  ("topsis", "minmax", "greedy"),
+        "TOPSIS_vec_grd": ("topsis", "vector", "greedy"),
+        "TOPSIS_vec_opt": ("topsis", "vector", "optimal"),
+    }
+    row: dict = {}
+    for col, (ag, nm, mt) in CELL_MAP.items():
+        mask = (
+            (grp_long["agg"]  == ag) &
+            (grp_long["norm"] == nm) &
+            (grp_long["mont"] == mt)
+        )
+        row[col] = [float(grp_long.loc[mask, "nd_Q2Ap"].mean())]
+    wide = pd.DataFrame(row)
+    return _agg_pooled3(wide)
 
 
 # ---------------------------------------------------------------------------

@@ -64,11 +64,104 @@ SHA_SEALED = {
 # Verified against e7_raw.csv on Athena; tolerance TOL=0.05 pp.
 K6_FOGO_EXPECTED: dict = {25: 21.1, 50: 20.4, 100: 9.3, 200: -0.4, 400: -5.7, 1000: -9.0}
 
+# Canonical content hash of gate3_trios_*.npz from the sealed --gate3-only run.
+# Hash covers: name + shape + dtype.str + raw bytes for each array, sorted by name.
+# Must be set after running --gate3-only on commit 5414bbb (or later code commit).
+# The full eval Gate 4a compares its freshly-computed npz against these constants.
+# If "PENDING": hash check is skipped with a warning (fill before tagging).
+SHA_NPZ_GATE3: dict = {
+    "ST": "PENDING_UPDATE_AFTER_GATE3_RERUN",
+    "SN": "PENDING_UPDATE_AFTER_GATE3_RERUN",
+}
+
 # Import shared aggregation functions from santiago_eval_core.
 # _agg_pooled3     : wide-format DataFrame (mc_*_raw.csv columns)
 # _agg_pooled3_long: long-format DataFrame (e7_raw.csv with agg/norm/mont columns)
 # Both implement the same formula: mean(SAW 3-cell) - mean(TOPSIS 3-cell) [pp].
 from santiago_eval_core import _agg_pooled3, _agg_pooled3_long  # noqa: E402
+
+# ---------------------------------------------------------------------------
+# Production helpers used by gates AND unit tests
+# ---------------------------------------------------------------------------
+
+def _check_perdraw_tol(oracle_r: np.ndarray, result_r: np.ndarray,
+                       tol_draw: float, label: str) -> None:
+    """Assert per-draw R values agree within tol_draw. Raises RuntimeError if not.
+
+    Called by gate_1_fogo_oracle() and directly by test_mutation_2.
+    Both arrays are in fraction units (not pp).
+    """
+    diff = np.abs(result_r - oracle_r)
+    max_diff = float(diff.max())
+    if max_diff > tol_draw:
+        raise RuntimeError(
+            f"Gate 1 FAIL [{label}]: per-draw max diff = {max_diff:.3e} > {tol_draw}. "
+            "compute_value_regret() diverges from oracle compute_regret.py."
+        )
+
+
+def _npz_content_hash(arrays: dict) -> str:
+    """Canonical content hash for a dict of numpy arrays.
+
+    Includes name, shape, dtype.str, and raw bytes for each array,
+    sorted alphabetically by name. Robust to zip timestamp changes.
+    """
+    import hashlib as _hh
+    h = _hh.sha256()
+    for name in sorted(arrays):
+        arr = np.asarray(arrays[name])
+        h.update(name.encode("utf-8"))
+        h.update(str(arr.shape).encode("utf-8"))
+        h.update(arr.dtype.str.encode("utf-8"))
+        h.update(arr.tobytes())
+    return h.hexdigest()
+
+
+def _check_gate3_row_counts(n_raw: int, n_e1: int,
+                             raw_name: str, e1_name: str) -> None:
+    """Check Gate 3 row counts; raises RuntimeError with match='3001' if wrong.
+
+    Called inside gate_3_q2_reconstruction() and directly by test_mutation_8.
+    """
+    if n_raw != 3001:
+        raise RuntimeError(
+            f"Gate 3 FAIL: {raw_name} has {n_raw} rows, expected 3001"
+        )
+    if n_e1 != 2004:
+        raise RuntimeError(
+            f"Gate 3 FAIL: {e1_name} has {n_e1} rows, expected 2004"
+        )
+
+
+def _check_gate4a_identity(g3_dict: dict, regret_dict: dict,
+                            branch_key: str) -> None:
+    """Gate 4a identity: SAW_mm_opt trio from Gate 3 must equal EVAL-R argmax.
+
+    Called inside main() and directly by test_mutation_11.
+    Raises RuntimeError with match='Gate 4a identity FAIL' if not.
+    """
+    trio_idx_evalr = regret_dict["trio_idx_mm_opt"]
+    for di, cell_dict in g3_dict.items():
+        opt_g3    = cell_dict["SAW_mm_opt"]
+        opt_evalr = trio_idx_evalr[di]
+        if opt_g3 != opt_evalr:
+            raise RuntimeError(
+                f"Gate 4a identity FAIL ({branch_key} draw {di}): "
+                f"Gate3 trio={opt_g3} != EVAL-R argmax={opt_evalr}"
+            )
+
+
+def _check_q2_cell(got: int, exp: int, kappa: float,
+                   draw: int, cell: str) -> None:
+    """Check a single Gate 3 Q2 value; raises RuntimeError if got != exp.
+
+    Called inside gate_3_q2_reconstruction() and directly by test_mutation_12.
+    """
+    if got != exp:
+        raise RuntimeError(
+            f"Gate 3 FAIL Q2: κ={kappa} draw={draw} {cell}: "
+            f"got {got} exp {exp}"
+        )
 
 def _bs_ci(a, b, seed, n=B_BOOT, alpha=0.05):
     """Paired bootstrap CI for mean(a-b). Returns (mean_diff, ci_lo, ci_hi, p_one_sided).
@@ -133,14 +226,7 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
     df_e1  = pd.read_csv(e1_csv)
 
     # Verify row counts match spec
-    if len(df_raw) != 3001:
-        raise RuntimeError(
-            f"Gate 3 FAIL: {raw_csv.name} has {len(df_raw)} rows, expected 3001"
-        )
-    if len(df_e1) != 2004:
-        raise RuntimeError(
-            f"Gate 3 FAIL: {e1_csv.name} has {len(df_e1)} rows, expected 2004"
-        )
+    _check_gate3_row_counts(len(df_raw), len(df_e1), raw_csv.name, e1_csv.name)
     print(f"  Row counts verified: raw={len(df_raw)}, e1={len(df_e1)}", flush=True)
 
     try:
@@ -188,10 +274,28 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
     scorers_cpu = make_santiago_scorers(X_mm, rho_j) if not use_gpu else None
     A_ones_cpu  = np.ones(len(w0))
 
+    # ── Precompute for trio lookup and E1 indices at κ=200 ───────────────────
+    # X_trio: (T, M) float64 — trio sums used for E1 V-score computation
+    X_trio_e1_cpu = X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]
+    # E1 amplitude arrays (CPU, constant across draws)
+    _e1_amp_arrs  = {nm: np.asarray(e1_amps[nm], dtype=np.float64)
+                     for nm in ("M", "B", "W", "V")}
+    if use_gpu:
+        _X_trio_e1_gpu      = cp.asarray(X_trio_e1_cpu)      # (T, M) GPU float64
+        _trios_sorted_gpu   = cp.sort(cp.asarray(trios), axis=1)  # (T, 3) GPU int32
+    else:
+        # CPU lookup: frozenset(site0,site1,site2) → trio index
+        _trios_set_to_idx   = {frozenset(row.tolist()): i
+                                for i, row in enumerate(trios)}
+
     # Gate 4a trio indices — filled only for κ=200
     trio_indices_k200: dict = {}
 
-    n_fail     = 0
+    # E1-B/W ULP tracking at κ=200 (E1-V≡SAW_vec, E1-M≡SAW_mm, checked via Gate 4d/4e)
+    n_below_10ulp_e1b  = 0;  min_margin_e1b_k200 = float("inf")
+    n_below_10ulp_e1w  = 0;  min_margin_e1w_k200 = float("inf")
+
+    n_fail     = 0   # kept as counter (n_fail always 0 since _check_q2_cell raises immediately)
     total_raw  = 0
     total_e1   = 0
     _eps32     = float(np.finfo(np.float32).eps)
@@ -279,12 +383,85 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                             min_margin_vec_k = marg
                         if v_mx > 0 and marg / (_eps32 * v_mx) < 10.0:
                             n_below_10ulp_vec += 1
+                            # Confirm float64 argmax (log line required by audit)
+                            f64_argmax = int(V_arr.argmax())
+                            f32_argmax = int(V_arr.astype(np.float32).argmax())
+                            match_str  = "MATCH" if f64_argmax == f32_argmax else "MISMATCH"
+                            print(
+                                f"    κ={kappa} draw {di} SAW_vec below-10ulp "
+                                f"margin={marg:.3e}: f64_argmax={f64_argmax} "
+                                f"f32_argmax={f32_argmax} {match_str}",
+                                flush=True,
+                            )
 
             if kappa == 200:
-                trio_indices_k200[di] = {
+                # SAW_vec_grd trio index (for npz / Gate 4a verification)
+                if use_gpu:
+                    _gv_sorted = cp.sort(cp.asarray(np.array(grd_vec, dtype=np.int32)))
+                    _match_gpu = cp.where(
+                        cp.all(_trios_sorted_gpu == _gv_sorted, axis=1)
+                    )[0]
+                    grd_vec_idx = int(_match_gpu[0]) if len(_match_gpu) > 0 else -1
+                else:
+                    grd_vec_idx = _trios_set_to_idx.get(frozenset(grd_vec), -1)
+                if grd_vec_idx < 0:
+                    raise RuntimeError(
+                        f"Gate 3 FAIL: SAW_vec_grd trio {grd_vec} not in trios "
+                        f"(di={di}, κ=200, branch={tag})"
+                    )
+
+                # E1 optimal indices + ULP margins for E1-B and E1-W
+                _e1_entry: dict = {
                     "SAW_mm_opt":  opt_mm_idx,
                     "SAW_vec_opt": opt_vec_idx,
+                    "SAW_vec_grd": grd_vec_idx,
                 }
+                for _e1_nm in ("M", "B", "W", "V"):
+                    _A_j = _e1_amp_arrs[_e1_nm]
+                    if use_gpu:
+                        _A_j_gpu   = cp.asarray(_A_j)
+                        _V_e1_gpu  = (_X_trio_e1_gpu * (w_gpu * _A_j_gpu)).sum(1)
+                        _V_e1_cpu  = cp.asnumpy(_V_e1_gpu)
+                    else:
+                        _V_e1_cpu  = (X_trio_e1_cpu * (w_cpu * _A_j)).sum(1)
+                    _opt_e1x = int(np.argmax(_V_e1_cpu))
+                    _e1_entry[f"E1{_e1_nm}_opt"] = _opt_e1x
+                    # ULP check for E1-B and E1-W only
+                    # (E1-V ≡ SAW_vec and E1-M ≡ SAW_mm are covered by Gate 4d/4e)
+                    if _e1_nm in ("B", "W") and len(_V_e1_cpu) >= 2:
+                        _v_mx_e1 = float(_V_e1_cpu.max())
+                        _v_2_e1  = float(np.partition(_V_e1_cpu, -2)[-2])
+                        _marg_e1 = _v_mx_e1 - _v_2_e1
+                        _below   = _v_mx_e1 > 0 and _marg_e1 / (_eps32 * _v_mx_e1) < 10.0
+                        if _e1_nm == "B":
+                            if _marg_e1 < min_margin_e1b_k200:
+                                min_margin_e1b_k200 = _marg_e1
+                            if _below:
+                                n_below_10ulp_e1b += 1
+                                _f64 = _opt_e1x
+                                _f32 = int(_V_e1_cpu.astype(np.float32).argmax())
+                                print(
+                                    f"    κ=200 draw {di} E1-B below-10ulp "
+                                    f"margin={_marg_e1:.3e}: f64_argmax={_f64} "
+                                    f"f32_argmax={_f32} "
+                                    f"{'MATCH' if _f64==_f32 else 'MISMATCH'}",
+                                    flush=True,
+                                )
+                        else:  # W
+                            if _marg_e1 < min_margin_e1w_k200:
+                                min_margin_e1w_k200 = _marg_e1
+                            if _below:
+                                n_below_10ulp_e1w += 1
+                                _f64 = _opt_e1x
+                                _f32 = int(_V_e1_cpu.astype(np.float32).argmax())
+                                print(
+                                    f"    κ=200 draw {di} E1-W below-10ulp "
+                                    f"margin={_marg_e1:.3e}: f64_argmax={_f64} "
+                                    f"f32_argmax={_f32} "
+                                    f"{'MATCH' if _f64==_f32 else 'MISMATCH'}",
+                                    flush=True,
+                                )
+                trio_indices_k200[di] = _e1_entry
 
             row = df_raw_k[df_raw_k["draw"] == di]
             if row.empty:
@@ -294,10 +471,7 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
             for cell in CELLS_8:
                 got = raw_result[cell]
                 exp = int(row[cell].values[0])
-                if got != exp:
-                    print(f"  FAIL κ={kappa} draw {di} {cell}: got {got} exp {exp}",
-                          flush=True)
-                    n_fail += 1
+                _check_q2_cell(got, exp, kappa, di, cell)
                 total_raw += 1
 
             # E1 cells (only κ=200)
@@ -329,20 +503,24 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                             f"Gate 3 FAIL: κ=200 draw {di} E1-{r['e1_cell']} missing"
                         )
                     exp_e1 = int(e1_row["Q2_opt"].values[0])
-                    if r["Q2_opt"] != exp_e1:
-                        print(f"  FAIL κ=200 draw {di} E1-{r['e1_cell']}: "
-                              f"got {r['Q2_opt']} exp {exp_e1}", flush=True)
-                        n_fail += 1
+                    _check_q2_cell(r["Q2_opt"], exp_e1, 200, di, f"E1-{r['e1_cell']}")
                     total_e1 += 1
 
         mm_ulp  = f"{min_margin_mm_k:.3e}"  if min_margin_mm_k < float("inf") else "n/a"
         vec_ulp = f"{min_margin_vec_k:.3e}" if min_margin_vec_k < float("inf") else "n/a"
+        e1b_ulp = f"{min_margin_e1b_k200:.3e}" if kappa == 200 and min_margin_e1b_k200 < float("inf") else "n/a"
+        e1w_ulp = f"{min_margin_e1w_k200:.3e}" if kappa == 200 and min_margin_e1w_k200 < float("inf") else "n/a"
+        _e1_ulp_str = (
+            f"  below-10ulp-e1b={n_below_10ulp_e1b}/500({e1b_ulp})"
+            f"  below-10ulp-e1w={n_below_10ulp_e1w}/500({e1w_ulp})"
+        ) if kappa == 200 else ""
         print(
             f"    κ={kappa:4d} OK  "
             f"same-mm={n_same_mm_k}/{n_draws_k}  "
             f"same-vec={n_same_vec_k}/{n_draws_k}  "
             f"below-10ulp-mm={n_below_10ulp_mm}/{n_draws_k}({mm_ulp})  "
-            f"below-10ulp-vec={n_below_10ulp_vec}/{n_draws_k}({vec_ulp})",
+            f"below-10ulp-vec={n_below_10ulp_vec}/{n_draws_k}({vec_ulp})"
+            f"{_e1_ulp_str}",
             flush=True,
         )
 
@@ -397,9 +575,7 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
     for cell in CELLS_8:
         got = raw_inf[cell]
         exp = int(df_raw_inf[cell].values[0])
-        if got != exp:
-            print(f"  FAIL κ=∞ {cell}: got {got} exp {exp}", flush=True)
-            n_fail += 1
+        _check_q2_cell(got, exp, np.inf, 0, cell)
         total_raw += 1
 
     for r in e1_inf:
@@ -409,28 +585,34 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                 f"Gate 3 FAIL: κ=∞ E1-{r['e1_cell']} missing from {e1_csv.name}"
             )
         exp_e1 = int(e1_row["Q2_opt"].values[0])
-        if r["Q2_opt"] != exp_e1:
-            print(f"  FAIL κ=∞ E1-{r['e1_cell']}: got {r['Q2_opt']} exp {exp_e1}",
-                  flush=True)
-            n_fail += 1
+        _check_q2_cell(r["Q2_opt"], exp_e1, np.inf, 0, f"E1-{r['e1_cell']}")
         total_e1 += 1
 
     print(f"  κ=∞ OK  same-mm={same_mm_inf}/1  same-vec={same_vec_inf}/1", flush=True)
 
-    # ── Save trio indices (κ=200) as npz + content hash ────────────────────
-    # NOTE: .npz is a zip; file SHA changes with timestamp. Use content hash instead.
+    # ── Save trio indices (κ=200) as npz with canonical content hash ────────
+    # Arrays: 7 int32 arrays per draw — SAW_mm_opt, SAW_vec_opt, SAW_vec_grd,
+    #         E1M_opt, E1B_opt, E1W_opt, E1V_opt.
+    # Hash covers name + shape + dtype.str + raw bytes, sorted by name.
+    # Canonical hash is stable across zip timestamps.
     npz_path = ROOT / "results" / "santiago" / f"gate3_trios_{tag}.npz"
-    SAW_mm_arr  = np.array([trio_indices_k200[d]["SAW_mm_opt"]  for d in range(len(trio_indices_k200))], dtype=np.int32)
-    SAW_vec_arr = np.array([trio_indices_k200[d]["SAW_vec_opt"] for d in range(len(trio_indices_k200))], dtype=np.int32)
-    np.savez(npz_path, SAW_mm_opt=SAW_mm_arr, SAW_vec_opt=SAW_vec_arr)
+    _n_k200  = len(trio_indices_k200)
+    _npz_arrays: dict = {}
+    for _key in ("SAW_mm_opt", "SAW_vec_opt", "SAW_vec_grd",
+                 "E1M_opt", "E1B_opt", "E1W_opt", "E1V_opt"):
+        _npz_arrays[_key] = np.array(
+            [trio_indices_k200[d][_key] for d in range(_n_k200)], dtype=np.int32
+        )
+    np.savez(npz_path, **_npz_arrays)
     import hashlib as _hl2
-    content_hash = _hl2.sha256(SAW_mm_arr.tobytes() + SAW_vec_arr.tobytes()).hexdigest()
+    content_hash = _npz_content_hash(_npz_arrays)
     file_sha = _hl2.sha256(npz_path.read_bytes()).hexdigest()
-    print(f"  Saved: {npz_path.name}", flush=True)
-    print(f"    content-hash (arrays): {content_hash}", flush=True)
-    print(f"    file-sha256 (zip):     {file_sha}", flush=True)
+    print(f"  Saved: {npz_path.name}  ({len(_npz_arrays)} arrays, {_n_k200} rows)",
+          flush=True)
+    print(f"    content-hash (canonical): {content_hash}", flush=True)
+    print(f"    file-sha256 (zip):        {file_sha}", flush=True)
 
-    if n_fail:
+    if n_fail:  # n_fail is always 0 since _check_q2_cell raises immediately; kept for clarity
         raise RuntimeError(
             f"Gate 3 FAIL ({label}): {n_fail} mismatches. "
             f"({total_raw} raw + {total_e1} E1 cells checked)"
@@ -1006,15 +1188,8 @@ def gate_1_fogo_oracle() -> bool:
     diff_grd = np.abs(R_vec_grd_f - R_vec_grd_oracle)
     diff_opt = np.abs(R_vec_opt_f - R_vec_opt_oracle)
 
-    if diff_grd.max() > TOL_DRAW:
-        raise RuntimeError(
-            f"Gate 1 FAIL: R_vec_grd per-draw max diff = {diff_grd.max():.3e} > {TOL_DRAW}. "
-            "compute_value_regret() diverges from oracle compute_regret.py."
-        )
-    if diff_opt.max() > TOL_DRAW:
-        raise RuntimeError(
-            f"Gate 1 FAIL: R_vec_opt per-draw max diff = {diff_opt.max():.3e} > {TOL_DRAW}."
-        )
+    _check_perdraw_tol(R_vec_grd_oracle, R_vec_grd_f, TOL_DRAW, "grd")
+    _check_perdraw_tol(R_vec_opt_oracle, R_vec_opt_f, TOL_DRAW, "opt")
     print(
         f"  Per-draw: max diff grd={diff_grd.max():.2e} opt={diff_opt.max():.2e} PASS",
         flush=True,
@@ -1246,38 +1421,47 @@ def main():
     g3_st = gate_3_q2_reconstruction("ST")
     g3_sn = gate_3_q2_reconstruction("SN")
 
-    # Verify that the evaluation uses the SAME trios as Gate 3 (content hash check)
-    import hashlib as _hlg3
+    # Verify that the evaluation uses the SAME trios as Gate 3 (canonical hash check)
+    # Compares the freshly-computed npz (same run) against SHA_NPZ_GATE3[tag],
+    # the sealed hash from the prior --gate3-only run. If PENDING, skip with warning.
+    print("=== Gate 4a npz hash check ===", flush=True)
     for tag, g3 in [("ST", g3_st), ("SN", g3_sn)]:
         npz_p = ROOT / "results" / "santiago" / f"gate3_trios_{tag}.npz"
-        if npz_p.exists():
-            data_npz = np.load(npz_p)
-            mm_a  = data_npz["SAW_mm_opt"].astype(np.int32)
-            vec_a = data_npz["SAW_vec_opt"].astype(np.int32)
-            stored_hash = _hlg3.sha256(mm_a.tobytes() + vec_a.tobytes()).hexdigest()
-            # Recompute from in-memory dict
-            B = len(g3)
-            mm_b  = np.array([g3[d]["SAW_mm_opt"]  for d in range(B)], dtype=np.int32)
-            vec_b = np.array([g3[d]["SAW_vec_opt"] for d in range(B)], dtype=np.int32)
-            mem_hash = _hlg3.sha256(mm_b.tobytes() + vec_b.tobytes()).hexdigest()
-            if stored_hash != mem_hash:
+        if not npz_p.exists():
+            raise RuntimeError(
+                f"Gate 4a: {npz_p.name} not found. Run --gate3-only first."
+            )
+        # Rebuild arrays from in-memory gate3 dict (deterministic, no file I/O)
+        _n = len(g3)
+        _fresh: dict = {}
+        for _k in ("SAW_mm_opt", "SAW_vec_opt", "SAW_vec_grd",
+                   "E1M_opt", "E1B_opt", "E1W_opt", "E1V_opt"):
+            _fresh[_k] = np.array([g3[d][_k] for d in range(_n)], dtype=np.int32)
+        fresh_hash = _npz_content_hash(_fresh)
+        sealed_hash = SHA_NPZ_GATE3.get(tag, "PENDING_UPDATE_AFTER_GATE3_RERUN")
+        if sealed_hash.startswith("PENDING"):
+            print(
+                f"  Gate 4a ({tag}): SHA_NPZ_GATE3['{tag}'] not yet set — "
+                f"skip sealed check. Run --gate3-only and update SHA_NPZ_GATE3.",
+                flush=True,
+            )
+        else:
+            if fresh_hash != sealed_hash:
                 raise RuntimeError(
-                    f"Gate 4a: trio content-hash mismatch for {tag}.\n"
-                    f"  disk:   {stored_hash[:16]}\n  memory: {mem_hash[:16]}"
+                    f"Gate 4a: npz canonical hash mismatch for {tag}.\n"
+                    f"  sealed (--gate3-only run): {sealed_hash[:16]}\n"
+                    f"  this run:                  {fresh_hash[:16]}\n"
+                    "Seeds or data changed between runs."
                 )
-            print(f"  Gate 4a trio hash ({tag}): disk==memory ({stored_hash[:16]}) PASS",
-                  flush=True)
+            print(
+                f"  Gate 4a ({tag}): sealed hash matches ({fresh_hash[:16]}) PASS",
+                flush=True,
+            )
 
     # Gate 4a identity: trio from Gate 3 must match argmax(V_mm) from EVAL-R
     print("=== Gate 4a identity (Gate 3 vs EVAL-R) ===", flush=True)
     for branch_key, g3, regret in [("ST", g3_st, st_regret), ("SN", g3_sn, sn_regret)]:
-        for di, cell_dict in g3.items():
-            opt_g3   = cell_dict["SAW_mm_opt"]
-            opt_evalr = regret["trio_idx_mm_opt"][di]
-            assert opt_g3 == opt_evalr, (
-                f"Gate 4a identity FAIL ({branch_key} draw {di}): "
-                f"Gate3 trio={opt_g3} != EVAL-R argmax={opt_evalr}"
-            )
+        _check_gate4a_identity(g3, regret, branch_key)
     print("  Gate 4a identity (Gate 3 vs EVAL-R): PASS\n", flush=True)
 
     # S0-S7b evaluation
