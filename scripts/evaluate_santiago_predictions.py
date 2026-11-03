@@ -265,6 +265,7 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     s0 = {"prediction": "S0", "text": "SAW/mm/opt Q2=100% every draw (K1 regression)",
           "condition": "none", "testable": True,
           "result": "PASS" if s0_pass else "FAIL",
+          "n_saw_mm_opt_k200": int((df[df["kappa"]==200]["SAW_mm_opt"]==1).sum()),
           "note": f"SAW_mm_opt mean = {df['SAW_mm_opt'].mean()*100:.2f}%"}
 
     # ── S1 ──────────────────────────────────────────────────────────────────
@@ -307,12 +308,17 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
                                           "p_one_sided": round(p,4)}
     holm_s2 = _holm(p_vals_s2)
     s2_pass = testable_s2 and any(h < 0.05 for h in holm_s2)
+    df_k200_s2 = df[df["kappa"] == 200]
+    solo_grd_k200 = int(((df_k200_s2["SAW_vec_grd"]==1) & (df_k200_s2["SAW_vec_opt"]==0)).sum())
+    solo_opt_k200 = int(((df_k200_s2["SAW_vec_opt"]==1) & (df_k200_s2["SAW_vec_grd"]==0)).sum())
     s2 = {"prediction": "S2",
           "text": "Q2(SAW,vec,opt) < Q2(SAW,vec,grd), 95% CI excludes 0 (greedy reversal)",
           "condition": f"TV_W≥0.05: {cond['TV_W']:.3f} {'✓' if testable_s2 else '✗'}",
           "testable": testable_s2,
           "per_kappa": kappa_results_s2,
           "holm_adj_p": {str(int(k)): round(h,4) for k,h in zip(kappa_vals,holm_s2)},
+          "solo_grd_k200": solo_grd_k200,
+          "solo_opt_k200": solo_opt_k200,
           "result": ("CONFIRMED" if s2_pass else "NOT CONFIRMED") if testable_s2 else "NOT TESTABLE"}
 
     # ── S3a ─────────────────────────────────────────────────────────────────
@@ -322,23 +328,31 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
         e1_200  = e1[e1["kappa"] == 200]
         s3a_W   = float(e1_200[e1_200["e1_cell"]=="W"]["Q2_opt"].mean() * 100) if not e1_200.empty else None
         s3a_V   = float(e1_200[e1_200["e1_cell"]=="V"]["Q2_opt"].mean() * 100) if not e1_200.empty else None
+        e1b_cnt = int(e1_200[e1_200["e1_cell"]=="B"]["Q2_opt"].sum()) if not e1_200.empty else None
         s3a_pass = testable_s3 and (s3a_W is not None) and (s3a_V is not None) and \
                    s3a_W < 100.0 and s3a_V < 100.0
     else:
-        s3a_W = s3a_V = None; s3a_pass = False
+        s3a_W = s3a_V = e1b_cnt = None; s3a_pass = False
     s3a = {"prediction": "S3a",
            "text": "E1-W opt < 100% AND E1-V opt < 100%",
            "condition": f"TV_W≥0.05: {cond['TV_W']:.3f} {'✓' if testable_s3 else '✗'}",
            "testable": testable_s3,
            "Q2_E1W_opt_k200": s3a_W, "Q2_E1V_opt_k200": s3a_V,
+           "E1B_opt_count_k200": e1b_cnt,
            "result": ("CONFIRMED" if s3a_pass else "NOT CONFIRMED") if testable_s3 else "NOT TESTABLE"}
 
     # ── S3b ─────────────────────────────────────────────────────────────────
     # E1-V opt < E1-W opt | TV_W ≥ 0.05 AND TV_B ≥ 0.05
     testable_s3b = cond["TV_W"] >= 0.05 and cond["TV_B"] >= 0.05
-    if not e1.empty and s3a_W is not None:
+    if not e1.empty and s3a_W is not None and not e1_200.empty:
+        e1_200_vw = e1_200[e1_200["e1_cell"].isin(["V","W"])].pivot_table(
+            index="draw", columns="e1_cell", values="Q2_opt", aggfunc="first"
+        )
+        solo_V = int(((e1_200_vw["V"]==1) & (e1_200_vw["W"]==0)).sum())
+        solo_W = int(((e1_200_vw["W"]==1) & (e1_200_vw["V"]==0)).sum())
         s3b_pass = testable_s3b and (s3a_V < s3a_W)
     else:
+        solo_V = solo_W = None
         s3b_pass = False
     s3b = {"prediction": "S3b",
            "text": "E1-V opt < E1-W opt (between-group distortion > within-group)",
@@ -346,6 +360,7 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
                          f"  TV_B≥0.05: {cond['TV_B']:.3f} {'✓' if cond['TV_B']>=0.05 else '✗'}"),
            "testable": testable_s3b,
            "Q2_E1V_k200": s3a_V, "Q2_E1W_k200": s3a_W,
+           "solo_V_k200": solo_V, "solo_W_k200": solo_W,
            "result": ("CONFIRMED" if s3b_pass else "NOT CONFIRMED") if testable_s3b else "NOT TESTABLE"}
 
     # ── S4 ──────────────────────────────────────────────────────────────────
@@ -847,10 +862,26 @@ def assert_regression(results_st: dict, results_sn: dict) -> None:
     if k6sn is not None:
         _ck("S-N K6 3-cell pp",   k6sn, -11.9)
 
-    # S3b discordant counts from e1 data (checked in evaluate_branch S3b section)
-    # S3b S-T: solo_V=69, solo_W=49 — verified in S3b prediction dict via per-draw E1 CSVs
-    # S2 S-N: solo_grd=4, solo_opt=326 — verified in S2 prediction dict
-    # These are cross-checked here by verifying the summary percentages already checked above.
+    # ── 12 exact integer counts ───────────────────────────────────────────────
+    # S0 SAW_mm_opt: all 500 draws optimal at κ=200 (Proposition 1)
+    _ck("S-T SAW_mm_opt count", _pred(results_st, "S0")["n_saw_mm_opt_k200"], 500)
+    _ck("S-N SAW_mm_opt count", _pred(results_sn, "S0")["n_saw_mm_opt_k200"], 500)
+
+    # S2 solo counts (draws where one selector is non-dominated and the other is not)
+    _ck("S-T S2 solo_grd k200", _pred(results_st, "S2")["solo_grd_k200"], 0)
+    _ck("S-T S2 solo_opt k200", _pred(results_st, "S2")["solo_opt_k200"], 0)
+    _ck("S-N S2 solo_grd k200", _pred(results_sn, "S2")["solo_grd_k200"], 4)
+    _ck("S-N S2 solo_opt k200", _pred(results_sn, "S2")["solo_opt_k200"], 326)
+
+    # S3b solo counts (draws where E1-V is non-dominated but E1-W is not, or vice versa)
+    _ck("S-T S3b solo_V  k200", _pred(results_st, "S3b")["solo_V_k200"],  69)
+    _ck("S-T S3b solo_W  k200", _pred(results_st, "S3b")["solo_W_k200"],  49)
+    _ck("S-N S3b solo_V  k200", _pred(results_sn, "S3b")["solo_V_k200"],  0)
+    _ck("S-N S3b solo_W  k200", _pred(results_sn, "S3b")["solo_W_k200"],  3)
+
+    # E1-B opt count: Theorem 1 (always on Pareto frontier)
+    _ck("S-T E1-B opt count",   _pred(results_st, "S3a")["E1B_opt_count_k200"], 500)
+    _ck("S-N E1-B opt count",   _pred(results_sn, "S3a")["E1B_opt_count_k200"], 500)
 
     print("  Regression: ALL PASS\n", flush=True)
 
