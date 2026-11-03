@@ -79,3 +79,14 @@ On Windows: SHA-only check. Must pass with full re-computation on Athena before 
 - Commit fd64eeb (2026-11-03): removed PENDING; S6/S7 use value regret; raise if unavailable.
 - Commit current: gate_1 rewritten to be non-circular; gate_3 stub added;
   assert_regression expanded; DEV-SANT-EVALR-001 created.
+
+## Registration note
+
+This DEV was created in commit 36a2f1d (2026-11-03), after the code already existed
+in commit 12b57d3. This is an exception to the "DEV before code" rule. The reason:
+the correction was identified during the evaluation session (S4/S6/S7 analysis),
+the code and the DEV were written in the same session, and the DEV was the first
+document to explicitly name the deviation (R=1−Q2 is wrong).
+
+The code in 12b57d3 introduced compute_value_regret_santiago() with the correct formula.
+The DEV in 36a2f1d documents that the formula was wrong in earlier versions.
