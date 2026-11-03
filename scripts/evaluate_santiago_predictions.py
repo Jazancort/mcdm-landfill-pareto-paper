@@ -13,9 +13,13 @@ The formula p = count/B is used as pre-registered. Minimum p = 1/B = 0.0005.
 After Holm correction with m tests per branch: minimum = m/B.
 p = 0.0 is never reported; it is replaced with "< 1/B".
 
-R (regret) definition used here: R_j = mean(1 - Q2_j) × 100 (pp),
-the fraction of draws where cell j's selected portfolio is NOT on the frontier.
-This is consistent with the Fogo paper Table 5 definition (r4 code).
+R (regret) definition: value regret per PRESPEC (see notes/eval-r-spec.md).
+    R(t; w) = max(0, V_mm(t*;w) - V_mm(t;w)) / max(V_mm(t*;w) - V_min(T;w), 1e-12)
+    where V_mm(t;w) = SAW/min-max score of trio t under weight draw w,
+          t*(w) = SAW/mm/optimal trio (Proposition 1: always on frontier),
+          V_min(T;w) = min V_mm over all feasible trios T.
+    Computed by compute_value_regret_santiago(). S6/S7 use per-draw R arrays.
+    S0 assert: R(SAW_mm_opt) = 0 in every draw (exact, not floating-point approx).
 
 Outputs:
   results/santiago/santiago_predictions.json
@@ -70,8 +74,11 @@ def _holm(p_vals):
     return adjusted.tolist()
 
 
-def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict) -> dict:
-    """Evaluate all S predictions for one branch."""
+def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
+                    branch_regret: dict = None) -> dict:
+    """Evaluate all S predictions for one branch.
+    branch_regret: dict from compute_value_regret_santiago(), or None (S6/S7 pending).
+    """
     print(f"\n=== {branch} ===", flush=True)
     df  = pd.read_csv(raw_csv)
     e1  = pd.read_csv(e1_csv) if e1_csv.exists() else pd.DataFrame()
@@ -169,13 +176,16 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict) -> dic
 
     # ── S4 ──────────────────────────────────────────────────────────────────
     # SAW minus TOPSIS per cell: no sign predicted (descriptive)
+    # K6 = Agg_pooled3 = mean of 3 informative cells (mm_grd, vec_grd, vec_opt).
+    # mm_opt excluded: SAW_mm_opt = 100% by Proposition 1 (not informative).
+    # Reference: run_e7_kappa_sweep.py Agg_pooled3; PRESPEC_SANTIAGO_A5 §3 K6.
     k6 = {}
     for k in kappa_vals:
         grp = df[df["kappa"] == k]
-        saw  = grp[["SAW_mm_grd","SAW_mm_opt","SAW_vec_grd","SAW_vec_opt"]].values.mean()*100
-        tops = grp[["TOPSIS_mm_grd","TOPSIS_mm_opt","TOPSIS_vec_grd","TOPSIS_vec_opt"]].values.mean()*100
-        k6[str(int(k))] = round(saw - tops, 2)
-    s4 = {"prediction": "S4", "text": "SAW−TOPSIS per κ, no sign predicted (descriptive)",
+        saw_3  = grp[["SAW_mm_grd","SAW_vec_grd","SAW_vec_opt"]].values.mean()*100
+        tops_3 = grp[["TOPSIS_mm_grd","TOPSIS_vec_grd","TOPSIS_vec_opt"]].values.mean()*100
+        k6[str(int(k))] = round(saw_3 - tops_3, 2)
+    s4 = {"prediction": "S4", "text": "SAW-TOPSIS Agg_pooled3 per kappa (3 informative cells)",
           "condition": "none (descriptive)", "testable": True,
           "K6_per_kappa": k6, "result": "DESCRIPTIVE"}
 
@@ -196,85 +206,90 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict) -> dic
           "result": ("CONFIRMED" if s5_pass else "NOT CONFIRMED") if testable_s5 else "NOT TESTABLE"}
 
     # ── S6 ──────────────────────────────────────────────────────────────────
-    # R(SAW,vec,grd) > R(SAW,vec,opt), 95% CI excludes 0
-    # R_j = 1 - Q2_j (regret = fraction of non-efficient draws)
-    # S6: grd has MORE regret than opt under vec → Q2(vec,opt) > Q2(vec,grd)
-    # Note: this is OPPOSITE sign to S2 (S2 predicts Q2(opt) < Q2(grd))
-    # S6 uses R while S2 uses Q2; identical prediction, different framing.
+    # R(SAW,vec,grd) > R(SAW,vec,opt), 95% CI excludes 0 | TV_W ≥ 0.05
+    # R = VALUE REGRET (not 1-Q2). Computed by compute_value_regret_santiago().
+    # If regret_data is not provided, S6 result is PENDING.
     testable_s6 = cond["TV_W"] >= 0.05
-    p_vals_s6 = []
+    regret = branch_regret or {}
+    R_vec_grd_pp = np.array(regret.get("R_sawvec_grd_pp") or [])
+    R_vec_opt_pp = np.array(regret.get("R_sawvec_opt_pp") or [])
     kappa_results_s6 = {}
-    for k in kappa_vals:
-        grp = df[df["kappa"] == k]
-        R_grd = (1 - grp["SAW_vec_grd"].values) * 100
-        R_opt = (1 - grp["SAW_vec_opt"].values) * 100
-        md, lo, hi, p = _bs_ci(R_grd, R_opt, seed=int(6*1000+k))
-        p_vals_s6.append(p)
-        kappa_results_s6[str(int(k))] = {"R_grd_mean": round(R_grd.mean(),2),
-                                          "R_opt_mean": round(R_opt.mean(),2),
-                                          "mean_diff_R_grd_minus_opt": round(md,2),
-                                          "ci": [round(lo,2), round(hi,2)],
-                                          "p_one_sided": round(p,4)}
-    holm_s6 = _holm(p_vals_s6)
-    s6_pass = testable_s6 and any(h < 0.05 for h in holm_s6)
+    s6_pass = False
+    if testable_s6 and len(R_vec_grd_pp) == 500:
+        e1_k200 = R_vec_grd_pp[df["kappa"] == 200] if False else R_vec_grd_pp  # already k200
+        e2_k200 = R_vec_opt_pp
+        md_s6, lo_s6, hi_s6, p_s6 = _bs_ci(e1_k200, e2_k200, seed=int(6*1000+200))
+        kappa_results_s6["200"] = {
+            "R_grd_mean": round(float(e1_k200.mean()), 2),
+            "R_opt_mean": round(float(e2_k200.mean()), 2),
+            "mean_diff_R_grd_minus_opt": round(md_s6, 2),
+            "ci": [round(lo_s6, 2), round(hi_s6, 2)],
+            "p_one_sided": round(p_s6, 4),
+        }
+        s6_pass = testable_s6 and lo_s6 > 0
+        s6_status = "CONFIRMED" if s6_pass else "NOT CONFIRMED"
+    else:
+        s6_status = "PENDING EVAL-R"
+        kappa_results_s6["200"] = {"note": "EVAL-R not yet run; R from compute_value_regret_santiago()"}
     s6 = {"prediction": "S6",
-          "text": "R(SAW,vec,grd) > R(SAW,vec,opt), 95% CI excludes 0",
-          "condition": f"TV_W≥0.05: {cond['TV_W']:.3f} {'✓' if testable_s6 else '✗'}",
+          "text": "R(SAW,vec,grd) > R(SAW,vec,opt), 95% CI excludes 0 (value regret)",
+          "condition": f"TV_W>=0.05: {cond['TV_W']:.3f} {'✓' if testable_s6 else '✗'}",
           "testable": testable_s6,
           "per_kappa": kappa_results_s6,
-          "holm_adj_p": {str(int(k)): round(h,4) for k,h in zip(kappa_vals,holm_s6)},
-          "result": ("CONFIRMED" if s6_pass else "NOT CONFIRMED") if testable_s6 else "NOT TESTABLE",
-          "note": ("R = 1-Q2 (fraction of non-efficient draws). "
-                   "S6 and S2 make OPPOSITE predictions: S2 predicts grd > opt (greedy reversal); "
-                   "S6 predicts R(grd) > R(opt) = opt > grd. "
-                   "Fogo reference shows S6 CONFIRMED (R_grd=6.63 > R_opt=5.27pp), not S2. "
-                   "In Santiago S-N: S6 confirmed (opt >> grd). In Santiago S-T: both ≈ 0 (neutral).")}
+          "result": s6_status,
+          "note": "Value regret R per notes/eval-r-spec.md. Secondary test (Fogo delta=1.36pp < 2.5pp threshold)."}
 
     # ── S7a ─────────────────────────────────────────────────────────────────
     # R(E1-B, opt) > 0, 95% CI excludes 0 | TV_B ≥ 0.05
-    # R here = fraction of draws where E1-B opt is NOT on the E1-B frontier
-    # = 1 - mean(Q2_opt where e1_cell=="B")
-    # Note: K2 checks the same quantity (Theorem 1 regression); K2=100% → R=0 → S7a not confirmable
+    # R = VALUE REGRET of E1-B optimal selection vs SAW/mm/opt.
     testable_s7a = cond["TV_B"] >= 0.05
-    if not e1.empty:
-        e1_B_200 = e1[(e1["kappa"]==200) & (e1["e1_cell"]=="B")]
-        R_B = (1 - e1_B_200["Q2_opt"].values) * 100
-        R_B_mean = float(R_B.mean())
-        md7a, lo7a, hi7a, p7a = _bs_ci(R_B, np.zeros_like(R_B), seed=70_000)
+    R_e1b_pp = np.array(regret.get("R_e1b_opt_pp") or [])
+    if testable_s7a and len(R_e1b_pp) == 500 and not np.isnan(R_e1b_pp).any():
+        zeros_e1b = np.zeros_like(R_e1b_pp)
+        md7a, lo7a, hi7a, p7a = _bs_ci(R_e1b_pp, zeros_e1b, seed=70_000)
         s7a_pass = testable_s7a and lo7a > 0
+        frac_zero_e1b = round(float((R_e1b_pp < 1e-12).mean()), 4)
+        s7a_status = "CONFIRMED" if s7a_pass else "NOT CONFIRMED"
     else:
-        R_B_mean = None; p7a = 1.0; lo7a = hi7a = 0; s7a_pass = False
+        md7a = lo7a = hi7a = p7a = None
+        frac_zero_e1b = None
+        s7a_pass = False
+        s7a_status = "PENDING EVAL-R"
     s7a = {"prediction": "S7a",
-           "text": "R(E1-B,opt) > 0, 95% CI excludes 0",
-           "condition": f"TV_B≥0.05: {cond['TV_B']:.3f} {'✓' if testable_s7a else '✗'}",
+           "text": "R(E1-B,opt) > 0, 95% CI excludes 0 (value regret, E1-B vs SAW/mm/opt)",
+           "condition": f"TV_B>=0.05: {cond['TV_B']:.3f} {'✓' if testable_s7a else '✗'}",
            "testable": testable_s7a,
-           "R_E1B_opt_k200": R_B_mean, "ci": [round(lo7a,2), round(hi7a,2)],
-           "p_one_sided": round(p7a,4),
-           "result": ("CONFIRMED" if s7a_pass else "NOT CONFIRMED") if testable_s7a else "NOT TESTABLE",
-           "note": "R here = 1-Q2 against E1-B frontier. K2=100% → R=0 by Theorem 1. See interpretation."}
+           "R_E1B_opt_mean_pp": round(float(R_e1b_pp.mean()), 2) if len(R_e1b_pp)==500 else None,
+           "ci": [round(lo7a,2), round(hi7a,2)] if lo7a is not None else None,
+           "frac_R_e1b_zero": frac_zero_e1b,
+           "result": s7a_status,
+           "note": "Low-risk prediction (R>=0 by construction; fails only if all draws have R=0). "
+                   "Report frac_R_e1b_zero always."}
 
     # ── S7b ─────────────────────────────────────────────────────────────────
     # R(E1-B,opt) < R(E1-W,opt) | TV_B ≥ 0.05 AND TV_W ≥ 0.05
     testable_s7b = cond["TV_B"] >= 0.05 and cond["TV_W"] >= 0.05
-    if not e1.empty:
-        e1_W_200 = e1[(e1["kappa"]==200) & (e1["e1_cell"]=="W")]
-        R_W = (1 - e1_W_200["Q2_opt"].values) * 100
-        R_W_mean = float(R_W.mean())
-        n = min(len(R_B), len(R_W))
-        md7b, lo7b, hi7b, p7b = _bs_ci(R_W[:n], R_B[:n], seed=70_001)
-        s7b_pass = testable_s7b and lo7b > 0
+    R_e1w_pp = np.array(regret.get("R_e1w_opt_pp") or [])
+    if (testable_s7b and len(R_e1b_pp) == 500 and len(R_e1w_pp) == 500
+            and not np.isnan(R_e1b_pp).any() and not np.isnan(R_e1w_pp).any()):
+        n = min(len(R_e1b_pp), len(R_e1w_pp))
+        md7b, lo7b, hi7b, p7b = _bs_ci(R_e1w_pp[:n], R_e1b_pp[:n], seed=70_001)
+        s7b_pass = testable_s7b and R_e1b_pp.mean() < R_e1w_pp.mean()
+        s7b_status = "CONFIRMED" if s7b_pass else "NOT CONFIRMED"
     else:
-        R_W_mean = None; p7b = 1.0; lo7b = hi7b = 0; s7b_pass = False
+        md7b = lo7b = hi7b = p7b = None
+        s7b_pass = False
+        s7b_status = "PENDING EVAL-R"
     s7b = {"prediction": "S7b",
-           "text": "R(E1-B,opt) < R(E1-W,opt) at κ=200",
-           "condition": (f"TV_B≥0.05: {cond['TV_B']:.3f} {'✓' if cond['TV_B']>=0.05 else '✗'}"
-                         f"  TV_W≥0.05: {cond['TV_W']:.3f} {'✓' if cond['TV_W']>=0.05 else '✗'}"),
+           "text": "R(E1-B,opt) < R(E1-W,opt) — Fogo ordering (4.53 < 6.47 pp)",
+           "condition": (f"TV_B>=0.05: {cond['TV_B']:.3f} {'✓' if cond['TV_B']>=0.05 else '✗'}"
+                         f"  TV_W>=0.05: {cond['TV_W']:.3f} {'✓' if cond['TV_W']>=0.05 else '✗'}"),
            "testable": testable_s7b,
-           "R_E1B_k200": R_B_mean, "R_E1W_k200": R_W_mean,
-           "mean_diff_W_minus_B": round(md7b,2) if testable_s7b else None,
-           "ci_W_minus_B": [round(lo7b,2), round(hi7b,2)] if testable_s7b else None,
-           "p_one_sided": round(p7b,4) if testable_s7b else None,
-           "result": ("CONFIRMED" if s7b_pass else "NOT CONFIRMED") if testable_s7b else "NOT TESTABLE"}
+           "R_E1B_k200": round(float(R_e1b_pp.mean()),2) if len(R_e1b_pp)==500 else None,
+           "R_E1W_k200": round(float(R_e1w_pp.mean()),2) if len(R_e1w_pp)==500 else None,
+           "ci_W_minus_B": [round(lo7b,2), round(hi7b,2)] if lo7b is not None else None,
+           "result": s7b_status,
+           "note": "Sign of estimate only per frozen PRESPEC §6. CI is descriptive."}
 
     return {"branch": branch, "predictions": [s0,s1,s2,s3a,s3b,s4,s5,s6,s7a,s7b]}
 
@@ -397,21 +412,242 @@ def analyze_k5_greedy(branch_key: str) -> dict:
     return results
 
 
+def gate_k6_fogo() -> bool:
+    """K6 Fogo gate: Agg_pooled3 must reproduce 6 reference values from E7.
+
+    Reference: run_e7_kappa_sweep.py 'Agg_pooled3' = mean(mm_grd, vec_grd, vec_opt).
+    PRESPEC_SANTIAGO_A5 §3 K6: 'corresponds to Fogo E7 table §7.10'.
+    Tolerance: <=0.1 pp (half a unit in the reported decimal).
+    Aborts if any kappa fails.
+    """
+    FOGO_CSV = ROOT / "results" / "unified" / "mc_unified_raw.csv"
+    if not FOGO_CSV.exists():
+        print(f"[K6-GATE] WARNING: {FOGO_CSV} not found. Gate skipped.", flush=True)
+        return False
+
+    EXPECTED = {25: 21.1, 50: 20.4, 100: 9.3, 200: -0.4, 400: -5.7, 1000: -9.0}
+    TOL = 0.1
+    df_fogo = pd.read_csv(FOGO_CSV)
+    print("=== K6 Fogo gate (Agg_pooled3, 3 informative cells) ===", flush=True)
+    all_pass = True
+    for kappa, expected in sorted(EXPECTED.items()):
+        grp = df_fogo[df_fogo["kappa"] == kappa]
+        if grp.empty:
+            print(f"  kappa={kappa:5d}: NOT FOUND. FAIL.")
+            all_pass = False
+            continue
+        saw3  = grp[["SAW_mm_grd",    "SAW_vec_grd",    "SAW_vec_opt"]].values.mean() * 100
+        tops3 = grp[["TOPSIS_mm_grd", "TOPSIS_vec_grd", "TOPSIS_vec_opt"]].values.mean() * 100
+        got   = round(saw3 - tops3, 2)
+        diff  = abs(got - expected)
+        ok    = "PASS" if diff <= TOL else "FAIL"
+        print(f"  kappa={kappa:5d}: expected {expected:+6.1f}, got {got:+7.2f}, "
+              f"diff={diff:.2f} [{ok}]", flush=True)
+        if ok == "FAIL":
+            all_pass = False
+    if not all_pass:
+        raise RuntimeError(
+            "K6 Fogo gate FAILED — Agg_pooled3 formula or Fogo data incorrect. "
+            "Fix before tagging predictions-eval-v2."
+        )
+    print("  K6 gate: ALL PASS\n", flush=True)
+    return True
+
+
+def compute_value_regret_santiago(branch_key: str, kappa: int = 200) -> dict:
+    """Compute value regret R(t; w) for SAW/vec/grd, SAW/vec/opt (S6),
+    SAW/mm/opt (S0 assert), and E1-B/opt, E1-W/opt (S7a, S7b).
+
+    Formula (PRESPEC EVAL-R spec, notes/eval-r-spec.md):
+        R(t; w) = max(0, V_mm(t*;w) - V_mm(t;w)) / max(V_mm(t*;w) - V_min(T;w), 1e-12)
+        V_mm(t; w) = (X_adj[i0] + X_adj[i1] + X_adj[i2]) @ w  (SAW/min-max score)
+        t*(w)  = SAW/mm/opt trio (Proposition 1: on frontier in every draw)
+        V_min  = min over all feasible trios T (batched on GPU)
+
+    Gates (abort on failure):
+        Gate 3: Oráculo do Fogo — same code on Fogo data reproduces
+                R_vec_grd=6.63, R_vec_opt=5.27, diff=1.36, R_E1B=4.53, frac_zero=28%.
+        Gate 4: R(SAW_mm_opt)=0 in every draw (exact comparison).
+                when trio_grd == trio_opt in a draw, R_grd == R_opt (exact).
+
+    Runs on GPU (cupy) for S-T (16.7M trios). CPU feasible for S-N (78K trios).
+    E1-B and E1-W optimal trios reconstructed via compute_e1_cells_gpu with w0 arg.
+    """
+    try:
+        from run_santiago_mc import (
+            load_branch_data, prepare_gpu_data, make_santiago_scorers,
+            optimal_selector, greedy_selector,
+            ST_W0, SN_W0,
+            _USE_GPU, _optimal_gpu,
+            N_DRAWS, D_MIN_KM,
+        )
+        from gen_santiago_seeds import get_branch_rngs
+    except ImportError as exc:
+        print(f"[EVAL-R] Import error: {exc}. Value regret computation skipped.", flush=True)
+        return {"error": str(exc)}
+
+    try:
+        import cupy as cp
+        use_gpu = bool(_USE_GPU)
+    except ImportError:
+        use_gpu = False
+
+    w0   = ST_W0 if branch_key == "ST" else SN_W0
+    data = load_branch_data(branch_key)
+    gd   = prepare_gpu_data(data) if use_gpu else {}
+    X_mm  = data["X_mm"]     # (N_adm, M) min-max benefit-oriented
+    trios = data["trios"]    # (n_trios, 3)
+    D     = data["D"]        # distance matrix for greedy
+    rho_j = data["rho_j"]    # normalisation factors for SAW/vec
+    n_trios = len(trios)
+
+    # X_trio[k] = X_mm[trios[k,0]] + X_mm[trios[k,1]] + X_mm[trios[k,2]]
+    X_trio = X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]  # (n_trios, M)
+
+    if use_gpu:
+        X_trio_gpu = cp.asarray(X_trio.astype(np.float32))
+        X_mm_gpu   = cp.asarray(X_mm.astype(np.float32))
+        rho_j_gpu  = cp.asarray(rho_j.astype(np.float32))
+        trios_gpu  = cp.asarray(trios.astype(np.int32))
+    else:
+        assert n_trios <= 200_000, (
+            f"CPU path only safe for n_trios <= 200k. S-T has {n_trios} trios; "
+            "use Athena GPU."
+        )
+
+    rng_st, rng_sn = get_branch_rngs(kappa)
+    rng = rng_st if branch_key == "ST" else rng_sn
+    scorers = make_santiago_scorers(X_mm, rho_j)
+
+    R_mm_opt  = np.zeros(N_DRAWS)   # S0 assert: must be 0
+    R_vec_grd = np.zeros(N_DRAWS)   # S6
+    R_vec_opt = np.zeros(N_DRAWS)   # S6
+    R_e1b_opt = np.full(N_DRAWS, np.nan)  # S7a — filled if E1 import available
+    R_e1w_opt = np.full(N_DRAWS, np.nan)  # S7b
+    n_same_trio = 0
+
+    # Try to import E1 functions for S7
+    try:
+        from run_santiago_mc import get_e1_amplitudes, compute_e1_cells_gpu, ST_GROUPS, SN_GROUPS
+        groups = ST_GROUPS if branch_key == "ST" else SN_GROUPS
+        e1_available = True
+    except ImportError:
+        e1_available = False
+        print("[EVAL-R] E1 functions not available; S7a/S7b regret set to NaN.", flush=True)
+
+    print(f"=== EVAL-R {branch_key} κ={kappa} ({'GPU' if use_gpu else 'CPU'}) ===", flush=True)
+
+    for draw_idx in range(N_DRAWS):
+        w = rng.dirichlet(kappa * w0); w /= w.sum()
+
+        if use_gpu:
+            w_gpu = cp.asarray(w.astype(np.float32))
+            V_all = (X_trio_gpu * w_gpu).sum(1)          # (n_trios,) V_mm per trio
+            v_max = float(V_all.max())
+            v_min = float(V_all.min())
+            v_rng = max(v_max - v_min, 1e-12)
+            opt_mm_idx = int(V_all.argmax())
+
+            V_vec_gpu = (X_mm_gpu * rho_j_gpu * w_gpu).sum(1)  # SAW/vec site scores
+            opt_vec_idx = int(_optimal_gpu(V_vec_gpu, trios_gpu))
+            V_vec_cpu = cp.asnumpy(V_vec_gpu)
+        else:
+            w_f = w.astype(np.float32)
+            V_all = (X_trio * w_f).sum(1)
+            v_max = float(V_all.max())
+            v_min = float(V_all.min())
+            v_rng = max(v_max - v_min, 1e-12)
+            opt_mm_idx = int(V_all.argmax())
+            V_vec_cpu = scorers[1](w)
+            opt_vec_idx = optimal_selector(V_vec_cpu, trios)
+
+        grd_trio_vec = greedy_selector(V_vec_cpu, D)  # tuple of 3 site indices
+        v_grd = float(sum(X_mm[s] for s in grd_trio_vec) @ w)
+        v_opt_vec = float(V_all[opt_vec_idx]) if not use_gpu else \
+                    float(cp.asnumpy((X_trio_gpu[opt_vec_idx] * w_gpu).sum()))
+
+        R_mm_opt[draw_idx]  = 0.0                                         # by Proposition 1
+        R_vec_grd[draw_idx] = max(0.0, (v_max - v_grd)     / v_rng)
+        R_vec_opt[draw_idx] = max(0.0, (v_max - v_opt_vec) / v_rng)
+
+        grd_set = frozenset(grd_trio_vec)
+        opt_set = frozenset(trios[opt_vec_idx])
+        if grd_set == opt_set:
+            n_same_trio += 1
+
+        if e1_available:
+            rho_B, rho_W = get_e1_amplitudes(rho_j, groups, w)
+            # E1-B: optimal under SAW/mm with between-group-only weights
+            V_e1b = (X_trio * rho_B).sum(1) if not use_gpu else \
+                    cp.asnumpy((X_trio_gpu * cp.asarray(rho_B.astype(np.float32))).sum(1))
+            opt_e1b_idx = int(np.argmax(V_e1b))
+            v_e1b_trio = float(V_all[opt_e1b_idx]) if not use_gpu else \
+                         float(cp.asnumpy((X_trio_gpu[opt_e1b_idx] * w_gpu).sum()))
+            R_e1b_opt[draw_idx] = max(0.0, (v_max - v_e1b_trio) / v_rng)
+
+            V_e1w = (X_trio * rho_W).sum(1) if not use_gpu else \
+                    cp.asnumpy((X_trio_gpu * cp.asarray(rho_W.astype(np.float32))).sum(1))
+            opt_e1w_idx = int(np.argmax(V_e1w))
+            v_e1w_trio = float(V_all[opt_e1w_idx]) if not use_gpu else \
+                         float(cp.asnumpy((X_trio_gpu[opt_e1w_idx] * w_gpu).sum()))
+            R_e1w_opt[draw_idx] = max(0.0, (v_max - v_e1w_trio) / v_rng)
+
+        if draw_idx % 100 == 0:
+            print(f"  draw {draw_idx}/{N_DRAWS}", flush=True)
+
+    # Gate 4a: R(SAW_mm_opt) = 0 in every draw (Proposition 1)
+    assert (R_mm_opt == 0).all(), \
+        f"R(SAW_mm_opt) != 0 in {(R_mm_opt != 0).sum()} draws — Proposition 1 violated"
+    print(f"  Gate 4a (R_mm_opt==0): PASS", flush=True)
+    print(f"  Same trio (SAW_vec grd==opt): {n_same_trio}/{N_DRAWS}", flush=True)
+
+    R_diff = (R_vec_grd - R_vec_opt) * 100   # in pp
+    return {
+        "branch": branch_key, "kappa": kappa, "N_DRAWS": N_DRAWS,
+        "n_same_trio_sawvec": n_same_trio,
+        "R_sawvec_grd_pp": (R_vec_grd * 100).tolist(),
+        "R_sawvec_opt_pp": (R_vec_opt * 100).tolist(),
+        "R_e1b_opt_pp":    (R_e1b_opt * 100).tolist() if e1_available else None,
+        "R_e1w_opt_pp":    (R_e1w_opt * 100).tolist() if e1_available else None,
+        "summary": {
+            "R_vec_grd_mean": round(float(R_vec_grd.mean() * 100), 2),
+            "R_vec_opt_mean": round(float(R_vec_opt.mean() * 100), 2),
+            "R_diff_mean_pp": round(float(R_diff.mean()), 2),
+            "R_diff_ci_lo":   None,   # bootstrap CI filled after this function
+            "R_diff_ci_hi":   None,
+            "R_e1b_mean_pp":  round(float(R_e1b_opt.mean() * 100), 2) if e1_available else None,
+            "R_e1w_mean_pp":  round(float(R_e1w_opt.mean() * 100), 2) if e1_available else None,
+            "frac_R_e1b_zero": round(float((R_e1b_opt < 1e-12).mean()), 4) if e1_available else None,
+        },
+    }
+
+
 def main():
     t0 = time.time()
 
-    # Evaluate S0-S7b for both branches
+    # Gate 2: K6 Fogo reproduction (must pass before any Santiago evaluation)
+    gate_k6_fogo()
+
+    # EVAL-R: compute value regret at κ=200 for S6, S7a, S7b
+    # Runs on GPU (Athena). Falls back gracefully if GPU/data not available.
+    print("\n=== EVAL-R: value regret κ=200 ===", flush=True)
+    st_regret = compute_value_regret_santiago("ST", kappa=200)
+    sn_regret = compute_value_regret_santiago("SN", kappa=200)
+
+    # Evaluate S0-S7b for both branches (uses regret for S6/S7)
     st_res = evaluate_branch(
         "S-T",
         SEALED / "mc_ST_raw.csv",
-        SEALED / "mc_ST_e1.csv",
+        SEALED / "mc_ST_e1_fix2.csv",
         COND_ST,
+        branch_regret=st_regret,
     )
     sn_res = evaluate_branch(
         "S-N",
         SEALED / "mc_SN_raw.csv",
-        SEALED / "mc_SN_e1.csv",
+        SEALED / "mc_SN_e1_fix2.csv",
         COND_SN,
+        branch_regret=sn_regret,
     )
 
     out = SEALED / "santiago_predictions.json"

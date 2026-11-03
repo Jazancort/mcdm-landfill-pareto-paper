@@ -134,7 +134,12 @@ removed in commit 950064b (2026-10-26T00:27) — the same commit that also split
 into S7a/S7b. The frozen version omitted the redistribution rule because at freeze
 time ZDTI was assumed available (C-4 not expected). The
 DEV-ZDTI (committed before data at stage4-launch-r4/r5) chose global redistribution
-without referencing the draft's different approach. This sensitivity is declared
+without referencing the draft's different approach.
+The redistribution rule was removed in 950064b because by 2026-10-25 the ZDTI layer
+appeared in GetCapabilities and §5.4 declared "C-4 NOT triggered". Contingency C-4
+(§10) was retained without specifying redistribution method — the frozen PRESPEC
+assumed C-4 would never activate.
+This sensitivity is declared
 post-data to bound the effect; the primary analysis (global redistribution) stands.
 Testability of S-N predictions is evaluated on the primary analysis only.
 
