@@ -69,9 +69,10 @@ K6_FOGO_EXPECTED: dict = {25: 21.1, 50: 20.4, 100: 9.3, 200: -0.4, 400: -5.7, 10
 # Must be set after running --gate3-only on commit 5414bbb (or later code commit).
 # The full eval Gate 4a compares its freshly-computed npz against these constants.
 # If "PENDING": hash check is skipped with a warning (fill before tagging).
+# Set from --gate3-only run on commit f4f290b (TS=20261103T2036Z).
 SHA_NPZ_GATE3: dict = {
-    "ST": "PENDING_UPDATE_AFTER_GATE3_RERUN",
-    "SN": "PENDING_UPDATE_AFTER_GATE3_RERUN",
+    "ST": "612a8833d1db85802703b2235aed94a3f5207422829bad9b03b151eedc80f40c",
+    "SN": "09d0fcffc2d98728a2a8ea341541d2c1e26702f5aa822601bf8d21fcda69331e",
 }
 
 # Import shared aggregation functions from santiago_eval_core.
