@@ -49,8 +49,8 @@ new_refs_draft.bib
 # Grid results: D_km.npy is reproducible from candidates.csv
 results/grid/**/*.npy
 
-docs/session-log.md
-docs/estado-atual.md
+notes/session-log.md
+notes/estado-atual.md
 .DS_Store
 Thumbs.db
 .vscode/
