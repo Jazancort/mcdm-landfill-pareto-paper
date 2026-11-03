@@ -717,10 +717,52 @@ def gate_k6_fogo() -> bool:
     if not all_pass:
         raise RuntimeError("K6 gate FAILED — Agg_pooled3 mismatch. Fix formula before tagging.")
 
-    # κ=∞: theoretical value 0.0; no stochastic data in e7_raw.csv to verify
-    print("  kappa=  inf: theoretical 0.0 (SAW==TOPSIS at deterministic w) [no data]",
-          flush=True)
-    print("  K6 gate: ALL 6 STOCHASTIC VALUES PASS\n", flush=True)
+    # κ=∞: MANDATORY. FAIL if data not found.
+    # Search: git ls-files | grep -iE 'e7|kinf|inf|determin'
+    # If no file exists, compute with real code + w0 (single deterministic draw) and
+    # record SHA in DEV-K6 before tagging.
+    E7_INF_CSV = ROOT / "results" / "e7" / "e7_inf_raw.csv"
+    if not E7_INF_CSV.exists() or E7_INF_CSV.stat().st_size < 10:
+        raise RuntimeError(
+            f"K6 gate FAIL: κ=∞ data not found at {E7_INF_CSV}.\n"
+            "Either find the existing Fogo κ=∞ output (git ls-files | grep -iE 'e7|inf') "
+            "or compute it: one deterministic draw with w=w0 in run_santiago_mc.py, "
+            "save result to results/e7/e7_inf_raw.csv, record SHA in DEV-SANT-K6-001.\n"
+            "DO NOT set expected=0.0 without computing it first."
+        )
+    df_inf = pd.read_csv(E7_INF_CSV)
+    if "alpha" in df_inf.columns:
+        grp_inf = df_inf[df_inf["alpha"].astype(str).isin(["inf","Inf"])]
+    elif "kappa" in df_inf.columns:
+        grp_inf = df_inf[df_inf["kappa"].astype(str).isin(["inf","Inf"])]
+    else:
+        raise RuntimeError("K6 gate FAIL: e7_inf_raw.csv missing alpha/kappa column.")
+    if grp_inf.empty:
+        raise RuntimeError("K6 gate FAIL: κ=∞ row not found in e7_inf_raw.csv.")
+
+    saw3_inf = sum(
+        grp_inf[(grp_inf["agg"]==ag) & (grp_inf["norm"]==nm) & (grp_inf["mont"]==mt)][
+            "nd_Q2Ap"
+        ].mean()
+        for ag, nm, mt in CELLS_SAW
+    ) / 3 * 100
+    tops3_inf = sum(
+        grp_inf[(grp_inf["agg"]==ag) & (grp_inf["norm"]==nm) & (grp_inf["mont"]==mt)][
+            "nd_Q2Ap"
+        ].mean()
+        for ag, nm, mt in CELLS_TOPS
+    ) / 3 * 100
+    got_inf  = round(saw3_inf - tops3_inf, 2)
+    diff_inf = abs(got_inf - 0.0)
+    ok_inf   = "PASS" if diff_inf <= TOL else "FAIL"
+    print(
+        f"  kappa=  inf: expected  +0.00, got {got_inf:+7.2f}, diff={diff_inf:.3f} [{ok_inf}]",
+        flush=True,
+    )
+    if ok_inf == "FAIL":
+        raise RuntimeError(f"K6 gate κ=∞ FAILED: got {got_inf}, expected 0.0 (SAW==TOPSIS)")
+
+    print("  K6 gate: ALL 7 VALUES PASS\n", flush=True)
     return True
 
 
@@ -829,12 +871,16 @@ def gate_1_fogo_oracle() -> bool:
         if ok == "FAIL":
             raise RuntimeError(f"Gate 1 FAIL: {lbl} diff={diff:.3f} > {TOL_PP}")
 
-    # ── Exact count (diagnostic — verify via _compute_e1_regret.py) ─────
+    # ── Exact count: compare against oracle from _compute_e1_regret.py ─────
     n_e1b_zero = summ.get("n_e1b_zero_exact")
-    print(f"  n_e1b_zero: {n_e1b_zero}/500 (oracle=140; run _compute_e1_regret.py to confirm)",
-          flush=True)
-    # NOTE: 140 was computed by oracle. Current code (fixed w0) gives different count.
-    # Investigate before merge: run _compute_e1_regret.py on Athena to confirm expected.
+    if n_e1b_zero != 140:
+        raise RuntimeError(
+            f"Gate 1 FAIL: n_e1b_zero = {n_e1b_zero} != 140.\n"
+            "Investigate: run _compute_e1_regret.py on Athena and compare per-draw "
+            "R_e1b values with five criteria (R==0.0, R<1e-12, R<1e-9, "
+            "round(100*R,2)==0, trio==t*). Do NOT relax this check before resolving."
+        )
+    print(f"  n_e1b_zero: {n_e1b_zero}/500 = 28% PASS", flush=True)
     print("  Gate 1: ALL PASS\n", flush=True)
     return True
 
