@@ -226,8 +226,10 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
                 s_vec_gpu   = (gd["X_mm"] * gd["rho_j"] * w_gpu).sum(1)
                 opt_mm_idx  = int(_optimal_gpu(s_mm_gpu,  gd["trios"]))
                 opt_vec_idx = int(_optimal_gpu(s_vec_gpu, gd["trios"]))
-                # V_mm for ULP check: F_mm_trios_gpu is the SAW/mm trio scores
-                V_mm_cpu = cp.asnumpy(F_mm_trios_gpu.astype(cp.float64))
+                # V_mm per trio for ULP check (same formula as in compute_q2_all_cells_gpu)
+                t = gd["trios"]
+                v_trios_gpu = s_mm_gpu[t[:, 0]] + s_mm_gpu[t[:, 1]] + s_mm_gpu[t[:, 2]]
+                V_mm_cpu = cp.asnumpy(v_trios_gpu.astype(cp.float64))
             else:
                 F_mm_site  = compute_group_objectives(X_mm, w_cpu, A_ones_cpu, groups)
                 F_mm_trios = compute_trio_objectives(F_mm_site, trios)
