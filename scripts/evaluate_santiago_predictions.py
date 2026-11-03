@@ -66,13 +66,11 @@ K6_FOGO_EXPECTED: dict = {25: 21.1, 50: 20.4, 100: 9.3, 200: -0.4, 400: -5.7, 10
 
 # Canonical content hash of gate3_trios_*.npz from the sealed --gate3-only run.
 # Hash covers: name + shape + dtype.str + raw bytes for each array, sorted by name.
-# Must be set after running --gate3-only on commit 5414bbb (or later code commit).
-# The full eval Gate 4a compares its freshly-computed npz against these constants.
-# If "PENDING": hash check is skipped with a warning (fill before tagging).
-# Set from --gate3-only run on commit f4f290b (TS=20261103T2036Z).
+# Now includes 14 arrays: 7×κ=200 (shape (500,)) + 7×{key}_inf κ=∞ (shape (1,)).
+# PENDING: set after running --gate3-only on this commit (format changed with κ=∞).
 SHA_NPZ_GATE3: dict = {
-    "ST": "612a8833d1db85802703b2235aed94a3f5207422829bad9b03b151eedc80f40c",
-    "SN": "09d0fcffc2d98728a2a8ea341541d2c1e26702f5aa822601bf8d21fcda69331e",
+    "ST": "PENDING_UPDATE_AFTER_GATE3_RERUN",
+    "SN": "PENDING_UPDATE_AFTER_GATE3_RERUN",
 }
 
 # Import shared aggregation functions from santiago_eval_core.
@@ -135,21 +133,55 @@ def _check_gate3_row_counts(n_raw: int, n_e1: int,
 
 
 def _check_gate4a_identity(g3_dict: dict, regret_dict: dict,
-                            branch_key: str) -> None:
-    """Gate 4a identity: SAW_mm_opt trio from Gate 3 must equal EVAL-R argmax.
+                            branch_key: str,
+                            trios: np.ndarray = None) -> None:
+    """Gate 4a identity: all 7 arrays in Gate 3 npz must equal compute_value_regret output.
 
+    Checks 500 draws, FAIL on first difference.
     Called inside main() and directly by test_mutation_11.
-    Raises RuntimeError with match='Gate 4a identity FAIL' if not.
+
+    Arrays checked:
+    - SAW_mm_opt, SAW_vec_opt, E1M_opt, E1B_opt, E1W_opt, E1V_opt: direct index equality
+    - SAW_vec_grd: frozenset(grd_sites) == frozenset(trios[g3_idx])  [requires trios arg]
+
+    Raises RuntimeError with match='Gate 4a identity FAIL' if any mismatch.
     """
-    trio_idx_evalr = regret_dict["trio_idx_mm_opt"]
+    # Map from gate3 dict key → compute_value_regret return key
+    KEY_MAP = {
+        "SAW_mm_opt": "trio_idx_mm_opt",
+        "SAW_vec_opt": "trio_idx_vec_opt",
+        "E1M_opt":    "trio_idx_e1m_opt",
+        "E1B_opt":    "trio_idx_e1b_opt",
+        "E1W_opt":    "trio_idx_e1w_opt",
+        "E1V_opt":    "trio_idx_e1v_opt",
+    }
+    grd_vec_sites = regret_dict.get("trio_grd_vec_sites")
+
     for di, cell_dict in g3_dict.items():
-        opt_g3    = cell_dict["SAW_mm_opt"]
-        opt_evalr = trio_idx_evalr[di]
-        if opt_g3 != opt_evalr:
-            raise RuntimeError(
-                f"Gate 4a identity FAIL ({branch_key} draw {di}): "
-                f"Gate3 trio={opt_g3} != EVAL-R argmax={opt_evalr}"
-            )
+        # Direct index checks (6 arrays)
+        for g3_key, evalr_key in KEY_MAP.items():
+            evalr_list = regret_dict.get(evalr_key)
+            if evalr_list is None:
+                continue  # E1 not computed (e1_fn not provided)
+            opt_g3    = cell_dict[g3_key]
+            opt_evalr = evalr_list[di]
+            if opt_g3 != opt_evalr:
+                raise RuntimeError(
+                    f"Gate 4a identity FAIL ({branch_key} draw {di} {g3_key}): "
+                    f"Gate3={opt_g3} != EVAL-R={opt_evalr}"
+                )
+        # SAW_vec_grd: frozenset comparison (gate3 has trio index, evalr has site indices)
+        if trios is not None and grd_vec_sites is not None and di < len(grd_vec_sites):
+            g3_grd_idx = cell_dict.get("SAW_vec_grd")
+            if g3_grd_idx is not None:
+                grd_sites = grd_vec_sites[di]          # [i0, i1, i2] from greedy_fn
+                g3_sites  = trios[g3_grd_idx].tolist() # trio sites from gate3 index
+                if frozenset(grd_sites) != frozenset(g3_sites):
+                    raise RuntimeError(
+                        f"Gate 4a identity FAIL ({branch_key} draw {di} SAW_vec_grd): "
+                        f"Gate3 sites={sorted(g3_sites)} != "
+                        f"EVAL-R greedy_fn sites={sorted(grd_sites)}"
+                    )
 
 
 def _check_q2_cell(got: int, exp: int, kappa: float,
@@ -559,12 +591,46 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
             f_grd = sum(F_mm_site_inf[trio_grd[i]] for i in range(3))
             q2_opt = 0 if check_dominated_raw(F_mm_trios_inf, F_mm_trios_inf[tidx]) else 1
             q2_grd = 0 if check_dominated_raw(F_mm_trios_inf, f_grd) else 1
-            e1_inf.append({"e1_cell": e1_name, "Q2_opt": q2_opt, "Q2_grd": q2_grd})
+            e1_inf.append({"e1_cell": e1_name, "Q2_opt": q2_opt, "Q2_grd": q2_grd,
+                           "opt_idx": tidx})
+
+    # E1 optimal indices at κ=∞ (GPU path: compute from _X_trio_e1_gpu + w_inf)
+    if use_gpu:
+        w_inf_gpu_e1 = cp.asarray(w_inf)
+        _e1_inf_indices = {}
+        for e1_name in ("M", "B", "W", "V"):
+            A_j_gpu = cp.asarray(_e1_amp_arrs[e1_name])
+            V_e1_inf_gpu = (_X_trio_e1_gpu * (w_inf_gpu_e1 * A_j_gpu)).sum(1)
+            _e1_inf_indices[e1_name] = int(cp.argmax(V_e1_inf_gpu))
+    else:
+        _e1_inf_indices = {r["e1_cell"]: r["opt_idx"] for r in e1_inf}
 
     grd_mm_inf  = greedy_selector(s_mm_cpu_inf,  D)
     grd_vec_inf = greedy_selector(s_vec_cpu_inf, D)
     same_mm_inf  = int(frozenset(grd_mm_inf)  == frozenset(trios[opt_mm_inf]))
     same_vec_inf = int(frozenset(grd_vec_inf) == frozenset(trios[opt_vec_inf]))
+
+    # κ=∞ grd_vec trio index (cheap: only 1 draw, lookup by frozenset)
+    if use_gpu:
+        _grd_vec_inf_set = frozenset(grd_vec_inf)
+        _match_inf = cp.where(cp.all(_trios_sorted_gpu == cp.sort(
+            cp.asarray(np.array(grd_vec_inf, dtype=np.int32))), axis=1))[0]
+        grd_vec_inf_idx = int(_match_inf[0]) if len(_match_inf) > 0 else -1
+    else:
+        grd_vec_inf_idx = _trios_set_to_idx.get(frozenset(grd_vec_inf), -1)
+    if grd_vec_inf_idx < 0:
+        raise RuntimeError(f"Gate 3 FAIL: grd_vec_inf {grd_vec_inf} not in trios (κ=∞)")
+
+    # Store κ=∞ trio indices for npz
+    trio_indices_kinf = {
+        "SAW_mm_opt":  opt_mm_inf,
+        "SAW_vec_opt": opt_vec_inf,
+        "SAW_vec_grd": grd_vec_inf_idx,
+        "E1M_opt":     _e1_inf_indices["M"],
+        "E1B_opt":     _e1_inf_indices["B"],
+        "E1W_opt":     _e1_inf_indices["W"],
+        "E1V_opt":     _e1_inf_indices["V"],
+    }
 
     df_raw_inf = df_raw[df_raw["kappa"] == np.inf]
     df_e1_inf  = df_e1[df_e1["kappa"] == np.inf].sort_values("e1_cell")
@@ -591,11 +657,11 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
 
     print(f"  κ=∞ OK  same-mm={same_mm_inf}/1  same-vec={same_vec_inf}/1", flush=True)
 
-    # ── Save trio indices (κ=200) as npz with canonical content hash ────────
-    # Arrays: 7 int32 arrays per draw — SAW_mm_opt, SAW_vec_opt, SAW_vec_grd,
-    #         E1M_opt, E1B_opt, E1W_opt, E1V_opt.
+    # ── Save trio indices (κ=200 + κ=∞) as npz with canonical content hash ──
+    # κ=200: 7 int32 arrays of shape (500,); κ=∞: 7 int32 arrays of shape (1,)
+    # Suffix _inf for κ=∞ arrays.
     # Hash covers name + shape + dtype.str + raw bytes, sorted by name.
-    # Canonical hash is stable across zip timestamps.
+    # R is computed at κ=200 only. κ=∞ arrays stored for Gate 4a reference.
     npz_path = ROOT / "results" / "santiago" / f"gate3_trios_{tag}.npz"
     _n_k200  = len(trio_indices_k200)
     _npz_arrays: dict = {}
@@ -604,12 +670,13 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
         _npz_arrays[_key] = np.array(
             [trio_indices_k200[d][_key] for d in range(_n_k200)], dtype=np.int32
         )
+        _npz_arrays[f"{_key}_inf"] = np.array([trio_indices_kinf[_key]], dtype=np.int32)
     np.savez(npz_path, **_npz_arrays)
     import hashlib as _hl2
     content_hash = _npz_content_hash(_npz_arrays)
     file_sha = _hl2.sha256(npz_path.read_bytes()).hexdigest()
-    print(f"  Saved: {npz_path.name}  ({len(_npz_arrays)} arrays, {_n_k200} rows)",
-          flush=True)
+    print(f"  Saved: {npz_path.name}  ({len(_npz_arrays)} arrays: "
+          f"7×κ=200 (n={_n_k200}) + 7×κ=∞)", flush=True)
     print(f"    content-hash (canonical): {content_hash}", flush=True)
     print(f"    file-sha256 (zip):        {file_sha}", flush=True)
 
@@ -624,7 +691,7 @@ def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
         f"({total_raw + total_e1} total)\n",
         flush=True,
     )
-    return trio_indices_k200
+    return trio_indices_k200, trio_indices_kinf, trios
 
 
 def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
@@ -1451,14 +1518,14 @@ def main():
     sn_regret = compute_value_regret_santiago("SN", kappa=200)
 
     # Gate 3: full Q2 reconstruction (runs before any verdict); returns trio_indices
-    g3_st = gate_3_q2_reconstruction("ST")
-    g3_sn = gate_3_q2_reconstruction("SN")
+    g3_st, g3_st_inf, trios_st = gate_3_q2_reconstruction("ST")
+    g3_sn, g3_sn_inf, trios_sn = gate_3_q2_reconstruction("SN")
 
     # Verify that the evaluation uses the SAME trios as Gate 3 (canonical hash check)
     # Compares the freshly-computed npz (same run) against SHA_NPZ_GATE3[tag],
     # the sealed hash from the prior --gate3-only run. If PENDING, skip with warning.
     print("=== Gate 4a npz hash check ===", flush=True)
-    for tag, g3 in [("ST", g3_st), ("SN", g3_sn)]:
+    for tag, g3, g3_inf in [("ST", g3_st, g3_st_inf), ("SN", g3_sn, g3_sn_inf)]:
         npz_p = ROOT / "results" / "santiago" / f"gate3_trios_{tag}.npz"
         if not npz_p.exists():
             raise RuntimeError(
@@ -1470,6 +1537,8 @@ def main():
         for _k in ("SAW_mm_opt", "SAW_vec_opt", "SAW_vec_grd",
                    "E1M_opt", "E1B_opt", "E1W_opt", "E1V_opt"):
             _fresh[_k] = np.array([g3[d][_k] for d in range(_n)], dtype=np.int32)
+            # κ=∞ (1 draw each)
+            _fresh[f"{_k}_inf"] = np.array([g3_inf[_k]], dtype=np.int32)
         fresh_hash = _npz_content_hash(_fresh)
         sealed_hash = SHA_NPZ_GATE3.get(tag, "PENDING_UPDATE_AFTER_GATE3_RERUN")
         if sealed_hash.startswith("PENDING"):
@@ -1491,11 +1560,15 @@ def main():
                 flush=True,
             )
 
-    # Gate 4a identity: trio from Gate 3 must match argmax(V_mm) from EVAL-R
-    print("=== Gate 4a identity (Gate 3 vs EVAL-R) ===", flush=True)
-    for branch_key, g3, regret in [("ST", g3_st, st_regret), ("SN", g3_sn, sn_regret)]:
-        _check_gate4a_identity(g3, regret, branch_key)
-    print("  Gate 4a identity (Gate 3 vs EVAL-R): PASS\n", flush=True)
+    # Gate 4a identity: all 7 Gate 3 trio arrays must match compute_value_regret output
+    # Checks 500 draws; FAIL on first difference.
+    print("=== Gate 4a identity (Gate 3 vs EVAL-R, all 7 arrays) ===", flush=True)
+    for branch_key, g3, regret, trios_arr in [
+        ("ST", g3_st, st_regret, trios_st),
+        ("SN", g3_sn, sn_regret, trios_sn),
+    ]:
+        _check_gate4a_identity(g3, regret, branch_key, trios=trios_arr)
+    print("  Gate 4a identity (all 7 arrays, 500 draws each): PASS\n", flush=True)
 
     # S0-S7b evaluation
     st_res = evaluate_branch(

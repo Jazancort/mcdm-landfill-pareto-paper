@@ -197,6 +197,12 @@ def compute_value_regret(
 
     trio_idx_mm_opt  = np.zeros(B, dtype=np.int32)
     trio_idx_vec_opt = np.zeros(B, dtype=np.int32)
+    # Gate 4a: E1 optimal trio indices and SAW_vec greedy site indices
+    trio_idx_e1b_opt = np.full(B, -1, dtype=np.int32)
+    trio_idx_e1w_opt = np.full(B, -1, dtype=np.int32)
+    trio_idx_e1v_opt = np.full(B, -1, dtype=np.int32)
+    trio_idx_e1m_opt = np.full(B, -1, dtype=np.int32)
+    trio_grd_vec_sites: list = []  # [[i0,i1,i2], ...] per draw (if greedy_fn given)
     min_v_margin_mm  = np.inf
     n_same_trio      = 0
     n_nonzero_e1b_trio = 0  # draws where opt_e1b_idx != opt_mm_idx (trio != t*)
@@ -267,6 +273,7 @@ def compute_value_regret(
             grd_trio      = greedy_fn(V_vec_sites, D)
             v_grd         = float(sum(X_mm[s] for s in grd_trio) @ w)
             R_vec_grd[di] = max(0.0, (v_max - v_grd) / v_rng)
+            trio_grd_vec_sites.append(list(map(int, grd_trio)))  # store [i0,i1,i2] for Gate 4a
             # Gate 4c: same trio => R_grd == R_opt
             if frozenset(grd_trio) == frozenset(trios[opt_vec_idx]):
                 n_same_trio += 1
@@ -291,6 +298,12 @@ def compute_value_regret(
 
             R_e1b_opt[di] = max(0.0, (v_max - float(V_all[opt_e1b_idx])) / v_rng)
             R_e1w_opt[di] = max(0.0, (v_max - float(V_all[opt_e1w_idx])) / v_rng)
+
+            # Store E1 trio indices for Gate 4a identity verification
+            trio_idx_e1b_opt[di] = opt_e1b_idx
+            trio_idx_e1w_opt[di] = opt_e1w_idx
+            trio_idx_e1v_opt[di] = opt_e1v_idx
+            trio_idx_e1m_opt[di] = opt_e1m_idx
 
             # Assert: (trio_sel != t*) <==> (R > 0)
             # In production code R == 0.0 exactly iff opt_e1b_idx == opt_mm_idx.
@@ -372,6 +385,11 @@ def compute_value_regret(
         "R_e1w_opt_pp":      (R_e1w_opt * 100).tolist(),
         "trio_idx_mm_opt":   trio_idx_mm_opt.tolist(),
         "trio_idx_vec_opt":  trio_idx_vec_opt.tolist(),
+        "trio_idx_e1b_opt":  trio_idx_e1b_opt.tolist() if e1_avail else None,
+        "trio_idx_e1w_opt":  trio_idx_e1w_opt.tolist() if e1_avail else None,
+        "trio_idx_e1v_opt":  trio_idx_e1v_opt.tolist() if e1_avail else None,
+        "trio_idx_e1m_opt":  trio_idx_e1m_opt.tolist() if e1_avail else None,
+        "trio_grd_vec_sites": trio_grd_vec_sites if greedy_fn is not None else None,
         "min_v_margin_mm":   float(min_v_margin_mm),
         "n_same_trio_sawvec": n_same_trio,
         "summary":           summary,

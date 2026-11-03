@@ -298,8 +298,12 @@ def test_mutation_10_e1_abar_w_not_w0():
 def test_mutation_11_gate4a_second_best():
     """Gate 4a identity: second-best trio (index 5) vs EVAL-R best (index 3) must raise."""
     from evaluate_santiago_predictions import _check_gate4a_identity
-    g3     = {0: {"SAW_mm_opt": 5}}   # gate3 says second-best (mutation)
-    regret = {"trio_idx_mm_opt": [3]}  # eval-R says best
+    import numpy as np
+    # Minimal trios array — only used to verify SAW_vec_grd via frozenset
+    trios_dummy = np.array([[0,1,2],[3,4,5],[6,7,8],[0,2,3],[1,3,5],[2,4,6]], dtype=np.int32)
+    g3     = {0: {"SAW_mm_opt": 5, "SAW_vec_opt": 3, "SAW_vec_grd": 1,
+                  "E1M_opt": 3, "E1B_opt": 3, "E1W_opt": 3, "E1V_opt": 3}}
+    regret = {"trio_idx_mm_opt": [3]}   # eval-R says best=3, gate3 says 5 → FAIL
     with pytest.raises(RuntimeError, match="Gate 4a identity FAIL"):
         _check_gate4a_identity(g3, regret, "TEST")
 

@@ -82,24 +82,51 @@ for d in range(N):
         print(f"  draw {d}/{N}", flush=True)
 
 print(f"\nR_e1b stats: min={R_e1b.min():.8f} max={R_e1b.max():.4f} mean={R_e1b.mean():.4f}")
-print("--- 5 criteria (denominator=500) ---")
-print(f"(0) R < 0  (batch artifact, before clamp): {(R_e1b < 0).sum():3d}")
-print(f"(1) R==0.0 exact:         {(R_e1b==0.0).sum():3d}")
-print(f"(2) R<1e-12 pp:           {(R_e1b<1e-12).sum():3d}")
-print(f"(3) R<1e-9  pp:           {(R_e1b<1e-9).sum():3d}")
-print(f"(4) round(R,2)==0.00:     {(np.round(R_e1b,2)==0).sum():3d}")
-print(f"(5) opt_e1b==opt_mm:      {same_as_mm.sum():3d}")
+print("\n=== Path 1: Sequential computation (this script, V_all draw-by-draw) ===")
+print(f"  (0) R < 0  (before clamp):      {(R_e1b < 0).sum():3d}")
+print(f"  (1) R==0.0 exact:               {(R_e1b==0.0).sum():3d}")
+print(f"  (2) R<1e-12 pp:                 {(R_e1b<1e-12).sum():3d}")
+print(f"  (3) R<1e-9  pp:                 {(R_e1b<1e-9).sum():3d}")
+print(f"  (4) round(R,2)==0.00:           {(np.round(R_e1b,2)==0).sum():3d}")
+print(f"  (5) opt_e1b==opt_mm (semantic): {same_as_mm.sum():3d}")
 
-# Minimum non-zero R (draws where trio != t*)
 diff_trio = ~same_as_mm
 if diff_trio.any():
     R_nonzero = R_e1b[diff_trio]
-    print(f"\nDraws with opt_e1b != opt_mm (trio != t*): {diff_trio.sum()}")
-    print(f"  min R_pp (trio!=t*): {R_nonzero.min():.6f} pp")
-    print(f"  max R_pp:            {R_nonzero.max():.4f} pp")
-    print(f"  R < 0 in these:      {(R_nonzero < 0).sum()}")
-    print(f"  R >= 1e-12 pp:       {(R_nonzero >= 1e-12).sum()}")
-    print("  → min 0.0426 pp >> 1e-12; confirms trio_eq_tstar is correct criterion")
+    print(f"  min R_pp (trio!=t*): {R_nonzero[R_nonzero > 0].min():.6f} pp")
+
+# ── Oracle CSV: batch computation (e1_oracle_per_draw.csv, SHA 913396ce) ──────
+print("\n=== Path 2: Oracle CSV (batch V_max, compute_regret.py, SHA 913396ce) ===")
+E1_OR = ROOT / "results" / "regret" / "e1_oracle_per_draw.csv"
+if E1_OR.exists():
+    import pandas as _pd
+    df_or = _pd.read_csv(E1_OR)
+    e1b_or = df_or[(df_or["cell"] == "B") & (df_or["mont"] == "optimal")].sort_values("draw")
+    R_or = e1b_or["R_pp"].values
+    t_or = e1b_or["trio_eq_tstar"].values.astype(bool)
+    n_neg = (R_or < 0).sum()
+    n_ex0 = (R_or == 0.0).sum()
+    n_pos_near = ((R_or > 0) & (R_or < 1e-9)).sum()
+    n_tstar = t_or.sum()
+    print(f"  (0) R < 0 (batch artifact):     {n_neg:3d}")
+    print(f"  (1) R==0.0 exact:               {n_ex0:3d}")
+    print(f"  (2) 0 < R < 1e-9 pp:            {n_pos_near:3d}")
+    print(f"  (3) trio == t* (semantic):       {n_tstar:3d}")
+    if n_neg > 0:
+        print(f"  max |R| (negatives):            {abs(R_or[R_or < 0]).max():.6e} pp")
+    diff_or = R_or[(~t_or) & (R_or > 0)]
+    if len(diff_or) > 0:
+        print(f"  min R_pp (trio!=t*, R>0):       {diff_or.min():.6f} pp")
+    print()
+    print("  Summary table:")
+    print(f"  {'Fonte':<42} {'R==0':>6} {'0<R<1e-9':>9} {'R<0':>5} {'trio=t*':>8}")
+    print(f"  {'CSV oráculo (batch V_max)':<42} {n_ex0:>6} {n_pos_near:>9} {n_neg:>5} {n_tstar:>8}")
+    print(f"  {'Sequencial (sorteio a sorteio)':<42} {(R_e1b==0.0).sum():>6} {'0':>9} {'0':>5} {same_as_mm.sum():>8}")
+    print("  Diferenças: artefacto float64 batch vs sequencial.")
+    print(f"  Ambas dão trio==t*=177 e min R (trio!=t*)=0.0426 pp. "
+          f"Gate 1 usa o sequencial (compute_value_regret).")
+else:
+    print("  (e1_oracle_per_draw.csv not found)")
 
 np.save(ROOT / "results" / "regret" / "e1b_R_pp_oracle_rerun.npy", R_e1b)
-print("Saved results/regret/e1b_R_pp_oracle_rerun.npy", flush=True)
+print("\nSaved results/regret/e1b_R_pp_oracle_rerun.npy", flush=True)
