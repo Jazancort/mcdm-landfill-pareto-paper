@@ -1,0 +1,44 @@
+% macros_santi_extras.tex — Santiago section: manually maintained extras
+% Sources cited per macro; update here, not in auto-generated macros_santiago.tex.
+% ──────────────────────────────────────────────────────────────────────────────
+
+% Bootstrap / draw parameters (PRESPEC_SANTIAGO_A5.md §1)
+\newcommand{\nboot}{2000}           % B bootstrap replicates
+\newcommand{\SantNdraws}{500}       % draws per κ
+\newcommand{\SantNkappa}{6}         % stochastic κ values {25,50,100,200,400,1000}
+\newcommand{\SantDminKm}{10}        % portfolio d_\min (km); A5 §1
+
+% S5 testability threshold (PRESPEC_SANTIAGO.md §6)
+\newcommand{\SantSfiveThresh}{0.5}  % max continuous point-mass threshold
+
+% E7 bootstrap seed (run_e7_kappa_sweep.py:321 def bstrap(...,seed=99))
+\newcommand{\EsevenBootSeed}{99}
+
+% Number of criteria per instance
+\newcommand{\FogoMcrit}{11}         % Fogo AHP model (main article)
+\newcommand{\SantSTMcrit}{10}       % S-T: Fogo transferred; wells omitted (C-2)
+%   A_j keys in stage3b_descriptors.json: perm,slope,roads,rivers,aspect,
+%   coast,protected,urban,aero,cult (10 entries; no wells key).
+\newcommand{\SantSNMcrit}{13}       % S-N: Cabral 2012; A2 (ZDTI) absent from data
+%   A_j keys: A1,A3,A4,A5,A6,A7,B1,B2,B3,C1,C2,D1,D2 (13 entries; no A2).
+
+% Island / region areas (km²)
+\newcommand{\FogoAreaKmSq}{476}     % Fogo island approx. area (km²)
+\newcommand{\SantSTAreaKmSq}{991}   % Santiago island area (PRESPEC §2)
+\newcommand{\SantSNAreaKmSq}{395}   % Southern region area (PRESPEC §2 and §5.1)
+
+% Grid spacings (km) — from stage3b_descriptors.json spacing_m field
+\newcommand{\FogoGridSpacingKm}{1.0}    % Fogo: 1 km grid (PRE-A in PRESPEC §3)
+\newcommand{\SantSTSpacingKm}{1.25}     % S-T: 1 250 m (spacing rule, Stage 3a)
+\newcommand{\SantSNSpacingKm}{1.00}     % S-N: 1 000 m
+
+% Fogo perm point-mass (S5 not testable on Fogo)
+% PRESPEC_SANTIAGO.md §6 note: "perm point-mass = 350/389 = 0.90"
+\newcommand{\FogoRefPermPM}{0.90}
+
+% Same-trio counts SAW/vec (greedy == optimal) on S-T
+% Source: results/santiago/eval_v2_full_20261104.log (eval commit d02a324)
+%   line 88:  κ= 25 same-vec=488/500
+%   line 96:  κ=200 same-vec=500/500
+\newcommand{\SantSTSameVecKtwentyfive}{488}
+\newcommand{\SantSTSameVecKtwohundred}{500}
