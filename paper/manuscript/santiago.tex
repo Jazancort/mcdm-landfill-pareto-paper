@@ -12,26 +12,31 @@
 
 Two branches of the same experiment are reported here regardless of outcome.
 \textbf{S-T (transfer)} applies the Fogo value model
-(\SantSTMcrit{} criteria, Fogo AHP weights, Fogo group partition)
-to the whole island of Santiago ($\approx\SantSTAreaKmSq$\,km\textsuperscript{2}).
-The wells criterion was omitted because fewer than 20 OSM features were found
-on the island (contingency C-2 in the pre-specification); the remaining
-\SantSTMcrit{} criterion weights were renormalised proportionally.
+(\FogoMcrit{} criteria, Fogo AHP weights, Fogo group partition)
+to the whole island of Santiago
+(${\approx}\SantSTAreaKmSq$\,km\textsuperscript{2}).
+The wells criterion was omitted because fewer than 20 OSM features were
+found on the island (contingency~C-2 in PRESPEC\_SANTIAGO.md~§10;
+deviation logged in DEV-SANT-EVALR-001).
 \textbf{S-N (native)} applies the Cabral (2012) value model
 (\SantSNMcrit{} criteria, Cabral AHP weights, four group objectives)
-to the southern region (concelhos of Praia, S\~ao Domingos, and Ribeira Grande
-de Santiago; $\approx\SantSNAreaKmSq$\,km\textsuperscript{2}).
-The ZDTI criterion (A2) was absent from the available data for the S-N
-boundary and therefore not included in the final criterion set.
-S-T uses the Fogo spatial data pipeline and scoring algorithm (commit
-\texttt{94b5baf}; PRESPEC\_SANTIAGO.md~§3); S-N uses the same pipeline
-generalised to a different criterion partition.
+to the southern region (concelhos of Praia, S\~ao Dom\-ingos, and
+Ribeira Grande de Santiago;
+${\approx}\SantSNAreaKmSq$\,km\textsuperscript{2}).
+The ZDTI layer (criterion A2) was confirmed in the IDECV GetCapabilities
+response (2026-10-25), but the GetFeature request returned HTTP\,500 on
+2026-10-27 (DEV-SANT-ZDTI-001); contingency C-4 was applied post-hoc,
+removing A2 from the criterion set and redistributing its weight.
 
-The predictions were frozen before the first Monte Carlo regression on
-Santiago data; amendments A5--A5b fixed the $\kappa$ grid, seeds, and
-K1--K6 before Stage~4 began (tags \texttt{prespec-santiago-a5} and
+The predictions were frozen before the first scoring of Santiago data;
+amendments A5--A5b fixed the $\kappa$ grid, seeds, and K1--K6 before
+Stage~4 began (tags \texttt{prespec-santiago-a5} and
 \texttt{prespec-santiago-a5b}).
-Predictions S0--S7 are evaluated at $\kappa=200$ (PRESPEC\_SANTIAGO.md~§6).
+Other recorded deviations concern the evaluation framework (DEV-SANT-EVALR-001),
+K5 descriptive scope (DEV-SANT-K5-001), and the $\kappa\to\infty$ handling
+(DEV-SANT-KINF-001); none changes a verdict.
+Predictions S0--S7 are evaluated at $\kappa=200$
+(PRESPEC\_SANTIAGO.md~§6).
 Predictions K1--K6 cover the full $\kappa$ grid (A5~§2).
 Each prediction is evaluated independently in each branch;
 no multiplicity correction is applied across predictions.
@@ -42,90 +47,93 @@ no multiplicity correction is applied across predictions.
 % -----------------------------------------------------------------------
 
 Table~\ref{tab:santiago-descriptors} describes the three instances.
-The Fogo reference values come from the published dataset
+Fogo reference values come from the published dataset
 (\citealt{AzancortNeto2026}; \texttt{df\_real\_data\_cached.csv},
-SHA-256: \texttt{8c88b3654f06a3}).
+SHA-256: \texttt{8c88b365}).
 
 \begin{table*}[!t]
 \centering
-\caption{Instance descriptors for Fogo (reference), S-T (Santiago whole
-  island, Fogo model), and S-N (southern Santiago, Cabral model).
-  $N_\text{cand}$: grid points (1\,km $\times$ 1\,km cells; centroid on land).
-  $N_\text{adm}$: sites remaining after exclusion-zone removal.
+\caption{Instance descriptors for Fogo (reference), S-T (Santiago
+  whole island; Fogo model), and S-N (southern Santiago; Cabral model).
+  $N_\text{cand}$: grid points (spacing $d_\text{grid}$; centroid on land).
+  $N_\text{adm}$: sites after exclusion-zone removal.
   $N_\text{trios}$: feasible three-site portfolios satisfying $d_\text{min}$.
   $\mathrm{TV}_B$, $\mathrm{TV}_W$: between-group and within-group
   distortion components (Section~\ref{sec:groupconst}).
-  $m$: number of criteria in the value model.
+  $m$: criteria in the value model.
   $m_\text{eff}$: effective number of distorting criteria,
-  $\|\delta\|_1^2/\|\delta\|_2^2$ where $\delta_j = w_j^\mathrm{eff} - w_j$
-  (Eq.~\eqref{eq:meff}); range $[2, m]$.
+  $\lVert\delta\rVert_1^2/\lVert\delta\rVert_2^2$,
+  $\delta_j=w_j^\mathrm{eff}-w_j$ (Eq.~\eqref{eq:meff}; range $[2,m]$).
   $p_\text{max}^c$: largest point-mass share among continuous criteria
-  (binary criteria and B1 excluded); determines S5 testability
-  ($< \SantSfiveThresh$).
-  Criterion(ies) with the largest $p_\text{max}^c$ noted in parentheses.
+  (binary and categorical criteria excluded); determines S5 testability
+  (threshold $\SantSfiveThresh$; A5~§2).
+  Criterion with largest $p_\text{max}^c$ in parentheses.
   $d_\text{grid}$: grid spacing; $d_\text{min}$: portfolio separation
-  constraint (A5~§1).}
+  (A5~§1).}
 \label{tab:santiago-descriptors}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrr}
 \toprule
-Property                             & \textbf{Fogo}      & \textbf{S-T}                       & \textbf{S-N} \\
+Property                                    & \textbf{Fogo}         & \textbf{S-T}                     & \textbf{S-N} \\
 \midrule
-$N_\text{cand}$                      & \Ncand             & \SantSTNcand                       & \SantSNNcand \\
-$N_\text{adm}$                       & \FogoRefNadm       & \SantSTNadm                        & \SantSNNadm \\
-$N_\text{trios}$                     & \FogoRefNtrios     & \SantSTNtrios                      & \SantSNNtrios \\[3pt]
-$\mathrm{TV}$                        & \FogoRefTV         & \SantSTTV                          & \SantSNTV \\
-$\mathrm{TV}_B$                      & \FogoRefTVB        & \SantSTTVB                         & \SantSNTVB \\
-$\mathrm{TV}_W$                      & \FogoRefTVW        & \SantSTTVW                         & \SantSNTVW \\[3pt]
-$m$                                  & \FogoMcrit         & \SantSTMcrit                       & \SantSNMcrit \\
-$m_\text{eff}$                       & \FogoRefMeff       & \SantSTMeff                        & \SantSNMeff \\[3pt]
-$p_\text{max}^c$ (criterion)         & \FogoRefPermPM\ (perm)
-                                     & \SantSTSfivePerm\ (perm)           & \SantSNSfivePerm\ (C1) \\
-$d_\text{grid}$ (km)                 & \FogoGridSpacingKm & \SantSTSpacingKm                   & \SantSNSpacingKm \\
-$d_\text{min}$ (km)                  & \SantDminKm        & \SantDminKm                        & \SantDminKm \\
-Area (km\textsuperscript{2})         & $\approx\FogoAreaKmSq$ & $\approx\SantSTAreaKmSq$       & $\approx\SantSNAreaKmSq$ \\
+$N_\text{cand}$                             & \Ncand                & \SantSTNcand                     & \SantSNNcand \\
+$N_\text{adm}$                              & \FogoRefNadm          & \SantSTNadm                      & \SantSNNadm \\
+$N_\text{trios}$                            & \FogoRefNtrios        & \SantSTNtrios                    & \SantSNNtrios \\[3pt]
+$\mathrm{TV}$                               & \FogoRefTV            & \SantSTTV                        & \SantSNTV \\
+$\mathrm{TV}_B$                             & \FogoRefTVB           & \SantSTTVB                       & \SantSNTVB \\
+$\mathrm{TV}_W$                             & \FogoRefTVW           & \SantSTTVW                       & \SantSNTVW \\[3pt]
+$m$                                         & \FogoMcrit            & \SantSTMcrit                     & \SantSNMcrit \\
+$m_\text{eff}$                              & \FogoRefMeff          & \SantSTMeff                      & \SantSNMeff \\[3pt]
+$p_\text{max}^c$ (criterion)                & \FogoRefPermPM\ (perm)& \SantSTSfivePerm\ (perm)         & \SantSNSfivePerm\ (C1) \\
+$d_\text{grid}$ (km)                        & \FogoGridSpacingKm    & \SantSTSpacingKm                 & \SantSNSpacingKm \\
+$d_\text{min}$ (km)                         & \dmin                 & \dmin                            & \dmin \\
+Area (km\textsuperscript{2})                & ${\approx}\FogoAreaKmSq$ & ${\approx}\SantSTAreaKmSq$    & ${\approx}\SantSNAreaKmSq$ \\
 \bottomrule
 \end{tabular*}
 \end{table*}
 
-Under vector normalisation, S-T distorts the effective weights less than
-Fogo ($\mathrm{TV}=\SantSTTV$ vs $\FogoRefTV$), and S-N less still
-($\SantSNTV$). S-N has the most uniform nominal weights ($m_\text{eff}=\SantSNMeff$)
-and the smallest feasible space ($N_\text{trios}=\SantSNNtrios$), making some
-predictions testable by narrower margins.
-The $\mathrm{TV}_B$ of S-N ($\SantSNTVB$) is just above the S3b and S7b
-testability threshold ($0.05$), and the S-N agricultural layer was restricted
-to the IDECV \texttt{carta\_agricola\_st} dataset (Regadios only), which covers
-a smaller area than the Fogo equivalent.
-The Fogo perm point-mass ($p_\text{max}^c=\FogoRefPermPM$) exceeded the S5
-threshold, so S5 would not have been testable on Fogo either.
+Under vector normalisation, both Santiago branches distort effective
+weights less than Fogo
+($\mathrm{TV}=\SantSTTV$ and $\SantSNTV$, against $\FogoRefTV$);
+the distortion is spread over $\SantSTMeff$ of $\SantSTMcrit$ criteria
+on S-T and $\SantSNMeff$ of $\SantSNMcrit$ on S-N.
+S-T inherits a heavy point mass in \textit{perm}
+($p_\text{max}^c=\SantSTSfivePerm$), as on Fogo ($\FogoRefPermPM$);
+S-N has none ($\SantSNSfivePerm$).
+S-N's $\mathrm{TV}_B$ ($\SantSNTVB$) is only just above the pre-registered
+testability threshold ($\SantTVBThresh$) for S3b and S7b.
+All descriptors were computed before the Monte Carlo runs, and testability
+was decided from them (Stage~3; A5~§4).
 
 % -----------------------------------------------------------------------
 \subsection{Prediction outcomes}
 \label{sec:santiago-outcomes}
 % -----------------------------------------------------------------------
 
-Table~\ref{tab:santiago-predictions} reports the outcome of each prediction.
-Vocabulary: \textit{confirmed} if the 95\% CI excludes zero and the sign is
-as predicted; \textit{not confirmed} if the CI includes zero or the sign is
-opposite; \textit{effect absent} if the effect is structurally zero; \textit{descriptive}
-if no confirmation criterion was pre-registered.
-Fogo column: reference value (S5--S7b) or section where the Fogo result is
-reported (all other rows).
-Conditions that must be met before testing each prediction are stated in
-PRESPEC\_SANTIAGO.md~§6; all conditions were met for both branches except S5
-on S-T.
+Table~\ref{tab:santiago-predictions} reports all sixteen prediction
+outcomes.
+Each prediction is judged by its own pre-registered rule
+(PRESPEC\_SANTIAGO.md~§6 and A5~§2):
+a 95\% CI excluding zero in the predicted direction (S1, S2, S6, S7a, S7b, K4),
+the sign of the point estimate (S3b),
+a threshold (S3a, S5, K3),
+or an exact count (S0, K1, K2).
+Outcomes are \textit{confirmed} or \textit{not confirmed} under those rules;
+\textit{opposite sign} when the CI excludes zero in the direction opposite
+to the prediction;
+\textit{effect absent} when both cells select the same portfolio in every draw;
+\textit{not testable} when a pre-registered condition fails;
+and \textit{descriptive} when no rule was pre-registered (S4, K5, K6).
 
 \begin{table*}[!t]
 \centering
 \caption{Prediction outcomes for S-T and S-N at $\kappa=200$ unless noted.
-  Intervals are 95\% bootstrap CIs (pp); $B=\nboot$, percentile method.
-  K3 and K6 summarise across all \SantNkappa{} stochastic $\kappa$ values.
-  Fogo column: Fogo reference value (S5--S7b; from macros listed in
-  Section~\ref{sec:results}) or section reference (remaining rows).
-  $\dagger$: S5 not testable on S-T because $p_\text{max}^c=\SantSTSfivePerm
-  >\SantSfiveThresh$ (Table~\ref{tab:santiago-descriptors}).
-  $\ddagger$: Fogo perm $p_\text{max}^c=\FogoRefPermPM>\SantSfiveThresh$,
-  so S5 was also not testable on Fogo.}
+  CIs are 95\% bootstrap ($B=\nboot$, percentile method).
+  K3 and K6 summarise across all $\SantNkappa$ stochastic $\kappa$ values.
+  Fogo column: reference value (S3b, S5--S7b) or section where the
+  corresponding Fogo result is reported (all other rows).
+  $\dagger$: not testable on S-T ($p_\text{max}^c=\SantSTSfivePerm
+  >\SantSfiveThresh$; Table~\ref{tab:santiago-descriptors}).
+  Comments on each row cite the source of the pre-registered claim.}
 \label{tab:santiago-predictions}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}
     l
@@ -140,206 +148,211 @@ on S-T.
               & \textbf{S-N} \\
 \midrule
 %
-% S0–S2
+% S0: PRESPEC_SANTIAGO.md §6 type=Regression
+S0  & $Q_2(\text{SAW,mm,opt})=100\%$, $R=0$ every draw; E1-B opt $Q_2=100\%$
+    & \S\ref{sec:base}
+    & confirmed: all \SantKoneTotalRows{} rows all~$\kappa$;
+      E1-B \SantSTKtwoN/\SantEoneRows{} ($\kappa=200$,$\kappa\to\infty$)
+    & confirmed (same) \\[2pt]
 %
-S0   & $Q_2(\text{SAW,mm,opt})=100\%$ and $R=0$ every draw; E1-B opt $Q_2=100\%$
-     & \S\ref{sec:base}
-     & confirmed (\SantSTKoneN/\SantNdraws{} draws at $\kappa=200$)
-     & confirmed (\SantSNKoneN/\SantNdraws{} draws) \\[2pt]
+% S1: PRESPEC_SANTIAGO.md §6 "Q2(SAW,mm,grd) > Q2(SAW,vec,grd), 95% CI excludes 0"
+S1  & $Q_2(\text{SAW,mm,grd}) > Q_2(\text{SAW,vec,grd})$; CI~$\not\ni 0$
+    & \S\ref{sec:factorial}
+    & confirmed: $+\SantSTSoneDiff$\,pp [$\SantSTSoneCIlo$, $\SantSTSoneCIhi$]
+    & confirmed: $+\SantSNSoneDiff$\,pp [$\SantSNSoneCIlo$, $\SantSNSoneCIhi$] \\[2pt]
 %
-S1   & $Q_2(\text{SAW,mm,grd}) > Q_2(\text{SAW,vec,grd})$; CI excludes 0
-     & \S\ref{sec:factorial}
-     & confirmed: $+\SantSTSoneDiff$\,pp $[\SantSTSoneCIlo, \SantSTSoneCIhi]$
-     & confirmed: $+\SantSNSoneDiff$\,pp $[\SantSNSoneCIlo, \SantSNSoneCIhi]$ \\[2pt]
+% S2: PRESPEC_SANTIAGO.md §6 "Q2(SAW,vec,opt) < Q2(SAW,vec,grd), CI excludes 0"
+S2  & $Q_2(\text{SAW,vec,grd}) > Q_2(\text{SAW,vec,opt})$; CI~$\not\ni 0$
+    & \S\ref{sec:assembly}
+    & effect absent: $\SantSTStwoDiff$\,pp;
+      \SantSTStwoSoloGrd{} vs \SantSTStwoSoloOpt{} discordant draws
+    & opposite sign: $\SantSNStwoDiff$\,pp [$\SantSNStwoCIlo$, $\SantSNStwoCIhi$];
+      \SantSNStwoSoloGrd{} vs \SantSNStwoSoloOpt{} discordant draws \\[2pt]
 %
-S2   & $Q_2(\text{SAW,vec,grd}) > Q_2(\text{SAW,vec,opt})$; CI excludes 0
-     & \S\ref{sec:assembly}
-     & effect absent: $\SantSTStwoDiff$\,pp; \SantSTStwoSoloGrd{} vs \SantSTStwoSoloOpt{} exclusive draws
-     & opposite sign: $\SantSNStwoDiff$\,pp $[\SantSNStwoCIlo, \SantSNStwoCIhi]$;
-       \SantSNStwoSoloGrd{} vs \SantSNStwoSoloOpt{} exclusive draws \\[2pt]
+% S3a: PRESPEC_SANTIAGO.md §6 "E1-W optimal < 100% and E1-V optimal < 100%"
+S3a & $Q_2(\text{E1-W,opt}) < 100\%$ and $Q_2(\text{E1-V,opt}) < 100\%$
+    & \S\ref{sec:e1}
+    & confirmed: W~$\SantSTSthreeaEoneW$\%, V~$\SantSTSthreeaEoneV$\%
+    & confirmed: W~$\SantSNSthreeaEoneW$\%, V~$\SantSNSthreeaEoneV$\% \\[2pt]
 %
-% S3
+% S3b: PRESPEC_SANTIAGO.md §6 "E1-V optimal < E1-W optimal (direction observed in Fogo)"
+% Fogo: QtwoEoneVOpt=56.8% vs QtwoEoneWOpt=64.2%; sign confirmed if diff < 0
+S3b & $Q_2(\text{E1-V,opt}) < Q_2(\text{E1-W,opt})$
+    & \QtwoEoneVOpt\% vs \QtwoEoneWOpt\%
+    & not confirmed: $+\SantSTSthreebDiff$\,pp;
+      \SantSTSthreebSoloV{} vs \SantSTSthreebSoloW{} discordant;
+      $p=\SantSTSthreebPval$ (McNemar)
+    & confirmed: $\SantSNSthreebDiff$\,pp;
+      \SantSNSthreebSoloV{} vs \SantSNSthreebSoloW{} discordant;
+      $p=\SantSNSthreebPval$ (binomial) \\[2pt]
 %
-S3a  & $Q_2(\text{E1-W,opt}) < 100\%$ and $Q_2(\text{E1-V,opt}) < 100\%$
-     & \S\ref{sec:e1}
-     & confirmed: W~$\SantSTSthreeaEoneW$\%, V~$\SantSTSthreeaEoneV$\%
-     & confirmed: W~$\SantSNSthreeaEoneW$\%, V~$\SantSNSthreeaEoneV$\% \\[2pt]
+% S4: PRESPEC_SANTIAGO.md §6 "SAW minus TOPSIS per cell: no sign predicted; Descriptive"
+S4  & SAW$-$TOPSIS per informative cell; no sign predicted
+    & \S\ref{sec:factorial}
+    & descriptive; see K5, K6, and Supplementary table
+    & descriptive; see K5, K6, and Supplementary table \\[2pt]
 %
-S3b  & $Q_2(\text{E1-V,opt}) < Q_2(\text{E1-W,opt})$
-     & \QtwoEoneVOpt\% vs \QtwoEoneWOpt\%
-     & not confirmed: $+\SantSTSthreebDiff$\,pp;
-       \SantSTSthreebSoloV{} vs \SantSTSthreebSoloW{};
-       $p=\SantSTSthreebPval$ (McNemar)
-     & confirmed: $\SantSNSthreebDiff$\,pp;
-       \SantSNSthreebSoloV{} vs \SantSNSthreebSoloW{};
-       $p=\SantSNSthreebPval$ (binomial) \\[2pt]
+% S5: PRESPEC_SANTIAGO.md §6 "Q2(SAW,vec,opt) > 56.8% (Fogo result)"
+% condition: max continuous point-mass share < 0.5 (A5 §2)
+S5  & $Q_2(\text{SAW,vec,opt}) > \QtwovecOptimal$\%;
+      condition: $p_\text{max}^c < \SantSfiveThresh$
+    & \QtwovecOptimal\%
+    & not testable$^\dagger$
+    & confirmed: $\SantSNSfiveQvec$\% \\[2pt]
 %
-% S4–S6
+% S6: PRESPEC_SANTIAGO.md §6 "R(SAW,vec,grd) > R(SAW,vec,opt), CI excludes 0"
+% Fogo reference: R(vec,grd)=6.63 pp, R(vec,opt)=5.27 pp (regret_macros.tex)
+S6  & $R(\text{SAW,vec,grd}) > R(\text{SAW,vec,opt})$; CI~$\not\ni 0$
+    & \RegrSAWvecGrd{} vs \RegrSAWvecOpt\,pp
+    & effect absent: identical portfolios in
+      \SantSTSameVecKTwoHundred/\ndraws{} draws at $\kappa=200$
+    & confirmed: $+\SantSNSsixDiff$\,pp [$\SantSNSsixCIlo$, $\SantSNSsixCIhi$] \\[2pt]
 %
-S4   & SAW minus TOPSIS per cell; no sign predicted
-     & \S\ref{sec:kappa}
-     & descriptive (see K5, K6)
-     & descriptive (see K5, K6) \\[2pt]
+% S7a: PRESPEC_SANTIAGO.md §6 "R(E1-B,optimal) > 0, CI excludes 0"
+% Fogo reference: 4.53 pp, 35.4% zeros (RegretEoneB, RegretEoneBfracZero)
+S7a & $R(\text{E1-B,opt}) > 0$; CI~$\not\ni 0$
+    & \RegretEoneB\,pp; \RegretEoneBfracZero\%\ zeros
+    & confirmed: \SantSTSsvnaREoneB\,pp [$\SantSTSsvnaCIlo$, $\SantSTSsvnaCIhi$];
+      \SantSTSsvnaFracZero\%\ zeros
+    & confirmed: \SantSNSsvnaREoneB\,pp [$\SantSNSsvnaCIlo$, $\SantSNSsvnaCIhi$];
+      \SantSNSsvnaFracZero\%\ zeros \\[2pt]
 %
-S5   & $Q_2(\text{SAW,vec,opt}) > \QtwovecOptimal$\% (Fogo result); condition:
-       $p_\text{max}^c < \SantSfiveThresh$
-     & \QtwovecOptimal\%$^{\ddagger}$
-     & not testable$^\dagger$
-     & confirmed: $\SantSNSfiveQvec$\% \\[2pt]
-%
-S6   & $R(\text{SAW,vec,grd}) > R(\text{SAW,vec,opt})$; CI excludes 0
-     & \RegrSAWvecGrd{} vs \RegrSAWvecOpt\,pp
-     & effect absent: $\SantSTSsixDiff$\,pp (all draws)
-     & confirmed: $+\SantSNSsixDiff$\,pp $[\SantSNSsixCIlo, \SantSNSsixCIhi]$ \\[2pt]
-%
-% S7
-%
-S7a  & $R(\text{E1-B,opt}) > 0$; CI excludes 0
-     & \RegretEoneB\,pp; \RegretEoneBfracZero\%\ zeros
-     & confirmed: \SantSTSsvnaREoneB\,pp $[\SantSTSsvnaCIlo, \SantSTSsvnaCIhi]$;
-       \SantSTSsvnaFracZero\%\ zeros
-     & confirmed: \SantSNSsvnaREoneB\,pp $[\SantSNSsvnaCIlo, \SantSNSsvnaCIhi]$;
-       \SantSNSsvnaFracZero\%\ zeros \\[2pt]
-%
-S7b  & $R(\text{E1-B,opt}) < R(\text{E1-W,opt})$
-     & \RegretEoneB{} vs \RegretEoneW\,pp
-     & confirmed: $\Delta\in[\SantSTSsvnbCIlo, \SantSTSsvnbCIhi]$\,pp
-     & confirmed: $\Delta\in[\SantSNSsvnbCIlo, \SantSNSsvnbCIhi]$\,pp \\
+% S7b: PRESPEC_SANTIAGO.md §6 "R(E1-B,optimal) < R(E1-W,optimal)"
+% Fogo reference: 4.53 pp < 6.47 pp (RegretEoneB, RegretEoneW)
+S7b & $R(\text{E1-B,opt}) < R(\text{E1-W,opt})$
+    & \RegretEoneB{} vs \RegretEoneW\,pp
+    & confirmed: $\Delta\in[\SantSTSsvnbCIlo, \SantSTSsvnbCIhi]$\,pp
+    & confirmed: $\Delta\in[\SantSNSsvnbCIlo, \SantSNSsvnbCIhi]$\,pp \\
 \midrule
 %
-% K1–K4
+% K1: A5 §2 lines 63-66 "SAW/min-max/optimal attains Q2=100% at every kappa (stochastic and deterministic)"
+K1  & SAW/mm/opt $Q_2=100\%$ every $\kappa$ incl.\ $\kappa\to\infty$ (A5~§2~l.~63--66)
+    & \S\ref{sec:base}
+    & confirmed: \SantKoneTotalRows{} rows all $\kappa$; gates PASS in eval \texttt{d02a324}
+    & confirmed (same) \\[2pt]
 %
-K1   & SAW/mm/opt $Q_2=100\%$ at every $\kappa$ incl.\ $\kappa\to\infty$
-       (A5 §2 l.~63--66)
-     & \S\ref{sec:base}
-     & confirmed: all $\SantNkappa$ stochastic $\kappa$ and $\kappa\to\infty$
-       (gates passed in eval run \texttt{d02a324})
-     & confirmed (same) \\[2pt]
+% K2: A5 §2 lines 69-71 "E1 cell B attains Q2=100% under optimal at both kappa=200 and kappa=inf"
+K2  & E1-B/opt $Q_2=100\%$ at $\kappa=200$ and $\kappa\to\infty$ (A5~§2~l.~69--71)
+    & \S\ref{sec:e1}
+    & confirmed: $\kappa=200$: \SantSTKtwoN/\ndraws;
+      $\kappa\to\infty$: \SantSTKtwoInfResult
+    & confirmed: $\kappa=200$: \SantSNKtwoN/\ndraws;
+      $\kappa\to\infty$: \SantSNKtwoInfResult \\[2pt]
 %
-K2   & E1-B/opt $Q_2=100\%$ at $\kappa=200$ and $\kappa\to\infty$
-       (A5 §2 l.~69--71)
-     & \S\ref{sec:e1}
-     & confirmed: $\kappa=200$: \SantSTKtwoN/\SantNdraws;
-       $\kappa\to\infty$: \SantSTKtwoInfResult
-     & confirmed: $\kappa=200$: \SantSNKtwoN/\SantNdraws;
-       $\kappa\to\infty$: \SantSNKtwoInfResult \\[2pt]
+% K3: A5 §2 lines 75-78 "For no kappa is the CI of the greedy normalisation contrast entirely below zero"
+K3  & No $\kappa\in\{25,\ldots,1000\}$ with S1 CI entirely below~0 (A5~§2~l.~75--78)
+    & \S\ref{sec:kappa}
+    & confirmed: min CI lo $=\SantSTKthreeMinCIlo$\,pp (all CIs positive)
+    & confirmed: min CI lo $=\SantSNKthreeMinCIlo$\,pp \\[2pt]
 %
-K3   & No $\kappa$ in $\{25,\ldots,1000\}$ has its S1 CI entirely below 0
-       (A5 §2 l.~75--78)
-     & \S\ref{sec:kappa}
-     & confirmed: min CI lo $= \SantSTKthreeMinCIlo$\,pp (all CIs positive)
-     & confirmed: min CI lo $= \SantSNKthreeMinCIlo$\,pp \\[2pt]
+% K4: A5 §2 lines 82-84 "at least one kappa significantly positive after Holm"
+K4  & S1 significantly positive after Holm at $\ge1$ $\kappa$ (A5~§2~l.~82--84)
+    & \S\ref{sec:kappa}
+    & confirmed: $p_\text{Holm}=\SantSTKfourHolmP$
+    & confirmed: $p_\text{Holm}=\SantSNKfourHolmP$ \\[2pt]
 %
-K4   & S1 significantly positive after Holm at $\ge1$ $\kappa$
-       (A5 §2 l.~82--84)
-     & \S\ref{sec:kappa}
-     & confirmed: $p_\text{Holm}=\SantSTKfourHolmP$
-     & confirmed: $p_\text{Holm}=\SantSNKfourHolmP$ \\[2pt]
+% K5: A5 §2 lines 93-100; sign resolved from Stage-3 descriptors (A5 §4 line ~138)
+% K5a = sign of assembly contrast (SAW,vec,opt - SAW,vec,grd) at kappa=1000 vs kappa=inf
+% K5b = sign of pooled SAW-TOPSIS contrast at kappa=1000 vs kappa=inf
+K5  & Sign of (a) assembly contrast and (b) aggr.\ contrast at $\kappa=1000$ vs
+      $\kappa\to\infty$; descriptive (A5~§2~l.~93--100)
+    & \S\ref{sec:kappa}
+    & (a) sign undefined: $\SantSTKfiveaKThousand$\,pp and $\SantSTKfiveaInf$\,pp
+      (zero at both $\kappa$);
+      (b) sign undefined: $\SantSTKsixKThousand$\,pp and $\SantSTKsixInf$\,pp
+      (zero at $\kappa\to\infty$)
+    & (a) same sign: $\SantSNKfiveaKThousand$\,pp and $\SantSNKfiveaInf$\,pp;
+      (b) same sign: $\SantSNKsixKThousand$\,pp and $\SantSNKsixInf$\,pp \\[2pt]
 %
-% K5–K6
-%
-K5   & Sign of (a) assembly contrast and (b) aggregation contrast
-       at $\kappa=1000$ vs $\kappa\to\infty$; descriptive
-       (A5 §2 l.~93--100)
-     & \S\ref{sec:kappa}
-     & (a) sign undefined: $\SantSTKfiveaKThousand$\,pp and $\SantSTKfiveaInf$\,pp
-       (value zero at $\kappa\to\infty$); (b) same sign
-     & (a) same sign: $\SantSNKfiveaKThousand$\,pp and $\SantSNKfiveaInf$\,pp;
-       (b) same sign \\[2pt]
-%
-K6   & SAW$-$TOPSIS aggregation contrast at each $\kappa$;
-       no directional prediction; exploratory
-       (A5 §2 l.~108--112)
-     & \S\ref{sec:kappa}
-     & positive at all $\SantNkappa{}$ $\kappa$ ($\SantSTKsixKTwentyFive$\,pp
-       at $\kappa=25$ to $\SantSTKsixKFifty$\,pp at $\kappa=50$);
-       $\SantSTKsixInf$\,pp at $\kappa\to\infty$
-     & sign reversal: positive at $\kappa\le50$ ($\SantSNKsixKFifty$\,pp),
-       negative by $\kappa=100$ ($\SantSNKsixKHundred$\,pp);
-       $\SantSNKsixInf$\,pp at $\kappa\to\infty$ \\
+% K6: A5 §2 lines 108-112 "No directional prediction; exploratory"
+K6  & SAW$-$TOPSIS aggr.\ contrast at each $\kappa$; no directional prediction;
+      exploratory (A5~§2~l.~108--112)
+    & \S\ref{sec:kappa}
+    & all positive: $\SantSTKsixMin$--$\SantSTKsixMax$\,pp over stochastic $\kappa$;
+      $\SantSTKsixInf$\,pp at $\kappa\to\infty$
+    & sign reversal between $\kappa=50$ ($\SantSNKsixKFifty$\,pp) and
+      $\kappa=100$ ($\SantSNKsixKHundred$\,pp);
+      $\SantSNKsixInf$\,pp at $\kappa\to\infty$ \\
 \bottomrule
 \end{tabular*}
 \end{table*}
 
-\textbf{Normalisation under vector assembly (S1).}
-The normalisation contrast (S1) is confirmed on both branches
-and in every one of the $\SantNkappa{}$ stochastic $\kappa$ values (K3
-confirmed; K4 $p_\text{Holm}=\SantSTKfourHolmP$).
-This is the most direct replication of the Fogo main finding: under
-min--max normalisation, greedy assembly attains the frontier more often
-than under vector normalisation, by
-$+\SantSTSoneDiff$\,pp on S-T and $+\SantSNSoneDiff$\,pp on S-N
-at $\kappa=200$.
-Structural checks S0, S3a, and K2 pass in both branches, confirming
-that the scoring and assembly algorithm operates correctly on both instances.
+\textbf{Normalisation (S1, K3, K4).}
+S1 is confirmed on both branches: $+\SantSTSoneDiff$\,pp on S-T and
+$+\SantSNSoneDiff$\,pp on S-N at $\kappa=200$.
+The S1 CI excludes zero at every $\kappa$ in the stochastic grid (K3: smallest
+lower bound $\SantSTKthreeMinCIlo$\,pp on S-T, $\SantSNKthreeMinCIlo$\,pp on S-N;
+K4: Holm-corrected $p=\SantSTKfourHolmP$ on S-T, $\SantSNKfourHolmP$ on S-N).
+Regression checks S0 and K1, and K2 (guaranteed by
+Theorem~\ref{thm:groupconst}), hold on both branches.
+S3a, that within-group distortion alone costs frontier attainment, is confirmed
+on both branches ($Q_2(\text{E1-W,opt})=\SantSTSthreeaEoneW$\% and
+$Q_2(\text{E1-V,opt})=\SantSTSthreeaEoneV$\% on S-T;
+$\SantSNSthreeaEoneW$\% and $\SantSNSthreeaEoneV$\% on S-N).
 
 \textbf{Assembly under vector normalisation (S2, S6).}
-On Fogo, Q2 and R gave discordant signals: greedy assembly reached the
-frontier \emph{more} often than exact assembly under vector normalisation
-(S2 confirmed), but optimal assembly incurred \emph{lower} value regret
-(S6 confirmed) (Sections~\ref{sec:assembly} and~\ref{sec:greedy}).
-On S-N, the two measures agree: S2 shows the opposite sign
-($\SantSNStwoDiff$\,pp, CI $[\SantSNStwoCIlo, \SantSNStwoCIhi]$;
-$\SantSNStwoSoloGrd$ vs $\SantSNStwoSoloOpt$ exclusive-frontier draws),
-and S6 is confirmed ($+\SantSNSsixDiff$\,pp,
-CI $[\SantSNSsixCIlo, \SantSNSsixCIhi]$).
-On S-T, neither effect exists at $\kappa=200$: greedy and exact assembly of
-the SAW/vector score select the same portfolio in
-$\SantSTSameVecKtwohundred$ of $\SantNdraws$ draws (log: eval run
-\texttt{d02a324}, $\kappa=200$); the $Q_2$ and $R$ differences are
-therefore zero in every draw.
-At $\kappa=25$, $\SantSTSameVecKtwentyfive$ of $\SantNdraws$ draws yield
-identical portfolios.
+On Fogo, the two measures pointed in opposite directions under vector
+normalisation: greedy assembly reached the frontier more often than exact
+assembly (S2 confirmed on Fogo, Section~\ref{sec:assembly}), while exact
+assembly had lower value regret by $\RegrDiffSAWvec$\,pp, below the
+equivalence margin (S6, Section~\ref{sec:greedy}).
+S2 and S6 predicted that both patterns would recur on Santiago.
+On S-N, the two measures agree that exact assembly is better:
+S2 shows the opposite sign ($\SantSNStwoDiff$\,pp,
+CI $[\SantSNStwoCIlo, \SantSNStwoCIhi]$;
+$\SantSNStwoSoloGrd$ vs $\SantSNStwoSoloOpt$ discordant draws) and S6 is
+confirmed ($+\SantSNSsixDiff$\,pp, CI $[\SantSNSsixCIlo, \SantSNSsixCIhi]$).
+On S-T, neither effect exists at $\kappa=200$: greedy and exact assembly
+select the same portfolio in $\SantSTSameVecKTwoHundred$ of $\ndraws$ draws;
+at $\kappa=25$, $\SantSTSameVecKTwentyFive$ of $\ndraws$ draws yield identical
+portfolios.
 This is an observation on this instance; its cause has not been tested.
 The Fogo assembly reversal under vector normalisation does not replicate on
 either branch.
 
 \textbf{Between-group and within-group distortion (S7a, S7b).}
-Between-group distortion alone (cell E1-B) keeps exact assembly on the
-frontier in both branches (K2) but moves it away from the
-value-maximising portfolio $t^*$ in a positive fraction of draws:
+Between-group distortion alone (cell E1-B) keeps exact assembly on the frontier
+in both branches (K2) but moves it away from the value-maximising portfolio
+$t^*$ in a positive fraction of draws:
 S7a is confirmed on S-T
-($\SantSTSsvnaREoneB$\,pp, CI $[\SantSTSsvnaCIlo, \SantSTSsvnaCIhi]$)
-and on S-N
-($\SantSNSsvnaREoneB$\,pp, CI $[\SantSNSsvnaCIlo, \SantSNSsvnaCIhi]$).
-E1-B selects $t^*$ in $\SantSTSsvnaFracZero$\% of S-T draws, against
-$\RegretEoneBfracZero$\% on Fogo (Section~\ref{sec:e1}), and in
-$\SantSNSsvnaFracZero$\% of S-N draws.
-On S-N the mean regret of $\SantSNSsvnaREoneB$\,pp is formally positive
-but far below the $\eqmargin$\,pp equivalence margin and has no practical
-relevance.
+($\SantSTSsvnaREoneB$\,pp, CI $[\SantSTSsvnaCIlo, \SantSTSsvnaCIhi]$;
+$\SantSTSsvnaFracZero$\%\ zeros, against $\RegretEoneBfracZero$\%\ on Fogo,
+Section~\ref{sec:e1}) and on S-N
+($\SantSNSsvnaREoneB$\,pp, CI $[\SantSNSsvnaCIlo, \SantSNSsvnaCIhi]$;
+$\SantSNSsvnaFracZero$\%\ zeros).
+On S-N the mean regret of $\SantSNSsvnaREoneB$\,pp is formally positive but
+far below the $\eqmargin$\,pp equivalence margin and has no practical relevance.
 S7b is confirmed on both branches.
 
 \textbf{E1 direction across branches (S3b).}
-On Fogo, $Q_2(\text{E1-V,opt}) = \QtwoEoneVOpt$\% was below
-$Q_2(\text{E1-W,opt}) = \QtwoEoneWOpt$\%;
-the pre-registered confirmation criterion is the sign of the point estimate.
+On Fogo $Q_2(\text{E1-V,opt})=\QtwoEoneVOpt$\% was below
+$Q_2(\text{E1-W,opt})=\QtwoEoneWOpt$\%;
+the pre-registered rule is the sign of the point estimate.
 S3b is confirmed on S-N
-($Q_2(\text{E1-V}) - Q_2(\text{E1-W}) = \SantSNSthreebDiff$\,pp;
+($Q_2(\text{E1-V})-Q_2(\text{E1-W})=\SantSNSthreebDiff$\,pp;
 $\SantSNSthreebSoloV$ vs $\SantSNSthreebSoloW$ discordant draws;
 exact binomial $p=\SantSNSthreebPval$)
 and not confirmed on S-T
 ($+\SantSTSthreebDiff$\,pp in the opposite direction;
 $\SantSTSthreebSoloV$ vs $\SantSTSthreebSoloW$;
-McNemar with continuity correction $p=\SantSTSthreebPval$).
+McNemar with c.c.\ $p=\SantSTSthreebPval$).
 The direction is not stable across branches;
-the S-N result rests on three discordant draws, and S-N's $\mathrm{TV}_B$
-($\SantSNTVB$) is only just above the testability threshold ($0.05$).
+S-N's $\mathrm{TV}_B$ ($\SantSNTVB$) is only just above the testability
+threshold~$\SantTVBThresh$, and the result rests on three discordant draws.
 
 \textbf{K5 and K6 (descriptive).}
-For S-T, K5(a) compares $\SantSTKfiveaKThousand$\,pp at $\kappa=1000$
-against $\SantSTKfiveaInf$\,pp at $\kappa\to\infty$; the value is zero at
-$\kappa\to\infty$, so the sign comparison is undefined.
-For S-N, both K5(a) and K5(b) show the same sign at $\kappa=1000$ and
-$\kappa\to\infty$.
+For S-T, both K5(a) and K5(b) have undefined signs: the assembly contrast is
+$\SantSTKfiveaKThousand$\,pp at $\kappa=1000$ and $\SantSTKfiveaInf$\,pp at
+$\kappa\to\infty$ (zero at both), while the aggregation contrast is
+$\SantSTKsixKThousand$\,pp and $\SantSTKsixInf$\,pp (zero at $\kappa\to\infty$).
 K6 on S-T is positive at all $\SantNkappa$ stochastic $\kappa$ values
-(range $[\SantSTKsixKTwentyFive, \SantSTKsixKFifty]$\,pp) and
-$\SantSTKsixInf$\,pp at $\kappa\to\infty$ (Fig.~\ref{fig:kappa}).
+(range $\SantSTKsixMin$--$\SantSTKsixMax$\,pp; Fig.~\ref{fig:kappa}).
+For S-N, K5(a) and K5(b) show the same sign at $\kappa=1000$ and $\kappa\to\infty$.
 K6 on S-N changes sign between $\kappa=50$
 ($\SantSNKsixKFifty$\,pp, CI $[\SantSNKsixKFiftyLo, \SantSNKsixKFiftyHi]$)
 and $\kappa=100$
-($\SantSNKsixKHundred$\,pp, CI $[\SantSNKsixKHundredLo, \SantSNKsixKHundredHi]$),
-reaching $\SantSNKsixInf$\,pp at $\kappa\to\infty$ (Fig.~\ref{fig:kappa}).
+($\SantSNKsixKHundred$\,pp, CI $[\SantSNKsixKHundredLo, \SantSNKsixKHundredHi]$)
+(Fig.~\ref{fig:kappa}).
 K5 and K6 are descriptive; no pre-registered confirmation criterion applies.
 
 \begin{figure}[!t]
@@ -347,12 +360,12 @@ K5 and K6 are descriptive; no pre-registered confirmation criterion applies.
 \includegraphics[width=\columnwidth]{figures/fig_kappa_santiago.pdf}
 \caption{%
   Pooled SAW$-$TOPSIS aggregation contrast (three informative cells,
-  Section~\ref{sec:factorial}) as a function of weight concentration~$\kappa$
+  Section~\ref{sec:factorial}) vs weight concentration~$\kappa$
   for Fogo (filled circles), S-T (open squares), and S-N (open triangles).
   Crosses at the right margin: deterministic draws ($\kappa\to\infty$,
   nominal weights $\mathbf{w}_0$); no CI; not connected to the curves.
   Shaded bands for Fogo: 95\% bootstrap CI ($B=\nboot$, percentile,
-  seed~$=\EsevenBootSeed$; paired by draw within~$\kappa$;
+  seed~$\EsevenBootSeed$; paired by draw within~$\kappa$;
   from \texttt{run\_e7\_kappa\_sweep.py}, Section~\ref{sec:kappa}).
   Shaded bands for S-T and S-N: 95\% bootstrap CI
   ($B=\nboot$, percentile, \texttt{SeedSequence(20261104)};

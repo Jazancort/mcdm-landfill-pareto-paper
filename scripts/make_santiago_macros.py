@@ -35,11 +35,13 @@ ROOT         = Path(__file__).parent.parent
 DEFAULT_OUT  = ROOT / "results" / "santiago" / "macros_santiago.tex"
 JSON_PATH    = ROOT / "results" / "santiago" / "santiago_predictions_v2.json"
 STAGE3B_PATH = ROOT / "results" / "santiago" / "stage3b_descriptors.json"
+EVALLOG_PATH = ROOT / "results" / "santiago" / "eval_v2_full_20261104.log"
 
 SHA_JSON     = "1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf80"
 SHA_STAGE3B  = "710718247783f1eeccbebfe894e953e21f56c963076bbf99e912a5b57f6fcbcc"
 SHA_K6CI     = "88fc473c994794aa83e6a7a45304a3ee65071af9dd9e81799aeb169e5a56395d"
 SHA_ST_E1    = "7806db5da3e78246e2707ef7df3e4980b445f9b7e04e751e65dbfeefd2b07507"
+SHA_EVALLOG  = "5946835674f20850fb67274c6a19a962992d9f4538da28d71559290be90cd1f0"
 SHA_SN_E1    = "357904c04d9d863b40c3cb448cb3b58e4615321cf5ac25f24c84a228312c1593"
 
 K6CI_PATH    = ROOT / "results" / "santiago" / "santiago_k6_ci.json"
@@ -302,6 +304,149 @@ def generate_lines(data, k6_ci=None):
     return lines
 
 
+def _load_evallog():
+    """Load and SHA-verify eval_v2_full_20261104.log; extract per-κ same-vec counts."""
+    if not EVALLOG_PATH.exists():
+        raise RuntimeError(f"Eval log not found: {EVALLOG_PATH}")
+    got = hashlib.sha256(EVALLOG_PATH.read_bytes()).hexdigest()
+    if got != SHA_EVALLOG:
+        raise RuntimeError(
+            f"SHA mismatch for eval_v2_full_20261104.log:\n"
+            f"  expected {SHA_EVALLOG}\n  got      {got}"
+        )
+    print(f"  SHA OK: eval_v2_full_20261104.log ({SHA_EVALLOG[:16]})")
+    text = EVALLOG_PATH.read_text(encoding="utf-8", errors="replace")
+    lines = text.splitlines()
+
+    # Raw row count from gate-3 verification (same line for both branches)
+    # Line format: "  Row counts verified: raw=3001, e1=2004"
+    row_counts = [l for l in lines if "Row counts verified" in l]
+    if len(row_counts) < 2:
+        raise RuntimeError("Expected 2 'Row counts verified' lines in eval log")
+    raw_re = re.search(r"raw=(\d+)", row_counts[0])
+    e1_re  = re.search(r"e1=(\d+)",  row_counts[0])
+    n_raw  = int(raw_re.group(1)) if raw_re else None
+    n_e1   = int(e1_re.group(1))  if e1_re  else None
+    if n_raw != 3001:
+        raise RuntimeError(f"Expected raw=3001, got {n_raw}")
+
+    # same-vec per κ for S-T (first block: lines between first and second "Row counts")
+    # Format: "    κ=  25 OK  same-mm=486/500  same-vec=488/500  ..."
+    rc_idxs = [i for i, l in enumerate(lines) if "Row counts verified" in l]
+    st_lines = lines[rc_idxs[0]:rc_idxs[1]]
+    sv_re = re.compile(r"κ=\s*(\d+|∞)\s+OK.*?same-vec=(\d+)/(\d+)")
+    sv_st = {}
+    for l in st_lines:
+        m = sv_re.search(l)
+        if m:
+            k, n, d = m.group(1), int(m.group(2)), int(m.group(3))
+            sv_st[k] = (n, d)
+
+    # n_e1 / 4 cells = rows per E1 cell (e.g. 2004/4 = 501)
+    n_e1_per_cell = n_e1 // 4 if n_e1 else None
+
+    return {
+        "n_raw":          n_raw,
+        "n_e1_per_cell":  n_e1_per_cell,
+        "sv_st":          sv_st,   # dict κ_str -> (n_same, n_draws)
+    }
+
+
+def _append_extras(lines, data, s3b, evallog=None):
+    """Append additional macros sourced from stage3b, eval log, and PRESPEC constants."""
+    def cmd(macro, value, comment=""):
+        s = f"\\newcommand{{\\{macro}}}{{{value}}}"
+        if comment:
+            s += f"  % {comment}"
+        return s
+
+    lines.append("% ── Stage 3 descriptors: M (criteria count) and spacing (km) ──────────────")
+    lines.append("% Source: stage3b_descriptors.json (SHA above)")
+    for branch, br in [("S-T", "ST"), ("S-N", "SN")]:
+        d = s3b[branch]
+        sp_km = f"{d['spacing_m'] / 1000:.2f}".rstrip("0").rstrip(".")
+        # format as n.nn with at most 2dp, strip trailing zeros
+        if "." in sp_km and len(sp_km.split(".")[1]) == 1:
+            sp_km += "0"   # keep one decimal for clarity
+        lines += [
+            cmd(f"Sant{br}Mcrit",      str(int(d["M"])),      f"criteria in {branch} model"),
+            cmd(f"Sant{br}SpacingKm",  sp_km,                  f"grid spacing km ({branch})"),
+        ]
+    # Fogo reference: m_eff from stage3b, but M and area from published constants
+    fogo = s3b["Fogo_ref"]
+    lines += [
+        cmd("FogoRefMeffCheck", f"{fogo['m_eff']:.2f}",
+            "m_eff Fogo — must equal \\FogoRefMeff above"),
+    ]
+    lines.append("")
+
+    # K6 min/max over stochastic kappa for S-T (for body text)
+    lines.append("% ── K6 stochastic min/max for S-T ─────────────────────────────────────────")
+    lines.append("% Source: santiago_predictions_v2.json (SHA above)")
+    st_k6 = [p for p in data["S-T"]["predictions"] if p["prediction"] == "S4"][0]["K6_per_kappa"]
+    k6_vals = list(st_k6.values())
+    k6_strs = {k: pp1(v) for k, v in st_k6.items()}
+    k6_min_v = min(k6_vals)
+    k6_max_v = max(k6_vals)
+    k6_min_k = [k for k, v in st_k6.items() if v == k6_min_v][0]
+    k6_max_k = [k for k, v in st_k6.items() if v == k6_max_v][0]
+    lines += [
+        cmd("SantSTKsixMin",    pp1(k6_min_v),
+            f"K6 S-T stochastic min = {pp1(k6_min_v)} at κ={k6_min_k}"),
+        cmd("SantSTKsixMinKappa", k6_min_k,       f"κ at min"),
+        cmd("SantSTKsixMax",    pp1(k6_max_v),
+            f"K6 S-T stochastic max = {pp1(k6_max_v)} at κ={k6_max_k}"),
+        cmd("SantSTKsixMaxKappa", k6_max_k,       f"κ at max"),
+    ]
+    lines.append("")
+
+    # Eval-log-sourced macros
+    if evallog:
+        lines.append("% ── Eval-log sourced: same-vec counts and row counts ────────────────────────")
+        lines.append("% Source: eval_v2_full_20261104.log (SHA above); eval commit d02a324")
+        lines += [
+            cmd("SantKoneTotalRows",        str(evallog["n_raw"]),
+                f"total rows in raw MC CSV (6×500+1 = all κ incl. ∞)"),
+            cmd("SantEoneRows",             str(evallog["n_e1_per_cell"]),
+                "rows per E1 cell (500 stoch + 1 det)"),
+        ]
+        for k_str, (n_same, n_draws) in sorted(evallog["sv_st"].items(),
+                                                key=lambda x: (x[0] == "∞", x[0])):
+            kname = KNAME.get(k_str, "Inf" if k_str == "∞" else k_str)
+            lines.append(cmd(
+                f"SantSTSameVecK{kname}", str(n_same),
+                f"S-T same SAW/vec portfolio (grd==opt) at κ={k_str}"
+            ))
+        lines.append("")
+
+    # PRESPEC/A5-sourced constants (SHA: PRESPEC_SANTIAGO_A5.md dd945d1c)
+    lines.append("% ── PRESPEC/A5 constants ───────────────────────────────────────────────────")
+    lines.append("% Source: PRESPEC_SANTIAGO_A5.md §1 (SHA dd945d1c5ef9d238)")
+    lines += [
+        cmd("SantNkappa",       "6",
+            "stochastic κ values {25,50,100,200,400,1000} (A5 §1)"),
+        cmd("SantSfiveThresh",  "0.5",
+            "S5 testability threshold (PRESPEC_SANTIAGO.md §6)"),
+        cmd("SantTVBThresh",    "0.05",
+            "S3b/S7b TV_B testability threshold (PRESPEC_SANTIAGO.md §6)"),
+        cmd("SantSTAreaKmSq",   "991",
+            "Santiago island area km² (PRESPEC_SANTIAGO.md §2)"),
+        cmd("SantSNAreaKmSq",   "395",
+            "Southern region area km² (PRESPEC_SANTIAGO.md §2 and §5.1)"),
+        cmd("FogoMcrit",        "11",
+            "Fogo AHP model: 11 criteria (main article Table 2)"),
+        cmd("FogoGridSpacingKm", "1.0",
+            "Fogo grid spacing km (PRESPEC_SANTIAGO.md §3 PRE-A)"),
+        cmd("FogoAreaKmSq",     "476",
+            "Fogo island area km² (published; AzancortNeto2026)"),
+        cmd("FogoRefPermPM",    "0.90",
+            "Fogo perm point-mass = 350/389 (PRESPEC_SANTIAGO.md §6 note)"),
+        cmd("EsevenBootSeed",   "99",
+            "E7 bootstrap seed (run_e7_kappa_sweep.py:321 def bstrap(...,seed=99))"),
+    ]
+    lines.append("")
+
+
 def _load_stage3b():
     """Load and SHA-verify stage3b_descriptors.json."""
     if not STAGE3B_PATH.exists():
@@ -496,8 +641,10 @@ def main():
     s3b   = _load_stage3b()
     k6_ci = _load_k6_ci()
     e1_kinf = _load_e1_kinf()
+    evallog = _load_evallog()
     lines = generate_lines(data, k6_ci)
     _append_k_and_table(lines, data, s3b, e1_kinf)
+    _append_extras(lines, data, s3b, evallog)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 

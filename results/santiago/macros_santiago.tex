@@ -217,3 +217,43 @@
 \newcommand{\FogoRefNadm}{389}
 \newcommand{\FogoRefNtrios}{1{,}944{,}653}
 
+% ── Stage 3 descriptors: M (criteria count) and spacing (km) ──────────────
+% Source: stage3b_descriptors.json (SHA above)
+\newcommand{\SantSTMcrit}{10}  % criteria in S-T model
+\newcommand{\SantSTSpacingKm}{1.25}  % grid spacing km (S-T)
+\newcommand{\SantSNMcrit}{13}  % criteria in S-N model
+\newcommand{\SantSNSpacingKm}{1}  % grid spacing km (S-N)
+\newcommand{\FogoRefMeffCheck}{4.03}  % m_eff Fogo — must equal \FogoRefMeff above
+
+% ── K6 stochastic min/max for S-T ─────────────────────────────────────────
+% Source: santiago_predictions_v2.json (SHA above)
+\newcommand{\SantSTKsixMin}{22.1}  % K6 S-T stochastic min = 22.1 at κ=25
+\newcommand{\SantSTKsixMinKappa}{25}  % κ at min
+\newcommand{\SantSTKsixMax}{26.4}  % K6 S-T stochastic max = 26.4 at κ=50
+\newcommand{\SantSTKsixMaxKappa}{50}  % κ at max
+
+% ── Eval-log sourced: same-vec counts and row counts ────────────────────────
+% Source: eval_v2_full_20261104.log (SHA above); eval commit d02a324
+\newcommand{\SantKoneTotalRows}{3001}  % total rows in raw MC CSV (6×500+1 = all κ incl. ∞)
+\newcommand{\SantEoneRows}{501}  % rows per E1 cell (500 stoch + 1 det)
+\newcommand{\SantSTSameVecKHundred}{500}  % S-T same SAW/vec portfolio (grd==opt) at κ=100
+\newcommand{\SantSTSameVecKThousand}{500}  % S-T same SAW/vec portfolio (grd==opt) at κ=1000
+\newcommand{\SantSTSameVecKTwoHundred}{500}  % S-T same SAW/vec portfolio (grd==opt) at κ=200
+\newcommand{\SantSTSameVecKTwentyFive}{488}  % S-T same SAW/vec portfolio (grd==opt) at κ=25
+\newcommand{\SantSTSameVecKFourHundred}{500}  % S-T same SAW/vec portfolio (grd==opt) at κ=400
+\newcommand{\SantSTSameVecKFifty}{493}  % S-T same SAW/vec portfolio (grd==opt) at κ=50
+\newcommand{\SantSTSameVecKInf}{1}  % S-T same SAW/vec portfolio (grd==opt) at κ=∞
+
+% ── PRESPEC/A5 constants ───────────────────────────────────────────────────
+% Source: PRESPEC_SANTIAGO_A5.md §1 (SHA dd945d1c5ef9d238)
+\newcommand{\SantNkappa}{6}  % stochastic κ values {25,50,100,200,400,1000} (A5 §1)
+\newcommand{\SantSfiveThresh}{0.5}  % S5 testability threshold (PRESPEC_SANTIAGO.md §6)
+\newcommand{\SantTVBThresh}{0.05}  % S3b/S7b TV_B testability threshold (PRESPEC_SANTIAGO.md §6)
+\newcommand{\SantSTAreaKmSq}{991}  % Santiago island area km² (PRESPEC_SANTIAGO.md §2)
+\newcommand{\SantSNAreaKmSq}{395}  % Southern region area km² (PRESPEC_SANTIAGO.md §2 and §5.1)
+\newcommand{\FogoMcrit}{11}  % Fogo AHP model: 11 criteria (main article Table 2)
+\newcommand{\FogoGridSpacingKm}{1.0}  % Fogo grid spacing km (PRESPEC_SANTIAGO.md §3 PRE-A)
+\newcommand{\FogoAreaKmSq}{476}  % Fogo island area km² (published; AzancortNeto2026)
+\newcommand{\FogoRefPermPM}{0.90}  % Fogo perm point-mass = 350/389 (PRESPEC_SANTIAGO.md §6 note)
+\newcommand{\EsevenBootSeed}{99}  % E7 bootstrap seed (run_e7_kappa_sweep.py:321 def bstrap(...,seed=99))
+
