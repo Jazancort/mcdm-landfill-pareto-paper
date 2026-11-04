@@ -39,8 +39,12 @@ STAGE3B_PATH = ROOT / "results" / "santiago" / "stage3b_descriptors.json"
 SHA_JSON     = "1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf80"
 SHA_STAGE3B  = "710718247783f1eeccbebfe894e953e21f56c963076bbf99e912a5b57f6fcbcc"
 SHA_K6CI     = "88fc473c994794aa83e6a7a45304a3ee65071af9dd9e81799aeb169e5a56395d"
+SHA_ST_E1    = "7806db5da3e78246e2707ef7df3e4980b445f9b7e04e751e65dbfeefd2b07507"
+SHA_SN_E1    = "357904c04d9d863b40c3cb448cb3b58e4615321cf5ac25f24c84a228312c1593"
 
 K6CI_PATH    = ROOT / "results" / "santiago" / "santiago_k6_ci.json"
+ST_E1_PATH   = ROOT / "results" / "santiago" / "mc_ST_e1_fix2.csv"
+SN_E1_PATH   = ROOT / "results" / "santiago" / "mc_SN_e1_fix2.csv"
 
 # κ value → LaTeX-safe macro suffix (no digits in \newcommand names)
 KNAME = {"25": "TwentyFive", "50": "Fifty", "100": "Hundred",
@@ -321,7 +325,32 @@ def _load_k6_ci():
     return json.loads(K6CI_PATH.read_text(encoding="utf-8"))
 
 
-def _append_k_and_table(lines, data, s3b):
+def _load_e1_kinf():
+    """Load ST and SN E1 CSVs (SHA-verified), return E1-B/opt Q2 at k=inf per branch.
+
+    A5:69-71: K2 requires E1-B/opt Q2=100% at BOTH k=200 and k=inf.
+    k=200 comes from S3a E1B_opt_count_k200; k=inf comes from these CSVs.
+    """
+    import pandas as _pd
+    import numpy as _np
+    result = {}
+    for br, path, sha in [("ST", ST_E1_PATH, SHA_ST_E1),
+                           ("SN", SN_E1_PATH, SHA_SN_E1)]:
+        if not path.exists():
+            raise RuntimeError(f"E1 CSV not found: {path}")
+        got = hashlib.sha256(path.read_bytes()).hexdigest()
+        if got != sha:
+            raise RuntimeError(f"SHA mismatch {path.name}: expected {sha}, got {got}")
+        print(f"  SHA OK: {path.name} ({sha[:16]})")
+        df = _pd.read_csv(path)
+        row = df[_np.isinf(df["kappa"]) & (df["e1_cell"] == "B")]
+        if len(row) != 1:
+            raise RuntimeError(f"Expected 1 E1-B kinf row for {br}, got {len(row)}")
+        result[br] = int(row["Q2_opt"].iloc[0])   # 1 = 100%
+    return result
+
+
+def _append_k_and_table(lines, data, s3b, e1_kinf=None):
     """Append K1-K4 macros and Table A macros to lines (in-place)."""
     def pred(branch, name):
         for p in data[branch]["predictions"]:
@@ -348,19 +377,20 @@ def _append_k_and_table(lines, data, s3b):
         ]
     lines.append("")
 
-    # K2: E1-B/opt Q2=100% at k=200 (from S3a) AND k=inf
-    # A5:69-71: "E1 cell B attains Q2=100% under optimal assembly at both κ=200 and κ=∞"
-    # k=200: from S3a E1B_opt_count_k200; k=inf: verified via Gate 3 pass (eval log:107,136)
+    # K2: E1-B/opt Q2=100% at k=200 AND k=inf (A5:69-71)
+    # k=200: from S3a E1B_opt_count_k200
+    # k=inf: from mc_*_e1_fix2.csv SHA-verified (SHA_ST_E1, SHA_SN_E1)
     lines.append("% -- K2: E1-B/opt Q2=100% at k=200 AND k=inf (A5:69-71) --------------")
     for branch, br in BRANCHES:
         p = pred(branch, "S3a")
-        e1b = int(p["E1B_opt_count_k200"])
-        # k=inf: Gate 3 (eval log:107,136) ALL MATCH confirms k=inf row passes
-        k2_pass = "PASS" if e1b == 500 else "FAIL"
+        e1b_200 = int(p["E1B_opt_count_k200"])
+        e1b_inf = (e1_kinf or {}).get(br, 1)
+        k2_pass = "PASS" if (e1b_200 == 500 and e1b_inf == 1) else "FAIL"
         lines += [
-            cmd(f"Sant{br}KtwoResult", k2_pass,
-                f"k=200: {e1b}/500; k=inf: Gate 3 PASS (eval log:107,136)"),
-            cmd(f"Sant{br}KtwoN", n(e1b), "draws Q2=100% at k=200"),
+            cmd(f"Sant{br}KtwoResult",    k2_pass),
+            cmd(f"Sant{br}KtwoN",         n(e1b_200), "draws Q2=100% at k=200"),
+            cmd(f"Sant{br}KtwoInfResult", "PASS" if e1b_inf == 1 else "FAIL",
+                f"k=inf: Q2_opt={e1b_inf} from mc_{br}_e1_fix2.csv"),
         ]
     lines.append("")
 
@@ -382,20 +412,29 @@ def _append_k_and_table(lines, data, s3b):
     # K4: detectable at some k (A5:82-85, Holm-corrected, one-sided)
     # A5:82-85: "Holm correction across the six stochastic κ values
     #            (one-sided test: H0: contrast ≤ 0; reject if lower 95% CI bound > 0 after adjustment)"
-    # NOTE: _holm() in evaluate_santiago_predictions.py:243 is missing the monotonicity
-    # (cummax) step. With all raw p = 0.0005 = 1/B, the correct minimum Holm-adj p
-    # (after cummax) = max(holm_adj_p.values()) = 0.003 = 6 × (1/2000). Use max(), not min().
-    lines.append("% -- K4: detectable (Holm-corrected, A5:82-85) --- use max() for correct monotone min --")
+    # NOTE: _holm() in evaluate_santiago_predictions.py:243 is missing the cummax
+    # (monotonicity) step. We recompute Holm correctly here from per_kappa p_one_sided.
+    # With all raw p = 0.0005 = 1/B, correct Holm (with cummax) gives all adjusted = 0.003.
+    # Macro is named KfourHolmP (not Min) since all adjusted values are equal after cummax.
+    lines.append("% -- K4: detectable (Holm-corrected, A5:82-85) --- cummax enforced here --")
     for branch, br in BRANCHES:
-        p     = pred(branch, "S1")
-        holms = p["holm_adj_p"]
-        # With proper Holm monotonicity, min_Holm_adj = max of the step-down values
-        # (all raw p tied at 1/B=0.0005, so cummax enforces all equal to rank-1 value = 0.003)
-        min_p = max(holms.values())   # 0.003 = 6 × 1/2000, correct with monotonicity
+        p      = pred(branch, "S1")
+        # Raw p-values from per_kappa p_one_sided
+        raw_ps = [p["per_kappa"][k]["p_one_sided"] for k in sorted(p["per_kappa"].keys())]
+        m      = len(raw_ps)
+        # Holm step-down with cummax (standard, monotonicity enforced)
+        order  = sorted(range(m), key=lambda i: raw_ps[i])
+        adj    = [0.0] * m
+        cummax = 0.0
+        for rank, idx in enumerate(order):
+            val    = min(raw_ps[idx] * (m - rank), 1.0)
+            cummax = max(cummax, val)
+            adj[idx] = cummax
+        min_holm = min(adj)   # 0.003 when all raw p = 0.0005
         lines += [
-            cmd(f"Sant{br}KfourResult",   "CONFIRMED" if min_p < 0.05 else "NOT CONFIRMED"),
-            cmd(f"Sant{br}KfourMinHolmP", p3(min_p),
-                f"min Holm-adj p ({branch}); correct with monotonicity, = 6x(1/B)=0.003"),
+            cmd(f"Sant{br}KfourResult",  "CONFIRMED" if min_holm < 0.05 else "NOT CONFIRMED"),
+            cmd(f"Sant{br}KfourHolmP",   p3(min_holm),
+                f"Holm-adj p (min, with cummax), = 6x(1/B)=0.003 ({branch})"),
         ]
     lines.append("")
 
@@ -451,8 +490,9 @@ def main():
     data  = json.loads(JSON_PATH.read_text(encoding="utf-8"))
     s3b   = _load_stage3b()
     k6_ci = _load_k6_ci()
+    e1_kinf = _load_e1_kinf()
     lines = generate_lines(data, k6_ci)
-    _append_k_and_table(lines, data, s3b)
+    _append_k_and_table(lines, data, s3b, e1_kinf)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 

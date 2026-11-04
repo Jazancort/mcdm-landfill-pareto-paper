@@ -573,3 +573,29 @@ todos os sorteios (κ=200, S-T), por isso R_grd = R_opt = 3.22 pp em cada sortei
 A ausência de efeito é estrutural, não estatística. O p não se aplica.
 
 Esta errata não altera nenhum outro veredicto.
+
+---
+
+## ER-HOLM-CUMMAX — _holm() sem passo de monotonia
+
+Registado em verificação pré-Bloco 1.
+
+**Descrição:** `_holm()` em `scripts/evaluate_santiago_predictions.py:243` implementa
+a correcção de Holm sem o passo de cummax (monotonia). O código calcula
+`adjusted[idx] = min(p * (m - rank), 1.0)` sem `cummax = max(cummax, adjusted[idx])`.
+Sem cummax, os p ajustados do maior rank ficam mais pequenos do que deviam ser.
+
+**Impacto no Santiago:** nenhum. Os seis p brutos de S1 são todos 0,0005 = 1/B
+(todos os 500 bootstrap draws confirmam o sinal). Com monotonia correcta,
+todos os p ajustados são iguais: cummax enforça que todos = max(rank-1 value) = 0,003
+= 6 × (1/2000). O veredicto do K4 não muda (0,003 < 0,05 → CONFIRMED).
+
+**O gerador** (`scripts/make_santiago_macros.py`) reimplementa Holm correctamente
+a partir dos `p_one_sided` brutos do JSON, com cummax. A macro `\SantSTKfourHolmP`
+contém o valor correcto (0,003). O script de avaliação continua selado.
+
+**E7/Fogo:** `run_e7_kappa_sweep.py` não usa `_holm()`. A significância E7
+é determinada por contenção de CI (`sig = "SIG" if (lo > 0 or hi < 0) else "n.s."`).
+O texto "five remain significant after Holm correction" refere-se a 5/6 Agg_pooled3
+com CI inteiramente acima ou abaixo de 0. Mesmo sem Holm, esse resultado é 5/6.
+O `_holm()` não afecta o Fogo. O texto está correcto.

@@ -170,21 +170,23 @@
 \newcommand{\SantSNKoneN}{500}  % draws Q2=100% (S-N)
 
 % -- K2: E1-B/opt Q2=100% at k=200 AND k=inf (A5:69-71) --------------
-\newcommand{\SantSTKtwoResult}{PASS}  % k=200: 500/500; k=inf: Gate 3 PASS (eval log:107,136)
+\newcommand{\SantSTKtwoResult}{PASS}
 \newcommand{\SantSTKtwoN}{500}  % draws Q2=100% at k=200
-\newcommand{\SantSNKtwoResult}{PASS}  % k=200: 500/500; k=inf: Gate 3 PASS (eval log:107,136)
+\newcommand{\SantSTKtwoInfResult}{PASS}  % k=inf: Q2_opt=1 from mc_ST_e1_fix2.csv
+\newcommand{\SantSNKtwoResult}{PASS}
 \newcommand{\SantSNKtwoN}{500}  % draws Q2=100% at k=200
+\newcommand{\SantSNKtwoInfResult}{PASS}  % k=inf: Q2_opt=1 from mc_SN_e1_fix2.csv
 
 \newcommand{\SantSTKthreeResult}{CONFIRMED}
 \newcommand{\SantSTKthreeMinCIlo}{3.6}  % min CI lower across k (S-T)
 \newcommand{\SantSNKthreeResult}{CONFIRMED}
 \newcommand{\SantSNKthreeMinCIlo}{2.0}  % min CI lower across k (S-N)
 
-% -- K4: detectable (Holm-corrected, A5:82-85) --- use max() for correct monotone min --
+% -- K4: detectable (Holm-corrected, A5:82-85) --- cummax enforced here --
 \newcommand{\SantSTKfourResult}{CONFIRMED}
-\newcommand{\SantSTKfourMinHolmP}{0.003}  % min Holm-adj p (S-T); correct with monotonicity, = 6x(1/B)=0.003
+\newcommand{\SantSTKfourHolmP}{0.003}  % Holm-adj p (min, with cummax), = 6x(1/B)=0.003 (S-T)
 \newcommand{\SantSNKfourResult}{CONFIRMED}
-\newcommand{\SantSNKfourMinHolmP}{0.003}  % min Holm-adj p (S-N); correct with monotonicity, = 6x(1/B)=0.003
+\newcommand{\SantSNKfourHolmP}{0.003}  % Holm-adj p (min, with cummax), = 6x(1/B)=0.003 (S-N)
 
 % -- Table A: Stage 3b descriptors (SHA-verified) -----------------
 % stage3b_descriptors.json SHA: 710718247783f1ee
