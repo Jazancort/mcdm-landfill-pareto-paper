@@ -45,10 +45,10 @@ after the pre-specification was locked; contingency C-4 was invoked
 after the freeze, before any Monte Carlo run (DEV-SANT-ZDTI-001),
 removing A2 and renormalising the remaining
 $\SantSNMcrit$ weights proportionally.
-Agricultural exclusions in S-N use irrigated perimeters (Regadios) only;
-\citet{Cabral2012}'s agricultural areas were taken from municipal master
-plans and appear to cover a larger area
-($+\SantCabralAgriDiff$\,\% of the S-N region).
+Agricultural exclusions in S-N use irrigated perimeters (Regadios) only
+($\SantSNRegadiosPct$\,\% of the S-N area);
+\citet{Cabral2012}'s agricultural areas came from municipal master
+plans and appear to cover more.
 
 Five implementation corrections were made after the Monte Carlo outputs
 were sealed (Supplementary Table~\ref{tab:sant-dev}):
@@ -339,7 +339,10 @@ K5  & Sign of (a) assembly and (b) aggregation contrast at
 % K6: A5 §2 l.108-112 "No directional prediction; exploratory"
 K6  & SAW$-$TOPSIS aggregation contrast at each $\kappa$;
       no directional prediction; exploratory
-    & \S\ref{sec:kappa}
+    % Fogo K6 per-kappa: macros/macros_e7.tex (SHA-verified)
+    & $\AggKtwentyfive$\,pp ($\kappa=25$) to $\AggKthousand$\,pp ($\kappa=1000$);
+      sign reversal between $\kappa=100$ and $\kappa=400$
+      (\S\ref{sec:kappa})
     & all positive: $\SantSTKsixMin$--$\SantSTKsixMax$\,pp (stochastic);
       $\SantSTKsixInf$\,pp at $\kappa\to\infty$
     & sign reversal: $+\SantSNKsixKFifty$\,pp at $\kappa=50$,
@@ -359,6 +362,14 @@ Regression checks S0 and K1, and K2 (guaranteed by
 Theorem~\ref{thm:groupconst}), hold on both branches.
 S3a, that within-group distortion alone costs frontier attainment, is
 confirmed on both.
+
+\textbf{S5.}
+S-N's frontier is defined on four objectives; a larger share of portfolios
+is non-dominated than on Fogo or S-T, so $Q_2$ levels are not directly
+comparable across instances.
+The tested quantity is within-branch: $Q_2(\text{SAW,vec,opt})=\SantSNSfiveQvec$\%
+on S-N exceeds the pre-registered threshold of \QtwovecOptimal\% (S-T: not testable,
+$p_\text{max}^c=\SantSTSfivePerm>\SantSfiveThresh$).
 
 \textbf{Assembly under vector normalisation (S2, S6).}
 On Fogo, the two measures pointed in opposite directions under vector

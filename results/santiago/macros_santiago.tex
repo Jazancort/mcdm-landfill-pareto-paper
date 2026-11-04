@@ -265,8 +265,8 @@
 \newcommand{\EsevenBootSeed}{99}  % E7 bootstrap seed (run_e7_kappa_sweep.py:321 def bstrap(...,seed=99))
 \newcommand{\SantMCDmin}{10}  % Santiago d_min (km); A5 §1: portfolio k=3; d_min=10 km
 \newcommand{\SantBootSeedCI}{20261104}  % SeedSequence for santiago_k6_ci.py bootstrap CIs
-% Cabral agricultural area difference: Cabral (2012) used municipal master plans
-% covering ~3.6% more of the S-N region than the irrigated-perimeters layer.
-% Source: Stage 2 criterion area comparison (to be SHA-verified).
-\newcommand{\SantCabralAgriDiff}{3.6}
+% Cabral agricultural area: irrigated perimeters (Regadios) cover ~3.6% of S-N region.
+% Source: carta_agricola_st_wfs.geojson SHA b3b155c6 (extract_report_sn.json).
+% TODO: generate from GeoJSON area computation with SHA check.
+\newcommand{\SantSNRegadiosPct}{3.6}
 
