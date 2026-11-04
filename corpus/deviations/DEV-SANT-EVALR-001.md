@@ -462,3 +462,26 @@ requer instalar esta versão explicitamente.
 
 **Impacto:** nenhum dado selado afectado. A comparabilidade do ambiente é reduzida
 (uv.lock ausente). Declarado aqui para transparência.
+
+---
+
+## ER-GATE-RUN-v6 — gates-only e mutations em 32037a4 (2026-11-04)
+
+Commit: `32037a44638b439ae316612405d855c1cedfffe8` (eval-v2: K5 fix + _v2 outputs + DEV updates)
+Data: 2026-11-04
+
+**--gates-only:**
+- Exit: 0 (Fogo gates passed)
+- Elapsed: 143.6s
+- Log: `results/santiago/eval_v2_gates_.log`
+- SHA-256: `99cff36b93d11367f8259dc057157056e8616d77cc3090c64e71d553057f6b07`
+
+**mutations 21/21 PASS:**
+- Elapsed: 0.77s
+- Log: `results/santiago/eval_v2_mutation_32037a4.log`
+- SHA-256: `0a06fbaf71d1c4cc420fa85430f8b09fde99893339e8c08f2ace5ee80481c18d`
+
+Diferença vs ca5d4ec: a lógica de gates e mutations não mudou; os SHAs dos mutations são
+idênticos ao run anterior (0a06fbaf). O SHA das gates difere por elapsed time no log.
+Alterações em 32037a4 tocam só em docstrings/comentários do script e nos nomes dos
+ficheiros de output (_v2). Nenhuma gate function alterada.
