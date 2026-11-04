@@ -5,296 +5,309 @@ Source: results/santiago/santiago_predictions_v2.json (SHA verified).
 Commit of evaluation: d02a32406e8a51b79fcb2fec53d506ec9164b0ef
 Tag: predictions-eval-v2
 
-S3b p-values are computed from the solo counts in the JSON:
-  S-T: McNemar with continuity correction (solo_V=69, solo_W=49)
-       chi2 = (|b-c|-1)^2 / (b+c) = 19^2/118 = 3.059
-       p = erfc(sqrt(chi2/2))  [chi2 df=1 two-sided, no scipy needed]
-  S-N: Exact binomial two-sided (solo_V=0, solo_W=3)
-       p = 2 * (0.5)^3 = 0.25
+Formatting rules (avoids stripped zeros in the .tex):
+  pp1(x)  : 1 decimal — Q2 differences, CIs, K5, S5 Q2 percentages
+  r2(x)   : 2 decimals — value regret R (S6, S7a, S7b), those CIs
+  p3(x)   : 3 decimals — p-values
+  n(x)    : integer   — counts
 
-Usage:
-    uv run python scripts/make_santiago_macros.py
-    # or from Athena:
-    .venv/bin/python3 scripts/make_santiago_macros.py
+S3b p-values computed from solo counts:
+  S-T: McNemar c.c.: chi2 = (|b-c|-1)^2/(b+c); p = erfc(sqrt(chi2/2))
+  S-N: binomial exact two-sided: sum P(X=k) for k <= min(b,c), * 2
 
-Output: results/santiago/macros_santiago.tex  (overwritten)
+CLI:
+  uv run python scripts/make_santiago_macros.py [--out PATH]
+  --out PATH   write to PATH instead of default output file
+  (No --out: writes to results/santiago/macros_santiago.tex)
+
+Verification (used by verify_macros_permanent.py --santiago):
+  python scripts/make_santiago_macros.py --out /tmp/check.tex
+  diff /tmp/check.tex results/santiago/macros_santiago.tex
 """
 import hashlib
 import json
 import math
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-JSON_PATH = ROOT / "results" / "santiago" / "santiago_predictions_v2.json"
-OUT_PATH  = ROOT / "results" / "santiago" / "macros_santiago.tex"
+DEFAULT_OUT = ROOT / "results" / "santiago" / "macros_santiago.tex"
+JSON_PATH   = ROOT / "results" / "santiago" / "santiago_predictions_v2.json"
 
 SHA_JSON = "1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf80"
 
-# ── Verify SHA ─────────────────────────────────────────────────────────────────
-if not JSON_PATH.exists():
-    raise RuntimeError(f"JSON not found: {JSON_PATH}")
-got = hashlib.sha256(JSON_PATH.read_bytes()).hexdigest()
-if got != SHA_JSON:
-    raise RuntimeError(
-        f"SHA mismatch for santiago_predictions_v2.json:\n"
-        f"  expected {SHA_JSON}\n"
-        f"  got      {got}"
-    )
-print(f"  SHA OK: santiago_predictions_v2.json ({SHA_JSON[:16]})")
+# ── Format helpers ─────────────────────────────────────────────────────────────
 
-data = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+def pp1(x):
+    """Q2-type pp value: 1 decimal place (diffs, CIs, K5, S3/S5 Q2%)."""
+    return f"{float(x):.1f}"
 
+def r2(x):
+    """Regret-type R value: 2 decimal places (S6/S7a/S7b R and CIs)."""
+    return f"{float(x):.2f}"
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
+def p3(x):
+    """p-value: 3 decimal places."""
+    return f"{float(x):.3f}"
 
-def get_pred(branch, name):
-    """Return prediction dict; raises KeyError if not found."""
-    for p in data[branch]["predictions"]:
-        if p["prediction"] == name:
-            return p
-    raise KeyError(f"Prediction {name!r} not found in branch {branch!r}")
+def n(x):
+    """Integer count."""
+    return str(int(float(x)))
 
 
-def cmd(macro, value, comment=""):
-    """Return a \\newcommand line."""
-    s = f"\\newcommand{{\\{macro}}}{{{value}}}"
-    if comment:
-        s += f"  % {comment}"
-    return s
-
-
-def fmt(x):
-    """Format a number: strip trailing .0 only if integer; keep decimals otherwise."""
-    if isinstance(x, float) and x == int(x) and abs(x) < 1e9:
-        return str(int(x))
-    if isinstance(x, float):
-        return str(x)
-    return str(x)
-
-
-def extract_perm(condition_str):
-    """Extract numeric perm value from condition string like 'max_pm < 0.5: 0.6173 ✗'."""
-    m = re.search(r"([\d.]+)\s*[✓✗]", condition_str)
-    return m.group(1) if m else "NA"
-
-
-# ── S3b p-values (computed from solo counts) ──────────────────────────────────
+# ── p-value computations ───────────────────────────────────────────────────────
 
 def mcnemar_p(b, c):
-    """McNemar with continuity correction; returns p (chi2 df=1, two-sided).
-    Uses math.erfc — no scipy required.
-    Formula: chi2 = (|b-c| - 1)^2 / (b+c); p = erfc(sqrt(chi2/2)).
-    """
-    n = b + c
-    if n == 0:
+    """McNemar with continuity correction: p = erfc(sqrt((|b-c|-1)^2/(b+c)/2))."""
+    total = b + c
+    if total == 0:
         return 1.0
-    stat = (abs(b - c) - 1) ** 2 / n
+    stat = (abs(b - c) - 1) ** 2 / total
     return math.erfc(math.sqrt(stat / 2))
 
 
 def binomial_two_sided_p(b, c):
-    """Exact binomial two-sided p under H0 = 0.5.
-    P = 2 * (0.5)^(b+c) when one count is 0.
-    General: sum of P(X=k) for k <= min(b,c) or k >= max(b,c) under Bin(b+c, 0.5).
-    """
-    n = b + c
-    if n == 0:
+    """Exact two-sided binomial under H0=0.5; sum of tail probabilities."""
+    total = b + c
+    if total == 0:
         return 1.0
-    # Exact: sum both tails
     from math import comb
     min_k = min(b, c)
-    p = sum(comb(n, k) * (0.5 ** n) for k in range(0, min_k + 1)) * 2
-    return p
+    return sum(comb(total, k) * (0.5 ** total) for k in range(0, min_k + 1)) * 2
 
 
-# ── Build macro lines ──────────────────────────────────────────────────────────
+# ── Core generator ─────────────────────────────────────────────────────────────
 
-lines = [
-    "% AUTO-GENERATED by scripts/make_santiago_macros.py — DO NOT EDIT BY HAND",
-    "% Source: results/santiago/santiago_predictions_v2.json",
-    f"% JSON SHA-256: {SHA_JSON[:16]}",
-    "% Commit of evaluation: d02a32406e8a51b79fcb2fec53d506ec9164b0ef",
-    "% Tag: predictions-eval-v2",
-    "% B_BOOT = 2000, κ = 200 for all testable predictions",
-    "",
-]
-
-BRANCHES = [("S-T", "ST"), ("S-N", "SN")]
-
-# ── S0 ────────────────────────────────────────────────────────────────────────
-lines.append("% ── S0: SAW/mm/opt Q2=100% every draw ─────────────────────────────────────")
-for branch, br in BRANCHES:
-    p = get_pred(branch, "S0")
-    lines += [
-        cmd(f"Sant{br}SzeroResult",   p["result"]),
-        cmd(f"Sant{br}SzeroN",        fmt(p["n_saw_mm_opt_k200"]),
-            f"draws/{500} where SAW/mm/opt==100% ({branch})"),
+def generate_lines(data):
+    """Return list of strings forming macros_santiago.tex content."""
+    lines = [
+        "% AUTO-GENERATED by scripts/make_santiago_macros.py \u2014 DO NOT EDIT BY HAND",
+        "% Source: results/santiago/santiago_predictions_v2.json",
+        f"% JSON SHA-256: {SHA_JSON[:16]}",
+        "% Commit of evaluation: d02a32406e8a51b79fcb2fec53d506ec9164b0ef",
+        "% Tag: predictions-eval-v2",
+        "% B_BOOT = 2000, \u03ba = 200 for all testable predictions",
+        "% Formats: pp1 = Q2 diffs/CIs (1dp), r2 = regret R (2dp), p3 = p-val (3dp)",
+        "",
     ]
-lines.append("")
 
-# ── S1 κ=200 ──────────────────────────────────────────────────────────────────
-lines.append("% ── S1: Q2(SAW,mm,grd) > Q2(SAW,vec,grd) ──────────────────────────────────")
-for branch, br in BRANCHES:
-    p = get_pred(branch, "S1")
-    kp = p["per_kappa"]["200"]
-    lines += [
-        cmd(f"Sant{br}SoneResult",    p["result"]),
-        cmd(f"Sant{br}SoneDiff",      fmt(kp["mean_diff"]),    f"pp ({branch} κ=200)"),
-        cmd(f"Sant{br}SoneCIlo",      fmt(kp["ci"][0])),
-        cmd(f"Sant{br}SoneCIhi",      fmt(kp["ci"][1])),
-    ]
-lines.append("")
+    def cmd(macro, value, comment=""):
+        s = f"\\newcommand{{\\{macro}}}{{{value}}}"
+        if comment:
+            s += f"  % {comment}"
+        return s
 
-# ── S2 κ=200 ──────────────────────────────────────────────────────────────────
-lines.append("% ── S2: greedy reversal (opt < grd) ───────────────────────────────────────")
-for branch, br in BRANCHES:
-    p = get_pred(branch, "S2")
-    kp = p["per_kappa"]["200"]
-    diff = kp["mean_grd_minus_opt"]
-    lines += [
-        cmd(f"Sant{br}StwoResult",    p["result"]),
-        cmd(f"Sant{br}StwoDiff",      fmt(diff),               f"pp grd-opt ({branch} κ=200)"),
-        cmd(f"Sant{br}StwoCIlo",      fmt(kp["ci"][0])),
-        cmd(f"Sant{br}StwoCIhi",      fmt(kp["ci"][1])),
-        cmd(f"Sant{br}StwoSoloGrd",   fmt(p["solo_grd_k200"]), "draws only greedy on frontier"),
-        cmd(f"Sant{br}StwoSoloOpt",   fmt(p["solo_opt_k200"]), "draws only optimal on frontier"),
-    ]
-lines.append("")
+    def pred(branch, name):
+        for p in data[branch]["predictions"]:
+            if p["prediction"] == name:
+                return p
+        raise KeyError(f"{name!r} not in {branch!r}")
 
-# ── S3a κ=200 ─────────────────────────────────────────────────────────────────
-lines.append("% ── S3a: E1-W opt < 100% AND E1-V opt < 100% ──────────────────────────────")
-for branch, br in BRANCHES:
-    p = get_pred(branch, "S3a")
-    lines += [
-        cmd(f"Sant{br}SthreeaResult", p["result"]),
-        cmd(f"Sant{br}SthreeaEoneW",  fmt(p["Q2_E1W_opt_k200"]), "Q2(E1-W,opt) %"),
-        cmd(f"Sant{br}SthreeaEoneV",  fmt(p["Q2_E1V_opt_k200"]), "Q2(E1-V,opt) %"),
-    ]
-lines.append("")
+    BRANCHES = [("S-T", "ST"), ("S-N", "SN")]
 
-# ── S3b κ=200 (p-values computed from counts) ─────────────────────────────────
-lines.append("% ── S3b: E1-V opt < E1-W opt (p from solo counts) ─────────────────────────")
-for branch, br in BRANCHES:
-    p = get_pred(branch, "S3b")
-    sv = p["solo_V_k200"]
-    sw = p["solo_W_k200"]
-    diff_vw = round(p["Q2_E1V_k200"] - p["Q2_E1W_k200"], 2)
-    if branch == "S-T":
-        pv = mcnemar_p(sv, sw)
-        pv_str  = f"{pv:.3f}"
-        pv_note = f"McNemar c.c. ({sv} vs {sw}), stat={(abs(sv-sw)-1)**2/(sv+sw):.3f}"
-    else:
-        pv = binomial_two_sided_p(sv, sw)
-        pv_str  = f"{pv:.2f}"
-        pv_note = f"binomial exact ({sv} vs {sw})"
-    lines += [
-        cmd(f"Sant{br}SthreebResult", p["result"]),
-        cmd(f"Sant{br}SthreebDiff",   fmt(diff_vw),   "pp Q2(E1-V) - Q2(E1-W)"),
-        cmd(f"Sant{br}SthreebSoloV",  fmt(sv),        "draws exclusively E1-V on frontier"),
-        cmd(f"Sant{br}SthreebSoloW",  fmt(sw),        "draws exclusively E1-W on frontier"),
-        cmd(f"Sant{br}SthreebPval",   pv_str,          pv_note),
-    ]
-lines.append("")
-
-# ── S4/K5 descriptive ─────────────────────────────────────────────────────────
-lines.append("% ── S4/K5: descriptive sign check ─────────────────────────────────────────")
-for branch, br in BRANCHES:
-    p = get_pred(branch, "S4")
-    k5a_1k  = p["K5a_assembly_per_kappa"]["1000"]
-    k5a_inf = p["K5a_assembly_inf"]
-    k5b_1k  = p["K6_per_kappa"]["1000"]
-    k5b_inf = p["K6_inf"]
-    sa = p["K5a_same_sign_1000_inf"]
-    sb = p["K5b_same_sign_1000_inf"]
-    lines += [
-        cmd(f"Sant{br}KfiveaOne",      fmt(k5a_1k),    "K5(a) at κ=1000 [pp]"),
-        cmd(f"Sant{br}KfiveaInf",      fmt(k5a_inf),   "K5(a) at κ=∞ [pp]"),
-        cmd(f"Sant{br}KfivebOne",      fmt(k5b_1k),    "K5(b)=K6 at κ=1000 [pp]"),
-        cmd(f"Sant{br}KfivebInf",      fmt(k5b_inf),   "K5(b)=K6 at κ=∞ [pp]"),
-        cmd(f"Sant{br}KfiveaSameSign", "null" if sa is None else str(sa).lower()),
-        cmd(f"Sant{br}KfivebSameSign", "null" if sb is None else str(sb).lower()),
-    ]
-lines.append("")
-
-# ── S5 κ=200 ──────────────────────────────────────────────────────────────────
-lines.append("% ── S5: Q2(SAW,vec,opt) > 56.8% reference ─────────────────────────────────")
-for branch, br in BRANCHES:
-    p = get_pred(branch, "S5")
-    perm_val = extract_perm(p["condition"])
-    q_200    = p["per_kappa"]["200"]["Q2_SAW_vec_opt"]
-    lines += [
-        cmd(f"Sant{br}SfiveResult",   p["result"]),
-        cmd(f"Sant{br}SfivePerm",     perm_val,         "max_pm_continuous"),
-        cmd(f"Sant{br}SfiveQvec",     fmt(q_200),       "Q2(SAW,vec,opt) % at κ=200"),
-    ]
-lines.append("")
-
-# ── S6 κ=200 ──────────────────────────────────────────────────────────────────
-lines.append("% ── S6: R(SAW,vec,grd) > R(SAW,vec,opt) ───────────────────────────────────")
-lines.append("% S-T: efeito ausente (same-trio 500/500; 0/500 draws with R_grd != R_opt)")
-for branch, br in BRANCHES:
-    p = get_pred(branch, "S6")
-    kp = p["per_kappa"]["200"]
-    lines += [
-        cmd(f"Sant{br}SsixResult",   p["result"]),
-        cmd(f"Sant{br}SsixRgrd",     fmt(kp["R_grd_mean"]),            "R(grd) mean pp"),
-        cmd(f"Sant{br}SsixRopt",     fmt(kp["R_opt_mean"]),            "R(opt) mean pp"),
-        cmd(f"Sant{br}SsixDiff",     fmt(kp["mean_diff_R_grd_minus_opt"]), "pp"),
-    ]
-    if branch == "S-N":
+    # ── S0 ──────────────────────────────────────────────────────────────────────
+    lines.append("% \u2500\u2500 S0 \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+    for branch, br in BRANCHES:
+        p = pred(branch, "S0")
         lines += [
-            cmd(f"Sant{br}SsixCIlo", fmt(kp["ci"][0])),
-            cmd(f"Sant{br}SsixCIhi", fmt(kp["ci"][1])),
+            cmd(f"Sant{br}SzeroResult", p["result"]),
+            cmd(f"Sant{br}SzeroN", n(p["n_saw_mm_opt_k200"]),
+                f"draws where SAW/mm/opt==100\\% ({branch})"),
         ]
-lines.append("")
+    lines.append("")
 
-# ── S7a κ=200 ─────────────────────────────────────────────────────────────────
-lines.append("% ── S7a: R(E1-B,opt) > 0 ──────────────────────────────────────────────────")
-lines.append("% Fogo reference: 177/500 = 35.4% zeros (DEV-FOGO-E1B-001)")
-for branch, br in BRANCHES:
-    p = get_pred(branch, "S7a")
-    lines += [
-        cmd(f"Sant{br}SsvnaResult",   p["result"]),
-        cmd(f"Sant{br}SsvnaREoneB",   fmt(p["R_E1B_opt_mean_pp"]),  "R(E1-B,opt) mean pp"),
-        cmd(f"Sant{br}SsvnaCIlo",     fmt(p["ci"][0])),
-        cmd(f"Sant{br}SsvnaCIhi",     fmt(p["ci"][1])),
-        cmd(f"Sant{br}SsvnaFracZero", fmt(round(p["frac_R_e1b_zero"] * 100, 1)), "% draws R==0"),
-        cmd(f"Sant{br}SsvnaNnonzero", fmt(p["n_nonzero_e1b"]),      "draws with R>0"),
-    ]
-lines.append("")
+    # ── S1 κ=200 ────────────────────────────────────────────────────────────────
+    lines.append("% \u2500\u2500 S1 (\u03ba=200) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+    for branch, br in BRANCHES:
+        p = pred(branch, "S1")
+        kp = p["per_kappa"]["200"]
+        lines += [
+            cmd(f"Sant{br}SoneResult", p["result"]),
+            cmd(f"Sant{br}SoneDiff",   pp1(kp["mean_diff"]),   f"pp ({branch} \u03ba=200)"),
+            cmd(f"Sant{br}SoneCIlo",   pp1(kp["ci"][0])),
+            cmd(f"Sant{br}SoneCIhi",   pp1(kp["ci"][1])),
+        ]
+    lines.append("")
 
-# ── S7b κ=200 ─────────────────────────────────────────────────────────────────
-lines.append("% ── S7b: R(E1-B,opt) < R(E1-W,opt) ────────────────────────────────────────")
-for branch, br in BRANCHES:
-    p = get_pred(branch, "S7b")
-    lines += [
-        cmd(f"Sant{br}SsvnbResult",  p["result"]),
-        cmd(f"Sant{br}SsvnbREoneB",  fmt(p["R_E1B_k200"]), "R(E1-B) pp"),
-        cmd(f"Sant{br}SsvnbREoneW",  fmt(p["R_E1W_k200"]), "R(E1-W) pp"),
-        cmd(f"Sant{br}SsvnbCIlo",    fmt(p["ci_W_minus_B"][0]), "CI lower (R_W - R_B)"),
-        cmd(f"Sant{br}SsvnbCIhi",    fmt(p["ci_W_minus_B"][1]), "CI upper"),
-    ]
-lines.append("")
+    # ── S2 κ=200 ────────────────────────────────────────────────────────────────
+    lines.append("% \u2500\u2500 S2 (\u03ba=200) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+    for branch, br in BRANCHES:
+        p = pred(branch, "S2")
+        kp = p["per_kappa"]["200"]
+        lines += [
+            cmd(f"Sant{br}StwoResult",    p["result"]),
+            cmd(f"Sant{br}StwoDiff",      pp1(kp["mean_grd_minus_opt"]),
+                f"pp grd\u2212opt ({branch} \u03ba=200)"),
+            cmd(f"Sant{br}StwoCIlo",      pp1(kp["ci"][0])),
+            cmd(f"Sant{br}StwoCIhi",      pp1(kp["ci"][1])),
+            cmd(f"Sant{br}StwoSoloGrd",   n(p["solo_grd_k200"]),
+                "draws only greedy on frontier"),
+            cmd(f"Sant{br}StwoSoloOpt",   n(p["solo_opt_k200"]),
+                "draws only optimal on frontier"),
+        ]
+    lines.append("")
 
-# ── Write ──────────────────────────────────────────────────────────────────────
-OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-OUT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    # ── S3a κ=200 ───────────────────────────────────────────────────────────────
+    lines.append("% \u2500\u2500 S3a (\u03ba=200) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+    for branch, br in BRANCHES:
+        p = pred(branch, "S3a")
+        lines += [
+            cmd(f"Sant{br}SthreeaResult", p["result"]),
+            cmd(f"Sant{br}SthreeaEoneW",  pp1(p["Q2_E1W_opt_k200"]), "Q2(E1-W,opt) \\%"),
+            cmd(f"Sant{br}SthreeaEoneV",  pp1(p["Q2_E1V_opt_k200"]), "Q2(E1-V,opt) \\%"),
+        ]
+    lines.append("")
 
-print(f"\nWrote: {OUT_PATH}")
-print(f"  Lines: {len(lines)}")
+    # ── S3b κ=200 (p-values computed from counts) ──────────────────────────────
+    lines.append("% \u2500\u2500 S3b (\u03ba=200) p from solo counts \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+    for branch, br in BRANCHES:
+        p = pred(branch, "S3b")
+        sv   = p["solo_V_k200"]
+        sw   = p["solo_W_k200"]
+        diff = p["Q2_E1V_k200"] - p["Q2_E1W_k200"]
+        if branch == "S-T":
+            pv      = mcnemar_p(sv, sw)
+            pv_note = f"McNemar c.c. ({sv} vs {sw})"
+        else:
+            pv      = binomial_two_sided_p(sv, sw)
+            pv_note = f"binomial exact ({sv} vs {sw})"
+        lines += [
+            cmd(f"Sant{br}SthreebResult", p["result"]),
+            cmd(f"Sant{br}SthreebDiff",   pp1(diff),  "pp Q2(E1-V) - Q2(E1-W)"),
+            cmd(f"Sant{br}SthreebSoloV",  n(sv),      "draws exclusively E1-V on frontier"),
+            cmd(f"Sant{br}SthreebSoloW",  n(sw),      "draws exclusively E1-W on frontier"),
+            cmd(f"Sant{br}SthreebPval",   p3(pv),     pv_note),
+        ]
+    lines.append("")
 
-# ── Self-check: verify a few key values ───────────────────────────────────────
-st_s3b = get_pred("S-T", "S3b")
-sv, sw = st_s3b["solo_V_k200"], st_s3b["solo_W_k200"]
-p_st = mcnemar_p(sv, sw)
-sn_s3b = get_pred("S-N", "S3b")
-sv2, sw2 = sn_s3b["solo_V_k200"], sn_s3b["solo_W_k200"]
-p_sn = binomial_two_sided_p(sv2, sw2)
-print(f"\n  S3b S-T: solo_V={sv} solo_W={sw}  p={p_st:.4f}  (expected ~0.0801)")
-print(f"  S3b S-N: solo_V={sv2} solo_W={sw2}  p={p_sn:.4f}  (expected 0.25)")
+    # ── S4/K5 (descriptive) ─────────────────────────────────────────────────────
+    lines.append("% \u2500\u2500 S4/K5 (descriptive) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+    for branch, br in BRANCHES:
+        p = pred(branch, "S4")
+        k5a_1k  = p["K5a_assembly_per_kappa"]["1000"]
+        k5a_inf = p["K5a_assembly_inf"]
+        k5b_1k  = p["K6_per_kappa"]["1000"]
+        k5b_inf = p["K6_inf"]
+        sa = p["K5a_same_sign_1000_inf"]
+        sb = p["K5b_same_sign_1000_inf"]
+        lines += [
+            cmd(f"Sant{br}KfiveaOne",      pp1(k5a_1k),  "K5(a) at \\kappa=1000 [pp]"),
+            cmd(f"Sant{br}KfiveaInf",      pp1(k5a_inf), "K5(a) at \\kappa=inf [pp]"),
+            cmd(f"Sant{br}KfivebOne",      pp1(k5b_1k),  "K5(b)=K6 at \\kappa=1000 [pp]"),
+            cmd(f"Sant{br}KfivebInf",      pp1(k5b_inf), "K5(b)=K6 at \\kappa=inf [pp]"),
+            cmd(f"Sant{br}KfiveaSameSign", "null" if sa is None else str(sa).lower()),
+            cmd(f"Sant{br}KfivebSameSign", "null" if sb is None else str(sb).lower()),
+        ]
+    lines.append("")
 
-sn_s6 = get_pred("S-N", "S6")
-diff_s6 = sn_s6["per_kappa"]["200"]["mean_diff_R_grd_minus_opt"]
-print(f"  S6 S-N diff: {diff_s6} pp  (expected 13.44)")
-print("\nDone.")
+    # ── S5 κ=200 ────────────────────────────────────────────────────────────────
+    lines.append("% \u2500\u2500 S5 (\u03ba=200) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+    for branch, br in BRANCHES:
+        p    = pred(branch, "S5")
+        m    = re.search(r"([\d.]+)\s*[\u2713\u2717]", p["condition"])
+        perm = m.group(1) if m else "NA"
+        q200 = p["per_kappa"]["200"]["Q2_SAW_vec_opt"]
+        lines += [
+            cmd(f"Sant{br}SfiveResult", p["result"]),
+            cmd(f"Sant{br}SfivePerm",   perm,       "max_pm_continuous"),
+            cmd(f"Sant{br}SfiveQvec",   pp1(q200),  "Q2(SAW,vec,opt) \\% at \\kappa=200"),
+        ]
+    lines.append("")
+
+    # ── S6 κ=200 ────────────────────────────────────────────────────────────────
+    lines.append("% \u2500\u2500 S6 (\u03ba=200) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+    lines.append("% S-T: efeito ausente (same-trio 500/500; 0/500 draws R_grd != R_opt)")
+    for branch, br in BRANCHES:
+        p  = pred(branch, "S6")
+        kp = p["per_kappa"]["200"]
+        lines += [
+            cmd(f"Sant{br}SsixResult", p["result"]),
+            cmd(f"Sant{br}SsixRgrd",   r2(kp["R_grd_mean"]),               "R(grd) mean pp"),
+            cmd(f"Sant{br}SsixRopt",   r2(kp["R_opt_mean"]),               "R(opt) mean pp"),
+            cmd(f"Sant{br}SsixDiff",   r2(kp["mean_diff_R_grd_minus_opt"]), "pp"),
+        ]
+        if branch == "S-N":
+            lines += [
+                cmd(f"Sant{br}SsixCIlo", r2(kp["ci"][0])),
+                cmd(f"Sant{br}SsixCIhi", r2(kp["ci"][1])),
+            ]
+    lines.append("")
+
+    # ── S7a κ=200 ───────────────────────────────────────────────────────────────
+    lines.append("% \u2500\u2500 S7a (\u03ba=200) \u2014 Fogo ref: 177/500 = 35.4\\% zeros (DEV-FOGO-E1B-001) \u2500")
+    for branch, br in BRANCHES:
+        p = pred(branch, "S7a")
+        lines += [
+            cmd(f"Sant{br}SsvnaResult",   p["result"]),
+            cmd(f"Sant{br}SsvnaREoneB",   r2(p["R_E1B_opt_mean_pp"]), "R(E1-B,opt) mean pp"),
+            cmd(f"Sant{br}SsvnaCIlo",     r2(p["ci"][0])),
+            cmd(f"Sant{br}SsvnaCIhi",     r2(p["ci"][1])),
+            cmd(f"Sant{br}SsvnaFracZero", pp1(p["frac_R_e1b_zero"] * 100),
+                "\\% draws R==0"),
+            cmd(f"Sant{br}SsvnaNnonzero", n(p["n_nonzero_e1b"]), "draws with R>0"),
+        ]
+    lines.append("")
+
+    # ── S7b κ=200 ───────────────────────────────────────────────────────────────
+    lines.append("% \u2500\u2500 S7b (\u03ba=200) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+    for branch, br in BRANCHES:
+        p = pred(branch, "S7b")
+        lines += [
+            cmd(f"Sant{br}SsvnbResult",  p["result"]),
+            cmd(f"Sant{br}SsvnbREoneB",  r2(p["R_E1B_k200"]), "R(E1-B) pp"),
+            cmd(f"Sant{br}SsvnbREoneW",  r2(p["R_E1W_k200"]), "R(E1-W) pp"),
+            cmd(f"Sant{br}SsvnbCIlo",    r2(p["ci_W_minus_B"][0]), "CI lower (R_W - R_B)"),
+            cmd(f"Sant{br}SsvnbCIhi",    r2(p["ci_W_minus_B"][1]), "CI upper"),
+        ]
+    lines.append("")
+
+    return lines
+
+
+# ── Main (SHA-verify + generate + write) ───────────────────────────────────────
+
+def main():
+    out_arg = sys.argv.index("--out") if "--out" in sys.argv else None
+    out_path = Path(sys.argv[out_arg + 1]) if out_arg is not None else DEFAULT_OUT
+
+    if not JSON_PATH.exists():
+        raise RuntimeError(f"JSON not found: {JSON_PATH}")
+    got = hashlib.sha256(JSON_PATH.read_bytes()).hexdigest()
+    if got != SHA_JSON:
+        raise RuntimeError(
+            f"SHA mismatch for santiago_predictions_v2.json:\n"
+            f"  expected {SHA_JSON}\n"
+            f"  got      {got}"
+        )
+    print(f"  SHA OK: santiago_predictions_v2.json ({SHA_JSON[:16]})")
+
+    data = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+    lines = generate_lines(data)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+
+    print(f"  Wrote: {out_path}  ({len(lines)} lines)")
+
+    # Self-check key values
+    for branch, br in [("S-T", "ST"), ("S-N", "SN")]:
+        def pred(b, name):
+            for p in data[b]["predictions"]:
+                if p["prediction"] == name:
+                    return p
+        sv = pred(branch, "S3b")["solo_V_k200"]
+        sw = pred(branch, "S3b")["solo_W_k200"]
+        if branch == "S-T":
+            pv = mcnemar_p(sv, sw)
+            label = "McNemar"
+        else:
+            pv = binomial_two_sided_p(sv, sw)
+            label = "binomial"
+        print(f"  S3b {branch}: p={pv:.4f} ({label}, {sv} vs {sw})")
+
+    sn_s6 = pred("S-N", "S6")
+    print(f"  S6 S-N diff: {sn_s6['per_kappa']['200']['mean_diff_R_grd_minus_opt']} pp")
+
+
+if __name__ == "__main__":
+    main()

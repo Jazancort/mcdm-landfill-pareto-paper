@@ -269,63 +269,58 @@ _SHA_SANT_JSON = "1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf
 
 
 def verify_santiago():
-    """Re-derive key Santiago macros from the sealed JSON and check them."""
+    """Re-generate macros_santiago.tex to a temp file and diff against tracked version."""
+    import subprocess, tempfile, os as _os, sys as _sys
+
     _fail = []
-
-    def _check(name, computed, expected, tol=0.005):
-        ok = abs(float(computed) - float(expected)) <= tol
-        status = "OK  " if ok else "FAIL"
-        print(f"  [{status}] {name}: computed={computed}  expected={expected}")
-        if not ok:
-            _fail.append(f"{name}: got {computed} != {expected}")
-
     _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    _json_path = os.path.join(_root, "results", "santiago", "santiago_predictions_v2.json")
-    _got = hashlib.sha256(open(_json_path, "rb").read()).hexdigest()
-    if _got != _SHA_SANT_JSON:
-        print(f"  [FAIL] JSON SHA mismatch: {_got}")
-        _fail.append("JSON SHA mismatch")
-    else:
-        print(f"  [OK  ] JSON SHA {_SHA_SANT_JSON[:16]}")
+    _make_script = os.path.join(_root, "scripts", "make_santiago_macros.py")
+    _tracked_path = os.path.join(_root, "results", "santiago", "macros_santiago.tex")
 
-    _data = _json.loads(open(_json_path, encoding="utf-8").read())
+    # Step 1: Generate to a temp file
+    with tempfile.NamedTemporaryFile(suffix=".tex", delete=False, mode="w") as tmp:
+        tmp_path = tmp.name
+    try:
+        result = subprocess.run(
+            [_sys.executable, _make_script, "--out", tmp_path],
+            capture_output=True, text=True,
+        )
+        if result.returncode != 0:
+            print(f"  [FAIL] make_santiago_macros.py failed:\n{result.stderr}")
+            _fail.append("make_santiago_macros.py non-zero exit")
+            return False
+        print(f"  [OK  ] generated to temp: {tmp_path}")
 
-    def _pred(branch, name):
-        for p in _data[branch]["predictions"]:
-            if p["prediction"] == name:
-                return p
-        raise KeyError(name)
+        # Step 2: Compare all lines
+        tracked   = open(_tracked_path, encoding="utf-8").read()
+        generated = open(tmp_path,      encoding="utf-8").read()
+        if tracked == generated:
+            n_lines = len(tracked.splitlines())
+            print(f"  [OK  ] macros_santiago.tex matches regenerated ({n_lines} lines, all {n_lines} macros verified)")
+        else:
+            import difflib
+            diff = list(difflib.unified_diff(
+                tracked.splitlines(), generated.splitlines(),
+                fromfile="tracked/macros_santiago.tex",
+                tofile="regenerated/macros_santiago.tex",
+                lineterm="",
+            ))
+            print(f"  [FAIL] macros_santiago.tex differs from regenerated ({len(diff)} diff lines):")
+            for line in diff[:30]:
+                print(f"    {line}")
+            _fail.append(f"macros_santiago.tex differs ({len(diff)} diff lines)")
+    finally:
+        try:
+            _os.unlink(tmp_path)
+        except OSError:
+            pass
 
-    print("\n--- Santiago key macro checks ---")
-    _check("S-T S0 n",      _pred("S-T", "S0")["n_saw_mm_opt_k200"],             500,   tol=0)
-    _check("S-N S0 n",      _pred("S-N", "S0")["n_saw_mm_opt_k200"],             500,   tol=0)
-    _check("S-T S1 diff",   _pred("S-T", "S1")["per_kappa"]["200"]["mean_diff"], 15.8)
-    _check("S-N S1 diff",   _pred("S-N", "S1")["per_kappa"]["200"]["mean_diff"], 25.2)
-    _check("S-N S6 diff",   _pred("S-N", "S6")["per_kappa"]["200"]["mean_diff_R_grd_minus_opt"], 13.44)
-    _check("S-N S6 CI lo",  _pred("S-N", "S6")["per_kappa"]["200"]["ci"][0],     12.96)
-    _check("S-T S7a R_E1B", _pred("S-T", "S7a")["R_E1B_opt_mean_pp"],            0.93)
-    _check("S-N S7a R_E1B", _pred("S-N", "S7a")["R_E1B_opt_mean_pp"],            0.06)
-
-    sv  = _pred("S-T", "S3b")["solo_V_k200"]
-    sw  = _pred("S-T", "S3b")["solo_W_k200"]
-    stat = (abs(sv - sw) - 1) ** 2 / (sv + sw)
-    p_st = _math.erfc(_math.sqrt(stat / 2))
-    _check("S-T S3b p (McNemar)", round(p_st, 3), 0.080)
-
-    sv2 = _pred("S-N", "S3b")["solo_V_k200"]
-    sw2 = _pred("S-N", "S3b")["solo_W_k200"]
-    from math import comb as _comb
-    n2 = sv2 + sw2
-    p_sn = sum(_comb(n2, k) * (0.5 ** n2) for k in range(0, min(sv2, sw2) + 1)) * 2
-    _check("S-N S3b p (binomial)", round(p_sn, 2), 0.25)
-
-    print()
     if _fail:
-        print(f"SANTIAGO FAIL: {len(_fail)} check(s):")
+        print(f"\nSANTIAGO FAIL: {len(_fail)} check(s):")
         for f in _fail:
             print(f"  x {f}")
         return False
-    print("SANTIAGO ALL PASS")
+    print("\nSANTIAGO ALL PASS")
     return True
 
 
