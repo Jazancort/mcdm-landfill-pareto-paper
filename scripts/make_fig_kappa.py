@@ -32,8 +32,10 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import numpy as np
 
-JSON_PATH = ROOT / "results" / "santiago" / "santiago_predictions_v2.json"
-SHA_JSON  = "1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf80"
+JSON_PATH  = ROOT / "results" / "santiago" / "santiago_predictions_v2.json"
+K6CI_PATH  = ROOT / "results" / "santiago" / "santiago_k6_ci.json"
+SHA_JSON   = "1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf80"
+SHA_K6CI   = "88fc473c994794aa83e6a7a45304a3ee65071af9dd9e81799aeb169e5a56395d"
 
 # ── SHA-verify ─────────────────────────────────────────────────────────────────
 got = hashlib.sha256(JSON_PATH.read_bytes()).hexdigest()
@@ -41,7 +43,13 @@ if got != SHA_JSON:
     raise RuntimeError(f"JSON SHA mismatch: got {got}")
 print(f"  SHA OK: santiago_predictions_v2.json ({SHA_JSON[:16]})")
 
-data = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+got_ci = hashlib.sha256(K6CI_PATH.read_bytes()).hexdigest()
+if got_ci != SHA_K6CI:
+    raise RuntimeError(f"K6 CI SHA mismatch: got {got_ci}")
+print(f"  SHA OK: santiago_k6_ci.json ({SHA_K6CI[:16]})")
+
+data   = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+k6_ci  = json.loads(K6CI_PATH.read_text(encoding="utf-8"))["results"]
 
 def get_pred(branch, name):
     for p in data[branch]["predictions"]:
@@ -67,6 +75,16 @@ sn_k6 = {int(k): v for k, v in sn_s4["K6_per_kappa"].items()}
 st_inf = st_s4["K6_inf"]   # 0.0
 sn_inf = sn_s4["K6_inf"]   # -33.33
 
+# Descriptive CIs from santiago_k6_ci.json (same method as Fogo E7)
+def get_ci(branch_key, k):
+    d = k6_ci[branch_key].get(str(k), {})
+    return d.get("lo", None), d.get("hi", None)
+
+ST_LO = np.array([get_ci("ST", k)[0] for k in KAPPAS])
+ST_HI = np.array([get_ci("ST", k)[1] for k in KAPPAS])
+SN_LO = np.array([get_ci("SN", k)[0] for k in KAPPAS])
+SN_HI = np.array([get_ci("SN", k)[1] for k in KAPPAS])
+
 # ── Style ──────────────────────────────────────────────────────────────────────
 set_rcparams()
 
@@ -89,15 +107,17 @@ ax.fill_between(xk, fg_lo, fg_hi, color=C_FOGO, alpha=ALPHA_BAND)
 ax.plot(xk, fg_y, color=C_FOGO, lw=2.0, marker="o", ms=6,
         label="Fogo (E7, 95% CI)")
 
-# Santiago S-T: points only
+# Santiago S-T: line + descriptive CI band
 st_y = np.array([st_k6[k] for k in KAPPAS])
-ax.plot(xk, st_y, color=C_ST, lw=0, marker="s", ms=7,
-        label="Santiago S-T")
+ax.fill_between(xk, ST_LO, ST_HI, color=C_ST, alpha=ALPHA_BAND)
+ax.plot(xk, st_y, color=C_ST, lw=1.4, marker="s", ms=6,
+        label="Santiago S-T (descriptive CI)")
 
-# Santiago S-N: points only
+# Santiago S-N: line + descriptive CI band
 sn_y = np.array([sn_k6[k] for k in KAPPAS])
-ax.plot(xk, sn_y, color=C_SN, lw=0, marker="^", ms=7,
-        label="Santiago S-N")
+ax.fill_between(xk, SN_LO, SN_HI, color=C_SN, alpha=ALPHA_BAND)
+ax.plot(xk, sn_y, color=C_SN, lw=1.4, marker="^", ms=6,
+        label="Santiago S-N (descriptive CI)")
 
 # y=0 reference
 ax.axhline(0, color="black", lw=0.8, ls="--", alpha=0.4, zorder=0)

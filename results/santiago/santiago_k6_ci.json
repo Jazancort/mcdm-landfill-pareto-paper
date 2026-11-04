@@ -1,0 +1,81 @@
+{
+  "description": "Descriptive bootstrap CIs for Santiago K6 (Agg_pooled3). Computed after evaluation. No verdict depends on these CIs. Method: identical to run_e7_kappa_sweep.py bstrap() \u2014 percentile bootstrap B=2000, resample draws with replacement.",
+  "source_script": "scripts/santiago_k6_ci.py",
+  "method": "percentile bootstrap, B=2000, resample draws (same as Fogo E7)",
+  "cells": [
+    "SAW_mm_grd-TOPSIS_mm_grd",
+    "SAW_vec_grd-TOPSIS_vec_grd",
+    "SAW_vec_opt-TOPSIS_vec_opt"
+  ],
+  "seed_sequence": "numpy.random.SeedSequence(20261104)",
+  "sealed_csv_shas": {
+    "mc_ST_raw.csv": "123a5421d81b7bdd5d405ddb4a60edde1eeaa2f7da5cefbb640812aeed67bd80",
+    "mc_SN_raw.csv": "dbfa2f00b6f3f98e3a900f9020f98ecb55ef98dfdeed199a334f7b299013d492"
+  },
+  "results": {
+    "ST": {
+      "25": {
+        "obs": 22.07,
+        "lo": 18.67,
+        "hi": 25.33
+      },
+      "50": {
+        "obs": 26.4,
+        "lo": 23.13,
+        "hi": 29.6
+      },
+      "100": {
+        "obs": 23.93,
+        "lo": 20.8,
+        "hi": 27.13
+      },
+      "200": {
+        "obs": 26.2,
+        "lo": 23.13,
+        "hi": 29.2
+      },
+      "400": {
+        "obs": 23.8,
+        "lo": 21.0,
+        "hi": 26.73
+      },
+      "1000": {
+        "obs": 24.13,
+        "lo": 21.27,
+        "hi": 27.0
+      }
+    },
+    "SN": {
+      "25": {
+        "obs": 7.47,
+        "lo": 5.2,
+        "hi": 9.73
+      },
+      "50": {
+        "obs": 4.73,
+        "lo": 2.47,
+        "hi": 7.0
+      },
+      "100": {
+        "obs": -2.6,
+        "lo": -4.93,
+        "hi": -0.33
+      },
+      "200": {
+        "obs": -11.93,
+        "lo": -14.2,
+        "hi": -9.73
+      },
+      "400": {
+        "obs": -22.53,
+        "lo": -24.53,
+        "hi": -20.4
+      },
+      "1000": {
+        "obs": -36.47,
+        "lo": -38.0,
+        "hi": -34.93
+      }
+    }
+  }
+}

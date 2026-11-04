@@ -67,11 +67,23 @@
 \newcommand{\SantSTKfiveaInf}{0.0}  % K5(a) at κ=∞ [pp]
 \newcommand{\SantSTKfiveaSameSign}{null}
 \newcommand{\SantSTKsixKTwentyFive}{22.1}  % K6 Agg_pooled3 at κ=25 [pp]
+\newcommand{\SantSTKsixKTwentyFiveLo}{18.7}  % descriptive CI lower
+\newcommand{\SantSTKsixKTwentyFiveHi}{25.3}  % descriptive CI upper
 \newcommand{\SantSTKsixKFifty}{26.4}  % K6 Agg_pooled3 at κ=50 [pp]
+\newcommand{\SantSTKsixKFiftyLo}{23.1}  % descriptive CI lower
+\newcommand{\SantSTKsixKFiftyHi}{29.6}  % descriptive CI upper
 \newcommand{\SantSTKsixKHundred}{23.9}  % K6 Agg_pooled3 at κ=100 [pp]
+\newcommand{\SantSTKsixKHundredLo}{20.8}  % descriptive CI lower
+\newcommand{\SantSTKsixKHundredHi}{27.1}  % descriptive CI upper
 \newcommand{\SantSTKsixKTwoHundred}{26.2}  % K6 Agg_pooled3 at κ=200 [pp]
+\newcommand{\SantSTKsixKTwoHundredLo}{23.1}  % descriptive CI lower
+\newcommand{\SantSTKsixKTwoHundredHi}{29.2}  % descriptive CI upper
 \newcommand{\SantSTKsixKFourHundred}{23.8}  % K6 Agg_pooled3 at κ=400 [pp]
+\newcommand{\SantSTKsixKFourHundredLo}{21.0}  % descriptive CI lower
+\newcommand{\SantSTKsixKFourHundredHi}{26.7}  % descriptive CI upper
 \newcommand{\SantSTKsixKThousand}{24.1}  % K6 Agg_pooled3 at κ=1000 [pp]
+\newcommand{\SantSTKsixKThousandLo}{21.3}  % descriptive CI lower
+\newcommand{\SantSTKsixKThousandHi}{27.0}  % descriptive CI upper
 \newcommand{\SantSTKsixInf}{0.0}  % K6 at κ=∞ [pp]
 \newcommand{\SantSTKfivebSameSign}{null}
 % S4/K5 S-N: K5a same-sign=True  K5b same-sign=True
@@ -84,11 +96,23 @@
 \newcommand{\SantSNKfiveaInf}{100.0}  % K5(a) at κ=∞ [pp]
 \newcommand{\SantSNKfiveaSameSign}{true}
 \newcommand{\SantSNKsixKTwentyFive}{7.5}  % K6 Agg_pooled3 at κ=25 [pp]
+\newcommand{\SantSNKsixKTwentyFiveLo}{5.2}  % descriptive CI lower
+\newcommand{\SantSNKsixKTwentyFiveHi}{9.7}  % descriptive CI upper
 \newcommand{\SantSNKsixKFifty}{4.7}  % K6 Agg_pooled3 at κ=50 [pp]
+\newcommand{\SantSNKsixKFiftyLo}{2.5}  % descriptive CI lower
+\newcommand{\SantSNKsixKFiftyHi}{7.0}  % descriptive CI upper
 \newcommand{\SantSNKsixKHundred}{-2.6}  % K6 Agg_pooled3 at κ=100 [pp]
+\newcommand{\SantSNKsixKHundredLo}{-4.9}  % descriptive CI lower
+\newcommand{\SantSNKsixKHundredHi}{-0.3}  % descriptive CI upper
 \newcommand{\SantSNKsixKTwoHundred}{-11.9}  % K6 Agg_pooled3 at κ=200 [pp]
+\newcommand{\SantSNKsixKTwoHundredLo}{-14.2}  % descriptive CI lower
+\newcommand{\SantSNKsixKTwoHundredHi}{-9.7}  % descriptive CI upper
 \newcommand{\SantSNKsixKFourHundred}{-22.5}  % K6 Agg_pooled3 at κ=400 [pp]
+\newcommand{\SantSNKsixKFourHundredLo}{-24.5}  % descriptive CI lower
+\newcommand{\SantSNKsixKFourHundredHi}{-20.4}  % descriptive CI upper
 \newcommand{\SantSNKsixKThousand}{-36.5}  % K6 Agg_pooled3 at κ=1000 [pp]
+\newcommand{\SantSNKsixKThousandLo}{-38.0}  % descriptive CI lower
+\newcommand{\SantSNKsixKThousandHi}{-34.9}  % descriptive CI upper
 \newcommand{\SantSNKsixInf}{-33.3}  % K6 at κ=∞ [pp]
 \newcommand{\SantSNKfivebSameSign}{true}
 
@@ -145,23 +169,22 @@
 \newcommand{\SantSNKoneResult}{PASS}
 \newcommand{\SantSNKoneN}{500}  % draws Q2=100% (S-N)
 
-% -- K2: E1-B/opt Q2=100% at k=200 (from S3a) --------------------
-\newcommand{\SantSTKtwoResult}{PASS}  % E1-B/opt==100% in 500/500 draws
-\newcommand{\SantSTKtwoN}{500}
-\newcommand{\SantSNKtwoResult}{PASS}  % E1-B/opt==100% in 500/500 draws
-\newcommand{\SantSNKtwoN}{500}
+% -- K2: E1-B/opt Q2=100% at k=200 AND k=inf (A5:69-71) --------------
+\newcommand{\SantSTKtwoResult}{PASS}  % k=200: 500/500; k=inf: Gate 3 PASS (eval log:107,136)
+\newcommand{\SantSTKtwoN}{500}  % draws Q2=100% at k=200
+\newcommand{\SantSNKtwoResult}{PASS}  % k=200: 500/500; k=inf: Gate 3 PASS (eval log:107,136)
+\newcommand{\SantSNKtwoN}{500}  % draws Q2=100% at k=200
 
-% -- K3: no reversal -- all k CI lo > 0 --------------------------
 \newcommand{\SantSTKthreeResult}{CONFIRMED}
 \newcommand{\SantSTKthreeMinCIlo}{3.6}  % min CI lower across k (S-T)
 \newcommand{\SantSNKthreeResult}{CONFIRMED}
 \newcommand{\SantSNKthreeMinCIlo}{2.0}  % min CI lower across k (S-N)
 
-% -- K4: detectable -- holm_adj_p < 0.05 at some k ---------------
+% -- K4: detectable (Holm-corrected, A5:82-85) --- use max() for correct monotone min --
 \newcommand{\SantSTKfourResult}{CONFIRMED}
-\newcommand{\SantSTKfourMinHolmP}{0.001}  % min Holm-adj p across k (S-T)
+\newcommand{\SantSTKfourMinHolmP}{0.003}  % min Holm-adj p (S-T); correct with monotonicity, = 6x(1/B)=0.003
 \newcommand{\SantSNKfourResult}{CONFIRMED}
-\newcommand{\SantSNKfourMinHolmP}{0.001}  % min Holm-adj p across k (S-N)
+\newcommand{\SantSNKfourMinHolmP}{0.003}  % min Holm-adj p (S-N); correct with monotonicity, = 6x(1/B)=0.003
 
 % -- Table A: Stage 3b descriptors (SHA-verified) -----------------
 % stage3b_descriptors.json SHA: 710718247783f1ee
