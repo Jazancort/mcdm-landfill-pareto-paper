@@ -261,6 +261,75 @@ else:
     print(f'  [FAIL] log not found')
 
 # ---------------------------------------------------------------------------
+# ── Santiago macro verification function ────────────────────────────────────
+import math as _math
+import json as _json
+
+_SHA_SANT_JSON = "1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf80"
+
+
+def verify_santiago():
+    """Re-derive key Santiago macros from the sealed JSON and check them."""
+    _fail = []
+
+    def _check(name, computed, expected, tol=0.005):
+        ok = abs(float(computed) - float(expected)) <= tol
+        status = "OK  " if ok else "FAIL"
+        print(f"  [{status}] {name}: computed={computed}  expected={expected}")
+        if not ok:
+            _fail.append(f"{name}: got {computed} != {expected}")
+
+    _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    _json_path = os.path.join(_root, "results", "santiago", "santiago_predictions_v2.json")
+    _got = hashlib.sha256(open(_json_path, "rb").read()).hexdigest()
+    if _got != _SHA_SANT_JSON:
+        print(f"  [FAIL] JSON SHA mismatch: {_got}")
+        _fail.append("JSON SHA mismatch")
+    else:
+        print(f"  [OK  ] JSON SHA {_SHA_SANT_JSON[:16]}")
+
+    _data = _json.loads(open(_json_path, encoding="utf-8").read())
+
+    def _pred(branch, name):
+        for p in _data[branch]["predictions"]:
+            if p["prediction"] == name:
+                return p
+        raise KeyError(name)
+
+    print("\n--- Santiago key macro checks ---")
+    _check("S-T S0 n",      _pred("S-T", "S0")["n_saw_mm_opt_k200"],             500,   tol=0)
+    _check("S-N S0 n",      _pred("S-N", "S0")["n_saw_mm_opt_k200"],             500,   tol=0)
+    _check("S-T S1 diff",   _pred("S-T", "S1")["per_kappa"]["200"]["mean_diff"], 15.8)
+    _check("S-N S1 diff",   _pred("S-N", "S1")["per_kappa"]["200"]["mean_diff"], 25.2)
+    _check("S-N S6 diff",   _pred("S-N", "S6")["per_kappa"]["200"]["mean_diff_R_grd_minus_opt"], 13.44)
+    _check("S-N S6 CI lo",  _pred("S-N", "S6")["per_kappa"]["200"]["ci"][0],     12.96)
+    _check("S-T S7a R_E1B", _pred("S-T", "S7a")["R_E1B_opt_mean_pp"],            0.93)
+    _check("S-N S7a R_E1B", _pred("S-N", "S7a")["R_E1B_opt_mean_pp"],            0.06)
+
+    sv  = _pred("S-T", "S3b")["solo_V_k200"]
+    sw  = _pred("S-T", "S3b")["solo_W_k200"]
+    stat = (abs(sv - sw) - 1) ** 2 / (sv + sw)
+    p_st = _math.erfc(_math.sqrt(stat / 2))
+    _check("S-T S3b p (McNemar)", round(p_st, 3), 0.080)
+
+    sv2 = _pred("S-N", "S3b")["solo_V_k200"]
+    sw2 = _pred("S-N", "S3b")["solo_W_k200"]
+    from math import comb as _comb
+    n2 = sv2 + sw2
+    p_sn = sum(_comb(n2, k) * (0.5 ** n2) for k in range(0, min(sv2, sw2) + 1)) * 2
+    _check("S-N S3b p (binomial)", round(p_sn, 2), 0.25)
+
+    print()
+    if _fail:
+        print(f"SANTIAGO FAIL: {len(_fail)} check(s):")
+        for f in _fail:
+            print(f"  x {f}")
+        return False
+    print("SANTIAGO ALL PASS")
+    return True
+
+
+# ---------------------------------------------------------------------------
 print('\n' + '=' * 60)
 if FAIL:
     print(f'FAILED: {len(FAIL)} check(s):')
@@ -269,4 +338,10 @@ if FAIL:
     sys.exit(1)
 else:
     print('ALL CHECKS PASSED')
+
+# Run Santiago verification when requested (before final exit)
+if '--santiago' in sys.argv:
+    ok = verify_santiago()
+    sys.exit(0 if ok else 1)
+else:
     sys.exit(0)

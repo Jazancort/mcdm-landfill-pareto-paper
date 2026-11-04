@@ -17,14 +17,63 @@
         "condition": "TV\u22650.05: 0.232 \u2713",
         "testable": true,
         "per_kappa": {
-          "25": {"mean_diff": 15.2, "ci": [12.2, 18.2], "p_one_sided": 0.0005},
-          "50": {"mean_diff": 17.2, "ci": [14.0, 20.4], "p_one_sided": 0.0005},
-          "100": {"mean_diff": 23.0, "ci": [19.4, 26.8], "p_one_sided": 0.0005},
-          "200": {"mean_diff": 15.8, "ci": [12.6, 19.0], "p_one_sided": 0.0005},
-          "400": {"mean_diff": 12.8, "ci": [9.8, 15.8], "p_one_sided": 0.0005},
-          "1000": {"mean_diff": 5.6, "ci": [3.6, 7.8], "p_one_sided": 0.0005}
+          "25": {
+            "mean_diff": 15.2,
+            "ci": [
+              12.2,
+              18.2
+            ],
+            "p_one_sided": 0.0005
+          },
+          "50": {
+            "mean_diff": 17.2,
+            "ci": [
+              14.0,
+              20.4
+            ],
+            "p_one_sided": 0.0005
+          },
+          "100": {
+            "mean_diff": 23.0,
+            "ci": [
+              19.4,
+              26.8
+            ],
+            "p_one_sided": 0.0005
+          },
+          "200": {
+            "mean_diff": 15.8,
+            "ci": [
+              12.6,
+              19.0
+            ],
+            "p_one_sided": 0.0005
+          },
+          "400": {
+            "mean_diff": 12.8,
+            "ci": [
+              9.8,
+              15.8
+            ],
+            "p_one_sided": 0.0005
+          },
+          "1000": {
+            "mean_diff": 5.6,
+            "ci": [
+              3.6,
+              7.8
+            ],
+            "p_one_sided": 0.0005
+          }
         },
-        "holm_adj_p": {"25": 0.003, "50": 0.0025, "100": 0.002, "200": 0.0015, "400": 0.001, "1000": 0.0005},
+        "holm_adj_p": {
+          "25": 0.003,
+          "50": 0.0025,
+          "100": 0.002,
+          "200": 0.0015,
+          "400": 0.001,
+          "1000": 0.0005
+        },
         "result": "CONFIRMED"
       },
       {
@@ -33,14 +82,63 @@
         "condition": "TV_W\u22650.05: 0.157 \u2713",
         "testable": true,
         "per_kappa": {
-          "25": {"mean_grd_minus_opt": -0.2, "ci": [-0.6, 0.0], "p_one_sided": 1.0},
-          "50": {"mean_grd_minus_opt": -0.6, "ci": [-1.4, 0.0], "p_one_sided": 1.0},
-          "100": {"mean_grd_minus_opt": 0.0, "ci": [0.0, 0.0], "p_one_sided": 1.0},
-          "200": {"mean_grd_minus_opt": 0.0, "ci": [0.0, 0.0], "p_one_sided": 1.0},
-          "400": {"mean_grd_minus_opt": 0.0, "ci": [0.0, 0.0], "p_one_sided": 1.0},
-          "1000": {"mean_grd_minus_opt": 0.0, "ci": [0.0, 0.0], "p_one_sided": 1.0}
+          "25": {
+            "mean_grd_minus_opt": -0.2,
+            "ci": [
+              -0.6,
+              0.0
+            ],
+            "p_one_sided": 1.0
+          },
+          "50": {
+            "mean_grd_minus_opt": -0.6,
+            "ci": [
+              -1.4,
+              0.0
+            ],
+            "p_one_sided": 1.0
+          },
+          "100": {
+            "mean_grd_minus_opt": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "p_one_sided": 1.0
+          },
+          "200": {
+            "mean_grd_minus_opt": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "p_one_sided": 1.0
+          },
+          "400": {
+            "mean_grd_minus_opt": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "p_one_sided": 1.0
+          },
+          "1000": {
+            "mean_grd_minus_opt": 0.0,
+            "ci": [
+              0.0,
+              0.0
+            ],
+            "p_one_sided": 1.0
+          }
         },
-        "holm_adj_p": {"25": 1.0, "50": 1.0, "100": 1.0, "200": 1.0, "400": 1.0, "1000": 1.0},
+        "holm_adj_p": {
+          "25": 1.0,
+          "50": 1.0,
+          "100": 1.0,
+          "200": 1.0,
+          "400": 1.0,
+          "1000": 1.0
+        },
         "solo_grd_k200": 0,
         "solo_opt_k200": 0,
         "result": "NOT CONFIRMED"
@@ -71,9 +169,23 @@
         "text": "SAW-TOPSIS Agg_pooled3 per kappa (3 informative cells; K5 descriptive sign check)",
         "condition": "none (descriptive)",
         "testable": true,
-        "K6_per_kappa": {"25": 22.07, "50": 26.4, "100": 23.93, "200": 26.2, "400": 23.8, "1000": 24.13},
+        "K6_per_kappa": {
+          "25": 22.07,
+          "50": 26.4,
+          "100": 23.93,
+          "200": 26.2,
+          "400": 23.8,
+          "1000": 24.13
+        },
         "K6_inf": 0.0,
-        "K5a_assembly_per_kappa": {"25": 0.2, "50": 0.6, "100": 0.0, "200": 0.0, "400": 0.0, "1000": 0.0},
+        "K5a_assembly_per_kappa": {
+          "25": 0.2,
+          "50": 0.6,
+          "100": 0.0,
+          "200": 0.0,
+          "400": 0.0,
+          "1000": 0.0
+        },
         "K5a_assembly_inf": 0.0,
         "K5a_same_sign_1000_inf": null,
         "K5b_same_sign_1000_inf": null,
@@ -85,12 +197,30 @@
         "condition": "max_pm_continuous < 0.5: 0.6173 \u2717",
         "testable": false,
         "per_kappa": {
-          "25": {"Q2_SAW_vec_opt": 85.0, "above_ref": true},
-          "50": {"Q2_SAW_vec_opt": 83.4, "above_ref": true},
-          "100": {"Q2_SAW_vec_opt": 77.0, "above_ref": true},
-          "200": {"Q2_SAW_vec_opt": 84.2, "above_ref": true},
-          "400": {"Q2_SAW_vec_opt": 87.2, "above_ref": true},
-          "1000": {"Q2_SAW_vec_opt": 94.4, "above_ref": true}
+          "25": {
+            "Q2_SAW_vec_opt": 85.0,
+            "above_ref": true
+          },
+          "50": {
+            "Q2_SAW_vec_opt": 83.4,
+            "above_ref": true
+          },
+          "100": {
+            "Q2_SAW_vec_opt": 77.0,
+            "above_ref": true
+          },
+          "200": {
+            "Q2_SAW_vec_opt": 84.2,
+            "above_ref": true
+          },
+          "400": {
+            "Q2_SAW_vec_opt": 87.2,
+            "above_ref": true
+          },
+          "1000": {
+            "Q2_SAW_vec_opt": 94.4,
+            "above_ref": true
+          }
         },
         "result": "NOT TESTABLE"
       },
@@ -104,7 +234,10 @@
             "R_grd_mean": 3.22,
             "R_opt_mean": 3.22,
             "mean_diff_R_grd_minus_opt": 0.0,
-            "ci": [-0.0, 0.0],
+            "ci": [
+              -0.0,
+              0.0
+            ],
             "p_one_sided": 0.291
           }
         },
@@ -118,7 +251,10 @@
         "testable": true,
         "R_E1B_opt_mean_pp": 0.93,
         "R_E1B_opt_mean_diff_pp": 0.93,
-        "ci": [0.84, 1.02],
+        "ci": [
+          0.84,
+          1.02
+        ],
         "p_one_sided": 0.0005,
         "n_nonzero_e1b": 322,
         "frac_R_e1b_zero": 0.356,
@@ -132,7 +268,10 @@
         "testable": true,
         "R_E1B_k200": 0.93,
         "R_E1W_k200": 2.88,
-        "ci_W_minus_B": [1.71, 2.18],
+        "ci_W_minus_B": [
+          1.71,
+          2.18
+        ],
         "result": "CONFIRMED",
         "note": "Sign of estimate only per frozen PRESPEC \u00a76. CI is descriptive."
       }
@@ -156,14 +295,63 @@
         "condition": "TV\u22650.05: 0.076 \u2713",
         "testable": true,
         "per_kappa": {
-          "25": {"mean_diff": 4.6, "ci": [2.0, 7.4], "p_one_sided": 0.0005},
-          "50": {"mean_diff": 12.4, "ci": [9.2, 15.6], "p_one_sided": 0.0005},
-          "100": {"mean_diff": 21.8, "ci": [17.8, 25.8], "p_one_sided": 0.0005},
-          "200": {"mean_diff": 25.2, "ci": [21.0, 29.2], "p_one_sided": 0.0005},
-          "400": {"mean_diff": 21.2, "ci": [17.6, 25.0], "p_one_sided": 0.0005},
-          "1000": {"mean_diff": 5.8, "ci": [3.8, 7.8], "p_one_sided": 0.0005}
+          "25": {
+            "mean_diff": 4.6,
+            "ci": [
+              2.0,
+              7.4
+            ],
+            "p_one_sided": 0.0005
+          },
+          "50": {
+            "mean_diff": 12.4,
+            "ci": [
+              9.2,
+              15.6
+            ],
+            "p_one_sided": 0.0005
+          },
+          "100": {
+            "mean_diff": 21.8,
+            "ci": [
+              17.8,
+              25.8
+            ],
+            "p_one_sided": 0.0005
+          },
+          "200": {
+            "mean_diff": 25.2,
+            "ci": [
+              21.0,
+              29.2
+            ],
+            "p_one_sided": 0.0005
+          },
+          "400": {
+            "mean_diff": 21.2,
+            "ci": [
+              17.6,
+              25.0
+            ],
+            "p_one_sided": 0.0005
+          },
+          "1000": {
+            "mean_diff": 5.8,
+            "ci": [
+              3.8,
+              7.8
+            ],
+            "p_one_sided": 0.0005
+          }
         },
-        "holm_adj_p": {"25": 0.003, "50": 0.0025, "100": 0.002, "200": 0.0015, "400": 0.001, "1000": 0.0005},
+        "holm_adj_p": {
+          "25": 0.003,
+          "50": 0.0025,
+          "100": 0.002,
+          "200": 0.0015,
+          "400": 0.001,
+          "1000": 0.0005
+        },
         "result": "CONFIRMED"
       },
       {
@@ -172,14 +360,63 @@
         "condition": "TV_W\u22650.05: 0.056 \u2713",
         "testable": true,
         "per_kappa": {
-          "25": {"mean_grd_minus_opt": -14.2, "ci": [-17.4, -11.2], "p_one_sided": 1.0},
-          "50": {"mean_grd_minus_opt": -26.2, "ci": [-30.0, -22.4], "p_one_sided": 1.0},
-          "100": {"mean_grd_minus_opt": -48.6, "ci": [-53.4, -44.4], "p_one_sided": 1.0},
-          "200": {"mean_grd_minus_opt": -64.4, "ci": [-68.6, -60.0], "p_one_sided": 1.0},
-          "400": {"mean_grd_minus_opt": -85.0, "ci": [-88.0, -81.8], "p_one_sided": 1.0},
-          "1000": {"mean_grd_minus_opt": -96.8, "ci": [-98.4, -95.2], "p_one_sided": 1.0}
+          "25": {
+            "mean_grd_minus_opt": -14.2,
+            "ci": [
+              -17.4,
+              -11.2
+            ],
+            "p_one_sided": 1.0
+          },
+          "50": {
+            "mean_grd_minus_opt": -26.2,
+            "ci": [
+              -30.0,
+              -22.4
+            ],
+            "p_one_sided": 1.0
+          },
+          "100": {
+            "mean_grd_minus_opt": -48.6,
+            "ci": [
+              -53.4,
+              -44.4
+            ],
+            "p_one_sided": 1.0
+          },
+          "200": {
+            "mean_grd_minus_opt": -64.4,
+            "ci": [
+              -68.6,
+              -60.0
+            ],
+            "p_one_sided": 1.0
+          },
+          "400": {
+            "mean_grd_minus_opt": -85.0,
+            "ci": [
+              -88.0,
+              -81.8
+            ],
+            "p_one_sided": 1.0
+          },
+          "1000": {
+            "mean_grd_minus_opt": -96.8,
+            "ci": [
+              -98.4,
+              -95.2
+            ],
+            "p_one_sided": 1.0
+          }
         },
-        "holm_adj_p": {"25": 1.0, "50": 1.0, "100": 1.0, "200": 1.0, "400": 1.0, "1000": 1.0},
+        "holm_adj_p": {
+          "25": 1.0,
+          "50": 1.0,
+          "100": 1.0,
+          "200": 1.0,
+          "400": 1.0,
+          "1000": 1.0
+        },
         "solo_grd_k200": 4,
         "solo_opt_k200": 326,
         "result": "NOT CONFIRMED"
@@ -210,9 +447,23 @@
         "text": "SAW-TOPSIS Agg_pooled3 per kappa (3 informative cells; K5 descriptive sign check)",
         "condition": "none (descriptive)",
         "testable": true,
-        "K6_per_kappa": {"25": 7.47, "50": 4.73, "100": -2.6, "200": -11.93, "400": -22.53, "1000": -36.47},
+        "K6_per_kappa": {
+          "25": 7.47,
+          "50": 4.73,
+          "100": -2.6,
+          "200": -11.93,
+          "400": -22.53,
+          "1000": -36.47
+        },
         "K6_inf": -33.33,
-        "K5a_assembly_per_kappa": {"25": 14.2, "50": 26.2, "100": 48.6, "200": 64.4, "400": 85.0, "1000": 96.8},
+        "K5a_assembly_per_kappa": {
+          "25": 14.2,
+          "50": 26.2,
+          "100": 48.6,
+          "200": 64.4,
+          "400": 85.0,
+          "1000": 96.8
+        },
         "K5a_assembly_inf": 100.0,
         "K5a_same_sign_1000_inf": true,
         "K5b_same_sign_1000_inf": true,
@@ -224,12 +475,30 @@
         "condition": "max_pm_continuous < 0.5: 0.0158 \u2713",
         "testable": true,
         "per_kappa": {
-          "25": {"Q2_SAW_vec_opt": 99.8, "above_ref": true},
-          "50": {"Q2_SAW_vec_opt": 99.6, "above_ref": true},
-          "100": {"Q2_SAW_vec_opt": 99.6, "above_ref": true},
-          "200": {"Q2_SAW_vec_opt": 98.6, "above_ref": true},
-          "400": {"Q2_SAW_vec_opt": 99.8, "above_ref": true},
-          "1000": {"Q2_SAW_vec_opt": 100.0, "above_ref": true}
+          "25": {
+            "Q2_SAW_vec_opt": 99.8,
+            "above_ref": true
+          },
+          "50": {
+            "Q2_SAW_vec_opt": 99.6,
+            "above_ref": true
+          },
+          "100": {
+            "Q2_SAW_vec_opt": 99.6,
+            "above_ref": true
+          },
+          "200": {
+            "Q2_SAW_vec_opt": 98.6,
+            "above_ref": true
+          },
+          "400": {
+            "Q2_SAW_vec_opt": 99.8,
+            "above_ref": true
+          },
+          "1000": {
+            "Q2_SAW_vec_opt": 100.0,
+            "above_ref": true
+          }
         },
         "result": "CONFIRMED"
       },
@@ -243,7 +512,10 @@
             "R_grd_mean": 13.87,
             "R_opt_mean": 0.43,
             "mean_diff_R_grd_minus_opt": 13.44,
-            "ci": [12.96, 13.93],
+            "ci": [
+              12.96,
+              13.93
+            ],
             "p_one_sided": 0.0005
           }
         },
@@ -257,7 +529,10 @@
         "testable": true,
         "R_E1B_opt_mean_pp": 0.06,
         "R_E1B_opt_mean_diff_pp": 0.06,
-        "ci": [0.05, 0.08],
+        "ci": [
+          0.05,
+          0.08
+        ],
         "p_one_sided": 0.0005,
         "n_nonzero_e1b": 102,
         "frac_R_e1b_zero": 0.796,
@@ -271,7 +546,10 @@
         "testable": true,
         "R_E1B_k200": 0.06,
         "R_E1W_k200": 0.37,
-        "ci_W_minus_B": [0.25, 0.38],
+        "ci_W_minus_B": [
+          0.25,
+          0.38
+        ],
         "result": "CONFIRMED",
         "note": "Sign of estimate only per frozen PRESPEC \u00a76. CI is descriptive."
       }
