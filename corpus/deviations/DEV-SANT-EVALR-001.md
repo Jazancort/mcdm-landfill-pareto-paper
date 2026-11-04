@@ -485,3 +485,69 @@ Diferença vs ca5d4ec: a lógica de gates e mutations não mudou; os SHAs dos mu
 idênticos ao run anterior (0a06fbaf). O SHA das gates difere por elapsed time no log.
 Alterações em 32037a4 tocam só em docstrings/comentários do script e nos nomes dos
 ficheiros de output (_v2). Nenhuma gate function alterada.
+
+---
+
+## ER-EVAL-RUN-v1 — Avaliação completa eval-v2 (2026-11-04)
+
+Commit da avaliação: `d02a32406e8a51b79fcb2fec53d506ec9164b0ef`
+(chore: add run_eval_v2.sh helper script for nohup eval run)
+
+**Nota:** o repositório estava "dirty" quando o script iniciou (repo_clean=false no JSON),
+porque o log `eval_v2_full_20261104.log` estava a ser escrito e não estava commitado.
+O hash do commit (`d02a324`) é correcto; os dados selados e o script são o que consta
+no commit.
+
+**Log:** `results/santiago/eval_v2_full_20261104.log`
+SHA-256: `02835bec8003cf01437a112ac2c37027675f8367fab129e7d6221cf73b41d968`
+
+**Predictions JSON:** `results/santiago/santiago_predictions_v2.json`
+SHA-256: `1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf80`
+
+**Elapsed:** 2302.5s (~38 min)
+
+**Gates (todas PASS):**
+- Gate 1 (Fogo): ALL PASS  (log:30)
+- K6 gate (Fogo): ALL 7 VALUES PASS  (log:41)
+- Gate 3 (S-T): 24008 raw + 2004 E1 ALL MATCH; content-hash 97ed76f1...  (log:105,107)
+- Gate 3 (S-N): 24008 raw + 2004 E1 ALL MATCH; content-hash 9b94c73a...  (log:134,136)
+- Gate 4a npz hash (ST): 97ed76f1763400ef PASS  (log:139)
+- Gate 4a npz hash (SN): 9b94c73a6dfae44b PASS  (log:140)
+- Gate 4a identity (all 7 arrays, 500 draws): PASS  (log:142)
+- Regression: ALL PASS  (log:177)
+
+**Predições — S-T:**
+
+| Pred | Resultado | Valores-chave |
+|---|---|---|
+| S0 | PASS | n_mm_opt=500/500 (log:213) |
+| S1 | CONFIRMED | diff=15.8pp CI[12.6,19.0] κ=200 (log:214) |
+| S2 | NOT CONFIRMED | diff=0.0pp CI[0.0,0.0] κ=200 — greedy=óptimo (log:215) |
+| S3a | CONFIRMED | E1-W=80.2%, E1-V=84.2% (log:216) |
+| S3b | NOT CONFIRMED | E1-V(84.2) > E1-W(80.2) — sentido invertido (log:217) |
+| S4 | DESCRIPTIVE | K5a sinal nulo (both 0); K5b sinal nulo (K6_inf=0) (log:218) |
+| S5 | NOT TESTABLE | max_pm=0.617 > 0.5 (log:219) |
+| S6 | NOT CONFIRMED | R_grd=R_opt=3.22pp, diff=0.0pp p=0.291 — efeito ausente (log:220) |
+| S7a | CONFIRMED | R_E1B=0.93pp CI[0.84,1.02] p<0.0005; n_nonzero=322/500 (log:221) |
+| S7b | CONFIRMED | R_E1B=0.93 < R_E1W=2.88pp CI_diff=[1.71,2.18] (log:222) |
+
+**Predições — S-N:**
+
+| Pred | Resultado | Valores-chave |
+|---|---|---|
+| S0 | PASS | n_mm_opt=500/500 (log:225) |
+| S1 | CONFIRMED | diff=25.2pp CI[21.0,29.2] κ=200 (log:226) |
+| S2 | NOT CONFIRMED | diff=-64.4pp (opt>>grd) — sem reversão greedy (log:227) |
+| S3a | CONFIRMED | E1-W=99.2%, E1-V=98.6% (log:228) |
+| S3b | CONFIRMED | E1-V(98.6) < E1-W(99.2) (log:229) |
+| S4 | DESCRIPTIVE | K5a: 96.8pp/100pp same_sign=True; K5b same_sign=True (log:230) |
+| S5 | CONFIRMED | Q2_vec_opt=98.6% > 56.8% ref (log:231) |
+| S6 | CONFIRMED | R_grd=13.87pp, R_opt=0.43pp, diff=13.44pp CI[12.96,13.93] p<0.0005 (log:232) |
+| S7a | CONFIRMED | R_E1B=0.06pp CI[0.05,0.08] p<0.0005; n_nonzero=102/500 (log:233) |
+| S7b | CONFIRMED | R_E1B=0.06 < R_E1W=0.37pp CI_diff=[0.25,0.38] (log:234) |
+
+**Sealed CSV SHAs (verificados no run):**
+- mc_ST_raw.csv: 123a5421...
+- mc_SN_raw.csv: dbfa2f00...
+- mc_ST_e1_fix2.csv: 7806db5d...
+- mc_SN_e1_fix2.csv: 357904c0...
