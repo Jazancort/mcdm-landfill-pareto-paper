@@ -551,3 +551,25 @@ SHA-256: `1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf80`
 - mc_SN_raw.csv: dbfa2f00...
 - mc_ST_e1_fix2.csv: 7806db5d...
 - mc_SN_e1_fix2.csv: 357904c0...
+
+---
+
+## Errata ER-EVAL-RUN-v1 — S6 S-T: veredicto revisto para "efeito ausente"
+
+O ER-EVAL-RUN-v1 reportou S6 S-T como "NOT CONFIRMED" com p = 0.291. Este veredicto
+é tecnicamente correcto mas enganoso. O motivo:
+
+`eval_v2_full_20261104.log:60` — `same-trio SAW/vec: 500/500` para S-T κ=200.
+
+Com trios idênticos em todos os sorteios, R_grd = R_opt exactamente em cada um dos
+500 sorteios. O bootstrap produz uma distribuição degenerada (variância zero):
+`mean_diff = 0.0 pp`, `CI = [−0.0, 0.0]` (santiago_predictions_v2.json → S-T S6).
+O p = 0.291 é calculado sobre 500 zeros e não tem interpretação.
+
+**Contagem directa:** 0/500 sorteios com R_grd ≠ R_opt.
+
+**Veredicto revisto:** efeito ausente — o greedy e o óptimo produzem o mesmo trio em
+todos os sorteios (κ=200, S-T), por isso R_grd = R_opt = 3.22 pp em cada sorteio.
+A ausência de efeito é estrutural, não estatística. O p não se aplica.
+
+Esta errata não altera nenhum outro veredicto.
