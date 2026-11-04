@@ -72,6 +72,11 @@ def n(x):
     return str(int(float(x)))
 
 
+def nfmt(x):
+    """Integer with LaTeX thousands separator {,} (for large counts in tables)."""
+    return f"{int(float(x)):,}".replace(",", "{,}")
+
+
 # ── p-value computations ───────────────────────────────────────────────────────
 
 def mcnemar_p(b, c):
@@ -448,7 +453,7 @@ def _append_k_and_table(lines, data, s3b, e1_kinf=None):
         lines += [
             cmd(f"Sant{br}Ncand",    n(d["N_cand"])),
             cmd(f"Sant{br}Nadm",     n(d["N_adm"])),
-            cmd(f"Sant{br}Ntrios",   n(d["n_trios"])),
+            cmd(f"Sant{br}Ntrios",   nfmt(d["n_trios"])),
             cmd(f"Sant{br}TV",       f"{d['TV']:.3f}"),
             cmd(f"Sant{br}TVB",      f"{d['TV_B']:.3f}"),
             cmd(f"Sant{br}TVW",      f"{d['TV_W']:.3f}"),
@@ -465,7 +470,7 @@ def _append_k_and_table(lines, data, s3b, e1_kinf=None):
         cmd("FogoRefTVW",    f"{f['TV_W']:.3f}"),
         cmd("FogoRefMeff",   f"{f['m_eff']:.2f}"),
         cmd("FogoRefNadm",   n(f["N_adm"])),
-        cmd("FogoRefNtrios", n(f["n_trios"])),
+        cmd("FogoRefNtrios", nfmt(f["n_trios"])),
     ]
     lines.append("")
 

@@ -2646,11 +2646,15 @@ $\kappa=200$ includes zero.
 \includegraphics[width=\columnwidth]{figures/fig_kappa.pdf}
 \caption{%
   Aggregation contrast (SAW minus TOPSIS, three informative cells,
-  Section~\ref{sec:factorial}) as a function of weight concentration~$\kappa$.
-  Shaded band: $95\%$ bootstrap CI ($B=2000$, paired by draw).
-  Grey band: equivalence margin $\pm\eqmargin=\pm2.5$~pp.
-  The open diamond marks the only interval including zero
-  ($\kappa=200$). Lower $\kappa$ means more dispersed weights.}
+  Section~\ref{sec:factorial}) as a function of weight concentration~$\kappa$
+  for the Fogo instance (filled circles) and the two Santiago instances
+  S-T (open squares) and S-N (open triangles).
+  Shaded bands: descriptive 95\% bootstrap CIs ($B=2000$, percentile method).
+  Grey band: equivalence margin $\pm\eqmargin=\pm2.5$~pp (Fogo only).
+  The open diamond (Fogo, $\kappa=200$) marks the only Fogo interval including zero.
+  Lower $\kappa$ means more dispersed weights.
+  S-N crosses zero between $\kappa=50$ and $\kappa=100$ (sign reversal confirmed;
+  Section~\ref{sec:santiago-outcomes}).}
 \label{fig:kappa}
 \end{figure}
 
@@ -2710,7 +2714,12 @@ The full $6\kappa\times8$-cell grid is in Supplementary Table~\ref{tab:e7grid}.
 
 
 % =======================================================================
-% \S8 Discussion
+% \S8 External validation: the Santiago instances
+% =======================================================================
+\input{santiago}
+
+% =======================================================================
+% \S9 Discussion
 % =======================================================================
 \FloatBarrier
 \section{Discussion}

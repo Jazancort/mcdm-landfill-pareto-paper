@@ -1,0 +1,242 @@
+% ======================================================================
+% §8  External validation: the Santiago instances
+% ======================================================================
+\FloatBarrier
+\section{External validation: the Santiago instances}
+\label{sec:santiago}
+
+The predictions derived from the Fogo study (Section~\ref{sec:results})
+were pre-registered before the Santiago data were processed.
+Two independent instances drawn from the municipality of
+[CITY-A] (S-T) and [CITY-B] (S-N) in Pará, Brazil,
+are evaluated here against those predictions.
+Both instances use the same weight-draw protocol and software pipeline
+as the Fogo analysis (Section~\ref{sec:methods}), but were produced on
+separate grids with fresh Pareto frontiers.
+Results are reported at $\kappa=200$ unless noted; all bootstrap
+confidence intervals use $B=2000$ draws and a \texttt{SeedSequence}
+initialised at 20261104.
+
+% ----------------------------------------------------------------------
+\subsection{Instance descriptors}
+\label{sec:santiago-instances}
+% ----------------------------------------------------------------------
+
+Table~\ref{tab:santiago-descriptors} compares the three instances on the
+scale and difficulty measures that the predictions depend on.
+
+\begin{table*}[!t]
+\centering
+\caption{Instance descriptors for Fogo (reference) and the two Santiago
+  instances (S-T, S-N).
+  $N_\text{cand}$: candidate sites before the spacing filter.
+  $N_\text{adm}$: sites admitted after exclusion-zone removal.
+  $N_\text{trios}$: feasible three-site portfolios satisfying~$d_\text{min}$.
+  $\mathrm{TV}$, $\mathrm{TV}_B$, $\mathrm{TV}_W$: total variation,
+  bottom-tercile variant, and criterion-weighted variant
+  (Section~\ref{sec:lemmaconf}).
+  $M_\text{eff} = 1/\!\sum_j w_j^2$ under nominal AHP weights.
+  $p_\text{max}^c$: largest continuous point mass in the SAW/vec/opt
+  $Q_2$ distribution at $\kappa=200$ (S5 testability criterion; see
+  Section~\ref{sec:factorial}).
+  $d_\text{min}$: enforced inter-site separation.
+  Dashes: metric not computed for Fogo.}
+\label{tab:santiago-descriptors}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrr}
+\toprule
+Property                              & \textbf{Fogo}  & \textbf{S-T}                            & \textbf{S-N} \\
+\midrule
+$N_\text{cand}$                       & \Ncand         & \SantSTNcand                            & \SantSNNcand \\
+$N_\text{adm}$                        & \FogoRefNadm   & \SantSTNadm                             & \SantSNNadm  \\
+$N_\text{trios}$                      & \FogoRefNtrios & \SantSTNtrios                           & \SantSNNtrios \\[3pt]
+$\mathrm{TV}$                         & \FogoRefTV     & \SantSTTV                               & \SantSNTV \\
+$\mathrm{TV}_B$                       & \FogoRefTVB    & \SantSTTVB                              & \SantSNTVB \\
+$\mathrm{TV}_W$                       & \FogoRefTVW    & \SantSTTVW                              & \SantSNTVW \\
+$M_\text{eff}$                        & \FogoRefMeff   & \SantSTMeff                             & \SantSNMeff \\[3pt]
+$p_\text{max}^c$                      & ---            & \SantSTSfivePerm                        & \SantSNSfivePerm \\
+$d_\text{min}$ (m)                    & ---            & \SantSTSpacing                          & \SantSNSpacing \\
+\bottomrule
+\end{tabular*}
+\end{table*}
+
+S-T has more candidate sites and a substantially larger trio space than Fogo
+($N_\text{trios}=\SantSTNtrios$ vs $\FogoRefNtrios$), but lower TV values
+($\mathrm{TV}=\SantSTTV$ vs $\FogoRefTV$), indicating less within-criterion
+variation and therefore smaller normalisation distortions.
+S-N has a much smaller feasible space ($N_\text{trios}=\SantSNNtrios$) and
+the lowest TV ($\SantSNTV$), while its higher $M_\text{eff}$ ($\SantSNMeff$
+vs $\FogoRefMeff$ for Fogo) reflects more uniform nominal weights across
+criteria.
+The large $p_\text{max}^c$ of S-T ($\SantSTSfivePerm$) exceeds the S5
+testability threshold, making the S5 prediction not evaluable on that
+instance; S-N passes the criterion ($p_\text{max}^c = \SantSNSfivePerm$).
+
+% ----------------------------------------------------------------------
+\subsection{Prediction outcomes}
+\label{sec:santiago-outcomes}
+% ----------------------------------------------------------------------
+
+Table~\ref{tab:santiago-predictions} summarises all sixteen prediction
+outcomes.
+The Fogo column gives the section in which the corresponding Fogo result
+was established; it is not a repeated measurement but a cross-reference
+to where each prediction originates.
+
+\begin{table*}[!t]
+\centering
+\caption{Prediction outcomes for the two Santiago instances at
+  $\kappa=200$.
+  Results in brackets are 95\% bootstrap confidence intervals (pp).
+  For K3 and K6, the summary statistic spans all six stochastic
+  $\kappa$ values ($25$--$1000$).
+  S4 specifies that K5 is purely descriptive; no confirmation
+  criterion applies.
+  Fogo column: cross-reference to the section where the corresponding
+  Fogo result is reported.
+  $\dagger$: not testable ($p_\text{max}^c=\SantSTSfivePerm>\text{threshold}$);
+  see Table~\ref{tab:santiago-descriptors}.}
+\label{tab:santiago-predictions}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}
+    l
+    >{\raggedright\arraybackslash}p{3.2cm}
+    c
+    >{\raggedright\arraybackslash}p{5.0cm}
+    >{\raggedright\arraybackslash}p{5.0cm}}
+\toprule
+\textbf{Pred} & \textbf{Claim} & \textbf{Fogo} &
+  \textbf{S-T} & \textbf{S-N} \\
+\midrule
+S0   & SAW/mm/opt $Q_2=100\%$
+     & \S\ref{sec:base}
+     & PASS (\SantSTSzeroN/500 draws)
+     & PASS (\SantSNSzeroN/500 draws) \\[2pt]
+S1   & mm $>$ vec on $Q_2$
+     & \S\ref{sec:factorial}
+     & $+\SantSTSoneDiff$\,pp [$\SantSTSoneCIlo$, $\SantSTSoneCIhi$]; confirmed
+     & $+\SantSNSoneDiff$\,pp [$\SantSNSoneCIlo$, $\SantSNSoneCIhi$]; confirmed \\[2pt]
+S2   & $Q_2(\text{opt}) > Q_2(\text{grd})$
+     & \S\ref{sec:greedy}
+     & absent: both $Q_2=0\%$ (\SantSTStwoSoloGrd{} vs \SantSTStwoSoloOpt{} draws)
+     & opp.\ sign: $\SantSNStwoDiff$\,pp [$\SantSNStwoCIlo$, $\SantSNStwoCIhi$]
+       (\SantSNStwoSoloGrd{} vs \SantSNStwoSoloOpt{} draws) \\[2pt]
+S3a  & E1-W, E1-V both improve $Q_2$
+     & \S\ref{sec:e1}
+     & W: $\SantSTSthreeaEoneW$\%; V: $\SantSTSthreeaEoneV$\%; confirmed
+     & W: $\SantSNSthreeaEoneW$\%; V: $\SantSNSthreeaEoneV$\%; confirmed \\[2pt]
+S3b  & E1-V $<$ E1-W (regret)
+     & \S\ref{sec:e1}
+     & not confirmed: $+\SantSTSthreebDiff$\,pp
+       ($\SantSTSthreebSoloV$ vs $\SantSTSthreebSoloW$; $p=\SantSTSthreebPval$)
+     & confirmed: $\SantSNSthreebDiff$\,pp
+       ($\SantSNSthreebSoloV$ vs $\SantSNSthreebSoloW$; $p=\SantSNSthreebPval$) \\[2pt]
+S4   & K5 purely descriptive
+     & \S\ref{sec:kappa}
+     & \multicolumn{2}{l}{%
+         \textit{Specification only; no confirmation criterion applies.}} \\[2pt]
+S5   & SAW/vec/opt $Q_2$ high (if testable)
+     & \S\ref{sec:factorial}
+     & not testable$^\dagger$
+     & $\SantSNSfiveQvec$\%; confirmed \\[2pt]
+S6   & $R_\text{grd} > R_\text{opt}$
+     & \S\ref{sec:greedy}
+     & absent: trios identical across all 500 draws
+     & $+\SantSNSsixDiff$\,pp [$\SantSNSsixCIlo$, $\SantSNSsixCIhi$]; confirmed \\[2pt]
+S7a  & $R(E1\text{-}B) > 0$
+     & \S\ref{sec:e1}
+     & $\SantSTSsvnaREoneB$\,pp [$\SantSTSsvnaCIlo$, $\SantSTSsvnaCIhi$];
+       $\SantSTSsvnaFracZero$\% zeros (cf.\ Fogo: $\RegretEoneBfracZero$\%)
+     & $\SantSNSsvnaREoneB$\,pp [$\SantSNSsvnaCIlo$, $\SantSNSsvnaCIhi$];
+       $\SantSNSsvnaFracZero$\% zeros \\[2pt]
+S7b  & $R(E1\text{-}B) < R(E1\text{-}W)$
+     & \S\ref{sec:e1}
+     & $\Delta\in[\SantSTSsvnbCIlo,\,\SantSTSsvnbCIhi]$\,pp; confirmed
+     & $\Delta\in[\SantSNSsvnbCIlo,\,\SantSNSsvnbCIhi]$\,pp; confirmed \\
+\midrule
+K1   & SAW/mm/opt $Q_2=100\%$ every draw
+     & \S\ref{sec:base}
+     & PASS (\SantSTKoneN/500)
+     & PASS (\SantSNKoneN/500) \\[2pt]
+K2   & E1-B/opt $Q_2=100\%$ at $\kappa=200$ and $\kappa\to\infty$
+     & \S\ref{sec:e1}
+     & PASS ($\kappa=200$: $\SantSTKtwoN$/500; $\kappa\to\infty$: \SantSTKtwoInfResult)
+     & PASS ($\kappa=200$: $\SantSNKtwoN$/500; $\kappa\to\infty$: \SantSNKtwoInfResult) \\[2pt]
+K3   & mm CI lower bound $>0$ for all $\kappa$
+     & \S\ref{sec:kappa}
+     & min CI lo $= \SantSTKthreeMinCIlo$\,pp; confirmed
+     & min CI lo $= \SantSNKthreeMinCIlo$\,pp; confirmed \\[2pt]
+K4   & detectable at some $\kappa$ (Holm)
+     & \S\ref{sec:kappa}
+     & $p_\text{Holm}=\SantSTKfourHolmP$; confirmed
+     & $p_\text{Holm}=\SantSNKfourHolmP$; confirmed \\[2pt]
+K5   & sign consistency (descriptive)
+     & \S\ref{sec:kappa}
+     & (a) null; (b) null
+     & (a) same sign; (b) same sign \\[2pt]
+K6   & agg.\ contrast $>0$ for all $\kappa$ (S-T);
+       sign reversal with $\kappa$ (S-N)
+     & \S\ref{sec:kappa}
+     & $\SantSTKsixKTwentyFive$\,pp at $\kappa=25$,
+       $\SantSTKsixInf$\,pp at $\kappa\to\infty$; no reversal
+     & $\SantSNKsixKFifty$\,pp at $\kappa=50$,
+       $\SantSNKsixKHundred$\,pp at $\kappa=100$; sign reversal \\
+\bottomrule
+\end{tabular*}
+\end{table*}
+
+\textbf{S2 and S6 jointly.}
+On S-T, greedy assembly and optimal assembly produce the same three-site portfolio
+in every weight draw at $\kappa=200$: $Q_2(\text{grd})=Q_2(\text{opt})=0\%$
+and $R(\text{grd})=R(\text{opt})$ in all 500 draws.
+The S2 prediction (that optimal outperforms greedy on $Q_2$) and the S6
+prediction (that greedy incurs higher regret) both return an absent effect,
+not a failed test: the criterion values under the nominal weights are such
+that greedy happens to find the optimal trio at every stochastic realisation.
+On S-N, both effects are present and in the predicted direction:
+optimal outperforms greedy on $Q_2$ by $\SantSNStwoDiff$\,pp
+(95\% CI [$\SantSNStwoCIlo$, $\SantSNStwoCIhi$]; note the sign is opposite to S2,
+reflecting that $Q_2(\text{grd})-Q_2(\text{opt}) < 0$ means greedy is worse)
+and the regret gap $R(\text{grd})-R(\text{opt}) = \SantSNSsixDiff$\,pp
+(95\% CI [$\SantSNSsixCIlo$, $\SantSNSsixCIhi$]).
+
+\textbf{S7a: zeros and magnitude.}
+Both instances confirm that the E1-B intervention achieves positive $Q_2$
+improvement over the baseline on average, but the effect profiles differ.
+On S-T, the fraction of draws where $R(E1\text{-}B)=0$ (meaning the
+intervention recovers the optimum exactly) is $\SantSTSsvnaFracZero$\%,
+closely matching the Fogo reference ($\RegretEoneBfracZero$\%;
+Section~\ref{sec:e1}), which suggests similar structural difficulty
+across the two instances.
+On S-N, the confirmed mean regret of $\SantSNSsvnaREoneB$\,pp
+(95\% CI [$\SantSNSsvnaCIlo$, $\SantSNSsvnaCIhi$]) is formally positive
+but negligible in practice; the $\SantSNSsvnaFracZero$\% zero rate
+indicates that the intervention trivially finds the optimum in most draws,
+leaving little room to measure the effect.
+
+\textbf{S3b: opposite directions across instances.}
+The pre-registered direction for S3b (E1-V outperforms E1-W, i.e.,
+value-function normalisation yields lower regret than worst-case
+normalisation after the E1 intervention) is confirmed on S-N
+($Q_2(E1\text{-}V)-Q_2(E1\text{-}W) = \SantSNSthreebDiff$\,pp;
+$\SantSNSthreebSoloV$ vs $\SantSNSthreebSoloW$ exclusive-frontier draws;
+exact binomial $p=\SantSNSthreebPval$)
+but not on S-T ($+\SantSTSthreebDiff$\,pp in the opposite direction;
+$\SantSTSthreebSoloV$ vs $\SantSTSthreebSoloW$;
+McNemar $p=\SantSTSthreebPval$).
+The two instances thus provide conflicting evidence on S3b,
+consistent with a small and unstable effect that depends on properties
+of the specific criterion distributions.
+
+\textbf{K5 and K6.}
+For S-T, K5 shows null sign agreement between the $\kappa=1000$ and
+$\kappa\to\infty$ values for both K5(a) and K5(b); the aggregation contrast
+K6 is positive across all tested $\kappa$ values
+($\SantSTKsixKTwentyFive$\,pp at $\kappa=25$ to $\SantSTKsixKFourHundred$\,pp
+at $\kappa=400$; Fig.~\ref{fig:kappa}).
+For S-N, K5 shows same-sign agreement on both (a) and (b); K6 is positive at
+$\kappa=50$ ($\SantSNKsixKFifty$\,pp,
+95\% CI [$\SantSNKsixKFiftyLo$, $\SantSNKsixKFiftyHi$]) and
+turns negative by $\kappa=100$ ($\SantSNKsixKHundred$\,pp,
+95\% CI [$\SantSNKsixKHundredLo$, $\SantSNKsixKHundredHi$]),
+confirming the predicted sign reversal (Fig.~\ref{fig:kappa}).
+These K5 and K6 results are descriptive; no pre-registered confirmation
+criterion applies to them.
