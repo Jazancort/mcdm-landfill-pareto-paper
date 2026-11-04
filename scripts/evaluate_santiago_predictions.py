@@ -5,7 +5,8 @@ Reads only the sealed Stage 4 output files.
 Must be committed and tagged BEFORE running.
 
 S0–S7b definitions: PRESPEC_SANTIAGO.md §6.
-K5 greedy analysis: per κ per cell, fraction of draws where greedy trio == optimal trio.
+K5 descriptive sign check: reports K5(a) and K5(b) values at κ=1000 and κ=∞ with
+same_sign flag (True/False/None). See PRESPEC_SANTIAGO_A5.md §3 K5 and DEV-SANT-K5-001.
 
 Bootstrap: B=2000, numpy.random.default_rng(seed) seeded per prediction to
 make bootstrap reproducible. Seed = prediction_index (0-indexed).
@@ -21,9 +22,10 @@ R (regret) definition: value regret per PRESPEC (see notes/eval-r-spec.md).
     Computed by compute_value_regret_santiago(). S6/S7 use per-draw R arrays.
     S0 assert: R(SAW_mm_opt) = 0 in every draw (exact, not floating-point approx).
 
-Outputs:
-  results/santiago/santiago_predictions.json
-  results/santiago/st_k5_greedy_analysis.json
+Outputs (eval-v2 run — do not overwrite v1 files):
+  results/santiago/santiago_predictions_v2.json
+  results/santiago/st_k5_greedy_ST_v2.json
+  results/santiago/st_k5_greedy_SN_v2.json
 
 Run:
   CUDA_VISIBLE_DEVICES=0 .venv/bin/python3 -u scripts/evaluate_santiago_predictions.py
@@ -861,16 +863,15 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     else:
         k6_inf = k5a_inf = None
 
-    # K5 sign checks (descriptive, no verdict)
-    # INDETERMINATE if EITHER side is 0 (not just kappa=inf).
-    # Declared post-data: S-T K5(a)=0 for k>=100, k=inf; both are 0 at k=1000 and k=inf.
-    # Two readings reported: "indeterminate" (primary) if any zero; "not confirmed" (conservative).
+    # K5 sign checks (descriptive, no verdict — A5:100 "no CI test, no confirmation criterion").
+    # same_sign = True if both nonzero and equal sign; False if both nonzero and opposite;
+    # None ("sinal nulo") if either side is 0 — reporting convention, not a decision rule.
+    # Declared post-data: S-T K5(a)=0 for k>=100 and k=inf (DEV-SANT-K5-001 [POST-DATA]).
     def _sign(x): return 1 if x > 0 else (-1 if x < 0 else 0)
     k5a_sign_1000 = _sign(k5a.get("1000", 0))
     k5a_sign_inf  = _sign(k5a_inf) if k5a_inf is not None else 0
     k5b_sign_1000 = _sign(float(k6.get("1000", 0)))
     k5b_sign_inf  = _sign(k6_inf) if k6_inf is not None else 0
-    # INDETERMINATE if either side is 0; CONFIRMED if both nonzero and same sign
     k5a_same_sign = (k5a_sign_1000 == k5a_sign_inf) if (k5a_sign_1000 != 0 and k5a_sign_inf != 0) else None
     k5b_same_sign = (k5b_sign_1000 == k5b_sign_inf) if (k5b_sign_1000 != 0 and k5b_sign_inf != 0) else None
 
@@ -1619,7 +1620,7 @@ def main():
     # Regression check against manual cross-check (seed 20261103)
     assert_regression(st_res, sn_res)
 
-    out = SEALED / "santiago_predictions.json"
+    out = SEALED / "santiago_predictions_v2.json"
     import hashlib as _hl, subprocess as _sp
     _git_sha = _sp.check_output(["git","rev-parse","HEAD"], cwd=ROOT).decode().strip()
     _repo_clean = not _sp.check_output(["git","status","--porcelain"], cwd=ROOT).decode().strip()
@@ -1641,7 +1642,7 @@ def main():
     for branch_key in ["ST", "SN"]:
         print(f"\n=== K5 greedy analysis: {branch_key} ===", flush=True)
         k5_res = analyze_k5_greedy(branch_key)
-        out_k5 = SEALED / f"st_k5_greedy_{branch_key}.json"
+        out_k5 = SEALED / f"st_k5_greedy_{branch_key}_v2.json"
         with open(out_k5, "w") as f:
             json.dump(k5_res, f, indent=2)
         print(f"  Written: {out_k5}")

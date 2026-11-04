@@ -435,3 +435,30 @@ Diagnósticos adicionais:
 - backup/11b6ad0 e backup/a60abd1 existem na Athena
 - pytest 9.2.0 em .venv/lib/python3.12/site-packages/pytest/__init__.py
   (sem pyproject.toml nem uv.lock no repo; instalado directamente)
+
+---
+
+## ER-ENV-PYTEST — pytest instalado no .venv após selagem MC; uv.lock ausente
+
+Registado em verificação pré-avaliação (commit após c08c53f).
+
+**uv.lock:** o ficheiro não existe no repositório (`git ls-files | grep uv.lock` retorna
+vazio). O `run_santiago_mc.py` tenta calcular o hash do uv.lock na proveniência mas regista
+"uv.lock: NOT FOUND (environment not pinned via uv)" no log selado:
+
+```
+mc_full_20261028T1237Z_gpu.log:11: uv.lock: NOT FOUND
+mc_full_20261028T1237Z_gpu.log:68: uv.lock: NOT FOUND
+```
+
+O ambiente Stage 4 não estava pinado via uv; a reprodutibilidade do ambiente depende
+do `extract_env.txt` registado no mesmo log.
+
+**pytest:** foi instalado directamente no `.venv` (`pip install pytest==9.2.0`) para
+os testes de mutação do eval-v2. Este passo ocorreu depois do run Stage 4 (MC selado).
+Os resultados do MC não são afectados (pytest não é chamado pelo pipeline de cálculo).
+Os testes de mutação do eval-v2 dependem de `pytest==9.2.0` no `.venv`; reprodução
+requer instalar esta versão explicitamente.
+
+**Impacto:** nenhum dado selado afectado. A comparabilidade do ambiente é reduzida
+(uv.lock ausente). Declarado aqui para transparência.

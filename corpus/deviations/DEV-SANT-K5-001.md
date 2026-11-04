@@ -133,3 +133,40 @@ calcular Q2(SAW,vec,opt) nem Q2(SAW,vec,grd); só o MC fornece esses valores.
 
 Nenhum veredicto (S0–S7b) depende do K5. K5 é puramente descritivo (sem ajuste
 por multiplidade, sem critério de confirmação).
+
+---
+
+## Errata 2026-11-04 (ronda eval-v2, commit após c08c53f)
+
+A edição de ca5d4ec introduziu dois erros por instrução incorrecta do utilizador,
+corrigida pelo próprio utilizador nesta ronda.
+
+**Erro 1:** "K5 tem veredicto descritivo: o script de avaliação deve reportar 'mesmo
+sinal' ou 'sinal diferente'" — ERRADO. A5:100 diz textualmente "K5 is purely
+descriptive; no CI test, no confirmation criterion." K5 não tem veredicto. Não há
+categorias "confirmado", "não confirmado" ou "indeterminado" no output.
+
+**Erro 2:** A tabela "Duas leituras reportadas" (leitura principal/conservadora com
+colunas "confirmado"/"não confirmado") foi introduzida em ca5d4ec e está errada.
+Não existem duas leituras alternativas; existe apenas o output descritivo.
+
+**O que o código reporta (correcto — conforme A5:92-100):**
+- `K5a_assembly_per_kappa`: K5(a) por κ [pp]
+- `K5a_assembly_inf`: K5(a) em κ=∞ [pp]
+- `K5a_same_sign_1000_inf`: True se ambos não-zero e mesmo sinal; False se ambos não-zero
+  e sinal oposto; None se qualquer lado for 0
+- `K5b_same_sign_1000_inf`: idem para K5(b)
+- `result`: "DESCRIPTIVE"
+
+None = "sinal nulo": convenção de reporte quando um dos lados é 0.
+A regra do zero é uma convenção de reporte, não uma regra de decisão (mantém-se
+[POST-DATA] como declarado na secção anterior).
+
+**Sobre ca5d4ec:** nesse commit foram removidas linhas originais do DEV (03d62a0),
+o que viola a regra "errata no fim, não reescrita". Esta correcção é acrescentada no
+fim (regra respeitada).
+
+**Impacto:** o código `evaluate_santiago_predictions.py` foi corrigido (comentários
+enganosos removidos, docstring actualizada). Nenhuma lógica de cálculo alterada.
+Nenhum dado selado afectado. A função `analyze_k5_greedy` já produzia o output
+correcto (sem campos confirm/pass); apenas os comentários estavam errados.
