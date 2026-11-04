@@ -31,11 +31,17 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).parent.parent
-DEFAULT_OUT = ROOT / "results" / "santiago" / "macros_santiago.tex"
-JSON_PATH   = ROOT / "results" / "santiago" / "santiago_predictions_v2.json"
+ROOT         = Path(__file__).parent.parent
+DEFAULT_OUT  = ROOT / "results" / "santiago" / "macros_santiago.tex"
+JSON_PATH    = ROOT / "results" / "santiago" / "santiago_predictions_v2.json"
+STAGE3B_PATH = ROOT / "results" / "santiago" / "stage3b_descriptors.json"
 
-SHA_JSON = "1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf80"
+SHA_JSON     = "1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf80"
+SHA_STAGE3B  = "710718247783f1eeccbebfe894e953e21f56c963076bbf99e912a5b57f6fcbcc"
+
+# κ value → LaTeX-safe macro suffix (no digits in \newcommand names)
+KNAME = {"25": "TwentyFive", "50": "Fifty", "100": "Hundred",
+         "200": "TwoHundred", "400": "FourHundred", "1000": "Thousand"}
 
 # ── Format helpers ─────────────────────────────────────────────────────────────
 
@@ -181,24 +187,31 @@ def generate_lines(data):
         ]
     lines.append("")
 
-    # ── S4/K5 (descriptive) ─────────────────────────────────────────────────────
-    lines.append("% \u2500\u2500 S4/K5 (descriptive) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
+    # ── S4/K5 descriptive + K6 per all κ ──────────────────────────────────────
+    lines.append("% \u2500\u2500 S4/K5 (descriptive) + K6 per \u03ba \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")
     for branch, br in BRANCHES:
         p = pred(branch, "S4")
-        k5a_1k  = p["K5a_assembly_per_kappa"]["1000"]
-        k5a_inf = p["K5a_assembly_inf"]
-        k5b_1k  = p["K6_per_kappa"]["1000"]
-        k5b_inf = p["K6_inf"]
         sa = p["K5a_same_sign_1000_inf"]
         sb = p["K5b_same_sign_1000_inf"]
-        lines += [
-            cmd(f"Sant{br}KfiveaOne",      pp1(k5a_1k),  "K5(a) at \\kappa=1000 [pp]"),
-            cmd(f"Sant{br}KfiveaInf",      pp1(k5a_inf), "K5(a) at \\kappa=inf [pp]"),
-            cmd(f"Sant{br}KfivebOne",      pp1(k5b_1k),  "K5(b)=K6 at \\kappa=1000 [pp]"),
-            cmd(f"Sant{br}KfivebInf",      pp1(k5b_inf), "K5(b)=K6 at \\kappa=inf [pp]"),
-            cmd(f"Sant{br}KfiveaSameSign", "null" if sa is None else str(sa).lower()),
-            cmd(f"Sant{br}KfivebSameSign", "null" if sb is None else str(sb).lower()),
-        ]
+        lines.append(f"% S4/K5 {branch}: K5a same-sign={sa}  K5b same-sign={sb}")
+        # K5a per all stochastic κ + ∞
+        for kstr, val in p["K5a_assembly_per_kappa"].items():
+            kname = KNAME[kstr]
+            lines.append(cmd(f"Sant{br}KfiveaK{kname}", pp1(val),
+                             f"K5(a) at \u03ba={kstr} [pp]"))
+        lines.append(cmd(f"Sant{br}KfiveaInf", pp1(p["K5a_assembly_inf"]),
+                         "K5(a) at \u03ba=\u221e [pp]"))
+        lines.append(cmd(f"Sant{br}KfiveaSameSign",
+                         "null" if sa is None else str(sa).lower()))
+        # K6 per all stochastic κ + ∞
+        for kstr, val in p["K6_per_kappa"].items():
+            kname = KNAME[kstr]
+            lines.append(cmd(f"Sant{br}KsixK{kname}", pp1(val),
+                             f"K6 Agg_pooled3 at \u03ba={kstr} [pp]"))
+        lines.append(cmd(f"Sant{br}KsixInf", pp1(p["K6_inf"]),
+                         "K6 at \u03ba=\u221e [pp]"))
+        lines.append(cmd(f"Sant{br}KfivebSameSign",
+                         "null" if sb is None else str(sb).lower()))
     lines.append("")
 
     # ── S5 κ=200 ────────────────────────────────────────────────────────────────
@@ -265,6 +278,118 @@ def generate_lines(data):
     return lines
 
 
+def _load_stage3b():
+    """Load and SHA-verify stage3b_descriptors.json."""
+    if not STAGE3B_PATH.exists():
+        raise RuntimeError(f"stage3b not found: {STAGE3B_PATH}")
+    got = hashlib.sha256(STAGE3B_PATH.read_bytes()).hexdigest()
+    if got != SHA_STAGE3B:
+        raise RuntimeError(
+            f"SHA mismatch for stage3b_descriptors.json:\n"
+            f"  expected {SHA_STAGE3B}\n  got      {got}"
+        )
+    print(f"  SHA OK: stage3b_descriptors.json ({SHA_STAGE3B[:16]})")
+    return json.loads(STAGE3B_PATH.read_text(encoding="utf-8"))
+
+
+def _append_k_and_table(lines, data, s3b):
+    """Append K1-K4 macros and Table A macros to lines (in-place)."""
+    def pred(branch, name):
+        for p in data[branch]["predictions"]:
+            if p["prediction"] == name:
+                return p
+        raise KeyError(name)
+
+    def cmd(macro, value, comment=""):
+        s = f"\\newcommand{{\\{macro}}}{{{value}}}"
+        if comment:
+            s += f"  % {comment}"
+        return s
+
+    BRANCHES = [("S-T", "ST"), ("S-N", "SN")]
+
+    # K1 (= S0)
+    lines.append("% -- K1 (= S0): SAW/mm/opt Q2=100% every draw --------------------")
+    for branch, br in BRANCHES:
+        p = pred(branch, "S0")
+        lines += [
+            cmd(f"Sant{br}KoneResult", p["result"]),
+            cmd(f"Sant{br}KoneN",      n(p["n_saw_mm_opt_k200"]),
+                f"draws Q2=100% ({branch})"),
+        ]
+    lines.append("")
+
+    # K2: E1-B/opt Q2=100% at k=200 (from S3a E1B_opt_count)
+    lines.append("% -- K2: E1-B/opt Q2=100% at k=200 (from S3a) --------------------")
+    for branch, br in BRANCHES:
+        p = pred(branch, "S3a")
+        e1b = int(p["E1B_opt_count_k200"])
+        lines += [
+            cmd(f"Sant{br}KtwoResult", "PASS" if e1b == 500 else "FAIL",
+                f"E1-B/opt==100% in {e1b}/500 draws"),
+            cmd(f"Sant{br}KtwoN", n(e1b)),
+        ]
+    lines.append("")
+
+    # K3: no reversal
+    lines.append("% -- K3: no reversal -- all k CI lo > 0 --------------------------")
+    for branch, br in BRANCHES:
+        p  = pred(branch, "S1")
+        kp = p["per_kappa"]
+        lo_vals = [kp[k]["ci"][0] for k in kp]
+        min_lo  = min(lo_vals)
+        lines += [
+            cmd(f"Sant{br}KthreeResult",  "CONFIRMED" if min_lo > 0 else "NOT CONFIRMED"),
+            cmd(f"Sant{br}KthreeMinCIlo", pp1(min_lo),
+                f"min CI lower across k ({branch})"),
+        ]
+    lines.append("")
+
+    # K4: detectable at some k
+    lines.append("% -- K4: detectable -- holm_adj_p < 0.05 at some k ---------------")
+    for branch, br in BRANCHES:
+        p     = pred(branch, "S1")
+        holms = list(p["holm_adj_p"].values())
+        min_p = min(holms)
+        lines += [
+            cmd(f"Sant{br}KfourResult",   "CONFIRMED" if min_p < 0.05 else "NOT CONFIRMED"),
+            cmd(f"Sant{br}KfourMinHolmP", p3(min_p),
+                f"min Holm-adj p across k ({branch})"),
+        ]
+    lines.append("")
+
+    # Table A: Stage 3b descriptors
+    lines.append("% -- Table A: Stage 3b descriptors (SHA-verified) -----------------")
+    lines.append(f"% stage3b_descriptors.json SHA: {SHA_STAGE3B[:16]}")
+    for branch, br in BRANCHES:
+        d = s3b[branch]
+        max_pm_key = max(d["point_masses"], key=lambda k: d["point_masses"][k])
+        max_pm_val = d["point_masses"][max_pm_key]
+        lines += [
+            cmd(f"Sant{br}Ncand",    n(d["N_cand"])),
+            cmd(f"Sant{br}Nadm",     n(d["N_adm"])),
+            cmd(f"Sant{br}Ntrios",   n(d["n_trios"])),
+            cmd(f"Sant{br}TV",       f"{d['TV']:.3f}"),
+            cmd(f"Sant{br}TVB",      f"{d['TV_B']:.3f}"),
+            cmd(f"Sant{br}TVW",      f"{d['TV_W']:.3f}"),
+            cmd(f"Sant{br}Meff",     f"{d['m_eff']:.2f}"),
+            cmd(f"Sant{br}MaxPM",    f"{max_pm_val:.3f}",
+                f"max point mass (crit: {max_pm_key})"),
+            cmd(f"Sant{br}MaxPMKey", max_pm_key),
+            cmd(f"Sant{br}Spacing",  n(d["spacing_m"]), "d_min in metres"),
+        ]
+    f = s3b["Fogo_ref"]
+    lines += [
+        cmd("FogoRefTV",     f"{f['TV']:.3f}",  "Fogo reference"),
+        cmd("FogoRefTVB",    f"{f['TV_B']:.3f}"),
+        cmd("FogoRefTVW",    f"{f['TV_W']:.3f}"),
+        cmd("FogoRefMeff",   f"{f['m_eff']:.2f}"),
+        cmd("FogoRefNadm",   n(f["N_adm"])),
+        cmd("FogoRefNtrios", n(f["n_trios"])),
+    ]
+    lines.append("")
+
+
 # ── Main (SHA-verify + generate + write) ───────────────────────────────────────
 
 def main():
@@ -282,8 +407,10 @@ def main():
         )
     print(f"  SHA OK: santiago_predictions_v2.json ({SHA_JSON[:16]})")
 
-    data = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+    data  = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+    s3b   = _load_stage3b()
     lines = generate_lines(data)
+    _append_k_and_table(lines, data, s3b)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 

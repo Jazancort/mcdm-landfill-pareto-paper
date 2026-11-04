@@ -56,18 +56,40 @@
 \newcommand{\SantSNSthreebSoloW}{3}  % draws exclusively E1-W on frontier
 \newcommand{\SantSNSthreebPval}{0.250}  % binomial exact (0 vs 3)
 
-% ── S4/K5 (descriptive) ────────────────────────────────────────────────────
-\newcommand{\SantSTKfiveaOne}{0.0}  % K5(a) at \kappa=1000 [pp]
-\newcommand{\SantSTKfiveaInf}{0.0}  % K5(a) at \kappa=inf [pp]
-\newcommand{\SantSTKfivebOne}{24.1}  % K5(b)=K6 at \kappa=1000 [pp]
-\newcommand{\SantSTKfivebInf}{0.0}  % K5(b)=K6 at \kappa=inf [pp]
+% ── S4/K5 (descriptive) + K6 per κ ─────────────────────────────────────────────
+% S4/K5 S-T: K5a same-sign=None  K5b same-sign=None
+\newcommand{\SantSTKfiveaKTwentyFive}{0.2}  % K5(a) at κ=25 [pp]
+\newcommand{\SantSTKfiveaKFifty}{0.6}  % K5(a) at κ=50 [pp]
+\newcommand{\SantSTKfiveaKHundred}{0.0}  % K5(a) at κ=100 [pp]
+\newcommand{\SantSTKfiveaKTwoHundred}{0.0}  % K5(a) at κ=200 [pp]
+\newcommand{\SantSTKfiveaKFourHundred}{0.0}  % K5(a) at κ=400 [pp]
+\newcommand{\SantSTKfiveaKThousand}{0.0}  % K5(a) at κ=1000 [pp]
+\newcommand{\SantSTKfiveaInf}{0.0}  % K5(a) at κ=∞ [pp]
 \newcommand{\SantSTKfiveaSameSign}{null}
+\newcommand{\SantSTKsixKTwentyFive}{22.1}  % K6 Agg_pooled3 at κ=25 [pp]
+\newcommand{\SantSTKsixKFifty}{26.4}  % K6 Agg_pooled3 at κ=50 [pp]
+\newcommand{\SantSTKsixKHundred}{23.9}  % K6 Agg_pooled3 at κ=100 [pp]
+\newcommand{\SantSTKsixKTwoHundred}{26.2}  % K6 Agg_pooled3 at κ=200 [pp]
+\newcommand{\SantSTKsixKFourHundred}{23.8}  % K6 Agg_pooled3 at κ=400 [pp]
+\newcommand{\SantSTKsixKThousand}{24.1}  % K6 Agg_pooled3 at κ=1000 [pp]
+\newcommand{\SantSTKsixInf}{0.0}  % K6 at κ=∞ [pp]
 \newcommand{\SantSTKfivebSameSign}{null}
-\newcommand{\SantSNKfiveaOne}{96.8}  % K5(a) at \kappa=1000 [pp]
-\newcommand{\SantSNKfiveaInf}{100.0}  % K5(a) at \kappa=inf [pp]
-\newcommand{\SantSNKfivebOne}{-36.5}  % K5(b)=K6 at \kappa=1000 [pp]
-\newcommand{\SantSNKfivebInf}{-33.3}  % K5(b)=K6 at \kappa=inf [pp]
+% S4/K5 S-N: K5a same-sign=True  K5b same-sign=True
+\newcommand{\SantSNKfiveaKTwentyFive}{14.2}  % K5(a) at κ=25 [pp]
+\newcommand{\SantSNKfiveaKFifty}{26.2}  % K5(a) at κ=50 [pp]
+\newcommand{\SantSNKfiveaKHundred}{48.6}  % K5(a) at κ=100 [pp]
+\newcommand{\SantSNKfiveaKTwoHundred}{64.4}  % K5(a) at κ=200 [pp]
+\newcommand{\SantSNKfiveaKFourHundred}{85.0}  % K5(a) at κ=400 [pp]
+\newcommand{\SantSNKfiveaKThousand}{96.8}  % K5(a) at κ=1000 [pp]
+\newcommand{\SantSNKfiveaInf}{100.0}  % K5(a) at κ=∞ [pp]
 \newcommand{\SantSNKfiveaSameSign}{true}
+\newcommand{\SantSNKsixKTwentyFive}{7.5}  % K6 Agg_pooled3 at κ=25 [pp]
+\newcommand{\SantSNKsixKFifty}{4.7}  % K6 Agg_pooled3 at κ=50 [pp]
+\newcommand{\SantSNKsixKHundred}{-2.6}  % K6 Agg_pooled3 at κ=100 [pp]
+\newcommand{\SantSNKsixKTwoHundred}{-11.9}  % K6 Agg_pooled3 at κ=200 [pp]
+\newcommand{\SantSNKsixKFourHundred}{-22.5}  % K6 Agg_pooled3 at κ=400 [pp]
+\newcommand{\SantSNKsixKThousand}{-36.5}  % K6 Agg_pooled3 at κ=1000 [pp]
+\newcommand{\SantSNKsixInf}{-33.3}  % K6 at κ=∞ [pp]
 \newcommand{\SantSNKfivebSameSign}{true}
 
 % ── S5 (κ=200) ────────────────────────────────────────────────────────────
@@ -116,4 +138,57 @@
 \newcommand{\SantSNSsvnbREoneW}{0.37}  % R(E1-W) pp
 \newcommand{\SantSNSsvnbCIlo}{0.25}  % CI lower (R_W - R_B)
 \newcommand{\SantSNSsvnbCIhi}{0.38}  % CI upper
+
+% -- K1 (= S0): SAW/mm/opt Q2=100% every draw --------------------
+\newcommand{\SantSTKoneResult}{PASS}
+\newcommand{\SantSTKoneN}{500}  % draws Q2=100% (S-T)
+\newcommand{\SantSNKoneResult}{PASS}
+\newcommand{\SantSNKoneN}{500}  % draws Q2=100% (S-N)
+
+% -- K2: E1-B/opt Q2=100% at k=200 (from S3a) --------------------
+\newcommand{\SantSTKtwoResult}{PASS}  % E1-B/opt==100% in 500/500 draws
+\newcommand{\SantSTKtwoN}{500}
+\newcommand{\SantSNKtwoResult}{PASS}  % E1-B/opt==100% in 500/500 draws
+\newcommand{\SantSNKtwoN}{500}
+
+% -- K3: no reversal -- all k CI lo > 0 --------------------------
+\newcommand{\SantSTKthreeResult}{CONFIRMED}
+\newcommand{\SantSTKthreeMinCIlo}{3.6}  % min CI lower across k (S-T)
+\newcommand{\SantSNKthreeResult}{CONFIRMED}
+\newcommand{\SantSNKthreeMinCIlo}{2.0}  % min CI lower across k (S-N)
+
+% -- K4: detectable -- holm_adj_p < 0.05 at some k ---------------
+\newcommand{\SantSTKfourResult}{CONFIRMED}
+\newcommand{\SantSTKfourMinHolmP}{0.001}  % min Holm-adj p across k (S-T)
+\newcommand{\SantSNKfourResult}{CONFIRMED}
+\newcommand{\SantSNKfourMinHolmP}{0.001}  % min Holm-adj p across k (S-N)
+
+% -- Table A: Stage 3b descriptors (SHA-verified) -----------------
+% stage3b_descriptors.json SHA: 710718247783f1ee
+\newcommand{\SantSTNcand}{650}
+\newcommand{\SantSTNadm}{601}
+\newcommand{\SantSTNtrios}{16699705}
+\newcommand{\SantSTTV}{0.232}
+\newcommand{\SantSTTVB}{0.196}
+\newcommand{\SantSTTVW}{0.157}
+\newcommand{\SantSTMeff}{4.49}
+\newcommand{\SantSTMaxPM}{0.617}  % max point mass (crit: perm)
+\newcommand{\SantSTMaxPMKey}{perm}
+\newcommand{\SantSTSpacing}{1250}  % d_min in metres
+\newcommand{\SantSNNcand}{387}
+\newcommand{\SantSNNadm}{190}
+\newcommand{\SantSNNtrios}{77995}
+\newcommand{\SantSNTV}{0.076}
+\newcommand{\SantSNTVB}{0.057}
+\newcommand{\SantSNTVW}{0.056}
+\newcommand{\SantSNMeff}{5.31}
+\newcommand{\SantSNMaxPM}{0.832}  % max point mass (crit: B1)
+\newcommand{\SantSNMaxPMKey}{B1}
+\newcommand{\SantSNSpacing}{1000}  % d_min in metres
+\newcommand{\FogoRefTV}{0.311}  % Fogo reference
+\newcommand{\FogoRefTVB}{0.248}
+\newcommand{\FogoRefTVW}{0.195}
+\newcommand{\FogoRefMeff}{4.03}
+\newcommand{\FogoRefNadm}{389}
+\newcommand{\FogoRefNtrios}{1944653}
 
