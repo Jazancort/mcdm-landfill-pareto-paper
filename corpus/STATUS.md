@@ -81,6 +81,9 @@ Correm com run_santiago_mc.py congelado, sem gates nem previsões novas.
 **Fase D — limpeza antes da submissão (uma sessão):**
 - Motor de compilação: decidido pdflatex, Makefile atualizado (root), fonte única
   paper/manuscript/main.tex, src/main.tex removido.
+  **PENDENTE: escolher pdflatex como único motor (remover variantes `(xelatex variant)`
+  do whitelist do check_consistency.py); corrigir linhas com overflow >1 pt em vez de
+  as pôr no whitelist — 13.12 pt e 20.05 pt são visíveis no PDF.**
 - suppl_wrapper microtype: `pdfTeX error: auto expansion is only possible with
   scalable fonts` — fix: `\usepackage[protrusion=true,expansion=false]{microtype}`
   em suppl_wrapper.tex. Até lá, tab:orient_conv e tab:e7grid ficam indefinidas (3
@@ -99,3 +102,12 @@ Correm com run_santiago_mc.py congelado, sem gates nem previsões novas.
 - *, w0 na assinatura
 - corrigir texto do DEV-GPU-001
 - lista de erratas acumuladas até lá
+- **PENDENTE (Athena): clone limpo — `git clone && make paper && make check` ambos
+  exit 0; confirmar que build_paper.py funciona em Linux.**
+- **PENDENTE: FrontFracSN, FrontFracST, FrontFracFogo** (fracção de portefólios na
+  fronteira com pesos nominais); scripts/compute_descriptive.py tem a lógica para
+  S-N; S-T e Fogo precisam de correr na Athena (16.7M e 1.94M triplos).
+  Quando existirem, trocar a ressalva qualitativa da S5 pela quantitativa.
+- **PENDENTE: \SantSNRegadiosPct** (4.25%, scripts/compute_descriptive.py) usa
+  convex hull dos candidatos como proxy da área S-N. Melhorar com polígono concavehull
+  ou fronteiras municipais de Praia+SãoDomingos+RibeiraGrandeSantiago se disponíveis.
