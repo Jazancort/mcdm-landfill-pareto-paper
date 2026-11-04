@@ -1,18 +1,11 @@
 # Estado actual — handoff para próxima sessão
 
-**Ramo:** `main` HEAD `a17c239`.
+**Ramo:** `writing-santiago` HEAD `180ee60` (4 commits acima de `origin/main` ea86be2).
+PR aberto em: https://github.com/Jazancort/mcdm-landfill-pareto-paper/pull/new/writing-santiago
 
-**Bloco 1 em curso.** Tabelas A e B prontas em `paper/manuscript/santiago.tex`. Texto §8.1–§8.2 com análise S2+S6, S7a, S3b, K5/K6. Compilação: 30 páginas, 0 cross-references por resolver (5 passes pdflatex).
+**Bloco 1 pronto para revisão.** `santiago.tex` com §8 completo; compilação 33 páginas, bibtex funcional (0 citações indefinidas), 0 marcadores ativos.
 
-**Próximo passo:** revisão das Tabelas A e B e do texto por Julio. Verificar cada célula quanto ao veredicto. Tópicos pendentes: nome das cidades S-T e S-N ([CITY-A], [CITY-B]); secção de sensibilidades (Fase C).
-
-**Nota de arranque:**
-```powershell
-$REPO = "g:\...\paper - Comparison between MCDM Methods for Landfill Site Selection"
-cd $REPO
-git switch main; git pull --ff-only; git log --oneline -3
-```
-Enviar `paper/manuscript/santiago.tex` para revisão e começar Fase C (SENS-AGR, S-N a 1.25km) quando aprovado.
+**Próximo passo:** Julio revê `paper/manuscript/santiago.tex` e legenda do `fig:kappa`. Depois abrir PR e fazer merge para main.
 
 **Avaliação do Santiago fechada (v2, commit d02a324, tag predictions-eval-v2).**
 Bloco 0 completo: 219 macros em `macros_santiago.tex` (SHA verificado, 5 ficheiros),
@@ -71,24 +64,29 @@ Só levanto um problema se mudar um veredicto. Tudo o resto vai para a lista da 
   --santiago` difere 219 linhas contra temp. K6 CIs: `santiago_k6_ci.json` (SHA
   88fc473c…), percentile bootstrap B=2000. Figura `fig_kappa_santiago.pdf`: 3 curvas
   (Fogo, S-T, S-N), bandas de IC, Wong palette, fig_utils.
-- Bloco 1: EM REVISÃO (a17c239). `santiago.tex` com §8, Tabela A (9 linhas), Tabela B
-  (16 linhas S0–S7b K1–K6), texto S2+S6/S7a/S3b/K5+K6. Figura em §7.9 (caption
-  actualizada para 3 curvas). Citação nfmt() aplicada (16{,}699{,}705). 30 páginas,
-  0 cross-references por resolver.
-  Pendente: nomes [CITY-A]/[CITY-B], aprovação das tabelas.
-- Depois: §7 (abstract actualizado com Santiago), highlights, §9 Discussion com
-  referência a Santiago, §10 Conclusion.
+- Bloco 1: PRONTO PARA REVISÃO (180ee60, ramo writing-santiago). `santiago.tex`:
+  §8.1 Tabela A (9 linhas); §8.2 Tabela B (16 previsões S0–S7b K1–K6 com coluna
+  Fogo com valores reais para S5/S6/S7a/S7b e §\ref para os restantes); texto
+  S2+S6/S7a/S3b/K5+K6; figura option A (fig_kappa_santiago.pdf).
+  Citações: bibtex funcional (0 indefinidas). Marcadores: 0 ativos.
+  Fonte única: paper/manuscript/main.tex (src/main.tex removido). Makefile
+  atualizado para pdflatex + paper/manuscript/ como fonte.
+  Pendente: aprovação das tabelas; suppl_wrapper microtype fix (Fase D).
+- Depois: §7 (abstract com Santiago), highlights, §9 Discussion, §10 Conclusion.
 
 **Fase C — sensibilidades** (paralela, só descritivas):
 SENS-AGR, S-N a 1,25 km, S5 com perm categórico, SENS-ZDTI-DISTRIB.
 Correm com run_santiago_mc.py congelado, sem gates nem previsões novas.
 
 **Fase D — limpeza antes da submissão (uma sessão):**
-- Motor de compilação: decidir entre pdflatex e xelatex, actualizar Makefile,
-  usar sempre o mesmo. O xelatex crashava no 2.º passe por VS Code/MiKTeX a
-  compilar em background e bloquear ficheiros (não é bug do documento); solução:
-  desligar compilação automática do VS Code ou compilar sempre na Athena com Make.
-  Número de páginas muda entre os dois motores (30 vs 31).
+- Motor de compilação: decidido pdflatex, Makefile atualizado (root), fonte única
+  paper/manuscript/main.tex, src/main.tex removido.
+- suppl_wrapper microtype: `pdfTeX error: auto expansion is only possible with
+  scalable fonts` — fix: `\usepackage[protrusion=true,expansion=false]{microtype}`
+  em suppl_wrapper.tex. Até lá, tab:orient_conv e tab:e7grid ficam indefinidas (3
+  referências, pré-existentes).
+- thumbnails/: copiar `thumbnails/cas-email.jpeg` do template CAS-DC para o repo;
+  a sua ausência faz pdflatex sair com exit 1 em vez de exit 0.
 - thumbnails/: copiar `thumbnails/cas-email.jpeg` do template CAS-DC para o repo;
   a sua ausência faz pdflatex sair com exit 1 em vez de exit 0.
 - Referências por resolver: após compilar `suppl_wrapper.tex` primeiro, confirmar
