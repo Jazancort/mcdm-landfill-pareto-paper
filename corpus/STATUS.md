@@ -87,8 +87,6 @@ Correm com run_santiago_mc.py congelado, sem gates nem previsões novas.
   referências, pré-existentes).
 - thumbnails/: copiar `thumbnails/cas-email.jpeg` do template CAS-DC para o repo;
   a sua ausência faz pdflatex sair com exit 1 em vez de exit 0.
-- thumbnails/: copiar `thumbnails/cas-email.jpeg` do template CAS-DC para o repo;
-  a sua ausência faz pdflatex sair com exit 1 em vez de exit 0.
 - Referências por resolver: após compilar `suppl_wrapper.tex` primeiro, confirmar
   `grep -cE 'Reference .* undefined' main.log` devolve 0.
 - Frase do E7: "as pre-registered (PRESPEC E7 §6)" → "as specified in
