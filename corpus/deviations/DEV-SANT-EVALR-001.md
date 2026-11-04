@@ -365,3 +365,40 @@ Mudanças em 30ea02f vs runs anteriores:
 - .npz: 14 arrays (7×κ=200 + 7×κ=∞); R calculado só em κ=200
 - DEV-SANT-K5-001: K5(a) corrigido para Q2(SAW,vec,opt)−Q2(SAW,vec,grd)
 - diagnostics/_count_e1b_zeros.py: tabela comparativa batch vs sequencial
+
+---
+
+### ER-SCOPE-R: âmbito do R e dos arrays de κ=∞ (declarado antes da corrida)
+
+**Declarado:** antes da avaliação completa (este commit).
+
+#### R é calculado só em κ=200
+
+`compute_value_regret_santiago(branch_key, kappa=200)` é chamado uma vez em `main()`.
+Não existe chamada análoga para κ=∞ nem para outros κ.
+
+Consequências directas:
+- **S0 do R**: cobre 500 sorteios em κ=200. Não cobre κ=∞ (1 sorteio, determinístico).
+  O CSV selado cobre κ=∞ na contagem de Q2 (via evaluate_branch S0), mas o R do S0
+  (R_mm_opt = 0 em todos os sorteios) vem apenas do κ=200.
+- **S6, S7a, S7b**: por definição, usam κ=200. Não afectados.
+- **Contagem total**: 500 sorteios, não 3001 (3001 = 6×500 raw + 1 determinístico).
+
+#### Arrays de κ=∞ no .npz são referência, não verificados no Gate 4a
+
+O gate3_trios_*.npz contém 14 arrays:
+- 7 arrays de shape (500,) para κ=200 → verificados por Gate 4a identity (500 draw-by-draw checks)
+- 7 arrays de shape (1,) com sufixo `_inf` para κ=∞ → não entram no Gate 4a identity
+  nem no cálculo de R; guardados para referência futura
+
+#### Índices do E1 em κ=∞ não verificados contra a função MC importada
+
+No caminho GPU (que é o que corre em Athena), os índices `E1{M,B,W,V}_opt_inf` são
+calculados por uma expressão própria do gate3:
+```python
+V_e1_inf_gpu = (_X_trio_e1_gpu * (w_inf_gpu_e1 * A_j_gpu)).sum(1)
+_e1_inf_indices[e1_name] = int(cp.argmax(V_e1_inf_gpu))
+```
+Esta expressão **não chama** `compute_e1_cells_gpu` (a função importada do MC).
+Os valores não estão verificados por comparação com a função canónica. Para a avaliação
+actual (R só em κ=200), esta não-verificação não afecta nenhum resultado.

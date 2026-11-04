@@ -95,6 +95,15 @@ if diff_trio.any():
     R_nonzero = R_e1b[diff_trio]
     print(f"  min R_pp (trio!=t*): {R_nonzero[R_nonzero > 0].min():.6f} pp")
 
+# Pre-compute sequential summary values for the comparison table
+_seq_neg      = int((R_e1b < 0).sum())
+_seq_pos_near = int(((R_e1b > 0) & (R_e1b < 1e-9)).sum())
+_seq_exact0   = int((R_e1b == 0.0).sum())
+_seq_tstar    = int(same_as_mm.sum())
+# Minimum R for draws with trio != t* (sequential path)
+_diff_seq = R_e1b[~same_as_mm]
+_seq_min_r = float(_diff_seq[_diff_seq > 0].min()) if (_diff_seq > 0).any() else float('nan')
+
 # ── Oracle CSV: batch computation (e1_oracle_per_draw.csv, SHA 913396ce) ──────
 print("\n=== Path 2: Oracle CSV (batch V_max, compute_regret.py, SHA 913396ce) ===")
 E1_OR = ROOT / "results" / "regret" / "e1_oracle_per_draw.csv"
@@ -121,9 +130,9 @@ if E1_OR.exists():
     print("  Summary table:")
     print(f"  {'Fonte':<42} {'R==0':>6} {'0<R<1e-9':>9} {'R<0':>5} {'trio=t*':>8}")
     print(f"  {'CSV oráculo (batch V_max)':<42} {n_ex0:>6} {n_pos_near:>9} {n_neg:>5} {n_tstar:>8}")
-    print(f"  {'Sequencial (sorteio a sorteio)':<42} {(R_e1b==0.0).sum():>6} {'0':>9} {'0':>5} {same_as_mm.sum():>8}")
+    print(f"  {'Sequencial (sorteio a sorteio)':<42} {_seq_exact0:>6} {_seq_pos_near:>9} {_seq_neg:>5} {_seq_tstar:>8}")
     print("  Diferenças: artefacto float64 batch vs sequencial.")
-    print(f"  Ambas dão trio==t*=177 e min R (trio!=t*)=0.0426 pp. "
+    print(f"  Ambas dão trio==t*={_seq_tstar} e min R (trio!=t*)={_seq_min_r:.4f} pp. "
           f"Gate 1 usa o sequencial (compute_value_regret).")
 else:
     print("  (e1_oracle_per_draw.csv not found)")

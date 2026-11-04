@@ -166,8 +166,7 @@ def compute_value_regret(
         )
 
     # E1 amplitudes — constant across draws (computed from fixed w0)
-    # Mandatory: e1_fn is not None (checked above).
-    e1_avail = True
+    # Mandatory: e1_fn is not None (checked above). e1 code always runs.
     e1_amps  = e1_fn()  # {"M": A_M, "B": A_B, "W": A_W, "V": A_V} — no per-draw arg
     A_B = np.asarray(e1_amps["B"], dtype=np.float64)
     A_W = np.asarray(e1_amps["W"], dtype=np.float64)
@@ -282,54 +281,53 @@ def compute_value_regret(
                     f"R_grd={R_vec_grd[di]:.3e} != R_opt={R_vec_opt[di]:.3e}"
                 )
 
-        # ── E1 (constant amplitudes, per-draw w) ────────────────────────
-        if e1_avail:
-            V_e1b = (X_trio_e1b * w).sum(1)     # (T,) float64 — E1-B
-            V_e1w = (X_trio_e1w * w).sum(1)     # (T,) float64 — E1-W
-            # Gate 4d: E1-V uses X_trio_e1v (= X_trio * A_V from e1_fn()["V"])
-            # Must agree with V_vec_trios since A_V == rho_j (checked pre-loop).
-            V_e1v = (X_trio_e1v * w).sum(1)     # (T,) float64 — E1-V (via e1_fn["V"])
-            V_e1m = V_all                        # (T,) float64 — E1-M = SAW_mm
+        # ── E1 (constant amplitudes, per-draw w) — always runs (e1_fn is mandatory)
+        V_e1b = (X_trio_e1b * w).sum(1)     # (T,) float64 — E1-B
+        V_e1w = (X_trio_e1w * w).sum(1)     # (T,) float64 — E1-W
+        # Gate 4d: E1-V uses X_trio_e1v (= X_trio * A_V from e1_fn()["V"])
+        # Must agree with V_vec_trios since A_V == rho_j (checked pre-loop).
+        V_e1v = (X_trio_e1v * w).sum(1)     # (T,) float64 — E1-V (via e1_fn["V"])
+        V_e1m = V_all                        # (T,) float64 — E1-M = SAW_mm
 
-            opt_e1b_idx = int(np.argmax(V_e1b))
-            opt_e1w_idx = int(np.argmax(V_e1w))
-            opt_e1v_idx = int(np.argmax(V_e1v))
-            opt_e1m_idx = int(np.argmax(V_e1m))
+        opt_e1b_idx = int(np.argmax(V_e1b))
+        opt_e1w_idx = int(np.argmax(V_e1w))
+        opt_e1v_idx = int(np.argmax(V_e1v))
+        opt_e1m_idx = int(np.argmax(V_e1m))
 
-            R_e1b_opt[di] = max(0.0, (v_max - float(V_all[opt_e1b_idx])) / v_rng)
-            R_e1w_opt[di] = max(0.0, (v_max - float(V_all[opt_e1w_idx])) / v_rng)
+        R_e1b_opt[di] = max(0.0, (v_max - float(V_all[opt_e1b_idx])) / v_rng)
+        R_e1w_opt[di] = max(0.0, (v_max - float(V_all[opt_e1w_idx])) / v_rng)
 
-            # Store E1 trio indices for Gate 4a identity verification
-            trio_idx_e1b_opt[di] = opt_e1b_idx
-            trio_idx_e1w_opt[di] = opt_e1w_idx
-            trio_idx_e1v_opt[di] = opt_e1v_idx
-            trio_idx_e1m_opt[di] = opt_e1m_idx
+        # Store E1 trio indices for Gate 4a identity verification
+        trio_idx_e1b_opt[di] = opt_e1b_idx
+        trio_idx_e1w_opt[di] = opt_e1w_idx
+        trio_idx_e1v_opt[di] = opt_e1v_idx
+        trio_idx_e1m_opt[di] = opt_e1m_idx
 
-            # Assert: (trio_sel != t*) <==> (R > 0)
-            # In production code R == 0.0 exactly iff opt_e1b_idx == opt_mm_idx.
-            # If this assert fires, there is a floating-point mismatch or a bug.
-            trio_neq_tstar = (opt_e1b_idx != opt_mm_idx)
-            r_e1b_pos      = (R_e1b_opt[di] > 0.0)
-            assert trio_neq_tstar == r_e1b_pos, (
-                f"[EVAL-R {label}] draw {di}: "
-                f"trio_neq_tstar={trio_neq_tstar} but R_e1b>0={r_e1b_pos} "
-                f"(R_e1b={R_e1b_opt[di]:.3e}); min non-zero R must be >> 1e-12"
-            )
-            n_nonzero_e1b_trio += int(trio_neq_tstar)
+        # Assert: (trio_sel != t*) <==> (R > 0)
+        # In production code R == 0.0 exactly iff opt_e1b_idx == opt_mm_idx.
+        # If this assert fires, there is a floating-point mismatch or a bug.
+        trio_neq_tstar = (opt_e1b_idx != opt_mm_idx)
+        r_e1b_pos      = (R_e1b_opt[di] > 0.0)
+        assert trio_neq_tstar == r_e1b_pos, (
+            f"[EVAL-R {label}] draw {di}: "
+            f"trio_neq_tstar={trio_neq_tstar} but R_e1b>0={r_e1b_pos} "
+            f"(R_e1b={R_e1b_opt[di]:.3e}); min non-zero R must be >> 1e-12"
+        )
+        n_nonzero_e1b_trio += int(trio_neq_tstar)
 
-            # Gate 4d: E1-V ≡ SAW_vec (A_V = rho_j, so V_e1v = V_vec_trios)
-            # Both use identical float64 computation; must agree exactly.
-            assert opt_e1v_idx == opt_vec_idx, (
-                f"[EVAL-R {label}] Gate 4d draw {di}: "
-                f"E1-V opt={opt_e1v_idx} != SAW_vec opt={opt_vec_idx}. "
-                "A_V != rho_j or floating-point disagrees."
-            )
-            # Gate 4e: E1-M ≡ SAW_mm (A_M = ones, so V_e1m = V_all)
-            assert opt_e1m_idx == opt_mm_idx, (
-                f"[EVAL-R {label}] Gate 4e draw {di}: "
-                f"E1-M opt={opt_e1m_idx} != SAW_mm opt={opt_mm_idx}. "
-                "A_M != ones or floating-point disagrees."
-            )
+        # Gate 4d: E1-V ≡ SAW_vec (A_V = rho_j, so V_e1v = V_vec_trios)
+        # Both use identical float64 computation; must agree exactly.
+        assert opt_e1v_idx == opt_vec_idx, (
+            f"[EVAL-R {label}] Gate 4d draw {di}: "
+            f"E1-V opt={opt_e1v_idx} != SAW_vec opt={opt_vec_idx}. "
+            "A_V != rho_j or floating-point disagrees."
+        )
+        # Gate 4e: E1-M ≡ SAW_mm (A_M = ones, so V_e1m = V_all)
+        assert opt_e1m_idx == opt_mm_idx, (
+            f"[EVAL-R {label}] Gate 4e draw {di}: "
+            f"E1-M opt={opt_e1m_idx} != SAW_mm opt={opt_mm_idx}. "
+            "A_M != ones or floating-point disagrees."
+        )
 
         if verbose and di % 100 == 0:
             print(f"  draw {di}/{B}", flush=True)
@@ -347,9 +345,8 @@ def compute_value_regret(
         print("  Gate 4a (R_mm==0 exact, unique argmax): PASS", flush=True)
         print("  Gate 4b (0<=R<=1): PASS", flush=True)
         print("  Gate 4c (same_trio=>R_grd==R_opt): PASS", flush=True)
-        if e1_avail:
-            print("  Gate 4d (E1-V==SAW_vec): PASS", flush=True)
-            print("  Gate 4e (E1-M==SAW_mm):  PASS", flush=True)
+        print("  Gate 4d (E1-V==SAW_vec): PASS", flush=True)
+        print("  Gate 4e (E1-M==SAW_mm):  PASS", flush=True)
         print(f"  min_v_margin_mm = {min_v_margin_mm:.3e}", flush=True)
         print(f"  same-trio SAW/vec: {n_same_trio}/{B}", flush=True)
 
@@ -363,18 +360,20 @@ def compute_value_regret(
         "R_diff_mean_pp":   round(float(R_diff_pp.mean()), 2),
         "min_v_margin_mm":  float(min_v_margin_mm),
     }
-    if e1_avail:
-        summary.update({
-            "R_e1b_mean_pp":       round(float(np.nanmean(R_e1b_opt)   * 100), 2),
-            "R_e1b_median_pp":     round(float(np.nanmedian(R_e1b_opt) * 100), 2),
-            "R_e1w_mean_pp":       round(float(np.nanmean(R_e1w_opt)   * 100), 2),
-            "R_e1w_median_pp":     round(float(np.nanmedian(R_e1w_opt) * 100), 2),
-            "frac_R_e1b_zero":     round(float((R_e1b_opt < 1e-12).mean()), 4),
-            "n_e1b_zero_exact":    int((R_e1b_opt < 1e-12).sum()),
-            # Trio-based count (primary): n_nonzero = sum(trio_sel != t*)
-            # Equivalent to R>0 by assertion; trio comparison is the definition.
-            "n_nonzero_e1b_trio":  n_nonzero_e1b_trio,
-        })
+    # E1 always computed (e1_fn is mandatory); update summary unconditionally
+    summary.update({
+        "R_e1b_mean_pp":       round(float(np.nanmean(R_e1b_opt)   * 100), 2),
+        "R_e1b_median_pp":     round(float(np.nanmedian(R_e1b_opt) * 100), 2),
+        "R_e1w_mean_pp":       round(float(np.nanmean(R_e1w_opt)   * 100), 2),
+        "R_e1w_median_pp":     round(float(np.nanmedian(R_e1w_opt) * 100), 2),
+        "frac_R_e1b_zero":     round(float((R_e1b_opt < 1e-12).mean()), 4),
+        "n_e1b_zero_exact":    int((R_e1b_opt < 1e-12).sum()),
+        # Trio-based count (primary): n_nonzero = sum(trio_sel != t*)
+        # Equivalent to R>0 by assertion; trio comparison is the definition.
+        "n_nonzero_e1b_trio":  n_nonzero_e1b_trio,
+    })
+    # trio_grd_vec_sites: populated only if greedy_fn was provided ([] if not)
+    # Gate 4a identity validation requires len == B; raises FAIL if empty.
     return {
         "label":             label,
         "N_DRAWS":           B,
@@ -385,11 +384,11 @@ def compute_value_regret(
         "R_e1w_opt_pp":      (R_e1w_opt * 100).tolist(),
         "trio_idx_mm_opt":   trio_idx_mm_opt.tolist(),
         "trio_idx_vec_opt":  trio_idx_vec_opt.tolist(),
-        "trio_idx_e1b_opt":  trio_idx_e1b_opt.tolist() if e1_avail else None,
-        "trio_idx_e1w_opt":  trio_idx_e1w_opt.tolist() if e1_avail else None,
-        "trio_idx_e1v_opt":  trio_idx_e1v_opt.tolist() if e1_avail else None,
-        "trio_idx_e1m_opt":  trio_idx_e1m_opt.tolist() if e1_avail else None,
-        "trio_grd_vec_sites": trio_grd_vec_sites if greedy_fn is not None else None,
+        "trio_idx_e1b_opt":  trio_idx_e1b_opt.tolist(),
+        "trio_idx_e1w_opt":  trio_idx_e1w_opt.tolist(),
+        "trio_idx_e1v_opt":  trio_idx_e1v_opt.tolist(),
+        "trio_idx_e1m_opt":  trio_idx_e1m_opt.tolist(),
+        "trio_grd_vec_sites": trio_grd_vec_sites,   # [] if greedy_fn is None
         "min_v_margin_mm":   float(min_v_margin_mm),
         "n_same_trio_sawvec": n_same_trio,
         "summary":           summary,

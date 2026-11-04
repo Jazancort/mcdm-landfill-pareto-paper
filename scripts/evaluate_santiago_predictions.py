@@ -135,19 +135,21 @@ def _check_gate3_row_counts(n_raw: int, n_e1: int,
 
 def _check_gate4a_identity(g3_dict: dict, regret_dict: dict,
                             branch_key: str,
-                            trios: np.ndarray = None) -> None:
+                            trios: np.ndarray) -> None:
     """Gate 4a identity: all 7 arrays in Gate 3 npz must equal compute_value_regret output.
 
     Checks 500 draws, FAIL on first difference.
-    Called inside main() and directly by test_mutation_11.
+    trios is REQUIRED: no default. FAIL if trios is not provided.
+    FAIL immediately if any key is missing, any value is None, or any index disagrees.
 
-    Arrays checked:
-    - SAW_mm_opt, SAW_vec_opt, E1M_opt, E1B_opt, E1W_opt, E1V_opt: direct index equality
-    - SAW_vec_grd: frozenset(grd_sites) == frozenset(trios[g3_idx])  [requires trios arg]
-
-    Raises RuntimeError with match='Gate 4a identity FAIL' if any mismatch.
+    Called inside main() and directly by parametrized test_mutation_11_*
     """
-    # Map from gate3 dict key → compute_value_regret return key
+    if trios is None:
+        raise RuntimeError(
+            f"Gate 4a identity FAIL ({branch_key}): "
+            "trios array is required but not provided."
+        )
+
     KEY_MAP = {
         "SAW_mm_opt": "trio_idx_mm_opt",
         "SAW_vec_opt": "trio_idx_vec_opt",
@@ -156,14 +158,33 @@ def _check_gate4a_identity(g3_dict: dict, regret_dict: dict,
         "E1W_opt":    "trio_idx_e1w_opt",
         "E1V_opt":    "trio_idx_e1v_opt",
     }
+    B = len(g3_dict)
     grd_vec_sites = regret_dict.get("trio_grd_vec_sites")
 
+    # Validate grd_vec_sites presence and length — FAIL if wrong
+    if not grd_vec_sites or len(grd_vec_sites) != B:
+        raise RuntimeError(
+            f"Gate 4a identity FAIL ({branch_key}): "
+            f"trio_grd_vec_sites has {len(grd_vec_sites) if grd_vec_sites else 0} "
+            f"entries, expected {B}. "
+            "Ensure compute_value_regret was called with greedy_fn."
+        )
+
     for di, cell_dict in g3_dict.items():
-        # Direct index checks (6 arrays)
+        # Direct index checks (6 arrays) — FAIL on None or missing key, no skipping
         for g3_key, evalr_key in KEY_MAP.items():
             evalr_list = regret_dict.get(evalr_key)
             if evalr_list is None:
-                continue  # E1 not computed (e1_fn not provided)
+                raise RuntimeError(
+                    f"Gate 4a identity FAIL ({branch_key}): "
+                    f"compute_value_regret did not return '{evalr_key}' (None). "
+                    "Ensure e1_fn and greedy_fn are provided."
+                )
+            if g3_key not in cell_dict:
+                raise RuntimeError(
+                    f"Gate 4a identity FAIL ({branch_key} draw {di}): "
+                    f"Gate3 dict missing required key '{g3_key}'."
+                )
             opt_g3    = cell_dict[g3_key]
             opt_evalr = evalr_list[di]
             if opt_g3 != opt_evalr:
@@ -171,18 +192,22 @@ def _check_gate4a_identity(g3_dict: dict, regret_dict: dict,
                     f"Gate 4a identity FAIL ({branch_key} draw {di} {g3_key}): "
                     f"Gate3={opt_g3} != EVAL-R={opt_evalr}"
                 )
-        # SAW_vec_grd: frozenset comparison (gate3 has trio index, evalr has site indices)
-        if trios is not None and grd_vec_sites is not None and di < len(grd_vec_sites):
-            g3_grd_idx = cell_dict.get("SAW_vec_grd")
-            if g3_grd_idx is not None:
-                grd_sites = grd_vec_sites[di]          # [i0, i1, i2] from greedy_fn
-                g3_sites  = trios[g3_grd_idx].tolist() # trio sites from gate3 index
-                if frozenset(grd_sites) != frozenset(g3_sites):
-                    raise RuntimeError(
-                        f"Gate 4a identity FAIL ({branch_key} draw {di} SAW_vec_grd): "
-                        f"Gate3 sites={sorted(g3_sites)} != "
-                        f"EVAL-R greedy_fn sites={sorted(grd_sites)}"
-                    )
+
+        # SAW_vec_grd — FAIL if key missing (no .get() with None default)
+        if "SAW_vec_grd" not in cell_dict:
+            raise RuntimeError(
+                f"Gate 4a identity FAIL ({branch_key} draw {di}): "
+                "Gate3 dict missing required key 'SAW_vec_grd'."
+            )
+        g3_grd_idx = cell_dict["SAW_vec_grd"]
+        grd_sites  = grd_vec_sites[di]
+        g3_sites   = trios[g3_grd_idx].tolist()
+        if frozenset(grd_sites) != frozenset(g3_sites):
+            raise RuntimeError(
+                f"Gate 4a identity FAIL ({branch_key} draw {di} SAW_vec_grd): "
+                f"Gate3 sites={sorted(g3_sites)} != "
+                f"EVAL-R greedy_fn sites={sorted(grd_sites)}"
+            )
 
 
 def _check_q2_cell(got: int, exp: int, kappa: float,
@@ -837,13 +862,17 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
         k6_inf = k5a_inf = None
 
     # K5 sign checks (descriptive, no verdict)
+    # INDETERMINATE if EITHER side is 0 (not just kappa=inf).
+    # Declared post-data: S-T K5(a)=0 for k>=100, k=inf; both are 0 at k=1000 and k=inf.
+    # Two readings reported: "indeterminate" (primary) if any zero; "not confirmed" (conservative).
     def _sign(x): return 1 if x > 0 else (-1 if x < 0 else 0)
     k5a_sign_1000 = _sign(k5a.get("1000", 0))
     k5a_sign_inf  = _sign(k5a_inf) if k5a_inf is not None else 0
     k5b_sign_1000 = _sign(float(k6.get("1000", 0)))
     k5b_sign_inf  = _sign(k6_inf) if k6_inf is not None else 0
-    k5a_same_sign = (k5a_sign_1000 == k5a_sign_inf) if k5a_sign_inf != 0 else None
-    k5b_same_sign = (k5b_sign_1000 == k5b_sign_inf) if k5b_sign_inf != 0 else None
+    # INDETERMINATE if either side is 0; CONFIRMED if both nonzero and same sign
+    k5a_same_sign = (k5a_sign_1000 == k5a_sign_inf) if (k5a_sign_1000 != 0 and k5a_sign_inf != 0) else None
+    k5b_same_sign = (k5b_sign_1000 == k5b_sign_inf) if (k5b_sign_1000 != 0 and k5b_sign_inf != 0) else None
 
     s4 = {"prediction": "S4",
           "text": "SAW-TOPSIS Agg_pooled3 per kappa (3 informative cells; K5 descriptive sign check)",
@@ -1543,10 +1572,10 @@ def main():
         fresh_hash = _npz_content_hash(_fresh)
         sealed_hash = SHA_NPZ_GATE3.get(tag, "PENDING_UPDATE_AFTER_GATE3_RERUN")
         if sealed_hash.startswith("PENDING"):
-            print(
-                f"  Gate 4a ({tag}): SHA_NPZ_GATE3['{tag}'] not yet set — "
-                f"skip sealed check. Run --gate3-only and update SHA_NPZ_GATE3.",
-                flush=True,
+            raise RuntimeError(
+                f"Gate 4a FAIL ({tag}): SHA_NPZ_GATE3['{tag}'] is PENDING. "
+                "Run --gate3-only on the current commit and set SHA_NPZ_GATE3 "
+                "before running full evaluation."
             )
         else:
             if fresh_hash != sealed_hash:

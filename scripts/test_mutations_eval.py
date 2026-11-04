@@ -291,20 +291,85 @@ def test_mutation_10_e1_abar_w_not_w0():
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Mutation 11 — Gate 4a identity: second-best trio in Gate 3 result must raise
-# Calls _check_gate4a_identity() from production.
+# Mutations 11a–11c — Gate 4a: parametrized 7-array check + missing key + trios required
 # ──────────────────────────────────────────────────────────────────────────────
 
-def test_mutation_11_gate4a_second_best():
-    """Gate 4a identity: second-best trio (index 5) vs EVAL-R best (index 3) must raise."""
+_np11 = np  # alias for Gate 4a test fixtures (numpy already imported at module top)
+
+# 7-entry trios array for Gate 4a tests; trios[0] = sites [0,1,2]
+_TRIOS_T11 = _np11.array(
+    [[0,1,2],[3,4,5],[6,7,8],[0,2,3],[1,3,5],[2,4,6],[0,3,6]], dtype=_np11.int32
+)
+_ALL_G3_KEYS = ["SAW_mm_opt","SAW_vec_opt","SAW_vec_grd","E1M_opt","E1B_opt","E1W_opt","E1V_opt"]
+_KEY_TO_REGRET = {
+    "SAW_mm_opt":  "trio_idx_mm_opt",
+    "SAW_vec_opt": "trio_idx_vec_opt",
+    "E1M_opt":     "trio_idx_e1m_opt",
+    "E1B_opt":     "trio_idx_e1b_opt",
+    "E1W_opt":     "trio_idx_e1w_opt",
+    "E1V_opt":     "trio_idx_e1v_opt",
+}
+
+def _g3_base(B=3):
+    """Gate3 dict with all 7 keys set to 0 for draws 0..B-1."""
+    return {di: {k: 0 for k in _ALL_G3_KEYS} for di in range(B)}
+
+def _regret_base(B=3):
+    """compute_value_regret dict matching g3_base (all zeros, grd sites = trios[0])."""
+    return {
+        "trio_idx_mm_opt":   [0]*B,
+        "trio_idx_vec_opt":  [0]*B,
+        "trio_idx_e1m_opt":  [0]*B,
+        "trio_idx_e1b_opt":  [0]*B,
+        "trio_idx_e1w_opt":  [0]*B,
+        "trio_idx_e1v_opt":  [0]*B,
+        "trio_grd_vec_sites": [[0,1,2]]*B,   # matches _TRIOS_T11[0]
+    }
+
+
+@pytest.mark.parametrize("wrong_key", _ALL_G3_KEYS)
+def test_mutation_11a_gate4a_each_array(wrong_key):
+    """Each of the 7 Gate3 arrays triggers FAIL when draw 0 differs from EVAL-R."""
     from evaluate_santiago_predictions import _check_gate4a_identity
-    import numpy as np
-    # Minimal trios array — only used to verify SAW_vec_grd via frozenset
-    trios_dummy = np.array([[0,1,2],[3,4,5],[6,7,8],[0,2,3],[1,3,5],[2,4,6]], dtype=np.int32)
-    g3     = {0: {"SAW_mm_opt": 5, "SAW_vec_opt": 3, "SAW_vec_grd": 1,
-                  "E1M_opt": 3, "E1B_opt": 3, "E1W_opt": 3, "E1V_opt": 3}}
-    regret = {"trio_idx_mm_opt": [3]}   # eval-R says best=3, gate3 says 5 → FAIL
+    B = 3
+    g3     = _g3_base(B)
+    regret = _regret_base(B)
+
+    # Mutate: draw 0 in g3 differs from regret (g3 says 0, regret says 1)
+    if wrong_key == "SAW_vec_grd":
+        # Mismatch: regret grd_sites don't match _TRIOS_T11[0]=[0,1,2]
+        regret["trio_grd_vec_sites"][0] = [10, 20, 30]
+    elif wrong_key in _KEY_TO_REGRET:
+        evalr_key = _KEY_TO_REGRET[wrong_key]
+        regret[evalr_key][0] = 1   # different from g3 value (0)
+
     with pytest.raises(RuntimeError, match="Gate 4a identity FAIL"):
+        _check_gate4a_identity(g3, regret, "TEST", trios=_TRIOS_T11)
+
+
+def test_mutation_11b_gate4a_missing_key():
+    """Gate 4a must FAIL if a required key is missing from g3_dict (no silent skip)."""
+    from evaluate_santiago_predictions import _check_gate4a_identity
+    B = 2
+    g3     = _g3_base(B)
+    regret = _regret_base(B)
+    # Remove SAW_vec_grd from g3
+    for di in g3:
+        del g3[di]["SAW_vec_grd"]
+    with pytest.raises(RuntimeError, match="Gate 4a identity FAIL"):
+        _check_gate4a_identity(g3, regret, "TEST", trios=_TRIOS_T11)
+
+
+def test_mutation_11c_gate4a_trios_required():
+    """Gate 4a must FAIL (not skip) when trios is not provided."""
+    from evaluate_santiago_predictions import _check_gate4a_identity
+    B = 2
+    g3     = _g3_base(B)
+    regret = _regret_base(B)
+    # Calling without trios: trios is now a required positional arg → TypeError,
+    # OR RuntimeError if a None sentinel is passed
+    with pytest.raises((RuntimeError, TypeError)):
+        # No trios argument — either TypeError (missing arg) or RuntimeError
         _check_gate4a_identity(g3, regret, "TEST")
 
 
