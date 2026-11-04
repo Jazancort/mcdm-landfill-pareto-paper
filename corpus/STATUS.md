@@ -1,5 +1,8 @@
 # Estado actual — handoff para próxima sessão
 
+**Ramo:** `eval-v2-rewrite` (este ficheiro está aqui, não em main).
+Ao abrir a próxima sessão: `git switch eval-v2-rewrite`.
+
 **Avaliação do Santiago fechada (v2, commit d02a324, tag predictions-eval-v2).**
 Escrita, Bloco 0: gerar o macros_santiago.tex a partir do santiago_predictions_v2.json,
 verificando o SHA (1fbc412b…), e juntá-lo ao verify_macros_permanent.py. O p da S3b é
