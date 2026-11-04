@@ -1,0 +1,35 @@
+Loading data...
+V_max/V_min batch...
+  draw 0/500
+  draw 100/500
+  draw 200/500
+  draw 300/500
+  draw 400/500
+
+R_e1b stats: min=0.00000000 max=13.1059 mean=4.5275
+
+=== Path 1: Sequential computation (this script, V_all draw-by-draw) ===
+  (0) R < 0  (before clamp):        0
+  (1) R==0.0 exact:               177
+  (2) R<1e-12 pp:                 177
+  (3) R<1e-9  pp:                 177
+  (4) round(R,2)==0.00:           177
+  (5) opt_e1b==opt_mm (semantic): 177
+  min R_pp (trio!=t*): 0.042616 pp
+
+=== Path 2: Oracle CSV (batch V_max, compute_regret.py, SHA 913396ce) ===
+  (0) R < 0 (batch artifact):      44
+  (1) R==0.0 exact:               101
+  (2) 0 < R < 1e-9 pp:             32
+  (3) trio == t* (semantic):       177
+  max |R| (negatives):            4.673859e-14 pp
+  min R_pp (trio!=t*, R>0):       0.042616 pp
+
+  Summary table:
+  Fonte                                        R==0  0<R<1e-9   R<0  trio=t*
+  CSV oráculo (batch V_max)                     101        32    44      177
+  Sequencial (sorteio a sorteio)                177         0     0      177
+  Diferenças: artefacto float64 batch vs sequencial.
+  Ambas dão trio==t*=177 e min R (trio!=t*)=0.0426 pp. Gate 1 usa o sequencial (compute_value_regret).
+
+Saved results/regret/e1b_R_pp_oracle_rerun.npy

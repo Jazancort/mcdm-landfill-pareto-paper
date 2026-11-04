@@ -240,10 +240,11 @@ for _, row in df_agg.iterrows():
 macros_path = OUT / "regret_macros.tex"
 macros_path.write_text("\n".join(macro_lines) + "\n", encoding="utf-8")
 print(f"Saved: {macros_path}")
-
 print()
 print("=" * 60)
-print("DONE")
+print("DONE — SAW/TOPSIS macros only.")
+print("For the complete regret_macros.tex (including E1 section),")
+print("run: uv run python scripts/make_regret_macros.py")
 print(f"  perdraw : {perdraw_path}")
 print(f"  aggregate: {agg_path}")
 print(f"  macros  : {macros_path}")

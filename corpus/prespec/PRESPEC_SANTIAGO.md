@@ -876,3 +876,35 @@ For use in §7.10 of the article. Fill in actual values at reporting time.
 | `prespec-santiago-a5` | `fa2f9a2` | 2026-10-27 | κ grid {25,50,100,200,400,1000,∞}; predictions K1–K6; d_min = 10 km fixed; S-N objectives 4D confirmed (groups A–D); seed convention from PRESPEC_E7_KAPPA_A2 §Seeds confirmation; Assomada rule fixed pre-data. **Note:** the body of PRESPEC_SANTIAGO_A5.md cites commit `475c3eb` which no longer exists (overwritten by amend before tagging). The authoritative reference is tag `prespec-santiago-a5` → commit `fa2f9a2`. |
 
 Note: amend4b contained an incorrect statement (ocean = nodata, -compute_edges confirmed). That tag is retained for audit trail; the correction is in amend-final.
+
+---
+
+## Errata (post-data corrections to Fogo reference values)
+
+These notes correct factual errors in the Fogo reference values cited in the body of this
+PRESPEC. The body text is NOT rewritten (it is frozen). Errata entries reference the DEV
+document that documents the root cause and correction.
+
+| Prediction | PRESPEC text (frozen) | Corrected value | DEV reference |
+|---|---|---|---|
+| S7a | "28% of draws R = 0" (Fogo E1-B/opt) | **35.4% (177/500 draws)** | DEV-FOGO-E1B-001 |
+
+**Details (DEV-FOGO-E1B-001)**:
+The 28% value was written manually in `regret_macros.tex` on 2026-10-25 from a version
+of `_compute_e1_regret.py` that used a different R denominator (range over 8 cells only,
+giving mean R = 72 pp). Ten minutes later the denominator was corrected (range over all
+1.94M trios, mean R = 4.53 pp), but the fraction was not regenerated. The script does not
+print the fraction; it was never recomputed. The correct value, verified by
+`diagnostics/e1_oracle_per_draw.py` (oracle CSV SHA 913396ce), is 177/500 = 35.4%.
+
+Definition: a draw has R = 0 iff the E1-B optimal trio equals t* (SAW/mm/opt argmax).
+This is exact (integer comparison). Equivalently: R < 1e-12 pp (since the minimum
+non-zero R across 500 draws is 0.042616 pp >> 1e-12 pp).
+
+**Zenodo versions affected**: v1.8 (2026-10-27, DOI 10.5281/zenodo.23676429 latest at
+time of correction). All other public versions (v1.0–v1.7) predate the introduction of
+the `\RegretEoneBfracZero` macro and do not contain this value.
+The correction is in commit 96ff26a (branch eval-v2-rewrite, 2026-11-03).
+
+The verdict for S7a is not affected: it is a reference value (Fogo) used as context,
+not a pass/fail condition.

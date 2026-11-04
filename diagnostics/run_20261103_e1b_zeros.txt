@@ -1,0 +1,24 @@
+Loading data...
+V_max/V_min batch...
+  draw 0/500
+  draw 100/500
+  draw 200/500
+  draw 300/500
+  draw 400/500
+
+R_e1b stats: min=0.00000000 max=13.1059 mean=4.5275
+--- 5 criteria (denominator=500) ---
+(0) R < 0  (batch artifact, before clamp):   0
+(1) R==0.0 exact:         177
+(2) R<1e-12 pp:           177
+(3) R<1e-9  pp:           177
+(4) round(R,2)==0.00:     177
+(5) opt_e1b==opt_mm:      177
+
+Draws with opt_e1b != opt_mm (trio != t*): 323
+  min R_pp (trio!=t*): 0.042616 pp
+  max R_pp:            13.1059 pp
+  R < 0 in these:      0
+  R >= 1e-12 pp:       323
+  → min 0.0426 pp >> 1e-12; confirms trio_eq_tstar is correct criterion
+Saved results/regret/e1b_R_pp_oracle_rerun.npy

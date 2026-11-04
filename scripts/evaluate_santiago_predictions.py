@@ -5,7 +5,8 @@ Reads only the sealed Stage 4 output files.
 Must be committed and tagged BEFORE running.
 
 S0–S7b definitions: PRESPEC_SANTIAGO.md §6.
-K5 greedy analysis: per κ per cell, fraction of draws where greedy trio == optimal trio.
+K5 descriptive sign check: reports K5(a) and K5(b) values at κ=1000 and κ=∞ with
+same_sign flag (True/False/None). See PRESPEC_SANTIAGO_A5.md §3 K5 and DEV-SANT-K5-001.
 
 Bootstrap: B=2000, numpy.random.default_rng(seed) seeded per prediction to
 make bootstrap reproducible. Seed = prediction_index (0-indexed).
@@ -21,9 +22,10 @@ R (regret) definition: value regret per PRESPEC (see notes/eval-r-spec.md).
     Computed by compute_value_regret_santiago(). S6/S7 use per-draw R arrays.
     S0 assert: R(SAW_mm_opt) = 0 in every draw (exact, not floating-point approx).
 
-Outputs:
-  results/santiago/santiago_predictions.json
-  results/santiago/st_k5_greedy_analysis.json
+Outputs (eval-v2 run — do not overwrite v1 files):
+  results/santiago/santiago_predictions_v2.json
+  results/santiago/st_k5_greedy_ST_v2.json
+  results/santiago/st_k5_greedy_SN_v2.json
 
 Run:
   CUDA_VISIBLE_DEVICES=0 .venv/bin/python3 -u scripts/evaluate_santiago_predictions.py
@@ -49,20 +51,178 @@ FOGO_Q2_SAW_VEC_OPT = 56.8   # Fogo reference for S5 (pp)
 KAPPAS_STOCH = [25, 50, 100, 200, 400, 1000]
 BOOTSTRAP_SEED = 20261104      # fixed per PRESPEC A5b; used for S6/S7 bootstrap
 # Oracle SHA-256 prefixes for Fogo regret files (stage1 verified)
-SHA_REGRET_AGG   = "bc364ce3"  # results/regret/regret_aggregate.csv
-SHA_MC_UNIFIED   = "b02df727"  # results/unified/mc_unified_raw.csv
-SHA_REGRET_PERDRAW = "282445c4b5c5ccd5"  # results/regret/regret_perdraw.csv (stage1 verified)
+SHA_REGRET_AGG     = "bc364ce312ce9772f06d41fc63f0fc0b0991f6cc8665a52d82515283df952bd1"
+SHA_MC_UNIFIED     = "b02df727"  # results/unified/mc_unified_raw.csv
+SHA_REGRET_PERDRAW = "282445c4b5c5ccd593963ae1073210385da465b93fa45408e97ba3f5c99201ca"
+# Sealed Stage 4 prediction CSVs (verified at commit stage4-results-sealed)
+SHA_SEALED = {
+    "mc_ST_raw.csv":      "123a5421d81b7bdd5d405ddb4a60edde1eeaa2f7da5cefbb640812aeed67bd80",
+    "mc_SN_raw.csv":      "dbfa2f00b6f3f98e3a900f9020f98ecb55ef98dfdeed199a334f7b299013d492",
+    "mc_ST_e1_fix2.csv":  "7806db5da3e78246e2707ef7df3e4980b445f9b7e04e751e65dbfeefd2b07507",
+    "mc_SN_e1_fix2.csv":  "357904c04d9d863b40c3cb448cb3b58e4615321cf5ac25f24c84a228312c1593",
+}
 
+# K6 Fogo expected values — module constant so tests can monkeypatch.
+# Verified against e7_raw.csv on Athena; tolerance TOL=0.05 pp.
+K6_FOGO_EXPECTED: dict = {25: 21.1, 50: 20.4, 100: 9.3, 200: -0.4, 400: -5.7, 1000: -9.0}
 
-def _agg_pooled3(grp: "pd.DataFrame") -> float:
-    """Agg_pooled3: mean(SAW-TOPSIS) for 3 informative cells (mm_grd, vec_grd, vec_opt).
+# Canonical content hash of gate3_trios_*.npz from the sealed --gate3-only run.
+# Hash covers: name + shape + dtype.str + raw bytes for each array, sorted by name.
+# Now includes 14 arrays: 7×κ=200 (shape (500,)) + 7×{key}_inf κ=∞ (shape (1,)).
+# PENDING: set after running --gate3-only on this commit (format changed with κ=∞).
+# Set from --gate3-only run on commit 03d62a0 (TS=20261103T2345Z).
+SHA_NPZ_GATE3: dict = {
+    "ST": "97ed76f1763400ef406bbafff6e59f5eaede0547a8e6954faefdea429bda71f1",
+    "SN": "9b94c73a6dfae44b4aa775531c9c0f90fea65687b831449b431d547134d0a38d",
+}
 
-    mm_opt excluded: SAW_mm_opt=100% by Proposition 1 — not informative.
-    Reference: run_e7_kappa_sweep.py; PRESPEC_SANTIAGO_A5 §3 K6.
+# Import shared aggregation functions from santiago_eval_core.
+# _agg_pooled3     : wide-format DataFrame (mc_*_raw.csv columns)
+# _agg_pooled3_long: long-format DataFrame (e7_raw.csv with agg/norm/mont columns)
+# Both implement the same formula: mean(SAW 3-cell) - mean(TOPSIS 3-cell) [pp].
+from santiago_eval_core import _agg_pooled3, _agg_pooled3_long  # noqa: E402
+
+# ---------------------------------------------------------------------------
+# Production helpers used by gates AND unit tests
+# ---------------------------------------------------------------------------
+
+def _check_perdraw_tol(oracle_r: np.ndarray, result_r: np.ndarray,
+                       tol_draw: float, label: str) -> None:
+    """Assert per-draw R values agree within tol_draw. Raises RuntimeError if not.
+
+    Called by gate_1_fogo_oracle() and directly by test_mutation_2.
+    Both arrays are in fraction units (not pp).
     """
-    saw3  = grp[["SAW_mm_grd",    "SAW_vec_grd",    "SAW_vec_opt"]].values.mean() * 100
-    tops3 = grp[["TOPSIS_mm_grd", "TOPSIS_vec_grd", "TOPSIS_vec_opt"]].values.mean() * 100
-    return float(saw3 - tops3)
+    diff = np.abs(result_r - oracle_r)
+    max_diff = float(diff.max())
+    if max_diff > tol_draw:
+        raise RuntimeError(
+            f"Gate 1 FAIL [{label}]: per-draw max diff = {max_diff:.3e} > {tol_draw}. "
+            "compute_value_regret() diverges from oracle compute_regret.py."
+        )
+
+
+def _npz_content_hash(arrays: dict) -> str:
+    """Canonical content hash for a dict of numpy arrays.
+
+    Includes name, shape, dtype.str, and raw bytes for each array,
+    sorted alphabetically by name. Robust to zip timestamp changes.
+    """
+    import hashlib as _hh
+    h = _hh.sha256()
+    for name in sorted(arrays):
+        arr = np.asarray(arrays[name])
+        h.update(name.encode("utf-8"))
+        h.update(str(arr.shape).encode("utf-8"))
+        h.update(arr.dtype.str.encode("utf-8"))
+        h.update(arr.tobytes())
+    return h.hexdigest()
+
+
+def _check_gate3_row_counts(n_raw: int, n_e1: int,
+                             raw_name: str, e1_name: str) -> None:
+    """Check Gate 3 row counts; raises RuntimeError with match='3001' if wrong.
+
+    Called inside gate_3_q2_reconstruction() and directly by test_mutation_8.
+    """
+    if n_raw != 3001:
+        raise RuntimeError(
+            f"Gate 3 FAIL: {raw_name} has {n_raw} rows, expected 3001"
+        )
+    if n_e1 != 2004:
+        raise RuntimeError(
+            f"Gate 3 FAIL: {e1_name} has {n_e1} rows, expected 2004"
+        )
+
+
+def _check_gate4a_identity(g3_dict: dict, regret_dict: dict,
+                            branch_key: str,
+                            trios: np.ndarray) -> None:
+    """Gate 4a identity: all 7 arrays in Gate 3 npz must equal compute_value_regret output.
+
+    Checks 500 draws, FAIL on first difference.
+    trios is REQUIRED: no default. FAIL if trios is not provided.
+    FAIL immediately if any key is missing, any value is None, or any index disagrees.
+
+    Called inside main() and directly by parametrized test_mutation_11_*
+    """
+    if trios is None:
+        raise RuntimeError(
+            f"Gate 4a identity FAIL ({branch_key}): "
+            "trios array is required but not provided."
+        )
+
+    KEY_MAP = {
+        "SAW_mm_opt": "trio_idx_mm_opt",
+        "SAW_vec_opt": "trio_idx_vec_opt",
+        "E1M_opt":    "trio_idx_e1m_opt",
+        "E1B_opt":    "trio_idx_e1b_opt",
+        "E1W_opt":    "trio_idx_e1w_opt",
+        "E1V_opt":    "trio_idx_e1v_opt",
+    }
+    B = len(g3_dict)
+    grd_vec_sites = regret_dict.get("trio_grd_vec_sites")
+
+    # Validate grd_vec_sites presence and length — FAIL if wrong
+    if not grd_vec_sites or len(grd_vec_sites) != B:
+        raise RuntimeError(
+            f"Gate 4a identity FAIL ({branch_key}): "
+            f"trio_grd_vec_sites has {len(grd_vec_sites) if grd_vec_sites else 0} "
+            f"entries, expected {B}. "
+            "Ensure compute_value_regret was called with greedy_fn."
+        )
+
+    for di, cell_dict in g3_dict.items():
+        # Direct index checks (6 arrays) — FAIL on None or missing key, no skipping
+        for g3_key, evalr_key in KEY_MAP.items():
+            evalr_list = regret_dict.get(evalr_key)
+            if evalr_list is None:
+                raise RuntimeError(
+                    f"Gate 4a identity FAIL ({branch_key}): "
+                    f"compute_value_regret did not return '{evalr_key}' (None). "
+                    "Ensure e1_fn and greedy_fn are provided."
+                )
+            if g3_key not in cell_dict:
+                raise RuntimeError(
+                    f"Gate 4a identity FAIL ({branch_key} draw {di}): "
+                    f"Gate3 dict missing required key '{g3_key}'."
+                )
+            opt_g3    = cell_dict[g3_key]
+            opt_evalr = evalr_list[di]
+            if opt_g3 != opt_evalr:
+                raise RuntimeError(
+                    f"Gate 4a identity FAIL ({branch_key} draw {di} {g3_key}): "
+                    f"Gate3={opt_g3} != EVAL-R={opt_evalr}"
+                )
+
+        # SAW_vec_grd — FAIL if key missing (no .get() with None default)
+        if "SAW_vec_grd" not in cell_dict:
+            raise RuntimeError(
+                f"Gate 4a identity FAIL ({branch_key} draw {di}): "
+                "Gate3 dict missing required key 'SAW_vec_grd'."
+            )
+        g3_grd_idx = cell_dict["SAW_vec_grd"]
+        grd_sites  = grd_vec_sites[di]
+        g3_sites   = trios[g3_grd_idx].tolist()
+        if frozenset(grd_sites) != frozenset(g3_sites):
+            raise RuntimeError(
+                f"Gate 4a identity FAIL ({branch_key} draw {di} SAW_vec_grd): "
+                f"Gate3 sites={sorted(g3_sites)} != "
+                f"EVAL-R greedy_fn sites={sorted(grd_sites)}"
+            )
+
+
+def _check_q2_cell(got: int, exp: int, kappa: float,
+                   draw: int, cell: str) -> None:
+    """Check a single Gate 3 Q2 value; raises RuntimeError if got != exp.
+
+    Called inside gate_3_q2_reconstruction() and directly by test_mutation_12.
+    """
+    if got != exp:
+        raise RuntimeError(
+            f"Gate 3 FAIL Q2: κ={kappa} draw={draw} {cell}: "
+            f"got {got} exp {exp}"
+        )
 
 def _bs_ci(a, b, seed, n=B_BOOT, alpha=0.05):
     """Paired bootstrap CI for mean(a-b). Returns (mean_diff, ci_lo, ci_hi, p_one_sided).
@@ -90,50 +250,483 @@ def _holm(p_vals):
     return adjusted.tolist()
 
 
-def gate_3_q2_reconstruction(branch: str, raw_csv: Path, e1_csv: Path,
-                              w0: "np.ndarray", groups: list, rho_j: "np.ndarray",
-                              n_check: int = 10) -> bool:
-    """Gate 3: Q2 recalculated from trios must match sealed CSV draw-by-draw.
+def gate_3_q2_reconstruction(branch_key: str, n_check: int = 500) -> dict:
+    """Gate 3: Reconstruct Q2 for ALL κ (3001 raw + 2004 E1 lines) and compare
+    draw-by-draw to sealed CSVs.
 
-    Takes n_check draws from κ=200, reconstructs trios via compute_value_regret_santiago()
-    pipeline, and compares recalculated Q2 against sealed mc_*_raw.csv values.
-    Runs ONLY in full evaluation mode (not --gates-only). Aborts before any verdict.
+    Coverage:
+      raw  : 6 stochastic κ × 500 draws × 8 cells  +  κ=∞ × 1 draw × 8 cells = 3001 rows
+      E1   : κ=200 × 500 draws × 4 cells  +  κ=∞ × 1 draw × 4 cells           = 2004 rows
 
-    NOTE: Full implementation requires GPU (calls compute_value_regret_santiago()).
-    Currently verifies that the sealed CSV is self-consistent (SAW_mm_opt=1 everywhere).
-    Full reconstruction is run automatically within compute_value_regret_santiago().
+    Uses compute_q2_all_cells_gpu / compute_e1_cells_gpu from run_santiago_mc directly
+    (no reimplementation). GPU path bit-for-bit identical to original sealed-CSV run.
+    CPU fallback available for S-N (78K trios); S-T (16.7M) requires GPU.
+
+    n_check applies only to the stochastic κ draws (max 500). κ=∞ always uses 1 draw.
+    Returns {draw_idx: {"SAW_mm_opt": idx, "SAW_vec_opt": idx}} for κ=200 (Gate 4a).
+    Raises RuntimeError on any mismatch or missing modules.
     """
-    print(f"=== Gate 3: Q2 self-consistency check ({branch}) ===", flush=True)
-    df = pd.read_csv(raw_csv)
+    import hashlib as _hl
 
-    # S0 regression: SAW_mm_opt=1 in ALL draws (every kappa)
-    fail_mm_opt = (df["SAW_mm_opt"] != 1).sum()
-    if fail_mm_opt:
+    tag     = branch_key
+    raw_csv = SEALED / f"mc_{tag}_raw.csv"
+    e1_csv  = SEALED / f"mc_{tag}_e1_fix2.csv"
+    label   = "S-T" if tag == "ST" else "S-N"
+
+    for f in [raw_csv, e1_csv]:
+        sha_exp = SHA_SEALED[f.name]
+        sha_got = _hl.sha256(f.read_bytes()).hexdigest()
+        if sha_got != sha_exp:
+            raise RuntimeError(
+                f"Gate 3 FAIL: {f.name} SHA mismatch.\n"
+                f"  expected {sha_exp}\n  got      {sha_got}"
+            )
+    print(f"  Sealed CSV SHA verified: {raw_csv.name}, {e1_csv.name}", flush=True)
+
+    df_raw = pd.read_csv(raw_csv)
+    df_e1  = pd.read_csv(e1_csv)
+
+    # Verify row counts match spec
+    _check_gate3_row_counts(len(df_raw), len(df_e1), raw_csv.name, e1_csv.name)
+    print(f"  Row counts verified: raw={len(df_raw)}, e1={len(df_e1)}", flush=True)
+
+    try:
+        from run_santiago_mc import (
+            load_branch_data, prepare_gpu_data,
+            compute_q2_all_cells_gpu, compute_e1_cells_gpu,
+            compute_q2_all_cells, make_santiago_scorers,
+            compute_group_objectives, compute_trio_objectives,
+            check_dominated_raw, optimal_selector, greedy_selector,
+            get_e1_amplitudes,
+            ST_W0, SN_W0, ST_GROUPS, SN_GROUPS, CELLS_8,
+            _optimal_gpu,
+        )
+        from gen_santiago_seeds import get_branch_rngs, KAPPA_VALUES
+    except (ImportError, FileNotFoundError) as exc:
         raise RuntimeError(
-            f"Gate 3 FAIL ({branch}): SAW_mm_opt != 1 in {fail_mm_opt} rows. "
-            "Sealed CSV violates Proposition 1."
+            f"Gate 3 FAIL: Santiago modules not importable ({exc}). Requires Athena."
+        )
+    print(f"  Functions imported from run_santiago_mc: "
+          f"compute_q2_all_cells_gpu, compute_e1_cells_gpu, "
+          f"get_e1_amplitudes, greedy_selector", flush=True)
+    print(f"  Comparison mode: Q2 {{0,1}} — exact integer equality (==), no tolerance",
+          flush=True)
+
+    data   = load_branch_data(branch_key)
+    X_mm   = np.asarray(data["X_mm"],   dtype=np.float64)
+    trios  = np.asarray(data["trios"],  dtype=np.int32)
+    D      = data["D"]
+    rho_j  = np.asarray(data["rho_j"],  dtype=np.float64)
+    groups = ST_GROUPS if branch_key == "ST" else SN_GROUPS
+    w0     = np.asarray(ST_W0 if branch_key == "ST" else SN_W0, dtype=np.float64)
+
+    trios_sha = _hl.sha256(trios.tobytes()).hexdigest()[:16]
+    print(f"  trios SHA-256[:16]: {trios_sha}  n_trios: {len(trios)}", flush=True)
+
+    e1_amps = get_e1_amplitudes(rho_j, groups, w0=w0)
+
+    gd = prepare_gpu_data(data)
+    use_gpu = bool(gd)
+    print(f"  device: {'GPU' if use_gpu else 'CPU'}", flush=True)
+
+    if use_gpu:
+        import cupy as cp
+
+    scorers_cpu = make_santiago_scorers(X_mm, rho_j) if not use_gpu else None
+    A_ones_cpu  = np.ones(len(w0))
+
+    # ── Precompute for trio lookup and E1 indices at κ=200 ───────────────────
+    # X_trio: (T, M) float64 — trio sums used for E1 V-score computation
+    X_trio_e1_cpu = X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]
+    # E1 amplitude arrays (CPU, constant across draws)
+    _e1_amp_arrs  = {nm: np.asarray(e1_amps[nm], dtype=np.float64)
+                     for nm in ("M", "B", "W", "V")}
+    if use_gpu:
+        _X_trio_e1_gpu      = cp.asarray(X_trio_e1_cpu)      # (T, M) GPU float64
+        _trios_sorted_gpu   = cp.sort(cp.asarray(trios), axis=1)  # (T, 3) GPU int32
+    else:
+        # CPU lookup: frozenset(site0,site1,site2) → trio index
+        _trios_set_to_idx   = {frozenset(row.tolist()): i
+                                for i, row in enumerate(trios)}
+
+    # Gate 4a trio indices — filled only for κ=200
+    trio_indices_k200: dict = {}
+
+    # E1-B/W ULP tracking at κ=200 (E1-V≡SAW_vec, E1-M≡SAW_mm, checked via Gate 4d/4e)
+    n_below_10ulp_e1b  = 0;  min_margin_e1b_k200 = float("inf")
+    n_below_10ulp_e1w  = 0;  min_margin_e1w_k200 = float("inf")
+
+    n_fail     = 0   # kept as counter (n_fail always 0 since _check_q2_cell raises immediately)
+    total_raw  = 0
+    total_e1   = 0
+    _eps32     = float(np.finfo(np.float32).eps)
+
+    # ── Stochastic κ (500 draws each) ───────────────────────────────────────
+    for kappa in KAPPA_VALUES:
+        rng_st, rng_sn = get_branch_rngs(kappa)
+        rng = rng_st if branch_key == "ST" else rng_sn
+        W_k = np.array([rng.dirichlet(kappa * w0) for _ in range(500)])
+        W_k = W_k / W_k.sum(axis=1, keepdims=True)
+
+        df_raw_k = df_raw[df_raw["kappa"] == kappa].sort_values("draw").reset_index(drop=True)
+        df_e1_k  = df_e1[df_e1["kappa"] == kappa].sort_values(
+            ["draw", "e1_cell"]).reset_index(drop=True) if kappa == 200 else None
+
+        n_draws_k       = min(n_check, len(df_raw_k))
+        n_same_mm_k     = 0   # draws where greedy SAW_mm == optimal SAW_mm (TRUE trio compare)
+        n_same_vec_k    = 0   # draws where greedy SAW_vec == optimal SAW_vec (TRUE trio compare)
+        n_below_10ulp_mm  = 0   # draws where SAW_mm margin < 10 ULPs of float32
+        n_below_10ulp_vec = 0   # draws where SAW_vec margin < 10 ULPs of float32
+        min_margin_mm_k = float("inf")
+        min_margin_vec_k = float("inf")
+        print(f"  κ={kappa:4d}: {n_draws_k} draws × 8 raw"
+              f"{' + 4 E1' if df_e1_k is not None else ''}...", flush=True)
+
+        for di in range(n_draws_k):
+            w_cpu = W_k[di]
+
+            # raw Q2
+            if use_gpu:
+                raw_result, F_mm_trios_gpu, F_mm_site_gpu = compute_q2_all_cells_gpu(
+                    gd, w_cpu, D
+                )
+                w_gpu        = cp.asarray(w_cpu)
+                s_mm_gpu     = (gd["X_mm"] * w_gpu).sum(1)
+                s_vec_gpu    = (gd["X_mm"] * gd["rho_j"] * w_gpu).sum(1)
+                opt_mm_idx   = int(_optimal_gpu(s_mm_gpu,  gd["trios"]))
+                opt_vec_idx  = int(_optimal_gpu(s_vec_gpu, gd["trios"]))
+                # V_mm per trio (float64) — same formula used by compute_q2_all_cells_gpu
+                t = gd["trios"]
+                v_mm_gpu  = s_mm_gpu[t[:, 0]] + s_mm_gpu[t[:, 1]] + s_mm_gpu[t[:, 2]]
+                v_vec_gpu = s_vec_gpu[t[:, 0]] + s_vec_gpu[t[:, 1]] + s_vec_gpu[t[:, 2]]
+                V_mm_cpu  = cp.asnumpy(v_mm_gpu.astype(cp.float64))
+                V_vec_cpu = cp.asnumpy(v_vec_gpu.astype(cp.float64))
+                # Per-site scores for greedy (CPU)
+                s_mm_cpu  = cp.asnumpy(s_mm_gpu)
+                s_vec_cpu = cp.asnumpy(s_vec_gpu)
+            else:
+                F_mm_site  = compute_group_objectives(X_mm, w_cpu, A_ones_cpu, groups)
+                F_mm_trios = compute_trio_objectives(F_mm_site, trios)
+                raw_result = compute_q2_all_cells(X_mm, w_cpu, A_ones_cpu, groups,
+                                                  trios, D, scorers_cpu)
+                opt_mm_idx  = optimal_selector(scorers_cpu[0](w_cpu), trios)
+                opt_vec_idx = optimal_selector(scorers_cpu[1](w_cpu), trios)
+                s_mm_cpu  = (X_mm * w_cpu).sum(1)
+                s_vec_cpu = (X_mm * rho_j * w_cpu).sum(1)
+                V_mm_cpu  = np.array(F_mm_trios, dtype=np.float64)
+                # V_vec per trio for ULP
+                V_vec_cpu = (
+                    X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]
+                ) @ (rho_j * w_cpu)
+
+            # TRUE same-trio: call greedy_selector and compare to optimal trio index
+            grd_mm  = greedy_selector(s_mm_cpu,  D)
+            grd_vec = greedy_selector(s_vec_cpu, D)
+            n_same_mm_k  += int(frozenset(grd_mm)  == frozenset(trios[opt_mm_idx]))
+            n_same_vec_k += int(frozenset(grd_vec) == frozenset(trios[opt_vec_idx]))
+
+            # ULP margin: best vs second-best for SAW_mm and SAW_vec
+            for V_arr, n_below_ref, min_margin_ref, label_ulp in [
+                (V_mm_cpu,  "mm",  min_margin_mm_k,  "mm"),
+                (V_vec_cpu, "vec", min_margin_vec_k, "vec"),
+            ]:
+                if len(V_arr) >= 2:
+                    v_mx = float(V_arr.max())
+                    v_2  = float(np.partition(V_arr, -2)[-2])
+                    marg = v_mx - v_2
+                    if label_ulp == "mm":
+                        if marg < min_margin_mm_k:
+                            min_margin_mm_k = marg
+                        if v_mx > 0 and marg / (_eps32 * v_mx) < 10.0:
+                            n_below_10ulp_mm += 1
+                    else:
+                        if marg < min_margin_vec_k:
+                            min_margin_vec_k = marg
+                        if v_mx > 0 and marg / (_eps32 * v_mx) < 10.0:
+                            n_below_10ulp_vec += 1
+                            # Confirm float64 argmax (log line required by audit)
+                            f64_argmax = int(V_arr.argmax())
+                            f32_argmax = int(V_arr.astype(np.float32).argmax())
+                            match_str  = "MATCH" if f64_argmax == f32_argmax else "MISMATCH"
+                            print(
+                                f"    κ={kappa} draw {di} SAW_vec below-10ulp "
+                                f"margin={marg:.3e}: f64_argmax={f64_argmax} "
+                                f"f32_argmax={f32_argmax} {match_str}",
+                                flush=True,
+                            )
+
+            if kappa == 200:
+                # SAW_vec_grd trio index (for npz / Gate 4a verification)
+                if use_gpu:
+                    _gv_sorted = cp.sort(cp.asarray(np.array(grd_vec, dtype=np.int32)))
+                    _match_gpu = cp.where(
+                        cp.all(_trios_sorted_gpu == _gv_sorted, axis=1)
+                    )[0]
+                    grd_vec_idx = int(_match_gpu[0]) if len(_match_gpu) > 0 else -1
+                else:
+                    grd_vec_idx = _trios_set_to_idx.get(frozenset(grd_vec), -1)
+                if grd_vec_idx < 0:
+                    raise RuntimeError(
+                        f"Gate 3 FAIL: SAW_vec_grd trio {grd_vec} not in trios "
+                        f"(di={di}, κ=200, branch={tag})"
+                    )
+
+                # E1 optimal indices + ULP margins for E1-B and E1-W
+                _e1_entry: dict = {
+                    "SAW_mm_opt":  opt_mm_idx,
+                    "SAW_vec_opt": opt_vec_idx,
+                    "SAW_vec_grd": grd_vec_idx,
+                }
+                for _e1_nm in ("M", "B", "W", "V"):
+                    _A_j = _e1_amp_arrs[_e1_nm]
+                    if use_gpu:
+                        _A_j_gpu   = cp.asarray(_A_j)
+                        _V_e1_gpu  = (_X_trio_e1_gpu * (w_gpu * _A_j_gpu)).sum(1)
+                        _V_e1_cpu  = cp.asnumpy(_V_e1_gpu)
+                    else:
+                        _V_e1_cpu  = (X_trio_e1_cpu * (w_cpu * _A_j)).sum(1)
+                    _opt_e1x = int(np.argmax(_V_e1_cpu))
+                    _e1_entry[f"E1{_e1_nm}_opt"] = _opt_e1x
+                    # ULP check for E1-B and E1-W only
+                    # (E1-V ≡ SAW_vec and E1-M ≡ SAW_mm are covered by Gate 4d/4e)
+                    if _e1_nm in ("B", "W") and len(_V_e1_cpu) >= 2:
+                        _v_mx_e1 = float(_V_e1_cpu.max())
+                        _v_2_e1  = float(np.partition(_V_e1_cpu, -2)[-2])
+                        _marg_e1 = _v_mx_e1 - _v_2_e1
+                        _below   = _v_mx_e1 > 0 and _marg_e1 / (_eps32 * _v_mx_e1) < 10.0
+                        if _e1_nm == "B":
+                            if _marg_e1 < min_margin_e1b_k200:
+                                min_margin_e1b_k200 = _marg_e1
+                            if _below:
+                                n_below_10ulp_e1b += 1
+                                _f64 = _opt_e1x
+                                _f32 = int(_V_e1_cpu.astype(np.float32).argmax())
+                                print(
+                                    f"    κ=200 draw {di} E1-B below-10ulp "
+                                    f"margin={_marg_e1:.3e}: f64_argmax={_f64} "
+                                    f"f32_argmax={_f32} "
+                                    f"{'MATCH' if _f64==_f32 else 'MISMATCH'}",
+                                    flush=True,
+                                )
+                        else:  # W
+                            if _marg_e1 < min_margin_e1w_k200:
+                                min_margin_e1w_k200 = _marg_e1
+                            if _below:
+                                n_below_10ulp_e1w += 1
+                                _f64 = _opt_e1x
+                                _f32 = int(_V_e1_cpu.astype(np.float32).argmax())
+                                print(
+                                    f"    κ=200 draw {di} E1-W below-10ulp "
+                                    f"margin={_marg_e1:.3e}: f64_argmax={_f64} "
+                                    f"f32_argmax={_f32} "
+                                    f"{'MATCH' if _f64==_f32 else 'MISMATCH'}",
+                                    flush=True,
+                                )
+                trio_indices_k200[di] = _e1_entry
+
+            row = df_raw_k[df_raw_k["draw"] == di]
+            if row.empty:
+                raise RuntimeError(
+                    f"Gate 3 FAIL: κ={kappa} draw {di} missing from {raw_csv.name}"
+                )
+            for cell in CELLS_8:
+                got = raw_result[cell]
+                exp = int(row[cell].values[0])
+                _check_q2_cell(got, exp, kappa, di, cell)
+                total_raw += 1
+
+            # E1 cells (only κ=200)
+            if df_e1_k is not None:
+                if use_gpu:
+                    e1_rows = compute_e1_cells_gpu(
+                        gd, w_cpu, rho_j, groups, D,
+                        F_mm_site_gpu, F_mm_trios_gpu, w0=w0,
+                    )
+                else:
+                    e1_rows = []
+                    for e1_name in ["M", "B", "W", "V"]:
+                        A_j  = np.asarray(e1_amps[e1_name], dtype=np.float64)
+                        sc   = (X_mm * (w_cpu * A_j)).sum(1)
+                        tidx = optimal_selector(sc, trios)
+                        f_grd = (F_mm_site[greedy_selector(sc, D)[0]] +
+                                 F_mm_site[greedy_selector(sc, D)[1]] +
+                                 F_mm_site[greedy_selector(sc, D)[2]])
+                        q2_opt = 0 if check_dominated_raw(F_mm_trios, F_mm_trios[tidx]) else 1
+                        q2_grd = 0 if check_dominated_raw(F_mm_trios, f_grd) else 1
+                        e1_rows.append({"e1_cell": e1_name, "Q2_opt": q2_opt,
+                                        "Q2_grd": q2_grd})
+                for r in e1_rows:
+                    e1_row = df_e1_k[
+                        (df_e1_k["draw"] == di) & (df_e1_k["e1_cell"] == r["e1_cell"])
+                    ]
+                    if e1_row.empty:
+                        raise RuntimeError(
+                            f"Gate 3 FAIL: κ=200 draw {di} E1-{r['e1_cell']} missing"
+                        )
+                    exp_e1 = int(e1_row["Q2_opt"].values[0])
+                    _check_q2_cell(r["Q2_opt"], exp_e1, 200, di, f"E1-{r['e1_cell']}")
+                    total_e1 += 1
+
+        mm_ulp  = f"{min_margin_mm_k:.3e}"  if min_margin_mm_k < float("inf") else "n/a"
+        vec_ulp = f"{min_margin_vec_k:.3e}" if min_margin_vec_k < float("inf") else "n/a"
+        e1b_ulp = f"{min_margin_e1b_k200:.3e}" if kappa == 200 and min_margin_e1b_k200 < float("inf") else "n/a"
+        e1w_ulp = f"{min_margin_e1w_k200:.3e}" if kappa == 200 and min_margin_e1w_k200 < float("inf") else "n/a"
+        _e1_ulp_str = (
+            f"  below-10ulp-e1b={n_below_10ulp_e1b}/500({e1b_ulp})"
+            f"  below-10ulp-e1w={n_below_10ulp_e1w}/500({e1w_ulp})"
+        ) if kappa == 200 else ""
+        print(
+            f"    κ={kappa:4d} OK  "
+            f"same-mm={n_same_mm_k}/{n_draws_k}  "
+            f"same-vec={n_same_vec_k}/{n_draws_k}  "
+            f"below-10ulp-mm={n_below_10ulp_mm}/{n_draws_k}({mm_ulp})  "
+            f"below-10ulp-vec={n_below_10ulp_vec}/{n_draws_k}({vec_ulp})"
+            f"{_e1_ulp_str}",
+            flush=True,
         )
 
-    # E1-B opt=1 check (K2): in e1_fix2, E1-B optimal must be 100% at all κ
-    e1 = pd.read_csv(e1_csv) if e1_csv.exists() else None
-    if e1 is not None:
-        e1_B = e1[e1["e1_cell"] == "B"]
-        fail_B = (e1_B["Q2_opt"] != 1).sum()
-        if fail_B:
-            raise RuntimeError(
-                f"Gate 3 FAIL ({branch}): E1-B Q2_opt != 1 in {fail_B} rows. "
-                "K2 (Theorem 1) violated."
-            )
+    # ── κ=∞ (1 draw — deterministic w0) ─────────────────────────────────────
+    print(f"  κ=∞: 1 draw × 8 raw + 4 E1...", flush=True)
+    w_inf = w0 / w0.sum()
 
-    print(f"  Gate 3 ({branch}): self-consistency PASS (SAW_mm_opt=1, E1-B_opt=1)", flush=True)
-    print(f"  NOTE: full trio reconstruction (n_check={n_check}) runs in compute_value_regret_santiago().", flush=True)
-    return True
+    if use_gpu:
+        raw_inf, F_mm_trios_inf, F_mm_site_inf = compute_q2_all_cells_gpu(gd, w_inf, D)
+        e1_inf = compute_e1_cells_gpu(
+            gd, w_inf, rho_j, groups, D, F_mm_site_inf, F_mm_trios_inf, w0=w0
+        )
+        w_inf_gpu   = cp.asarray(w_inf)
+        s_mm_inf    = (gd["X_mm"] * w_inf_gpu).sum(1)
+        s_vec_inf   = (gd["X_mm"] * gd["rho_j"] * w_inf_gpu).sum(1)
+        opt_mm_inf  = int(_optimal_gpu(s_mm_inf,  gd["trios"]))
+        opt_vec_inf = int(_optimal_gpu(s_vec_inf, gd["trios"]))
+        s_mm_cpu_inf  = cp.asnumpy(s_mm_inf)
+        s_vec_cpu_inf = cp.asnumpy(s_vec_inf)
+    else:
+        F_mm_site_inf  = compute_group_objectives(X_mm, w_inf, A_ones_cpu, groups)
+        F_mm_trios_inf = compute_trio_objectives(F_mm_site_inf, trios)
+        raw_inf = compute_q2_all_cells(X_mm, w_inf, A_ones_cpu, groups,
+                                       trios, D, scorers_cpu)
+        opt_mm_inf  = optimal_selector(scorers_cpu[0](w_inf), trios)
+        opt_vec_inf = optimal_selector(scorers_cpu[1](w_inf), trios)
+        s_mm_cpu_inf  = (X_mm * w_inf).sum(1)
+        s_vec_cpu_inf = (X_mm * rho_j * w_inf).sum(1)
+        e1_inf = []
+        for e1_name in ["M", "B", "W", "V"]:
+            A_j  = np.asarray(e1_amps[e1_name], dtype=np.float64)
+            sc   = (X_mm * (w_inf * A_j)).sum(1)
+            tidx = optimal_selector(sc, trios)
+            trio_grd = greedy_selector(sc, D)
+            f_grd = sum(F_mm_site_inf[trio_grd[i]] for i in range(3))
+            q2_opt = 0 if check_dominated_raw(F_mm_trios_inf, F_mm_trios_inf[tidx]) else 1
+            q2_grd = 0 if check_dominated_raw(F_mm_trios_inf, f_grd) else 1
+            e1_inf.append({"e1_cell": e1_name, "Q2_opt": q2_opt, "Q2_grd": q2_grd,
+                           "opt_idx": tidx})
+
+    # E1 optimal indices at κ=∞ (GPU path: compute from _X_trio_e1_gpu + w_inf)
+    if use_gpu:
+        w_inf_gpu_e1 = cp.asarray(w_inf)
+        _e1_inf_indices = {}
+        for e1_name in ("M", "B", "W", "V"):
+            A_j_gpu = cp.asarray(_e1_amp_arrs[e1_name])
+            V_e1_inf_gpu = (_X_trio_e1_gpu * (w_inf_gpu_e1 * A_j_gpu)).sum(1)
+            _e1_inf_indices[e1_name] = int(cp.argmax(V_e1_inf_gpu))
+    else:
+        _e1_inf_indices = {r["e1_cell"]: r["opt_idx"] for r in e1_inf}
+
+    grd_mm_inf  = greedy_selector(s_mm_cpu_inf,  D)
+    grd_vec_inf = greedy_selector(s_vec_cpu_inf, D)
+    same_mm_inf  = int(frozenset(grd_mm_inf)  == frozenset(trios[opt_mm_inf]))
+    same_vec_inf = int(frozenset(grd_vec_inf) == frozenset(trios[opt_vec_inf]))
+
+    # κ=∞ grd_vec trio index (cheap: only 1 draw, lookup by frozenset)
+    if use_gpu:
+        _grd_vec_inf_set = frozenset(grd_vec_inf)
+        _match_inf = cp.where(cp.all(_trios_sorted_gpu == cp.sort(
+            cp.asarray(np.array(grd_vec_inf, dtype=np.int32))), axis=1))[0]
+        grd_vec_inf_idx = int(_match_inf[0]) if len(_match_inf) > 0 else -1
+    else:
+        grd_vec_inf_idx = _trios_set_to_idx.get(frozenset(grd_vec_inf), -1)
+    if grd_vec_inf_idx < 0:
+        raise RuntimeError(f"Gate 3 FAIL: grd_vec_inf {grd_vec_inf} not in trios (κ=∞)")
+
+    # Store κ=∞ trio indices for npz
+    trio_indices_kinf = {
+        "SAW_mm_opt":  opt_mm_inf,
+        "SAW_vec_opt": opt_vec_inf,
+        "SAW_vec_grd": grd_vec_inf_idx,
+        "E1M_opt":     _e1_inf_indices["M"],
+        "E1B_opt":     _e1_inf_indices["B"],
+        "E1W_opt":     _e1_inf_indices["W"],
+        "E1V_opt":     _e1_inf_indices["V"],
+    }
+
+    df_raw_inf = df_raw[df_raw["kappa"] == np.inf]
+    df_e1_inf  = df_e1[df_e1["kappa"] == np.inf].sort_values("e1_cell")
+
+    if len(df_raw_inf) != 1:
+        raise RuntimeError(
+            f"Gate 3 FAIL: expected 1 κ=∞ raw row, got {len(df_raw_inf)}"
+        )
+    for cell in CELLS_8:
+        got = raw_inf[cell]
+        exp = int(df_raw_inf[cell].values[0])
+        _check_q2_cell(got, exp, np.inf, 0, cell)
+        total_raw += 1
+
+    for r in e1_inf:
+        e1_row = df_e1_inf[df_e1_inf["e1_cell"] == r["e1_cell"]]
+        if e1_row.empty:
+            raise RuntimeError(
+                f"Gate 3 FAIL: κ=∞ E1-{r['e1_cell']} missing from {e1_csv.name}"
+            )
+        exp_e1 = int(e1_row["Q2_opt"].values[0])
+        _check_q2_cell(r["Q2_opt"], exp_e1, np.inf, 0, f"E1-{r['e1_cell']}")
+        total_e1 += 1
+
+    print(f"  κ=∞ OK  same-mm={same_mm_inf}/1  same-vec={same_vec_inf}/1", flush=True)
+
+    # ── Save trio indices (κ=200 + κ=∞) as npz with canonical content hash ──
+    # κ=200: 7 int32 arrays of shape (500,); κ=∞: 7 int32 arrays of shape (1,)
+    # Suffix _inf for κ=∞ arrays.
+    # Hash covers name + shape + dtype.str + raw bytes, sorted by name.
+    # R is computed at κ=200 only. κ=∞ arrays stored for Gate 4a reference.
+    npz_path = ROOT / "results" / "santiago" / f"gate3_trios_{tag}.npz"
+    _n_k200  = len(trio_indices_k200)
+    _npz_arrays: dict = {}
+    for _key in ("SAW_mm_opt", "SAW_vec_opt", "SAW_vec_grd",
+                 "E1M_opt", "E1B_opt", "E1W_opt", "E1V_opt"):
+        _npz_arrays[_key] = np.array(
+            [trio_indices_k200[d][_key] for d in range(_n_k200)], dtype=np.int32
+        )
+        _npz_arrays[f"{_key}_inf"] = np.array([trio_indices_kinf[_key]], dtype=np.int32)
+    np.savez(npz_path, **_npz_arrays)
+    import hashlib as _hl2
+    content_hash = _npz_content_hash(_npz_arrays)
+    file_sha = _hl2.sha256(npz_path.read_bytes()).hexdigest()
+    print(f"  Saved: {npz_path.name}  ({len(_npz_arrays)} arrays: "
+          f"7×κ=200 (n={_n_k200}) + 7×κ=∞)", flush=True)
+    print(f"    content-hash (canonical): {content_hash}", flush=True)
+    print(f"    file-sha256 (zip):        {file_sha}", flush=True)
+
+    if n_fail:  # n_fail is always 0 since _check_q2_cell raises immediately; kept for clarity
+        raise RuntimeError(
+            f"Gate 3 FAIL ({label}): {n_fail} mismatches. "
+            f"({total_raw} raw + {total_e1} E1 cells checked)"
+        )
+
+    print(
+        f"  Gate 3 ({label}): {total_raw} raw + {total_e1} E1 cells ALL MATCH "
+        f"({total_raw + total_e1} total)\n",
+        flush=True,
+    )
+    return trio_indices_k200, trio_indices_kinf, trios
 
 
 def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
                     branch_regret: dict = None) -> dict:
     """Evaluate all S predictions for one branch.
-    branch_regret: dict from compute_value_regret_santiago(), or None (S6/S7 pending).
+    branch_regret: dict from compute_value_regret_santiago(), required for S6/S7.
+    Raises RuntimeError if branch_regret is absent and S6 is testable.
     """
     print(f"\n=== {branch} ===", flush=True)
     df  = pd.read_csv(raw_csv)
@@ -147,6 +740,7 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     s0 = {"prediction": "S0", "text": "SAW/mm/opt Q2=100% every draw (K1 regression)",
           "condition": "none", "testable": True,
           "result": "PASS" if s0_pass else "FAIL",
+          "n_saw_mm_opt_k200": int((df[df["kappa"]==200]["SAW_mm_opt"]==1).sum()),
           "note": f"SAW_mm_opt mean = {df['SAW_mm_opt'].mean()*100:.2f}%"}
 
     # ── S1 ──────────────────────────────────────────────────────────────────
@@ -189,12 +783,17 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
                                           "p_one_sided": round(p,4)}
     holm_s2 = _holm(p_vals_s2)
     s2_pass = testable_s2 and any(h < 0.05 for h in holm_s2)
+    df_k200_s2 = df[df["kappa"] == 200]
+    solo_grd_k200 = int(((df_k200_s2["SAW_vec_grd"]==1) & (df_k200_s2["SAW_vec_opt"]==0)).sum())
+    solo_opt_k200 = int(((df_k200_s2["SAW_vec_opt"]==1) & (df_k200_s2["SAW_vec_grd"]==0)).sum())
     s2 = {"prediction": "S2",
           "text": "Q2(SAW,vec,opt) < Q2(SAW,vec,grd), 95% CI excludes 0 (greedy reversal)",
           "condition": f"TV_W≥0.05: {cond['TV_W']:.3f} {'✓' if testable_s2 else '✗'}",
           "testable": testable_s2,
           "per_kappa": kappa_results_s2,
           "holm_adj_p": {str(int(k)): round(h,4) for k,h in zip(kappa_vals,holm_s2)},
+          "solo_grd_k200": solo_grd_k200,
+          "solo_opt_k200": solo_opt_k200,
           "result": ("CONFIRMED" if s2_pass else "NOT CONFIRMED") if testable_s2 else "NOT TESTABLE"}
 
     # ── S3a ─────────────────────────────────────────────────────────────────
@@ -204,23 +803,31 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
         e1_200  = e1[e1["kappa"] == 200]
         s3a_W   = float(e1_200[e1_200["e1_cell"]=="W"]["Q2_opt"].mean() * 100) if not e1_200.empty else None
         s3a_V   = float(e1_200[e1_200["e1_cell"]=="V"]["Q2_opt"].mean() * 100) if not e1_200.empty else None
+        e1b_cnt = int(e1_200[e1_200["e1_cell"]=="B"]["Q2_opt"].sum()) if not e1_200.empty else None
         s3a_pass = testable_s3 and (s3a_W is not None) and (s3a_V is not None) and \
                    s3a_W < 100.0 and s3a_V < 100.0
     else:
-        s3a_W = s3a_V = None; s3a_pass = False
+        s3a_W = s3a_V = e1b_cnt = None; s3a_pass = False
     s3a = {"prediction": "S3a",
            "text": "E1-W opt < 100% AND E1-V opt < 100%",
            "condition": f"TV_W≥0.05: {cond['TV_W']:.3f} {'✓' if testable_s3 else '✗'}",
            "testable": testable_s3,
            "Q2_E1W_opt_k200": s3a_W, "Q2_E1V_opt_k200": s3a_V,
+           "E1B_opt_count_k200": e1b_cnt,
            "result": ("CONFIRMED" if s3a_pass else "NOT CONFIRMED") if testable_s3 else "NOT TESTABLE"}
 
     # ── S3b ─────────────────────────────────────────────────────────────────
     # E1-V opt < E1-W opt | TV_W ≥ 0.05 AND TV_B ≥ 0.05
     testable_s3b = cond["TV_W"] >= 0.05 and cond["TV_B"] >= 0.05
-    if not e1.empty and s3a_W is not None:
+    if not e1.empty and s3a_W is not None and not e1_200.empty:
+        e1_200_vw = e1_200[e1_200["e1_cell"].isin(["V","W"])].pivot_table(
+            index="draw", columns="e1_cell", values="Q2_opt", aggfunc="first"
+        )
+        solo_V = int(((e1_200_vw["V"]==1) & (e1_200_vw["W"]==0)).sum())
+        solo_W = int(((e1_200_vw["W"]==1) & (e1_200_vw["V"]==0)).sum())
         s3b_pass = testable_s3b and (s3a_V < s3a_W)
     else:
+        solo_V = solo_W = None
         s3b_pass = False
     s3b = {"prediction": "S3b",
            "text": "E1-V opt < E1-W opt (between-group distortion > within-group)",
@@ -228,22 +835,56 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
                          f"  TV_B≥0.05: {cond['TV_B']:.3f} {'✓' if cond['TV_B']>=0.05 else '✗'}"),
            "testable": testable_s3b,
            "Q2_E1V_k200": s3a_V, "Q2_E1W_k200": s3a_W,
+           "solo_V_k200": solo_V, "solo_W_k200": solo_W,
            "result": ("CONFIRMED" if s3b_pass else "NOT CONFIRMED") if testable_s3b else "NOT TESTABLE"}
 
     # ── S4 ──────────────────────────────────────────────────────────────────
     # SAW minus TOPSIS per cell: no sign predicted (descriptive)
     # K6 = Agg_pooled3 = mean of 3 informative cells (mm_grd, vec_grd, vec_opt).
-    # mm_opt excluded: SAW_mm_opt = 100% by Proposition 1 (not informative).
+    # mm_opt excluded: SAW_mm_opt = 100% by Proposition 1 — not informative.
     # Reference: run_e7_kappa_sweep.py Agg_pooled3; PRESPEC_SANTIAGO_A5 §3 K6.
-    k6 = {}
+    # K5(a) = Q2(SAW,vec,opt) − Q2(SAW,vec,grd) per κ (A5 §3 K5 vector-assembly effect).
+    # K5(b) = pooled SAW–TOPSIS aggregation contrast (=K6) — sign check at κ=1000 vs κ=∞.
+    k6    = {}
+    k5a   = {}   # vector-assembly effect per κ (PRESPEC K5(a))
     for k in kappa_vals:
         grp = df[df["kappa"] == k]
-        saw_3  = grp[["SAW_mm_grd","SAW_vec_grd","SAW_vec_opt"]].values.mean()*100
-        tops_3 = grp[["TOPSIS_mm_grd","TOPSIS_vec_grd","TOPSIS_vec_opt"]].values.mean()*100
-        k6[str(int(k))] = round(saw_3 - tops_3, 2)
-    s4 = {"prediction": "S4", "text": "SAW-TOPSIS Agg_pooled3 per kappa (3 informative cells)",
+        k6[str(int(k))]  = round(_agg_pooled3(grp), 2)
+        q2_opt_vec = float(grp["SAW_vec_opt"].mean() * 100)
+        q2_grd_vec = float(grp["SAW_vec_grd"].mean() * 100)
+        k5a[str(int(k))] = round(q2_opt_vec - q2_grd_vec, 2)   # >0 = opt better (Fogo: -12pp)
+
+    # κ=∞ assembly contrast (needed for K5 sign check)
+    df_inf_k5 = df[df["kappa"] == np.inf]
+    if not df_inf_k5.empty:
+        k6_inf  = round(_agg_pooled3(df_inf_k5.reset_index(drop=True)), 2)
+        k5a_inf = round(float(df_inf_k5["SAW_vec_opt"].mean()*100
+                               - df_inf_k5["SAW_vec_grd"].mean()*100), 2)
+    else:
+        k6_inf = k5a_inf = None
+
+    # K5 sign checks (descriptive, no verdict — A5:100 "no CI test, no confirmation criterion").
+    # same_sign = True if both nonzero and equal sign; False if both nonzero and opposite;
+    # None ("sinal nulo") if either side is 0 — reporting convention, not a decision rule.
+    # Declared post-data: S-T K5(a)=0 for k>=100 and k=inf (DEV-SANT-K5-001 [POST-DATA]).
+    def _sign(x): return 1 if x > 0 else (-1 if x < 0 else 0)
+    k5a_sign_1000 = _sign(k5a.get("1000", 0))
+    k5a_sign_inf  = _sign(k5a_inf) if k5a_inf is not None else 0
+    k5b_sign_1000 = _sign(float(k6.get("1000", 0)))
+    k5b_sign_inf  = _sign(k6_inf) if k6_inf is not None else 0
+    k5a_same_sign = (k5a_sign_1000 == k5a_sign_inf) if (k5a_sign_1000 != 0 and k5a_sign_inf != 0) else None
+    k5b_same_sign = (k5b_sign_1000 == k5b_sign_inf) if (k5b_sign_1000 != 0 and k5b_sign_inf != 0) else None
+
+    s4 = {"prediction": "S4",
+          "text": "SAW-TOPSIS Agg_pooled3 per kappa (3 informative cells; K5 descriptive sign check)",
           "condition": "none (descriptive)", "testable": True,
-          "K6_per_kappa": k6, "result": "DESCRIPTIVE"}
+          "K6_per_kappa": k6,          # K6 per κ (Agg_pooled3, used for PRESPEC K5(b))
+          "K6_inf":       k6_inf,      # κ=∞ K6 value
+          "K5a_assembly_per_kappa": k5a,   # PRESPEC K5(a): Q2(SAW,vec,opt)−Q2(SAW,vec,grd)
+          "K5a_assembly_inf":       k5a_inf,
+          "K5a_same_sign_1000_inf": k5a_same_sign,  # True/False/None
+          "K5b_same_sign_1000_inf": k5b_same_sign,
+          "result": "DESCRIPTIVE"}
 
     # ── S5 ──────────────────────────────────────────────────────────────────
     # Q2(SAW,vec,opt) > 56.8% | max_pm_continuous < 0.5
@@ -264,7 +905,7 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     # ── S6 ──────────────────────────────────────────────────────────────────
     # R(SAW,vec,grd) > R(SAW,vec,opt), 95% CI excludes 0 | TV_W ≥ 0.05
     # R = VALUE REGRET (not 1-Q2). Computed by compute_value_regret_santiago().
-    # If regret_data is not provided, S6 result is PENDING.
+    # branch_regret must always be provided; S6 raises RuntimeError otherwise.
     testable_s6 = cond["TV_W"] >= 0.05
     regret = branch_regret or {}
     R_vec_grd_pp = np.array(regret.get("R_sawvec_grd_pp") or [])
@@ -304,17 +945,32 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     testable_s7a = cond["TV_B"] >= 0.05
     R_e1b_pp = np.array(regret.get("R_e1b_opt_pp") or [])
     if testable_s7a and len(R_e1b_pp) == 500 and not np.isnan(R_e1b_pp).any():
-        zeros_e1b = np.zeros_like(R_e1b_pp)
-        md7a, lo7a, hi7a, p7a = _bs_ci(R_e1b_pp, zeros_e1b, seed=70_000)
-        s7a_pass = testable_s7a and lo7a > 0
-        frac_zero_e1b = round(float((R_e1b_pp < 1e-12).mean()), 4)
+        zeros_e1b      = np.zeros_like(R_e1b_pp)
+        # SeedSequence(20261104): reproducible seeds for S7a/S7b (spawn index 0/1)
+        from numpy.random import SeedSequence as _SS7
+        _ss7 = _SS7(20261104).spawn(2)
+        md7a, lo7a, hi7a, p7a = _bs_ci(R_e1b_pp, zeros_e1b, seed=_ss7[0])
+        # "Zero" = trio_sel == t* (SAW/mm/opt trio). In production code,
+        # R == 0.0 exactly iff opt_e1b_idx == opt_mm_idx (integer argmax).
+        # Threshold 1e-12 pp is a guard; min non-zero R is 0.042616 pp >> 1e-12.
+        # DEV-FOGO-E1B-001: 177/500 Fogo draws have trio==t* (35.4%).
+        n_nonzero_e1b  = regret.get("summary", {}).get("n_nonzero_e1b_trio")
+        if n_nonzero_e1b is None:
+            # fallback: count from R (equivalent in production code)
+            n_nonzero_e1b = int((R_e1b_pp > 1e-12).sum())
+        frac_zero_e1b  = round(float((R_e1b_pp < 1e-12).mean()), 4)  # frac trio==t*
+        # PRESPEC pass criterion: testable AND CI_lo > 0 (no n_nonzero condition).
+        # n_nonzero is diagnostic only — reported but not part of the verdict.
+        # The eval-r-spec.md ">=4" was post-data, not pre-registered.
+        s7a_pass   = testable_s7a and lo7a > 0
         s7a_status = "CONFIRMED" if s7a_pass else "NOT CONFIRMED"
     else:
         md7a = lo7a = hi7a = p7a = None
+        n_nonzero_e1b = None
         frac_zero_e1b = None
-        s7a_pass = False
-        s7a_status = "NOT CONFIRMED (no regret data)"
-    if not e1_available and len(R_e1b_pp) == 0:
+        s7a_pass      = False
+        s7a_status    = "NOT CONFIRMED (no regret data)"
+    if e1.empty and len(R_e1b_pp) == 0:
         raise RuntimeError(
             f"S7a evaluation for {branch} requires E1-B regret data."
         )
@@ -323,11 +979,15 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
            "condition": f"TV_B>=0.05: {cond['TV_B']:.3f} {'✓' if testable_s7a else '✗'}",
            "testable": testable_s7a,
            "R_E1B_opt_mean_pp": round(float(R_e1b_pp.mean()), 2) if len(R_e1b_pp)==500 else None,
+           "R_E1B_opt_mean_diff_pp": round(float(md7a), 2) if md7a is not None else None,
            "ci": [round(lo7a,2), round(hi7a,2)] if lo7a is not None else None,
+           "p_one_sided": round(float(p7a), 4) if p7a is not None else None,
+           "n_nonzero_e1b": n_nonzero_e1b,
            "frac_R_e1b_zero": frac_zero_e1b,
            "result": s7a_status,
-           "note": "Low-risk prediction (R>=0 by construction; fails only if all draws have R=0). "
-                   "Report frac_R_e1b_zero always."}
+           "note": ("PRESPEC criterion: testable AND CI_lo > 0. "
+                    "n_nonzero reported as diagnostic (not part of verdict). "
+                    "See PRESPEC_SANTIAGO.md S7a.")}
 
     # ── S7b ─────────────────────────────────────────────────────────────────
     # R(E1-B,opt) < R(E1-W,opt) | TV_B ≥ 0.05 AND TV_W ≥ 0.05
@@ -336,14 +996,14 @@ def evaluate_branch(branch: str, raw_csv: Path, e1_csv: Path, cond: dict,
     if (testable_s7b and len(R_e1b_pp) == 500 and len(R_e1w_pp) == 500
             and not np.isnan(R_e1b_pp).any() and not np.isnan(R_e1w_pp).any()):
         n = min(len(R_e1b_pp), len(R_e1w_pp))
-        md7b, lo7b, hi7b, p7b = _bs_ci(R_e1w_pp[:n], R_e1b_pp[:n], seed=70_001)
+        _, lo7b, hi7b, _ = _bs_ci(R_e1w_pp[:n], R_e1b_pp[:n], seed=_ss7[1])
         s7b_pass = testable_s7b and R_e1b_pp.mean() < R_e1w_pp.mean()
         s7b_status = "CONFIRMED" if s7b_pass else "NOT CONFIRMED"
     else:
-        md7b = lo7b = hi7b = p7b = None
+        lo7b = hi7b = None
         s7b_pass = False
         s7b_status = "NOT CONFIRMED (no regret data)"
-    if not e1_available and len(R_e1w_pp) == 0:
+    if e1.empty and len(R_e1w_pp) == 0:
         raise RuntimeError(
             f"S7b evaluation for {branch} requires E1-W regret data."
         )
@@ -371,9 +1031,9 @@ def analyze_k5_greedy(branch_key: str) -> dict:
         load_branch_data, prepare_gpu_data, make_santiago_scorers,
         optimal_selector, greedy_selector,
         compute_group_objectives, compute_trio_objectives,
-        ST_W0, SN_W0, ST_GROUPS, SN_GROUPS,
+        ST_W0, SN_W0,
         _USE_GPU, _f_trios_gpu, _optimal_gpu,
-        CELLS_8, N_DRAWS, D_MIN_KM,
+        CELLS_8, N_DRAWS,
     )
     from gen_santiago_seeds import get_branch_rngs, KAPPA_VALUES
     import cupy as cp
@@ -385,7 +1045,6 @@ def analyze_k5_greedy(branch_key: str) -> dict:
     X_mm, trios, D = data["X_mm"], data["trios"], data["D"]
     groups, rho_j  = data["groups"], data["rho_j"]
     scorers_cpu    = make_santiago_scorers(X_mm, rho_j)
-    A_ones         = np.ones(len(w0))
 
     results = {}
 
@@ -480,471 +1139,294 @@ def analyze_k5_greedy(branch_key: str) -> dict:
 
 
 def gate_k6_fogo() -> bool:
-    """K6 Fogo gate: Agg_pooled3 must reproduce 7 values from E7 (6 stochastic + κ=∞).
+    """K6 Fogo gate: Agg_pooled3 at 6 stochastic κ from e7_raw.csv.
 
-    Reads mc_unified_raw.csv (SHA verified) for stochastic κ and e7_raw.csv for κ=∞.
-    Uses _agg_pooled3() — the SAME function as S4 evaluation — so the gate tests
-    the formula used in the Santiago evaluation.
-    Tolerance: 0.05 pp. Aborts (FAIL) if any value fails or file is missing.
+    e7_raw.csv uses long format with 'alpha' column (= κ) and agg/norm/mont per cell.
+    mc_unified_raw.csv SHA is verified for Stage 1 integrity but not used for K6 values.
+    TOL=0.05 pp. κ=∞ is theoretical (0.0); no stochastic data in e7_raw.csv.
     """
     import hashlib as _hl
-    FOGO_CSV = ROOT / "results" / "unified" / "mc_unified_raw.csv"
-    E7_CSV   = ROOT / "results" / "e7" / "e7_raw.csv"
+    E7_CSV = ROOT / "results" / "e7" / "e7_raw.csv"
+    MC_CSV = ROOT / "results" / "unified" / "mc_unified_raw.csv"
 
-    if not FOGO_CSV.exists():
-        raise RuntimeError(f"K6 gate FAIL: {FOGO_CSV} not found. Athena required.")
+    # SHA verify mc_unified_raw.csv (Stage 1 integrity)
+    if not MC_CSV.exists():
+        raise RuntimeError(f"K6 gate FAIL: {MC_CSV} not found.")
+    sha_mc = _hl.sha256(MC_CSV.read_bytes()).hexdigest()[:8]
+    if sha_mc != SHA_MC_UNIFIED:
+        raise RuntimeError(
+            f"mc_unified_raw.csv SHA mismatch: expected {SHA_MC_UNIFIED}, got {sha_mc}"
+        )
+    print(f"  mc_unified_raw.csv SHA: {sha_mc} OK", flush=True)
 
-    sha_got = _hl.sha256(FOGO_CSV.read_bytes()).hexdigest()[:8]
-    if sha_got != SHA_MC_UNIFIED:
-        raise RuntimeError(f"mc_unified_raw.csv SHA mismatch: expected {SHA_MC_UNIFIED}, got {sha_got}")
-    print(f"  mc_unified_raw.csv SHA: {sha_got} OK", flush=True)
-
-    EXPECTED = {25: 21.1, 50: 20.4, 100: 9.3, 200: -0.4, 400: -5.7, 1000: -9.0}
-    TOL = 0.05
-    df_fogo = pd.read_csv(FOGO_CSV)
-    print("=== K6 Fogo gate (Agg_pooled3, 3 informative cells, TOL=0.05) ===", flush=True)
-    all_pass = True
-    for kappa, expected in sorted(EXPECTED.items()):
-        grp = df_fogo[df_fogo["kappa"] == kappa]
-        if grp.empty:
-            raise RuntimeError(f"K6 gate FAIL: kappa={kappa} not in mc_unified_raw.csv")
-        got  = round(_agg_pooled3(grp), 2)
-        diff = abs(got - expected)
-        ok   = "PASS" if diff <= TOL else "FAIL"
-        print(f"  kappa={kappa:5d}: expected {expected:+6.2f}, got {got:+7.2f}, diff={diff:.3f} [{ok}]",
-              flush=True)
-        if ok == "FAIL":
-            all_pass = False
-    if not all_pass:
-        raise RuntimeError("K6 gate FAILED — fix Agg_pooled3 formula before tagging.")
-
-    # κ=∞: mandatory check from e7_raw.csv
     if not E7_CSV.exists() or E7_CSV.stat().st_size < 100:
         raise RuntimeError(
-            f"K6 gate FAIL: e7_raw.csv not found or empty at {E7_CSV}. "
-            "κ=∞ verification is mandatory before tagging."
+            f"K6 gate FAIL: {E7_CSV} not found or empty. Athena required."
         )
+
+    # K6_FOGO_EXPECTED is a module constant — tests can monkeypatch it.
+    # _agg_pooled3_long is the shared aggregation function (long format, e7_raw.csv).
+    TOL = 0.05
+
     df_e7 = pd.read_csv(E7_CSV)
-    inf_vals = [np.inf, float("inf"), "inf", "Inf"]
-    grp_inf = df_e7[df_e7["kappa"].astype(str).isin([str(v) for v in inf_vals]) |
-                    (df_e7["kappa"] == np.inf)]
-    if grp_inf.empty:
-        raise RuntimeError("K6 gate FAIL: κ=∞ row not found in e7_raw.csv.")
-    got_inf = round(_agg_pooled3(grp_inf), 2)
-    expected_inf = 0.0
-    diff_inf = abs(got_inf - expected_inf)
-    ok_inf = "PASS" if diff_inf <= TOL else "FAIL"
-    print(f"  kappa=  inf: expected {expected_inf:+6.2f}, got {got_inf:+7.2f}, diff={diff_inf:.3f} [{ok_inf}]",
+    if "alpha" not in df_e7.columns:
+        raise RuntimeError("K6 gate FAIL: e7_raw.csv missing 'alpha' column. "
+                           "Expected long-format with alpha=κ.")
+
+    print("=== K6 Fogo gate (Agg_pooled3, 3 informative cells, TOL=0.05) ===",
           flush=True)
+
+    for kappa, expected in sorted(K6_FOGO_EXPECTED.items()):
+        grp = df_e7[df_e7["alpha"] == kappa]
+        if grp.empty:
+            raise RuntimeError(f"K6 gate FAIL: alpha={kappa} not in e7_raw.csv")
+
+        got  = round(_agg_pooled3_long(grp), 2)
+        diff = abs(got - expected)
+        ok   = "PASS" if diff <= TOL else "FAIL"
+        print(
+            f"  alpha={kappa:5d}: expected {expected:+6.2f},"
+            f" got {got:+7.2f}, diff={diff:.3f} [{ok}]",
+            flush=True,
+        )
+        if ok == "FAIL":
+            raise RuntimeError("K6 gate FAILED — Agg_pooled3 mismatch. Fix formula before tagging.")
+
+    # κ=∞: MANDATORY. Read Q2 values from macros_kappa_inf.tex (SHA verified).
+    # Generated by scripts/kappa_inf.py (kappa_inf.py log: commit 777e289 2026-11-02,
+    # from restore ef12e7c 2026-10-27, confirmed working in 80574e5 2026-10-27).
+    # Full SHA-256: 9c086c026d5846529fc938f5671e6756f6e6d5e4e1c9833f5ed12d93e3ccdbee
+    SHA_KAPPA_INF = "9c086c026d5846529fc938f5671e6756f6e6d5e4e1c9833f5ed12d93e3ccdbee"
+    KINF_TEX = ROOT / "macros" / "macros_kappa_inf.tex"
+
+    if not KINF_TEX.exists():
+        raise RuntimeError(
+            f"K6 gate FAIL: {KINF_TEX} not found.\n"
+            "Run scripts/kappa_inf.py to generate it, record SHA in DEV-K6."
+        )
+    sha_kinf = _hl.sha256(KINF_TEX.read_bytes()).hexdigest()
+    if sha_kinf != SHA_KAPPA_INF:
+        raise RuntimeError(
+            f"K6 gate FAIL: macros_kappa_inf.tex SHA mismatch.\n"
+            f"  expected {SHA_KAPPA_INF}\n  got      {sha_kinf}"
+        )
+
+    # Parse Q2 values and pass through _agg_pooled3() — SAME function as S4 evaluation.
+    # Macro names from kappa_inf.py: QtwoInf[S/T][Mi/Ve][Gre/Opt]
+    import re as _re
+    tex = KINF_TEX.read_text(encoding="utf-8")
+
+    def _q2inf(agg, norm, mont):
+        prefix = "S" if agg == "saw" else "T"
+        nm2    = norm.capitalize()[:2]
+        mt2    = mont.capitalize()[:3]
+        m = _re.search(r"\\newcommand\{\\QtwoInf" + prefix + nm2 + mt2 + r"\}\{([0-9]+)\}",
+                       tex)
+        if not m:
+            raise RuntimeError(f"K6 gate FAIL: macro QtwoInf{prefix}{nm2}{mt2} not found")
+        return float(m.group(1)) / 100.0  # convert to [0,1] for _agg_pooled3
+
+    # Build single-row DataFrame matching mc_*_raw.csv wide format → _agg_pooled3
+    import pandas as _pd
+    df_inf_row = _pd.DataFrame([{
+        "SAW_mm_grd":     _q2inf("saw",    "minmax", "greedy"),
+        "SAW_mm_opt":     _q2inf("saw",    "minmax", "optimal"),
+        "SAW_vec_grd":    _q2inf("saw",    "vector", "greedy"),
+        "SAW_vec_opt":    _q2inf("saw",    "vector", "optimal"),
+        "TOPSIS_mm_grd":  _q2inf("topsis", "minmax", "greedy"),
+        "TOPSIS_mm_opt":  _q2inf("topsis", "minmax", "optimal"),
+        "TOPSIS_vec_grd": _q2inf("topsis", "vector", "greedy"),
+        "TOPSIS_vec_opt": _q2inf("topsis", "vector", "optimal"),
+    }])
+    # _agg_pooled3 uses [0,1] fractions × 100 internally — pass as-is
+    got_inf   = round(_agg_pooled3(df_inf_row), 2)
+    diff_inf  = abs(got_inf - 0.0)
+    ok_inf    = "PASS" if diff_inf <= TOL else "FAIL"
+    print(
+        f"  kappa=  inf: expected  +0.00, got {got_inf:+7.2f}, diff={diff_inf:.3f} [{ok_inf}]"
+        f"  (from macros_kappa_inf.tex SHA:{sha_kinf[:8]})",
+        flush=True,
+    )
     if ok_inf == "FAIL":
-        raise RuntimeError(f"K6 gate κ=∞ FAILED: got {got_inf}, expected {expected_inf}")
+        raise RuntimeError(f"K6 gate κ=∞ FAILED: got {got_inf}, expected 0.0")
 
     print("  K6 gate: ALL 7 VALUES PASS\n", flush=True)
     return True
 
 
 def gate_1_fogo_oracle() -> bool:
-    """Gate 1: Call compute_value_regret_santiago() on Fogo data; compare draw-by-draw.
+    """Gate 1: Call compute_value_regret() on Fogo data; compare draw-by-draw.
 
-    NON-CIRCULAR: calls the SAME function object (compute_value_regret_santiago with
-    _fogo_override) and compares its per-draw output against SHA-verified oracle files
-    (regret_perdraw.csv from compute_regret.py; regret_macros.tex from _compute_e1_regret.py).
+    NON-CIRCULAR: calls compute_value_regret() from santiago_eval_core (no _fogo_override)
+    and compares its per-draw output against SHA-verified oracle files.
 
     FAILS if Fogo modules are not importable (no Windows fallback).
-    FAILS if any per-draw R value differs > 1e-4 from oracle.
-    FAILS if n_e1b_zero count != 140 (exact, = 28% of 500 draws).
+    FAILS if any per-draw R value differs > 1e-12 from oracle.
+    FAILS if n_e1b_zero count != 177 (trio==t* criterion = 35.4% of 500 draws; DEV-FOGO-E1B-001).
 
-    SHA verification: regret_aggregate.csv (bc364ce3), regret_perdraw.csv (282445c4b5c5ccd5).
+    SHA verification: full 64-char SHA-256 for both oracle files.
     """
     import hashlib as _hl, re
-    TOL_PP = 0.05
-    TOL_DRAW = 1e-4  # tolerance for per-draw R comparison
-    PERDRAW = ROOT / "results" / "regret" / "regret_perdraw.csv"
-    AGG     = ROOT / "results" / "regret" / "regret_aggregate.csv"
-    MAC     = ROOT / "results" / "regret" / "regret_macros.tex"
+    from santiago_eval_core import load_fogo_data, compute_value_regret as _cvr
+
+    TOL_PP   = 0.05
+    TOL_DRAW = 1e-12   # per-draw tolerance: same code + data -> difference == 0
+    PERDRAW  = ROOT / "results" / "regret" / "regret_perdraw.csv"
+    AGG      = ROOT / "results" / "regret" / "regret_aggregate.csv"
+    MAC      = ROOT / "results" / "regret" / "regret_macros.tex"
 
     for f in [PERDRAW, AGG, MAC]:
         if not f.exists():
             raise RuntimeError(f"Gate 1 FAIL: {f.name} not found. Run compute_regret.py first.")
 
-    sha_agg = _hl.sha256(AGG.read_bytes()).hexdigest()[:8]
+    sha_agg = _hl.sha256(AGG.read_bytes()).hexdigest()
     if sha_agg != SHA_REGRET_AGG:
-        raise RuntimeError(f"regret_aggregate.csv SHA mismatch: expected {SHA_REGRET_AGG}, got {sha_agg}")
-
-    sha_pd = _hl.sha256(PERDRAW.read_bytes()).hexdigest()[:16]
+        raise RuntimeError(
+            f"regret_aggregate.csv SHA mismatch:\n"
+            f"  expected {SHA_REGRET_AGG}\n  got      {sha_agg}"
+        )
+    sha_pd = _hl.sha256(PERDRAW.read_bytes()).hexdigest()
     if sha_pd != SHA_REGRET_PERDRAW:
-        raise RuntimeError(f"regret_perdraw.csv SHA mismatch: expected {SHA_REGRET_PERDRAW}, got {sha_pd}")
-    print(f"  Oracle SHA: regret_aggregate {sha_agg} OK; regret_perdraw {sha_pd} OK", flush=True)
+        raise RuntimeError(
+            f"regret_perdraw.csv SHA mismatch:\n"
+            f"  expected {SHA_REGRET_PERDRAW}\n  got      {sha_pd}"
+        )
+    print("  Oracle SHA: regret_aggregate OK; regret_perdraw OK", flush=True)
 
     # ── Load oracle per-draw R values ────────────────────────────────────────
     df_pd = pd.read_csv(PERDRAW)
+
     def _oracle_r(agg, norm, mont):
-        mask = (df_pd["agg"]==agg) & (df_pd["norm"]==norm) & (df_pd["mont"]==mont)
-        sub = df_pd[mask].sort_values("draw")
+        mask = (df_pd["agg"] == agg) & (df_pd["norm"] == norm) & (df_pd["mont"] == mont)
+        sub  = df_pd[mask].sort_values("draw")
         if len(sub) != 500:
-            raise RuntimeError(f"Gate 1: expected 500 rows for {agg}/{norm}/{mont}, got {len(sub)}")
+            raise RuntimeError(
+                f"Gate 1: expected 500 rows for {agg}/{norm}/{mont}, got {len(sub)}"
+            )
         return sub["R"].values  # shape (500,), values in [0, 1]
 
     R_vec_grd_oracle = _oracle_r("saw", "vector", "greedy")
     R_vec_opt_oracle = _oracle_r("saw", "vector", "optimal")
 
-    # ── Load Fogo data and call compute_value_regret_santiago ────────────────
-    try:
-        import os
-        if "MCDM_DATA_DIR" not in os.environ:
-            _a = "/home/julioazancort/scratch/mcdm"
-            if os.path.exists(_a):
-                os.environ["MCDM_DATA_DIR"] = _a
-
-        from mcdm_experiment import (
-            load_data, impute_nan, COL, _build_decision_matrix, haversine_km
-        )
-        from fogo_constants import OBJ_GROUPS, AJ_VEC as rho_j_fogo, MIN_DIST_KM
-        from run_santiago_mc import greedy_selector as _grd_sel, get_e1_amplitudes as _e1_amp
-
-        # Verify SHA of E1 weight file (Stage 1 verified)
-        W_PATH = ROOT / "results" / "e1" / "e1_weights_k200.npy"
-        if not W_PATH.exists():
-            raise FileNotFoundError(f"e1_weights_k200.npy not found at {W_PATH}")
-
-        # Load Fogo data
-        df_all, _, _ = load_data()
-        df_imp = impute_nan(df_all)
-        df_via = df_imp[df_imp[COL["protected"]] > 0].copy().reset_index(drop=True)
-        assert len(df_via) == 389, f"Expected 389 Fogo sites, got {len(df_via)}"
-
-        X_via, benefit = _build_decision_matrix(df_via)
-        X_adj_f = X_via.copy()
-        for j, b in enumerate(benefit):
-            if not b:
-                X_adj_f[:, j] = 1.0 - X_via[:, j]
-
-        lat = df_via["latitude (degrees)"].values
-        lon = df_via["longitude (degrees)"].values
-        D_f = haversine_km(lat, lon)
-
-        trios_f  = np.load(ROOT / "data" / "fogo_trios.npy").astype(int)
-        W_draws  = np.load(W_PATH)  # (500, 11)
-        groups_f = [OBJ_GROUPS[g] for g in sorted(OBJ_GROUPS.keys())]
-        # Fogo nominal weights (AHP, normalized)
-        from fogo_constants import W as w_fogo_raw
-        w0_f = w_fogo_raw / w_fogo_raw.sum()
-
-        fogo_data = {
-            "X_mm": X_adj_f, "trios": trios_f, "D": D_f,
-            "rho_j": rho_j_fogo, "groups": groups_f, "W_draws": W_draws,
-            "w0": w0_f,
-            "greedy_selector": _grd_sel,
-            "get_e1_amplitudes": _e1_amp,
-        }
-
-    except (ImportError, FileNotFoundError) as exc:
-        raise RuntimeError(
-            f"Gate 1 FAIL: Fogo modules/data not available ({exc}). "
-            "This gate MUST run on Athena. No fallback."
-        )
-
-    # ── Call the SAME function used for Santiago evaluation ──────────────────
-    print("  Gate 1: calling compute_value_regret_santiago(_fogo_override=fogo_data)...", flush=True)
-    result = compute_value_regret_santiago(_fogo_override=fogo_data)
+    # ── Call the SAME function as Santiago evaluation ────────────────────────
+    print("  Gate 1: calling load_fogo_data() + compute_value_regret()...", flush=True)
+    result = _cvr(**load_fogo_data())
 
     R_vec_grd_f = np.array(result["R_sawvec_grd_pp"]) / 100
     R_vec_opt_f = np.array(result["R_sawvec_opt_pp"]) / 100
-    R_e1b_f     = np.array(result["R_e1b_opt_pp"]) / 100 if result["R_e1b_opt_pp"] else None
 
-    # ── Per-draw comparison against oracle ────────────────────────────────────
-    print("  Comparing per-draw R against oracle...", flush=True)
+    # ── Per-draw comparison ──────────────────────────────────────────────────
     diff_grd = np.abs(R_vec_grd_f - R_vec_grd_oracle)
     diff_opt = np.abs(R_vec_opt_f - R_vec_opt_oracle)
 
-    if diff_grd.max() > TOL_DRAW:
-        raise RuntimeError(
-            f"Gate 1 FAIL: R_vec_grd per-draw max diff = {diff_grd.max():.6f} > {TOL_DRAW}. "
-            "compute_value_regret_santiago() gives different results than compute_regret.py."
-        )
-    if diff_opt.max() > TOL_DRAW:
-        raise RuntimeError(
-            f"Gate 1 FAIL: R_vec_opt per-draw max diff = {diff_opt.max():.6f} > {TOL_DRAW}."
-        )
-    print(f"  Per-draw comparison: max diff grd={diff_grd.max():.2e}, opt={diff_opt.max():.2e} PASS",
-          flush=True)
+    _check_perdraw_tol(R_vec_grd_oracle, R_vec_grd_f, TOL_DRAW, "grd")
+    _check_perdraw_tol(R_vec_opt_oracle, R_vec_opt_f, TOL_DRAW, "opt")
+    print(
+        f"  Per-draw: max diff grd={diff_grd.max():.2e} opt={diff_opt.max():.2e} PASS",
+        flush=True,
+    )
 
-    # ── Mean comparison against oracle (from regret_aggregate.csv / macros.tex) ──
+    # ── E1-B and E1-W per-draw comparison against oracle CSV ─────────────────
+    # Oracle: results/regret/e1_oracle_per_draw.csv (generated by
+    #   diagnostics/e1_oracle_per_draw.py with SHA-verified _compute_e1_regret.py)
+    # Comparison: |R_our_pp/100 - R_oracle_pp/100| <= TOL_DRAW = 1e-12 (fraction)
+    # Zero criterion: trio_eq_tstar from oracle CSV (semantic: selected trio == t*)
+    SHA_E1_ORACLE_CSV = "913396cea6a6288836783c9bc02a5f7a898b70643dd2788a5d0780b42155b56c"
+    E1_ORACLE_CSV     = ROOT / "results" / "regret" / "e1_oracle_per_draw.csv"
+    if not E1_ORACLE_CSV.exists():
+        raise RuntimeError(
+            f"Gate 1 FAIL: {E1_ORACLE_CSV} not found. "
+            "Run: MCDM_DATA_DIR=/home/julioazancort/scratch/mcdm "
+            ".venv/bin/python3 diagnostics/e1_oracle_per_draw.py"
+        )
+    sha_e1csv = _hl.sha256(E1_ORACLE_CSV.read_bytes()).hexdigest()
+    if sha_e1csv != SHA_E1_ORACLE_CSV:
+        raise RuntimeError(
+            f"Gate 1 FAIL: e1_oracle_per_draw.csv SHA mismatch.\n"
+            f"  expected {SHA_E1_ORACLE_CSV}\n  got      {sha_e1csv}"
+        )
+    print(f"  e1_oracle_per_draw.csv SHA: OK ({sha_e1csv[:8]})", flush=True)
+
+    df_e1_or = pd.read_csv(E1_ORACLE_CSV)
+    for e1_cell, r_key in [("B", "R_e1b_opt_pp"), ("W", "R_e1w_opt_pp")]:
+        cell_or   = df_e1_or[(df_e1_or["cell"] == e1_cell) &
+                              (df_e1_or["mont"] == "optimal")].sort_values("draw")
+        R_or_frac = cell_or["R_pp"].values / 100.0       # fraction
+        R_our_frac = np.array(result[r_key]) / 100.0     # fraction (R_pp/100)
+        diff_e1 = np.abs(R_our_frac - R_or_frac)
+        if diff_e1.max() > TOL_DRAW:
+            raise RuntimeError(
+                f"Gate 1 FAIL: E1-{e1_cell} per-draw max diff = {diff_e1.max():.3e} "
+                f"> {TOL_DRAW}."
+            )
+        print(f"  E1-{e1_cell} per-draw: max diff={diff_e1.max():.2e} PASS", flush=True)
+
+    # n_e1b_zero: READ FROM oracle CSV (trio_eq_tstar) — not hardcoded
+    b_opt_or      = df_e1_or[(df_e1_or["cell"] == "B") &
+                              (df_e1_or["mont"] == "optimal")].sort_values("draw")
+    n_e1b_zero_or = int(b_opt_or["trio_eq_tstar"].sum())
+    print(f"  n_e1b_zero oracle (trio==t*): {n_e1b_zero_or}/500 = "
+          f"{n_e1b_zero_or/5:.1f}%", flush=True)
+
+    # ── Mean/median comparison against macros.tex ────────────────────────────
     def _mac(name):
-        m = re.search(r"\\newcommand\{\\"+name+r"\}\{([0-9.]+)\}", MAC.read_text(encoding="utf-8"))
+        txt = MAC.read_text(encoding="utf-8")
+        m   = re.search(r"\\newcommand\{\\"+name+r"\}\{([0-9.]+)\}", txt)
         if not m:
-            raise RuntimeError(f"Gate 1: macro \\{name} not found")
+            raise RuntimeError(f"Gate 1: macro \\{name} not found in regret_macros.tex")
         return float(m.group(1))
 
     summ = result["summary"]
     oracle_means = {
-        "R_vec_grd_mean": (summ["R_vec_grd_mean"],  6.63),
-        "R_vec_opt_mean": (summ["R_vec_opt_mean"],  5.27),
-        "diff_grd-opt":   (summ["R_diff_mean_pp"],  1.36),
-        "R_e1b_mean":     (summ["R_e1b_mean_pp"],   _mac("RegretEoneB")),
-        "R_e1b_median":   (None,                    _mac("RegretEoneBMed")),  # not in summary
-        "R_e1w_mean":     (summ["R_e1w_mean_pp"],   _mac("RegretEoneW")),
+        "R_vec_grd_mean":   (summ["R_vec_grd_mean"],   6.63),
+        "R_vec_opt_mean":   (summ["R_vec_opt_mean"],   5.27),
+        "diff_grd-opt":     (summ["R_diff_mean_pp"],   1.36),
+        "R_e1b_mean":       (summ["R_e1b_mean_pp"],    _mac("RegretEoneB")),
+        "R_e1b_median":     (summ["R_e1b_median_pp"],  _mac("RegretEoneBMed")),
+        "R_e1w_mean":       (summ["R_e1w_mean_pp"],    _mac("RegretEoneW")),
     }
-    print("=== Gate 1: mean comparison ===", flush=True)
-    for label, (got, exp) in oracle_means.items():
-        if got is None:
-            print(f"  {label:20s}: oracle={exp:.2f} [SKIP — not in summary dict]", flush=True)
-            continue
+    print("=== Gate 1: mean/median comparison ===", flush=True)
+    for lbl, (got, exp) in oracle_means.items():
         diff = abs(got - exp)
-        ok = "PASS" if diff <= TOL_PP else "FAIL"
-        print(f"  {label:20s}: oracle={exp:.2f}, recomputed={got:.2f}, diff={diff:.3f} [{ok}]",
+        ok   = "PASS" if diff <= TOL_PP else "FAIL"
+        print(f"  {lbl:20s}: oracle={exp:.2f}, got={got:.2f}, diff={diff:.3f} [{ok}]",
               flush=True)
         if ok == "FAIL":
-            raise RuntimeError(f"Gate 1 FAIL: {label} diff={diff:.3f} > {TOL_PP}")
+            raise RuntimeError(f"Gate 1 FAIL: {lbl} diff={diff:.3f} > {TOL_PP}")
 
-    # ── Exact count: frac_zero of R(E1-B) = 140/500 (28%) ───────────────────
-    n_e1b_zero = result["summary"].get("n_e1b_zero_exact")
-    if n_e1b_zero is not None:
-        if n_e1b_zero != 140:
-            raise RuntimeError(
-                f"Gate 1 FAIL: n_e1b_zero = {n_e1b_zero} != 140 (expected 28% of 500)"
-            )
-        print(f"  n_e1b_zero count: {n_e1b_zero}/500 = 28% PASS", flush=True)
-
-    print("  Gate 1: ALL PASS (per-draw + means + count)\n", flush=True)
+    # ── Exact count: oracle rerun gives 177/500 = 35.4% ─────────────────────
+    # DEV-EVALR ER-7: macro \RegretEoneBfracZero{28} (28% = 140/500) was wrong.
+    # _count_e1b_zeros.py on Athena (commit 56dc283) shows 177/500 = 35.4%
+    # Zeros table using _compute_e1_regret.py logic (SHA verified, V_range from
+    # regret_perdraw.csv, same as oracle):
+    #   R==0.0 exact (batch V_max):         101/500 — floating-point batch artifact
+    #   round(R,2)==0:                       177/500
+    #   opt_e1b==opt_mm (semantic, same trio): 177/500
+    # EVAL-R uses sequential V_all (V_max and V_sel from same array):
+    #   R_current==0.0 exact = opt_e1b==opt_mm = 177/500 = 35.4%
+    # The 177 is the semantically correct count (all match: same trio criterion).
+    # The 28% (140) came from a 2026-10-25 run with different V_range (mean R=72pp),
+    # superseded. Diff between 101 and 177 is batch vs sequential float64 artifact.
+    # n_e1b_zero: read from oracle CSV (trio_eq_tstar criterion — not hardcoded)
+    n_e1b_zero = summ.get("n_e1b_zero_exact")
+    if n_e1b_zero != n_e1b_zero_or:
+        raise RuntimeError(
+            f"Gate 1 FAIL: n_e1b_zero = {n_e1b_zero} != {n_e1b_zero_or} "
+            "(oracle trio==t* criterion; see diagnostics/README.md, DEV-SANT-EVALR-001 ER-7)"
+        )
+    print(f"  n_e1b_zero: {n_e1b_zero}/500 = 35.4% PASS", flush=True)
+    print("  Gate 1: ALL PASS\n", flush=True)
     return True
 
 
-def compute_value_regret_santiago(branch_key: str = None, kappa: int = 200,
-                                   _fogo_override: dict = None) -> dict:
-    """Compute value regret R(t; w) for SAW/vec/grd, SAW/vec/opt (S6),
-    SAW/mm/opt (S0 assert), and E1-B/opt, E1-W/opt (S7a, S7b).
+def compute_value_regret_santiago(branch_key: str, kappa: int = 200) -> dict:
+    """Thin wrapper: delegates to santiago_eval_core.compute_value_regret().
 
-    _fogo_override: if provided, use Fogo data instead of loading Santiago.
-      Keys: X_mm, trios, D, rho_j, groups, W_draws, w0
-      Used by gate_1_fogo_oracle() to call the SAME function on Fogo data.
+    gate_1_fogo_oracle() uses load_fogo_data() + compute_value_regret() directly.
+    This wrapper is called for the Santiago branches in main() only.
     """
-    if _fogo_override:
-        # Fogo data path (used by Gate 1 only)
-        X_mm   = _fogo_override["X_mm"]
-        trios  = _fogo_override["trios"]
-        D      = _fogo_override["D"]
-        rho_j  = _fogo_override["rho_j"]
-        groups = _fogo_override["groups"]
-        W_draws = _fogo_override["W_draws"]
-        w0     = _fogo_override["w0"]
-        N_DRAWS_use = len(W_draws)
-        use_gpu = False
-        greedy_selector_fn = _fogo_override["greedy_selector"]
-        get_e1_amplitudes_fn = _fogo_override["get_e1_amplitudes"]
-        e1_available = True
-        label = "FOGO"
-    else:
-        # Normal Santiago path
-        try:
-            from run_santiago_mc import (
-                load_branch_data, prepare_gpu_data, make_santiago_scorers,
-                optimal_selector, greedy_selector as greedy_selector_fn,
-                ST_W0, SN_W0,
-                _USE_GPU, _optimal_gpu,
-                N_DRAWS as N_DRAWS_use, D_MIN_KM,
-            )
-            from gen_santiago_seeds import get_branch_rngs
-        except ImportError as exc:
-            raise RuntimeError(f"[EVAL-R] Cannot import Santiago modules: {exc}")
-
-        try:
-            import cupy as cp
-            use_gpu = bool(_USE_GPU)
-        except ImportError:
-            use_gpu = False
-
-        w0   = ST_W0 if branch_key == "ST" else SN_W0
-        data = load_branch_data(branch_key)
-        gd   = prepare_gpu_data(data) if use_gpu else {}
-        X_mm  = data["X_mm"]
-        trios = data["trios"]
-        D     = data["D"]
-        rho_j = data["rho_j"]
-
-        try:
-            from run_santiago_mc import get_e1_amplitudes as get_e1_amplitudes_fn, ST_GROUPS, SN_GROUPS
-            groups = ST_GROUPS if branch_key == "ST" else SN_GROUPS
-            e1_available = True
-        except ImportError:
-            e1_available = False
-            print("[EVAL-R] E1 functions not available; S7a/S7b set to NaN.", flush=True)
-
-        label = branch_key
-
-    # ── Shared core setup ───────────────────────────────────────────────────
-    n_trios = len(trios)
-    X_trio = X_mm[trios[:, 0]] + X_mm[trios[:, 1]] + X_mm[trios[:, 2]]  # (n_trios, M)
-
-    if not _fogo_override:
-        # Santiago path: set up GPU and seed generation
-        gd = {}
-        try:
-            import cupy as cp
-            from run_santiago_mc import prepare_gpu_data
-            data_gpu = {"X_mm": X_mm, "trios": trios, "D": D, "rho_j": rho_j, "groups": groups}
-            gd = prepare_gpu_data(data_gpu)
-            use_gpu = bool(gd)
-        except (ImportError, Exception):
-            use_gpu = False
-
-        rng_st, rng_sn = get_branch_rngs(kappa)
-        rng = rng_st if branch_key == "ST" else rng_sn
-
-        from run_santiago_mc import make_santiago_scorers, optimal_selector
-        scorers_cpu = make_santiago_scorers(X_mm, rho_j)
-
-        if use_gpu:
-            import cupy as cp
-            from run_santiago_mc import _optimal_gpu
-            X_trio_gpu = cp.asarray(X_trio.astype(np.float32))
-            X_mm_gpu   = cp.asarray(X_mm.astype(np.float32))
-            rho_j_gpu  = cp.asarray(rho_j.astype(np.float32))
-            trios_gpu  = cp.asarray(trios.astype(np.int32))
-    else:
-        use_gpu = False
-        scorers_cpu = None  # Fogo path uses direct matrix multiply
-
-    if not use_gpu and not _fogo_override:
-        if n_trios > 200_000:
-            raise RuntimeError(
-                f"CPU path requires n_trios<=200k (S-T has {n_trios}); use GPU on Athena."
-            )
-
-    R_mm_opt  = np.zeros(N_DRAWS_use)
-    R_vec_grd = np.zeros(N_DRAWS_use)
-    R_vec_opt = np.zeros(N_DRAWS_use)
-    R_e1b_opt = np.full(N_DRAWS_use, np.nan) if e1_available else None
-    R_e1w_opt = np.full(N_DRAWS_use, np.nan) if e1_available else None
-    n_same_trio_per_kappa: dict = {}  # only for Santiago multi-kappa; κ=200 stored in n_same_trio
-    n_same_trio = 0
-
-    print(f"=== EVAL-R {label} κ={kappa} ({'GPU' if use_gpu else 'CPU'}) ===", flush=True)
-
-    for draw_idx in range(N_DRAWS_use):
-        # ── Weight draw ───────────────────────────────────────────────────
-        if _fogo_override:
-            w = W_draws[draw_idx] / W_draws[draw_idx].sum()
-        else:
-            w = rng.dirichlet(kappa * w0); w /= w.sum()
-
-        # ── V_mm for all trios ────────────────────────────────────────────
-        if use_gpu:
-            import cupy as cp
-            w_gpu = cp.asarray(w.astype(np.float32))
-            V_all_gpu = (X_trio_gpu * w_gpu).sum(1)
-            v_max = float(V_all_gpu.max())
-            v_min = float(V_all_gpu.min())
-            v_rng = max(v_max - v_min, 1e-12)
-            opt_mm_idx = int(V_all_gpu.argmax())
-            # SAW/vec scores
-            V_vec_gpu = (X_mm_gpu * rho_j_gpu * w_gpu).sum(1)
-            opt_vec_idx = int(_optimal_gpu(V_vec_gpu, trios_gpu))
-            V_vec_cpu = cp.asnumpy(V_vec_gpu)
-            V_all = cp.asnumpy(V_all_gpu)  # for R computation
-        else:
-            w_f = w.astype(np.float32)
-            V_all = (X_trio * w_f).sum(1)  # (n_trios,)
-            v_max = float(V_all.max())
-            v_min = float(V_all.min())
-            v_rng = max(v_max - v_min, 1e-12)
-            opt_mm_idx = int(V_all.argmax())
-            if _fogo_override:
-                # Fogo: direct multiply; no scorers object
-                V_vec_sites = (X_mm * rho_j) @ w
-                V_vec_trios = (X_mm[trios[:, 0]] * rho_j + X_mm[trios[:, 1]] * rho_j +
-                               X_mm[trios[:, 2]] * rho_j) @ w
-                opt_vec_idx = int(V_vec_trios.argmax())
-                V_vec_cpu   = V_vec_sites
-            else:
-                V_vec_cpu   = scorers_cpu[1](w)   # SAW/vec site scores
-                opt_vec_idx = optimal_selector(V_vec_cpu, trios)
-
-        # ── Gate 4a: SAW_mm_opt selects t* (argmax of V_mm) ──────────────
-        v_opt_mm_check = float(V_all[opt_mm_idx])
-        assert abs(v_opt_mm_check - v_max) < 1e-6, \
-            f"Gate 4a draw {draw_idx}: V_mm[opt_mm_idx]={v_opt_mm_check} != v_max={v_max}"
-        R_mm_opt[draw_idx] = max(0.0, (v_max - v_opt_mm_check) / v_rng)
-        assert R_mm_opt[draw_idx] < 1e-12, \
-            f"Gate 4a draw {draw_idx}: R_mm_opt={R_mm_opt[draw_idx]} != 0"
-
-        # ── SAW/vec greedy ────────────────────────────────────────────────
-        grd_trio_vec = greedy_selector_fn(V_vec_cpu, D)
-        v_grd = float(sum(X_mm[s] for s in grd_trio_vec) @ w)
-        v_opt_vec = float(V_all[opt_vec_idx])
-
-        R_vec_grd[draw_idx] = max(0.0, (v_max - v_grd)     / v_rng)
-        R_vec_opt[draw_idx] = max(0.0, (v_max - v_opt_vec) / v_rng)
-
-        # ── Same-trio count ───────────────────────────────────────────────
-        grd_set = frozenset(grd_trio_vec)
-        opt_set = frozenset(trios[opt_vec_idx])
-        if grd_set == opt_set:
-            n_same_trio += 1
-            assert abs(R_vec_grd[draw_idx] - R_vec_opt[draw_idx]) < 1e-12, \
-                f"Gate 4c draw {draw_idx}: same trio but R_grd={R_vec_grd[draw_idx]} != R_opt={R_vec_opt[draw_idx]}"
-
-        # ── E1-B and E1-W ─────────────────────────────────────────────────
-        if e1_available:
-            rho_B, rho_W = get_e1_amplitudes_fn(rho_j, groups, w)
-            V_e1b = (X_trio * rho_B).sum(1)  # E1-B uses between-group weights
-            opt_e1b_idx = int(np.argmax(V_e1b))
-            R_e1b_opt[draw_idx] = max(0.0, (v_max - float(V_all[opt_e1b_idx])) / v_rng)
-
-            V_e1w = (X_trio * rho_W).sum(1)  # E1-W uses within-group weights
-            opt_e1w_idx = int(np.argmax(V_e1w))
-            R_e1w_opt[draw_idx] = max(0.0, (v_max - float(V_all[opt_e1w_idx])) / v_rng)
-
-            # ── Gate 4d: E1-V ≡ SAW_vec (same optimal trio and same R) ───
-            # E1-V = full TV = same weights as SAW_vec for this draw
-            # rho_V = rho_j (unchanged), so V_e1v = V_vec_trios
-            if not _fogo_override:
-                V_e1v = V_all  # NOT correct — see note below
-                # NOTE: E1-V uses rho_j with actual w, same as SAW_vec_opt
-                # opt_e1v should equal opt_vec_idx; if E1 functions are imported,
-                # verify explicitly. For now: assert draw-level equality when E1-V available.
-
-        if draw_idx % 100 == 0:
-            print(f"  draw {draw_idx}/{N_DRAWS_use}", flush=True)
-
-    # ── Post-loop gates ────────────────────────────────────────────────────
-    assert (R_mm_opt < 1e-12).all(), \
-        f"Gate 4a (post): R_mm_opt != 0 in {(R_mm_opt >= 1e-12).sum()} draws"
-    print(f"  Gate 4a (R_mm_opt==0, trio=t*): PASS ({N_DRAWS_use}/{N_DRAWS_use} draws)", flush=True)
-
-    for name, arr in [("R_vec_grd", R_vec_grd), ("R_vec_opt", R_vec_opt)]:
-        assert (arr >= -1e-9).all() and (arr <= 1 + 1e-9).all(), \
-            f"Gate 4b: {name} out of [0,1]"
-    if e1_available:
-        for name, arr in [("R_e1b_opt", R_e1b_opt), ("R_e1w_opt", R_e1w_opt)]:
-            finite = arr[~np.isnan(arr)]
-            if len(finite):
-                assert (finite >= -1e-9).all() and (finite <= 1 + 1e-9).all(), \
-                    f"Gate 4b: {name} out of [0,1]"
-    print(f"  Gate 4b (0<=R<=1): PASS", flush=True)
-    print(f"  Gate 4c (same_trio=>R_grd==R_opt): PASS (enforced per-draw)", flush=True)
-    print(f"  Same trio (SAW_vec grd==opt) at kappa={kappa}: {n_same_trio}/{N_DRAWS_use}", flush=True)
-
-    R_diff = (R_vec_grd - R_vec_opt) * 100   # in pp
-    return {
-        "branch": branch_key or "FOGO",
-        "kappa": kappa,
-        "N_DRAWS": N_DRAWS_use,
-        "n_same_trio_sawvec": n_same_trio,
-        "R_sawvec_grd_pp": (R_vec_grd * 100).tolist(),
-        "R_sawvec_opt_pp": (R_vec_opt * 100).tolist(),
-        "R_e1b_opt_pp": (R_e1b_opt * 100).tolist() if e1_available else None,
-        "R_e1w_opt_pp": (R_e1w_opt * 100).tolist() if e1_available else None,
-        "summary": {
-            "R_vec_grd_mean": round(float(R_vec_grd.mean() * 100), 2),
-            "R_vec_opt_mean": round(float(R_vec_opt.mean() * 100), 2),
-            "R_diff_mean_pp": round(float(R_diff.mean()), 2),
-            "R_e1b_mean_pp":  round(float(R_e1b_opt.mean() * 100), 2) if e1_available else None,
-            "R_e1w_mean_pp":  round(float(R_e1w_opt.mean() * 100), 2) if e1_available else None,
-            "frac_R_e1b_zero": round(float((R_e1b_opt < 1e-12).mean()), 4) if e1_available else None,
-            "n_e1b_zero_exact": int((R_e1b_opt < 1e-12).sum()) if e1_available else None,
-        },
-    }
+    from santiago_eval_core import load_santiago_data, compute_value_regret as _cvr
+    return _cvr(**load_santiago_data(branch_key, kappa))
 
 
 def assert_regression(results_st: dict, results_sn: dict) -> None:
@@ -1008,10 +1490,26 @@ def assert_regression(results_st: dict, results_sn: dict) -> None:
     if k6sn is not None:
         _ck("S-N K6 3-cell pp",   k6sn, -11.9)
 
-    # S3b discordant counts from e1 data (checked in evaluate_branch S3b section)
-    # S3b S-T: solo_V=69, solo_W=49 — verified in S3b prediction dict via per-draw E1 CSVs
-    # S2 S-N: solo_grd=4, solo_opt=326 — verified in S2 prediction dict
-    # These are cross-checked here by verifying the summary percentages already checked above.
+    # ── 12 exact integer counts ───────────────────────────────────────────────
+    # S0 SAW_mm_opt: all 500 draws optimal at κ=200 (Proposition 1)
+    _ck("S-T SAW_mm_opt count", _pred(results_st, "S0")["n_saw_mm_opt_k200"], 500)
+    _ck("S-N SAW_mm_opt count", _pred(results_sn, "S0")["n_saw_mm_opt_k200"], 500)
+
+    # S2 solo counts (draws where one selector is non-dominated and the other is not)
+    _ck("S-T S2 solo_grd k200", _pred(results_st, "S2")["solo_grd_k200"], 0)
+    _ck("S-T S2 solo_opt k200", _pred(results_st, "S2")["solo_opt_k200"], 0)
+    _ck("S-N S2 solo_grd k200", _pred(results_sn, "S2")["solo_grd_k200"], 4)
+    _ck("S-N S2 solo_opt k200", _pred(results_sn, "S2")["solo_opt_k200"], 326)
+
+    # S3b solo counts (draws where E1-V is non-dominated but E1-W is not, or vice versa)
+    _ck("S-T S3b solo_V  k200", _pred(results_st, "S3b")["solo_V_k200"],  69)
+    _ck("S-T S3b solo_W  k200", _pred(results_st, "S3b")["solo_W_k200"],  49)
+    _ck("S-N S3b solo_V  k200", _pred(results_sn, "S3b")["solo_V_k200"],  0)
+    _ck("S-N S3b solo_W  k200", _pred(results_sn, "S3b")["solo_W_k200"],  3)
+
+    # E1-B opt count: Theorem 1 (always on Pareto frontier)
+    _ck("S-T E1-B opt count",   _pred(results_st, "S3a")["E1B_opt_count_k200"], 500)
+    _ck("S-N E1-B opt count",   _pred(results_sn, "S3a")["E1B_opt_count_k200"], 500)
 
     print("  Regression: ALL PASS\n", flush=True)
 
@@ -1020,12 +1518,15 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description="Evaluate Santiago predictions S0-S7b")
     parser.add_argument("--gates-only", action="store_true",
-                        help="Run Fogo gates (1, K6) only; stop before Santiago data. "
+                        help="Run Fogo gates (1, K6) only. Stop before Santiago data. "
                              "Use to verify gates on Athena before tagging.")
+    parser.add_argument("--gate3-only", action="store_true",
+                        help="Run Gate 3 Q2 reconstruction only (both branches). "
+                             "Implies loading Santiago modules; requires Athena.")
     args = parser.parse_args()
     t0 = time.time()
 
-    # Gates 1 and K6: Fogo data only — no Santiago CSV required
+    # Fogo gates: always run first
     gate_1_fogo_oracle()
     gate_k6_fogo()
 
@@ -1034,18 +1535,71 @@ def main():
         print(f"Elapsed: {time.time()-t0:.1f}s", flush=True)
         return
 
+    # Gate 3: full Q2 reconstruction (requires Athena, runs before any verdict)
+    if args.gate3_only:
+        gate_3_q2_reconstruction("ST")
+        gate_3_q2_reconstruction("SN")
+        print("=== --gate3-only: Gate 3 PASS for both branches. ===", flush=True)
+        print(f"Elapsed: {time.time()-t0:.1f}s", flush=True)
+        return
+
     # EVAL-R: compute value regret at κ=200 for S6, S7a, S7b (GPU required for S-T)
     print("\n=== EVAL-R: value regret κ=200 ===", flush=True)
     st_regret = compute_value_regret_santiago("ST", kappa=200)
     sn_regret = compute_value_regret_santiago("SN", kappa=200)
 
-    # Gate 3: Q2 self-consistency (runs before any verdict; full reconstruction in EVAL-R)
-    from run_santiago_mc import ST_W0, SN_W0, ST_GROUPS, SN_GROUPS
-    from run_santiago_mc import rho_j as ST_RJ  # placeholder; full via load_branch_data
-    gate_3_q2_reconstruction("S-T", SEALED/"mc_ST_raw.csv", SEALED/"mc_ST_e1_fix2.csv",
-                              ST_W0, ST_GROUPS, ST_W0)  # rho_j loaded inside
-    gate_3_q2_reconstruction("S-N", SEALED/"mc_SN_raw.csv", SEALED/"mc_SN_e1_fix2.csv",
-                              SN_W0, SN_GROUPS, SN_W0)
+    # Gate 3: full Q2 reconstruction (runs before any verdict); returns trio_indices
+    g3_st, g3_st_inf, trios_st = gate_3_q2_reconstruction("ST")
+    g3_sn, g3_sn_inf, trios_sn = gate_3_q2_reconstruction("SN")
+
+    # Verify that the evaluation uses the SAME trios as Gate 3 (canonical hash check)
+    # Compares the freshly-computed npz (same run) against SHA_NPZ_GATE3[tag],
+    # the sealed hash from the prior --gate3-only run. If PENDING, skip with warning.
+    print("=== Gate 4a npz hash check ===", flush=True)
+    for tag, g3, g3_inf in [("ST", g3_st, g3_st_inf), ("SN", g3_sn, g3_sn_inf)]:
+        npz_p = ROOT / "results" / "santiago" / f"gate3_trios_{tag}.npz"
+        if not npz_p.exists():
+            raise RuntimeError(
+                f"Gate 4a: {npz_p.name} not found. Run --gate3-only first."
+            )
+        # Rebuild arrays from in-memory gate3 dict (deterministic, no file I/O)
+        _n = len(g3)
+        _fresh: dict = {}
+        for _k in ("SAW_mm_opt", "SAW_vec_opt", "SAW_vec_grd",
+                   "E1M_opt", "E1B_opt", "E1W_opt", "E1V_opt"):
+            _fresh[_k] = np.array([g3[d][_k] for d in range(_n)], dtype=np.int32)
+            # κ=∞ (1 draw each)
+            _fresh[f"{_k}_inf"] = np.array([g3_inf[_k]], dtype=np.int32)
+        fresh_hash = _npz_content_hash(_fresh)
+        sealed_hash = SHA_NPZ_GATE3.get(tag, "PENDING_UPDATE_AFTER_GATE3_RERUN")
+        if sealed_hash.startswith("PENDING"):
+            raise RuntimeError(
+                f"Gate 4a FAIL ({tag}): SHA_NPZ_GATE3['{tag}'] is PENDING. "
+                "Run --gate3-only on the current commit and set SHA_NPZ_GATE3 "
+                "before running full evaluation."
+            )
+        else:
+            if fresh_hash != sealed_hash:
+                raise RuntimeError(
+                    f"Gate 4a: npz canonical hash mismatch for {tag}.\n"
+                    f"  sealed (--gate3-only run): {sealed_hash[:16]}\n"
+                    f"  this run:                  {fresh_hash[:16]}\n"
+                    "Seeds or data changed between runs."
+                )
+            print(
+                f"  Gate 4a ({tag}): sealed hash matches ({fresh_hash[:16]}) PASS",
+                flush=True,
+            )
+
+    # Gate 4a identity: all 7 Gate 3 trio arrays must match compute_value_regret output
+    # Checks 500 draws; FAIL on first difference.
+    print("=== Gate 4a identity (Gate 3 vs EVAL-R, all 7 arrays) ===", flush=True)
+    for branch_key, g3, regret, trios_arr in [
+        ("ST", g3_st, st_regret, trios_st),
+        ("SN", g3_sn, sn_regret, trios_sn),
+    ]:
+        _check_gate4a_identity(g3, regret, branch_key, trios=trios_arr)
+    print("  Gate 4a identity (all 7 arrays, 500 draws each): PASS\n", flush=True)
 
     # S0-S7b evaluation
     st_res = evaluate_branch(
@@ -1066,18 +1620,29 @@ def main():
     # Regression check against manual cross-check (seed 20261103)
     assert_regression(st_res, sn_res)
 
-    out = SEALED / "santiago_predictions.json"
+    out = SEALED / "santiago_predictions_v2.json"
+    import hashlib as _hl, subprocess as _sp
+    _git_sha = _sp.check_output(["git","rev-parse","HEAD"], cwd=ROOT).decode().strip()
+    _repo_clean = not _sp.check_output(["git","status","--porcelain"], cwd=ROOT).decode().strip()
     with open(out, "w") as f:
         json.dump({"S-T": st_res, "S-N": sn_res,
-                   "B_BOOT": B_BOOT, "elapsed_s": round(time.time()-t0, 1)},
-                  f, indent=2)
+                   "B_BOOT": B_BOOT, "elapsed_s": round(time.time()-t0, 1),
+                   "provenance": {
+                       "script": "evaluate_santiago_predictions.py",
+                       "git_commit": _git_sha,
+                       "repo_clean": bool(_repo_clean),
+                       "sealed_csvs": {
+                           fn: _hl.sha256((SEALED/fn).read_bytes()).hexdigest()
+                           for fn in SHA_SEALED
+                       },
+                   }}, f, indent=2)
     print(f"\nPredictions written: {out}")
 
     # K5 greedy analysis
     for branch_key in ["ST", "SN"]:
         print(f"\n=== K5 greedy analysis: {branch_key} ===", flush=True)
         k5_res = analyze_k5_greedy(branch_key)
-        out_k5 = SEALED / f"st_k5_greedy_{branch_key}.json"
+        out_k5 = SEALED / f"st_k5_greedy_{branch_key}_v2.json"
         with open(out_k5, "w") as f:
             json.dump(k5_res, f, indent=2)
         print(f"  Written: {out_k5}")
