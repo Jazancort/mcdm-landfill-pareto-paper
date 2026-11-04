@@ -1,7 +1,8 @@
 # Estado actual — handoff para próxima sessão
 
-**Ramo:** `eval-v2-rewrite` (este ficheiro está aqui, não em main).
-Ao abrir a próxima sessão: `git switch eval-v2-rewrite`.
+**Ramo:** `main` (após merge do eval-v2-rewrite).
+
+**Bloco 0 fechado.** Próxima sessão: Bloco 1 — secção do Santiago.
 
 **Avaliação do Santiago fechada (v2, commit d02a324, tag predictions-eval-v2).**
 Escrita, Bloco 0: gerar o macros_santiago.tex a partir do santiago_predictions_v2.json,
@@ -55,11 +56,12 @@ Só levanto um problema se mudar um veredicto. Tudo o resto vai para a lista da 
 ## Fases restantes
 
 **Fase B — escrita:**
-- Bloco 0: gerar macros_santiago.tex a partir do JSON (SHA 1fbc412b); juntar ao
-  verify_macros_permanent.py; calcular p da S3b no gerador a partir das contagens.
-- Bloco 0b: figura do κ com três curvas (Fogo, S-T e S-N).
-- Bloco 0c: extrair K1–K4 e K6 do JSON antes de escrever.
-- Bloco 1: secção do Santiago.
+- Bloco 0: CONCLUÍDO. macros_santiago.tex (194 macros, SHA verificado), K1-K4,
+  K6 por κ, Tabela A do stage3b, fig_kappa_santiago (Wong palette, fig_utils),
+  \input no preâmbulo (zero colisões confirmado no log xelatex).
+- K6 CIs do Santiago: não calculados (não estão no JSON v2); figura fica com
+  pontos para Santiago, bandas só para Fogo. Decide na escrita se é necessário.
+- Bloco 1: secção do Santiago (usar macros \Sant* directamente, sem numbers à mão).
 - Depois: §7, abstract, highlights, §9.
 
 **Fase C — sensibilidades** (paralela, só descritivas):
