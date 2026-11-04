@@ -1108,3 +1108,66 @@ Criterion & Group & $\rho_j^A$ & $\rho_j^B$ & Notes \\
   Purely analytical.}
 \label{fig:binary_amplitude}
 \end{figure}
+
+% =======================================================================
+% Santiago replication: implementation deviations (tab:sant-dev)
+% =======================================================================
+\section*{Implementation corrections for the Santiago replication}
+\label{sec:sant-dev}
+
+Table~\ref{tab:sant-dev} lists all implementation corrections applied after the
+Monte Carlo outputs were sealed.
+Each row gives: the deviation ID, what changed, whether it was made before or after
+the affected quantity had been observed, and whether any verdict changed.
+
+\begin{table}[!t]
+\centering
+\caption{Implementation corrections for the Santiago replication (§\ref{sec:santiago}).
+  ``Before/after'' refers to whether the correction was applied before or after
+  the affected quantity (Q2, R, K6 contrast) had been observed in the Santiago runs.
+  No correction alters sealed Monte Carlo data; each aligns the evaluation code
+  with a definition already used on Fogo or stated in the pre-registration.}
+\label{tab:sant-dev}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}
+    >{\raggedright\arraybackslash}p{3.2cm}
+    >{\raggedright\arraybackslash}p{1.3cm}
+    >{\raggedright\arraybackslash}p{5.4cm}
+    >{\raggedright\arraybackslash}p{1.5cm}
+    >{\raggedright\arraybackslash}p{2.6cm}
+    @{}}
+\toprule
+\textbf{ID} & \textbf{Date} & \textbf{What changed} & \textbf{Before/} \newline \textbf{after seeing} & \textbf{Verdict impact} \\
+\midrule
+DEV-SANT-E1-001 &
+  2026-10-29 &
+  E1 cells had used an amplitude-specific frontier; corrected to use the
+  mm-frontier, matching the Fogo E1 experiment. &
+  After (all E1 cells returned $Q_2=100\%$ by construction) &
+  S3a, S3b, S7a, S7b change from degenerate to reported values. \\[3pt]
+DEV-SANT-K6-001 &
+  2026-11-03 &
+  Pooled SAW$-$TOPSIS contrast had used 4 cells; corrected to 3 informative
+  cells (SAW/mm/grd, SAW/vec/grd, SAW/vec/opt), matching the Fogo E7 definition. &
+  After (4-cell K6 per-$\kappa$ values were in the sealed log) &
+  K6 values change; K5(b) sign changes on S-T. \\[3pt]
+DEV-SANT-EVALR-001 &
+  2026-11-03 &
+  Regret $R$ had been computed as $1-Q_2$ (fraction not on frontier); corrected
+  to mean value regret (mean portfolio value loss relative to the frontier portfolio). &
+  Before (no correct $R$ had been computed on Santiago before this fix) &
+  S6, S7a, S7b change from 1$-Q_2$-based to value-regret values. \\[3pt]
+DEV-SANT-K5-001 &
+  pre-run &
+  K5 had used an incorrect assembly-contrast metric; corrected to the
+  metric defined in A5 §2 before the final evaluation run. &
+  Before (identified in code review before the final run) &
+  K5 descriptive values change; no verdict (K5 is descriptive). \\[3pt]
+Holm &
+  post-eval &
+  Holm adjustment recomputed after verdicts were first obtained. &
+  After &
+  One reported $p$-value changes; no verdict changes. \\
+\bottomrule
+\end{tabular}
+\end{table}
