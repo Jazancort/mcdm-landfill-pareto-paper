@@ -402,3 +402,36 @@ _e1_inf_indices[e1_name] = int(cp.argmax(V_e1_inf_gpu))
 Esta expressão **não chama** `compute_e1_cells_gpu` (a função importada do MC).
 Os valores não estão verificados por comparação com a função canónica. Para a avaliação
 actual (R só em κ=200), esta não-verificação não afecta nenhum resultado.
+
+---
+
+### ER-GATE-RUN-v5: Gates run record — commit final pré-avaliação (ca5d4ec, 2026-11-04)
+
+avaliacao a correr em `ca5d4ec81498a8088ed6ec1901c71d53bc0ba91c`, enviado ao GitHub antes da corrida.
+
+**Run timestamp**: 20261104T0700Z (Athena)
+
+| Gate | EXIT | Elapsed | Log SHA-256 |
+|------|------|---------|-------------|
+| --gates-only | 0 | 142.8s | `0989c3533357eb871d077b3fb0abe378a6c3635ede85d953f6cd38dbf3411da6` |
+| 21 mutation tests | 0 | 0.77s | `0a06fbaf71d1c4cc420fa85430f8b09fde99893339e8c08f2ace5ee80481c18d` |
+
+Nota: --gate3-only não correu nesta ronda (o hash SHA_NPZ_GATE3 foi definido em 30ea02f
+com base no run 03d62a0 T2345Z; os gates verificam o hash ao correr a avaliação completa).
+`git diff --stat 30ea02f b8db186` = 1 file, 24 lines (só corpus/deviations/DEV-SANT-EVALR-001.md).
+
+Mudanças em ca5d4ec vs 30ea02f:
+- Gate 4a: FAIL em tudo (sem `is not None` escapes); 7 arrays verificados, 500 draws
+- e1_avail removido de santiago_eval_core.py
+- SHA_NPZ_GATE3 PENDING → RuntimeError (não mais warning)
+- K5 sign: None se qualquer lado for 0 (não só kappa=inf)
+- 21 testes: 7-param 11a, 11b (chave em falta), 11c (trios ausente)
+- DEV-SANT-K5-001 reescrito com citações A5 word-for-word
+- DEV-SANT-EVALR-001: ER-SCOPE-R (R só em kappa=200, kappa=inf unverified)
+- diagnostics/_count_e1b_zeros.py: valores computados (não hardcoded)
+
+Diagnósticos adicionais:
+- `git diff 30ea02f b8db186`: só DEV-SANT-EVALR-001 (24 linhas)
+- backup/11b6ad0 e backup/a60abd1 existem na Athena
+- pytest 9.2.0 em .venv/lib/python3.12/site-packages/pytest/__init__.py
+  (sem pyproject.toml nem uv.lock no repo; instalado directamente)
