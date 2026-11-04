@@ -1,8 +1,18 @@
 # Estado actual — handoff para próxima sessão
 
-**Ramo:** `main` HEAD `ea86be2`.
+**Ramo:** `main` HEAD `a17c239`.
 
-**Bloco 0 fechado.** Próxima sessão: Bloco 1 — secção do Santiago (`\label{sec:santiago}`), entre os Resultados e a Discussão. Números só por macros `\Sant*`; nenhum número escrito à mão. Começar pelas Tabelas A e B e decidir onde fica a figura do κ com três curvas.
+**Bloco 1 em curso.** Tabelas A e B prontas em `paper/manuscript/santiago.tex`. Texto §8.1–§8.2 com análise S2+S6, S7a, S3b, K5/K6. Compilação: 30 páginas, 0 cross-references por resolver (5 passes pdflatex).
+
+**Próximo passo:** revisão das Tabelas A e B e do texto por Julio. Verificar cada célula quanto ao veredicto. Tópicos pendentes: nome das cidades S-T e S-N ([CITY-A], [CITY-B]); secção de sensibilidades (Fase C).
+
+**Nota de arranque:**
+```powershell
+$REPO = "g:\...\paper - Comparison between MCDM Methods for Landfill Site Selection"
+cd $REPO
+git switch main; git pull --ff-only; git log --oneline -3
+```
+Enviar `paper/manuscript/santiago.tex` para revisão e começar Fase C (SENS-AGR, S-N a 1.25km) quando aprovado.
 
 **Avaliação do Santiago fechada (v2, commit d02a324, tag predictions-eval-v2).**
 Bloco 0 completo: 219 macros em `macros_santiago.tex` (SHA verificado, 5 ficheiros),
@@ -61,12 +71,13 @@ Só levanto um problema se mudar um veredicto. Tudo o resto vai para a lista da 
   --santiago` difere 219 linhas contra temp. K6 CIs: `santiago_k6_ci.json` (SHA
   88fc473c…), percentile bootstrap B=2000. Figura `fig_kappa_santiago.pdf`: 3 curvas
   (Fogo, S-T, S-N), bandas de IC, Wong palette, fig_utils.
-- Bloco 1: secção do Santiago (`\label{sec:santiago}`), entre Resultados e Discussão.
-  Números só por macros `\Sant*`; nenhum número à mão. Começar pelas Tabelas A e B.
-  **Decisão pendente:** onde fica a figura do κ com três curvas (opção A: mover para
-  a secção do Santiago, §7 fica com ficheiro separado só do Fogo; opção B: fica no §7
-  com legenda alargada e remissão). A opção A é mais limpa.
-- Depois: §7, abstract, highlights, §9.
+- Bloco 1: EM REVISÃO (a17c239). `santiago.tex` com §8, Tabela A (9 linhas), Tabela B
+  (16 linhas S0–S7b K1–K6), texto S2+S6/S7a/S3b/K5+K6. Figura em §7.9 (caption
+  actualizada para 3 curvas). Citação nfmt() aplicada (16{,}699{,}705). 30 páginas,
+  0 cross-references por resolver.
+  Pendente: nomes [CITY-A]/[CITY-B], aprovação das tabelas.
+- Depois: §7 (abstract actualizado com Santiago), highlights, §9 Discussion com
+  referência a Santiago, §10 Conclusion.
 
 **Fase C — sensibilidades** (paralela, só descritivas):
 SENS-AGR, S-N a 1,25 km, S5 com perm categórico, SENS-ZDTI-DISTRIB.
