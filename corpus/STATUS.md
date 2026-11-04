@@ -1,15 +1,15 @@
 # Estado actual — handoff para próxima sessão
 
-**Ramo:** `main` (após merge do eval-v2-rewrite).
+**Ramo:** `main` HEAD `ea86be2`.
 
-**Bloco 0 fechado.** Próxima sessão: Bloco 1 — secção do Santiago.
+**Bloco 0 fechado.** Próxima sessão: Bloco 1 — secção do Santiago (`\label{sec:santiago}`), entre os Resultados e a Discussão. Números só por macros `\Sant*`; nenhum número escrito à mão. Começar pelas Tabelas A e B e decidir onde fica a figura do κ com três curvas.
 
 **Avaliação do Santiago fechada (v2, commit d02a324, tag predictions-eval-v2).**
-Escrita, Bloco 0: gerar o macros_santiago.tex a partir do santiago_predictions_v2.json,
-verificando o SHA (1fbc412b…), e juntá-lo ao verify_macros_permanent.py. O p da S3b é
-calculado no gerador a partir das contagens. A seguir, a figura do κ com três curvas
-(Fogo, S-T e S-N). Antes do Bloco 1, extrair do JSON os veredictos K1–K4 e K6. Depois,
-Bloco 1: secção do Santiago.
+Bloco 0 completo: 219 macros em `macros_santiago.tex` (SHA verificado, 5 ficheiros),
+K6 CIs descritivos calculados (`santiago_k6_ci.py`, percentile bootstrap B=2000,
+SeedSequence(20261104)), figura `fig_kappa_santiago.pdf` com três curvas e bandas de IC
+(Wong palette, fig_utils), `\input` no preâmbulo sem colisões. Motor: pdflatex (0
+indefinidos, 31 páginas, exit 1 não-fatal — ver Fase D).
 
 ---
 
@@ -56,12 +56,16 @@ Só levanto um problema se mudar um veredicto. Tudo o resto vai para a lista da 
 ## Fases restantes
 
 **Fase B — escrita:**
-- Bloco 0: CONCLUÍDO. macros_santiago.tex (194 macros, SHA verificado), K1-K4,
-  K6 por κ, Tabela A do stage3b, fig_kappa_santiago (Wong palette, fig_utils),
-  \input no preâmbulo (zero colisões confirmado no log xelatex).
-- K6 CIs do Santiago: não calculados (não estão no JSON v2); figura fica com
-  pontos para Santiago, bandas só para Fogo. Decide na escrita se é necessário.
-- Bloco 1: secção do Santiago (usar macros \Sant* directamente, sem numbers à mão).
+- Bloco 0: CONCLUÍDO (ea86be2). 219 macros em `macros_santiago.tex` (K1–K4 com
+  ficheiro:linha A5, K6 por κ com CIs, Tabela A do stage3b), `verify_macros_permanent.py
+  --santiago` difere 219 linhas contra temp. K6 CIs: `santiago_k6_ci.json` (SHA
+  88fc473c…), percentile bootstrap B=2000. Figura `fig_kappa_santiago.pdf`: 3 curvas
+  (Fogo, S-T, S-N), bandas de IC, Wong palette, fig_utils.
+- Bloco 1: secção do Santiago (`\label{sec:santiago}`), entre Resultados e Discussão.
+  Números só por macros `\Sant*`; nenhum número à mão. Começar pelas Tabelas A e B.
+  **Decisão pendente:** onde fica a figura do κ com três curvas (opção A: mover para
+  a secção do Santiago, §7 fica com ficheiro separado só do Fogo; opção B: fica no §7
+  com legenda alargada e remissão). A opção A é mais limpa.
 - Depois: §7, abstract, highlights, §9.
 
 **Fase C — sensibilidades** (paralela, só descritivas):
@@ -69,8 +73,19 @@ SENS-AGR, S-N a 1,25 km, S5 com perm categórico, SENS-ZDTI-DISTRIB.
 Correm com run_santiago_mc.py congelado, sem gates nem previsões novas.
 
 **Fase D — limpeza antes da submissão (uma sessão):**
-- merge para main
-- errata 28% → 35,4% no CHANGELOG do Zenodo (versões afectadas)
+- Motor de compilação: decidir entre pdflatex e xelatex, actualizar Makefile,
+  usar sempre o mesmo. O xelatex crashava no 2.º passe por VS Code/MiKTeX a
+  compilar em background e bloquear ficheiros (não é bug do documento); solução:
+  desligar compilação automática do VS Code ou compilar sempre na Athena com Make.
+  Número de páginas muda entre os dois motores (30 vs 31).
+- thumbnails/: copiar `thumbnails/cas-email.jpeg` do template CAS-DC para o repo;
+  a sua ausência faz pdflatex sair com exit 1 em vez de exit 0.
+- Referências por resolver: após compilar `suppl_wrapper.tex` primeiro, confirmar
+  `grep -cE 'Reference .* undefined' main.log` devolve 0.
+- Frase do E7: "as pre-registered (PRESPEC E7 §6)" → "as specified in
+  PRESPEC_E7_KAPPA.md" (§7 classifica E7 como exploratório; "pre-registered" é
+  reservado para Santiago e E1).
+- merge para main (já feito); errata 28% → 35,4% no CHANGELOG do Zenodo
 - run_e1.py marcado como INVALID; remover cópia duplicada run_e1_v3.py
 - repor asserts A2/A3 com valores actuais
 - refs.bib com year = {2012}
