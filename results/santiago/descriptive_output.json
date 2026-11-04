@@ -1,0 +1,20 @@
+{
+  "regadios": {
+    "study_area_km2_hull": 419.52,
+    "regadio_island_km2": 51.66,
+    "regadio_in_sn_km2": 17.83,
+    "regadio_pct": 4.25,
+    "method": "convex_hull_of_N_cand_387",
+    "sha_carta": "b3b155c6db081eefe8288d2efea2337cacb30d5b1c126f54dce77524de568a47",
+    "sha_df_sn": "c09b61f7bfb31b2aa118d972b9776ad1b055bc1f9d03abe04eb8b7fc2bbc484d"
+  },
+  "k5_check": {
+    "k5_in_stage3_descriptors": false,
+    "ST_K5a_inf_pp": 0.0,
+    "ST_K5b_inf_pp": 0.0,
+    "SN_K5a_inf_pp": 100.0,
+    "SN_K5b_inf_pp": -33.3,
+    "deviation": "stage3b_descriptors.json does not contain K5 kappa=inf contrasts; they were first computed in Stage 4 MC. K5 is descriptive; no verdict is affected. Registered as DEV-SANT-K5B-001 if not present.",
+    "sha_desc": "710718247783f1eeccbebfe894e953e21f56c963076bbf99e912a5b57f6fcbcc"
+  }
+}
