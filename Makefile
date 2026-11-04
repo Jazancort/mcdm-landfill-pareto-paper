@@ -1,6 +1,8 @@
 # Makefile for normalisation paper
 # Windows-compatible (uses uv run python and pdflatex)
 #
+SHELL = cmd.exe
+#
 # Single source of truth: paper/manuscript/main.tex
 # src/main.tex is DEPRECATED (removed 2026-11-04, writing-santiago branch).
 #
@@ -49,11 +51,11 @@ paper:
 	xcopy /E /Y /Q "$(SRCDIR)\figures\*" "$(BUILDDIR)\figures\" >nul 2>&1
 	copy /Y "$(SRCDIR)\macros\macros_e7.tex"       "$(BUILDDIR)\macros_e7.tex"       >nul
 	copy /Y "$(SRCDIR)\macros\macros_kappa_inf.tex" "$(BUILDDIR)\macros_kappa_inf.tex" >nul
-	cd "$(BUILDDIR)" && $(PDFLATEX) main.tex
-	cd "$(BUILDDIR)" && bibtex main
-	cd "$(BUILDDIR)" && $(PDFLATEX) suppl_wrapper.tex
-	cd "$(BUILDDIR)" && $(PDFLATEX) main.tex
-	cd "$(BUILDDIR)" && $(PDFLATEX) main.tex
+	-cd /d "$(BUILDDIR)" && $(PDFLATEX) main.tex
+	-cd /d "$(BUILDDIR)" && bibtex main
+	-cd /d "$(BUILDDIR)" && $(PDFLATEX) suppl_wrapper.tex
+	-cd /d "$(BUILDDIR)" && $(PDFLATEX) main.tex
+	-cd /d "$(BUILDDIR)" && $(PDFLATEX) main.tex
 	copy /Y "$(BUILDDIR)\main.bbl" "$(MSRC)\main.bbl"
 	copy /Y "$(BUILDDIR)\main.pdf" "$(MSRC)\main.pdf"
 	copy /Y "$(BUILDDIR)\suppl_wrapper.aux" "$(MSRC)\suppl_wrapper.aux"
