@@ -1,12 +1,22 @@
 {
   "regadios": {
-    "study_area_km2_hull": 419.52,
-    "regadio_island_km2": 51.66,
-    "regadio_in_sn_km2": 17.83,
-    "regadio_pct": 4.25,
-    "method": "convex_hull_of_N_cand_387",
+    "sn_area_km2": 387.023,
+    "regadio_in_sn_km2": 13.868,
+    "regadio_pct": 3.6,
     "sha_carta": "b3b155c6db081eefe8288d2efea2337cacb30d5b1c126f54dce77524de568a47",
-    "sha_df_sn": "c09b61f7bfb31b2aa118d972b9776ad1b055bc1f9d03abe04eb8b7fc2bbc484d"
+    "sha_sn_boundary": "d550883cad23e0d556ad76fd95592eaa8e5602ec9f33f7270348146b5c4cc8c1"
+  },
+  "frontier_fogo": {
+    "fmmsize": 181,
+    "ntrios": 1944653,
+    "fraction_pct": 0.0093
+  },
+  "frontier_sn": {
+    "n_adm": 190,
+    "n_trios": 77995,
+    "front_size": 1493,
+    "fraction_pct": 1.91,
+    "sha_csv": "c09b61f7bfb31b2aa118d972b9776ad1b055bc1f9d03abe04eb8b7fc2bbc484d"
   },
   "k5_check": {
     "k5_in_stage3_descriptors": false,

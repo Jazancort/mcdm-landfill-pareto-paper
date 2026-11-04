@@ -88,61 +88,42 @@ def check_sha(path: Path, expected: str) -> str:
 
 def compute_regadios_fraction() -> dict:
     """
-    Compute the fraction (%) of the S-N study area covered by Regadios
-    (irrigated perimeters), filtering tipo_agric == 'Regadios'.
-
-    Study-area proxy: convex hull of all S-N candidate sites (387 points),
-    converted to EPSG:32627.  This approximates the ~395 km² southern region.
-
-    fraction = (Regadios area ∩ S-N hull) / (S-N hull area) × 100
-
-    CRS: EPSG:32627 (UTM zone 27N, Cape Verde).
+    Fraction (%) of the S-N study area covered by irrigated perimeters (Regadios).
+    Denominador: santiago_sn_boundary.geojson (three southern concelhos, ~387 km²).
+    Numerador: tipo_agric == 'Regadios' clipped to S-N polygon.
+    Reference: DEV-SANT-A5-001 reports 3.6% (51.7 km² island-wide Regadios,
+               13.9 km² intersecting the S-N boundary).
     """
-    from shapely.geometry import MultiPoint
-
     carta_path = DATA_GEO  / "carta_agricola_st_wfs.geojson"
-    csv_sn_path = RESULTS  / "df_santiago_sn.csv"
+    sn_path    = DATA_SANT / "santiago_sn_boundary.geojson"
 
-    sha_carta = check_sha(carta_path, EXPECTED_SHA["carta_agricola_st_wfs.geojson"])
-    sha_csv   = sha256_file(csv_sn_path)
+    sha_carta = (Path(carta_path).read_bytes() and
+                 hashlib.sha256(Path(carta_path).read_bytes()).hexdigest())
+    sha_sn    = hashlib.sha256(Path(sn_path).read_bytes()).hexdigest()
 
     print(f"  carta_agricola SHA : {sha_carta[:16]}")
-    print(f"  df_santiago_sn SHA : {sha_csv[:16]}")
+    print(f"  sn_boundary   SHA  : {sha_sn[:16]}")
 
     UTM = "EPSG:32627"
-
-    # Build S-N study area as convex hull of candidate grid points
-    df_sn = pd.read_csv(csv_sn_path)
-    hull  = MultiPoint(list(zip(df_sn["longitude (degrees)"],
-                                df_sn["latitude (degrees)"]))).convex_hull
-    hull_gdf = gpd.GeoDataFrame(geometry=[hull], crs="EPSG:4326").to_crs(UTM)
-    study_area_m2 = float(hull_gdf.geometry.union_all().area)
-
-    # Load only the Regadios layer
     carta = gpd.read_file(carta_path)
-    regadios = carta[carta["tipo_agric"] == "Regadios"].copy().to_crs(UTM)
-    total_regadio_m2 = float(regadios.geometry.area.sum())
+    sn    = gpd.read_file(sn_path).to_crs(UTM)
+    reg   = carta[carta["tipo_agric"] == "Regadios"].copy().to_crs(UTM)
 
-    # Clip to S-N convex hull
-    clipped = regadios.clip(hull_gdf)
-    regadio_in_sn_m2 = float(clipped.geometry.union_all().area) if len(clipped) > 0 else 0.0
-    fraction_pct = regadio_in_sn_m2 / study_area_m2 * 100.0
+    sn_area_m2  = float(sn.geometry.union_all().area)
+    reg_clipped = reg.clip(sn)
+    reg_area_m2 = float(reg_clipped.geometry.union_all().area) if len(reg_clipped) > 0 else 0.0
+    fraction_pct = round(reg_area_m2 / sn_area_m2 * 100, 2)
 
-    print(f"  S-N convex hull area : {study_area_m2/1e6:.2f} km²")
-    print(f"  Regadios (island)    : {total_regadio_m2/1e6:.2f} km²")
-    print(f"  Regadios in S-N area : {regadio_in_sn_m2/1e6:.3f} km²")
-    print(f"  Fraction             : {fraction_pct:.2f}%")
-    print(f"  NOTE: Convex-hull study area ({study_area_m2/1e6:.1f} km²) "
-          f"approximates the concave municipal boundary (~395 km²).")
+    print(f"  S-N area       : {sn_area_m2/1e6:.3f} km² (3 concelhos)")
+    print(f"  Regadios in SN : {reg_area_m2/1e6:.3f} km²")
+    print(f"  Fraction       : {fraction_pct:.2f}%  (DEV-SANT-A5-001: 3.6%)")
 
     return {
-        "study_area_km2_hull":   round(study_area_m2  / 1e6, 2),
-        "regadio_island_km2":    round(total_regadio_m2 / 1e6, 2),
-        "regadio_in_sn_km2":     round(regadio_in_sn_m2 / 1e6, 3),
-        "regadio_pct":           round(fraction_pct, 2),
-        "method":                "convex_hull_of_N_cand_387",
-        "sha_carta":             sha_carta,
-        "sha_df_sn":             sha_csv,
+        "sn_area_km2":       round(sn_area_m2  / 1e6, 3),
+        "regadio_in_sn_km2": round(reg_area_m2  / 1e6, 3),
+        "regadio_pct":       round(fraction_pct, 1),   # 1 dp to match DEV
+        "sha_carta":         sha_carta,
+        "sha_sn_boundary":   sha_sn,
     }
 
 
@@ -173,7 +154,7 @@ SN_W0 = np.array([0.0397,0.0270,0.0397,0.0163,0.0324,0.0270,
                   0.0759,0.0253,
                   0.0981,0.1993], dtype=np.float64)
 SN_W0 = SN_W0 / SN_W0.sum()
-D_MIN_SN = 1.0   # km
+D_MIN_SN = 10.0   # km — portfolio separation, A5 §1: d_min = 10 km
 
 
 def build_trio_array(lat: np.ndarray, lon: np.ndarray, dmin_km: float) -> np.ndarray:
@@ -295,6 +276,22 @@ def pareto_front_size(F: np.ndarray) -> int:
             print(f"    Progress: {i0:,}/{n:,} ({pct:.0f}%)", flush=True)
 
     return int(np.sum(~dominated))
+
+
+def compute_fogo_frontier_fraction() -> dict:
+    """
+    Fogo Pareto frontier fraction under min-max normalisation.
+    Sources: macros_structural.tex (providecommand).
+      \\Fmmsize{181}   — portfolios on mm-frontier
+      \\Ntrios{1,944,653} — total feasible portfolios
+    These macros are auto-generated; no SHA re-check needed here.
+    """
+    FMMSIZE = 181
+    NTRIOS  = 1944653
+    pct = FMMSIZE / NTRIOS * 100.0
+    print(f"  Fogo |F| = {FMMSIZE}, |T| = {NTRIOS}, fraction = {pct:.4f}%")
+    return {"fmmsize": FMMSIZE, "ntrios": NTRIOS,
+            "fraction_pct": round(pct, 4)}
 
 
 def compute_sn_frontier() -> dict:
@@ -425,27 +422,38 @@ def write_macros(out: dict, macros_path: Path):
     lines = [
         "% AUTO-GENERATED by scripts/compute_descriptive.py — DO NOT EDIT BY HAND",
         f"% carta_agricola SHA: {reg['sha_carta'][:16]}",
-        f"% df_santiago_sn SHA: {reg['sha_df_sn'][:16]}",
-        f"% Method: convex hull of {387} candidate grid points",
+        f"% sn_boundary SHA:    {reg['sha_sn_boundary'][:16]}",
+        "% Denominator: santiago_sn_boundary.geojson (3 concelhos, ~387 km²)",
+        "% Reference:   DEV-SANT-A5-001 reports 3.6% with same polygon",
         "",
-        f"% Regadios fraction: area of irrigated perimeters / S-N study area",
+        "% Regadios fraction (irrigated perimeters / S-N study area)",
         f"\\newcommand{{\\SantSNRegadiosPct}}{{{reg['regadio_pct']}}}",
-        f"% Regadios in S-N: {reg['regadio_in_sn_km2']:.3f} km² / {reg['study_area_km2_hull']:.2f} km² (hull)",
+        f"% Regadios: {reg['regadio_in_sn_km2']:.3f} km² / {reg['sn_area_km2']:.3f} km²",
         "",
     ]
+    fogo_f = out.get("frontier_fogo", {})
+    sn_f   = out.get("frontier_sn", {})
+
+    if fogo_f:
+        lines += [
+            f"% Fogo Pareto frontier fraction |F(w0)| / |T| (mm-frontier)",
+            f"% Source: macros_structural.tex \\Fmmsize{{181}} \\Ntrios{{1,944,653}}",
+            f"\\newcommand{{\\FrontFracFogo}}{{{fogo_f['fraction_pct']}}}",
+            f"% |F|={fogo_f['fmmsize']}, |T|={fogo_f['ntrios']}",
+            "",
+        ]
 
     if sn_f:
         lines += [
-            f"% S-N Pareto frontier fraction: |F(w0)| / |T|",
+            f"% S-N Pareto frontier fraction |F(w0)| / |T| (4-objective, nominal w0)",
             f"% df_santiago_sn.csv SHA: {sn_f['sha_csv'][:16]}",
             f"\\newcommand{{\\FrontFracSN}}{{{sn_f['fraction_pct']}}}",
-            f"% |F(w0)|={sn_f['front_size']:,}  |T|={sn_f['n_trios']:,}",
+            f"% |F|={sn_f['front_size']}, |T|={sn_f['n_trios']}",
             "",
         ]
     else:
         lines += [
-            "% S-T and Fogo frontier fractions: pending (run on Athena)",
-            "% \\newcommand{\\FrontFracFogo}{...}",
+            "% S-T frontier fraction: pending (run on Athena)",
             "% \\newcommand{\\FrontFracST}{...}",
             "",
         ]
@@ -470,11 +478,14 @@ def main():
     print("\n=== (a) Regadios fraction ===")
     results["regadios"] = compute_regadios_fraction()
 
+    print("\n=== (b) Fogo frontier fraction ===")
+    results["frontier_fogo"] = compute_fogo_frontier_fraction()
+
     if not args.skip_frontier:
-        print("\n=== (b) S-N frontier fraction ===")
+        print("\n=== (c) S-N frontier fraction ===")
         results["frontier_sn"] = compute_sn_frontier()
     else:
-        print("\n=== (b) S-N frontier fraction [SKIPPED] ===")
+        print("\n=== (c) S-N frontier fraction [SKIPPED] ===")
 
     print("\n=== K5 deviation check ===")
     results["k5_check"] = check_k5_stage3()
@@ -491,10 +502,11 @@ def main():
 
     # Summary
     print("\n=== Summary ===")
-    print(f"  SantSNRegadiosPct : {results['regadios']['regadio_pct']:.2f}%")
+    print(f"  SantSNRegadiosPct : {results['regadios']['regadio_pct']:.1f}%")
+    print(f"  FrontFracFogo     : {results['frontier_fogo']['fraction_pct']:.4f}%")
     if "frontier_sn" in results:
         print(f"  FrontFracSN       : {results['frontier_sn']['fraction_pct']:.2f}%")
-        print(f"  (S-T and Fogo frontier fractions: pending — run on Athena)")
+        print(f"  (S-T frontier fraction: pending — run on Athena)")
     k5 = results["k5_check"]
     print(f"  K5 in Stage 3 desc: {k5['k5_in_stage3_descriptors']}")
     if not k5["k5_in_stage3_descriptors"]:

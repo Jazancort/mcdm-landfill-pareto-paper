@@ -50,26 +50,37 @@ Agricultural exclusions in S-N use irrigated perimeters (Regadios) only
 \citet{Cabral2012}'s agricultural areas came from municipal master
 plans and appear to cover more.
 
-Five implementation corrections were made after the Monte Carlo outputs
-were sealed (Supplementary Table~\ref{tab:sant-dev}):
-two errors in the E1 cells (DEV-SANT-E1-001),
-the three-cell definition of the pooled contrast (DEV-SANT-K6-001),
-the value-regret computation (DEV-SANT-EVALR-001),
-and the K5 metric scope (DEV-SANT-K5-001).
-None alters sealed data; each aligns the evaluation code with a definition
-already used on Fogo or stated in the pre-registration.
+Supplementary Table~\ref{tab:sant-dev} lists every departure from the
+pre-registration, with its date and whether the affected quantity had
+been seen.
+Before the Monte Carlo runs, criterion A2 was dropped under contingency
+C-4 because its WFS layer returned HTTP\,500 on download
+(DEV-SANT-ZDTI-001);
+criterion A4 fell back to a single heritage point when the UNESCO boundary
+shapefile was unavailable (DEV-SANT-A4-001);
+S-N spacing was corrected from 1{,}250\,m to 1{,}000\,m
+(DEV-SANT-SPACING-001);
+S5 criterion B1 was classified as categorical (DEV-SANT-S5-001);
+and agricultural exclusions used irrigated perimeters only, because
+all-type exclusion made the S-N branch degenerate (DEV-SANT-A5-001).
+After the outputs were sealed, four implementation corrections aligned
+the evaluation code with definitions already used on Fogo or stated in
+the pre-registration:
+the E1 cells, evaluated against the wrong frontier and with
+group amplitudes~$\bar A_g$ computed from the drawn rather than the
+nominal weights (DEV-SANT-E1-001);
+the three-cell pooled contrast (DEV-SANT-K6-001);
+the value-regret computation (DEV-SANT-EVALR-001);
+and the K5 metric (DEV-SANT-K5-001).
+None alters sealed data.
 Two were made after the affected quantities had been seen:
-the E1 cells, which returned $Q_2=100\%$ by construction because they
-were evaluated against the wrong frontier,
-and the pooled aggregation contrast, whose four-cell values were in
-the sealed log and which now uses the three informative cells defined
-on Fogo.
-The value-regret correction preceded any computation of $R$ on
-Santiago, and the K5 metric was corrected before the final evaluation.
-Verdicts for S1--S5 were first obtained with an earlier version of the
-evaluation code and are unchanged in the final version.
-The Holm adjustment was recomputed afterwards; it changes one reported
-$p$-value and no verdict.
+the E1 cells, which returned $Q_2=100\%$ by construction,
+and the pooled contrast, whose four-cell values were in the sealed log.
+The $\kappa\!\to\!\infty$ side of K5, which the pre-registration assigned
+to the Stage~3 descriptors, was first computed in the Monte Carlo run
+(Section~\ref{sec:santiago-instances}).
+The Holm adjustment was recomputed after the evaluation; it changes one
+reported $p$-value and no verdict.
 The Fogo reference fraction of zero-regret E1-B draws cited in the
 pre-registration was corrected from 28\% to $\RegretEoneBfracZero$\%.
 
@@ -369,11 +380,12 @@ S3a, that within-group distortion alone costs frontier attainment, is
 confirmed on both.
 
 \textbf{S5.}
-S-N's frontier is defined on four objectives; a larger share of portfolios
-is non-dominated than on Fogo or S-T, so $Q_2$ levels are not directly
-comparable across instances.
-The tested quantity is within-branch: $Q_2(\text{SAW,vec,opt})=\SantSNSfiveQvec$\%
-on S-N exceeds the pre-registered threshold of \QtwovecOptimal\% (S-T: not testable,
+S-N's frontier is defined on four objectives, so a larger share of
+portfolios is non-dominated ($\FrontFracSN$\% against $\FrontFracFogo$\%
+on Fogo); $Q_2$ levels are therefore not comparable across instances, and
+the tested quantities are within-branch contrasts.
+$Q_2(\text{SAW,vec,opt})=\SantSNSfiveQvec$\% on S-N exceeds the
+pre-registered threshold of \QtwovecOptimal\% (S-T: not testable,
 $p_\text{max}^c=\SantSTSfivePerm>\SantSfiveThresh$).
 
 \textbf{Assembly under vector normalisation (S2, S6).}

@@ -1112,70 +1112,95 @@ Criterion & Group & $\rho_j^A$ & $\rho_j^B$ & Notes \\
 % =======================================================================
 % Santiago replication: implementation deviations (tab:sant-dev)
 % =======================================================================
-\section*{Implementation corrections for the Santiago replication}
+\section*{Departures from the pre-registration (Santiago replication)}
 \label{sec:sant-dev}
 
-Table~\ref{tab:sant-dev} lists all implementation corrections applied after the
-Monte Carlo outputs were sealed.
-Each row gives: the deviation ID, what changed, whether it was made before or after
-the affected quantity had been observed, and whether any verdict changed.
+Table~\ref{tab:sant-dev} lists every departure from the pre-registration,
+ordered by date.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \centering
-\caption{Implementation corrections for the Santiago replication (§\ref{sec:santiago}).
-  ``Before/after'' refers to whether the correction was applied before or after
-  the affected quantity (Q2, R, K6 contrast) had been observed in the Santiago runs.
-  No correction alters sealed Monte Carlo data; each aligns the evaluation code
-  with a definition already used on Fogo or stated in the pre-registration.}
+\caption{All departures from the pre-registration for the Santiago
+  replication, ordered by date.
+  \textit{Phase}: ``Before MC'' = before Stage~4 launch (2026-10-28 08:34);
+  ``Before seal'' = during Stage~4 before results were sealed (2026-10-28 12:13);
+  ``After seal'' = after Stage~4 results sealed; ``After eval'' = after the final
+  evaluation (2026-11-04).
+  ``Qty seen?'' refers to whether the affected output quantity (Q2, R, contrast)
+  had been observed before the correction.
+  None of the corrections alter sealed Monte Carlo data.}
 \label{tab:sant-dev}
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}
-    >{\raggedright\arraybackslash}p{3.2cm}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}
+    >{\raggedright\arraybackslash}p{2.8cm}
     >{\raggedright\arraybackslash}p{1.3cm}
-    >{\raggedright\arraybackslash}p{5.4cm}
-    >{\raggedright\arraybackslash}p{1.5cm}
-    >{\raggedright\arraybackslash}p{2.6cm}
-    @{}}
+    >{\raggedright\arraybackslash}p{1.6cm}
+    >{\raggedright\arraybackslash}p{5.0cm}
+    >{\raggedright\arraybackslash}p{1.3cm}
+    >{\raggedright\arraybackslash}p{2.0cm}}
 \toprule
-\textbf{ID} & \textbf{Date} & \textbf{What changed} & \textbf{Before/} \newline \textbf{after seeing} & \textbf{Verdict impact} \\
+\textbf{ID} & \textbf{Date} & \textbf{Phase} & \textbf{What changed}
+  & \textbf{Qty seen?} & \textbf{Verdict} \\
 \midrule
-DEV-SANT-E1-001 &
-  2026-10-29 &
-  E1 cells had used an amplitude-specific frontier; corrected to use the
-  mm-frontier, matching the Fogo E1 experiment. &
-  After (all E1 cells returned $Q_2=100\%$ by construction) &
-  S3a, S3b, S7a, S7b change from degenerate to reported values. \\[3pt]
-DEV-SANT-K6-001 &
-  2026-11-03 &
-  Pooled SAW$-$TOPSIS contrast had used 4 cells; corrected to 3 informative
-  cells (SAW/mm/grd, SAW/vec/grd, SAW/vec/opt), matching the Fogo E7 definition. &
-  After (4-cell K6 per-$\kappa$ values were in the sealed log) &
-  K6 values change; K5(b) sign changes on S-T. \\[3pt]
-DEV-SANT-EVALR-001 &
-  2026-11-03 &
-  Regret $R$ had been computed as $1-Q_2$ (fraction not on frontier); corrected
-  to mean value regret (mean portfolio value loss relative to the frontier portfolio). &
-  Before (no correct $R$ had been computed on Santiago before this fix) &
-  S6, S7a, S7b change from 1$-Q_2$-based to value-regret values. \\[3pt]
-DEV-SANT-K5-001 &
-  pre-run &
-  K5 had used an incorrect assembly-contrast metric; corrected to the
-  metric defined in A5 §2 before the final evaluation run. &
-  Before (identified in code review before the final run) &
-  K5 descriptive values change; no verdict (K5 is descriptive). \\[3pt]
-Holm &
-  post-eval &
+DEV-SANT-ZDTI-001 & 2026-10-27 & Before MC &
+  A2 (ZDTI) dropped; C-4 applied; remaining weights renormalised.
+  WFS returned HTTP\,500. & No & None \\[2pt]
+DEV-SANT-A5-001 & 2026-10-28 & Before MC &
+  Agricultural exclusions: Regadios only.
+  All-type exclusion made S-N degenerate ($N_\text{adm}=0$). &
+  No (degeneracy) & None \\[2pt]
+DEV-SANT-A4-001 & 2026-10-28 & Before MC &
+  A4 cultural heritage: single-point fallback (Cidade Velha).
+  UNESCO boundary shapefile unavailable. & No & None \\[2pt]
+DEV-SANT-SPACING-001 & 2026-10-28 & Before MC &
+  S-N spacing 1{,}250\,m $\to$ 1{,}000\,m per pre-registered rule;
+  S-T stayed at 1{,}250\,m. & No & None \\[2pt]
+DEV-SANT-S5-001 & 2026-10-28 & Before MC &
+  B1 classified as categorical; excluded from S5 point-mass check.
+  S-N S5 testable under this classification. & No & S-N S5: testable \\[2pt]
+DEV-SANT-ORDER-001 & 2026-10-28 & Before MC &
+  S-T extraction ran before explicit Stage~1 confirmation and with
+  Copernicus GLO-30 instead of ASTER GDEM v3.
+  Stage~1 committed before extraction in git; no result used. & No & None \\[2pt]
+DEV-SANT-GPU-001 & 2026-10-28 & Before seal &
+  GPU substituted for CPU after $\sim$3\% of Stage~4 completed.
+  CPU--GPU equivalence verified on 500 draws $\times$ 8 cells. & No & None \\[2pt]
+DEV-SANT-KINF-001 & 2026-10-29 & Before seal &
+  $\kappa\!=\!\infty$: 1 deterministic draw instead of 500.
+  All 500 would be identical; 1 is sufficient. & No & None \\[2pt]
+DEV-SANT-TAG-001 & 2026-10-28 & Before seal &
+  Stage~4 launch tags re-issued r1--r5 as pipeline blockers
+  were resolved one by one. & No & None \\[2pt]
+DEV-SANT-TIMING-001 & 2026-10-29 & Before seal &
+  Timing run printed K1 implicitly; 5 draws, no Q2 saved outside K1. &
+  No & None \\[2pt]
+DEV-SANT-W0-001 & 2026-10-28 & After seal &
+  S-N weight vector $w_0$ post-run audit vs Cabral (2012) Annex~C.
+  No change to code or data. & After seal & None \\[2pt]
+DEV-SANT-E1-001 & 2026-10-29 & After seal &
+  E1 cells: (a)~evaluated against amplitude-specific instead of
+  mm-frontier; (b)~$\bar A_g$ from drawn weights instead of $w_0$. &
+  After (Q2$=$100\% by construction) & S3a, S3b, S7a, S7b \\[2pt]
+DEV-SANT-K5-001 & pre-final & After seal &
+  K5 metric corrected to A5~\S2 definition before the final evaluation. &
+  Before & None \\[2pt]
+DEV-SANT-EVALR-001 & 2026-11-03 & After seal &
+  $R = 1-Q_2$ $\to$ mean value regret. & Before ($R$ not yet computed) &
+  S6, S7a, S7b \\[2pt]
+DEV-SANT-K6-001 & 2026-11-03 & After seal &
+  K6: 4 cells $\to$ 3 informative cells (matching Fogo E7).
+  S-T K5(b) sign: indeterminate under both definitions. &
+  After (4-cell values in sealed log) & K6 values \\[2pt]
+DEV-SANT-KINF-K5 & 2026-10-28 & After seal &
+  A5~\S4 required $\kappa\!=\!\infty$ K5 from Stage~3 descriptors;
+  first computed in Stage~4 as the deterministic draw. &
+  After (Stage~4) & None (K5 descriptive) \\[2pt]
+Holm & post-eval & After eval &
   Holm adjustment recomputed after verdicts were first obtained. &
-  After &
-  One reported $p$-value changes; no verdict changes. \\[3pt]
-DEV-SANT-KINF-K5 &
-  2026-10-28 &
-  A5~\S4 requires the $\kappa\!=\!\infty$ K5 contrasts to be computed
-  in Stage~3 from descriptors; they were first computed in Stage~4 MC
-  as the one deterministic draw. Values match the macro
-  \verb|\SantSTKfiveaInf| (0\,pp) and \verb|\SantSNKfiveaInf| (100\,pp). &
-  After (Stage~4, from MC $\kappa\!=\!\infty$ row) &
-  None (K5 is purely descriptive; no testable criterion). \\
+  After & One $p$-value \\[2pt]
+DEV-FOGO-E1B-001 & (Fogo) & Pre-Fogo &
+  Fogo E1-B zero-regret fraction corrected from 28\% to 35.4\% &
+  After Fogo eval & Text only \\
 \bottomrule
-\end{tabular}
-\end{table}
+\end{tabular*}
+\end{table*}
