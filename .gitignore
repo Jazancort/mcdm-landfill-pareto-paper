@@ -68,3 +68,6 @@ results/santiago/_stage4_run_meta.json  # run metadata (git hash + SHAs); not sc
 
 data/santiago/*.pbf
 data/santiago/*.tif
+
+build/
+

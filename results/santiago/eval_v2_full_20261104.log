@@ -1,0 +1,235 @@
+  Oracle SHA: regret_aggregate OK; regret_perdraw OK
+  Gate 1: calling load_fogo_data() + compute_value_regret()...
+[GPU] CuPy 14.2.0  devices=1  free=12535 MiB  pool_limit=10655 MiB  → GPU acceleration ON
+=== EVAL-R FOGO B=500 T=1944653 (GPU) ===
+  draw 0/500
+  draw 100/500
+  draw 200/500
+  draw 300/500
+  draw 400/500
+  Gate 4a (R_mm==0 exact, unique argmax): PASS
+  Gate 4b (0<=R<=1): PASS
+  Gate 4c (same_trio=>R_grd==R_opt): PASS
+  Gate 4d (E1-V==SAW_vec): PASS
+  Gate 4e (E1-M==SAW_mm):  PASS
+  min_v_margin_mm = 7.456e-05
+  same-trio SAW/vec: 210/500
+  Per-draw: max diff grd=9.99e-16 opt=8.62e-16 PASS
+  e1_oracle_per_draw.csv SHA: OK (913396ce)
+  E1-B per-draw: max diff=9.09e-16 PASS
+  E1-W per-draw: max diff=1.11e-15 PASS
+  n_e1b_zero oracle (trio==t*): 177/500 = 35.4%
+=== Gate 1: mean/median comparison ===
+  R_vec_grd_mean      : oracle=6.63, got=6.63, diff=0.000 [PASS]
+  R_vec_opt_mean      : oracle=5.27, got=5.27, diff=0.000 [PASS]
+  diff_grd-opt        : oracle=1.36, got=1.36, diff=0.000 [PASS]
+  R_e1b_mean          : oracle=4.53, got=4.53, diff=0.000 [PASS]
+  R_e1b_median        : oracle=5.50, got=5.50, diff=0.000 [PASS]
+  R_e1w_mean          : oracle=6.47, got=6.47, diff=0.000 [PASS]
+  n_e1b_zero: 177/500 = 35.4% PASS
+  Gate 1: ALL PASS
+
+  mc_unified_raw.csv SHA: b02df727 OK
+=== K6 Fogo gate (Agg_pooled3, 3 informative cells, TOL=0.05) ===
+  alpha=   25: expected +21.10, got  +21.13, diff=0.030 [PASS]
+  alpha=   50: expected +20.40, got  +20.40, diff=0.000 [PASS]
+  alpha=  100: expected  +9.30, got   +9.33, diff=0.030 [PASS]
+  alpha=  200: expected  -0.40, got   -0.40, diff=0.000 [PASS]
+  alpha=  400: expected  -5.70, got   -5.67, diff=0.030 [PASS]
+  alpha= 1000: expected  -9.00, got   -9.00, diff=0.000 [PASS]
+  kappa=  inf: expected  +0.00, got   +0.00, diff=0.000 [PASS]  (from macros_kappa_inf.tex SHA:9c086c02)
+  K6 gate: ALL 7 VALUES PASS
+
+
+=== EVAL-R: value regret κ=200 ===
+  Loaded ST: N_adm=601
+  Building trios (d_min=10.0 km)...
+  n_trios=16,699,705  (0.5s)
+=== EVAL-R SANT-ST-k200 B=500 T=16699705 (GPU) ===
+  draw 0/500
+  draw 100/500
+  draw 200/500
+  draw 300/500
+  draw 400/500
+  Gate 4a (R_mm==0 exact, unique argmax): PASS
+  Gate 4b (0<=R<=1): PASS
+  Gate 4c (same_trio=>R_grd==R_opt): PASS
+  Gate 4d (E1-V==SAW_vec): PASS
+  Gate 4e (E1-M==SAW_mm):  PASS
+  min_v_margin_mm = 1.046e-05
+  same-trio SAW/vec: 500/500
+  Loaded SN: N_adm=190
+  Building trios (d_min=10.0 km)...
+  n_trios=77,995  (0.0s)
+=== EVAL-R SANT-SN-k200 B=500 T=77995 (GPU) ===
+  draw 0/500
+  draw 100/500
+  draw 200/500
+  draw 300/500
+  draw 400/500
+  Gate 4a (R_mm==0 exact, unique argmax): PASS
+  Gate 4b (0<=R<=1): PASS
+  Gate 4c (same_trio=>R_grd==R_opt): PASS
+  Gate 4d (E1-V==SAW_vec): PASS
+  Gate 4e (E1-M==SAW_mm):  PASS
+  min_v_margin_mm = 3.599e-06
+  same-trio SAW/vec: 52/500
+  Sealed CSV SHA verified: mc_ST_raw.csv, mc_ST_e1_fix2.csv
+  Row counts verified: raw=3001, e1=2004
+  Functions imported from run_santiago_mc: compute_q2_all_cells_gpu, compute_e1_cells_gpu, get_e1_amplitudes, greedy_selector
+  Comparison mode: Q2 {0,1} — exact integer equality (==), no tolerance
+  Loaded ST: N_adm=601
+  Building trios (d_min=10.0 km)...
+  n_trios=16,699,705  (0.5s)
+  trios SHA-256[:16]: 8cfd82a21956b7e3  n_trios: 16699705
+  [GPU] 200 MB transferred  (pool_limit=11173 MiB, free_now=9453 MiB)
+  device: GPU
+  κ=  25: 500 draws × 8 raw...
+    κ=  25 OK  same-mm=486/500  same-vec=488/500  below-10ulp-mm=0/500(1.136e-04)  below-10ulp-vec=0/500(3.501e-06)
+  κ=  50: 500 draws × 8 raw...
+    κ=50 draw 379 SAW_vec below-10ulp margin=3.138e-07: f64_argmax=10144856 f32_argmax=10144856 MATCH
+    κ=  50 OK  same-mm=494/500  same-vec=493/500  below-10ulp-mm=0/500(8.897e-06)  below-10ulp-vec=1/500(3.138e-07)
+  κ= 100: 500 draws × 8 raw...
+    κ=100 draw 45 SAW_vec below-10ulp margin=1.462e-07: f64_argmax=10092301 f32_argmax=10092301 MATCH
+    κ= 100 OK  same-mm=496/500  same-vec=500/500  below-10ulp-mm=0/500(2.415e-06)  below-10ulp-vec=1/500(1.462e-07)
+  κ= 200: 500 draws × 8 raw + 4 E1...
+    κ= 200 OK  same-mm=500/500  same-vec=500/500  below-10ulp-mm=0/500(1.046e-05)  below-10ulp-vec=0/500(1.279e-06)  below-10ulp-e1b=0/500(1.378e-06)  below-10ulp-e1w=0/500(9.019e-07)
+  κ= 400: 500 draws × 8 raw...
+    κ= 400 OK  same-mm=500/500  same-vec=500/500  below-10ulp-mm=0/500(5.495e-06)  below-10ulp-vec=0/500(2.194e-06)
+  κ=1000: 500 draws × 8 raw...
+    κ=1000 draw 43 SAW_vec below-10ulp margin=1.250e-07: f64_argmax=10030277 f32_argmax=10030277 MATCH
+    κ=1000 OK  same-mm=500/500  same-vec=500/500  below-10ulp-mm=0/500(4.443e-05)  below-10ulp-vec=1/500(1.250e-07)
+  κ=∞: 1 draw × 8 raw + 4 E1...
+  κ=∞ OK  same-mm=1/1  same-vec=1/1
+  Saved: gate3_trios_ST.npz  (14 arrays: 7×κ=200 (n=500) + 7×κ=∞)
+    content-hash (canonical): 97ed76f1763400ef406bbafff6e59f5eaede0547a8e6954faefdea429bda71f1
+    file-sha256 (zip):        649a10f2be6b3a0c80967e2f17f5d51bb31c22e1900f4ef6f581a88208468a2c
+  Gate 3 (S-T): 24008 raw + 2004 E1 cells ALL MATCH (26012 total)
+
+  Sealed CSV SHA verified: mc_SN_raw.csv, mc_SN_e1_fix2.csv
+  Row counts verified: raw=3001, e1=2004
+  Functions imported from run_santiago_mc: compute_q2_all_cells_gpu, compute_e1_cells_gpu, get_e1_amplitudes, greedy_selector
+  Comparison mode: Q2 {0,1} — exact integer equality (==), no tolerance
+  Loaded SN: N_adm=190
+  Building trios (d_min=10.0 km)...
+  n_trios=77,995  (0.0s)
+  trios SHA-256[:16]: 2bf559493d00d5b6  n_trios: 77995
+  [GPU] 1 MB transferred  (pool_limit=11173 MiB, free_now=8115 MiB)
+  device: GPU
+  κ=  25: 500 draws × 8 raw...
+    κ=  25 OK  same-mm=195/500  same-vec=203/500  below-10ulp-mm=0/500(4.361e-06)  below-10ulp-vec=0/500(1.488e-06)
+  κ=  50: 500 draws × 8 raw...
+    κ=  50 OK  same-mm=178/500  same-vec=174/500  below-10ulp-mm=0/500(1.158e-05)  below-10ulp-vec=0/500(5.711e-06)
+  κ= 100: 500 draws × 8 raw...
+    κ= 100 OK  same-mm=153/500  same-vec=103/500  below-10ulp-mm=0/500(5.101e-05)  below-10ulp-vec=0/500(1.767e-06)
+  κ= 200: 500 draws × 8 raw + 4 E1...
+    κ= 200 OK  same-mm=126/500  same-vec=52/500  below-10ulp-mm=0/500(3.599e-06)  below-10ulp-vec=0/500(5.227e-07)  below-10ulp-e1b=0/500(6.047e-07)  below-10ulp-e1w=0/500(6.780e-07)
+  κ= 400: 500 draws × 8 raw...
+    κ= 400 OK  same-mm=73/500  same-vec=14/500  below-10ulp-mm=0/500(1.374e-05)  below-10ulp-vec=0/500(2.314e-06)
+  κ=1000: 500 draws × 8 raw...
+    κ=1000 OK  same-mm=21/500  same-vec=0/500  below-10ulp-mm=0/500(1.211e-05)  below-10ulp-vec=0/500(6.714e-06)
+  κ=∞: 1 draw × 8 raw + 4 E1...
+  κ=∞ OK  same-mm=0/1  same-vec=0/1
+  Saved: gate3_trios_SN.npz  (14 arrays: 7×κ=200 (n=500) + 7×κ=∞)
+    content-hash (canonical): 9b94c73a6dfae44b4aa775531c9c0f90fea65687b831449b431d547134d0a38d
+    file-sha256 (zip):        7fb7beefb19541a996119438a74377a070425d301c81b76d42d3f325312dafad
+  Gate 3 (S-N): 24008 raw + 2004 E1 cells ALL MATCH (26012 total)
+
+=== Gate 4a npz hash check ===
+  Gate 4a (ST): sealed hash matches (97ed76f1763400ef) PASS
+  Gate 4a (SN): sealed hash matches (9b94c73a6dfae44b) PASS
+=== Gate 4a identity (Gate 3 vs EVAL-R, all 7 arrays) ===
+  Gate 4a identity (all 7 arrays, 500 draws each): PASS
+
+
+=== S-T ===
+
+=== S-N ===
+=== Regression check (24+ values) against conversation cross-check ===
+  REG OK [S-T S1 diff pp]: 15.8
+  REG OK [S-T S2 grd-opt pp]: 0.0
+  REG OK [S-T E1-W opt %]: 80.2
+  REG OK [S-T E1-V opt %]: 84.2
+  REG OK [S-T E1-W count (401)]: 401
+  REG OK [S-T E1-V count (421)]: 421
+  REG OK [S-T S5 vec_opt %]: 84.2
+  REG OK [S-T K6 3-cell pp]: 26.2
+  REG OK [S-N S1 diff pp]: 25.2
+  REG OK [S-N S2 grd-opt pp]: -64.4
+  REG OK [S-N E1-W opt %]: 99.2
+  REG OK [S-N E1-V opt %]: 98.6
+  REG OK [S-N E1-W count (496)]: 496
+  REG OK [S-N E1-V count (493)]: 493
+  REG OK [S-N S5 vec_opt %]: 98.6
+  REG OK [S-N K6 3-cell pp]: -11.93
+  REG OK [S-T SAW_mm_opt count]: 500
+  REG OK [S-N SAW_mm_opt count]: 500
+  REG OK [S-T S2 solo_grd k200]: 0
+  REG OK [S-T S2 solo_opt k200]: 0
+  REG OK [S-N S2 solo_grd k200]: 4
+  REG OK [S-N S2 solo_opt k200]: 326
+  REG OK [S-T S3b solo_V  k200]: 69
+  REG OK [S-T S3b solo_W  k200]: 49
+  REG OK [S-N S3b solo_V  k200]: 0
+  REG OK [S-N S3b solo_W  k200]: 3
+  REG OK [S-T E1-B opt count]: 500
+  REG OK [S-N E1-B opt count]: 500
+  Regression: ALL PASS
+
+
+Predictions written: /home/julioazancort/scratch/mcdm-landfill-pareto-paper/results/santiago/santiago_predictions_v2.json
+
+=== K5 greedy analysis: ST ===
+  Loaded ST: N_adm=601
+  Building trios (d_min=10.0 km)...
+  n_trios=16,699,705  (0.5s)
+  [GPU] 200 MB transferred  (pool_limit=11173 MiB, free_now=8115 MiB)
+  κ=25: done
+  κ=50: done
+  κ=100: done
+  κ=200: done
+  κ=400: done
+  κ=1000: done
+  Written: /home/julioazancort/scratch/mcdm-landfill-pareto-paper/results/santiago/st_k5_greedy_ST_v2.json
+
+=== K5 greedy analysis: SN ===
+  Loaded SN: N_adm=190
+  Building trios (d_min=10.0 km)...
+  n_trios=77,995  (0.0s)
+  [GPU] 1 MB transferred  (pool_limit=11173 MiB, free_now=8115 MiB)
+  κ=25: done
+  κ=50: done
+  κ=100: done
+  κ=200: done
+  κ=400: done
+  κ=1000: done
+  Written: /home/julioazancort/scratch/mcdm-landfill-pareto-paper/results/santiago/st_k5_greedy_SN_v2.json
+
+======================================================================
+PREDICTION SUMMARY
+======================================================================
+
+S-T:
+  S0   : PASS             SAW/mm/opt Q2=100% every draw (K1 regression)
+  S1   : CONFIRMED        Q2(SAW,mm,grd) > Q2(SAW,vec,grd), 95% CI excludes 0
+  S2   : NOT CONFIRMED    Q2(SAW,vec,opt) < Q2(SAW,vec,grd), 95% CI excludes 0 (greedy
+  S3a  : CONFIRMED        E1-W opt < 100% AND E1-V opt < 100%
+  S3b  : NOT CONFIRMED    E1-V opt < E1-W opt (between-group distortion > within-group
+  S4   : DESCRIPTIVE      SAW-TOPSIS Agg_pooled3 per kappa (3 informative cells; K5 de
+  S5   : NOT TESTABLE     Q2(SAW,vec,opt) > 56.8% (Fogo reference)
+  S6   : NOT CONFIRMED    R(SAW,vec,grd) > R(SAW,vec,opt), 95% CI excludes 0 (value re
+  S7a  : CONFIRMED        R(E1-B,opt) > 0, 95% CI excludes 0 (value regret, E1-B vs SA
+  S7b  : CONFIRMED        R(E1-B,opt) < R(E1-W,opt) — Fogo ordering (4.53 < 6.47 pp)
+
+S-N:
+  S0   : PASS             SAW/mm/opt Q2=100% every draw (K1 regression)
+  S1   : CONFIRMED        Q2(SAW,mm,grd) > Q2(SAW,vec,grd), 95% CI excludes 0
+  S2   : NOT CONFIRMED    Q2(SAW,vec,opt) < Q2(SAW,vec,grd), 95% CI excludes 0 (greedy
+  S3a  : CONFIRMED        E1-W opt < 100% AND E1-V opt < 100%
+  S3b  : CONFIRMED        E1-V opt < E1-W opt (between-group distortion > within-group
+  S4   : DESCRIPTIVE      SAW-TOPSIS Agg_pooled3 per kappa (3 informative cells; K5 de
+  S5   : CONFIRMED        Q2(SAW,vec,opt) > 56.8% (Fogo reference)
+  S6   : CONFIRMED        R(SAW,vec,grd) > R(SAW,vec,opt), 95% CI excludes 0 (value re
+  S7a  : CONFIRMED        R(E1-B,opt) > 0, 95% CI excludes 0 (value regret, E1-B vs SA
+  S7b  : CONFIRMED        R(E1-B,opt) < R(E1-W,opt) — Fogo ordering (4.53 < 6.47 pp)
+EVAL_DONE_exit=0

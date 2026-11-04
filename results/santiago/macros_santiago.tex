@@ -234,8 +234,12 @@
 
 % ── Eval-log sourced: same-vec counts and row counts ────────────────────────
 % Source: eval_v2_full_20261104.log (SHA above); eval commit d02a324
-\newcommand{\SantKoneTotalRows}{3001}  % total rows in raw MC CSV (6×500+1 = all κ incl. ∞)
+\newcommand{\SantKoneTotalRows}{3001}  % total rows in raw MC CSV (6x500+1 = all kappa incl. inf)
 \newcommand{\SantEoneRows}{501}  % rows per E1 cell (500 stoch + 1 det)
+\newcommand{\SantSTSzeroRzero}{500}  % R=0 draws at kappa=200 for SAW/mm/opt (S-T)
+\newcommand{\SantSTSzeroEoneB}{500}  % E1-B Q2=100% draws at kappa=200 (S-T)
+\newcommand{\SantSNSzeroRzero}{500}  % R=0 draws at kappa=200 for SAW/mm/opt (S-N)
+\newcommand{\SantSNSzeroEoneB}{500}  % E1-B Q2=100% draws at kappa=200 (S-N)
 \newcommand{\SantSTSameVecKHundred}{500}  % S-T same SAW/vec portfolio (grd==opt) at κ=100
 \newcommand{\SantSTSameVecKThousand}{500}  % S-T same SAW/vec portfolio (grd==opt) at κ=1000
 \newcommand{\SantSTSameVecKTwoHundred}{500}  % S-T same SAW/vec portfolio (grd==opt) at κ=200
@@ -246,14 +250,17 @@
 
 % ── PRESPEC/A5 constants ───────────────────────────────────────────────────
 % Source: PRESPEC_SANTIAGO_A5.md §1 (SHA dd945d1c5ef9d238)
-\newcommand{\SantNkappa}{6}  % stochastic κ values {25,50,100,200,400,1000} (A5 §1)
+\newcommand{\SantNkappa}{6}  % stochastic kappa values {25,50,100,200,400,1000} (A5 §1)
+\newcommand{\SantNdraws}{500}  % draws per kappa (A5 §1); alias kept separate from Fogo \ndraws
 \newcommand{\SantSfiveThresh}{0.5}  % S5 testability threshold (PRESPEC_SANTIAGO.md §6)
 \newcommand{\SantTVBThresh}{0.05}  % S3b/S7b TV_B testability threshold (PRESPEC_SANTIAGO.md §6)
-\newcommand{\SantSTAreaKmSq}{991}  % Santiago island area km² (PRESPEC_SANTIAGO.md §2)
-\newcommand{\SantSNAreaKmSq}{395}  % Southern region area km² (PRESPEC_SANTIAGO.md §2 and §5.1)
+\newcommand{\SantSTAreaKmSq}{991}  % Santiago island area km^2 (PRESPEC_SANTIAGO.md §2)
+\newcommand{\SantSNAreaKmSq}{395}  % Southern region area km^2 (PRESPEC_SANTIAGO.md §2 and §5.1)
 \newcommand{\FogoMcrit}{11}  % Fogo AHP model: 11 criteria (main article Table 2)
 \newcommand{\FogoGridSpacingKm}{1.0}  % Fogo grid spacing km (PRESPEC_SANTIAGO.md §3 PRE-A)
-\newcommand{\FogoAreaKmSq}{476}  % Fogo island area km² (published; AzancortNeto2026)
+\newcommand{\FogoAreaKmSq}{476}  % Fogo island area km^2 (published; AzancortNeto2026)
 \newcommand{\FogoRefPermPM}{0.90}  % Fogo perm point-mass = 350/389 (PRESPEC_SANTIAGO.md §6 note)
 \newcommand{\EsevenBootSeed}{99}  % E7 bootstrap seed (run_e7_kappa_sweep.py:321 def bstrap(...,seed=99))
+\newcommand{\SantMCDmin}{10}  % Santiago d_min (km); A5 §1: portfolio k=3; d_min=10 km
+\newcommand{\SantBootSeedCI}{20261104}  % SeedSequence for santiago_k6_ci.py bootstrap CIs
 

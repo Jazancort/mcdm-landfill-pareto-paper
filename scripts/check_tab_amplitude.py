@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 
 AMP_JSON = ROOT / "results" / "amplitudes" / "amplitudes.json"
-MAIN_TEX = ROOT / "src" / "main.tex"
+MAIN_TEX = ROOT / "paper" / "manuscript" / "main.tex"
 
 # ── Load amplitudes.json ───────────────────────────────────────────────────
 with open(AMP_JSON) as f:

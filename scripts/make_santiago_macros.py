@@ -406,10 +406,23 @@ def _append_extras(lines, data, s3b, evallog=None):
         lines.append("% Source: eval_v2_full_20261104.log (SHA above); eval commit d02a324")
         lines += [
             cmd("SantKoneTotalRows",        str(evallog["n_raw"]),
-                f"total rows in raw MC CSV (6×500+1 = all κ incl. ∞)"),
+                f"total rows in raw MC CSV (6x500+1 = all kappa incl. inf)"),
             cmd("SantEoneRows",             str(evallog["n_e1_per_cell"]),
                 "rows per E1 cell (500 stoch + 1 det)"),
         ]
+        # S0: R=0 and E1-B Q2=100% counts
+        # R=0 iff SAW/mm/opt is on the frontier (Q2=100%), same count as SzeroN
+        # E1-B Q2=100% at kappa=200: same as KtwoN (500); plus 1 at kappa=inf
+        for br, branch in [("ST", "S-T"), ("SN", "S-N")]:
+            p_s0 = [p for p in data[branch]["predictions"] if p["prediction"] == "S0"][0]
+            n_zero = int(p_s0["n_saw_mm_opt_k200"])
+            e1b_k200 = evallog["n_e1_per_cell"] - 1  # 501 - 1 = 500
+            lines += [
+                cmd(f"Sant{br}SzeroRzero",  str(n_zero),
+                    f"R=0 draws at kappa=200 for SAW/mm/opt ({branch})"),
+                cmd(f"Sant{br}SzeroEoneB",  str(e1b_k200),
+                    f"E1-B Q2=100% draws at kappa=200 ({branch})"),
+            ]
         for k_str, (n_same, n_draws) in sorted(evallog["sv_st"].items(),
                                                 key=lambda x: (x[0] == "∞", x[0])):
             kname = KNAME.get(k_str, "Inf" if k_str == "∞" else k_str)
@@ -424,25 +437,31 @@ def _append_extras(lines, data, s3b, evallog=None):
     lines.append("% Source: PRESPEC_SANTIAGO_A5.md §1 (SHA dd945d1c5ef9d238)")
     lines += [
         cmd("SantNkappa",       "6",
-            "stochastic κ values {25,50,100,200,400,1000} (A5 §1)"),
+            "stochastic kappa values {25,50,100,200,400,1000} (A5 §1)"),
+        cmd("SantNdraws",       "500",
+            "draws per kappa (A5 §1); alias kept separate from Fogo \\ndraws"),
         cmd("SantSfiveThresh",  "0.5",
             "S5 testability threshold (PRESPEC_SANTIAGO.md §6)"),
         cmd("SantTVBThresh",    "0.05",
             "S3b/S7b TV_B testability threshold (PRESPEC_SANTIAGO.md §6)"),
         cmd("SantSTAreaKmSq",   "991",
-            "Santiago island area km² (PRESPEC_SANTIAGO.md §2)"),
+            "Santiago island area km^2 (PRESPEC_SANTIAGO.md §2)"),
         cmd("SantSNAreaKmSq",   "395",
-            "Southern region area km² (PRESPEC_SANTIAGO.md §2 and §5.1)"),
+            "Southern region area km^2 (PRESPEC_SANTIAGO.md §2 and §5.1)"),
         cmd("FogoMcrit",        "11",
             "Fogo AHP model: 11 criteria (main article Table 2)"),
         cmd("FogoGridSpacingKm", "1.0",
             "Fogo grid spacing km (PRESPEC_SANTIAGO.md §3 PRE-A)"),
         cmd("FogoAreaKmSq",     "476",
-            "Fogo island area km² (published; AzancortNeto2026)"),
+            "Fogo island area km^2 (published; AzancortNeto2026)"),
         cmd("FogoRefPermPM",    "0.90",
             "Fogo perm point-mass = 350/389 (PRESPEC_SANTIAGO.md §6 note)"),
         cmd("EsevenBootSeed",   "99",
             "E7 bootstrap seed (run_e7_kappa_sweep.py:321 def bstrap(...,seed=99))"),
+        cmd("SantMCDmin",       "10",
+            "Santiago d_min (km); A5 §1: portfolio k=3; d_min=10 km"),
+        cmd("SantBootSeedCI",   "20261104",
+            "SeedSequence for santiago_k6_ci.py bootstrap CIs"),
     ]
     lines.append("")
 
