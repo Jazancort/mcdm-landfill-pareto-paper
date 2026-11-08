@@ -836,7 +836,10 @@ the ideal--nadir variant is reported in the Supplementary Material.
 \section{Methods}
 \label{sec:methods}
 
-The analysis is conducted on a GIS dataset for Fogo Island, Cape Verde.
+The main analysis is conducted on a GIS dataset for Fogo Island, Cape Verde;
+Section~\ref{sec:santiago} tests pre-registered predictions on two further
+instances built from Santiago Island, described there and in the Supplementary
+Material.
 This section describes the candidate grid, the criteria, and the preprocessing
 decisions that affect the downstream amplitude calculations.
 Figure~\ref{fig:workflow} summarises the six-stage pipeline; the subsections
@@ -847,7 +850,7 @@ that follow correspond to Stages~1--6 in order.
 \input{figures/fig_workflow}
 \caption{Six-stage MCDM pipeline for landfill site selection on Fogo Island,
   Cape Verde.
-  Stage~1: GIS dataset with 389 viable sites and 11 criteria across three
+  Stage~1: GIS dataset with \Nvia{} viable sites and 11 criteria across three
   objective groups (siting cost, environmental impact and social safety).
   Stage~2: AHP-derived nominal weights ($\mathrm{CR}=\CR$) with Dirichlet
   perturbation ($\kappa=200$, $\ndraws$ draws).
@@ -1002,7 +1005,7 @@ $1$ under min--max, and rank amplitudes depend only on the distribution of
 ranks, not on which end of the scale is labelled zero.
 This formulation coincides with the classical textbook form $x_{ij}/\lVert\mathbf{x}_j\rVert_2$
 when $\min_j x_j=0$ (true for \texttt{perm}, \texttt{slope}, \texttt{urban},
-\texttt{cult}, \texttt{aspect} and \texttt{protected} in the 473-site dataset,
+\texttt{cult}, \texttt{aspect} and \texttt{protected} in the \Ncand-site dataset,
 where \texttt{slope} and \texttt{protected} attain zero only at excluded candidate
 sites not present in $\Aspace'$)
 and differs by at most $\RhoShiftMaxPct\,\%$
@@ -1603,7 +1606,9 @@ amplitudes are themselves computed on the instance, so~(i)$\Rightarrow$(ii)
 should be read as: whenever a normalisation produces amplitudes that vary
 within a group, there exist configurations of sites under which exact
 assembly selects a dominated portfolio.
-Section~\ref{sec:e1} shows that Fogo is such a configuration.
+Section~\ref{sec:e1} shows that Fogo is such a configuration, and
+prediction~S3a (Section~\ref{sec:santiago}) shows the same for both Santiago
+instances.
 The proof uses only the weighted-sum structure and the objective ordering;
 it does not depend on the number of groups, so the equivalence holds for
 any $g\geq 1$.
@@ -1850,11 +1855,14 @@ sub-optimality in the factorial experiment into four ordered factors:
     Under SAW, where the Lemma applies exactly, both the greedy and
     optimal assembly benefit from the preservation.
   \item \emph{Assembly effect (optimal vs.\ greedy):}
-    Exact assembly helps under min--max and, on frontier attainment ($Q_2$),
-    hurts under vector normalisation, by an amount that depends on $\kappa$
-    (Sections~\ref{sec:assembly} and~\ref{sec:kappa}).
-    Differences in value regret between the two assembly rules are below the
-    $\eqmargin=2.5$~pp margin in every informative cell.
+    On Fogo, exact assembly helps under min--max and, on frontier attainment
+    ($Q_2$), hurts under vector normalisation, by an amount that depends
+    on~$\kappa$ (Sections~\ref{sec:assembly} and~\ref{sec:kappa});
+    differences in value regret between the two rules are below the
+    $\eqmargin$~pp margin in every informative cell.
+    Neither pattern holds on Santiago (Section~\ref{sec:santiago}): on S-N
+    exact assembly is better on both measures, and on S-T the two rules
+    select the same portfolio in almost every draw.
   \item \emph{Aggregation effect (SAW vs.\ TOPSIS vs.\ VIKOR):}
     TOPSIS and VIKOR aggregate through ideal-point distances;
     The amplitude identity~\eqref{eq:weff} does not apply exactly to them.
@@ -2019,8 +2027,8 @@ $-\slopeOpt$~pp per unit of total variation; with three levels and
 \textit{vector} carrying most of the regressor variance, we report the
 ordering and decline to treat the slope as a predictive coefficient.
 Under greedy assembly the ordering is weak: min--max and midranks tie at
-$86.0\%$, because a myopic rule commits to the same leading sites under
-both.
+$\QtwommGreedy\%$, because a myopic rule commits to the same leading sites
+under both.
 The empirical ordering corroborates the analytic claim of
 Section~\ref{sec:three_norms}; it is not its foundation.
 Further families (max, Peldschus, sum) are reported in the
@@ -2049,7 +2057,7 @@ $\CondGapSAWvecOpt\%$ against $\CondGapSAWvecGrd\%$ for SAW;
 $\CondGapTOPSISvecOpt\%$ against $\CondGapTOPSISvecGrd\%$ for TOPSIS).
 This is consistent with exact assembly reaching the frontier of
 $w^{\mathrm{eff}}$, which lies close to, but not on, the frontier of $w$.
-According to the pre-specified equivalence criterion ($\eqmargin=2.5$~pp),
+According to the pre-specified equivalence criterion ($\eqmargin$~pp),
 all differences in $Q_3$ scaled to percentage points are below $\eqmargin$;
 severity differences are not practically relevant on this instance.
 
@@ -2135,7 +2143,7 @@ Assembly $\times$ normalisation (TOPSIS)      & $+\InteractionTOPSIS$ & $[+\Inte
 
 The aggregation contrast of $\AggContrast$~pp ($95\%$ CI
 $[\AggLo,\,\AggHi]$) has a pooled mean equivalent to zero at $\kappa=200$
-(TOST $p=\TOSTp$, $\eqmargin=2.5$~pp, $90\%$ CI within $\pm\eqmargin$).
+(TOST $p=\TOSTp$, $\eqmargin$~pp, $90\%$ CI within $\pm\eqmargin$).
 At $\kappa=50$ the same contrast is $\AggContrastKfifty$~pp ($95\%$ CI
 $[+\AggLoKfifty,\,+\AggHiKfifty]$); Section~\ref{sec:kappa} shows that both
 values lie on a monotone reversal across $\kappa$.
@@ -2182,21 +2190,22 @@ Tables~\ref{tab:factorial} and~\ref{tab:contrasts} show the per-cell $Q_2$ value
 sign with the normalisation, and any average would describe neither regime.
 Pooled over the three informative cells (excluding SAW/min--max/optimal, fixed
 at $100\%$ by Proposition~\ref{prop:p1:stmt}), it is $\AsmThreecell$~pp
-($95\%$ CI $[\AsmThreecellLo,\,\AsmThreecellHi]$); including that cell, it is $-1.1$~pp. The
-difference between the two figures is itself an artefact of the constructed cell.
+($95\%$ CI $[\AsmThreecellLo,\,\AsmThreecellHi]$); including that cell, it is
+$\AsmFourcell$~pp.
+The difference between the two figures is itself an artefact of the constructed cell.
 
 Under min--max normalisation, exact assembly is guaranteed to reach the
-frontier for SAW (Proposition~\ref{prop:p1:stmt}); the $+14.0$~pp contrast in
-that cell measures the greedy shortfall (Section~\ref{sec:greedy}), not an
-empirical benefit of optimisation. For TOPSIS, whose score is not additive in
+frontier for SAW (Proposition~\ref{prop:p1:stmt}); the $+\AsmMMSAWContrast$~pp
+contrast in that cell measures the greedy shortfall (Section~\ref{sec:greedy}),
+not an empirical benefit of optimisation. For TOPSIS, whose score is not additive in
 the objectives, exact assembly adds $+\AsmMMtopsis$~pp
 ($95\%$ CI $[+\AsmMMtopsisLo,\,+\AsmMMtopsisHi]$), a gain whose lower bound
-is close to zero. Under vector normalisation, exact assembly is worse than
-reading the ranking top-down at $\kappa=200$ for both aggregations: $-\AsmVecSAW$~pp for SAW
-($[-\AsmVecSAWLo,\,-\AsmVecSAWHi]$) and $-\AsmVecTOPSIS$~pp for TOPSIS
-($[-\AsmVecTOPSISLo,\,-\AsmVecTOPSISHi]$). For
-TOPSIS the assembly-by-normalisation interaction is $+\InteractionTOPSIS$~pp ($95\%$ CI
-$[+\InteractionTOPSISLo,\,+\InteractionTOPSISHi]$).
+is close to zero. On Fogo, under vector normalisation, exact assembly is worse than
+reading the ranking top-down at $\kappa=200$ for both aggregations:
+$-\AsmVecSAW$~pp for SAW ($[-\AsmVecSAWLo,\,-\AsmVecSAWHi]$) and
+$-\AsmVecTOPSIS$~pp for TOPSIS ($[-\AsmVecTOPSISLo,\,-\AsmVecTOPSISHi]$).
+For TOPSIS the assembly-by-normalisation interaction is $+\InteractionTOPSIS$~pp
+($95\%$ CI $[+\InteractionTOPSISLo,\,+\InteractionTOPSISHi]$).
 
 The reversal has a direct reading. Optimal assembly maximises
 $\sum_{i\in t} s(i)$ exactly and, by Proposition~\ref{prop:p1:stmt}, reaches
@@ -2208,6 +2217,9 @@ of $w^{\mathrm{eff}}$ precisely, and departs from the frontier defined by $w$.
 Greedy assembly is myopic and, on this evidence, less exposed to a distortion
 it does not optimise. This last statement is an interpretation;
 Section~\ref{sec:e1} isolates the component of the distortion responsible.
+The Santiago replication does not support it as a general property: on S-N,
+greedy assembly of the vector score reaches the frontier far less often than
+exact assembly (prediction~S2, Section~\ref{sec:santiago}).
 Value regret is consistent with this reading, but the difference
 ($\RegrDiffSAWvec$~pp, 95\%~CI $[\RegrDiffSAWvecLo,\,\RegrDiffSAWvecHi]$~pp)
 is below $\eqmargin$~pp.
@@ -2408,12 +2420,13 @@ Four score matrices differ only in $A_j$; objectives, frontier, draws and
 feasible set are identical to the factorial ($\kappa=200$, $\ndraws$
 draws, space~$\Aspace'$).
 \textbf{M} sets $A_j\equiv1$.
-\textbf{B} sets $A_j=\bar A_g$, the weighted mean of $\rho_j$ within
-the group of $j$, which reproduces the between-group distortion of
-vector normalisation with none within groups.
-\textbf{W} sets $A_j\propto\rho_j/\bar A_g$, which equalises group
-totals while leaving within-group shares exactly as under vector
-normalisation.
+\textbf{B} sets $A_j=\bar A_g=\sum_{k\in G_g}(w_{0,k}/W_{0,g})\,\rho_k$,
+the mean of $\rho_j$ within the group of $j$ weighted by the nominal
+weights $w_0$ and held fixed across draws, which reproduces the
+between-group distortion of vector normalisation with none within groups.
+\textbf{W} sets $A_j\propto\rho_j/\bar A_g$, with the same
+$w_0$-weighted $\bar A_g$, which equalises group totals while leaving
+within-group shares exactly as under vector normalisation.
 \textbf{V} sets $A_j=\rho_j$.
 The four cells form a $2\times2$ design in the presence of each
 component (Table~\ref{tab:e1}).
@@ -2442,7 +2455,7 @@ V (vector)       & \TVBvec & \TVWvec & $\QtwoEoneVGrd$\%  & $\QtwoEoneVOpt$\%  &
 \bottomrule
 \multicolumn{8}{l}{\footnotesize $R$ in percentage of attainable $V$-range; $R=0$ means $t^*_w$ selected exactly.}\\
 \multicolumn{8}{l}{\footnotesize $^{*}$ Mean (SE~$\RegretEoneBSE$~pp; median~$\RegretEoneBMed$~pp;
-  $\RegretEoneBfracZero\%$ of draws: $R=0$).}
+  $\RegretEoneBfracZero\%$ of draws select $t^*$ exactly ($R=0$)).}
 \end{tabular}
 \end{table*}
 
@@ -2464,8 +2477,8 @@ SE~$\RegretEoneBSE$~pp; $\RegretEoneBfracZero\%$ of draws select the
 reference portfolio exactly; see Table~\ref{tab:e1}).
 The regret ordering across cells is $M < B < V < W$ under optimal assembly.
 B and~V agree with the $Q_2$ ordering ($Q_2$: $B > V$; $R$: $B < V$).
-W and~V disagree: W fares better than V in $Q_2$ ($64.2\%$ against $56.8\%$)
-but worse in $R$ ($\RegretEoneW$~pp against $\RegrSAWvecOpt$~pp), so
+W and~V disagree: W fares better than V in $Q_2$ ($\QtwoEoneWOpt\%$ against
+$\QtwoEoneVOpt\%$) but worse in $R$ ($\RegretEoneW$~pp against $\RegrSAWvecOpt$~pp), so
 within-group distortion that recovers some frontier attainment does so at
 a higher value cost.
 Alone, between-group distortion costs nothing in $Q_2$
@@ -2629,7 +2642,7 @@ $\AggKtwentyfive$~pp at $\kappa=25$,
 $\AggContrastKfifty$~pp at $\kappa=50$,
 $\AggKonehundred$~pp at $\kappa=100$,
 $\AggContrast$~pp at $\kappa=200$
-(equivalent to zero; TOST $\eqmargin=2.5$~pp, $p=\TOSTp$;
+(equivalent to zero; TOST $\eqmargin$~pp, $p=\TOSTp$;
 equivalence holds for any $\eqmargin\ge1.9$~pp),
 $\AggKfourhundred$~pp at $\kappa=400$,
 and $\AggKthousand$~pp at $\kappa=1000$ (Fig.~\ref{fig:kappa}).
@@ -2644,6 +2657,7 @@ The negative values at $\kappa=400$--$1000$ therefore arise under small but
 non-zero weight uncertainty, not at the nominal weights themselves.
 Five of the six 95\% CIs exclude zero (unadjusted); only the interval at
 $\kappa=200$ includes zero.
+Section~\ref{sec:santiago} shows that the reversal recurs on S-N but not on S-T.
 
 % Figure moved to §8 (Section~\ref{sec:santiago-outcomes}) — Option A.
 % In-text references to Fig.~\ref{fig:kappa} below are forward references to that section.
@@ -2674,7 +2688,7 @@ $\NormKtwentyfive$~pp at $\kappa=25$, peaks near $\kappa=50$
 ($\NormKthousand$~pp). It never favours vector normalisation significantly.
 At $\kappa\to\infty$ the contrast is zero, because both normalisations yield
 efficient greedy portfolios at the nominal weights; the non-significant value at
-$\kappa=1000$ reflects this limit.
+$\kappa=1000$ is consistent with this limit.
 
 \textbf{Assembly under vector normalisation.}
 Relative to greedy, exact assembly changes $Q_2$ by
@@ -2683,11 +2697,11 @@ $+\AsmVecSAWKtwentyfiveMag$~pp for SAW at $\kappa=25$
 $-\AsmVecSAW$~pp (SAW) and $-\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$
 (Section~\ref{sec:assembly}), and by $-\AsmVecSAWKthousandMag$~pp (SAW) and
 $-\AsmVecTOPKthousandMag$~pp (TOPSIS) at $\kappa=1000$;
-at the deterministic limit ($\kappa\to\infty$, nominal AHP weights)
-the SAW/vec/optimal and TOPSIS/vec/optimal cells reach $0\%$
-(Supplementary Table~\ref{tab:e7grid}, column $\kappa\to\infty$);
-for this factor, unlike aggregation, the large penalties at high $\kappa$
-converge to a deterministic limit, not to zero.
+at the nominal weights the SAW/vec/optimal and TOPSIS/vec/optimal cells
+attain $0\%$ (Supplementary Table~\ref{tab:e7grid}, column $\kappa\to\infty$);
+for this factor, unlike aggregation, the penalty does not vanish in the
+deterministic limit; values of $\kappa$ between $1000$ and $\infty$ were not
+tested on Fogo.
 
 \textbf{Comparison across factors.}
 Measured by range over the grid, the assembly effect under vector normalisation
@@ -2699,7 +2713,7 @@ normalisation is the only factor that keeps its sign wherever it is
 distinguishable from zero.
 
 All 36 intervals ($6$ contrasts $\times$ $6$ values of $\kappa$) are
-unadjusted and descriptive, as pre-registered (PRESPEC~E7~\S6).
+unadjusted and descriptive, as specified in PRESPEC\_E7\_KAPPA.md before the run.
 The full $6\kappa\times8$-cell grid is in Supplementary Table~\ref{tab:e7grid}.
 
 
