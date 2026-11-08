@@ -1,6 +1,123 @@
 # Estado actual — handoff para próxima sessão
 
-**Ramo:** `writing-santiago` HEAD `90a4549`.
+**Ramo:** `writing-santiago` HEAD `5ad5c08` → novo commit desta sessão (pendente).
+
+## ERRATA — verificações anteriores não eram fiáveis
+
+**Commit 90a4549**: O STATUS.md dizia "make check: 0 falhas". Não estava correcto:
+- `check_consistency.py` lia `C:\build\paper\main.log` (log de sessão anterior, não o log actual).
+- `verify_macros_permanent.py --santiago` passava, mas `macros_santiago.tex` continha
+  linhas que o gerador não produzia (`\SantKtwoInfN`, comentário TODO dos Regadios).
+- `\FrontFracSN{1.91}` estava escrito à mão no `macros_descriptive.tex`; o JSON não
+  tinha o valor; o gerador não o produzia.
+- `\RaspLoss` comparava com inteiro (84) em vez de 1 casa decimal (84.4) → DIFF silencioso.
+- `\AsmFourcell` era alias de `\AsmMain` — macro duplicada sem verificação.
+
+Esta errata não muda nenhum resultado científico. Os valores estavam correctos.
+
+## Estado actual (após esta sessão)
+
+```
+BRANCH:  writing-santiago
+HEAD:    5ad5c08 + novo commit desta sessão
+MAKE PAPER: exit 0 (34 páginas)
+MAKE CHECK: exit 0 (0 falhas)
+  check_consistency.py  — lê build/paper/main.log (caminho impresso no output)
+  generate_macros_r1.py — \RaspLoss comparado com 84.4 (1 dp)
+  verify_macros_permanent.py --santiago:
+    macros_santiago.tex  — 268 linhas, OK
+    macros_descriptive.tex — 30 linhas, OK (\FrontFracSN gerado pelo script)
+    \AsmMMSAWContrast verificado contra Q_saw_mm_opt − Q_saw_mm_grd
+C:\build\ — APAGADO
+```
+
+## O que foi feito nesta sessão
+
+1. `check_consistency.py`: todos os caminhos `C:\build\` → `build/paper/`; R10 imprime o log lido.
+2. `generate_macros_r1.py`: `\RaspLoss` comparado com `round(100-rasp_opt, 1)` (84.4).
+3. `\AsmFourcell`, `\AsmFourcellLo`, `\AsmFourcellHi` removidos dos dois `macros.tex`; `\AsmMain` usado no texto.
+4. `\AsmMMSAWContrast` verificado em `verify_macros_permanent.py`.
+5. `compute_descriptive.py`: `--skip-frontier` salta só o S-T (reutiliza JSON); S-N sempre calculado; `\FrontFracSN` gerado pelo script.
+6. `verify_macros_permanent.py --santiago`: passa a comparar também `macros_descriptive.tex`.
+7. `check_consistency.py` A9b: testa que as duas cópias de `macros.tex` estão em sincronia.
+8. `main.tex`: 389/473 → `\Nvia`/`\Ncand`; "pre-registered criterion" → "pre-specified criterion" no E6 (linhas 2572, 2573, 2583); `\AsmFourcell` → `\AsmMain`.
+9. `santiago.tex` + Tabela A: áreas GIS (`\FogoAreaGIS`, `\SantSTAreaGIS`, `\SantSNAreaGIS`); `\SantSNAreaCabral` citado; legenda actualizada; `*AreaKmSq` removido.
+10. `build_paper.py`: `_cp_tree` com `onerror` para ficheiros read-only no Windows.
+
+## Pendentes (próxima sessão — Bloco 3)
+
+- Bloco 3 (discussão/limitações): subsecção "What generalises beyond Fogo", práticas 2 e 5, limitações.
+- Bloco 4 (moldura): introdução, conclusão, resumo, highlights, palavras-chave.
+- "fewer than 20 OSM features" → macro; confirmar rescale 0.2024/0.2034 no run_e1_v3.py.
+- `\SantKtwoInfN` a partir do CSV do E1 (actualmente constante no gerador).
+- Fase D: ver lista abaixo.
+
+---
+
+## O que está fechado
+
+- Commit da avaliação: `d02a324` (eval-v2-rewrite)
+- Tag: `predictions-eval-v2` aponta para `e9850ba` (registo dos resultados)
+- JSON selado: `results/santiago/santiago_predictions_v2.json`
+  SHA-256: `1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf80`
+- Errata S6 S-T: "efeito ausente (trios idênticos 500/500)", p não se aplica
+- 28 REG OK, todos os gates PASS dentro da avaliação
+
+## Tabela de resultados (v2, κ=200)
+
+| Previsão | S-T | S-N |
+|---|---|---|
+| S0 | Confirmada (500/500; R=0) | Confirmada |
+| S1 mm > vec | Confirmada: +15,8 [12,6; 19,0] | Confirmada: +25,2 [21,0; 29,2] |
+| S2 opt < grd | Efeito ausente (0 contra 0) | Sinal oposto: −64,4 [−68,6; −60,0] (4 contra 326) |
+| S3a | Confirmada (W 80,2; V 84,2) | Confirmada (W 99,2; V 98,6) |
+| S3b V < W | Não confirmada: +4,0 (69 contra 49; p=0,080 McNemar) | Confirmada: −0,6 (0 contra 3; p=0,25 binomial) |
+| S4 | Descritiva | Descritiva |
+| S5 | Não testável (perm 0,617) | Confirmada: 98,6% |
+| S6 R_grd > R_opt | Efeito ausente (trios idênticos 500/500) | Confirmada: Δ 13,44 [12,96; 13,93] |
+| S7a R(E1-B) > 0 | Confirmada: 0,93 [0,84; 1,02]; 35,6% zeros (Fogo: 35,4%) | Confirmada: 0,06 [0,05; 0,08]; 79,6% zeros |
+| S7b E1-B < E1-W | Confirmada: Δ [1,71; 2,18] | Confirmada: Δ [0,25; 0,38] |
+| K5 (descritivo) | Sinal nulo em (a) e (b) | Mesmo sinal: (a) +96,8/+100; (b) −36,5/−33,3 |
+
+## Três mensagens principais
+
+1. **S2 e S6 juntas.** No S-N, Q2 e R concordam: o óptimo é melhor nas duas métricas.
+   No S-T, a questão não se põe — o greedy encontra o trio óptimo em todos os
+   sorteios a partir de κ=200.
+
+2. **S7a.** No S-T, fracção de zeros (35,6%) ≈ Fogo (35,4%). No S-N, confirmada
+   formalmente mas efeito de 0,06 pp sem importância prática. Dizer no texto.
+
+3. **S3b.** Os dois ramos dão sentidos opostos.
+
+## Protocolo em vigor
+
+Só levanto um problema se mudar um veredicto. Tudo o resto vai para a lista da Fase D.
+
+## Fases restantes
+
+**Fase B — escrita:**
+- Bloco 0: CONCLUÍDO (ea86be2).
+- Bloco 1: CONCLUÍDO (90a4549). `santiago.tex` + `supplementary.tex` com §8 completo.
+- Bloco 2 (verificação): CONCLUÍDO nesta sessão — verificação fiável, macros limpas.
+- Bloco 3 (PENDENTE): discussão/limitações.
+- Bloco 4 (PENDENTE): moldura (introdução, conclusão, resumo, highlights).
+
+**Fase D — limpeza antes da submissão:**
+- Motor de compilação: pdflatex confirmado; remover variantes `(xelatex variant)` do whitelist.
+- `\SantKtwoInfN` a partir do CSV do E1 (actualmente constante no gerador).
+- "fewer than 20 OSM features" → macro.
+- Confirmar rescale 0.2024/0.2034 no run_e1_v3.py.
+- `\FrontFracST` (Athena).
+- Sensibilidades pré-registadas: SENS-AGR, S-N a 1,25 km, perm categórico, ZDTI-DISTRIB.
+- overflow lines >1pt.
+- thumbnails/cas-email.jpeg em falta.
+- refs.bib year={2012} → verificar.
+- run_e1.py marcado INVALID.
+- asserts A2/A3 com valores actuais.
+- Zenodo CHANGELOG errata 28%→35.4%.
+- clone limpo: git clone && make paper && make check (Linux).
+
 
 **§8 FECHADA.** Todos os três pontos pendentes da sessão anterior foram resolvidos no commit `90a4549`:
 1. `\SantSNRegadiosPct` = 3.6% — denominador corrigido para o polígono dos três concelhos (387 km²; SHA `d550883c`); numerador = só Regadios (13.868 km²).

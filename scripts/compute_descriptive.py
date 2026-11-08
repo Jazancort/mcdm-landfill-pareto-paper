@@ -545,7 +545,9 @@ def write_macros(out: dict, macros_path: Path):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--skip-frontier", action="store_true",
-                        help="Skip frontier fraction computation (for quick test)")
+                        help="Skip S-T frontier fraction (large; run on Athena). "
+                             "S-N is always computed locally. "
+                             "When skipped, S-T value is preserved from existing JSON.")
     args = parser.parse_args()
 
     results = {}
@@ -559,11 +561,26 @@ def main():
     print("\n=== (b) Fogo frontier fraction ===")
     results["frontier_fogo"] = compute_fogo_frontier_fraction()
 
-    if not args.skip_frontier:
-        print("\n=== (c) S-N frontier fraction ===")
-        results["frontier_sn"] = compute_sn_frontier()
+    print("\n=== (c) S-N frontier fraction ===")
+    results["frontier_sn"] = compute_sn_frontier()
+
+    if args.skip_frontier:
+        print("\n=== (d) S-T frontier fraction [SKIPPED — run on Athena] ===")
+        # Preserve existing S-T value from JSON if present
+        out_path = RESULTS / "descriptive_output.json"
+        if out_path.exists():
+            import json as _j
+            prev = _j.loads(out_path.read_text(encoding="utf-8"))
+            if "frontier_st" in prev:
+                results["frontier_st"] = prev["frontier_st"]
+                print(f"  Reusing S-T from JSON: {prev['frontier_st']}")
+            else:
+                print("  No S-T value in existing JSON — will be absent from output")
+        else:
+            print("  No existing JSON — S-T will be absent from output")
     else:
-        print("\n=== (c) S-N frontier fraction [SKIPPED] ===")
+        print("\n=== (d) S-T frontier fraction [NOT YET IMPLEMENTED — run on Athena] ===")
+        print("  Use --skip-frontier to skip (S-T has 16.7M trios)")
 
     print("\n=== K5 deviation check ===")
     results["k5_check"] = check_k5_stage3()

@@ -22,9 +22,14 @@ def _cp(src: Path, dst: Path) -> None:
 
 
 def _cp_tree(src: Path, dst: Path) -> None:
-    """Copy directory tree."""
+    """Copy directory tree, handling read-only files on Windows."""
     if dst.exists():
-        shutil.rmtree(str(dst))
+        import stat as _stat
+        def _rm_readonly(func, path, _):
+            import os as _os
+            _os.chmod(path, _stat.S_IWRITE)
+            func(path)
+        shutil.rmtree(str(dst), onerror=_rm_readonly)
     shutil.copytree(str(src), str(dst))
 
 

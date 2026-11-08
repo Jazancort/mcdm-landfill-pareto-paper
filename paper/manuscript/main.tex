@@ -1392,7 +1392,7 @@ long-tailed norm.
 The rank normalisation gives $\mathrm{TV} = 0.091$: \textit{perm} is
 deflated ($A_j = 0.547$, factor $\mathbf{0.616\times}$) because 350
 tied zeros compress the maximum midrank to $\approx 214.5$ instead
-of~$389$, while \textit{aspect} (binary) gives $A_j = N/[2(N+1)]
+of~$\Nvia$, while \textit{aspect} (binary) gives $A_j = N/[2(N+1)]
 \approx 0.499$ (factor $\mathbf{0.562\times}$) as predicted by
 \eqref{eq:Arank_binary}, independent of $n_1$.
 The seven fully continuous criteria are conversely \emph{inflated}
@@ -2191,7 +2191,7 @@ sign with the normalisation, and any average would describe neither regime.
 Pooled over the three informative cells (excluding SAW/min--max/optimal, fixed
 at $100\%$ by Proposition~\ref{prop:p1:stmt}), it is $\AsmThreecell$~pp
 ($95\%$ CI $[\AsmThreecellLo,\,\AsmThreecellHi]$); including that cell, it is
-$\AsmFourcell$~pp.
+$\AsmMain$~pp.
 The difference between the two figures is itself an artefact of the constructed cell.
 
 Under min--max normalisation, exact assembly is guaranteed to reach the
@@ -2325,7 +2325,7 @@ aspect encoding, not vector normalisation.}
 \centering\small
 \begin{tabular}{@{}ll@{\hspace{4pt}}c@{\hspace{4pt}}c@{}}
 \toprule
-Aspect encoding & Assembly & 389-site & 473-site \\
+Aspect encoding & Assembly & $\Nvia$-site & $\Ncand$-site \\
 \midrule
 Binary (consistent) & optimal & $100.0\%$ (R-M)  & $\RVstarOptimal\%$ (R-V$^*$) \\
                     & greedy  & $\QtwommGreedy\%$  & $\RVstarGreedy\%$ \\
@@ -2569,8 +2569,8 @@ Theorem~\ref{thm:groupconst}) confirmed the implementation: both baseline
 cells (M and B) attained $Q_2=100\%$ on all \EsixPoneNDesign{}
 draws (\EsixPoneHits{} of \EsixPoneTotal{} draw-cell combinations).
 
-P2 (pre-registered criterion: $r_s(\mathrm{TV}_W, Q_2^{\mathrm{opt}}) < 0$ in $\ge80\%$ of instances per family; Supplementary Material):
-among informative instances $r_s < 0$ in $100\%$ per family, satisfying the pre-registered criterion.
+P2 (pre-specified criterion: $r_s(\mathrm{TV}_W, Q_2^{\mathrm{opt}}) < 0$ in $\ge80\%$ of instances per family; Supplementary Material):
+among informative instances $r_s < 0$ in $100\%$ per family, satisfying the pre-specified criterion.
 Supplementary Material, DEV-E6-002, revised the test to a monotone ordering
 criterion ($L\ge F\ge H$ with $H<L$, one-sided Poisson-binomial); that analysis was a mixed result.
 Among instances with no detectable loss at any $\mathrm{TV}_W$
@@ -2580,7 +2580,7 @@ Among the \EsixPtwoLossyNAll{} informative instances, \EsixPtwoMonoAll{}
 satisfied the ordering (two three-way ties and one reversal counted as failures;
 \EsixPtwoPAll; Supplementary Material, DEV-E6-002).
 
-P3 (TV\textsubscript{B} aggravates loss) met the pre-registered criterion
+P3 (TV\textsubscript{B} aggravates loss) met the pre-specified criterion
 in all four families, but most successes were ties at $Q_2=100\%$;
 no single family reached significance among informative instances
 (one-sided binomial $p\ge\EsixPthreeInfPminFam$; DEV-E6-001).
@@ -2774,14 +2774,14 @@ continuous azimuth while the objectives used the binary SE-facing indicator.
 Crossing the two codings with the two reference sets
 (Table~\ref{tab:coding2x2}) separates three effects.
 The coding inconsistency alone costs $\RaspLoss$~pp under optimal assembly
-($100.0\%$ to $\RaspOptimal\%$, 389-site constants).
+($100.0\%$ to $\RaspOptimal\%$, $\Nvia$-site constants).
 Normalising over the $\Ncand$ candidates costs nothing under optimal
 assembly when the coding is consistent ($100.0\%$ in both cells) and
 improves greedy assembly by $\RefSetGreedyGain$~pp
 ($95\%$ CI $[\RoneTwoGrdCIlo,\,\RoneTwoGrdCIhi]$).
-When the coding is inconsistent, the 473-site reference set reduces
+When the coding is inconsistent, the $\Ncand$-site reference set reduces
 $Q_2$ by $\ResidualRefOptDelta$~pp under optimal assembly relative to
-the 389-site reference
+the $\Nvia$-site reference
 ($95\%$~CI $[\ResidualRefOptCIlo,\,\ResidualRefOptCIhi]$,
 greedy: $\ResidualRefGrdDelta$~pp, $[\ResidualRefGrdCIlo,\,\ResidualRefGrdCIhi]$).
 On this instance, a larger reference set under inconsistent coding
@@ -3075,7 +3075,7 @@ and greedy loss in the model as fitted
 $95\%$ CI $[-5.1,\,+2.4]$), while instance size and spatial geometry
 dominate (Supplementary Material, Experiment~E5).
 E5 departs from its pre-specification in seven declared respects,
-including the omission of the $N=389$ level (Supplementary Material).
+including the omission of the $N=\Nvia$ level (Supplementary Material).
 External confirmation on other published instances was not obtained.
 
 A pre-specified experiment, with declared deviations, on \EsixNinst{} synthetic instances

@@ -119,7 +119,7 @@ import re
 macros_tex = (REPO / "macros" / "macros.tex").read_text(encoding="utf-8")
 checks = [
     ("RaspOptimal", rasp_opt),
-    ("RaspLoss",    int(round(100-rasp_opt))),
+    ("RaspLoss",    round(100-rasp_opt, 1)),
     ("RoneOneOptDelta", r_rvm["diff_opt_pp"]),
     ("RoneTwoGrdDelta", r_rvm["diff_grd_pp"]),
     ("RoneTwoGrdCIlo",  r_rvm["ci_lo_grd"]),

@@ -22,6 +22,13 @@
     "ntrios": 1944653,
     "fraction_pct": 0.0093
   },
+  "frontier_sn": {
+    "n_adm": 190,
+    "n_trios": 77995,
+    "front_size": 1493,
+    "fraction_pct": 1.91,
+    "sha_csv": "c09b61f7bfb31b2aa118d972b9776ad1b055bc1f9d03abe04eb8b7fc2bbc484d"
+  },
   "k5_check": {
     "k5_in_stage3_descriptors": false,
     "ST_K5a_inf_pp": 0.0,

@@ -360,18 +360,18 @@ print()
 print("=== Document quality checks ===")
 
 # Check: no undefined \ref labels in compiled log
-# Always read from build dir (repo log is stale/absent after make paper)
+# Always read from build/paper/main.log (repo-relative, written by build_paper.py)
 log_candidates = [
-    Path(r"C:\build\paper\main.log"),
-    ROOT / "main.log",
+    ROOT / "build" / "paper" / "main.log",
+    ROOT / "paper" / "manuscript" / "main.log",
 ]
 log_path = next((p for p in log_candidates if p.exists() and p.stat().st_size > 1024), None)
 
 if log_path is None:
-    FAIL.append("main.log not found in C:\\build\\paper or repo root — run make paper first")
+    FAIL.append("main.log not found in build/paper/ or paper/manuscript/ — run make paper first")
     print("  [FAIL] main.log not found — run make paper first")
 else:
-    print(f"  [INFO] Reading {log_path}")
+    print(f"  [INFO] Reading log: {log_path}")
     log_text = log_path.read_text(encoding="utf-8", errors="replace")
     ref_undef = len(re.findall(r"Reference `[^']+' on page \d+ undefined", log_text))
     if ref_undef > 0:
@@ -403,13 +403,13 @@ else:
     else:
         print(f"  [OK  ] ?? in log: 0")
 
-# Check: main.bbl exists and is > 1 KB (check build dir too)
-bbl_path = ROOT / "paper"/"manuscript" / "main.bbl"
-build_bbl = Path(r"C:\build\paper\src\main.bbl")
-# Use the most recently updated bbl (prefer local over stale build dir)
+# Check: main.bbl exists and is > 1 KB
+bbl_path = ROOT / "paper" / "manuscript" / "main.bbl"
+build_bbl = ROOT / "build" / "paper" / "main.bbl"
+# Use the most recently updated bbl
 if build_bbl.exists() and build_bbl.stat().st_size > 1024:
     if bbl_path.exists() and bbl_path.stat().st_mtime >= build_bbl.stat().st_mtime:
-        bbl_real = bbl_path   # local is newer or same age
+        bbl_real = bbl_path
     else:
         bbl_real = build_bbl
 else:
@@ -813,7 +813,7 @@ if bbl_check.exists():
             print(f"  [FAIL] {key} not cited (absent from main.bbl)")
 
 # Rule 4: no "Repeated entry" in main.blg
-blg_path = Path(r"C:\build\paper\main.blg")
+blg_path = ROOT / "build" / "paper" / "main.blg"
 if blg_path.exists():
     blg_text = blg_path.read_text(encoding="utf-8", errors="replace")
     if "Repeated entry" in blg_text:
@@ -861,13 +861,12 @@ print("=== Log quality gates (undefined refs, Rerun, Overfull) ===")
 log_for_gates = next((p for p in [
     ROOT / "build" / "paper" / "main.log",
     ROOT / "paper" / "manuscript" / "main.log",
-    Path(r"C:\build\paper\main.log"),
-    ROOT / "main.log",
 ] if p.exists() and p.stat().st_size > 1024), None)
 if log_for_gates is None:
-    FAIL.append("Log5b: main.log not found — run xelatex first")
+    FAIL.append("Log5b: main.log not found — run make paper first")
     print("  [FAIL] main.log not found")
 else:
+    print(f"  [INFO] Reading log: {log_for_gates}")
     import re as _re5
     _log5 = log_for_gates.read_text(encoding="utf-8", errors="replace")
     # Undefined references / citations (final pass)
@@ -928,7 +927,7 @@ else:
         print(f"  [FAIL] Rerun to get: {_rerun_text}")
 
     # blg file: bibtex warnings
-    blg_check = next((p for p in [Path(r"C:\build\paper\main.blg"), ROOT / "main.blg"]
+    blg_check = next((p for p in [ROOT / "build" / "paper" / "main.blg", ROOT / "main.blg"]
                       if p.exists()), None)
     if blg_check:
         _blg = blg_check.read_text(encoding="utf-8", errors="replace")
@@ -1001,8 +1000,8 @@ if main_tex.exists():
 print()
 print("=== A7: PDF integrity (pdftotext) ===")
 pdf_candidates = [
-    Path(r"C:\build\paper\src\main.pdf"),
-    ROOT / "paper"/"manuscript" / "main.pdf",
+    ROOT / "build" / "paper" / "main.pdf",
+    ROOT / "paper" / "manuscript" / "main.pdf",
 ]
 pdf_path = next((p for p in pdf_candidates if p.exists() and p.stat().st_size > 100_000), None)
 if pdf_path is None:
@@ -1052,9 +1051,9 @@ else:
 print()
 print("=== A8: Supplementary PDF integrity (pdftotext) ===")
 suppl_pdf_candidates = [
-    Path(r"C:\build\paper\src\suppl_wrapper.pdf"),
-    ROOT / "paper"/"manuscript" / "suppl_wrapper.pdf",
-    ROOT / "paper"/"manuscript" / "supplementary.pdf",
+    ROOT / "build" / "paper" / "suppl_wrapper.pdf",
+    ROOT / "paper" / "manuscript" / "suppl_wrapper.pdf",
+    ROOT / "paper" / "manuscript" / "supplementary.pdf",
 ]
 suppl_pdf = next((p for p in suppl_pdf_candidates if p.exists() and p.stat().st_size > 10_000), None)
 if suppl_pdf is None:
@@ -1079,12 +1078,45 @@ else:
 
 print()
 
+# ── A9b: macros/macros.tex and paper/manuscript/macros.tex must not diverge ───────
+# The two copies differ only in \input path prefixes (../macros/ vs macros/).
+# Any other difference means one copy was edited without updating the other.
+print()
+print("=== A9b: macros.tex copies in sync ===")
+_mac_root = ROOT / "macros" / "macros.tex"
+_mac_msrc = ROOT / "paper" / "manuscript" / "macros.tex"
+if _mac_root.exists() and _mac_msrc.exists():
+    import re as _re9b
+    def _normalise_mac(text):
+        # Strip path prefix differences in \input lines
+        # macros/macros.tex uses \input{e1/...} (relative to results/)
+        # paper/manuscript/macros.tex uses \input{results/e1/...}
+        text = _re9b.sub(r"\\input\{\.\./(macros|results)/", r"\\input{", text)
+        text = _re9b.sub(r"\\input\{results/", r"\\input{", text)
+        return text
+    _norm_root = _normalise_mac(_mac_root.read_text(encoding="utf-8"))
+    _norm_msrc = _normalise_mac(_mac_msrc.read_text(encoding="utf-8"))
+    if _norm_root == _norm_msrc:
+        print("  [OK  ] macros/macros.tex and paper/manuscript/macros.tex are in sync")
+    else:
+        import difflib as _dl9b
+        _diff9b = list(_dl9b.unified_diff(
+            _norm_root.splitlines(), _norm_msrc.splitlines(),
+            fromfile="macros/macros.tex", tofile="paper/manuscript/macros.tex", lineterm=""
+        ))
+        FAIL.append(f"A9b: macros.tex copies diverge ({len(_diff9b)} diff lines) — update both or consolidate")
+        print(f"  [FAIL] macros.tex copies diverge ({len(_diff9b)} diff lines):")
+        for _l in _diff9b[:15]:
+            print(f"    {_l}")
+else:
+    print("  [INFO] A9b: one or both macros.tex copies not found — skipping")
+
 # ── A9: No macro defined more than once across included files ─────────────────
 print()
 print("=== A9: No duplicate macro definitions ===")
 import collections as _col
 _defs = _col.defaultdict(list)
-for _fname in ["src/main.tex", "macros/macros.tex", "macros/macros_amplitudes.tex", "macros/macros_e6.tex", "macros/macros_structural.tex"]:
+for _fname in ["paper/manuscript/main.tex", "macros/macros.tex", "macros/macros_amplitudes.tex", "macros/macros_e6.tex", "macros/macros_structural.tex"]:
     _fpath = ROOT / _fname
     if not _fpath.exists():
         continue
@@ -1590,6 +1622,7 @@ for lab in all_labels:
 # ── R10: log must not request recompilation ────────────────────────────────────
 print("=== R10: no rerun request in log ===")
 if log_path and log_path.exists():
+    print(f"  [INFO] Reading log: {log_path}")
     log_txt = log_path.read_text(encoding="utf-8", errors="replace")
     if re.search(r"Rerun to get|Label\(s\) may have changed", log_txt):
         FAIL.append("R10: log requests rerun")

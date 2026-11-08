@@ -189,6 +189,11 @@ check('QtwovecOptimal',     Q_saw_vec_opt,'56.8', 'cell saw/vector/optimal mean%
 check('QtwommGreedy',       Q_saw_mm_grd, '86.0', 'cell saw/minmax/greedy mean%')
 check('QtwommOptimal',      Q_saw_mm_opt, '100.0','cell saw/minmax/optimal mean%')
 
+# AsmMMSAWContrast = QtwommOptimal - QtwommGreedy
+asm_mm_saw_raw = Q_saw_mm_opt - Q_saw_mm_grd
+check('AsmMMSAWContrast', asm_mm_saw_raw, '14.0',
+      'QtwommOptimal - QtwommGreedy (saw/minmax/optimal - saw/minmax/greedy)')
+
 # Step 6: TV_B_VEC / TV_W_VEC from fogo_constants
 sys.path.insert(0, os.path.join(REPO, 'scripts'))
 import fogo_constants as fc
@@ -269,7 +274,8 @@ _SHA_SANT_JSON = "1fbc412b8ace6bdbd07d74f890f1460a2acdc268ce45ed59fc2a7900e520cf
 
 
 def verify_santiago():
-    """Re-generate macros_santiago.tex to a temp file and diff against tracked version."""
+    """Re-generate macros_santiago.tex and macros_descriptive.tex to temp files
+    and diff against tracked versions."""
     import subprocess, tempfile, os as _os, sys as _sys
 
     _fail = []
@@ -277,7 +283,7 @@ def verify_santiago():
     _make_script = os.path.join(_root, "scripts", "make_santiago_macros.py")
     _tracked_path = os.path.join(_root, "results", "santiago", "macros_santiago.tex")
 
-    # Step 1: Generate to a temp file
+    # Step 1: Generate macros_santiago.tex to a temp file
     with tempfile.NamedTemporaryFile(suffix=".tex", delete=False, mode="w") as tmp:
         tmp_path = tmp.name
     try:
@@ -314,6 +320,60 @@ def verify_santiago():
             _os.unlink(tmp_path)
         except OSError:
             pass
+
+    # Step 3: Verify macros_descriptive.tex matches compute_descriptive.py output
+    print()
+    print("  --- macros_descriptive.tex vs compute_descriptive.py ---")
+    _desc_script = os.path.join(_root, "scripts", "compute_descriptive.py")
+    _tracked_desc = os.path.join(_root, "results", "santiago", "macros_descriptive.tex")
+    with tempfile.TemporaryDirectory() as _tmpdir:
+        import shutil as _sh
+        # Run compute_descriptive.py with output redirected to temp dir
+        # We patch RESULTS to write to tmpdir by passing env var
+        _tmp_desc = os.path.join(_tmpdir, "macros_descriptive.tex")
+        # Use subprocess to run with modified output path via monkey-patching
+        _patch_code = (
+            f"import sys; sys.argv=['compute_descriptive.py']; "
+            f"import importlib.util, pathlib; "
+            f"spec=importlib.util.spec_from_file_location('cd',{repr(_desc_script)}); "
+            f"mod=importlib.util.module_from_spec(spec); "
+            f"spec.loader.exec_module(mod); "
+            f"import json; "
+            f"r={{}}; "
+            f"r['clipping_areas']=mod.compute_clipping_areas(); "
+            f"r['regadios']=mod.compute_regadios_fraction(); "
+            f"r['frontier_fogo']=mod.compute_fogo_frontier_fraction(); "
+            f"r['frontier_sn']=mod.compute_sn_frontier(); "
+            f"mod.write_macros(r, pathlib.Path({repr(_tmp_desc)}))"
+        )
+        _res2 = subprocess.run(
+            [_sys.executable, "-X", "utf8", "-c", _patch_code],
+            capture_output=True, text=True, encoding="utf-8",
+        )
+        if _res2.returncode != 0:
+            print(f"  [FAIL] compute_descriptive.py failed:\n{_res2.stderr[-500:]}")
+            _fail.append("compute_descriptive.py non-zero exit for descriptive diff")
+        elif not os.path.exists(_tmp_desc):
+            print("  [FAIL] compute_descriptive.py did not write macros_descriptive.tex")
+            _fail.append("macros_descriptive.tex not written by compute_descriptive.py")
+        else:
+            _tracked_d = open(_tracked_desc, encoding="utf-8").read()
+            _generated_d = open(_tmp_desc, encoding="utf-8").read()
+            if _tracked_d == _generated_d:
+                n = len(_tracked_d.splitlines())
+                print(f"  [OK  ] macros_descriptive.tex matches regenerated ({n} lines)")
+            else:
+                import difflib as _dl
+                _diff_d = list(_dl.unified_diff(
+                    _tracked_d.splitlines(), _generated_d.splitlines(),
+                    fromfile="tracked/macros_descriptive.tex",
+                    tofile="regenerated/macros_descriptive.tex",
+                    lineterm="",
+                ))
+                print(f"  [FAIL] macros_descriptive.tex differs ({len(_diff_d)} diff lines):")
+                for _l in _diff_d[:20]:
+                    print(f"    {_l}")
+                _fail.append(f"macros_descriptive.tex differs ({len(_diff_d)} diff lines)")
 
     if _fail:
         print(f"\nSANTIAGO FAIL: {len(_fail)} check(s):")
