@@ -1,11 +1,15 @@
 # Estado actual — handoff para próxima sessão
 
-**Ramo:** `writing-santiago` HEAD `180ee60` (4 commits acima de `origin/main` ea86be2).
-PR aberto em: https://github.com/Jazancort/mcdm-landfill-pareto-paper/pull/new/writing-santiago
+**Ramo:** `writing-santiago` HEAD `90a4549`.
 
-**Bloco 1 pronto para revisão.** `santiago.tex` com §8 completo; compilação 33 páginas, bibtex funcional (0 citações indefinidas), 0 marcadores ativos.
+**§8 FECHADA.** Todos os três pontos pendentes da sessão anterior foram resolvidos no commit `90a4549`:
+1. `\SantSNRegadiosPct` = 3.6% — denominador corrigido para o polígono dos três concelhos (387 km²; SHA `d550883c`); numerador = só Regadios (13.868 km²).
+2. `tab:sant-dev` — 18 linhas cobrindo todos os DEV-SANT-* + Holm + DEV-FOGO-E1B-001; colunas Phase/Date/What/Qty seen/Verdict; E1-ABAR adicionado; K6 sem "K5(b) sign changes on S-T".
+3. Fracções na fronteira: `\FrontFracFogo` = 0.0093% (181/1 944 653), `\FrontFracSN` = 1.91% (1 493/77 995); S5 com ressalva quantitativa. S-T fica para a Athena.
 
-**Próximo passo:** Julio revê `paper/manuscript/santiago.tex` e legenda do `fig:kappa`. Depois abrir PR e fazer merge para main.
+`make check` passa com 0 falhas. R10 (rerun no log) é artefacto de compilação.
+
+**Próximo passo:** Bloco 2 — correcções ao texto do Fogo (§§1–7). Não depende de nada do Santiago.
 
 **Avaliação do Santiago fechada (v2, commit d02a324, tag predictions-eval-v2).**
 Bloco 0 completo: 219 macros em `macros_santiago.tex` (SHA verificado, 5 ficheiros),
@@ -59,20 +63,12 @@ Só levanto um problema se mudar um veredicto. Tudo o resto vai para a lista da 
 ## Fases restantes
 
 **Fase B — escrita:**
-- Bloco 0: CONCLUÍDO (ea86be2). 219 macros em `macros_santiago.tex` (K1–K4 com
-  ficheiro:linha A5, K6 por κ com CIs, Tabela A do stage3b), `verify_macros_permanent.py
-  --santiago` difere 219 linhas contra temp. K6 CIs: `santiago_k6_ci.json` (SHA
-  88fc473c…), percentile bootstrap B=2000. Figura `fig_kappa_santiago.pdf`: 3 curvas
-  (Fogo, S-T, S-N), bandas de IC, Wong palette, fig_utils.
-- Bloco 1: PRONTO PARA REVISÃO (180ee60, ramo writing-santiago). `santiago.tex`:
-  §8.1 Tabela A (9 linhas); §8.2 Tabela B (16 previsões S0–S7b K1–K6 com coluna
-  Fogo com valores reais para S5/S6/S7a/S7b e §\ref para os restantes); texto
-  S2+S6/S7a/S3b/K5+K6; figura option A (fig_kappa_santiago.pdf).
-  Citações: bibtex funcional (0 indefinidas). Marcadores: 0 ativos.
-  Fonte única: paper/manuscript/main.tex (src/main.tex removido). Makefile
-  atualizado para pdflatex + paper/manuscript/ como fonte.
-  Pendente: aprovação das tabelas; suppl_wrapper microtype fix (Fase D).
-- Depois: §7 (abstract com Santiago), highlights, §9 Discussion, §10 Conclusion.
+- Bloco 0: CONCLUÍDO (ea86be2).
+- Bloco 1: CONCLUÍDO (90a4549). `santiago.tex` + `supplementary.tex` com §8 completo,
+  `tab:sant-dev` (18 linhas, todos DEV-SANT-*), parágrafo dos desvios reescrito,
+  `\SantSNRegadiosPct`=3.6%, `\FrontFracFogo`=0.0093%, `\FrontFracSN`=1.91%.
+  `make check` passa com 0 falhas.
+- Bloco 2 (PENDENTE): correcções ao texto do Fogo (§§1–7). Ver Fase D para lista.
 
 **Fase C — sensibilidades** (paralela, só descritivas):
 SENS-AGR, S-N a 1,25 km, S5 com perm categórico, SENS-ZDTI-DISTRIB.
