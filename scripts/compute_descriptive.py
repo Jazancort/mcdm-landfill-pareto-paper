@@ -566,12 +566,31 @@ def main():
 
     if args.skip_frontier:
         print("\n=== (d) S-T frontier fraction [SKIPPED — run on Athena] ===")
-        # Preserve existing S-T value from JSON if present
+        # Preserve existing S-T value from JSON if present,
+        # but ABORT if the S-T input SHAs have changed since the last run.
         out_path = RESULTS / "descriptive_output.json"
         if out_path.exists():
             import json as _j
             prev = _j.loads(out_path.read_text(encoding="utf-8"))
             if "frontier_st" in prev:
+                # Verify S-T input SHAs before reusing
+                st_sha_inputs = [
+                    DATA_SANT / "santiago_boundary.geojson",
+                ]
+                prev_shas = prev["frontier_st"].get("input_shas", {})
+                sha_ok = True
+                for inp in st_sha_inputs:
+                    if inp.exists():
+                        cur_sha = sha256_file(inp)[:16]
+                        prev_sha = prev_shas.get(inp.name, "")[:16]
+                        if prev_sha and cur_sha != prev_sha:
+                            raise RuntimeError(
+                                f"--skip-frontier: SHA mismatch for S-T input {inp.name}\n"
+                                f"  stored: {prev_sha}\n"
+                                f"  current: {cur_sha}\n"
+                                f"  Re-run compute_descriptive.py WITHOUT --skip-frontier on Athena."
+                            )
+                        print(f"  SHA OK: {inp.name} ({cur_sha})", flush=True)
                 results["frontier_st"] = prev["frontier_st"]
                 print(f"  Reusing S-T from JSON: {prev['frontier_st']}")
             else:
@@ -581,6 +600,11 @@ def main():
     else:
         print("\n=== (d) S-T frontier fraction [NOT YET IMPLEMENTED — run on Athena] ===")
         print("  Use --skip-frontier to skip (S-T has 16.7M trios)")
+        # When S-T is eventually computed on Athena, the result dict must include:
+        #   results["frontier_st"] = {
+        #       "front_size": ..., "n_trios": ..., "fraction_pct": ...,
+        #       "input_shas": {"santiago_boundary.geojson": sha256_file(...)}
+        #   }
 
     print("\n=== K5 deviation check ===")
     results["k5_check"] = check_k5_stage3()
