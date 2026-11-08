@@ -1167,7 +1167,7 @@ of $\kappa$ is discussed in Section~\ref{sec:entries}.
     The aggregation contrast is declared \emph{equivalent} if the
     $90\%$ bootstrap CI lies entirely within $(-\eqmargin,+\eqmargin)$
     (two one-sided tests at $\alpha=0.05$ each, TOST).
-  \item \textbf{Equivalence test}: TOST with $\eqmargin=2.5$~pp tests whether the pooled mean is
+  \item \textbf{Equivalence test}: TOST with $\eqmargin$~pp tests whether the pooled mean is
     \emph{equivalent to zero} within the margin, not whether it is non-zero.
   \item \textbf{Bootstrap pairing}: replicates are paired by draw within
     each cell so that weight-vector noise cancels in contrasts; the
@@ -2379,7 +2379,7 @@ Full details and provenance are in the Supplementary Material.
 Section~\ref{prop:p1} guarantees that optimal assembly of an
 additive score attains the reference set under matching weights;
 Table~\ref{tab:factorial} shows greedy assembly of the same score
-reaching only $86.0\%$.
+reaching only $\QtwommGreedy\%$.
 The shortfall is attributable to the assembly rule alone, with
 aggregation, normalisation and reference set held fixed.
 
@@ -2420,7 +2420,8 @@ Four score matrices differ only in $A_j$; objectives, frontier, draws and
 feasible set are identical to the factorial ($\kappa=200$, $\ndraws$
 draws, space~$\Aspace'$).
 \textbf{M} sets $A_j\equiv1$.
-\textbf{B} sets $A_j=\bar A_g=\sum_{k\in G_g}(w_{0,k}/W_{0,g})\,\rho_k$,
+\textbf{B} sets $A_j=\bar A_g$ (the group mean of Section~\ref{sec:groupconst}
+evaluated at $w=w_0$, i.e.\ $\bar A_g=\sum_{k\in G_g}(w_{0,k}/W_{0,g})\,\rho_k$),
 the mean of $\rho_j$ within the group of $j$ weighted by the nominal
 weights $w_0$ and held fixed across draws, which reproduces the
 between-group distortion of vector normalisation with none within groups.

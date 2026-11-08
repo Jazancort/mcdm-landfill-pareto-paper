@@ -8,13 +8,26 @@
 \newcommand{\SantSNRegadiosPct}{3.6}
 % Regadios: 13.868 km² / 387.023 km²
 
+% GIS areas of the three clipping polygons (same CRS, same method)
+% fogo_boundary_geol.geojson SHA: 80e0fc8282aaff7b
+% santiago_boundary.geojson  SHA: 5cc381644497a9f2
+% santiago_sn_boundary.geojson SHA: d550883cad23e0d5
+\newcommand{\FogoAreaGIS}{471}
+\newcommand{\SantSTAreaGIS}{1003}
+\newcommand{\SantSNAreaGIS}{387}
+% Cited published area for S-N (Cabral 2012): 395 km²
+\newcommand{\SantSNAreaCabral}{395}
+
 % Fogo Pareto frontier fraction |F(w0)| / |T| (mm-frontier)
-% Source: macros_structural.tex \Fmmsize{181} \Ntrios{1,944,653}
+% Source: macros/macros_structural.tex \Fmmsize{181} \Ntrios{...}
 \newcommand{\FrontFracFogo}{0.0093}
 % |F|=181, |T|=1944653
 
 % S-N Pareto frontier fraction |F(w0)| / |T| (4-objective, nominal w0)
-% df_santiago_sn.csv SHA: c09b61f7bfb31b2a
+% Value from previous sealed run (df_santiago_sn.csv); recomputed when script runs without --skip-frontier
 \newcommand{\FrontFracSN}{1.91}
 % |F|=1493, |T|=77995
+
+% S-T frontier fraction: pending (run on Athena)
+% \newcommand{\FrontFracST}{...}
 

@@ -1,4 +1,15 @@
 {
+  "clipping_areas": {
+    "fogo_km2": 471,
+    "fogo_km2_exact": 471.01696676388593,
+    "fogo_sha": "80e0fc8282aaff7b4dc27baf1fce140020d770c8d653f780cc54f3f938358c35",
+    "st_km2": 1003,
+    "st_km2_exact": 1003.4305071929018,
+    "st_sha": "5cc381644497a9f24eb326228b389d6cc02e09e7a9a7c7dc380d5f9559233a3d",
+    "sn_km2": 387,
+    "sn_km2_exact": 387.02305829523857,
+    "sn_sha": "d550883cad23e0d556ad76fd95592eaa8e5602ec9f33f7270348146b5c4cc8c1"
+  },
   "regadios": {
     "sn_area_km2": 387.023,
     "regadio_in_sn_km2": 13.868,
@@ -10,13 +21,6 @@
     "fmmsize": 181,
     "ntrios": 1944653,
     "fraction_pct": 0.0093
-  },
-  "frontier_sn": {
-    "n_adm": 190,
-    "n_trios": 77995,
-    "front_size": 1493,
-    "fraction_pct": 1.91,
-    "sha_csv": "c09b61f7bfb31b2aa118d972b9776ad1b055bc1f9d03abe04eb8b7fc2bbc484d"
   },
   "k5_check": {
     "k5_in_stage3_descriptors": false,

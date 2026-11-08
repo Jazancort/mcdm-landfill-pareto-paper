@@ -327,6 +327,9 @@ macros_out = [
     m("AsmThreecell",     round(cr["asm_3cell"]["mean_pp"],1),        "asm 3-cell"),
     m("AsmThreecellLo",   round(cr["asm_3cell"]["ci_lo"],1)),
     m("AsmThreecellHi",   round(cr["asm_3cell"]["ci_hi"],1)),
+    m("AsmFourcell",      round(cr["C2_asm_all4"]["mean_pp"],1),       "asm 4-cell = C2"),
+    m("AsmFourcellLo",    round(cr["C2_asm_all4"]["ci_lo"],1)),
+    m("AsmFourcellHi",    round(cr["C2_asm_all4"]["ci_hi"],1)),
     m("AsmVecSAWLo",      round(cr["asm_saw_vec"]["ci_lo"],1)),
     m("AsmVecSAWHi",      round(cr["asm_saw_vec"]["ci_hi"],1)),
     m("AsmVecTOPSISLo",   round(cr["asm_top_vec"]["ci_lo"],1)),
@@ -378,6 +381,10 @@ macros_out = [
     m("QtwommOptimal",  q3v("saw","minmax","optimal")["Q2_pct"]),
     m("QtwovecGreedy",  q3v("saw","vector","greedy")["Q2_pct"]),
     m("QtwovecOptimal", q3v("saw","vector","optimal")["Q2_pct"]),
+    m("AsmMMSAWContrast", round(
+        q3v("saw","minmax","optimal")["Q2_pct"] -
+        q3v("saw","minmax","greedy")["Q2_pct"], 1),
+        "QtwommOptimal - QtwommGreedy"),
 ]
 
 macros_path = OUT / "mc_unified_macros.tex"

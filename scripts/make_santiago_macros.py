@@ -561,6 +561,11 @@ def _append_k_and_table(lines, data, s3b, e1_kinf=None):
             cmd(f"Sant{br}KtwoInfResult", "PASS" if e1b_inf == 1 else "FAIL",
                 f"k=inf: Q2_opt={e1b_inf} from mc_{br}_e1_fix2.csv"),
         ]
+        if br == "SN":
+            lines += [
+                "% k=inf is a single deterministic draw; fraction 1/1 printed in K2 cell",
+                cmd("SantKtwoInfN", "1"),
+            ]
     lines.append("")
 
     # K3: no reversal -- all k CI lo > 0 (A5:75-78, no multiplicity adjustment)

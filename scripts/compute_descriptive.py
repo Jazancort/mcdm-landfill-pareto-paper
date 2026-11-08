@@ -56,6 +56,8 @@ SCRIPTS    = ROOT / "scripts"
 EXPECTED_SHA = {
     "carta_agricola_st_wfs.geojson": "b3b155c6db081eefe8288d2efea2337cacb30d5b1c126f54dce77524de568a47",
     "santiago_boundary.geojson":     "5cc381644497a9f24eb326228b389d6cc02e09e7a9a7c7dc380d5f9559233a3d",
+    "fogo_boundary_geol.geojson":    "80e0fc8282aaff7b",   # first 16 hex chars
+    "santiago_sn_boundary.geojson": "d550883cad23e0d5",   # first 16 hex chars
     "df_santiago_sn.csv":            None,   # sealed MC data — SHA checked below
     "stage3b_descriptors.json":      "710718247783f1ee",   # first 16 hex chars
 }
@@ -91,12 +93,20 @@ def check_sha(path: Path, expected: str) -> str:
 
 def compute_clipping_areas() -> dict:
     """
-    Area (km²) of each clipping polygon in UTM, computed in the same CRS
-    and with the same method for all three instances.
+    Area (km²) of each clipping polygon, computed in the UTM zone of the
+    respective grid (Fogo: EPSG:32626 / UTM 26N; Santiago: EPSG:32627 / UTM 27N).
+    This is consistent with the grid spacing and d_min used in each branch.
+
     Sources:
-      Fogo : data/geo/fogo_boundary_geol.geojson  (geology polygon)
+      Fogo : data/geo/fogo_boundary_geol.geojson  (geology polygon, dissolved;
+             confirmed as the on-land validation polygon in santiago_grid.py
+             --mode fogo-check; PRESPEC_SANTIAGO.md §3 PRE-A: "geol_dissolved")
       S-T  : data/santiago/santiago_boundary.geojson
       S-N  : data/santiago/santiago_sn_boundary.geojson
+
+    Regression assert: S-N area must equal 387.023 km² (the denominator used
+    in \\SantSNRegadiosPct; see DEV-SANT-A5-001).  A mismatch means the CRS
+    or polygon differs from compute_regadios_fraction().
     """
     UTM_FOGO = "EPSG:32626"   # UTM Zone 26N — Fogo
     UTM_SANT = "EPSG:32627"   # UTM Zone 27N — Santiago
@@ -111,10 +121,20 @@ def compute_clipping_areas() -> dict:
     for key, path, crs in specs:
         sha = sha256_file(path)
         gdf = gpd.read_file(path).to_crs(crs)
-        area_km2 = round(float(gdf.geometry.union_all().area) / 1e6, 0)
-        print(f"  {key:4s} area: {area_km2:.0f} km²  SHA: {sha[:16]}", flush=True)
-        out[f"{key}_km2"] = int(area_km2)
+        area_km2 = float(gdf.geometry.union_all().area) / 1e6
+        area_km2_rounded = round(area_km2, 0)
+        print(f"  {key:4s} area: {area_km2:.3f} km²  SHA: {sha[:16]}", flush=True)
+        out[f"{key}_km2"] = int(area_km2_rounded)
+        out[f"{key}_km2_exact"] = area_km2
         out[f"{key}_sha"] = sha
+
+    # Regression assert: S-N area must match the Regadios denominator
+    sn_exact = out["sn_km2_exact"]
+    assert abs(sn_exact - 387.023) < 0.5, (
+        f"S-N area regression FAIL: got {sn_exact:.3f} km², expected ~387.023 km² "
+        f"(DEV-SANT-A5-001 denominator). Check CRS or polygon."
+    )
+    print(f"  S-N area assert OK: {sn_exact:.3f} ~= 387.023 km2", flush=True)
     return out
 
 
@@ -317,13 +337,18 @@ def pareto_front_size(F: np.ndarray) -> int:
 def compute_fogo_frontier_fraction() -> dict:
     """
     Fogo Pareto frontier fraction under min-max normalisation.
-    Sources: macros_structural.tex (providecommand).
-      \\Fmmsize{181}   — portfolios on mm-frontier
-      \\Ntrios{1,944,653} — total feasible portfolios
-    These macros are auto-generated; no SHA re-check needed here.
+    Reads \\Fmmsize and \\Ntrios from macros/macros_structural.tex
+    (auto-generated; providecommand format).
     """
-    FMMSIZE = 181
-    NTRIOS  = 1944653
+    import re
+    struct_path = ROOT / "macros" / "macros_structural.tex"
+    text = struct_path.read_text(encoding="utf-8")
+    m_fmm  = re.search(r"\\providecommand\{\\Fmmsize\}\{(\d+)\}", text)
+    m_ntri = re.search(r"\\providecommand\{\\Ntrios\}\{([\d{,}]+)\}", text)
+    if not m_fmm or not m_ntri:
+        raise RuntimeError(f"Cannot parse \\Fmmsize / \\Ntrios from {struct_path}")
+    FMMSIZE = int(m_fmm.group(1))
+    NTRIOS  = int(m_ntri.group(1).replace("{", "").replace("}", "").replace(",", ""))
     pct = FMMSIZE / NTRIOS * 100.0
     print(f"  Fogo |F| = {FMMSIZE}, |T| = {NTRIOS}, fraction = {pct:.4f}%")
     return {"fmmsize": FMMSIZE, "ntrios": NTRIOS,
@@ -428,8 +453,8 @@ def check_k5_stage3() -> dict:
     sn_k5b = agg3(row_sn)
 
     print(f"  K5 in stage3b_descriptors: {k5_in_desc}")
-    print(f"  S-T K5(a)=+{st_k5a:.1f} pp  K5(b)={st_k5b:.1f} pp  at κ=∞")
-    print(f"  S-N K5(a)=+{sn_k5a:.1f} pp  K5(b)={sn_k5b:.1f} pp  at κ=∞")
+    print(f"  S-T K5(a)=+{st_k5a:.1f} pp  K5(b)={st_k5b:.1f} pp  at kappa=inf")
+    print(f"  S-N K5(a)=+{sn_k5a:.1f} pp  K5(b)={sn_k5b:.1f} pp  at kappa=inf")
 
     return {
         "k5_in_stage3_descriptors": k5_in_desc,
@@ -487,10 +512,9 @@ def write_macros(out: dict, macros_path: Path):
     if fogo_f:
         lines += [
             "% Fogo Pareto frontier fraction |F(w0)| / |T| (mm-frontier)",
-            f"% Source: macros_structural.tex \\Fmmsize{{181}} \\Ntrios{{1,944,653}}",
+            f"% Source: macros/macros_structural.tex \\Fmmsize{{{fogo_f['fmmsize']}}} \\Ntrios{{...}}",
             f"\\newcommand{{\\FrontFracFogo}}{{{fogo_f['fraction_pct']}}}",
             f"% |F|={fogo_f['fmmsize']}, |T|={fogo_f['ntrios']}",
-            f"\\newcommand{{\\FogoRefNtrios}}{{{fogo_f['ntrios']:,}}}",
             "",
         ]
 
@@ -500,7 +524,6 @@ def write_macros(out: dict, macros_path: Path):
             f"% df_santiago_sn.csv SHA: {sn_f['sha_csv'][:16]}",
             f"\\newcommand{{\\FrontFracSN}}{{{sn_f['fraction_pct']}}}",
             f"% |F|={sn_f['front_size']}, |T|={sn_f['n_trios']}",
-            f"\\newcommand{{\\SantSNNtrios}}{{{sn_f['n_trios']:,}}}",
             "",
         ]
     else:
@@ -569,8 +592,8 @@ def main():
     k5 = results["k5_check"]
     print(f"  K5 in Stage 3 desc: {k5['k5_in_stage3_descriptors']}")
     if not k5["k5_in_stage3_descriptors"]:
-        print(f"  S-T K5(a)=+{k5['ST_K5a_inf_pp']} pp  K5(b)={k5['ST_K5b_inf_pp']} pp  (κ=∞, from MC)")
-        print(f"  S-N K5(a)=+{k5['SN_K5a_inf_pp']} pp  K5(b)={k5['SN_K5b_inf_pp']} pp  (κ=∞, from MC)")
+        print(f"  S-T K5(a)=+{k5['ST_K5a_inf_pp']} pp  K5(b)={k5['ST_K5b_inf_pp']} pp  (kappa=inf, from MC)")
+        print(f"  S-N K5(a)=+{k5['SN_K5a_inf_pp']} pp  K5(b)={k5['SN_K5b_inf_pp']} pp  (kappa=inf, from MC)")
         print(f"  DEVIATION: {k5['deviation']}")
 
 
