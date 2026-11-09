@@ -32,6 +32,7 @@ CHECKS = [
     ("check_inputs",            ["scripts/check_inputs.py"]),
     ("check_seeds",             ["scripts/check_seeds.py"]),
     ("check_santiago_verdicts", ["scripts/check_santiago_verdicts.py"]),
+    ("check_inference_table",   ["scripts/check_inference_table.py"]),
 ]
 
 SEP = "=" * 72
