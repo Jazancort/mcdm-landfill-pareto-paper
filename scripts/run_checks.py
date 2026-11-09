@@ -31,6 +31,7 @@ CHECKS = [
     ("check_tolerances",        ["scripts/check_tolerances.py"]),
     ("check_inputs",            ["scripts/check_inputs.py"]),
     ("check_seeds",             ["scripts/check_seeds.py"]),
+    ("check_santiago_verdicts", ["scripts/check_santiago_verdicts.py"]),
 ]
 
 SEP = "=" * 72
