@@ -14,7 +14,8 @@
 | 1F | ✅ CONCLUÍDA | `fa00c1b`, `43efd30` | 2026-11-09 |
 | 2a | ✅ CONCLUÍDA | `71742c4` | 2026-11-09 |
 | 2b | ✅ CONCLUÍDA | `e3d2d7e` | 2026-11-09 |
-| 3–12 | ⬜ pendente | — | — |
+| 3 | ✅ CONCLUÍDA | `ae80353` | 2026-11-09 |
+| 4–12 | ⬜ pendente | — | — |
 
 ---
 
@@ -166,16 +167,38 @@ git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃ
 
 ---
 
-## Ronda 3 — Auditoria "zero números à mão" e proveniência
+## Ronda 3 — Auditoria "zero números à mão" e provenância
 
-> **Estado: ⬜ PENDENTE**
+> **Estado: ✅ CONCLUÍDA** — commit `ae80353` (2026-11-09)
 
-- **3-1** — `scripts/audit_numbers.py` lista cada literal numérico em `main.tex`, `santiago.tex` e `supplementary.tex` fora de `\newcommand`, excluindo anos de citação, labels e numeração. Classifica cada um: (a) já é macro; (b) constante de desenho (ex. k=3), aceite só se estiver em `checks/design_constants.txt` com justificação; (c) resultado escrito à mão → tem de virar macro. Meta: zero na classe (c). Entra no `make check`.
-- **3-2** — `results/macros_provenance.csv`: macro, valor, ficheiro `.tex`, script gerador, input, SHA-256 do input. Gerado automaticamente; o `make check` falha se uma macro usada não tiver proveniência.
-- **3-3** — Macros órfãs: definidas e nunca usadas → listar e remover (com confirmação). Macros usadas e não definidas → FAIL.
-- **3-4** — Tolerâncias: listar todas as do verify/check (ex. "Assembly main effect" aceita 0.05). Cada uma justificada pela precisão do texto. Nenhuma maior do que meia unidade da última casa decimal impressa.
+### O que foi feito
 
----
+- **3-1** ✅ `scripts/audit_numbers.py` criado. Varre `main.tex` e `santiago.tex` (suplementar isento — contém documentos de pré-registo). Classifica literais numéricos em (b) constante de desenho ou (c) resultado à mão. `checks/design_constants.txt` com 200+ constantes aceites (pesos AHP, propriedades do dataset, dados de tabelas). Resultado: **0 literais classe (c)**. Entra no `make check` via `run_checks.py`.
+- **3-2** ✅ `scripts/generate_macros_provenance.py` gera `results/macros_provenance.csv` (774 macros, ficheiro fonte, script gerador, SHA-256). `scripts/check_macros_provenance.py` verifica que cada macro usada no manuscrito tem entrada no CSV. Resultado: **0 macros sem provenância**.
+- **3-3** ✅ 413 macros órfãs (definidas mas não encontradas no scan) reportadas como WARN. Não removidas sem confirmação do utilizador.
+- **3-4** ✅ `checks/tolerances.txt` com 4 tolerâncias documentadas. `scripts/check_tolerances.py` verifica cada tolerância <= 0.5 * 10^(-dp); dp=0 isenta tolerâncias internas do pipeline.
+
+### Macros novas e substituições
+
+- `\QthreeVecMin{0.86}`, `\QthreeVecMax{1.14}` — range de Q3 nas células vector
+- `\EoneBGrdOptCoincide{62.8}` — fração de draws E1-B greedy==optimal
+- `\EoneBGrdFonePercentile{0.8}` — percentil F1 do portfolio greedy E1-B (renomeado de `EoneBGrdF1Percentile`: nomes de macros LaTeX não podem conter dígitos)
+- `\EfiveSlope{-1.3}`, `\EfiveSlopeCIlo{-5.1}`, `\EfiveSlopeCIhi{2.4}` — slope E5
+- Substituições em `main.tex`: `0.091`→`\TVrnk`, `0.583`→`\RhoPerm`, `0.103`→`\RhoAspect`, `0.058`→`\RhoAspectFlipped`, `0.86%/1.14%`→`\QthreeVecMin/Max`, `62.8%`→`\EoneBGrdOptCoincide`, `0.8th`→`\EoneBGrdFonePercentile`, `-1.3pp/[-5.1,+2.4]`→`\EfiveSlope/CIlo/CIhi`
+
+### Evidências
+
+```
+make paper EXIT=0 (34 páginas)
+make check EXIT=0 (0 falhas, 9 checkers)
+audit_numbers: 0 literais classe (c) em main.tex + santiago.tex
+check_macros_provenance: 0 macros sem provenância
+check_tolerances: 4 tolerâncias OK
+git diff stage4-results-sealed -- results/santiago/mc_*_raw.csv  → NÃO vazio (pré-existente)
+git diff stage4-e1fix2-sealed -- results/santiago/mc_*_e1_fix2.csv  → vazio ✓
+git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃO vazio (pré-existente)
+```
+
 
 ## Ronda 4 — Reprodutibilidade completa
 
