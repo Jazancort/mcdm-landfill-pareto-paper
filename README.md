@@ -74,8 +74,64 @@ graph LR
     C --> D["Bootstrap CIs\nTOST, Q3, gap"]
     D --> E["mc_unified_macros.tex"]
     E --> F["verify_macros_permanent.py\nALL CHECKS PASSED"]
-    F --> G["main.tex → main.pdf"]
+    F --> G["main.tex -> main.pdf"]
 ```
+
+### Replication
+
+Full pipeline (inputs -> macros -> checks -> PDF):
+
+```bash
+export MCDM_DATA_DIR=/path/to/mcdm_data   # Linux/macOS
+# $env:MCDM_DATA_DIR = "C:\path\to\mcdm_data"  # Windows
+make reproduce
+```
+
+`make reproduce` runs in order:
+1. `check_inputs.py` — SHA-verify the three non-versioned GIS files
+2. `make_santiago_macros.py` — regenerate all macros
+3. `run_checks.py` — 11 consistency checks (exit 0 = all pass)
+4. `build_paper.py` — compile PDF
+
+#### Step timings (Windows, CPU-only, Intel Core i7)
+
+| Step | Script | Time |
+|:-----|:-------|-----:|
+| Input SHA check | `check_inputs.py` | <1 s |
+| Santiago macros | `make_santiago_macros.py` | ~2 s |
+| Consistency checks | `run_checks.py` (11 scripts) | ~30 s |
+| PDF compilation | `build_paper.py` + latexmk | ~60 s |
+| **Total `make reproduce`** | | **~2 min** |
+| Canonical MC (Fogo) | `mc_unified.py` | ~9 min CPU / ~4 min GPU |
+| Santiago MC | `run_santiago_mc.py` | ~5 min CPU (Athena) |
+
+Note: `mc_unified.py` and `run_santiago_mc.py` are **not** part of `make reproduce`
+because their outputs are pre-committed as sealed results. Run them only to
+re-generate from scratch (requires `MCDM_DATA_DIR` and, for Santiago, Athena).
+
+#### Non-versioned inputs (SHA-256)
+
+Three files live outside the repository in `MCDM_DATA_DIR`:
+
+| File | SHA-256 (first 16 hex) |
+|:-----|:-----------------------|
+| `results_cache/df_real_data_cached.csv` | `234f6e1c2697ea54` |
+| `.../exhaustive_search_pareto.csv` | `ae4efe96d02ee50c` |
+| `.../best_compromise_sites.csv` | `b736c0e46486abae` |
+
+Full SHAs and paths are in `scripts/check_inputs.py`.
+
+#### Seeds by experiment
+
+| Experiment | Script | SEED | N_DRAWS | B_BOOT |
+|:-----------|:-------|-----:|--------:|-------:|
+| Fogo factorial (canonical) | `mc_unified.py` | 42 | 500 | 10 000 |
+| Fogo factorial (legacy) | `mc_2cube_fixed.py` | 42 | 500 | — |
+| E7 kappa sweep | `run_e7_kappa_sweep.py` | 100 | 500 | 2 000 |
+| Santiago MC | `run_santiago_mc.py` | — | 500 | 2 000 |
+| Santiago predictions | `evaluate_santiago_predictions.py` | 20261104 | — | 2 000 |
+
+All seeds are verified by `scripts/check_seeds.py` (part of `make check`).
 
 ---
 
