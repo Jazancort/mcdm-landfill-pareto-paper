@@ -13,7 +13,7 @@
 |-------|--------|-----------|------|
 | 1F | ✅ CONCLUÍDA | `fa00c1b`, `43efd30` | 2026-11-09 |
 | 2a | ✅ CONCLUÍDA | `71742c4` | 2026-11-09 |
-| 2b | ⬜ pendente | — | — |
+| 2b | ✅ CONCLUÍDA | `e3d2d7e` | 2026-11-09 |
 | 3–12 | ⬜ pendente | — | — |
 
 ---
@@ -108,6 +108,31 @@ A resolver numa ronda futura (Ronda 4 ou Fase D).
 ### Nota R4 (pré-existente, não introduzida por esta ronda)
 
 ```
+git diff stage4-results-sealed -- results/santiago/mc_*_raw.csv  → NÃO vazio (pré-existente)
+git diff stage4-e1fix2-sealed -- results/santiago/mc_*_e1_fix2.csv  → vazio ✓
+git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃO vazio (pré-existente)
+```
+
+---
+
+## Ronda 2b — Macros novas
+
+> **Estado: ✅ CONCLUÍDA** — commit `e3d2d7e` (2026-11-09)
+
+### O que foi feito
+
+- **2b-1** ✅ `\AsmFourcell`, `\AsmFourcellLo`, `\AsmFourcellHi` existiam apenas em `scripts/mc_unified.py:330-332` (geração para `results/unified/`). Nunca definidas em `macros/` nem usadas no manuscrito. Removidas as 3 linhas. `git grep -n "AsmFourcell" paper/ macros/ scripts/` sai vazio. `\AsmMain{-1.1}` já cobre o C2 all4 em `main.tex:2194`.
+- **2b-2** ✅ Check `AsmMMSAWContrast` **já existia** em `verify_macros_permanent.py`: `asm_mm_saw_raw = Q_saw_mm_opt - Q_saw_mm_grd`; `check('AsmMMSAWContrast', asm_mm_saw_raw, '14.0', ...)`. Valor calculado=14.0, macro=14.0, tolerância=half-up 1dp. Nenhuma alteração necessária.
+- **2b-3** ✅ `\SantKtwoInfN` **já implementada** em `make_santiago_macros.py:567` e definida em `results/santiago/macros_santiago.tex:180` com valor `1`. Fonte: `mc_ST_e1_fix2.csv` e `mc_SN_e1_fix2.csv` (SHA-verificados). Colunas: `draw,kappa,e1_cell,Q2_opt,Q2_grd`. kappa=inf codificado como `inf` (float). Filtro: `df[np.isinf(df['kappa']) & (df['e1_cell']=='B')]` → 1 linha, Q2_opt=1. Frase no texto: `$\kappa\to\infty$: \SantKtwoInfN/\SantKtwoInfN{} (deterministic)`. Nenhuma alteração necessária.
+- **2b-4** ✅ `\FogoAreaGIS{471}`, `\SantSTAreaGIS{1003}`, `\SantSNAreaGIS{387}`, `\SantSNAreaCabral{395}` **já existiam** em `results/santiago/macros_descriptive.tex` (geradas por `compute_descriptive.py`). `*AreaKmSq` não usadas no manuscrito. Removidas de `make_santiago_macros.py` e `results/santiago/macros_santiago.tex`. Corrigido `km²`→`km2` nos prints de `compute_descriptive.py` (4 ocorrências). Legenda da Tabela A já correcta. `\SantSNAreaCabral` com `\citep{Cabral2012}` já presente em `santiago.tex:38`.
+- **2b-5** ✅ "fewer than 20 OSM features" **não existe** no manuscrito. `santiago.tex:33` diz "fewer than the required number of mapped features" (genérico). Nenhuma alteração necessária.
+- **2b-6** ✅ Diagnóstico: `scale_EW = dot(w,rho_j) / dot(w, rho_j/Aj_bar) = 0.2034` (calculado). "published 0.2024" em `run_e1_v3.py:128` é referência histórica. Não citado no manuscrito. Nenhuma macro necessária.
+
+### Evidências
+
+```
+make paper EXIT=0 (34 páginas)
+make check EXIT=0 (0 falhas)
 git diff stage4-results-sealed -- results/santiago/mc_*_raw.csv  → NÃO vazio (pré-existente)
 git diff stage4-e1fix2-sealed -- results/santiago/mc_*_e1_fix2.csv  → vazio ✓
 git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃO vazio (pré-existente)
