@@ -51,8 +51,9 @@ ROW_PATTERN = re.compile(
 )
 
 # Also match TV row: $\mathrm{TV}$ & & & TV_mm & TV_vec & TV_rank
+# TV_vec may be a literal number or a macro like $\TVvec$
 TV_PATTERN = re.compile(
-    r"\\mathrm\{TV\}.*?&\s*&\s*&\s*([\d.]+)\s*&\s*([\d.]+)\s*&\s*([\d.]+)",
+    r"\\mathrm\{TV\}.*?&\s*&\s*&\s*([\d.]+)\s*&\s*(\$?\\?[\w{}$]+)\s*&\s*([\d.]+)",
     re.DOTALL
 )
 
@@ -86,16 +87,43 @@ print(f"  Rows checked: {rows_found}/11")
 print()
 print("=== Checking TV_vec ===")
 tv_m = TV_PATTERN.search(table_block)
+tv_verified = False
 if tv_m:
-    tv_table = float(tv_m.group(2))
-    expected_tv = round(tv_vec, 3)
-    ok = abs(tv_table - expected_tv) < 0.0005
-    status = "OK  " if ok else "FAIL"
-    print(f"  [{status}] TV_vec: table={tv_table:.3f}  json={expected_tv:.3f}")
-    if not ok:
-        failures.append(f"TV_vec: table={tv_table:.3f} vs json={expected_tv:.3f}")
+    tv_cell = tv_m.group(2).strip()
+    # tv_cell may be a literal float or a macro like $\TVvec$
+    import re as _re
+    lit_m = _re.match(r'^[\d.]+$', tv_cell)
+    if lit_m:
+        tv_table = float(tv_cell)
+    else:
+        # extract macro name and resolve from macros_amplitudes.tex
+        mac_name_m = _re.search(r'\\(\w+)', tv_cell)
+        if mac_name_m:
+            mac_name = mac_name_m.group(1)
+            mac_tex_path = ROOT / "macros" / "macros_amplitudes.tex"
+            if mac_tex_path.exists():
+                mac_tex = mac_tex_path.read_text(encoding="utf-8")
+                mac_val_m = _re.search(rf'\\(?:re)?newcommand\{{\\{mac_name}\}}\{{([\d.]+)\}}', mac_tex)
+                tv_table = float(mac_val_m.group(1)) if mac_val_m else None
+            else:
+                tv_table = None
+        else:
+            tv_table = None
+    if tv_table is not None:
+        expected_tv = round(tv_vec, 3)
+        ok = abs(tv_table - expected_tv) < 0.0005
+        status = "OK  " if ok else "FAIL"
+        print(f"  [{status}] TV_vec: table={tv_table:.3f}  json={expected_tv:.3f}  (cell={tv_cell!r})")
+        if not ok:
+            failures.append(f"TV_vec: table={tv_table:.3f} vs json={expected_tv:.3f}")
+        else:
+            tv_verified = True
+    else:
+        failures.append(f"TV_vec: could not resolve cell value {tv_cell!r}")
+        print(f"  [FAIL] TV_vec: could not resolve cell value {tv_cell!r}")
 else:
-    print("  [WARN] TV row not found")
+    failures.append("TV row not found in tab:amplitude")
+    print("  [FAIL] TV row not found in tab:amplitude")
 
 print()
 if failures:
@@ -104,4 +132,5 @@ if failures:
         print(f"  - {f}")
     sys.exit(1)
 else:
-    print(f"ALL OK: tab:amplitude matches amplitudes.json at 3dp ({rows_found} values + TV_vec)")
+    tv_suffix = " + TV_vec" if tv_verified else ""
+    print(f"ALL OK: tab:amplitude matches amplitudes.json at 3dp ({rows_found} values{tv_suffix})")

@@ -14,6 +14,7 @@ Assertions added in Marco A:
   - TVBvec and TVWvec from macros.tex
 """
 import sys, re
+sys.stdout.reconfigure(encoding="utf-8")
 from pathlib import Path
 
 ROOT   = Path(__file__).parent.parent
@@ -1580,13 +1581,6 @@ if _ng_hits:
 else:
     print(f"  [OK  ] No unexpected {_n}-gram repeats")
 
-if FAIL:
-    for msg in FAIL:
-        print(f"  x {msg}")
-    sys.exit(1)
-else:
-    print(f"ALL CHECKS PASSED (0 failures)")
-
 # ── Anti-X_adj_vec: forbid wrong normalisation in new scripts ────────────────
 print()
 print("=== Anti-X_adj_vec: no script should use wrong vec scoring ===")
@@ -1820,5 +1814,15 @@ if _reg_fail:
 else:
     print(f"  All {len(_MUST_FAIL)+len(_MUST_PASS)} regression cases correct")
 
-
-
+# ─────────────────────────────────────────────────────────────────────────────
+# FINAL SUMMARY — must be the last output line
+# ─────────────────────────────────────────────────────────────────────────────
+print()
+if FAIL:
+    print(f"FAILED: {len(FAIL)} check(s):")
+    for msg in FAIL:
+        print(f"  x {msg}")
+    sys.exit(1)
+else:
+    print(f"ALL CHECKS PASSED (0 failures)")
+    sys.exit(0)

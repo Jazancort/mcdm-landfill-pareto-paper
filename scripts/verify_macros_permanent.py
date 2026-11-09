@@ -72,7 +72,27 @@ print('=' * 60)
 print('verify_macros_permanent.py')
 print('=' * 60)
 
-# Step 1: File hash
+# Step 0: Cross-check MACRO_STRINGS against paper/manuscript/macros.tex
+# This catches the case where the .tex file was edited without updating the CSV.
+print('\n--- Cross-check macros.tex vs MACRO_STRINGS ---')
+_mac_tex_path = os.path.join(REPO, 'paper', 'manuscript', 'macros.tex')
+if os.path.exists(_mac_tex_path):
+    import re as _re_mac
+    _mac_tex = open(_mac_tex_path, encoding='utf-8').read()
+    for _name, _expected_str in MACRO_STRINGS.items():
+        _m = _re_mac.search(rf'\\newcommand\{{\\{_name}\}}\{{([^}}]+)\}}', _mac_tex)
+        if _m:
+            _tex_val = _m.group(1).strip()
+            if _tex_val != _expected_str:
+                FAIL.append(f'{_name}: macro={_tex_val} CSV={_expected_str}')
+                print(f'  [FAIL] {_name}: macro={_tex_val} CSV={_expected_str}')
+            else:
+                print(f'  [OK  ] {_name}: macro={_tex_val} matches CSV={_expected_str}')
+        else:
+            print(f'  [INFO] {_name}: not found in paper/manuscript/macros.tex (may be in sub-input)')
+else:
+    print(f'  [INFO] paper/manuscript/macros.tex not found — skipping cross-check')
+
 with open(CUBE_PATH, 'rb') as f:
     actual_hash = hashlib.sha256(f.read()).hexdigest()[:16]
 print(f'\n[hash] mc_2cube_fixed_raw.csv: {actual_hash}')

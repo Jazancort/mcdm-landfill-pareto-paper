@@ -1,0 +1,7 @@
+# checks/exceptions.txt — accepted warnings for make check
+# Format: id; pattern; justification
+# One entry per line. Blank lines and lines starting with # are ignored.
+# A WARN matching a pattern here is accepted; any WARN NOT listed = FAIL.
+
+OVERFULL-MAKETITLE; 123.62721pt too wide; CAS-DC class geometry artifact in maketitle box — not fixable without modifying the class file
+NGRAM-BINARY-CRITERION; every binary criterion loses approximately half its effective weight; Intentional repetition of theorem statement in two places (§3 and §6); to be eliminated in Ronda 8

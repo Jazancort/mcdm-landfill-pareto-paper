@@ -22,10 +22,7 @@ macros:
 	$(PYTHON) scripts/make_santiago_macros.py
 
 check: macros
-	$(PYTHON) -X utf8 scripts/check_tab_amplitude.py
-	$(PYTHON) -X utf8 scripts/generate_macros_r1.py
-	$(PYTHON) -X utf8 scripts/check_consistency.py
-	$(PYTHON) -X utf8 scripts/verify_macros_permanent.py --santiago
+	$(PYTHON) -X utf8 scripts/run_checks.py
 
 markers:
 	$(PYTHON) -c "import subprocess,sys; r=subprocess.run(['python','-c',\"import re,pathlib; files=list(pathlib.Path('paper/manuscript').glob('*.tex')); matches=[f'{f.name}:{i+1}: {l.rstrip()}' for f in files for i,l in enumerate(f.read_text('utf-8',errors='replace').splitlines()) if re.search(r'\\\\[[A-Z-]+\\\\]|TODO|XXX',l) and not l.lstrip().startswith('%')]; [print(m) for m in matches]; sys.exit(1 if matches else 0)\"],capture_output=False); sys.exit(r.returncode)"
