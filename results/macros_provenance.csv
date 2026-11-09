@@ -1,0 +1,779 @@
+macro,value,source_tex,generator,sha256_16
+Ncand,473,macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+Nexcl,84,macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+Nvia,389,macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+Ntrios,"1{,",macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+dmin,10,macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+kk,3,macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+Fmmsize,181,macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+FAsize,213,macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+FAinter,132,macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+ndraws,500,macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+nboot,"2{,",macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+nbootEone,"10{,",macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+Tset,\mathcal{T,macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+Fset,\mathcal{F,macros/macros_structural.tex,manually maintained,cbdbec23c3046d7d
+TVvec,0.3113,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+TVBvec,0.2479,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+TVWvec,0.1954,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+TVrnk,0.091,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+TValphaTwo,0.673,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+DeltaTValphaTwo,0.362,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+TValphaTwoMM,0.160,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+PermInflation,2.86,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+IntraGperm,1.56,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+UrbanRatioVec,0.53,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+AspectRatioVec,0.51,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+AspectAmplitudeRatio,1.77,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+RnkContinuousGainPct,12.1,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+DeltaLtwoshift,0.3101,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+DeltaLinfshift,0.2835,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+RhoShiftMaxPct,4.3,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+RhoShiftMaxCrit,coast,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+slopeOpt,139.5,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+RhoPerm,0.583,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+RhoPermInverted,0.052,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+RhoAspect,0.103,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+RhoAspectFlipped,0.058,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+meff,4.03,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+PermAbsDevPct,45.5,macros/macros_amplitudes.tex,scripts/generate_macros_amplitudes.py,de7b4b381420d690
+NormMainEffect,34.6,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormGreedyContrast,25.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmMain,-1.1,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmMMSAWContrast,14.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmMM,8.1,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormGreedyContrastKfifty,29.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormGreedyContrastKfiftyLo,25.7,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormGreedyContrastKfiftyHi,33.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormInfoEffectKfifty,33.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormInfoEffectKfiftyLo,29.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormInfoEffectKfiftyHi,36.7,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggContrastKfifty,+20.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggLoKfifty,17.7,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggHiKfifty,23.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmMMtopsisKfifty,2.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmMMtopsisKfiftyLo,-0.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmMMtopsisKfiftyHi,5.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVecKfifty,0.7,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVecKfiftyLo,-1.5,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVecKfiftyHi,3.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+InteractionTOPSISKfifty,3.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+InteractionTOPSISKfiftyLo,-0.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+InteractionTOPSISKfiftyHi,7.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggContrast,-0.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggLo,-2.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggHi,+1.3,macros/macros.tex,manually maintained,5b10abb3a410d421
+TOSTp,0.010,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmMMtopsis,2.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmMMtopsisLo,0.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmMMtopsisHi,4.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVecSAW,9.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVecSAWLo,12.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVecSAWHi,6.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVecTOPSIS,11.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVecTOPSISLo,14.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVecTOPSISHi,7.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVec,10.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVecLo,13.6,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmVecHi,7.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormInfoEffect,31.7,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormInfoLo,27.7,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormInfoHi,35.7,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmThreecell,-6.1,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmThreecellLo,-8.1,macros/macros.tex,manually maintained,5b10abb3a410d421
+AsmThreecellHi,-4.1,macros/macros.tex,manually maintained,5b10abb3a410d421
+InteractionTOPSIS,13.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+InteractionTOPSISLo,9.6,macros/macros.tex,manually maintained,5b10abb3a410d421
+InteractionTOPSISHi,17.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+EonePtwoDiff,7.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+EonePtwoBootCILo,4.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+EonePtwoBootCIHi,11.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+MechOnePredAdmiss,14.7,macros/macros.tex,manually maintained,5b10abb3a410d421
+MechOneShare,18,macros/macros.tex,manually maintained,5b10abb3a410d421
+MismatchRatioHi,5.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+MismatchRatioLo,0.34,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwommGreedy,86.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwommOptimal,100.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwovecGreedy,66.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwovecOptimal,56.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoRanksGreedy,86.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoRanksOptimal,88.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoTOPSISmmGrd,94.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoTOPSISmmOpt,96.6,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoTOPSISvecGrd,63.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoTOPSISvecOpt,52.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSEmmGreedy,1.6,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSEmmOptimal,0.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSEvecGreedy,2.1,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSEvecOptimal,2.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSETOPSISmmGrd,1.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSETOPSISmmOpt,0.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSETOPSISvecGrd,2.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSETOPSISvecOpt,2.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwommGreedyKfifty,97.6,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSEmmGreedyKfifty,0.7,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwommOptimalKfifty,100.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwovecGreedyKfifty,77.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSEvecGreedyKfifty,1.9,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwovecOptimalKfifty,79.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSEvecOptimalKfifty,1.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoTOPSISmmGrdKfifty,89.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSETOPSISmmGrdKfifty,1.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoTOPSISmmOptKfifty,92.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSETOPSISmmOptKfifty,1.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoTOPSISvecGrdKfifty,52.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSETOPSISvecGrdKfifty,2.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoTOPSISvecOptKfifty,51.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+QtwoSETOPSISvecOptKfifty,2.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormGreedyContrastLo,21.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+NormGreedyContrastHi,29.7,macros/macros.tex,manually maintained,5b10abb3a410d421
+LossTabTVorder,19.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+SAWgreedyContrast,19.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+slopeFive,93.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+SEfive,6.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+dffive,3,macros/macros.tex,manually maintained,5b10abb3a410d421
+SxxPctVecFive,73,macros/macros.tex,manually maintained,5b10abb3a410d421
+RsqDropFrom,0.984,macros/macros.tex,manually maintained,5b10abb3a410d421
+RsqDropTo,0.397,macros/macros.tex,manually maintained,5b10abb3a410d421
+slopeDropSum,30.9,macros/macros.tex,manually maintained,5b10abb3a410d421
+pDropSum,0.18,macros/macros.tex,manually maintained,5b10abb3a410d421
+EoneBGrdOptCoincide,62.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+EoneBGrdFonePercentile,0.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+EfiveSlope,-1.3,macros/macros.tex,manually maintained,5b10abb3a410d421
+EfiveSlopeCIlo,-5.1,macros/macros.tex,manually maintained,5b10abb3a410d421
+EfiveSlopeCIhi,2.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+TVWrw,0.082,macros/macros.tex,manually maintained,5b10abb3a410d421
+TVWrj,0.082,macros/macros.tex,manually maintained,5b10abb3a410d421
+TVWinvrj,0.085,macros/macros.tex,manually maintained,5b10abb3a410d421
+RVstarOptimal,100.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+RVstarGreedy,97.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+RVoptimal,6.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+RVgreedy,6.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+RVprimeOptimal,88.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+RefSetGreedyGain,11.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+AspSpearman,-0.445,macros/macros.tex,manually maintained,5b10abb3a410d421
+AspSpearmanP,0.000,macros/macros.tex,manually maintained,5b10abb3a410d421
+AspTopQuartile,100,macros/macros.tex,manually maintained,5b10abb3a410d421
+AspTopQuartileNonLee,100,macros/macros.tex,manually maintained,5b10abb3a410d421
+AspLeewardCount,94,macros/macros.tex,manually maintained,5b10abb3a410d421
+AspLeewardPct,24.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggContrastPooled,-0.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggContrastPooledLo,-2.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggContrastPooledHi,1.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggStratumMMgrd,-8.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggStratumMMgrdAbs,8.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggStratumVecgrd,2.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggStratumMMopt,3.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggStratumVecopt,4.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+RoneOneOptDelta,0.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+RoneTwoGrdDelta,11.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+RoneTwoGrdCIlo,8.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+RoneTwoGrdCIhi,14.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+RaspOptimal,15.6,macros/macros.tex,manually maintained,5b10abb3a410d421
+RaspGreedy,15.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+RaspLoss,84.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+ResidualRefOptDelta,9.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+ResidualRefOptCIlo,6.6,macros/macros.tex,manually maintained,5b10abb3a410d421
+ResidualRefOptCIhi,12.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+ResidualRefGrdDelta,9.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+ResidualRefGrdCIlo,6.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+ResidualRefGrdCIhi,12.6,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeSAWmmOpt,0.000,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeSAWmmGrd,0.0018,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeSAWvecGrd,0.0086,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeSAWvecOpt,0.0087,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeTOPSISmmGrd,0.0009,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeTOPSISmmOpt,0.0005,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeTOPSISvecGrd,0.0114,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeTOPSISvecOpt,0.0111,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeSAWmmGrdPct,0.18,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeSAWmmOptPct,0.00,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeSAWvecGrdPct,0.86,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeSAWvecOptPct,0.87,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeTOPSISmmGrdPct,0.09,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeTOPSISmmOptPct,0.05,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeTOPSISvecGrdPct,1.14,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeTOPSISvecOptPct,1.11,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeVecMin,0.86,macros/macros.tex,manually maintained,5b10abb3a410d421
+QthreeVecMax,1.14,macros/macros.tex,manually maintained,5b10abb3a410d421
+CondGapSAWmmGrd,1.29,macros/macros.tex,manually maintained,5b10abb3a410d421
+CondGapSAWvecGrd,2.54,macros/macros.tex,manually maintained,5b10abb3a410d421
+CondGapSAWvecOpt,2.01,macros/macros.tex,manually maintained,5b10abb3a410d421
+CondGapTOPSISmmGrd,1.57,macros/macros.tex,manually maintained,5b10abb3a410d421
+CondGapTOPSISmmOpt,1.40,macros/macros.tex,manually maintained,5b10abb3a410d421
+CondGapTOPSISvecGrd,3.11,macros/macros.tex,manually maintained,5b10abb3a410d421
+CondGapTOPSISvecOpt,2.34,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggMMgrdCIlo,-11.6,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggMMgrdCIhi,-5.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggVecgrdCIlo,0.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggVecgrdCIhi,5.2,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggMMoptCIlo,1.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggMMoptCIhi,5.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggVecoptCIlo,2.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+AggVecoptCIhi,6.8,macros/macros.tex,manually maintained,5b10abb3a410d421
+FEightVecOptQ,100.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+FEightVecOptSE,0.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+FEightMMOptQ,94.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+FEightMMOptSE,1.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+FEightMMOptLoss,5.6,macros/macros.tex,manually maintained,5b10abb3a410d421
+AspectTauB,0.92,macros/macros.tex,manually maintained,5b10abb3a410d421
+AspectTopKAgree,0.94,macros/macros.tex,manually maintained,5b10abb3a410d421
+FEightVecGrdQ,100.0,macros/macros.tex,manually maintained,5b10abb3a410d421
+FEightMMGrdQ,72.4,macros/macros.tex,manually maintained,5b10abb3a410d421
+RawSensSawOptSame,488,macros/macros_raw_sens.tex,scripts/generate_macros_raw_sens.py,3104e4472a325e93
+RawSensSawGrdSame,489,macros/macros_raw_sens.tex,scripts/generate_macros_raw_sens.py,3104e4472a325e93
+RawSensSame,488,macros/macros_raw_sens.tex,scripts/generate_macros_raw_sens.py,3104e4472a325e93
+RawSensTotal,500,macros/macros_raw_sens.tex,scripts/generate_macros_raw_sens.py,3104e4472a325e93
+RawSensTopsisOptSame,487,macros/macros_raw_sens.tex,scripts/generate_macros_raw_sens.py,3104e4472a325e93
+RawSensTopsisGrdSame,489,macros/macros_raw_sens.tex,scripts/generate_macros_raw_sens.py,3104e4472a325e93
+RawSensTopsisOptDiff,13,macros/macros_raw_sens.tex,scripts/generate_macros_raw_sens.py,3104e4472a325e93
+RawSensTopsisGrdDiff,11,macros/macros_raw_sens.tex,scripts/generate_macros_raw_sens.py,3104e4472a325e93
+RawSensMaxDeltaQtwo,1.0,macros/macros_raw_sens.tex,scripts/generate_macros_raw_sens.py,3104e4472a325e93
+EsixPthreeP,"%
+  \ifcsname EsixPthreeP#1\endcsname\csname EsixPthreeP#1\endcsname
+  \else\errmessage{E6 macro EsixPthreeP#1 undefined",macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourP,"%
+  \ifcsname EsixPfourP#1\endcsname\csname EsixPfourP#1\endcsname
+  \else\errmessage{E6 macro EsixPfourP#1 undefined",macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixTargetTVW,0.199,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixNinst,120,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixNfam,4,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixNcells,7,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixNperdraw,200,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixNdraws,"24{,",macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixNdrawsTotal,"168{,",macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPiZinf,0.90,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPoneHits,"48{,",macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPoneTotal,"48{,",macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPoneNDesign,"24{,",macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoLossyNLogn,20,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoMonoLogn,19,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoTiesLogn,1,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoReversalLogn,0,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoStrictOnlyLogn,15,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoPLogn,p<0.001,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoLossyNBeta,18,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoMonoBeta,17,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoTiesBeta,0,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoReversalBeta,1,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoStrictOnlyBeta,6,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoPBeta,p<0.001,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoLossyNUnif,22,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoMonoUnif,22,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoTiesUnif,0,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoReversalUnif,0,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoStrictOnlyUnif,9,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoPUnif,p<0.001,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoLossyNZinf,28,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoMonoZinf,27,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoTiesZinf,1,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoReversalZinf,0,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoStrictOnlyZinf,22,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoPZinf,p<0.001,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoLossyNAll,88,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoMonoAll,85,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoTiesAll,2,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoReversalAll,1,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoStrictOnlyAll,52,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPtwoPAll,p<0.001,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeInfPminFam,0.08,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreePreregNLogn,24,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeDenomLogn,30,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeInfStrictLogn,13,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeInfDenomLogn,19,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreePLogn,p=0.084,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreePreregNBeta,28,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeDenomBeta,30,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeInfStrictBeta,7,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeInfDenomBeta,9,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreePBeta,p=0.090,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreePreregNUnif,22,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeDenomUnif,30,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeInfStrictUnif,8,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeInfDenomUnif,16,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreePUnif,p=0.598,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreePreregNZinf,24,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeDenomZinf,30,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeInfStrictZinf,8,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeInfDenomZinf,14,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreePZinf,p=0.395,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreePreregNAll,98,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeDenomAll,120,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeInfStrictAll,36,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreeInfDenomAll,58,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPthreePAll,p=0.043,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourDeflLogn,13,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourInflLogn,12,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourNonTiedLogn,25,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourTiedLogn,5,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPLogn,p=1.000,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPropLogn,0.52,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPropThreeLogn,0.520,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourCIloLogn,0.33,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourCIhiLogn,0.70,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourDeflBeta,12,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourInflBeta,4,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourNonTiedBeta,16,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourTiedBeta,14,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPBeta,p=0.077,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPropBeta,0.75,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPropThreeBeta,0.750,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourCIloBeta,0.51,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourCIhiBeta,0.90,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourDeflUnif,10,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourInflUnif,8,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourNonTiedUnif,18,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourTiedUnif,12,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPUnif,p=0.815,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPropUnif,0.56,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPropThreeUnif,0.556,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourCIloUnif,0.34,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourCIhiUnif,0.75,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourDeflZinf,18,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourInflZinf,10,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourNonTiedZinf,28,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourTiedZinf,2,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPZinf,p=0.185,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPropZinf,0.64,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPropThreeZinf,0.643,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourCIloZinf,0.46,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourCIhiZinf,0.79,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourDeflAll,53,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourInflAll,34,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourNonTiedAll,87,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourTiedAll,33,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPAll,p=0.053,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPropAll,0.61,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourPropThreeAll,0.609,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourCIloAll,0.50,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixPfourCIhiAll,0.71,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixLossZinfWinfF,10.7,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensTargetTVW,0.1954,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourDeflAll,51,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourInflAll,32,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourNonTiedAll,83,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourTiedAll,37,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourPAll,p=0.048,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourPropAll,0.61,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourPropThreeAll,0.614,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourCIloAll,0.51,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourCIhiAll,0.71,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPoneHits,48000,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPoneTotal,48000,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPtwoMonoAll,85,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPtwoLossyNAll,88,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPtwoPAll,p<0.001,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreePreregNAll,99,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeDenomAll,120,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeInfStrictAll,36,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeInfDenomAll,57,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreePAll,p=0.031,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreePreregNLogn,25,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeDenomLogn,30,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeInfStrictLogn,13,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeInfDenomLogn,18,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreePLogn,p=0.048,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourDeflLogn,13,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourNonTiedLogn,25,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourPropThreeLogn,0.520,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourCIloLogn,0.33,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourCIhiLogn,0.70,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourPLogn,p=1.000,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreePreregNBeta,27,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeDenomBeta,30,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeInfStrictBeta,6,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeInfDenomBeta,9,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreePBeta,p=0.254,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourDeflBeta,12,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourNonTiedBeta,16,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourPropThreeBeta,0.750,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourCIloBeta,0.51,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourCIhiBeta,0.90,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourPBeta,p=0.077,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreePreregNUnif,23,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeDenomUnif,30,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeInfStrictUnif,8,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeInfDenomUnif,15,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreePUnif,p=0.500,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourDeflUnif,9,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourNonTiedUnif,15,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourPropThreeUnif,0.600,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourCIloUnif,0.36,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourCIhiUnif,0.80,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourPUnif,p=0.607,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreePreregNZinf,24,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeDenomZinf,30,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeInfStrictZinf,9,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreeInfDenomZinf,15,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPthreePZinf,p=0.304,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourDeflZinf,17,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourNonTiedZinf,27,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourPropThreeZinf,0.630,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourCIloZinf,0.44,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourCIhiZinf,0.78,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+EsixSensPfourPZinf,p=0.248,macros/macros_e6.tex,scripts/generate_macros_e6.py,ad4bed2ccefb60a8
+FEightVecFrontierSize,153,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightVecCoinc,457,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightVecSubopt,43,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMMCoinc,201,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMMSubopt,299,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMMDivGrdOff,111,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMMDivGrdOn,1,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightVecVecOptQ,100.0,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightVecMMOptQ,94.4,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightVecMMOptSE,1.028,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightVecMMOptLoss,5.6,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightVecVecGrdQ,100.0,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightVecMMGrdQ,72.4,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightVecMMGrdSE,1.999,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightVecMMGrdLoss,27.6,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMmMMOptQ,100.0,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMmVecOptQ,56.8,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMmVecOptSE,2.215,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMmVecOptLoss,43.2,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMmMMGrdQ,86.0,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMmMMGrdSE,1.552,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMmVecGrdQ,66.2,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMmVecGrdSE,2.115,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightMmVecGrdLoss,33.8,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightOptMmLossVecScore,43.2,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightOptMmLossVecScoreLo,38.6,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightOptMmLossVecScoreHi,47.8,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightOptVecLossMmScore,5.6,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightOptVecLossMmScoreLo,3.6,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightOptVecLossMmScoreHi,7.6,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightGrdMmLossVecScore,19.8,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightGrdMmLossVecScoreLo,14.6,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightGrdMmLossVecScoreHi,24.8,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightGrdVecLossMmScore,27.6,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightGrdVecLossMmScoreLo,23.6,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+FEightGrdVecLossMmScoreHi,31.6,macros/macros_f8.tex,scripts/generate_macros_f8.py,86b05f9d8dda0033
+AggKtwentyfive,+21.1,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AggKtwentyfiveLo,18.5,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AggKtwentyfiveHi,23.9,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AggKonehundred,+9.3,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AggKonehundredLo,7.1,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AggKonehundredHi,11.6,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AggKfourhundred,-5.7,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AggKfourhundredLo,-7.3,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AggKfourhundredHi,-4.1,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AggKthousand,-9.0,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AggKthousandLo,-10.5,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AggKthousandHi,-7.5,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NormKtwentyfive,+21.0,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NormKonehundred,+28.2,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NormKfourhundred,+13.3,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NormKthousand,-3.5,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+SAWmeanKtwentyfive,88.8,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+SAWmeanKfifty,84.7,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+SAWmeanKonehundred,77.4,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+SAWmeanKtwohundred,69.7,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+SAWmeanKfourhundred,69.0,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+SAWmeanKthousand,70.3,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+TOPmeanKtwentyfive,67.7,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+TOPmeanKfifty,64.3,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+TOPmeanKonehundred,68.1,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+TOPmeanKtwohundred,70.1,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+TOPmeanKfourhundred,74.7,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+TOPmeanKthousand,79.3,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecSAWKtwentyfive,+3.4,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecSAWKfifty,+2.4,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecSAWKonehundred,-2.6,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecSAWKfourhundred,-23.6,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecSAWKthousand,-38.4,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecTOPKtwentyfive,-2.0,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecTOPKfifty,-1.0,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecTOPKonehundred,-2.0,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecTOPKfourhundred,-19.6,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecTOPKthousand,-40.8,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecSAWKtwentyfiveMag,3.4,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecSAWKthousandMag,38.4,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecTOPKthousandMag,40.8,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NeffAHP,9.3,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NeffRegrSlopePP,5.4,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NeffRegrR,0.23,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NeffCrossover,9.2,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NeffRegrN,"3{,",macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NeffMeanKtwentyfive,7.2,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NeffMeanKthousand,9.3,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NormSigMin,13.3,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NormSigMax,29.2,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecSAWKtwentyfiveLo,1.2,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+AsmVecSAWKtwentyfiveHi,5.8,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NeffWithinSlope,+1.40,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NeffWithinLo,0.30,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+NeffWithinHi,2.50,macros/macros_e7.tex,manually maintained,3458aa5c4f42d375
+QtwoInfSMiGre,100,macros/macros_kappa_inf.tex,manually maintained,9c086c026d584652
+QtwoInfSMiOpt,100,macros/macros_kappa_inf.tex,manually maintained,9c086c026d584652
+QtwoInfSVeGre,100,macros/macros_kappa_inf.tex,manually maintained,9c086c026d584652
+QtwoInfSVeOpt,0,macros/macros_kappa_inf.tex,manually maintained,9c086c026d584652
+QtwoInfTMiGre,100,macros/macros_kappa_inf.tex,manually maintained,9c086c026d584652
+QtwoInfTMiOpt,100,macros/macros_kappa_inf.tex,manually maintained,9c086c026d584652
+QtwoInfTVeGre,100,macros/macros_kappa_inf.tex,manually maintained,9c086c026d584652
+QtwoInfTVeOpt,0,macros/macros_kappa_inf.tex,manually maintained,9c086c026d584652
+RegrSAWmmGrd,2.33,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrSAWmmGrdSE,0.12,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrSAWmmOpt,0.0,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrSAWmmOptSE,0.0,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrSAWvecGrd,6.63,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrSAWvecGrdSE,0.14,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrSAWvecOpt,5.27,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrSAWvecOptSE,0.14,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrTOPSISmmGrd,3.58,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrTOPSISmmGrdSE,0.12,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrTOPSISmmOpt,2.72,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrTOPSISmmOptSE,0.11,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrTOPSISvecGrd,8.51,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrTOPSISvecGrdSE,0.16,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrTOPSISvecOpt,6.35,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrTOPSISvecOptSE,0.15,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrDiffSAWvec,1.36,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrDiffSAWvecLo,0.95,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrDiffSAWvecHi,1.74,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrDiffTOPSISvec,2.15,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrDiffTOPSISvecLo,1.74,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrDiffTOPSISvecHi,2.58,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrDiffTOPSISmmGrdOpt,0.86,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrDiffTOPSISmmGrdOptLo,0.56,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegrDiffTOPSISmmGrdOptHi,1.17,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegretEoneB,4.53,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegretEoneBSE,0.17,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegretEoneBMed,5.50,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegretEoneBGrd,8.25,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegretEoneW,6.47,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegretEoneBfracZero,35.4,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegretEoneBfracZeroN,177,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RRegretRandom,54,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegretEoneWGrd,6.51,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegretEoneBGrdOptDiff,3.72,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegretEoneBGrdOptDiffLo,3.3,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+RegretEoneBGrdOptDiffHi,4.1,results/regret/regret_macros.tex,scripts/make_regret_macros.py,aba70a33939bce04
+SantSTSzeroResult,PASS,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSzeroN,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSzeroResult,PASS,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSzeroN,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSoneResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSoneDiff,15.8,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSoneCIlo,12.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSoneCIhi,19.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSoneResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSoneDiff,25.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSoneCIlo,21.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSoneCIhi,29.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTStwoResult,NOT CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTStwoDiff,0.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTStwoCIlo,0.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTStwoCIhi,0.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTStwoSoloGrd,0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTStwoSoloOpt,0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNStwoResult,NOT CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNStwoDiff,-64.4,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNStwoCIlo,-68.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNStwoCIhi,-60.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNStwoSoloGrd,4,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNStwoSoloOpt,326,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSthreeaResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSthreeaEoneW,80.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSthreeaEoneV,84.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSthreeaResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSthreeaEoneW,99.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSthreeaEoneV,98.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSthreebResult,NOT CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSthreebDiff,4.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSthreebSoloV,69,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSthreebSoloW,49,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSthreebPval,0.080,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSthreebResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSthreebDiff,-0.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSthreebSoloV,0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSthreebSoloW,3,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSthreebPval,0.250,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKfiveaKTwentyFive,0.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKfiveaKFifty,0.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKfiveaKHundred,0.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKfiveaKTwoHundred,0.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKfiveaKFourHundred,0.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKfiveaKThousand,0.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKfiveaInf,0.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKfiveaSameSign,null,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKTwentyFive,22.1,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKTwentyFiveLo,18.7,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKTwentyFiveHi,25.3,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKFifty,26.4,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKFiftyLo,23.1,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKFiftyHi,29.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKHundred,23.9,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKHundredLo,20.8,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKHundredHi,27.1,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKTwoHundred,26.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKTwoHundredLo,23.1,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKTwoHundredHi,29.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKFourHundred,23.8,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKFourHundredLo,21.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKFourHundredHi,26.7,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKThousand,24.1,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKThousandLo,21.3,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixKThousandHi,27.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixInf,0.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKfivebSameSign,null,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKfiveaKTwentyFive,14.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKfiveaKFifty,26.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKfiveaKHundred,48.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKfiveaKTwoHundred,64.4,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKfiveaKFourHundred,85.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKfiveaKThousand,96.8,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKfiveaInf,100.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKfiveaSameSign,true,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKTwentyFive,7.5,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKTwentyFiveLo,5.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKTwentyFiveHi,9.7,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKFifty,4.7,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKFiftyLo,2.5,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKFiftyHi,7.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKHundred,-2.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKHundredLo,-4.9,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKHundredHi,-0.3,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKTwoHundred,-11.9,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKTwoHundredLo,-14.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKTwoHundredHi,-9.7,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKFourHundred,-22.5,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKFourHundredLo,-24.5,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKFourHundredHi,-20.4,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKThousand,-36.5,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKThousandLo,-38.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixKThousandHi,-34.9,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKsixInf,-33.3,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKfivebSameSign,true,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSfiveResult,NOT TESTABLE,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSfivePerm,0.6173,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSfiveQvec,84.2,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSfiveResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSfivePerm,0.0158,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSfiveQvec,98.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsixResult,NOT CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsixRgrd,3.22,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsixRopt,3.22,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsixDiff,0.00,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsixResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsixRgrd,13.87,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsixRopt,0.43,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsixDiff,13.44,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsixCIlo,12.96,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsixCIhi,13.93,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsvnaResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsvnaREoneB,0.93,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsvnaCIlo,0.84,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsvnaCIhi,1.02,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsvnaFracZero,35.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsvnaNnonzero,322,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsvnaResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsvnaREoneB,0.06,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsvnaCIlo,0.05,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsvnaCIhi,0.08,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsvnaFracZero,79.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsvnaNnonzero,102,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsvnbResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsvnbREoneB,0.93,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsvnbREoneW,2.88,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsvnbCIlo,1.71,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSsvnbCIhi,2.18,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsvnbResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsvnbREoneB,0.06,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsvnbREoneW,0.37,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsvnbCIlo,0.25,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSsvnbCIhi,0.38,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKoneResult,PASS,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKoneN,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKoneResult,PASS,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKoneN,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKtwoResult,PASS,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKtwoN,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKtwoInfResult,PASS,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKtwoResult,PASS,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKtwoN,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKtwoInfResult,PASS,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantKtwoInfN,1,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKthreeResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKthreeMinCIlo,3.6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKthreeResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKthreeMinCIlo,2.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKfourResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKfourHolmP,0.003,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKfourResult,CONFIRMED,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNKfourHolmP,0.003,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTNcand,650,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTNadm,601,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTNtrios,"16{,",results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTTV,0.232,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTTVB,0.196,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTTVW,0.157,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTMeff,4.49,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTMaxPM,0.617,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTMaxPMKey,perm,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSpacing,1250,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNNcand,387,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNNadm,190,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNNtrios,"77{,",results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNTV,0.076,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNTVB,0.057,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNTVW,0.056,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNMeff,5.31,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNMaxPM,0.832,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNMaxPMKey,B1,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSpacing,1000,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+FogoRefTV,0.311,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+FogoRefTVB,0.248,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+FogoRefTVW,0.195,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+FogoRefMeff,4.03,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+FogoRefNadm,389,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+FogoRefNtrios,"1{,",results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTMcrit,10,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSpacingKm,1.25,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNMcrit,13,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSpacingKm,1,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+FogoRefMeffCheck,4.03,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixMin,22.1,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixMinKappa,25,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixMax,26.4,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTKsixMaxKappa,50,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantKoneTotalRows,3001,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantEoneRows,501,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSzeroRzero,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSzeroEoneB,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSzeroRzero,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNSzeroEoneB,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSameVecKHundred,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSameVecKThousand,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSameVecKTwoHundred,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSameVecKTwentyFive,488,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSameVecKFourHundred,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSameVecKFifty,493,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSTSameVecKInf,1,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantNkappa,6,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantNdraws,500,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSfiveThresh,0.5,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantTVBThresh,0.05,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+FogoMcrit,11,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+FogoGridSpacingKm,1.0,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+FogoRefPermPM,0.90,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+EsevenBootSeed,99,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantMCDmin,10,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantBootSeedCI,20261104,results/santiago/macros_santiago.tex,scripts/make_santiago_macros.py,7933a4d867f7061f
+SantSNRegadiosPct,3.6,results/santiago/macros_descriptive.tex,scripts/compute_descriptive.py,e1c342fcd1d3474d
+FogoAreaGIS,471,results/santiago/macros_descriptive.tex,scripts/compute_descriptive.py,e1c342fcd1d3474d
+SantSTAreaGIS,1003,results/santiago/macros_descriptive.tex,scripts/compute_descriptive.py,e1c342fcd1d3474d
+SantSNAreaGIS,387,results/santiago/macros_descriptive.tex,scripts/compute_descriptive.py,e1c342fcd1d3474d
+SantSNAreaCabral,395,results/santiago/macros_descriptive.tex,scripts/compute_descriptive.py,e1c342fcd1d3474d
+FrontFracFogo,0.0093,results/santiago/macros_descriptive.tex,scripts/compute_descriptive.py,e1c342fcd1d3474d
+FrontFracSN,1.91,results/santiago/macros_descriptive.tex,scripts/compute_descriptive.py,e1c342fcd1d3474d
+EoneVloss,43.2,results/e1/e1_macros.tex,scripts/generate_macros_e1.py,87303d388b1749ea
+EoneWloss,35.8,results/e1/e1_macros.tex,scripts/generate_macros_e1.py,87303d388b1749ea
+QtwoEoneM,M,results/e1/e1_macros.tex,scripts/generate_macros_e1.py,87303d388b1749ea
+QtwoEoneMGrd,86.0,results/e1/e1_macros.tex,scripts/generate_macros_e1.py,87303d388b1749ea
+QtwoEoneMOpt,100.0,results/e1/e1_macros.tex,scripts/generate_macros_e1.py,87303d388b1749ea
+QtwoEoneBGrd,100.0,results/e1/e1_macros.tex,scripts/generate_macros_e1.py,87303d388b1749ea
+QtwoEoneBOpt,100.0,results/e1/e1_macros.tex,scripts/generate_macros_e1.py,87303d388b1749ea
+QtwoEoneWGrd,64.0,results/e1/e1_macros.tex,scripts/generate_macros_e1.py,87303d388b1749ea
+QtwoEoneWOpt,64.2,results/e1/e1_macros.tex,scripts/generate_macros_e1.py,87303d388b1749ea
+QtwoEoneVGrd,66.2,results/e1/e1_macros.tex,scripts/generate_macros_e1.py,87303d388b1749ea
+QtwoEoneVOpt,56.8,results/e1/e1_macros.tex,scripts/generate_macros_e1.py,87303d388b1749ea

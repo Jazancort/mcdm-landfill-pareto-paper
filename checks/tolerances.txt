@@ -1,0 +1,36 @@
+# checks/tolerances.txt — accepted tolerances in verify/check scripts
+# Format: name; tolerance; precision_dp; justification
+# Rule: tolerance <= 0.5 * 10^(-precision_dp)
+# Exception: tolerances justified by SE or rounding are noted explicitly.
+# One entry per line. Blank lines and lines starting with # are ignored.
+
+# ── verify_macros_permanent.py ────────────────────────────────────────────────
+
+# Half-up rounding to 1 decimal place: max rounding error = 0.05 pp
+# Used for all Q2 and contrast macros (printed to 1 dp)
+half_up_1dp; 0.05; 1; half-up rounding to 1 decimal place — max error = 0.05 pp
+
+# TV_B/TV_W match tolerance: 4 decimal places, tolerance = 0.0001
+# Justification: TV values are printed to 3 dp (e.g. 0.311); tolerance 0.0001
+# is well within half a unit of the 4th decimal place (0.00005).
+# EXCEPTION: tolerance 0.0001 > 0.00005 (half of 4dp unit).
+# Accepted because TV values are printed to 3 dp in the manuscript,
+# so the effective precision is 3 dp and tolerance 0.0001 < 0.0005 (half of 3dp).
+TV_B_TV_W; 0.0001; 3; TV_B/TV_W match tolerance — printed to 3 dp; 0.0001 < 0.0005
+
+# ── check_consistency.py ──────────────────────────────────────────────────────
+
+# Weight sum tolerance: weights sum to 1.000 within 0.001
+# Justification: weights are printed to 3 dp; tolerance 0.001 = half of 2dp unit.
+# Accepted because the weight sum check is a sanity check, not a manuscript claim.
+weight_sum; 0.001; 2; weight sum tolerance — sanity check only; 0.001 = half of 2dp unit
+
+# ── verify_macros_permanent.py (E1 log) ───────────────────────────────────────
+
+# E1 assertion tolerance: 3*SE where SE=2.22 pp => 6.7 pp
+# Justification: this is a regression test comparing E1 results to WP3 baseline.
+# The tolerance is 3 standard errors, not a rounding tolerance.
+# The manuscript does not print this tolerance; it is internal to the pipeline.
+# EXCEPTION: tolerance 6.7 pp is larger than half a unit of 1 dp (0.05 pp).
+# Accepted because this is a regression test tolerance, not a manuscript precision.
+E1_log_SE; 6.7; 0; E1 regression test tolerance = 3*SE (3*2.22=6.7 pp) — internal pipeline only

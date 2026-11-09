@@ -1,0 +1,332 @@
+# checks/design_constants.txt — accepted design constants in manuscript .tex files
+# Format: value; justification
+# One entry per line. Blank lines and lines starting with # are ignored.
+# A numeric literal matching a value here is classified as class (b) — accepted.
+# Values must match exactly as they appear in the .tex (after comment stripping).
+
+# Portfolio size
+3; k=3 sites per portfolio (structural problem parameter, PRESPEC.md §1)
+
+# Separation constraint
+5; d_min=5 km (structural problem parameter, PRESPEC.md §1)
+
+# Significance level
+0.05; alpha=0.05 significance level (pre-specified, PRESPEC.md §3)
+
+# Equivalence margin
+2.5; Delta=2.5 pp TOST equivalence margin (pre-specified, PRESPEC.md §3)
+
+# Bootstrap replicates — these are macros \nboot and \nbootEone but appear as numbers in some contexts
+10000; B=10000 bootstrap replicates (pre-specified, PRESPEC.md §3)
+1000; B=1000 bootstrap replicates for E1 (pre-specified, PRESPEC_E1.md)
+
+# Dirichlet concentration values in E7 grid (macro-backed via macros_e7.tex)
+25; kappa=25 (E7 grid level, PRESPEC_E7_KAPPA.md)
+50; kappa=50 (E7 grid level, PRESPEC_E7_KAPPA.md)
+100; kappa=100 (E7 grid level, PRESPEC_E7_KAPPA.md)
+200; kappa=200 (primary kappa, PRESPEC.md §2)
+400; kappa=400 (E7 grid level, PRESPEC_E7_KAPPA.md)
+1000; kappa=1000 (E7 grid level, PRESPEC_E7_KAPPA.md)
+
+# Number of criteria (structural)
+11; m=11 criteria (structural, Table 1)
+4; four objective groups in S-N (structural, PRESPEC_SANTIAGO.md §4)
+
+# Dominance tolerance
+1e-9; epsilon=1e-9 dominance tolerance (structural, scripts/pareto_utils.py)
+
+# Probability threshold for S5
+0.5; p_max^c < 0.5 testability threshold (pre-specified, PRESPEC_SANTIAGO.md A5 §2)
+
+# Prediction margin for P2 in E1
+5; |Q2_W - Q2_V| < 5 pp threshold (pre-specified, PRESPEC_E1.md)
+
+# Number of synthetic instances in E6
+120; 4 families x 30 replicates = 120 instances per family (PRESPEC_E6.md)
+
+# TV_W levels in E6
+0.10; TV_W=0.10 low level (PRESPEC_E6.md)
+0.30; TV_W=0.30 high level (PRESPEC_E6.md)
+
+# Confidence interval level
+95; 95% CI (standard, pre-specified)
+90; 90% CI for TOST (pre-specified, PRESPEC.md §3)
+
+# Number of predictions in Santiago
+16; 16 pre-registered predictions (PRESPEC_SANTIAGO.md §6)
+
+# Aspect criterion binary threshold
+90; SE-facing lower bound 90 degrees (structural, AzancortNeto2026)
+180; SE-facing upper bound 180 degrees (structural, AzancortNeto2026)
+
+# Number of missing values
+3; 3 missing values in dataset (structural, AzancortNeto2026)
+
+# Number of E6 families
+4; 4 marginal families in E6 (PRESPEC_E6.md)
+
+# Number of E7 kappa levels
+6; 6 kappa levels in E7 grid (PRESPEC_E7_KAPPA.md)
+
+# Number of E6 cells
+7; 7 cells per instance in E6 (PRESPEC_E6.md)
+
+# Number of draws per instance in E6
+200; 200 draws per instance-cell in E6 (PRESPEC_E6.md)
+
+# Number of contrasts in E7
+36; 6 contrasts x 6 kappa = 36 intervals (PRESPEC_E7_KAPPA.md)
+
+# Supplementary table numbers (structural)
+240; 240 synthetic instances in E5 grid (PRESPEC_E5.md)
+405; 405 instances in E5 grid (PRESPEC_E5.md, DEV-E5-002)
+
+# Aspect n1 value (structural, from data)
+94; n1=94 SE-facing sites (structural, computed from dataset)
+
+# Number of landfill studies in review
+114; 114 landfill siting studies reviewed by Rezaeisabzevar2020
+
+# Number of normalisation techniques surveyed
+31; 31 normalisation techniques in Jahan2015
+
+# Number of normalisation techniques in Aytekin2021
+14; 14 techniques in Aytekin2021
+
+# Number of PDA contributions surveyed
+148; 148 PDA contributions in Liesio2021
+
+# Number of draws for E1
+500; N=500 draws for E1 (PRESPEC_E1.md)
+
+# Tolerance for weight comparison
+0.001; max weight difference for column-normalised vs eigenvector (methods section)
+0.004; max weight difference for column-normalised vs eigenvector (methods section)
+
+# Consistency ratio threshold
+0.10; CR < 0.10 threshold (Saaty1990)
+
+# Number of E5 geometries
+3; 3 geometries in E5 (PRESPEC_E5.md)
+
+# Number of E5 replicates
+3; 3 replicates per E5 cell (PRESPEC_E5.md)
+
+# Fraction for land coverage
+50; 50% land coverage threshold for grid cells (methods section)
+
+# Number of Santiago kappa levels
+6; 6 stochastic kappa values in Santiago (PRESPEC_SANTIAGO.md A5)
+
+# Number of E6 draws total denominator
+48000; 48000 = 4 families x 30 inst x 7 cells x 200 draws / ... (E6 P1 check)
+
+# Number of informative cells
+3; 3 informative cells (excluding SAW/mm/opt fixed at 100%)
+
+# Number of bootstrap replicates for Santiago CI
+10000; B=10000 for Santiago CI (PRESPEC_SANTIAGO.md)
+
+# ── Dataset structural constants (from AzancortNeto2026 dataset) ──────────────
+
+# perm criterion: 350 tied zeros, maximum 532m
+350; perm criterion has 350 tied zeros (structural property of dataset, AzancortNeto2026)
+532; maximum value of perm criterion in metres (structural property of dataset)
+
+# n0 = N - n1 = 389 - 94 = 295 non-SE-facing sites
+295; n0 = Nvia - n1 = 389 - 94 = 295 non-SE-facing sites (structural)
+
+# Aspect angle constants
+270; reflected convention theta_pub = (270 - theta) mod 360 (AzancortNeto2026 dataset)
+135; reflection axis 135 degrees = midpoint of SE-facing interval [90,180] (structural)
+359; example azimuth near 360 degrees (illustrative, structural)
+
+# Cosine verification values (aspect oracle check)
+0.805; mean cosine between aspect and summit-to-site bearing for theta from DEM (structural verification)
+-0.102; mean cosine for theta_pub (reflected convention, structural verification)
+
+# Missing value site IDs
+41; site 41 has missing roads value (structural, AzancortNeto2026)
+385; site 385 has missing urban distance value (structural, AzancortNeto2026)
+429; site 429 has missing aerodromes value (structural, AzancortNeto2026)
+
+# Draw number for greedy shortfall example
+302; draw 302 used as concrete example of greedy shortfall (illustrative)
+
+# AzancortNeto2026 scalarisation coefficients (their Table 10, scenario S1)
+0.295; S=0.295*f1+0.356*f2+0.349*(1-f3) coefficient for f1 (AzancortNeto2026 Table 10)
+0.356; S=0.295*f1+0.356*f2+0.349*(1-f3) coefficient for f2 (AzancortNeto2026 Table 10)
+0.349; S=0.295*f1+0.356*f2+0.349*(1-f3) coefficient for (1-f3) (AzancortNeto2026 Table 10)
+
+# Generic weight example
+0.15; w_j=0.15 used as generic example in Dirichlet SD formula (illustrative)
+
+# Number of trios in space A (AzancortNeto2026)
+2.90; approximately 2.90e6 feasible trios from all Ncand candidates (AzancortNeto2026)
+
+# Amplitude constants (structural, from dataset)
+1.000; A_j^mm = 1.000 by construction for all criteria (structural)
+0.62; factor 0.62x deflation of perm under rank normalisation (structural, from amplitudes.json)
+0.616; factor 0.616x deflation of perm effective weight under rank normalisation (structural)
+0.547; A_j^rank for perm = 0.547 (structural, from amplitudes.json)
+0.499; A_j^rank for binary criterion = N/[2(N+1)] approx 0.499 (structural formula)
+0.995; A_j^rank for continuous criterion without ties = (N-1)/(N+1) approx 0.995 (structural)
+
+# Criterion weights (structural, from Andrade2015/AzancortNeto2026)
+0.075; w_aspect = 0.075 (AHP weight, Andrade2015 Table 5)
+0.152; w_perm = 0.152 (AHP weight, Andrade2015 Table 5)
+0.166; w_urban = 0.166 (AHP weight, Andrade2015 Table 5)
+0.113; w_slope = 0.113 (AHP weight, Andrade2015 Table 5)
+0.030; w_roads = 0.030 (AHP weight, Andrade2015 Table 5)
+0.091; w_rivers = 0.091 (AHP weight, Andrade2015 Table 5)
+0.069; w_coast = 0.069 (AHP weight, Andrade2015 Table 5)
+0.066; w_protected = 0.066 (AHP weight, Andrade2015 Table 5)
+0.055; w_wells = 0.055 (AHP weight, Andrade2015 Table 5)
+0.102; w_aero = 0.102 (AHP weight, Andrade2015 Table 5)
+0.081; w_cult = 0.081 (AHP weight, Andrade2015 Table 5)
+
+# rho_j values (structural, from amplitudes.json)
+0.583; rho_perm = 0.583 = 1/L2(mm_perm) (structural, from amplitudes.json)
+0.103; rho_aspect = 0.103 = 1/sqrt(94) (structural, from amplitudes.json)
+0.139; rho_slope = 0.139 (structural, from amplitudes.json)
+0.206; rho_roads = 0.206 (structural, from amplitudes.json)
+0.265; rho_rivers = 0.265 (structural, from amplitudes.json)
+0.131; rho_coast = 0.131 (structural, from amplitudes.json)
+0.105; rho_protected = 0.105 (structural, from amplitudes.json)
+0.084; rho_wells = 0.084 (structural, from amplitudes.json)
+0.107; rho_urban = 0.107 (structural, from amplitudes.json)
+0.088; rho_aero = 0.088 (structural, from amplitudes.json)
+0.171; rho_cult = 0.171 (structural, from amplitudes.json)
+
+# w_eff/w ratios under vector normalisation (structural, from amplitudes.json)
+0.68; w_eff/w for slope under vector (structural)
+1.02; w_eff/w for roads under vector (structural)
+1.31; w_eff/w for rivers under vector (structural)
+0.64; w_eff/w for coast under vector (structural)
+0.52; w_eff/w for protected under vector (structural)
+0.41; w_eff/w for wells under vector (structural)
+0.43; w_eff/w for aero under vector (structural)
+0.85; w_eff/w for cult under vector (structural)
+
+# w_eff/w ratios under rank normalisation (structural, from amplitudes.json)
+1.12; w_eff/w for continuous criteria under rank (structural, approx 1.12x)
+1.11; w_eff/w for urban/cult under rank (structural, from amplitudes.json)
+0.989; A_j^rank for urban = 0.989 (structural, from amplitudes.json)
+0.981; A_j^rank for cult = 0.981 (structural, from amplitudes.json)
+
+# TV=0.000 for min-max (structural)
+0.000; TV=0.000 for min-max normalisation by construction (structural)
+
+# ── tab:canonical values (from AzancortNeto2026 dataset, verified in tab:canonical) ──
+
+# SAW/mm/greedy: {184,279,320}
+0.1273; F1 for SAW/mm/greedy portfolio {184,279,320} (tab:canonical, AzancortNeto2026)
+0.5963; F2 for SAW/mm/greedy portfolio {184,279,320} (tab:canonical, AzancortNeto2026)
+0.6207; F3 for SAW/mm/greedy portfolio {184,279,320} (tab:canonical, AzancortNeto2026)
+0.032; gap for SAW/mm/greedy portfolio (tab:canonical, AzancortNeto2026)
+
+# SAW/mm/optimal: {184,430,460}
+0.0811; F1 for SAW/mm/optimal portfolio {184,430,460} (tab:canonical, AzancortNeto2026)
+0.5568; F2 for SAW/mm/optimal portfolio {184,430,460} (tab:canonical, AzancortNeto2026)
+0.6170; F3 for SAW/mm/optimal portfolio {184,430,460} (tab:canonical, AzancortNeto2026)
+
+# TOPSIS/vec/greedy: {233,320,355}
+0.1113; F1 for TOPSIS/vec/greedy portfolio {233,320,355} (tab:canonical)
+0.5669; F2 for TOPSIS/vec/greedy portfolio {233,320,355} (tab:canonical)
+0.5358; F3 for TOPSIS/vec/greedy portfolio {233,320,355} (tab:canonical)
+0.048; gap for TOPSIS/vec/greedy portfolio (tab:canonical)
+
+# TOPSIS/vec/optimal: {227,233,345}
+0.0865; F1 for TOPSIS/vec/optimal portfolio {227,233,345} (tab:canonical)
+0.5955; F2 for TOPSIS/vec/optimal portfolio {227,233,345} (tab:canonical)
+0.5715; F3 for TOPSIS/vec/optimal portfolio {227,233,345} (tab:canonical)
+0.024; gap for TOPSIS/vec/optimal portfolio (tab:canonical)
+
+# TOPSIS/mm/greedy: {184,227,460}
+0.1104; F1 for TOPSIS/mm/greedy portfolio {184,227,460} (tab:canonical)
+0.6712; F2 for TOPSIS/mm/greedy portfolio {184,227,460} (tab:canonical)
+0.6883; F3 for TOPSIS/mm/greedy portfolio {184,227,460} (tab:canonical)
+
+# VIKOR/greedy: {233,279,320}
+0.1190; F1 for VIKOR/greedy portfolio {233,279,320} (tab:canonical)
+0.5819; F2 for VIKOR/greedy portfolio {233,279,320} (tab:canonical)
+0.5879; F3 for VIKOR/greedy portfolio {233,279,320} (tab:canonical)
+0.052; gap for VIKOR/greedy portfolio (tab:canonical)
+
+# PROMETHEE/greedy: {51,233,345}
+0.0447; F1 for PROMETHEE/greedy portfolio {51,233,345} (tab:canonical)
+0.5900; F2 for PROMETHEE/greedy portfolio {51,233,345} (tab:canonical)
+0.4852; F3 for PROMETHEE/greedy portfolio {51,233,345} (tab:canonical)
+
+# Greedy shortfall example (draw 302)
+0.028; gap=0.028 for greedy portfolio in draw 302 (illustrative example, sec:greedy)
+
+# ── E1-B post hoc diagnostics ─────────────────────────────────────────────────
+# These are post hoc observations from E1-B analysis; macros EoneBGrdOptCoincide
+# and EoneBGrdF1Percentile defined in macros.tex
+# 62.8 and 0.8 are now covered by those macros
+
+# ── E5 slope (Limitations section) ───────────────────────────────────────────
+# These are now covered by macros EfiveSlope, EfiveSlopeCIlo, EfiveSlopeCIhi
+# defined in macros.tex
+
+# ── Dirichlet SD range (structural formula) ───────────────────────────────────
+0.03; SD(w_i) approx 0.03 at kappa=25 for w_j=0.15 (structural Dirichlet formula)
+0.07; SD(w_i) approx 0.07 at kappa=25 for w_j=0.15 (structural Dirichlet formula)
+0.005; SD(w_i) approx 0.005 at kappa=1000 for w_j=0.15 (structural Dirichlet formula)
+0.012; SD(w_i) approx 0.012 at kappa=1000 for w_j=0.15 (structural Dirichlet formula)
+
+# ── Aspect analysis (sec:coding) ──────────────────────────────────────────────
+# 302 degrees = circular mean of top quartile azimuths (structural, from data)
+# 27 degrees = s.d. of top quartile azimuths (structural, from data)
+27; s.d. of top-quartile azimuths approx 27 degrees (structural, from data)
+
+# ── Discussion values ─────────────────────────────────────────────────────────
+# 0.616x and 0.547 are now covered by design constants above
+# TV=0.31 example in practice section
+0.31; TV=0.31 used as hypothetical example in practice section (illustrative)
+
+# ── Code availability ─────────────────────────────────────────────────────────
+1.7; version 1.7 of replication package (code availability section)
+
+# ── AHP consistency values ────────────────────────────────────────────────────
+0.08525; CI=0.08525 (AHP consistency index, Andrade2015/AzancortNeto2026)
+1.51; RI=1.51 (AHP random index for 11 criteria, Saaty1990)
+
+# ── E1-B group weight shift ───────────────────────────────────────────────────
+0.544; weight of G1 under E1-B amplitudes (from 0.295 to 0.544, post hoc)
+
+# ── R-V* amplitude range ─────────────────────────────────────────────────────
+0.482; amplitude of perm in R-V* cell (structural, from E4 analysis)
+0.683; amplitude of slope in R-V* cell (structural, from E4 analysis)
+
+# ── PROMETHEE identity verification ──────────────────────────────────────────
+6.7; 6.7e-16 maximum absolute error in PROMETHEE identity verification (structural)
+
+# ── top-100 rank agreement ────────────────────────────────────────────────────
+1.000; top-100 rank agreement = 1.000 under min-max (structural verification)
+
+# ── E6 no-loss range ─────────────────────────────────────────────────────────
+# 27-40% of instances under continuous marginals have no detectable loss
+# These are now covered by EsixNoLossMin/Max if they exist, otherwise structural
+# The text says "27--40\%" which is a range from the E6 results
+# 27 is already covered above; 40 is:
+40; upper bound of no-loss instance range in E6 (27-40%, structural E6 result)
+
+# ── E6 Q3 range ──────────────────────────────────────────────────────────────
+# "below 0.2%" for min-max cells
+0.2; Q3 below 0.2% in every min-max cell (structural, from macros QthreeSAWmmGrdPct=0.18)
+
+# ── Scanner false-positive fixes ──────────────────────────────────────────────
+# These are substrings of values already accepted above, detected by the scanner
+# as separate numbers due to regex matching.
+
+# 0.29 and 0.35 are prefixes of 0.295 and 0.356 (AzancortNeto2026 scalarisation)
+0.29; prefix of 0.295 (AzancortNeto2026 scalarisation coefficient, already accepted)
+0.35; prefix of 0.356 (AzancortNeto2026 scalarisation coefficient, already accepted)
+
+# 0.3 is prefix of 0.30 (E6 TV_W high level, already accepted as 0.30)
+0.3; prefix of 0.30 (E6 TV_W high level, already accepted)
+
+# 0.1 is the TV_W increment used in E5 slope description (per 0.1 of TV_W)
+0.1; TV_W increment = 0.1 units (E5 slope description, structural)

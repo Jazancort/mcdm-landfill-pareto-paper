@@ -169,7 +169,19 @@
 \newcommand{\pDropSum}{0.18}
 
 
-% ── Marco B: E4 preparation values (from tvw_e4.py, commit d4e970b) ─────
+% ── E1-B post hoc diagnostics (run_e1_v3.py post hoc analysis) ─────────────
+% Source: post hoc analysis of E1-B draws; not in log file.
+% These values appear in Sec. 7.7 (E1 section) as post hoc observations.
+\newcommand{\EoneBGrdOptCoincide}{62.8}  % % of draws where E1-B greedy==optimal
+\newcommand{\EoneBGrdFonePercentile}{0.8}  % median greedy portfolio F1 percentile
+
+% ── E5 slope (run_e5_grid.py, Limitations section) ───────────────────────────
+% Source: E5 grid regression; reported in Limitations as exploratory.
+\newcommand{\EfiveSlope}{-1.3}           % slope of Q2_grd on TV_W (pp per 0.1 TV_W)
+\newcommand{\EfiveSlopeCIlo}{-5.1}       % 95% CI lower
+\newcommand{\EfiveSlopeCIhi}{2.4}        % 95% CI upper
+
+
 % [MOVED to macros_amplitudes.tex] IntraGperm
 \newcommand{\TVWrw}{0.082}       % TV_W for E4 R-W cell (0.0815 rounded to 3 s.f.)
 
@@ -246,6 +258,9 @@
 \newcommand{\QthreeTOPSISmmOptPct}{0.05}
 \newcommand{\QthreeTOPSISvecGrdPct}{1.14}
 \newcommand{\QthreeTOPSISvecOptPct}{1.11}
+% Derived: min/max Q3 in vector cells (for text: "between X% and Y%")
+\newcommand{\QthreeVecMin}{0.86}   % = QthreeSAWvecGrdPct (minimum across 4 vector cells)
+\newcommand{\QthreeVecMax}{1.14}   % = QthreeTOPSISvecGrdPct (maximum across 4 vector cells)
 
 % Conditional gap = Q3 / (1-Q2), mean shortfall when portfolio misses frontier (%)
 \newcommand{\CondGapSAWmmGrd}{1.29}

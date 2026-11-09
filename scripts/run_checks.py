@@ -26,6 +26,9 @@ CHECKS = [
     ("check_consistency",       ["scripts/check_consistency.py"]),
     ("verify_macros_permanent", ["scripts/verify_macros_permanent.py"]),
     ("verify_macros_santiago",  ["scripts/verify_macros_permanent.py", "--santiago"]),
+    ("audit_numbers",           ["scripts/audit_numbers.py"]),
+    ("check_macros_provenance", ["scripts/check_macros_provenance.py"]),
+    ("check_tolerances",        ["scripts/check_tolerances.py"]),
 ]
 
 SEP = "=" * 72
