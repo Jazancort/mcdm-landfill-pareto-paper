@@ -123,7 +123,7 @@ def compute_clipping_areas() -> dict:
         gdf = gpd.read_file(path).to_crs(crs)
         area_km2 = float(gdf.geometry.union_all().area) / 1e6
         area_km2_rounded = round(area_km2, 0)
-        print(f"  {key:4s} area: {area_km2:.3f} km²  SHA: {sha[:16]}", flush=True)
+        print(f"  {key:4s} area: {area_km2:.3f} km2  SHA: {sha[:16]}", flush=True)
         out[f"{key}_km2"] = int(area_km2_rounded)
         out[f"{key}_km2_exact"] = area_km2
         out[f"{key}_sha"] = sha
@@ -131,7 +131,7 @@ def compute_clipping_areas() -> dict:
     # Regression assert: S-N area must match the Regadios denominator
     sn_exact = out["sn_km2_exact"]
     assert abs(sn_exact - 387.023) < 0.5, (
-        f"S-N area regression FAIL: got {sn_exact:.3f} km², expected ~387.023 km² "
+        f"S-N area regression FAIL: got {sn_exact:.3f} km2, expected ~387.023 km2 "
         f"(DEV-SANT-A5-001 denominator). Check CRS or polygon."
     )
     print(f"  S-N area assert OK: {sn_exact:.3f} ~= 387.023 km2", flush=True)
@@ -170,8 +170,8 @@ def compute_regadios_fraction() -> dict:
     reg_area_m2 = float(reg_clipped.geometry.union_all().area) if len(reg_clipped) > 0 else 0.0
     fraction_pct = round(reg_area_m2 / sn_area_m2 * 100, 2)
 
-    print(f"  S-N area       : {sn_area_m2/1e6:.3f} km² (3 concelhos)")
-    print(f"  Regadios in SN : {reg_area_m2/1e6:.3f} km²")
+    print(f"  S-N area       : {sn_area_m2/1e6:.3f} km2 (3 concelhos)")
+    print(f"  Regadios in SN : {reg_area_m2/1e6:.3f} km2")
     print(f"  Fraction       : {fraction_pct:.2f}%  (DEV-SANT-A5-001: 3.6%)")
 
     return {
@@ -621,10 +621,10 @@ def main():
 
     # Summary
     print("\n=== Summary ===")
-    print(f"  FogoAreaGIS       : {results['clipping_areas']['fogo_km2']} km²")
-    print(f"  SantSTAreaGIS     : {results['clipping_areas']['st_km2']} km²")
-    print(f"  SantSNAreaGIS     : {results['clipping_areas']['sn_km2']} km²")
-    print(f"  SantSNAreaCabral  : {SANT_SN_AREA_CABRAL_KM2} km² (cited)")
+    print(f"  FogoAreaGIS       : {results['clipping_areas']['fogo_km2']} km2")
+    print(f"  SantSTAreaGIS     : {results['clipping_areas']['st_km2']} km2")
+    print(f"  SantSNAreaGIS     : {results['clipping_areas']['sn_km2']} km2")
+    print(f"  SantSNAreaCabral  : {SANT_SN_AREA_CABRAL_KM2} km2 (cited)")
     print(f"  SantSNRegadiosPct : {results['regadios']['regadio_pct']:.1f}%")
     print(f"  FrontFracFogo     : {results['frontier_fogo']['fraction_pct']:.4f}%")
     if "frontier_sn" in results:
