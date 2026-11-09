@@ -1,6 +1,6 @@
 # Estado actual — handoff para próxima sessão
 
-**Ramo:** `writing-santiago` HEAD `fb52b61` → novo commit desta sessão (pendente).
+**Ramo:** `writing-santiago` HEAD `5232904`.
 
 ## ERRATA — verificações anteriores não eram fiáveis
 
@@ -20,11 +20,11 @@ descrita na mensagem do commit era inexacta.
 
 Esta errata não muda nenhum resultado científico. Os valores estavam correctos.
 
-## Estado actual (após esta sessão — Ronda 1 revista)
+## Estado actual (HEAD 5232904 — Ronda 1 revista corrigida)
 
 ```
 BRANCH:  writing-santiago
-HEAD:    fb52b61 + novo commit desta sessão
+HEAD:    5232904
 MAKE PAPER: exit 0 (34 páginas)
 MAKE CHECK: exit 0 (0 falhas)
   check_consistency.py:
@@ -39,26 +39,28 @@ MAKE CHECK: exit 0 (0 falhas)
   compute_descriptive.py:
     --skip-frontier salta só o S-T; S-N corre sempre
     ao reutilizar S-T do JSON, verifica SHA dos inputs; aborta se diferir
-TESTE NEGATIVO: QtwommGreedy 86.0→99.9 em macros/macros.tex
-  make check saiu com Error 1 (exit ≠ 0)
-  FAILs detectados: log stale, A9b divergência, Agg κ=200 inconsistente
-  macros/macros.tex restaurado com git show HEAD:macros/macros.tex
-```
 
-## Estado actual (após esta sessão)
+TESTE NEGATIVO A (macro errada — Ronda 1 revista corrigida):
+  Worktree wt-neg criado em HEAD 5232904.
+  make paper correu no worktree (log fresco: mtime=2026-11-08 21:14:01).
+  QtwommGreedy 86.0→99.9 em macros/macros.tex do worktree.
+  make paper correu novamente (log actualizado).
+  make check saiu com Error 1 (exit ≠ 0).
+  FAILs detectados pela razão certa (não por log em falta):
+    A9b: macros/macros.tex e paper/manuscript/macros.tex divergem
+         (QtwommGreedy: 99.9 vs 86.0 — diff mostrado explicitamente)
+    6c Tab6 Agg k=200: macro=-0.4, Tab5-derived=4.23
+         (inconsistência aritmética derivada do valor errado)
+  Log lido: build/paper/main.log mtime=2026-11-08 21:14:01 (fresco).
+  Não falhou por log em falta nem por log antigo.
+  Worktree removido: git worktree remove --force + rmdir.
 
-```
-BRANCH:  writing-santiago
-HEAD:    5ad5c08 + novo commit desta sessão
-MAKE PAPER: exit 0 (34 páginas)
-MAKE CHECK: exit 0 (0 falhas)
-  check_consistency.py  — lê build/paper/main.log (caminho impresso no output)
-  generate_macros_r1.py — \RaspLoss comparado com 84.4 (1 dp)
-  verify_macros_permanent.py --santiago:
-    macros_santiago.tex  — 268 linhas, OK
-    macros_descriptive.tex — 30 linhas, OK (\FrontFracSN gerado pelo script)
-    \AsmMMSAWContrast verificado contra Q_saw_mm_opt − Q_saw_mm_grd
-C:\build\ — APAGADO
+TESTE NEGATIVO B (log antigo):
+  No mesmo worktree (antes de remover): touch main.tex sem recompilar.
+  make check saiu com Error 1.
+  FAIL: main.log is older than main.tex
+        (log=2026-11-08 21:14:01, main.tex=2026-11-08 21:15:19)
+  Mensagem: "run make paper first".
 ```
 
 ## O que foi feito nesta sessão
