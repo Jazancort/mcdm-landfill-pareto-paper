@@ -17,7 +17,8 @@
 | 3 | ✅ CONCLUÍDA | `ae80353` | 2026-11-09 |
 | 4 | ✅ CONCLUÍDA | `127cdf7` | 2026-11-09 |
 | 5 | ✅ CONCLUÍDA | `4d63526` | 2026-11-09 |
-| 6–12 | ⬜ pendente | — | — |
+| 6 | ✅ CONCLUÍDA | `621bac5` | 2026-11-09 |
+| 7–12 | ⬜ pendente | — | — |
 
 ---
 
@@ -272,6 +273,32 @@ git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃ
 - **5-3** — Previsões refutadas reportadas com o mesmo destaque das confirmadas. Nenhuma análise nova sem o rótulo "exploratory".
 - **5-4** — Tabela de desvios (`tab:sant-dev`) com todos os `DEV-SANT-*`: data, antes/depois de ver resultados, impacto. Inclui E1-FRONT, E1-ABAR e K6.
 - **5-5** — Parágrafo sobre limiares marginais (TV_B S-N = 0.057 vs 0.05) e o que isso implica para S3b/S7b.
+
+---
+
+## Ronda 6 — Rigor estatístico
+
+> **Estado: ✅ CONCLUÍDA** — commit `621bac5` (2026-11-09)
+
+### O que foi feito
+
+- **6-1** ✅ `scripts/check_inference_table.py` criado. Tabela completa de todos os testes inferenciais: Fogo (NormMain, NormGreedy, TOST-Agg, AsmVecSAW, InterTOPSIS) + Santiago S1 (6 κ × 2 ramos, Holm-corrigido) + S7a (2 ramos) + S6 S-N. Colunas: ID, Branch, Test, Family, raw_p, holm_p, CI, Effect(pp).
+- **6-2** ✅ SE de Monte Carlo para 14 células Q2 (N=500). Tabela de contrastes: todas as conclusões baseadas em CI excedem 2×SE. Veredictos sign-only (S3b, TOST, S7a regret) marcados como SIGN, não WARN.
+- **6-3** ✅ B_BOOT=2000 verificado contra PRESPEC_SANTIAGO_A5 B=2000. TOST margin delta=2.5 pp verificado. Fogo TOST CI [-2.2,+1.3] dentro de [-2.5,+2.5] pp. Bootstrap: percentile CI, paired by draw.
+- **6-4** ✅ SENS-AGR: e6_raw_prespec.csv existe (7.5 MB). SENS-ZDTI-DISTRIB: não existe (Athena necessário; WARN aceite).
+- **6-5** ✅ S3b p-values verificados: McNemar c.c. p=0.0803 (69 vs 49) e binomial exacto p=0.250 (0 vs 3) coincidem com macros_santiago.tex a <0.002. Veredictos NOT CONFIRMED (S-T) e CONFIRMED (S-N) correctos.
+- `scripts/run_checks.py`: 13 checkers total (adicionado check_inference_table).
+
+### Evidências
+
+```
+make paper EXIT=0 (34 páginas)
+make check EXIT=0 (0 falhas, 1 warning: SENS-ZDTI-DISTRIB Athena pendente)
+check_inference_table: ALL CHECKS PASSED (0 failures, 1 warnings)
+git diff stage4-results-sealed -- results/santiago/mc_*_raw.csv  → NÃO vazio (pré-existente)
+git diff stage4-e1fix2-sealed -- results/santiago/mc_*_e1_fix2.csv  → vazio ✓
+git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃO vazio (pré-existente)
+```
 
 ---
 
