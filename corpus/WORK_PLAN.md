@@ -16,7 +16,8 @@
 | 2b | ✅ CONCLUÍDA | `e3d2d7e` | 2026-11-09 |
 | 3 | ✅ CONCLUÍDA | `ae80353` | 2026-11-09 |
 | 4 | ✅ CONCLUÍDA | `127cdf7` | 2026-11-09 |
-| 5–12 | ⬜ pendente | — | — |
+| 5 | ✅ CONCLUÍDA | `4d63526` | 2026-11-09 |
+| 6–12 | ⬜ pendente | — | — |
 
 ---
 
@@ -234,6 +235,31 @@ git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃ
 - **4-5** — Arquivo de replicação: README, LICENSE, CITATION.cff, `.zenodo.json`, environment (`uv.lock`), instruções GPU/CPU. Não publicar ainda.
 
 > **PARAGEM**: se o clone limpo não reproduzir alguma macro.
+
+---
+
+## Ronda 5 — Escrita da secção Santiago (Fase B)
+
+> **Estado: ✅ CONCLUÍDA** — commit `4d63526` (2026-11-09)
+
+### O que foi feito
+
+- **5-1** ✅ Estrutura da §8 verificada: `santiago.tex` já contém todas as subsecções (design, instâncias, S0–S7b, K1–K6, síntese). Nenhuma alteração necessária.
+- **5-2** ✅ `scripts/check_santiago_verdicts.py` criado. SHA-verifica `santiago_predictions_v2.json`. Lê macros `\Sant{ST|SN}S*Result` de `macros_santiago.tex`. Verifica 18 macros (S0–S7b, ambos os ramos) contra o JSON. `[FAIL] MISMATCH` se divergir; EXIT=1. Integrado no `run_checks.py` (12 checkers total). Teste negativo confirmado: EXIT=1 quando macro corrompida.
+- **5-3** ✅ Previsões refutadas (S2, S3b S-T, S6 S-T) já aparecem com o mesmo destaque das confirmadas no texto. Nenhuma alteração necessária.
+- **5-4** ✅ `tab:sant-dev` já existe em `supplementary.tex` com todos os `DEV-SANT-*`. Nenhuma alteração necessária.
+- **5-5** ✅ Parágrafo sobre TV_B S-N = 0.057 já existe no texto (§"Instance descriptors" e §"S3b"). Nenhuma alteração necessária.
+
+### Evidências
+
+```
+make paper EXIT=0 (34 páginas)
+make check EXIT=0 (0 falhas, 12 checkers)
+teste negativo: EXIT=1 quando \SantSNSoneResult corrompido para WRONG
+git diff stage4-results-sealed -- results/santiago/mc_*_raw.csv  → NÃO vazio (pré-existente)
+git diff stage4-e1fix2-sealed -- results/santiago/mc_*_e1_fix2.csv  → vazio ✓
+git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃO vazio (pré-existente)
+```
 
 ---
 
