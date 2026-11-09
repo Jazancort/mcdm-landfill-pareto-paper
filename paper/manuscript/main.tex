@@ -698,7 +698,7 @@ The feasible set is
   \label{eq:T}
   \Tset = \bigl\{\,t\subseteq\Sites \;:\; |t|=\kk,\ t \text{ satisfies }
     \eqref{eq:rsep}\,\bigr\},
-  \qquad |\Tset| = \Ntrios.
+  \;|\Tset| = \Ntrios.
 \end{equation}
 The excluded $\Nexcl$ candidates never enter a portfolio in either reference
 space and affect only the normalisation constants.
@@ -810,9 +810,9 @@ With $\Lambda_\ell = \max_{t\in\Tset}F_\ell - \min_{t\in\Tset}F_\ell$
 \begin{equation}
   \label{eq:gap}
   \mathrm{gap}(t) = \max_{t'\in\Tset}\;\min\!\left(
-    \frac{F_1(t){-}F_1(t')}{\Lambda_1},\;
-    \frac{F_2(t){-}F_2(t')}{\Lambda_2},\;
-    \frac{F_3(t'){-}F_3(t)}{\Lambda_3}
+    \tfrac{F_1(t){-}F_1(t')}{\Lambda_1},\,
+    \tfrac{F_2(t){-}F_2(t')}{\Lambda_2},\,
+    \tfrac{F_3(t'){-}F_3(t)}{\Lambda_3}
   \right)^{\!+},
 \end{equation}
 where $(x)^{+}=\max(0,x)$, so $\mathrm{gap}(t)=0$ if $t\in\Fset$.
@@ -972,9 +972,9 @@ Three normalisations are compared, spanning the standard taxonomies of
     c_j(i) = \frac{x_{ij}-\min_j}{\max_j-\min_j}, \label{eq:mm} \\
   \text{vector:} \quad &
     c_j(i) = \frac{\tilde{x}_{ij}}{\lVert\tilde{\mathbf{x}}_j\rVert_2},
-    \quad
-    \tilde{x}_{ij} = \frac{x_{ij}-\min_k x_{kj}}{\max_k x_{kj}-\min_k x_{kj}},
-    \label{eq:vec} \\
+    \label{eq:vec}\\
+  &\quad\tilde{x}_{ij} = \frac{x_{ij}-\min_k x_{kj}}{\max_k x_{kj}-\min_k x_{kj}},
+    \notag\allowbreak \\
   \text{ranks:} \quad &
     c_j(i) = r_j(i). \label{eq:ranks}
 \end{align}
@@ -2323,7 +2323,7 @@ R-V denotes the original reference-set cell; it uses the continuous
 aspect encoding, not vector normalisation.}
 \label{tab:coding2x2}
 \centering\small
-\begin{tabular}{@{}ll@{\hspace{4pt}}c@{\hspace{4pt}}c@{}}
+\begin{tabular}{@{}ll@{\hspace{1pt}}c@{\hspace{1pt}}c@{}}
 \toprule
 Aspect encoding & Assembly & $\Nvia$-site & $\Ncand$-site \\
 \midrule
@@ -2626,9 +2626,9 @@ distributing it uniformly across all criteria is not tested here.
 \subsection{Sensitivity of the factorial contrasts to weight dispersion}
 \label{sec:kappa}
 
-This analysis was specified (PRESPEC\_E7\_KAPPA.md, amendments A1--A2, in the
-replication archive) before the E7 run but after the main factorial results
-were known; we treat it as exploratory throughout.
+This analysis was specified (\texttt{PRESPEC\_E7\_KAPPA.md}, amendments A1--A2,
+in the replication archive) before the E7 run but after the main factorial
+results were known; we treat it as exploratory throughout.
 Weights are drawn as $\mathbf{w}\sim\mathrm{Dir}(\kappa\,\mathbf{w}_0)$ with the
 AHP weights as $\mathbf{w}_0$; smaller $\kappa$ means more dispersed weights
 ($\mathrm{SD}(w_i)=\sqrt{w_{0,i}(1-w_{0,i})/(\kappa+1)}$ falls from

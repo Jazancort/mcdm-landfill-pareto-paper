@@ -4,4 +4,5 @@
 # A WARN matching a pattern here is accepted; any WARN NOT listed = FAIL.
 
 OVERFULL-MAKETITLE; 123.62721pt too wide; CAS-DC class geometry artifact in maketitle box — not fixable without modifying the class file
+OVERFULL-SCALARISATION; 1.28632pt too wide; eq:scalarisation align row 2: subscript G_1\cup G_2 causes 1.3pt overfull — not fixable without losing mathematical notation
 NGRAM-BINARY-CRITERION; every binary criterion loses approximately half its effective weight; Intentional repetition of theorem statement in two places (§3 and §6); to be eliminated in Ronda 8

@@ -427,7 +427,8 @@ Results from \texttt{run\_e1\_v3.py}, commit \texttt{18e7a66}
 \noindent
 \textbf{Purpose:} Test whether the reference-set mismatch (473 vs.\ 389 sites
 in the score) reduces to within-group re-weighting of the same form as
-Experiment~E1, via the affine identity $n_j^{473}(a)=b_j+r_j\,n_j^{389}(a)$.
+Experiment~E1, via the affine identity
+$n_j^{473}(a)=b_j+r_j\,n_j^{389}(a)$.
 
 \subsection*{Pre-declared predictions}
 
@@ -543,7 +544,7 @@ Experiment~E1, via the affine identity $n_j^{473}(a)=b_j+r_j\,n_j^{389}(a)$.
   the failure rather than fix the script.  Commits 54195c1 and
   2aa0d38 were both reverted in commit \texttt{ec33779}.
   The corrected B1 run (commit \texttt{8f6a15a}, script
-  \texttt{compute\_b1\_spaceA.py} v3) uses the 1\,944\,653 admissible
+  \texttt{compute\_b1\_spaceA.py}~v3) uses the 1\,944\,653 admissible
   trios, computes objectives with \texttt{ref\_df=df\_all} for space~$A$
   normalisation, and the score is the direct scalarisation
   $-(F_1+F_2)+F_3$ with the same column values.  The corrected results
@@ -976,7 +977,7 @@ committed before that claim was inserted.
 The table below lists the key numbers, their source scripts, and whether
 the corresponding macro was affected by the coding inconsistency.
 
-\begin{table*}[!t]
+\begin{table*}[p]
 \centering
 \caption{Provenance of key manuscript values.
   ``Script'' identifies the Python script that produced each number.
@@ -986,7 +987,8 @@ the corresponding macro was affected by the coding inconsistency.
   \texttt{check\_consistency.py} verifies that no contaminated macro
   appears in the current manuscript.}
 \label{tab:provenance}
-\begin{tabular}{p{4.5cm}p{3.5cm}cc}
+\small
+\begin{tabular}{p{4.2cm}p{4.0cm}cc}
 \toprule
 Quantity & Script & Commit & Contaminated \\
 \midrule
@@ -1118,7 +1120,7 @@ Criterion & Group & $\rho_j^A$ & $\rho_j^B$ & Notes \\
 Table~\ref{tab:sant-dev} lists every departure from the pre-registration,
 ordered by date.
 
-\begin{table*}[!t]
+\begin{table*}[p]
 \centering
 \caption{All departures from the pre-registration for the Santiago
   replication, ordered by date.

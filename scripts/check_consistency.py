@@ -910,42 +910,31 @@ else:
         print(f"  [FAIL] Rerun to get: {_rerun}")
     else:
         print(f"  [OK  ] Rerun to get: 0")
-    # Overfull hbox > 5pt in prose (table cells with & are exempt)
-    # Whitelist of known pre-existing CAS-DC class geometry issues (not fixable without modifying class)
+    # Overfull hbox > 1pt in prose (table cells with & are exempt)
+    # Whitelist of known accepted overflows (see checks/exceptions.txt)
     _OVERFULL_WHITELIST = [
         # CAS-DC internal box for maketitle/abstract: class geometry artifact
         "123.62721pt too wide",
-        # Pre-existing equation/prose overflows (confirmed pre-existing, pdflatex build)
-        "13.1244pt too wide",   # eq:tset definition box
-        "13.1644pt too wide",   # eq:tset definition box (xelatex variant)
-        "31.15796pt too wide",  # equation with fractions (eq:gap)
-        "20.05048pt too wide",  # equations block (normalisation forms)
-        "20.05045pt too wide",  # idem (xelatex variant)
-        "5.7904pt too wide",    # prose overflow in Results section
-        "5.83052pt too wide",   # idem (xelatex variant)
-        "10.22704pt too wide",  # prose with formula
-        "7.39792pt too wide",   # prose overflow in F8 section
-        "42.58063pt too wide",  # inline formula V_mm in regret definition
-        "32.28215pt too wide",  # CI notation in F8 alignment text
-        "9.00845pt too wide",   # paragraph near eq:tset
+        # eq:scalarisation align row 2: subscript G_1\cup G_2 causes 1.3pt overfull
+        "1.28632pt too wide",
     ]
     _overfull_lines = [l for l in _log5.splitlines()
                        if "Overfull \\hbox" in l and "pt too wide" in l]
     _bad_overfull = []
     for _ol in _overfull_lines:
         _m = _re5.search(r"([\d.]+)pt too wide", _ol)
-        if _m and float(_m.group(1)) > 5.0:
+        if _m and float(_m.group(1)) > 1.0:
             # Check whitelist
             whitelisted = any(w in _ol for w in _OVERFULL_WHITELIST)
             if not whitelisted:
                 _bad_overfull.append(_ol)
     if _bad_overfull:
-        FAIL.append(f"Log5b: {len(_bad_overfull)} Overfull \\hbox > 5pt (excluding 1 whitelisted CAS-DC class artifact)")
-        print(f"  [FAIL] Overfull \\hbox > 5pt: {len(_bad_overfull)}")
+        FAIL.append(f"Log5b: {len(_bad_overfull)} Overfull \\hbox > 1pt (excluding whitelisted entries)")
+        print(f"  [FAIL] Overfull \\hbox > 1pt: {len(_bad_overfull)}")
         for _l in _bad_overfull[:5]:
             print(f"    {_l[:100]}")
     else:
-        print(f"  [OK  ] Overfull \\hbox > 5pt: 0 (1 whitelisted: CAS-DC maketitle class artifact)")
+        print(f"  [OK  ] Overfull \\hbox > 1pt: 0 (2 whitelisted: CAS-DC maketitle + eq:scalarisation)")
 
     # Rerun warning — another pass needed
     _rerun_text = _log5.count("Rerun to get")
