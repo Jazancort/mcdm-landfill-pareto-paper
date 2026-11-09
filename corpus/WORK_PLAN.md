@@ -15,7 +15,8 @@
 | 2a | ✅ CONCLUÍDA | `71742c4` | 2026-11-09 |
 | 2b | ✅ CONCLUÍDA | `e3d2d7e` | 2026-11-09 |
 | 3 | ✅ CONCLUÍDA | `ae80353` | 2026-11-09 |
-| 4–12 | ⬜ pendente | — | — |
+| 4 | ✅ CONCLUÍDA | `127cdf7` | 2026-11-09 |
+| 5–12 | ⬜ pendente | — | — |
 
 ---
 
@@ -202,7 +203,29 @@ git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃ
 
 ## Ronda 4 — Reprodutibilidade completa
 
-> **Estado: ⬜ PENDENTE**
+> **Estado: ✅ CONCLUÍDA** — commit `127cdf7` (2026-11-09)
+
+### O que foi feito
+
+- **4-1** ✅ Alvo `reproduce` adicionado ao Makefile: `check_inputs` + `make_santiago_macros` + `run_checks` + `build_paper`. Clone limpo em `../wt-r4-clone`: `make paper` EXIT=0 (34 páginas) + `make check` EXIT=0 (11 checkers). Todas as macros reproduzidas bit-exact.
+- **4-2** ✅ `scripts/check_inputs.py`: SHA-256 dos 3 ficheiros GIS não versionados (`df_real_data_cached.csv`, `exhaustive_search_pareto.csv`, `best_compromise_sites.csv`). Integrado no `run_checks.py`.
+- **4-3** ✅ README.md: secção "Replication" com tabela de tempos por etapa e tabela de seeds por experiência.
+- **4-4** ✅ `scripts/check_seeds.py`: verifica SEED/B_BOOT em 5 scripts canónicos (`mc_unified`, `mc_2cube_fixed`, `run_e7_kappa_sweep`, `run_santiago_mc`, `evaluate_santiago_predictions`). Regex aceita underscores (`10_000`) e nomes alternativos (`BASE_SEED`, `BOOTSTRAP_SEED`). Integrado no `run_checks.py`.
+- **4-5** ✅ `pyproject.toml` criado (mínimo, para `uv lock`). `uv.lock` gerado (43 pacotes, Python 3.12.13). `CITATION.cff` e `.zenodo.json` actualizados para v1.9.
+
+### Evidências
+
+```
+make paper EXIT=0 (34 páginas, repositório principal)
+make check EXIT=0 (0 falhas, 11 checkers)
+clone limpo ../wt-r4-clone:
+  make paper EXIT=0 (34 páginas)
+  make check EXIT=0 (0 falhas, 11 checkers)
+  verify_macros_permanent: ALL CHECKS PASSED (macros bit-exact)
+git diff stage4-results-sealed -- results/santiago/mc_*_raw.csv  → NÃO vazio (pré-existente)
+git diff stage4-e1fix2-sealed -- results/santiago/mc_*_e1_fix2.csv  → vazio ✓
+git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃO vazio (pré-existente)
+```
 
 - **4-1** — Clone limpo numa pasta nova (`git clone`, não worktree): `uv sync --frozen` e depois `make reproduce` (dados → macros → paper). Comparar todas as macros com as do repositório principal (diff vazio) e o SHA dos CSV selados.
 - **4-2** — Inputs não versionados: script de download e SHA esperado para cada um. O `make reproduce` aborta se um SHA falhar.
