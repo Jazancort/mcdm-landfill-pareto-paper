@@ -12,7 +12,7 @@
 | Ronda | Estado | Commit(s) | Data |
 |-------|--------|-----------|------|
 | 1F | ✅ CONCLUÍDA | `fa00c1b`, `43efd30` | 2026-11-09 |
-| 2a | ⬜ pendente | — | — |
+| 2a | ✅ CONCLUÍDA | `71742c4` | 2026-11-09 |
 | 2b | ⬜ pendente | — | — |
 | 3–12 | ⬜ pendente | — | — |
 
@@ -90,9 +90,32 @@ A resolver numa ronda futura (Ronda 4 ou Fase D).
 
 ## Ronda 2a — Estrutura (substituições de texto + fonte única de macros)
 
-> **Estado: ⬜ PENDENTE**
+> **Estado: ✅ CONCLUÍDA** — commit `71742c4` (2026-11-09)
 
-- **2a-1** — Substituições no `main.tex`:
+### O que foi feito
+
+- **2a-1** ✅ Verificado: `389/473` e `pre-registered criterion` **não existem** em `main.tex` nem `santiago.tex`. Em `supplementary.tex` existem em contexto E1 (correcto — não são números escritos à mão no corpo principal). `\Nvia{389}` e `\Ncand{473}` definidas em `macros/macros_structural.tex` (L5 e L7). Nenhuma substituição necessária.
+- **2a-2** ✅ Fonte única `macros/`:
+  - Diff `macros/macros*.tex` vs `paper/manuscript/macros*.tex`: apenas `macros.tex` difere (dois `\input` com caminhos relativos ao contexto de compilação). Os outros 5 ficheiros são idênticos. Condição de PARAGEM não se aplica.
+  - `git rm` de 6 cópias em `paper/manuscript/macros*.tex`.
+  - `build_paper.py`: copia todos `macros/*.tex` → `build/paper/` com ajuste dos dois `\input` em `macros.tex`.
+  - `run_checks.py`: A9b inline — FAIL se existir `macros*.tex` em `paper/manuscript/`.
+  - `verify_macros_permanent.py`: Step 0 lê `macros/macros.tex` (fonte única) em vez de `paper/manuscript/macros.tex`.
+  - Teste negativo 2a-2c: copiar `macros_structural.tex` → `paper/manuscript/` → EXIT=2, `[FAIL] stray macro file in paper/manuscript/: macros_structural.tex` ✓
+  - Teste negativo A2 (2a-2d): corromper `macros/macros.tex` `QtwommGreedy` 86.0→99.9 → `make paper` → EXIT=2, `[FAIL] QtwommGreedy: macro=99.9 CSV=86.0` em `verify_macros_permanent` ✓
+  - `make paper` EXIT=0 (34 páginas); `make check` EXIT=0 (0 falhas)
+
+### Nota R4 (pré-existente, não introduzida por esta ronda)
+
+```
+git diff stage4-results-sealed -- results/santiago/mc_*_raw.csv  → NÃO vazio (pré-existente)
+git diff stage4-e1fix2-sealed -- results/santiago/mc_*_e1_fix2.csv  → vazio ✓
+git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃO vazio (pré-existente)
+```
+
+---
+
+## Ronda 2b — Macros novas
   - a) output completo de `git grep -n "389/473" paper/` e de `git grep -n "pre-registered criterion" paper/`
   - b) imprimir `\Nvia` e `\Ncand`: ficheiro, linha, script gerador. Têm de expandir para 389 e 473. PARAGEM se não.
   - c) esperam-se 6 ocorrências de `389/473` e 3 de "pre-registered criterion" (E6). Para cada uma, ±2 linhas antes e depois, e confirmação de que é do Fogo. PARAGEM se o número for diferente ou se alguma for do Santiago.
@@ -246,7 +269,7 @@ A resolver numa ronda futura (Ronda 4 ou Fase D).
 
 | Código | Critério | Rondas | Estado |
 |--------|----------|--------|--------|
-| C1 | Verificação: `make check` fiável, negativos A2/B falham | R1F, 2a | 🔶 parcial (1F ✅, 2a ⬜) |
+| C1 | Verificação: `make check` fiável, negativos A2/B falham | R1F, 2a | ✅ CONCLUÍDA (1F + 2a) |
 | C2 | Zero números à mão; proveniência de todas as macros | R3 | ⬜ |
 | C3 | Reprodução em clone limpo, bit-exact nas macros | R4 | ⬜ |
 | C4 | Pré-registo: todas as previsões reportadas, desvios DEV | R5 | ⬜ |
