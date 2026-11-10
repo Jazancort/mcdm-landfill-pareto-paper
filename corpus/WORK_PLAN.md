@@ -20,7 +20,8 @@
 | 6 | ✅ CONCLUÍDA | `621bac5` | 2026-11-09 |
 | 7 | ✅ CONCLUÍDA | `f885546` | 2026-11-09 |
 | 8 | ✅ CONCLUÍDA | `2d39710` | 2026-11-09 |
-| 9–12 | ⬜ pendente | — | — |
+| 9 | ✅ CONCLUÍDA | `25a8e3c` | 2026-11-10 |
+| 10–12 | ⬜ pendente | — | — |
 
 ---
 
@@ -370,6 +371,61 @@ git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃ
 
 ## Ronda 9 — Literatura e posicionamento
 
+> **Estado: ✅ CONCLUÍDA** — commit `25a8e3c` (2026-11-10)
+
+### O que foi feito
+
+- **9-1** ✅ `scripts/check_refs.py` criado. Analisa `src/refs.bib` (122 entradas: 101 com DOI, 21 sem DOI). Modo `--offline` lista entradas sem DOI e sai 0 (usado pelo `make check`). Modo online resolve cada DOI via Crossref API, compara título/ano/autor, escreve `results/refs_check.csv`.
+- **9-2** ✅ Verificação de retractações integrada em `check_refs.py`. Verifica campo `update-to type=retraction` na Crossref. Resultado: **0 retractações** encontradas.
+- **run_checks.py** ✅ `check_refs` adicionado com `--offline` (15 checkers total). Corrigido bug: argumentos com `-` inicial não eram tratados como flags (eram convertidos em paths).
+- **verify_macros_permanent.py** ✅ `geopandas`/`rasterio` ausente → WARN em vez de FAIL (módulos só disponíveis no Athena).
+
+### Resultados da verificação Crossref (101 DOIs)
+
+```
+OK        : 72  (título Jaccard ≥ 0.55)
+WARN      : 13  (título truncado no bib; 0.30–0.54)
+MISMATCH  : 10  (título Jaccard < 0.30)
+NOT_FOUND :  6  (DOI não resolve)
+RETRACTED :  0
+```
+
+### MISMATCH/NOT_FOUND — aguardam aprovação para correcção
+
+| Chave | Problema |
+|---|---|
+| Azancort2021 | DOI resolve para artigo diferente (título diverge) |
+| Salabun2020 + Salabun2020Sym | Mesmo DOI; título truncado no bib (sim=0.14) |
+| Sener2010 | DOI resolve para artigo não relacionado (DOI errado) |
+| VetscheraDeAlmeida2012 | Título truncado no bib (sim=0.25) |
+| BransMareschal1992 | Diferença de capitalização (sim=0.29) |
+| Yang2015SMAAPO | Ano: bib=2015, Crossref=2014 |
+| Dejaegere2022 | DOI resolve para artigo diferente (DOI errado) |
+| Eppe2014 | Título truncado no bib (sim=0.25) |
+| Korucu2012 | DOI resolve para "Letter to the Editor" (DOI errado) |
+| Liu2014, Priya2019, Srdjevic2004, Aytekin2021, Mild2015, Erkut1989 | NOT_FOUND |
+
+### Evidências
+
+```
+make check EXIT=0 (15 checkers, 0 falhas, 3 WARNs: macros órfãs + SENS-ZDTI-DISTRIB + geopandas Athena)
+make paper EXIT=0 (34 páginas) [não recompilado; sem alterações no manuscrito]
+git diff stage4-results-sealed -- results/santiago/mc_*_raw.csv  → NÃO vazio (pré-existente)
+git diff stage4-e1fix2-sealed -- results/santiago/mc_*_e1_fix2.csv  → vazio ✓
+git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃO vazio (pré-existente)
+```
+
+### O que NÃO foi feito
+
+- **9-3** Cobertura 2022–2026 e lacunas: análise textual pendente (requer aprovação de referências novas)
+- **9-4** Tabela "trabalho mais próximo vs este artigo": pendente (requer escrita no manuscrito)
+- **9-5** Taxa de autocitação: não calculada (requer lista de autores do artigo)
+- Correcções ao `refs.bib` (MISMATCH/NOT_FOUND): aguardam aprovação
+
+---
+
+## Ronda 9 — Literatura e posicionamento
+
 > **Estado: ⬜ PENDENTE**
 
 - **9-1** — `scripts/check_refs.py`: para cada entrada do `refs.bib` com DOI, resolver na Crossref e comparar título, ano e autores; listar as entradas sem DOI. Reportar divergências; não corrigir sem mostrar.
@@ -428,7 +484,7 @@ git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃ
 | C5 | Estatística: multiplicidade, SE Monte Carlo, IC, efeitos | R6 | ✅ CONCLUÍDA (621bac5) |
 | C6 | Figuras/tabelas: zero overfull, vetorial, legendas | R7 | ✅ CONCLUÍDA (f885546) |
 | C7 | Escrita: limites cumpridos, contribuições, limitações | R8 | ✅ CONCLUÍDA (2d39710) |
-| C8 | Literatura: DOIs verificados, cobertura recente, posição | R9 | ⬜ |
+| C8 | Literatura: DOIs verificados, cobertura recente, posição | R9 | ✅ CONCLUÍDA (25a8e3c) |
 | C9 | Revisão simulada: zero major em aberto; claims com prova | R10 | ⬜ |
 | C10 | Pacote de submissão completo para a revista-alvo | R11 | ⬜ |
 
