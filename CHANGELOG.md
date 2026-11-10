@@ -63,3 +63,14 @@ priority vector (Table 5) to three decimal places (max |diff| = 0.001).
 The principal eigenvector from the same matrix differs by up to 0.004.
 Therefore sec 4.2 uses "column-normalised priority vector of Andrade (2015)"
 as the stated method, which matches the actual values.
+
+## Errata (2026-11-10)
+
+**DEV-FOGO-E1B-001**: `RegretEoneBfracZero` corrected from 28% to 35.4%.
+The fraction of draws in which the E1-B/optimal portfolio equals the
+value-optimal portfolio t* was recomputed from the oracle CSV
+(`e1_oracle_per_draw.csv`, SHA=913396ce): 177/500 draws have trio==t*,
+giving 35.4% (not 28% as reported in v1.0–v1.1).
+The correction was applied in commit `96ff26a` (2026-11-10).
+All other E1 values (RegretEoneB, RegretEoneBMed, RegretEoneBSE,
+RegretEoneBGrd, EoneVloss, EoneWloss) are unaffected.

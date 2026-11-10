@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+# INVALID: This script (run_e1.py v2) produces results that are superseded by
+# run_e1_v3.py (Athena, commit 380ee1a fixed, rerun 2026-10-02).
+# Canonical E1 results are in results/e1/e1_v3_verified.csv and e1_macros.tex.
+# Do NOT use the output of this script for the manuscript.
+# See DEV-E1-001 in corpus/deviations/ for the full history.
 """
 run_e1.py v2 — Experiment E1: between-group vs within-group amplitude distortion.
 Pre-specification: corpus/PRESPEC_E1.md (commit f6042f8, repo G:)
