@@ -1,0 +1,2 @@
+L78: b'% Note: old text had [3.8, 11.0] --- not reproducible; corrected to [4.0, 11.0] (default_rng)'
+L79: b'\\newcommand{\\EonePtwoDiff}{7.4}       % W exceeds V by this many pp (point estimate)'

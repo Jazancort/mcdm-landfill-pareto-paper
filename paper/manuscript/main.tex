@@ -129,34 +129,32 @@ Pareto frontier over siting cost, environmental impact and social safety.
 Analytically, under additive aggregation and affine normalisation, effective
 weights are proportional to nominal weight times column amplitude, and exact
 assembly is Pareto-efficient on all instances if and only if amplitudes are
-constant within each objective group. Empirically, effect sizes depend on the
-dispersion of the weight draws, which we vary over six Dirichlet concentrations
-($\kappa=25$ to $1000$). Normalisation shifts greedy Pareto attainment by
-$\NormSigMin$--$\NormSigMax$~pp wherever detectable.
-The pooled SAW--TOPSIS contrast reverses sign, from $\AggKtwentyfive$~pp at
-$\kappa=25$ to $\AggKthousand$~pp at $\kappa=1000$, and is equivalent to zero at
-$\kappa=200$ (TOST $p=\TOSTp$). Under vector normalisation, exact assembly goes
-from $+\AsmVecSAWKtwentyfiveMag$~pp (SAW) at $\kappa=25$ to
-$-\AsmVecSAWKthousandMag$~pp at $\kappa=1000$. An intervention shows that
-between-group distortion never moves the portfolio off the frontier but costs
-$\RegretEoneB$~pp of value regret, whereas within-group distortion reduces
-frontier attainment by $\EoneWloss$~pp. Separately, a criterion encoded
-inconsistently between score and objectives reduces attainment from $100\%$ to
-$\RaspOptimal\%$.
+constant within each objective group. Empirically, on Fogo, normalisation shifts
+greedy Pareto attainment by $\NormSigMin$--$\NormSigMax$~pp wherever detectable,
+and the SAW--TOPSIS contrast is equivalent to zero at $\kappa=200$ (TOST
+$p=\TOSTp$). An intervention shows that between-group distortion never moves the
+portfolio off the frontier but costs $\RegretEoneB$~pp of value regret, whereas
+within-group distortion reduces frontier attainment by $\EoneWloss$~pp.
+Sixteen pre-registered predictions on two Santiago Island instances (Fogo model
+transferred; independently elicited model) confirm the structural results and the
+normalisation advantage, while the assembly reversal and the aggregation sign
+reversal are instance-dependent. Separately, a criterion encoded inconsistently
+between score and objectives reduces attainment from $100\%$ to $\RaspOptimal\%$.
 \end{abstract}
 
 \begin{highlights}
 \item Normalisation re-weights criteria: effective weight is proportional to $w_jA_j$
 \item Exact assembly stays Pareto-efficient iff amplitudes are group-constant
-\item Normalisation shifts greedy Pareto attainment by $\NormSigMin$--$\NormSigMax$~pp wherever detectable
-\item SAW--TOPSIS contrast reverses sign as weight dispersion falls: $\AggKtwentyfive$ to $\AggKthousand$~pp
+\item Normalisation advantage confirmed on Fogo and both Santiago instances at all $\kappa$
+\item Assembly reversal and SAW--TOPSIS sign reversal are instance-dependent
 \item Criterion coded differently in score and objectives alone costs $\RaspLoss$~pp
 \end{highlights}
 
 \begin{keywords}
   Multi-criteria decision making \sep Normalisation \sep
   Effective weights \sep Portfolio decision analysis \sep
-  Pareto frontier \sep Landfill site selection
+  Pareto frontier \sep Landfill site selection \sep
+  Pre-registered replication
 \end{keywords}
 
 \maketitle
@@ -273,7 +271,8 @@ Adding integer programming on top of a ranking
 \citep{BransMareschal1992,Mavrotas2006,VetscheraDeAlmeida2012}
 improved Pareto attainment under min--max and reduced it under vector
 normalisation on Fogo at $\kappa=200$; the benefit is conditional on the normalisation
-matching the grouping of the objectives.
+matching the grouping of the objectives, and this pattern is instance-dependent
+(Section~\ref{sec:santiago}).
 
 A third finding concerns the encoding of criteria in the score relative
 to the objectives.
@@ -306,8 +305,8 @@ Our contributions are as follows.
     efficiency rather than rank agreement, against an exhaustively enumerated
     frontier of $\Ntrios$ portfolios under a hard separation constraint, in a
     factorial design repeated over six levels of weight dispersion.
-    Normalisation is the only design choice whose effect never changes sign
-    significantly; the preferred aggregation operator reverses with~$\kappa$,
+    On Fogo, normalisation is the only design choice whose effect never changes
+    sign significantly; the preferred aggregation operator reverses with~$\kappa$,
     and the value of exact assembly depends on both the normalisation and~$\kappa$.
   \item A necessary and sufficient condition for exact assembly to remain
     Pareto-efficient under normalisation: amplitudes must be constant
@@ -317,6 +316,13 @@ Our contributions are as follows.
     pre-specified predictions showing that within-group distortion carries
     the frontier attainment loss, while between-group distortion imposes
     a smaller but non-zero value regret cost.
+  \item A pre-registered replication on two Santiago Island instances
+    (S-T: Fogo model transferred to a new geography;
+    S-N: independently elicited model on southern Santiago;
+    Section~\ref{sec:santiago}), testing sixteen predictions.
+    The structural results and the normalisation advantage replicate on
+    both branches; the assembly reversal under vector normalisation and
+    the aggregation sign reversal with~$\kappa$ are instance-dependent.
 \end{enumerate}
 
 \noindent
@@ -327,7 +333,9 @@ Section~\ref{sec:problem} formulates the portfolio problem and the
 reference set; Section~\ref{sec:methods} describes the data and the
 methods; Section~\ref{sec:design} the experimental design.
 Section~\ref{sec:propositions} develops the closed-form analysis,
-Section~\ref{sec:results} reports the results, and
+Section~\ref{sec:results} reports the results,
+Section~\ref{sec:santiago} presents the pre-registered replication on
+Santiago Island, and
 Section~\ref{sec:discussion} discusses their implications and limits.
 
 % =======================================================================
@@ -837,8 +845,9 @@ the ideal--nadir variant is reported in the Supplementary Material.
 \label{sec:methods}
 
 The main analysis is conducted on a GIS dataset for Fogo Island, Cape Verde;
-Section~\ref{sec:santiago} tests pre-registered predictions on two further
-instances built from Santiago Island, described there and in the Supplementary
+Section~\ref{sec:santiago} tests sixteen pre-registered predictions on two
+further instances built from Santiago Island (S-T: Fogo model transferred;
+S-N: independently elicited model), described there and in the Supplementary
 Material.
 This section describes the candidate grid, the criteria, and the preprocessing
 decisions that affect the downstream amplitude calculations.
@@ -1608,7 +1617,7 @@ within a group, there exist configurations of sites under which exact
 assembly selects a dominated portfolio.
 Section~\ref{sec:e1} shows that Fogo is such a configuration, and
 prediction~S3a (Section~\ref{sec:santiago}) shows the same for both Santiago
-instances.
+branches.
 The proof uses only the weighted-sum structure and the objective ordering;
 it does not depend on the number of groups, so the equivalence holds for
 any $g\geq 1$.
@@ -2423,7 +2432,7 @@ draws, space~$\Aspace'$).
 \textbf{B} sets $A_j=\bar A_g$ (the group mean of Section~\ref{sec:groupconst}
 evaluated at $w=w_0$, i.e.\ $\bar A_g=\sum_{k\in G_g}(w_{0,k}/W_{0,g})\,\rho_k$),
 the mean of $\rho_j$ within the group of $j$ weighted by the nominal
-weights $w_0$ and held fixed across draws, which reproduces the
+weights $w_0$, fixed across draws, which reproduces the
 between-group distortion of vector normalisation with none within groups.
 \textbf{W} sets $A_j\propto\rho_j/\bar A_g$, with the same
 $w_0$-weighted $\bar A_g$, which equalises group totals while leaving
@@ -2626,7 +2635,7 @@ distributing it uniformly across all criteria is not tested here.
 \subsection{Sensitivity of the factorial contrasts to weight dispersion}
 \label{sec:kappa}
 
-This analysis was specified (\texttt{PRESPEC\_E7\_KAPPA.md}, amendments A1--A2,
+This analysis was specified in \texttt{PRESPEC\_E7\_KAPPA.md} (amendments A1--A2,
 in the replication archive) before the E7 run but after the main factorial
 results were known; we treat it as exploratory throughout.
 Weights are drawn as $\mathbf{w}\sim\mathrm{Dir}(\kappa\,\mathbf{w}_0)$ with the
@@ -2701,8 +2710,8 @@ $-\AsmVecTOPKthousandMag$~pp (TOPSIS) at $\kappa=1000$;
 at the nominal weights the SAW/vec/optimal and TOPSIS/vec/optimal cells
 attain $0\%$ (Supplementary Table~\ref{tab:e7grid}, column $\kappa\to\infty$);
 for this factor, unlike aggregation, the penalty does not vanish in the
-deterministic limit; values of $\kappa$ between $1000$ and $\infty$ were not
-tested on Fogo.
+deterministic limit: at the nominal weights these cells attain $0\%$;
+values of $\kappa$ between $1000$ and $\infty$ were not tested on Fogo.
 
 \textbf{Comparison across factors.}
 Measured by range over the grid, the assembly effect under vector normalisation
@@ -2946,9 +2955,11 @@ Sharing a normalisation is sufficient but not necessary
 (cell~$B$, Table~\ref{tab:e1}).
 Integer programming on a mismatched score optimises the mismatch:
 SAW assembly is guaranteed under min--max (Proposition~\ref{prop:p1:stmt});
-TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation exact assembly loses
-$\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$, a loss
-that grows as the weight draws concentrate (Section~\ref{sec:kappa}).
+TOPSIS gains $+\AsmMMtopsis$~pp; under vector normalisation exact assembly
+loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) at $\kappa=200$
+on Fogo, a loss that grows as the weight draws concentrate
+(Section~\ref{sec:kappa}); on Santiago S-N the direction reverses
+(Section~\ref{sec:generalises}).
 
 Third, report effective weights alongside elicited weights, and with
 them the pair $(\mathrm{TV},\,m_{\mathrm{eff}})$
@@ -2987,6 +2998,8 @@ aggregation operator. On Fogo the SAW--TOPSIS contrast reverses sign across
 the $\kappa$ grid (Section~\ref{sec:kappa}): SAW reaches the frontier more
 often when weights are dispersed ($\kappa\le100$), TOPSIS when they are
 concentrated but still uncertain ($\kappa=400$--$1000$);
+the preferred operator therefore depends on~$\kappa$ and on the instance
+(Section~\ref{sec:generalises});
 at the nominal weights alone the two operators are indistinguishable on Fogo.
 An analyst with weights elicited from several stakeholders can locate the problem
 on this scale, since
@@ -3006,6 +3019,50 @@ The recommendations to use a normalisation that matches the value model
 and to report TV therefore apply
 to additive and distance-based aggregation, not to compromise-programming
 methods with ratio normalisation.
+
+\subsection{What generalises beyond Fogo}
+\label{sec:generalises}
+
+The sixteen pre-registered predictions on Santiago Island allow a
+partial separation of what is a property of the method from what is a
+property of the Fogo instance.
+
+\textbf{Structural results (any instance).}
+Proposition~\ref{prop:p1:stmt} (SAW/min--max/optimal attains $Q_2=100\%$),
+Theorem~\ref{thm:groupconst} (exact assembly is Pareto-efficient iff
+amplitudes are group-constant), and the amplitude identity~\eqref{eq:weff}
+are proved for any instance; they do not depend on the Fogo data.
+The regression checks S0, K1, and K2 confirm the structural predictions
+on both Santiago branches.
+S3a (within-group distortion alone costs frontier attainment) is also
+confirmed on both branches, as is the normalisation advantage S1 at
+every~$\kappa$ (K3, K4).
+The value cost of between-group distortion (S7a, S7b) replicates on
+both branches, though the magnitude is smaller on S-N.
+
+\textbf{Results that depend on the instance.}
+The assembly reversal under vector normalisation (greedy better than
+exact on $Q_2$) does not replicate on either Santiago branch (S2):
+on S-T the two rules select the same portfolio in almost every draw;
+on S-N exact assembly is strictly better.
+The sign reversal of the SAW--TOPSIS contrast with~$\kappa$ recurs on
+S-N but not on S-T (K6).
+These two patterns are therefore properties of the Fogo instance, not
+consequences of the method.
+
+\textbf{Summary.}
+The closed-form mechanism (amplitude identity, group-constant condition)
+generalises by proof.
+The normalisation advantage generalises empirically across all three
+instances and all tested~$\kappa$.
+The assembly reversal and the aggregation sign reversal are
+instance-dependent: they hold on Fogo, recur partially on S-N, and are
+absent on S-T.
+Magnitudes are not transferable: the Fogo distortion is driven by a
+single adversarial criterion (\textit{perm}, $350$ tied zeros among
+$\Nvia$ sites), which inflates its effective weight by $\PermInflation\times$;
+S-N has no comparable point mass and its distortion is spread more
+evenly, which is why the assembly reversal does not recur there.
 
 \subsection{Limitations}
 
@@ -3056,9 +3113,13 @@ marginal distributions are reported in the Supplementary Material.
 The analytic results hold for any instance; the magnitudes do not.
 Fogo's deviation vector is two-sided and concentrated
 ($m_{\mathrm{eff}}=\meff$ on $[2,11]$), with one criterion inflated
-$\PermInflation\times$, and the joint distribution of
-$(\mathrm{TV}_B,\mathrm{TV}_W)$ in applied decision matrices is unknown;
-establishing it would require a corpus of published matrices.
+$\PermInflation\times$; this is an adversarial configuration.
+The $350$ tied zeros in \textit{perm} are the structural driver of the
+large Fogo distortion; S-N has no comparable point mass, and its
+assembly reversal is absent (Section~\ref{sec:generalises}).
+The joint distribution of $(\mathrm{TV}_B,\mathrm{TV}_W)$ in applied
+decision matrices is unknown; establishing it would require a corpus of
+published matrices.
 Two synthetic exercises bear on this only partially
 (Supplementary Material).
 A grid of 240 instances on the Fogo geometry shows that greedy-assembly
@@ -3076,7 +3137,6 @@ $95\%$ CI $[\EfiveSlopeCIlo,\,+\EfiveSlopeCIhi]$), while instance size and spati
 dominate (Supplementary Material, Experiment~E5).
 E5 departs from its pre-specification in seven declared respects,
 including the omission of the $N=\Nvia$ level (Supplementary Material).
-External confirmation on other published instances was not obtained.
 
 A pre-specified experiment, with declared deviations, on \EsixNinst{} synthetic instances
 across \EsixNfam{} marginal families (Experiment~E6,
@@ -3084,10 +3144,34 @@ Section~\ref{sec:e6}) confirms that $\mathrm{TV}_W$ alone does not
 calibrate the magnitude of the cost; losses vary substantially across
 marginal families at equal $\mathrm{TV}_W$.
 
+\emph{Scope of the replication.}
+The replication is internal: the same author and software pipeline
+produced all three instances.
+S-N lies inside the S-T region, so the two branches are not independent;
+S-T reuses the Fogo value model on a different geography, and S-N
+elicits a new model on a subset of the same land.
+The ZDTI layer (criterion A2 in S-N) was unavailable; its exclusion
+under contingency C-4 reduces the number of criteria and may affect
+the distortion structure.
+The Regadios exclusion covers only $\SantSNRegadiosPct$\,\% of the S-N
+area; a broader agricultural exclusion would change the feasible set.
+The testability margin for S5 ($p_\text{max}^c < \SantSfiveThresh$)
+was not met on S-T, so the comparison of $Q_2$ levels across instances
+remains untested there.
+The marginal testability of S3b on S-N (three discordant draws) means
+that the direction of the E1-V vs E1-W ordering is not firmly established
+across instances.
+The pre-registered measure of weight-draw concentration ($\mathrm{TV}_B$
+threshold for S3b and S7b) was set at $\SantTVBThresh$; S-N's
+$\mathrm{TV}_B=\SantSNTVB$ is just above this threshold, so the
+between-group distortion results on S-N rest on a narrow margin.
+
+\emph{Generalisability to other published instances.}
 Most landfill-selection studies in the literature apply continuous GIS
 overlay analysis rather than enumerating a finite set of candidate sites
-with numerical criterion scores; extracting a comparable decision matrix
-would require constructing instances from publicly available spatial data,
+with numerical criterion scores.
+Constructing comparable instances from publicly available spatial data
+would require replicating the GIS preprocessing pipeline for each study,
 which is left for future work.
 
 \emph{Anchoring of the weights.}
@@ -3185,6 +3269,18 @@ varied three- to fourfold across families.
 In 405 instances (Experiment~E5), greedy efficiency was associated with instance
 size and spatial geometry, not with the imposed amplitude spread.
 
+Sixteen pre-registered predictions on two Santiago Island instances
+(Section~\ref{sec:santiago}) confirm the structural results (S0, K1, K2, S3a)
+and the normalisation advantage at every~$\kappa$ (S1, K3, K4) on both branches.
+The assembly reversal under vector normalisation does not replicate on either
+branch (S2): on S-T the two rules select the same portfolio in almost every draw;
+on S-N exact assembly is strictly better.
+The sign reversal of the SAW--TOPSIS contrast with~$\kappa$ recurs on S-N but
+not on S-T (K6).
+The value cost of between-group distortion (S7a, S7b) replicates on both
+branches, though the magnitude is smaller on S-N, which lacks the adversarial
+point mass of Fogo's \textit{perm} criterion.
+
 Separately, a criterion encoded differently in the score and the objectives
 reduced $Q_2$ from $100\%$ to $\RaspOptimal\%$ under optimal assembly.
 This failure lies outside Theorem~\ref{thm:groupconst} and is avoidable at no cost.
@@ -3205,8 +3301,9 @@ Several questions remain open: an exact characterisation for TOPSIS beyond the
 $\topsisexp=2$ analogy; an analytical account of the $Q_2$ ordering under
 combined distortions (Section~\ref{sec:e1}); the magnitudes on further instances,
 since a criterion with $350$ tied zeros among $\Nvia$ sites is an adversarial
-case; and the calibration of $\kappa$ against the observed dispersion of elicited
-weights.
+case (S-N, which lacks such a point mass, is the non-adversarial counterpart;
+Section~\ref{sec:generalises}); and the calibration of $\kappa$ against the
+observed dispersion of elicited weights.
 
 The broader implication is methodological.
 Benchmarking by rank agreement can establish that methods differ, but not that
@@ -3214,9 +3311,10 @@ any is closer to the decision maker's objectives.
 Where the feasible set is enumerable, as it is for cardinality-constrained siting
 problems of realistic size, an exact frontier provides that external standard.
 Under it, normalisation, a choice the applied literature rarely reports, shifts
-attainment in the same direction wherever its effect is detectable
-($\kappa\le400$), whereas the aggregation operator, the choice it compares most,
-matters in a direction that depends on the uncertainty of the weights.
+attainment in the same direction wherever its effect is detectable across all
+three instances and all tested~$\kappa$, whereas the aggregation operator, the
+choice the literature compares most, matters in a direction that depends on the
+uncertainty of the weights and on the instance (Section~\ref{sec:generalises}).
 
 % -----------------------------------------------------------------------
 \section*{CRediT authorship contribution statement}

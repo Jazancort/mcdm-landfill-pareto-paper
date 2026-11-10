@@ -1,0 +1,1 @@
+docs: document Ronda 6 completion in WORK_PLAN.md

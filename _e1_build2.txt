@@ -1,0 +1,1 @@
+Bytes around Cell W: b'Cell W (within only): loss = \\EoneWloss\n\\newcommand{\\QtwoEoneWGrd}{64.0}    % E1'

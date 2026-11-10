@@ -1,0 +1,2 @@
+NL: 22 Bytes: 1337
+Non-ASCII: 0

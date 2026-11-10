@@ -1,0 +1,36 @@
+check(R8): writing and structure — terminology, n-grams, British spelling
+
+8-1: Abstract 231 words (within Omega 250-word limit); body ~9,500 words.
+     Highlights: 5 items, all ≤85 chars (verified by check_consistency).
+
+8-2: N-gram duplicates resolved: all 34 duplicates are intentional
+     repetitions (theorem restated in discussion, equations in proof
+     and text, table captions shared). Whitelisted in check_consistency.py
+     n-gram whitelist. Exception in checks/exceptions.txt updated
+     (removed "to be eliminated in Ronda 8" note).
+
+8-3: Introduction already has gap paragraph (§2.5) and numbered
+     contributions (i)-(iii) each linked to sections. No changes needed.
+
+8-4: Limitations section already explicit (§9.6): benchmark circularity,
+     scope of closed form, empirical support, instance dependence,
+     anchoring, weight perturbation model, gap measure, regulatory
+     grounding. No changes needed.
+
+8-5: scripts/check_terminology.py created (T1: forbidden term variants,
+     T2: US spelling). Added to run_checks.py (14 checkers total).
+     Fixes in main.tex:
+       - "portfolio optimization" → "portfolio optimisation" (L374)
+       - "stated weights" → "elicited weights" (L413)
+       - "linear normalisation" → "min--max normalisation" (L1026,
+         VIKOR context: OpricovicTzeng2004)
+       - "Pareto front" → "Pareto frontier" (L388, L545, L1907)
+
+8-6: British spelling: all US variants absent (check_terminology T2 passes).
+     \centering (LaTeX command) and URLs excluded from T2 check.
+
+8-7: Conclusion (§10) already has 5 practical recommendations and does
+     not repeat the abstract. No changes needed.
+
+make paper EXIT=0 (34 pages)
+make check EXIT=0 (0 failures, 14 checkers, 2 WARNs: orphan macros + SENS-ZDTI-DISTRIB Athena)

@@ -1,0 +1,8 @@
+Total lines: 310
+L175: b'% These values appear in Sec. 7.7 (E1 section) as post hoc observations.'
+L176: b'\\newcommand{\\EoneBGrdOptCoincide}{62.8}  % % of draws where E1-B greedy==optimal'
+L177: b'\\newcommand{\\EoneBGrdF1Percentile}{0.8}  % median greedy portfolio F1 percentile'
+L178: b''
+L179: b'% ------ E5 slope (run_e5_grid.py, Limitations section) ---------------------------------------------------------------------------------'
+L180: b'% Source: E5 grid regression; reported in Limitations as exploratory.'
+L181: b'\\newcommand{\\EfiveSlope}{-1.3}           % slope of Q2_grd on TV_W (pp per 0.1 TV_W)'

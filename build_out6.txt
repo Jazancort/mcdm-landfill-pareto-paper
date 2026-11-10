@@ -1,0 +1,9 @@
+Build dir : G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\build\paper
+Source dir: G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\paper\manuscript
+Traceback (most recent call last):
+  File "G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\scripts\build_paper.py", line 141, in <module>
+    main()
+  File "G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\scripts\build_paper.py", line 78, in main
+    _cp(item, dst)
+    ^^^
+NameError: name '_cp' is not defined

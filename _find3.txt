@@ -1,0 +1,4 @@
+b'\\\\input{macros_structural}'
+b'\\input{macros_structural}'
+double: False
+single: True

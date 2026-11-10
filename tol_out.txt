@@ -1,0 +1,19 @@
+========================================================================
+check_tolerances.py — tolerance audit
+========================================================================
+
+[WARN] G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\checks\tolerances.txt not found — creating template
+  Created template: G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\checks\tolerances.txt
+
+  Loaded 4 tolerance entries
+
+  [OK  ] half_up_1dp: tol=0.05, dp=1, max=0.050000  half-up rounding to 1 decimal place (standard)
+  [FAIL] TV_B_TV_W: tol=0.0001, dp=4, max=0.000050  TV_B/TV_W match tolerance (4 decimal places)
+  [FAIL] E1_log_SE: tol=6.7, dp=1, max=0.050000  E1 assertion tolerance = 3*SE (3*2.22=6.7 pp)
+  [FAIL] weight_sum: tol=0.001, dp=3, max=0.000500  sum of weights tolerance (3 decimal places)
+
+========================================================================
+FAILED: 3 check(s):
+  x TV_B_TV_W: tolerance 0.0001 > max 5e-05 for 4dp
+  x E1_log_SE: tolerance 6.7 > max 0.05 for 1dp
+  x weight_sum: tolerance 0.001 > max 0.0005 for 3dp

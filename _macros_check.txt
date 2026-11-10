@@ -1,0 +1,6 @@
+Non-ASCII count: 38
+pos1391: 0xce ctx=b'}     % Norm greedy \xce\xba=50\n\\newcommand{\\N'
+pos1392: 0xba ctx=b'     % Norm greedy \xce\xba=50\n\\newcommand{\\No'
+pos1560: 0xce ctx=b' % Norm informative \xce\xba=50\n\\newcommand{\\N'
+pos1561: 0xba ctx=b'% Norm informative \xce\xba=50\n\\newcommand{\\No'
+pos1715: 0xce ctx=b'       % Agg pooled \xce\xba=50 (SAW-TOPSIS, S'

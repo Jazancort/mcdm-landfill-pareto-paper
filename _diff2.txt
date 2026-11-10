@@ -1,0 +1,7 @@
+Orig: 309, Build: 294
+Diffs: 150
+L1: orig='% macros.tex — manually maintained macros NOT covered by auto-generated files.', build='% macros.tex --- manually maintained macros NOT covered by auto-generated files
+L14: orig='% ── Contrastes principais (mc_unified.py, seed=42, B=10000, N=500) ───────────, build='% ------ Contrastes principais (mc_unified.py, seed=42, B=10000, N=500) -------
+L21: orig='% Kappa=200 informative cells defined in macros_structural.tex — not duplicatin, build='% Kappa=200 informative cells defined in macros_structural.tex --- not duplicat
+L23: orig='% ── Contrastes κ=50 (robustez; bootstrap emparelhado, B=2000, seed=43) ───────, build='% ------ Contrastes --=50 (robustez; bootstrap emparelhado, B=2000, seed=43) --
+L25: orig='\\newcommand{\\NormGreedyContrastKfifty}{29.2}     % Norm greedy κ=50', build='\\newcommand{\\NormGreedyContrastKfifty}{29.2}     % Norm greedy --=50'

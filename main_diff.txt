@@ -1,0 +1,84 @@
+diff --git a/paper/manuscript/main.tex b/paper/manuscript/main.tex
+index 3110886..5833dde 100644
+--- a/paper/manuscript/main.tex
++++ b/paper/manuscript/main.tex
+@@ -1315,7 +1315,7 @@ rather than determining it exactly.
+ Within this scope, $Q_2[\mathcal{A}']$ at $\kappa=200$ is $\QtwommOptimal\%$,
+ $\QtwoRanksOptimal\%$ (heuristic: ranks fall outside the exact scope) and
+ $\QtwovecOptimal\%$ for min--max, ranks and vector normalisation
+-respectively; the distortions are $\mathrm{TV}=0$, $0.091$ and $\TVvec$,
++respectively; the distortions are $\mathrm{TV}=0$, $\TVrnk$ and $\TVvec$,
+ a strictly monotone ordering on this instance (Table~\ref{tab:tvorder}).
+ 
+ TOPSIS and VIKOR aggregate distances to ideal points rather than
+@@ -1385,7 +1385,7 @@ $\mathrm{TV} = \frac{1}{2}\sum_j |w_j^{\mathrm{eff}} - w_j|$ as a
+ summary statistic of aggregate distortion.
+ Min--max gives $\mathrm{TV} = 0$ by construction.
+ The vector normalisation gives $\mathrm{TV} = \TVvec$: criterion
+-\textit{perm} dominates, with $\rho_j = 0.583$ (factor
++\textit{perm} dominates, with $\rho_j = \RhoPerm$ (factor
+ $\mathbf{\PermInflation\times}$ relative to nominal weight) because its raw
+ distribution has 350 exact zeros and a maximum of~532~m, giving a
+ long-tailed norm.
+@@ -1732,10 +1732,10 @@ $\max - \min = 1$, giving $\rho_j = 1/\sqrt{n_1}$.\hfill$\square$
+ \noindent\textbf{Empirical calibration.}
+ Table~\ref{tab:amplitude} and Figure~\ref{fig:slope_weights} show $\rho_j$ and
+ $w_j^{\mathrm{eff}}/w_j$ for all eleven criteria.
+-\textit{Perm} ($w_j = 0.152$): $\rho_j = 0.583$, effective-weight
++\textit{Perm} ($w_j = 0.152$): $\rho_j = \RhoPerm$, effective-weight
+ factor $\mathbf{\PermInflation\times}$.
+ \textit{Urban} ($w_j = 0.166$): factor $\mathbf{\UrbanRatioVec\times}$.
+-\textit{Aspect} (binary, $n_1 = 94$): $\rho_j = 1/\sqrt{94} = 0.103$,
++\textit{Aspect} (binary, $n_1 = 94$): $\rho_j = 1/\sqrt{94} = \RhoAspect$,
+ factor $\mathbf{\AspectRatioVec\times}$.
+ 
+ 
+@@ -1826,7 +1826,7 @@ of the other), and each has a different amplitude $A_j$.
+ 
+ \paragraph{Empirical magnitude on Fogo Island.}
+ For \textit{aspect} ($n_1=94$ SE-facing sites, $n_0=295$), the two orders
+-give $A_j\in\{0.058,\,0.103\}$, a factor of $\AspectAmplitudeRatio$.
++give $A_j\in\{\RhoAspectFlipped,\,\RhoAspect\}$, a factor of $\AspectAmplitudeRatio$.
+ Running TOPSIS with vector normalisation under each order, holding the
+ criterion semantics (SE-facing $=$ favourable), weights, and data fixed,
+ yields a Kendall~$\tau_b=\AspectTauB$ and top-100 set agreement of $\AspectTopKAgree$
+@@ -2014,7 +2014,7 @@ between $\mathrm{TV}$ and Pareto attainment in general.
+ Normalisation & $A_j$ & $\mathrm{TV}$ & greedy & optimal \\
+ \midrule
+ min--max & $\equiv 1$                        & 0.000 & $\QtwommGreedy$\% & $\QtwommOptimal$\% \\
+-midranks & ${\scriptstyle(r_j^{\max}{-}r_j^{\min})/(N{+}1)}$ & 0.091 & $\QtwoRanksGreedy$\% & $\QtwoRanksOptimal$\% \\
++midranks & ${\scriptstyle(r_j^{\max}{-}r_j^{\min})/(N{+}1)}$ & $\TVrnk$ & $\QtwoRanksGreedy$\% & $\QtwoRanksOptimal$\% \\
+ vector   & $\rho_j$                          & \TVvec & $\QtwovecGreedy$\% &  $\QtwovecOptimal$\% \\
+ \bottomrule
+ \end{tabular}
+@@ -2046,7 +2046,7 @@ intervals paired by draw.
+ \textbf{Severity.}
+ The secondary measure $Q_3$ separates the min--max cells from the vector
+ cells as $Q_2$ does: it is below $0.2\%$ of the attainable range in
+-every min--max cell and between $0.86\%$ and $1.14\%$ in every vector cell.
++every min--max cell and between $\QthreeVecMin\%$ and $\QthreeVecMax\%$ in every vector cell.
+ Within the vector cells the two measures order the cells differently,
+ because $Q_3$ combines how often and how far a cell misses the frontier.
+ A portfolio that misses the frontier falls on average $1$--$3\%$ of the
+@@ -2496,8 +2496,8 @@ P3 is also falsified: cell~B under greedy assembly reaches $100\%$.
+ A post hoc diagnosis attributes this to the amplitudes of cell~B, which
+ give $F_1$ roughly $2.5$ times the weight of the other groups; the score
+ becomes nearly lexicographic in siting cost, greedy and optimal choices
+-coincide in $62.8\%$ of draws, and the median greedy portfolio lies at
+-the $0.8$th percentile of $F_1$.
++coincide in $\EoneBGrdOptCoincide\%$ of draws, and the median greedy portfolio lies at
++the $\EoneBGrdF1Percentile$th percentile of $F_1$.
+ In value regret, however, the greedy rule fares worse than optimal
+ ($R=\RegretEoneBGrd$~pp versus $\RegretEoneB$~pp; difference
+ $\RegretEoneBGrdOptDiff$~pp, 95\%~CI
+@@ -3071,8 +3071,8 @@ optimal assembly is efficient by construction and the grid does not
+ test Theorem~\ref{thm:groupconst}; on greedy assembly, we found no
+ evidence of linear association between the imposed within-group spread
+ and greedy loss in the model as fitted
+-($-1.3$~pp per $0.1$ of $\mathrm{TV}_W$,
+-$95\%$ CI $[-5.1,\,+2.4]$), while instance size and spatial geometry
++($\EfiveSlope$~pp per $0.1$ of $\mathrm{TV}_W$,
++$95\%$ CI $[\EfiveSlopeCIlo,\,+\EfiveSlopeCIhi]$), while instance size and spatial geometry
+ dominate (Supplementary Material, Experiment~E5).
+ E5 departs from its pre-specification in seven declared respects,
+ including the omission of the $N=\Nvia$ level (Supplementary Material).

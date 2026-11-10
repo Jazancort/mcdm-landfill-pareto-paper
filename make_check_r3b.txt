@@ -1,0 +1,813 @@
+uv run python scripts/make_santiago_macros.py
+  SHA OK: santiago_predictions_v2.json (1fbc412b8ace6bdb)
+  SHA OK: stage3b_descriptors.json (710718247783f1ee)
+  SHA OK: santiago_k6_ci.json (88fc473c994794aa)
+  SHA OK: mc_ST_e1_fix2.csv (7806db5da3e78246)
+  SHA OK: mc_SN_e1_fix2.csv (357904c04d9d863b)
+  SHA OK: eval_v2_full_20261104.log (5946835674f20850)
+  Wrote: G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\results\santiago\macros_santiago.tex  (265 lines)
+  S3b S-T: p=0.0803 (McNemar, 69 vs 49)
+  S3b S-N: p=0.2500 (binomial, 0 vs 3)
+  S6 S-N diff: 13.44 pp
+uv run python -X utf8 scripts/run_checks.py
+  SHA OK: santiago_predictions_v2.json (1fbc412b8ace6bdb)
+  SHA OK: stage3b_descriptors.json (710718247783f1ee)
+  SHA OK: santiago_k6_ci.json (88fc473c994794aa)
+  SHA OK: mc_ST_e1_fix2.csv (7806db5da3e78246)
+  SHA OK: mc_SN_e1_fix2.csv (357904c04d9d863b)
+  SHA OK: eval_v2_full_20261104.log (5946835674f20850)
+  Wrote: G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\results\santiago\macros_santiago.tex  (265 lines)
+  S3b S-T: p=0.0803 (McNemar, 69 vs 49)
+  S3b S-N: p=0.2500 (binomial, 0 vs 3)
+  S6 S-N diff: 13.44 pp
+amplitudes.json: TV_vec=0.311
+
+=== Checking A_vec column ===
+  [OK  ] perm      : table=0.583  json=0.583  diff=0.0000
+  [OK  ] slope     : table=0.139  json=0.139  diff=0.0000
+  [OK  ] roads     : table=0.206  json=0.206  diff=0.0000
+  [OK  ] rivers    : table=0.265  json=0.265  diff=0.0000
+  [OK  ] aspect    : table=0.103  json=0.103  diff=0.0000
+  [OK  ] coast     : table=0.131  json=0.131  diff=0.0000
+  [OK  ] protected : table=0.105  json=0.105  diff=0.0000
+  [OK  ] wells     : table=0.084  json=0.084  diff=0.0000
+  [OK  ] urban     : table=0.107  json=0.107  diff=0.0000
+  [OK  ] aero      : table=0.088  json=0.088  diff=0.0000
+  [OK  ] cult      : table=0.171  json=0.171  diff=0.0000
+
+  Rows checked: 11/11
+
+=== Checking TV_vec ===
+  [OK  ] TV_vec: table=0.311  json=0.311  (cell='$\\TVvec$')
+
+ALL OK: tab:amplitude matches amplitudes.json at 3dp (11 values + TV_vec)
+Wrote G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\results\r1\macros_r1.tex
+
+=== Values vs macros.tex entries ===
+  [OK  ] \RaspOptimal=15.6
+  [OK  ] \RaspLoss=84.4
+  [OK  ] \RoneOneOptDelta=0.0
+  [OK  ] \RoneTwoGrdDelta=11.8
+  [OK  ] \RoneTwoGrdCIlo=8.8
+  [OK  ] \RoneTwoGrdCIhi=14.8
+  [OK  ] \ResidualRefOptDelta=9.4
+  [OK  ] \ResidualRefOptCIlo=6.6
+  [OK  ] \ResidualRefOptCIhi=12.4
+  [OK  ] \ResidualRefGrdDelta=9.4
+  [OK  ] \ResidualRefGrdCIlo=6.4
+  [OK  ] \ResidualRefGrdCIhi=12.6
+
+All R1 macros in macros.tex match r1_bootstrap.csv
+=== macros_amplitudes.tex vs amplitudes.json ===
+  [OK  ] TVvec vs amplitudes.json: 0.3113 (expected 0.3113, |diff|=0.0000)
+  [OK  ] TVBvec vs amplitudes.json: 0.2479 (expected 0.2479, |diff|=0.0000)
+  [OK  ] TVWvec vs amplitudes.json: 0.1954 (expected 0.1954, |diff|=0.0000)
+  [OK  ] TValphaTwo vs amplitudes.json: 0.6730 (expected 0.6731, |diff|=0.0001)
+  [OK  ] DeltaTValphaTwo vs amplitudes.json: 0.3620 (expected 0.3618, |diff|=0.0002)
+  [OK  ] TValphaTwoMM vs amplitudes.json: 0.1600 (expected 0.1599, |diff|=0.0001)
+  [OK  ] PermInflation vs amplitudes.json: 2.8600 (expected 2.8649, |diff|=0.0049)
+  [OK  ] IntraGperm vs amplitudes.json: 1.5600 (expected 1.5566, |diff|=0.0034)
+  [OK  ] TVrnk vs amplitudes.json: 0.0910 (expected 0.0911, |diff|=0.0001)
+  [OK  ] slopeOpt vs amplitudes.json: 139.5000 (expected 139.5000, |diff|=0.0000)
+  [OK  ] RhoPerm vs amplitudes.json: 0.5830 (expected 0.5827, |diff|=0.0003)
+  [OK  ] RhoPermInverted vs amplitudes.json: 0.0520 (expected 0.0515, |diff|=0.0005)
+  [OK  ] RhoAspect vs amplitudes.json: 0.1030 (expected 0.1031, |diff|=0.0001)
+  [OK  ] RhoAspectFlipped vs amplitudes.json: 0.0580 (expected 0.0582, |diff|=0.0002)
+
+=== tab:tvorder (Marco A) ===
+  [OK  ] tvorder: optimal mm > rnk > vec: 11.8000 (expected 11.8000, |diff|=0.0000)
+  [OK  ] tvorder: optimal rnk > vec: 31.4000 (expected 31.4000, |diff|=0.0000)
+  [OK  ] tab:tvorder value 86.0 present in main.tex (literal or macro)
+  [OK  ] tab:tvorder value 88.2 present in main.tex (literal or macro)
+  [OK  ] tab:tvorder value 66.2 present in main.tex (literal or macro)
+  [OK  ] tab:tvorder value 56.8 present in main.tex (literal or macro)
+
+=== tab:factorial (Marco A) ===
+  [OK  ] Prop1: SAW mm optimal = 100.0: 100.0000 (expected 100.0000, |diff|=0.0000)
+  [OK  ] Norm greedy contrast (mm-vec, greedy only): 25.4000 (expected 25.4000, |diff|=0.0000)
+  [OK  ] tab:factorial value 94.4 in main.tex (literal or macro \QtwoTOPSISmmGrd)
+  [OK  ] tab:factorial value 96.6 in main.tex (literal or macro \QtwoTOPSISmmOpt)
+  [OK  ] tab:factorial value 63.4 in main.tex (literal or macro \QtwoTOPSISvecGrd)
+  [OK  ] tab:factorial value 52.4 in main.tex (literal or macro \QtwoTOPSISvecOpt)
+
+=== tab:assembly (Marco A) ===
+  [OK  ] Assembly SAW mm (= +14.0): 14.0000 (expected 14.0000, |diff|=0.0000)
+  [OK  ] Assembly SAW vec (= -9.4): -9.4000 (expected -9.4000, |diff|=0.0000)
+  [OK  ] Assembly TOPSIS mm (= +2.2): 2.2000 (expected 2.2000, |diff|=0.0000)
+  [OK  ] Assembly TOPSIS vec (= -11.0): -11.0000 (expected -11.0000, |diff|=0.0000)
+  [OK  ] Assembly main effect (~ -1.1): -1.0500 (expected -1.1000, |diff|=0.0500)
+  [OK  ] AsmMM (mm mean, macros = 8.1): 8.1000 (expected 8.1000, |diff|=0.0000)
+  [OK  ] AsmVec magnitude (vec mean, macros = 10.2): 10.2000 (expected 10.2000, |diff|=0.0000)
+
+=== tab:e1 (Marco A) ===
+  [OK  ] E1 P1: cell B optimal = 100.0: 100.0000 (expected 100.0000, |diff|=0.0000)
+  [OK  ] E1 between-only loss = 0.0: 0.0000 (expected 0.0000, |diff|=0.0000)
+  [OK  ] E1 EoneWloss (macros = 35.8): 35.8000 (expected 35.8000, |diff|=0.0000)
+  [OK  ] E1 EoneVloss (macros = 43.2): 43.2000 (expected 43.2000, |diff|=0.0000)
+  [OK  ] E1 V greedy = SAW vec greedy: 66.2000 (expected 66.2000, |diff|=0.0000)
+  [OK  ] E1 V optimal = SAW vec optimal: 56.8000 (expected 56.8000, |diff|=0.0000)
+
+=== tab:fourthcell (Marco A) ===
+  [OK  ] 4th [REGRESSION] Ncand/A  optimal = 100.0 (Prop1, diagonal A473)
+  [OK  ] 4th [REGRESSION] Nvia/A'  optimal = 100.0 (Prop1, diagonal A'389)
+  [OK  ] 4th consistent coding: Ncand/A opt - Ncand/A' opt (~0 pp): 0.0000 (expected 0.0000, |diff|=0.0000)
+  [OK  ] tab:fourthcell value 84.6 in supplementary.tex (Table S1)
+  [OK  ] tab:fourthcell value 97.8 in supplementary.tex (Table S1)
+  [OK  ] tab:fourthcell value 58.8 in supplementary.tex (Table S1)
+
+=== tab:coding2x2 arithmetic (DEV-E4-009) ===
+  [OK  ] coding2x2 R-asp opt - R-V opt = +9.4 pp [corrected 2026-10-28: R-V with geographic azimuth]: 9.4000 (expected 9.4000, |diff|=0.0000)
+  [OK  ] coding2x2 R-asp grd - R-V grd = +9.4 pp [corrected 2026-10-28]: 9.4000 (expected 9.4000, |diff|=0.0000)
+  [OK  ] coding2x2 R-V* grd - R-M grd = +11.8 pp: 11.8000 (expected 11.8000, |diff|=0.0000)
+  [OK  ] coding2x2 R-M opt = 100.0%: 100.0000 (expected 100.0000, |diff|=0.0000)
+  [OK  ] coding2x2 R-V* opt = 100.0%: 100.0000 (expected 100.0000, |diff|=0.0000)
+  [OK  ] tab:coding2x2 macro \RaspOptimal present in main.tex
+  [OK  ] tab:coding2x2 macro \RaspGreedy present in main.tex
+  [OK  ] tab:coding2x2 macro \RVoptimal present in main.tex
+  [OK  ] tab:coding2x2 macro \RVgreedy present in main.tex
+  [OK  ] tab:coding2x2 macro \RVstarOptimal present in main.tex
+  [OK  ] tab:coding2x2 macro \RVstarGreedy present in main.tex
+
+=== Document quality checks ===
+  [INFO] Reading log: G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\build\paper\main.log  mtime=2026-11-09 17:08:50
+  [OK  ] Undefined \ref labels: 0
+  [OK  ] Citation undefined: 0
+  [OK  ] BibTeX: no undefined citations
+  [OK  ] ?? in log: 0
+  [OK  ] main.bbl: 37,848 bytes (G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\paper\manuscript\main.bbl)
+  [OK  ] main.bbl up-to-date vs refs.bib
+  [OK  ] main.bbl up-to-date vs main.tex
+  [OK  ] Em-dashes in prose: 0
+  [OK  ] Non-ASCII characters: 0
+  [OK  ] Forbidden macro \slopeThree absent
+  [OK  ] Forbidden macro \RsqThree absent
+  [OK  ] Forbidden macro \hiiVecThree absent
+  [OK  ] Forbidden macro \SxxPctVecThree absent
+  [OK  ] Forbidden macro \slopeFive absent
+  [OK  ] Forbidden macro \SAWgreedyContrast absent
+  [OK  ] Forbidden macro \LossTabTVorder absent
+  [OK  ] Forbidden macro \Peldschus absent
+  [OK  ] Forbidden macro \RsqadjLtwo absent
+  [OK  ] Forbidden macro \RsqadjTV absent
+  [OK  ] Forbidden macro \RsqDrop absent
+  [OK  ] Forbidden macro \MismatchRatioHi absent
+  [OK  ] Forbidden macro \MismatchRatioLo absent
+  [OK  ] Forbidden macro \MechOnePredAdmiss absent
+  [OK  ] Forbidden macro \MechOneShare absent
+  [OK  ] Forbidden macro \EsixPtwoStrictLogn absent
+  [OK  ] Forbidden macro \EsixPtwoStrictBeta absent
+  [OK  ] Forbidden macro \EsixPtwoStrictUnif absent
+  [OK  ] Forbidden macro \EsixPtwoStrictZinf absent
+  [OK  ] Forbidden macro \EsixPtwoStrictAll absent
+  [OK  ] Forbidden macro \TVvecNumerical absent
+
+=== 7b: MUST_FAIL — literal results that became macros ===
+  [OK  ] Absent: old F8 greedy 500/500 claim (should use \FEightVecCoinc{457})
+  [OK  ] Absent: ok: valid reference to theorem for exact assembly
+  [OK  ] Absent: P4 old phrasing without proportion/CI (old version)
+  [OK  ] Absent: old Prop1 guarantee comment in macros.tex
+  [OK  ] Absent: m_eff=4.05 hardcoded (old rho_raw value; must use \meff)
+  [OK  ] Absent: 45.4% hardcoded (old rho_raw value; must use \PermAbsDevPct)
+  [OK  ] Absent: 43.2 pp hardcoded (must use \EoneVloss)
+  [OK  ] Absent: 43.2 pp hardcoded variant (must use \EoneVloss)
+  [OK  ] Absent: 43.2 pp hardcoded in F8 text (must use \EoneVloss)
+  [OK  ] Absent: old SAW raw = algebraic identity claim (corrected: true form gives \RawSensSawOptSame draws)
+  [OK  ] Absent: old 7.6 pp CI upper for greedy residual ref-set (must use \ResidualRefGrdCIhi = 7.8)
+
+=== Semantic correctness rules ===
+  [OK  ] Prohibited phrase absent: 'affine function of the objectives'
+  [OK  ] Prohibited phrase absent: 'score and the objectives use the same normalisation'
+  [OK  ] Prohibited phrase absent: 'voided'
+  [OK  ] Prohibited phrase absent: 're-weighting alone predicts'
+  [OK  ] Prohibited phrase absent: 'two distinct mechanisms'
+  [OK  ] Prohibited phrase absent: 'two routes to implicit re-weighting'
+  [OK  ] Prohibited phrase absent: 'same mechanism at a higher cost'
+  [OK  ] Prohibited phrase absent: 'not significant ($0$~pp, $95\%$ CI $[0,0]$)'
+  [OK  ] Prohibited phrase absent: 'not significant in the pooled analysis'
+  [OK  ] Prohibited phrase absent: 'not significant; sign cell-dependent'
+  [OK  ] Prohibited phrase absent: 'instead of~$388$'
+  [OK  ] Prohibited phrase absent: 'no longer holds for the implemented score'
+  [OK  ] Prohibited phrase absent: 'attributable to rescaling midranks by $N+1$'
+  [OK  ] Prohibited phrase absent: 'accounts\nfor $\\EoneWloss$ of the $\\EoneVloss'
+  [OK  ] Prohibited phrase absent: 'far more costly'
+  [OK  ] Prohibited phrase absent: 'more severe mechanism'
+  [OK  ] Prohibited phrase absent: 'Mechanism~1 component'
+  [OK  ] Prohibited phrase absent: 'entirely a coding effect'
+  [OK  ] Prohibited phrase absent: 'direction of distortion, not its magnitude'
+  [OK  ] Prohibited phrase absent: '0~pp vs $11.6$~pp'
+  [OK  ] Prohibited phrase absent: '0$~$pp vs $11.6$~pp'
+  [OK  ] Prohibited phrase absent: 'survives the coding correction'
+  [OK  ] Prohibited phrase absent: 'P\_E4\_5 being falsified'
+  [OK  ] Prohibited phrase absent: '89.4'
+  [OK  ] Prohibited phrase absent: '& 0.135 & 0.995'
+  [OK  ] Prohibited phrase absent: '& 0.126 & 0.995'
+  [OK  ] Prohibited phrase absent: '& 0.081 & 0.995'
+  [OK  ] Prohibited phrase absent: '& 0.086 & 0.995'
+  [OK  ] Prohibited phrase absent: '& 0.590 & $+0.279$'
+  [OK  ] Prohibited phrase absent: '& 0.675 & $+0.360$'
+  [OK  ] Prohibited phrase absent: '0.675 & $+0.360$'
+  [OK  ] Prohibited phrase absent: '\mathrm{TV}=0.3146'
+  [OK  ] Prohibited phrase absent: '\lVert\delta\rVert_2=0.3127'
+  [OK  ] Prohibited phrase absent: '\lVert\delta\rVert_\infty=0.2859'
+  [OK  ] Prohibited phrase absent: '\tau_b=0.960'
+  [OK  ] Prohibited phrase absent: 'agreement of $0.960$'
+  [OK  ] Prohibited phrase absent: 'Pareto membership (blue diamonds)'
+  [OK  ] Prohibited phrase absent: 'divides another by $0.53'
+  [OK  ] Prohibited phrase absent: '\texttt{aero} and \texttt{rivers}'
+  [OK  ] Prohibited phrase absent: 'slope (dimensionless gradient)'
+  [OK  ] Prohibited phrase absent: 'P1 is confirmed:'
+  [OK  ] Prohibited phrase absent: 'P1 (no loss when $\mathrm{TV}_W=0$) held on every draw:'
+  [OK  ] Prohibited phrase absent: '\subsection{Magnitude is not enough: the concentration'
+  [OK  ] Prohibited phrase absent: '= 28$ times'
+  [OK  ] Prohibited phrase absent: '\FEightMmVecOptLoss$~pp; a vector score evaluated against the min--max frontier rarely misses'
+  [OK  ] Prohibited phrase absent: '$\FEightVecMMOptLoss/\FEightMmVecOptLoss = 28$'
+  [OK  ] Prohibited phrase absent: 'times more costly
+to misalign than min--max scoring under optimal assembly'
+  [OK  ] Prohibited phrase absent: 'ratio $\approx 1.2\times$'
+  [OK  ] Prohibited phrase absent: '$\FEightMmVecGrdLoss$~pp versus $\FEightVecMMGrdLoss$~pp, ratio $\approx 1.2'
+  [OK  ] Prohibited phrase absent: 'exact optimisation loses $9$--$11$~pp to greedy ranking'
+  [OK  ] Prohibited phrase absent: 'exact assembly
+loses $\AsmVecSAW$~pp (SAW) and $\AsmVecTOPSIS$~pp (TOPSIS) relative to greedy ranking.'
+  [OK  ] Prohibited phrase absent: 'between-group distortion alone costs nothing'
+  [OK  ] Prohibited phrase absent: 'harmless on its own, therefore amplifies'
+  [OK  ] Prohibited phrase absent: '61.19'
+  [OK  ] Prohibited phrase absent: '77.15'
+  [OK  ] Prohibited phrase absent: '15.96'
+  [OK  ] Prohibited phrase absent: '$778$'
+  [OK  ] Prohibited phrase absent: 'leeward'
+  [OK  ] Prohibited phrase absent: 'rank-biserial'
+  [OK  ] Prohibited phrase absent: '$\rho=0.018'
+  [OK  ] Prohibited phrase absent: '0.73'
+  [OK  ] Prohibited phrase absent: '24.0\%'
+  [OK  ] Prohibited phrase absent: '76~pp'
+  [OK  ] Prohibited phrase absent: '+4.0~pp'
+  [OK  ] Prohibited phrase absent: '20.0\%'
+  [OK  ] Prohibited phrase absent: '$-4.4$~pp'
+  [OK  ] Prohibited phrase absent: 'shrinks to zero'
+  [OK  ] Prohibited phrase absent: 'shrinking to zero'
+  [OK  ] Prohibited phrase absent: '+\AggContrastKfifty'
+  [OK  ] Prohibited phrase absent: '+20.4~pp'
+
+=== Supplementary.tex: critical phrase checks ===
+  [OK  ] Prohibited phrase absent: 'leeward'
+  [OK  ] Prohibited phrase absent: 'rank-biserial'
+  [OK  ] Prohibited phrase absent: '$\rho=0.018'
+  [OK  ] Prohibited phrase absent: '24.0\%'
+
+=== 1c: Highlight item length (≤ 85 chars) ===
+  [OK  ] Highlight 1: 72 chars — 'Normalisation re-weights criteria: effective weight is proportional to X'
+  [OK  ] Highlight 2: 71 chars — 'Exact assembly stays Pareto-efficient iff amplitudes are group-constant'
+  [OK  ] Highlight 3: 76 chars — 'Normalisation shifts greedy Pareto attainment by X--X~pp wherever detectable'
+  [OK  ] Highlight 4: 72 chars — 'SAW--TOPSIS contrast reverses sign as weight dispersion falls: X to X~pp'
+  [OK  ] Highlight 5: 68 chars — 'Criterion coded differently in score and objectives alone costs X~pp'
+  [OK  ] All bib keys are ASCII (122 keys)
+  [OK  ] Geoffrion1968 cited (in main.bbl)
+  [OK  ] Weber1988 cited (in main.bbl)
+  [OK  ] Poyhonen2001 cited (in main.bbl)
+  [OK  ] No duplicate bib entries
+
+=== Rule 4b: slope_aspect direct reads outside aspect_utils.py ===
+  [OK  ] No direct slope_aspect reads outside aspect_utils.py (checked 278 scripts)
+
+
+=== Log quality gates (undefined refs, Rerun, Overfull) ===
+  [INFO] Reading log: G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\build\paper\main.log  mtime=2026-11-09 17:08:50
+  [OK  ] Undefined ref/cite: 0
+  [OK  ] Rerun to get: 0
+  [OK  ] Overfull \hbox > 5pt: 0 (1 whitelisted: CAS-DC maketitle class artifact)
+  [OK  ] bibtex warnings: 0
+  [OK  ] aspect coding (binary/SE-facing) documented or aspect not in text
+
+=== A7: PDF integrity (pdftotext) ===
+  [OK  ] A7: '??' in PDF: 0 (all refs and cites resolved)
+  [OK  ] A7: last-page reference resolved
+
+=== A8: Supplementary PDF integrity (pdftotext) ===
+  [OK  ] A8: '??' in supplementary PDF: 0
+
+
+=== A9b: macros.tex copies in sync ===
+  [INFO] A9b: one or both macros.tex copies not found — skipping
+
+=== A9: No duplicate macro definitions ===
+  [OK  ] No duplicate macro definitions across main.tex+macros*.tex
+
+=== A10: EoneVloss == 100 - QtwovecOptimal ===
+  [OK  ] EoneVloss == 100 - QtwovecOptimal: 43.2000 (expected 43.2000, |diff|=0.0000)
+  [OK  ] EoneVloss vs e1_stats.json: 43.2000 (expected 43.2000, |diff|=0.0000)
+  [OK  ] EoneWloss vs e1_stats.json: 35.8000 (expected 35.8000, |diff|=0.0000)
+
+=== G2: aspect_polecoding.json vs AspectTauB / AspectTopKAgree macros ===
+  [OK  ] AspectTauB vs aspect_polecoding.json: 0.9200 (expected 0.9200, |diff|=0.0000)
+  [OK  ] AspectTopKAgree vs aspect_polecoding.json: 0.9400 (expected 0.9400, |diff|=0.0000)
+
+=== C6: F8 alignment matrix — macros vs f8_circularity CSVs ===
+  [OK  ] \FEightVecMMOptQ vs CSV (obj=vec score=mm opt): 94.4000 (expected 94.4000, |diff|=0.0000)
+  [OK  ] \FEightVecMMGrdQ vs CSV (obj=vec score=mm grd): 72.4000 (expected 72.4000, |diff|=0.0000)
+  [OK  ] \FEightVecVecOptQ vs CSV (obj=vec score=vec opt): 100.0000 (expected 100.0000, |diff|=0.0000)
+  [OK  ] \FEightVecVecGrdQ vs CSV (obj=vec score=vec grd): 100.0000 (expected 100.0000, |diff|=0.0000)
+  [OK  ] \FEightMmMMOptQ vs CSV (obj=mm score=mm opt): 100.0000 (expected 100.0000, |diff|=0.0000)
+  [OK  ] \FEightMmMMGrdQ vs CSV (obj=mm score=mm grd): 86.0000 (expected 86.0000, |diff|=0.0000)
+  [OK  ] \FEightMmVecOptQ vs CSV (obj=mm score=vec opt): 56.8000 (expected 56.8000, |diff|=0.0000)
+  [OK  ] \FEightMmVecGrdQ vs CSV (obj=mm score=vec grd): 66.2000 (expected 66.2000, |diff|=0.0000)
+
+=== C0 invariant: FEightMmVecOptQ == QtwovecOptimal ===
+  [OK  ] FEightMmVecOptQ == QtwovecOptimal (same cell, two scripts): 56.8000 (expected 56.8000, |diff|=0.0000)
+  [OK  ] FEightMmVecGrdQ == QtwovecGreedy (same cell, two scripts): 66.2000 (expected 66.2000, |diff|=0.0000)
+
+=== R invariants: E1-V/M == SAW factorial (same portfolio, different script) ===
+  [OK  ] RegretEoneV_opt (via e1 script) expected == RegrSAWvecOpt (factorial): 5.2700 (expected 5.2700, |diff|=0.0000)
+  [OK  ] R(E1-V/opt) == R(SAW/vec/opt) == 5.27 pp (both scripts)
+  [OK  ] R(E1-M/opt) == R(SAW/mm/opt) == 0 (construction check)
+  [OK  ] R(E1-M/grd) == R(SAW/mm/grd) == 2.33 pp: 2.3300 (expected 2.3300, |diff|=0.0000)
+
+=== classify_pf T1 regression ===
+  [OK  ] classify_pf Baixa partition: ['A', 'A1', 'CB', 'PA', 'PA1', 'null', 'λρ', 'λρ1', 'φ']
+  [OK  ] classify_pf subclasses (Média/Alta/NC): all 28 rows match T1
+
+=== 6c: Table 6 contrasts derived from Table 5 Q2 values ===
+  [OK  ] Agg κ=200: macro=-0.4, Tab5-derived=-0.40
+  [OK  ] Agg κ=50: macro=20.4, Tab5-derived=20.40
+
+=== 8.03: Orphan bib entries (bbl vs main.tex \cite) ===
+  BBL keys: 75 | Cited in main.tex: 75
+  [OK  ] No orphan entries (all 75 bbl keys are cited in main.tex)
+
+=== E7: gates and macro cross-check ===
+  [OK  ] E7 G1: all 16 cells at k=50 and k=200 match Table 5
+  [OK  ] E7 G2: SAW/mm/opt = 100% at k = [np.int64(25), np.int64(50), np.int64(100), np.int64(200), np.int64(400), np.int64(1000)]
+  [OK  ] E7 macros match e7_contrasts.csv (sample 4/36)
+
+=== 8.05: N-gram duplicate detection (n=12, warn >=2 hits) ===
+  [WARN] 2x: 'every binary criterion loses approximately half its effective weight relative to a'
+  [WARN] 2x: 'binary criterion loses approximately half its effective weight relative to a tie-free'
+  [WARN] 2x: 'criterion loses approximately half its effective weight relative to a tie-free continuous'
+  [WARN] 2x: 'loses approximately half its effective weight relative to a tie-free continuous criterion'
+  [WARN] 2x: 'approximately half its effective weight relative to a tie-free continuous criterion in'
+  (Total n-gram duplicates: 34; check if intentional)
+
+=== Anti-X_adj_vec: no script should use wrong vec scoring ===
+  [OK  ] No script uses X_adj_vec in code (comments exempt)
+
+=== Rule regression tests ===
+=== R9: figure/table citations ===
+  [OK  ] cited: tab:criteria
+  [OK  ] cited: fig:workflow
+  [OK  ] cited: fig:map
+  [OK  ] cited: tab:amplitude
+  [OK  ] cited: fig:slope_weights
+  [OK  ] cited: tab:canonical
+  [OK  ] cited: fig:pareto
+  [OK  ] cited: tab:tvorder
+  [OK  ] cited: tab:factorial
+  [OK  ] cited: tab:contrasts
+  [OK  ] cited: tab:alignment
+  [OK  ] cited: tab:coding2x2
+  [OK  ] cited: tab:e1
+=== R10: no rerun request in log ===
+  [INFO] Reading log: G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\build\paper\main.log  mtime=2026-11-09 17:08:50
+  [OK  ] R10: no rerun needed
+=== R11: forbidden phrases ===
+  [OK  ] R11: banned: 'whole range' in §9
+  [OK  ] R11: banned: 'confirming that Section' (broken sentence)
+  [OK  ] R11: banned: 'most κ-sensitive'
+  [OK  ] R11: banned: 'normalisation dominates'
+  [OK  ] R11: banned: TV N_eff should be TV m_eff
+  [OK  ] R11: banned: 'robustness check' in table caption
+  [OK  ] R11: banned: per-criterion kappa-hat
+=== R12: ORCID checksum ===
+  [OK  ] R12 ORCID valid: 0000-0003-2866-5445 (CITATION.cff)
+  [OK  ] R12 ORCID valid: 0000-0003-2866-5445 (.zenodo.json)
+  [OK  ] MUST_FAIL: Tab2 stale rho_raw slope
+  [OK  ] MUST_FAIL: Tab2 stale rho_raw coast
+  [OK  ] MUST_FAIL: Tab2 stale rho_raw wells
+  [OK  ] MUST_FAIL: Tab2 stale rho_raw aero
+  [OK  ] MUST_FAIL: tab:exponent wrong def-(i) values
+  [OK  ] MUST_FAIL: tab:exponent rho_raw values
+  [OK  ] MUST_FAIL: F8 stale buggy value
+  [OK  ] MUST_FAIL: score not affine in objectives
+  [OK  ] MUST_FAIL: removed in B2
+  [OK  ] MUST_FAIL: aspect continuous score target (sentence-level: aspect+azimuth+score any order)
+  [OK  ] MUST_FAIL: aspect continuous score in non-exempt remark (rem:other)
+  [OK  ] MUST_FAIL: em-dash in running prose
+  [OK  ] MUST_FAIL: §6.8 stale raw TV=0.3146
+  [OK  ] MUST_FAIL: §6.8 stale raw L2=0.3127
+  [OK  ] MUST_FAIL: §6.8 stale raw Linf=0.2859
+  [OK  ] MUST_FAIL: §6.9 stale tau_b=0.960 (was copy-paste; correct is \AspectTauB=0.92)
+  [OK  ] MUST_FAIL: §6.9 stale top-100=0.960 (was copy-paste; correct is \AspectTopKAgree=0.94)
+  [OK  ] MUST_FAIL: word 'leeward' in manuscript (renamed to SE-facing, 2026-10-26)
+  [OK  ] MUST_FAIL: word 'leeward' in manuscript (renamed to SE-facing, 2026-10-26)
+  [OK  ] MUST_FAIL: AspSpearman old value 0.018 (notebook convention)
+  [OK  ] MUST_FAIL: rank-biserial must not appear — use 'Spearman' or 'point-biserial on ranks'
+  [OK  ] MUST_FAIL: old R-asp optimal 24.0% replaced by 15.6%
+  [OK  ] MUST_FAIL: old R-asp loss 76 pp replaced by 84.4 pp
+  [OK  ] MUST_FAIL: old R-asp vs R-V delta +4.0 pp replaced by -4.4 pp
+  [OK  ] MUST_FAIL: old R-V optimal 20.0% replaced by 6.2%
+  [OK  ] MUST_FAIL: old R-asp vs R-V delta -4.4 pp replaced by +9.4 pp (sign flipped with R-V correction)
+  [OK  ] MUST_FAIL: tab:canonical: blue diamonds removed — use \in\mathcal{F} column
+  [OK  ] MUST_FAIL: §8.3/Conclusion: divides-by-0.53 corrected to scales-by
+  [OK  ] MUST_FAIL: D2: P1 follows from Theorem; must use 'holds by Theorem' framing
+  [OK  ] MUST_FAIL: D2: E6-P1 framing corrected; must use 'guaranteed by Theorem' framing
+  [OK  ] MUST_FAIL: E3: §6.7 merged into §6.2; must not reappear as standalone subsection
+  [OK  ] MUST_FAIL: §8.02: 'shrinks to zero' banned phrase
+  [OK  ] MUST_FAIL: §8.02: 'shrinking to zero' banned phrase
+  [OK  ] MUST_FAIL: §8.01: double positive sign — AggContrastKfifty already has embedded '+'
+  [OK  ] MUST_PASS: rem:nonmonotone legitimate remark
+  [OK  ] MUST_PASS: remark env: continuous aspect in remark context
+  [OK  ] MUST_PASS: table cell --- notation
+  [OK  ] MUST_PASS: {---} table notation
+  All 38 regression cases correct
+
+ALL CHECKS PASSED (0 failures)
+============================================================
+verify_macros_permanent.py
+============================================================
+
+--- Cross-check macros.tex vs MACRO_STRINGS ---
+  [INFO] paper/manuscript/macros.tex not found — skipping cross-check
+
+[hash] mc_2cube_fixed_raw.csv: 813030ffd9520c2d
+  [OK  ] hash matches (line-ending variant accepted)
+  [OK  ] 8 combinations present
+  [OK  ] 500 draws per cell
+  [OK  ] no duplicates
+
+--- 8 cell means (%, 10 dp) ---
+  saw   /minmax/greedy   86.0000000000
+  saw   /minmax/optimal  100.0000000000
+  saw   /vector/greedy   66.2000000000
+  saw   /vector/optimal  56.8000000000
+  topsis/minmax/greedy   94.4000000000
+  topsis/minmax/optimal  96.6000000000
+  topsis/vector/greedy   63.4000000000
+  topsis/vector/optimal  52.4000000000
+
+--- Norm contrasts (paired, 10 dp) ---
+  NormMain (full factorial): 34.5500000000 pp
+  NormGrd  (greedy only):    25.4000000000 pp
+  n_pairs NormMain: 2000  (expected 2000 = 4 cells x 500 draws)
+  n_pairs NormGrd:  1000   (expected 1000 = 2 cells x 500 draws)
+
+--- GPT Decimal cross-check ---
+  mm_overall=94.2500  vec_overall=59.7000
+  diff=34.5500  rounded_half_up=34.6  (macro=34.6)
+  greedy_diff=25.4000  (macro=25.4)
+
+--- Macro verification ---
+  [OK  ] NormMainEffect:
+         computed_raw=34.5500000000
+         rounded=34.6  macro=34.6  match=True
+         formula: mean paired (minmax-vector) across all 4 agg/mont x 500 draws
+  [OK  ] NormGreedyContrast:
+         computed_raw=25.4000000000
+         rounded=25.4  macro=25.4  match=True
+         formula: mean paired (minmax-vector) greedy only x 2 agg x 500 draws
+  [OK  ] QtwovecGreedy:
+         computed_raw=66.2000000000
+         rounded=66.2  macro=66.2  match=True
+         formula: cell saw/vector/greedy mean%
+  [OK  ] QtwovecOptimal:
+         computed_raw=56.8000000000
+         rounded=56.8  macro=56.8  match=True
+         formula: cell saw/vector/optimal mean%
+  [OK  ] QtwommGreedy:
+         computed_raw=86.0000000000
+         rounded=86.0  macro=86.0  match=True
+         formula: cell saw/minmax/greedy mean%
+  [OK  ] QtwommOptimal:
+         computed_raw=100.0000000000
+         rounded=100.0  macro=100.0  match=True
+         formula: cell saw/minmax/optimal mean%
+  [OK  ] AsmMMSAWContrast:
+         computed_raw=14.0000000000
+         rounded=14.0  macro=14.0  match=True
+         formula: QtwommOptimal - QtwommGreedy (saw/minmax/optimal - saw/minmax/greedy)
+
+--- TV_B/TV_W (source_hash AJ_VEC+W: 8dd2ff78c0bdbfbe) ---
+  TV_B computed=0.2479397416  stored=0.2479397416177322
+  TV_W computed=0.1953659199  stored=0.1953659199410528
+  TV_B match=True  TV_W match=True
+
+--- E1 per-draw log ---
+  E1-W: greedy=64.0000%  optimal=64.2000000000%  SE=2.14
+  E1-V: greedy=66.2000%  optimal=56.8000000000%  SE=2.22
+  E1-B: greedy=100.0000%  optimal=100.0000000000%  SE=0.0
+  E1-M: greedy=86.0000%  optimal=100.0000000000%  SE=0.0
+  [OK  ] EoneWloss:
+         computed_raw=35.8000000000
+         rounded=35.8  macro=35.8  match=True
+         formula: 100 - E1-W/optimal=64.2 from e1_v3_rerun_20261002.log
+  [OK  ] EoneVloss:
+         computed_raw=43.2000000000
+         rounded=43.2  macro=43.2  match=True
+         formula: 100 - E1-V/optimal=56.8 from e1_v3_rerun_20261002.log
+
+============================================================
+ALL CHECKS PASSED
+============================================================
+verify_macros_permanent.py
+============================================================
+
+--- Cross-check macros.tex vs MACRO_STRINGS ---
+  [INFO] paper/manuscript/macros.tex not found — skipping cross-check
+
+[hash] mc_2cube_fixed_raw.csv: 813030ffd9520c2d
+  [OK  ] hash matches (line-ending variant accepted)
+  [OK  ] 8 combinations present
+  [OK  ] 500 draws per cell
+  [OK  ] no duplicates
+
+--- 8 cell means (%, 10 dp) ---
+  saw   /minmax/greedy   86.0000000000
+  saw   /minmax/optimal  100.0000000000
+  saw   /vector/greedy   66.2000000000
+  saw   /vector/optimal  56.8000000000
+  topsis/minmax/greedy   94.4000000000
+  topsis/minmax/optimal  96.6000000000
+  topsis/vector/greedy   63.4000000000
+  topsis/vector/optimal  52.4000000000
+
+--- Norm contrasts (paired, 10 dp) ---
+  NormMain (full factorial): 34.5500000000 pp
+  NormGrd  (greedy only):    25.4000000000 pp
+  n_pairs NormMain: 2000  (expected 2000 = 4 cells x 500 draws)
+  n_pairs NormGrd:  1000   (expected 1000 = 2 cells x 500 draws)
+
+--- GPT Decimal cross-check ---
+  mm_overall=94.2500  vec_overall=59.7000
+  diff=34.5500  rounded_half_up=34.6  (macro=34.6)
+  greedy_diff=25.4000  (macro=25.4)
+
+--- Macro verification ---
+  [OK  ] NormMainEffect:
+         computed_raw=34.5500000000
+         rounded=34.6  macro=34.6  match=True
+         formula: mean paired (minmax-vector) across all 4 agg/mont x 500 draws
+  [OK  ] NormGreedyContrast:
+         computed_raw=25.4000000000
+         rounded=25.4  macro=25.4  match=True
+         formula: mean paired (minmax-vector) greedy only x 2 agg x 500 draws
+  [OK  ] QtwovecGreedy:
+         computed_raw=66.2000000000
+         rounded=66.2  macro=66.2  match=True
+         formula: cell saw/vector/greedy mean%
+  [OK  ] QtwovecOptimal:
+         computed_raw=56.8000000000
+         rounded=56.8  macro=56.8  match=True
+         formula: cell saw/vector/optimal mean%
+  [OK  ] QtwommGreedy:
+         computed_raw=86.0000000000
+         rounded=86.0  macro=86.0  match=True
+         formula: cell saw/minmax/greedy mean%
+  [OK  ] QtwommOptimal:
+         computed_raw=100.0000000000
+         rounded=100.0  macro=100.0  match=True
+         formula: cell saw/minmax/optimal mean%
+  [OK  ] AsmMMSAWContrast:
+         computed_raw=14.0000000000
+         rounded=14.0  macro=14.0  match=True
+         formula: QtwommOptimal - QtwommGreedy (saw/minmax/optimal - saw/minmax/greedy)
+
+--- TV_B/TV_W (source_hash AJ_VEC+W: 8dd2ff78c0bdbfbe) ---
+  TV_B computed=0.2479397416  stored=0.2479397416177322
+  TV_W computed=0.1953659199  stored=0.1953659199410528
+  TV_B match=True  TV_W match=True
+
+--- E1 per-draw log ---
+  E1-W: greedy=64.0000%  optimal=64.2000000000%  SE=2.14
+  E1-V: greedy=66.2000%  optimal=56.8000000000%  SE=2.22
+  E1-B: greedy=100.0000%  optimal=100.0000000000%  SE=0.0
+  E1-M: greedy=86.0000%  optimal=100.0000000000%  SE=0.0
+  [OK  ] EoneWloss:
+         computed_raw=35.8000000000
+         rounded=35.8  macro=35.8  match=True
+         formula: 100 - E1-W/optimal=64.2 from e1_v3_rerun_20261002.log
+  [OK  ] EoneVloss:
+         computed_raw=43.2000000000
+         rounded=43.2  macro=43.2  match=True
+         formula: 100 - E1-V/optimal=56.8 from e1_v3_rerun_20261002.log
+
+============================================================
+ALL CHECKS PASSED
+========================================================================
+audit_numbers.py — numeric literal audit
+Scanning: main.tex, santiago.tex
+========================================================================
+
+[INFO] Class (b) — design constants (142 occurrences):
+  main.tex:283  '0.075'       w_aspect = 0.075 (AHP weight, Andrade2015 Table 5)
+  main.tex:765  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:890  '270'         reflected convention theta_pub = (270 - theta) mod 360 (AzancortNeto2026 dataset)
+  main.tex:895  '0.805'       mean cosine between aspect and summit-to-site bearing for theta from DEM (structural verification)
+  main.tex:896  '-0.102'      mean cosine for theta_pub (reflected convention, structural verification)
+  main.tex:899  '135'         reflection axis 135 degrees = midpoint of SE-facing interval [90,180] (structural)
+  main.tex:930  '41'          site 41 has missing roads value (structural, AzancortNeto2026)
+  main.tex:930  '385'         site 385 has missing urban distance value (structural, AzancortNeto2026)
+  main.tex:931  '429'         site 429 has missing aerodromes value (structural, AzancortNeto2026)
+  main.tex:1095  '0.15'        w_j=0.15 used as generic example in Dirichlet SD formula (illustrative)
+  main.tex:1190  '2.90'        approximately 2.90e6 feasible trios from all Ncand candidates (AzancortNeto2026)
+  main.tex:1362  '350'         perm criterion has 350 tied zeros (structural property of dataset, AzancortNeto2026)
+  main.tex:1390  '350'         perm criterion has 350 tied zeros (structural property of dataset, AzancortNeto2026)
+  main.tex:1390  '532'         maximum value of perm criterion in metres (structural property of dataset)
+  main.tex:1393  '0.547'       A_j^rank for perm = 0.547 (structural, from amplitudes.json)
+  main.tex:1393  '350'         perm criterion has 350 tied zeros (structural property of dataset, AzancortNeto2026)
+  main.tex:1693  '6.7'         6.7e-16 maximum absolute error in PROMETHEE identity verification (structural)
+  main.tex:1735  '0.152'       w_perm = 0.152 (AHP weight, Andrade2015 Table 5)
+  main.tex:1737  '0.166'       w_urban = 0.166 (AHP weight, Andrade2015 Table 5)
+  main.tex:1750  '0.995'       A_j^rank for continuous criterion without ties = (N-1)/(N+1) approx 0.995 (structural)
+  main.tex:1751  '0.499'       A_j^rank for binary criterion = N/[2(N+1)] approx 0.499 (structural formula)
+  main.tex:1752  '350'         perm criterion has 350 tied zeros (structural property of dataset, AzancortNeto2026)
+  main.tex:1752  '0.547'       A_j^rank for perm = 0.547 (structural, from amplitudes.json)
+  main.tex:1761  '0.152'       w_perm = 0.152 (AHP weight, Andrade2015 Table 5)
+  main.tex:1761  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:1761  '0.583'       rho_perm = 0.583 = 1/L2(mm_perm) (structural, from amplitudes.json)
+  main.tex:1761  '0.547'       A_j^rank for perm = 0.547 (structural, from amplitudes.json)
+  main.tex:1761  '0.62'        factor 0.62x deflation of perm under rank normalisation (structural, from amplitudes.json)
+  main.tex:1762  '0.113'       w_slope = 0.113 (AHP weight, Andrade2015 Table 5)
+  main.tex:1762  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:1762  '0.139'       rho_slope = 0.139 (structural, from amplitudes.json)
+  main.tex:1762  '0.995'       A_j^rank for continuous criterion without ties = (N-1)/(N+1) approx 0.995 (structural)
+  main.tex:1762  '0.68'        w_eff/w for slope under vector (structural)
+  main.tex:1762  '1.12'        w_eff/w for continuous criteria under rank (structural, approx 1.12x)
+  main.tex:1763  '0.030'       w_roads = 0.030 (AHP weight, Andrade2015 Table 5)
+  main.tex:1763  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:1763  '0.206'       rho_roads = 0.206 (structural, from amplitudes.json)
+  main.tex:1763  '0.995'       A_j^rank for continuous criterion without ties = (N-1)/(N+1) approx 0.995 (structural)
+  main.tex:1763  '1.02'        w_eff/w for roads under vector (structural)
+  main.tex:1763  '1.12'        w_eff/w for continuous criteria under rank (structural, approx 1.12x)
+  main.tex:1764  '0.091'       w_rivers = 0.091 (AHP weight, Andrade2015 Table 5)
+  main.tex:1764  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:1764  '0.265'       rho_rivers = 0.265 (structural, from amplitudes.json)
+  main.tex:1764  '0.995'       A_j^rank for continuous criterion without ties = (N-1)/(N+1) approx 0.995 (structural)
+  main.tex:1764  '1.31'        w_eff/w for rivers under vector (structural)
+  main.tex:1764  '1.12'        w_eff/w for continuous criteria under rank (structural, approx 1.12x)
+  main.tex:1765  '0.075'       w_aspect = 0.075 (AHP weight, Andrade2015 Table 5)
+  main.tex:1765  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:1765  '0.103'       rho_aspect = 0.103 = 1/sqrt(94) (structural, from amplitudes.json)
+  main.tex:1765  '0.499'       A_j^rank for binary criterion = N/[2(N+1)] approx 0.499 (structural formula)
+  main.tex:1766  '0.069'       w_coast = 0.069 (AHP weight, Andrade2015 Table 5)
+  main.tex:1766  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:1766  '0.131'       rho_coast = 0.131 (structural, from amplitudes.json)
+  main.tex:1766  '0.995'       A_j^rank for continuous criterion without ties = (N-1)/(N+1) approx 0.995 (structural)
+  main.tex:1766  '0.64'        w_eff/w for coast under vector (structural)
+  main.tex:1766  '1.12'        w_eff/w for continuous criteria under rank (structural, approx 1.12x)
+  main.tex:1767  '0.066'       w_protected = 0.066 (AHP weight, Andrade2015 Table 5)
+  main.tex:1767  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:1767  '0.105'       rho_protected = 0.105 (structural, from amplitudes.json)
+  main.tex:1767  '0.995'       A_j^rank for continuous criterion without ties = (N-1)/(N+1) approx 0.995 (structural)
+  main.tex:1767  '0.52'        w_eff/w for protected under vector (structural)
+  main.tex:1767  '1.12'        w_eff/w for continuous criteria under rank (structural, approx 1.12x)
+  main.tex:1768  '0.055'       w_wells = 0.055 (AHP weight, Andrade2015 Table 5)
+  main.tex:1768  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:1768  '0.084'       rho_wells = 0.084 (structural, from amplitudes.json)
+  main.tex:1768  '0.995'       A_j^rank for continuous criterion without ties = (N-1)/(N+1) approx 0.995 (structural)
+  main.tex:1768  '0.41'        w_eff/w for wells under vector (structural)
+  main.tex:1768  '1.12'        w_eff/w for continuous criteria under rank (structural, approx 1.12x)
+  main.tex:1769  '0.166'       w_urban = 0.166 (AHP weight, Andrade2015 Table 5)
+  main.tex:1769  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:1769  '0.107'       rho_urban = 0.107 (structural, from amplitudes.json)
+  main.tex:1769  '0.989'       A_j^rank for urban = 0.989 (structural, from amplitudes.json)
+  main.tex:1769  '1.11'        w_eff/w for urban/cult under rank (structural, from amplitudes.json)
+  main.tex:1770  '0.102'       w_aero = 0.102 (AHP weight, Andrade2015 Table 5)
+  main.tex:1770  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:1770  '0.088'       rho_aero = 0.088 (structural, from amplitudes.json)
+  main.tex:1770  '0.995'       A_j^rank for continuous criterion without ties = (N-1)/(N+1) approx 0.995 (structural)
+  main.tex:1770  '0.43'        w_eff/w for aero under vector (structural)
+  main.tex:1770  '1.12'        w_eff/w for continuous criteria under rank (structural, approx 1.12x)
+  main.tex:1771  '0.081'       w_cult = 0.081 (AHP weight, Andrade2015 Table 5)
+  main.tex:1771  '1.000'       top-100 rank agreement = 1.000 under min-max (structural verification)
+  main.tex:1771  '0.171'       rho_cult = 0.171 (structural, from amplitudes.json)
+  main.tex:1771  '0.981'       A_j^rank for cult = 0.981 (structural, from amplitudes.json)
+  main.tex:1771  '0.85'        w_eff/w for cult under vector (structural)
+  main.tex:1771  '1.11'        w_eff/w for urban/cult under rank (structural, from amplitudes.json)
+  main.tex:1773  '0.000'       TV=0.000 for min-max normalisation by construction (structural)
+  main.tex:1773  '0.091'       w_rivers = 0.091 (AHP weight, Andrade2015 Table 5)
+  main.tex:1792  '0.62'        factor 0.62x deflation of perm under rank normalisation (structural, from amplitudes.json)
+  main.tex:1828  '295'         n0 = Nvia - n1 = 389 - 94 = 295 non-SE-facing sites (structural)
+  main.tex:1908  '0.29'        prefix of 0.295 (AzancortNeto2026 scalarisation coefficient, already accepted)
+  main.tex:1908  '0.35'        prefix of 0.356 (AzancortNeto2026 scalarisation coefficient, already accepted)
+  main.tex:1908  '0.349'       S=0.295*f1+0.356*f2+0.349*(1-f3) coefficient for (1-f3) (AzancortNeto2026 Table 10)
+  main.tex:1942  '0.1273'      F1 for SAW/mm/greedy portfolio {184,279,320} (tab:canonical, AzancortNeto2026)
+  main.tex:1942  '0.5963'      F2 for SAW/mm/greedy portfolio {184,279,320} (tab:canonical, AzancortNeto2026)
+  main.tex:1942  '0.6207'      F3 for SAW/mm/greedy portfolio {184,279,320} (tab:canonical, AzancortNeto2026)
+  main.tex:1942  '0.032'       gap for SAW/mm/greedy portfolio (tab:canonical, AzancortNeto2026)
+  main.tex:1943  '0.0811'      F1 for SAW/mm/optimal portfolio {184,430,460} (tab:canonical, AzancortNeto2026)
+  main.tex:1943  '0.5568'      F2 for SAW/mm/optimal portfolio {184,430,460} (tab:canonical, AzancortNeto2026)
+  main.tex:1943  '0.6170'      F3 for SAW/mm/optimal portfolio {184,430,460} (tab:canonical, AzancortNeto2026)
+  main.tex:1943  '0.000'       TV=0.000 for min-max normalisation by construction (structural)
+  main.tex:1944  '0.1113'      F1 for TOPSIS/vec/greedy portfolio {233,320,355} (tab:canonical)
+  main.tex:1944  '0.5669'      F2 for TOPSIS/vec/greedy portfolio {233,320,355} (tab:canonical)
+  main.tex:1944  '0.5358'      F3 for TOPSIS/vec/greedy portfolio {233,320,355} (tab:canonical)
+  main.tex:1944  '0.048'       gap for TOPSIS/vec/greedy portfolio (tab:canonical)
+  main.tex:1945  '0.0865'      F1 for TOPSIS/vec/optimal portfolio {227,233,345} (tab:canonical)
+  main.tex:1945  '0.5955'      F2 for TOPSIS/vec/optimal portfolio {227,233,345} (tab:canonical)
+  main.tex:1945  '0.5715'      F3 for TOPSIS/vec/optimal portfolio {227,233,345} (tab:canonical)
+  main.tex:1945  '0.024'       gap for TOPSIS/vec/optimal portfolio (tab:canonical)
+  main.tex:1946  '0.1104'      F1 for TOPSIS/mm/greedy portfolio {184,227,460} (tab:canonical)
+  main.tex:1946  '0.6712'      F2 for TOPSIS/mm/greedy portfolio {184,227,460} (tab:canonical)
+  main.tex:1946  '0.6883'      F3 for TOPSIS/mm/greedy portfolio {184,227,460} (tab:canonical)
+  main.tex:1946  '0.000'       TV=0.000 for min-max normalisation by construction (structural)
+  main.tex:1947  '0.1190'      F1 for VIKOR/greedy portfolio {233,279,320} (tab:canonical)
+  main.tex:1947  '0.5819'      F2 for VIKOR/greedy portfolio {233,279,320} (tab:canonical)
+  main.tex:1947  '0.5879'      F3 for VIKOR/greedy portfolio {233,279,320} (tab:canonical)
+  main.tex:1947  '0.052'       gap for VIKOR/greedy portfolio (tab:canonical)
+  main.tex:1948  '0.0447'      F1 for PROMETHEE/greedy portfolio {51,233,345} (tab:canonical)
+  main.tex:1948  '0.5900'      F2 for PROMETHEE/greedy portfolio {51,233,345} (tab:canonical)
+  main.tex:1948  '0.4852'      F3 for PROMETHEE/greedy portfolio {51,233,345} (tab:canonical)
+  main.tex:1948  '0.000'       TV=0.000 for min-max normalisation by construction (structural)
+  main.tex:1950  '0.0811'      F1 for SAW/mm/optimal portfolio {184,430,460} (tab:canonical, AzancortNeto2026)
+  main.tex:1950  '0.5568'      F2 for SAW/mm/optimal portfolio {184,430,460} (tab:canonical, AzancortNeto2026)
+  main.tex:1950  '0.6170'      F3 for SAW/mm/optimal portfolio {184,430,460} (tab:canonical, AzancortNeto2026)
+  main.tex:1950  '0.000'       TV=0.000 for min-max normalisation by construction (structural)
+  main.tex:2016  '0.000'       TV=0.000 for min-max normalisation by construction (structural)
+  main.tex:2347  '359'         example azimuth near 360 degrees (illustrative, structural)
+  main.tex:2353  '27'          s.d. of top-quartile azimuths approx 27 degrees (structural, from data)
+  main.tex:2386  '302'         draw 302 used as concrete example of greedy shortfall (illustrative)
+  main.tex:2494  '0.295'       S=0.295*f1+0.356*f2+0.349*(1-f3) coefficient for f1 (AzancortNeto2026 Table 10)
+  main.tex:2494  '0.544'       weight of G1 under E1-B amplitudes (from 0.295 to 0.544, post hoc)
+  main.tex:2554  '0.3'         prefix of 0.30 (E6 TV_W high level, already accepted)
+  main.tex:2577  '27'          s.d. of top-quartile azimuths approx 27 degrees (structural, from data)
+  main.tex:2635  '0.03'        SD(w_i) approx 0.03 at kappa=25 for w_j=0.15 (structural Dirichlet formula)
+  main.tex:2635  '0.07'        SD(w_i) approx 0.07 at kappa=25 for w_j=0.15 (structural Dirichlet formula)
+  main.tex:2635  '0.005'       SD(w_i) approx 0.005 at kappa=1000 for w_j=0.15 (structural Dirichlet formula)
+  main.tex:2635  '0.012'       SD(w_i) approx 0.012 at kappa=1000 for w_j=0.15 (structural Dirichlet formula)
+  main.tex:2921  '0.616'       factor 0.616x deflation of perm effective weight under rank normalisation (structural)
+  main.tex:2922  '0.547'       A_j^rank for perm = 0.547 (structural, from amplitudes.json)
+  main.tex:2923  '350'         perm criterion has 350 tied zeros (structural property of dataset, AzancortNeto2026)
+  main.tex:3074  '0.1'         TV_W increment = 0.1 units (E5 slope description, structural)
+  main.tex:3207  '350'         perm criterion has 350 tied zeros (structural property of dataset, AzancortNeto2026)
+  main.tex:3267  '1.7'         version 1.7 of replication package (code availability section)
+
+[OK  ] Class (c): 0 hand-written results found
+
+========================================================================
+AUDIT RESULT: zero hand-written results — PASS
+========================================================================
+check_macros_provenance.py
+========================================================================
+
+  Loaded 774 macro definitions from provenance CSV
+  Found 361 distinct macro uses in manuscript
+
+[FAIL] 1 macros used but not in provenance CSV:
+  \EoneBGrdFonePercentile
+
+[WARN] 414 macros defined but not found in manuscript scan:
+  \AggContrastPooled  (macros/macros.tex)
+  \AggContrastPooledHi  (macros/macros.tex)
+  \AggContrastPooledLo  (macros/macros.tex)
+  \AggKfourhundredHi  (macros/macros_e7.tex)
+  \AggKfourhundredLo  (macros/macros_e7.tex)
+  \AggKonehundredHi  (macros/macros_e7.tex)
+  \AggKonehundredLo  (macros/macros_e7.tex)
+  \AggKthousandHi  (macros/macros_e7.tex)
+  \AggKthousandLo  (macros/macros_e7.tex)
+  \AggKtwentyfiveHi  (macros/macros_e7.tex)
+  \AggKtwentyfiveLo  (macros/macros_e7.tex)
+  \AggMMgrdCIhi  (macros/macros.tex)
+  \AggMMgrdCIlo  (macros/macros.tex)
+  \AggMMoptCIhi  (macros/macros.tex)
+  \AggMMoptCIlo  (macros/macros.tex)
+  \AggStratumMMgrdAbs  (macros/macros.tex)
+  \AggStratumMMopt  (macros/macros.tex)
+  \AggStratumVecgrd  (macros/macros.tex)
+  \AggVecgrdCIhi  (macros/macros.tex)
+  \AggVecgrdCIlo  (macros/macros.tex)
+  ... and 394 more
+
+========================================================================
+FAILED: 1 check(s):
+  x 1 macros without provenance
+========================================================================
+check_tolerances.py — tolerance audit
+========================================================================
+
+  Loaded 4 tolerance entries
+
+  [OK  ] half_up_1dp: tol=0.05, dp=1, max=0.050000  half-up rounding to 1 decimal place — max error = 0.05 pp
+  [OK  ] TV_B_TV_W: tol=0.0001, dp=3, max=0.000500  TV_B/TV_W match tolerance — printed to 3 dp; 0.0001 < 0.0005
+  [OK  ] weight_sum: tol=0.001, dp=2, max=0.005000  weight sum tolerance — sanity check only; 0.001 = half of 2dp unit
+  [OK  ] E1_log_SE: tol=6.7, dp=0 (no precision constraint)  E1 regression test tolerance = 3*SE (3*2.22=6.7 pp) — internal pipeline only
+
+========================================================================
+ALL CHECKS PASSED
+========================================================================
+run_checks.py — running all checkers
+========================================================================
+
+========================================================================
+Script                          Exit  FAILs  WARNs
+----------------------------------------------------
+make_santiago_macros               0      0      0
+check_tab_amplitude                0      0      0
+generate_macros_r1                 0      0      0
+check_consistency                  0      0      5
+verify_macros_permanent            0      0      0
+verify_macros_santiago             0      0      0
+audit_numbers                      0      0      0
+check_macros_provenance            1      1      1  <-- FAILED
+check_tolerances                   0      0      0
+========================================================================
+EXIT=1
+mingw32-make: *** [makefile:25: check] Error 1
+EXIT=2  

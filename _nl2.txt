@@ -1,0 +1,2 @@
+NL count: 309
+NL after non-ASCII: 20

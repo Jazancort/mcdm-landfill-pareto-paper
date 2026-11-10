@@ -1,0 +1,5 @@
+## Ronda 3 — Auditoria "zero números à mão" e proveniência
+
+> **Estado: ⬜ PENDENTE**
+
+- **3-1** — `scripts/audit_numbers.py` lista cada literal numérico em `main.tex`, `santiago.tex` e `supplementary.tex` fora de `\newcommand`, excluindo anos de citação, labels e numeração. Classifica cada um: (a) j

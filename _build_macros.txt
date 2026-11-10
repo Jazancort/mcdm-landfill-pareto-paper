@@ -1,0 +1,2 @@
+NL: 294 Bytes: 16508
+EoneBGrd: False EfiveSlope: False QthreeVecMin: False

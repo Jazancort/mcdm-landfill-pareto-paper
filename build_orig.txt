@@ -1,0 +1,4447 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(main.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-06-18>
+(cas-dc.cls
+Document Class: cas-dc 2024/05/04, 2.4: Formatting class for CAS double column 
+articles
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\fleqn.clo)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
+e.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/preprint\balance.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/makecell\makecell.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\color.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+)
+new hooks used!!
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\dcolumn.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/sttools\stfloats.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\xspace.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xstring\xstring.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/xstring\xstring.tex))
+ (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/footmisc\footmisc.sty)
+ (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\svgnam.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\dvipsnam.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
+ty) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty))) (cas-common.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/moreverb\moreverb.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\verbatim.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/wrapfig\wrapfig.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\stix.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/inconsolata\inconsolata
+.sty `inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xkeyval\xkeyval.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkeyval.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkvutils.tex)
+)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbib.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/placeins\placeins.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/morefloats\morefloats.s
+ty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
+sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.st
+y
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-common.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-latex.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.
+code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.
+sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.
+sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+libraryfiltered.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.c
+fg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-pdftex.def
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-common-pdf.def)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+ssoftpath.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+sprotocol.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+e.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.
+code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparse
+r.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.basic.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.trigonometric.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.random.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.comparison.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.base.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.round.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.misc.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.integerarithmetics.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.
+code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat
+.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.
+tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epoints.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathconstruct.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathusage.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+escopes.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+egraphicstate.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransformations.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+equick.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eobjects.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathprocessing.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+earrows.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eshade.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eimage.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eexternal.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+elayers.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransparency.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epatterns.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+erdf.code.tex)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+shapes.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+plot.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-0-65.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-1-18.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.st
+y
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.s
+ty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.
+code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z\tikz.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryplothandlers.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+matrix.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarytopaths.code.tex)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\xr.sty)
+(macros_structural.tex) (macros_amplitudes.tex) (macros.tex
+(results/e1/e1_macros.tex) (macros_structural.tex)) (macros_raw_sens.tex)
+(macros_e6.tex) (macros_f8.tex) (macros_e7.tex) (macros_kappa_inf.tex)
+(results/regret/regret_macros.tex) (results/santiago/macros_santiago.tex)
+(results/santiago/macros_descriptive.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\t1stix.fd)
+(main.aux)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stix.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stix.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg)) (main.out) (main.out)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/upquote\upquote.sty)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ts1stix.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixscr.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stixex.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixfrak.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixbb.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stixcal.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixsf.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stixtt.fd)
+[0{C:/Users/julio/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ju
+lio/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/stix/stix-t1.enc}{C:/Users/ju
+lio/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/stix/stix-ts1.enc}]
+Overfull \hbox (123.62721pt too wide) detected at line 162
+[]
+(main.abs)
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/inconsolata\t1zi4.fd)
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+
+Package natbib Warning: Citation `Rezaeisabzevar2020' on page 1 undefined on in
+put line 183.
+
+
+Package natbib Warning: Citation `EiseltMarianov2015' on page 1 undefined on in
+put line 186.
+
+
+Package natbib Warning: Citation `Chakraborty2009' on page 1 undefined on input
+ line 191.
+
+
+Package natbib Warning: Citation `Jahan2015' on page 1 undefined on input line 
+191.
+
+
+Package natbib Warning: Citation `Vafaei2018' on page 1 undefined on input line
+ 191.
+
+
+Package natbib Warning: Citation `Aytekin2021' on page 1 undefined on input lin
+e 191.
+
+
+Package natbib Warning: Citation `Salabun2020Sym' on page 1 undefined on input 
+line 191.
+
+
+Underfull \hbox (badness 1436) in paragraph at lines 179--195
+\T1/stix/m/n/10 stan-dard work-flow scores can-di-date sites with a multi-
+
+Underfull \hbox (badness 1033) in paragraph at lines 179--195
+\T1/stix/m/n/10 to be the dom-i-nant tools, and nor-mal-i-sa-tion choices to
+
+Underfull \hbox (badness 1946) in paragraph at lines 179--195
+\T1/stix/m/n/10 be rarely re-ported. \T1/stix/b/n/10 ? \T1/stix/m/n/10 pro-vide
+ a com-ple-men-tary sur-vey
+
+Underfull \hbox (badness 5802) in paragraph at lines 179--195
+\T1/stix/m/n/10 of math-e-mat-i-cal lo-ca-tion mod-els for mu-nic-i-pal solid
+
+Underfull \hbox (badness 1383) in paragraph at lines 179--195
+\T1/stix/m/n/10 waste fa-cil-i-ties, cov-er-ing bi-objective MIP and MCDM
+
+Underfull \hbox (badness 3439) in paragraph at lines 179--195
+\T1/stix/m/n/10 meth-ods ex-ten-sively, but al-most al-ways by mea-sur-ing
+
+Underfull \hbox (badness 1460) in paragraph at lines 179--195
+\T1/stix/m/n/10 agree-ment be-tween the rank-ings they pro-duce (\T1/stix/b/n/1
+0 ?????\T1/stix/m/n/10 ).
+
+LaTeX Warning: Reference `tab:canonical' on page 1 undefined on input line 211.
+
+
+
+LaTeX Warning: Reference `sec:kappa' on page 1 undefined on input line 216.
+
+[1{C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/inconsolata/i4-
+t1-0.enc} <./thumbnails/cas-email.jpeg>]
+
+Package natbib Warning: Citation `Choo1999' on page 2 undefined on input line 2
+37.
+
+
+LaTeX Warning: Reference `sec:assembly' on page 2 undefined on input line 262.
+
+
+LaTeX Warning: Reference `sec:e1' on page 2 undefined on input line 270.
+
+
+Package natbib Warning: Citation `BransMareschal1992' on page 2 undefined on in
+put line 273.
+
+
+Package natbib Warning: Citation `Mavrotas2006' on page 2 undefined on input li
+ne 273.
+
+
+Package natbib Warning: Citation `VetscheraDeAlmeida2012' on page 2 undefined o
+n input line 273.
+
+
+Package natbib Warning: Citation `Choo1999' on page 2 undefined on input line 2
+97.
+
+
+Package natbib Warning: Citation `vonNitzsch1993' on page 2 undefined on input 
+line 298.
+
+
+Package natbib Warning: Citation `Fischer1995' on page 2 undefined on input lin
+e 298.
+
+
+Underfull \hbox (badness 1874) in paragraph at lines 305--312
+\T1/stix/m/n/10 an ex-haus-tively enu-mer-ated fron-tier of $\LS1/stix/m/n/10 1
+[]944[]653$
+
+LaTeX Warning: Reference `sec:results' on page 2 undefined on input line 330.
+
+
+LaTeX Warning: Reference `sec:discussion' on page 2 undefined on input line 331
+.
+
+
+Package natbib Warning: Citation `BransMareschal1992' on page 2 undefined on in
+put line 353.
+
+
+Package natbib Warning: Citation `Mavrotas2006' on page 2 undefined on input li
+ne 356.
+
+
+Package natbib Warning: Citation `Mavrotas2008' on page 2 undefined on input li
+ne 356.
+
+
+Package natbib Warning: Citation `VetscheraDeAlmeida2012' on page 2 undefined o
+n input line 360.
+
+
+Package natbib Warning: Citation `DeAlmeidaVetschera2012' on page 2 undefined o
+n input line 363.
+
+[2]
+
+Package natbib Warning: Citation `Liesio2007' on page 3 undefined on input line
+ 370.
+
+
+Package natbib Warning: Citation `Liesio2008' on page 3 undefined on input line
+ 370.
+
+
+Package natbib Warning: Citation `Mild2015' on page 3 undefined on input line 3
+74.
+
+
+Package natbib Warning: Citation `Yang2015SMAAPO' on page 3 undefined on input 
+line 375.
+
+
+Package natbib Warning: Citation `Liesio2021' on page 3 undefined on input line
+ 378.
+
+
+Package natbib Warning: Citation `Barbati2018' on page 3 undefined on input lin
+e 381.
+
+
+Package natbib Warning: Citation `Carazo2010' on page 3 undefined on input line
+ 383.
+
+
+Package natbib Warning: Citation `Doerner2006' on page 3 undefined on input lin
+e 387.
+
+
+Package natbib Warning: Citation `Choo1999' on page 3 undefined on input line 4
+07.
+
+
+Package natbib Warning: Citation `vonNitzsch1993' on page 3 undefined on input 
+line 412.
+
+
+Package natbib Warning: Citation `Fischer1995' on page 3 undefined on input lin
+e 416.
+
+
+Package natbib Warning: Citation `Kettani2004' on page 3 undefined on input lin
+e 421.
+
+
+Package natbib Warning: Citation `Milani2005' on page 3 undefined on input line
+ 427.
+
+
+Package natbib Warning: Citation `Chakraborty2009' on page 3 undefined on input
+ line 434.
+
+
+Package natbib Warning: Citation `Vafaei2018' on page 3 undefined on input line
+ 436.
+
+
+Package natbib Warning: Citation `Vafaei2022' on page 3 undefined on input line
+ 437.
+
+
+Package natbib Warning: Citation `Jahan2015' on page 3 undefined on input line 
+438.
+
+
+Package natbib Warning: Citation `Aytekin2021' on page 3 undefined on input lin
+e 441.
+
+
+Package natbib Warning: Citation `Wolters1995' on page 3 undefined on input lin
+e 443.
+
+
+Package natbib Warning: Citation `Liao2020' on page 3 undefined on input line 4
+62.
+
+
+Package natbib Warning: Citation `GarciaCascales2012' on page 3 undefined on in
+put line 470.
+
+
+Package natbib Warning: Citation `Kuo2017' on page 3 undefined on input line 47
+2.
+
+
+Package natbib Warning: Citation `OpricovicTzeng2004' on page 3 undefined on in
+put line 474.
+
+[3]
+
+Package natbib Warning: Citation `Hwang1981' on page 4 undefined on input line 
+484.
+
+
+Package natbib Warning: Citation `Brans1986' on page 4 undefined on input line 
+485.
+
+
+Package natbib Warning: Citation `OpricovicTzeng2004' on page 4 undefined on in
+put line 486.
+
+
+Package natbib Warning: Citation `Bouyssou1992' on page 4 undefined on input li
+ne 488.
+
+
+Package natbib Warning: Citation `Marchant1996' on page 4 undefined on input li
+ne 489.
+
+
+Package natbib Warning: Citation `Bouyssou1992' on page 4 undefined on input li
+ne 490.
+
+
+Package natbib Warning: Citation `Marchant1996' on page 4 undefined on input li
+ne 492.
+
+
+Package natbib Warning: Citation `Mareschal2008' on page 4 undefined on input l
+ine 499.
+
+
+Package natbib Warning: Citation `Dejaegere2022' on page 4 undefined on input l
+ine 499.
+
+
+Package natbib Warning: Citation `Coquelet2024' on page 4 undefined on input li
+ne 499.
+
+
+LaTeX Warning: Reference `sec:coding' on page 4 undefined on input line 503.
+
+
+LaTeX Warning: Reference `tab:coding2x2' on page 4 undefined on input line 503.
+
+
+
+Package natbib Warning: Citation `Eppe2014' on page 4 undefined on input line 5
+06.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 506--509
+[]\T1/stix/b/n/10 ? \T1/stix/m/n/10 pro-posed piecewise-linear ap-prox-i-ma-tio
+ns of
+
+Package natbib Warning: Citation `Cinelli2020' on page 4 undefined on input lin
+e 517.
+
+
+Package natbib Warning: Citation `Salabun2020Sym' on page 4 undefined on input 
+line 520.
+
+
+Package natbib Warning: Citation `PintoCosta2005' on page 4 undefined on input 
+line 524.
+
+
+Package natbib Warning: Citation `Watrobski2019' on page 4 undefined on input l
+ine 525.
+
+
+Package natbib Warning: Citation `Mulliner2016' on page 4 undefined on input li
+ne 531.
+
+
+Package natbib Warning: Citation `Mohammadi2020' on page 4 undefined on input l
+ine 535.
+
+
+Package natbib Warning: Citation `Korotkov2021' on page 4 undefined on input li
+ne 538.
+
+
+Package natbib Warning: Citation `Guerreiro2023' on page 4 undefined on input l
+ine 544.
+
+
+Package natbib Warning: Citation `MoonChaudhry1984' on page 4 undefined on inpu
+t line 559.
+
+
+Package natbib Warning: Citation `Current1990' on page 4 undefined on input lin
+e 562.
+
+
+Package natbib Warning: Citation `Erkut1989' on page 4 undefined on input line 
+566.
+
+
+Package natbib Warning: Citation `Erkut1996' on page 4 undefined on input line 
+569.
+
+
+Package natbib Warning: Citation `Colebrook2007' on page 4 undefined on input l
+ine 573.
+
+
+Package natbib Warning: Citation `Paul2017' on page 4 undefined on input line 5
+79.
+
+
+Package natbib Warning: Citation `Kinay2019' on page 4 undefined on input line 
+581.
+
+
+Package natbib Warning: Citation `Kuby1987' on page 4 undefined on input line 5
+88.
+
+
+Package natbib Warning: Citation `Church2022' on page 4 undefined on input line
+ 589.
+
+
+Package natbib Warning: Citation `Marti2022' on page 4 undefined on input line 
+590.
+
+
+Package natbib Warning: Citation `Rezaeisabzevar2020' on page 4 undefined on in
+put line 600.
+
+
+Package natbib Warning: Citation `Korucu2012' on page 4 undefined on input line
+ 602.
+
+
+Package natbib Warning: Citation `Spigolon2018' on page 4 undefined on input li
+ne 604.
+
+
+Package natbib Warning: Citation `Demesouka2019' on page 4 undefined on input l
+ine 606.
+
+
+Package natbib Warning: Citation `EiseltMarianov2014' on page 4 undefined on in
+put line 611.
+
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 4 undefined on inpu
+t line 612.
+
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 4 undefined on inpu
+t line 616.
+
+
+Package natbib Warning: Citation `AzancortNeto2021' on page 4 undefined on inpu
+t line 621.
+
+
+Package natbib Warning: Citation `Costa2020' on page 4 undefined on input line 
+622.
+
+[4]
+
+Package natbib Warning: Citation `Choo1999' on page 5 undefined on input line 6
+53.
+
+
+Package natbib Warning: Citation `Liesio2021' on page 5 undefined on input line
+ 657.
+
+
+Underfull \hbox (badness 7667) in paragraph at lines 672--675
+[]\T1/stix/m/n/10 This sec-tion de-fines the sit-ing prob-lem for-mally
+
+Underfull \hbox (badness 7168) in paragraph at lines 672--675
+\T1/stix/m/n/10 normalisation--assembly com-bi-na-tions are sub-se-quently
+
+Package natbib Warning: Citation `Erkut1996' on page 5 undefined on input line 
+691.
+
+
+Package natbib Warning: Citation `MoonChaudhry1984' on page 5 undefined on inpu
+t line 691.
+
+
+Package natbib Warning: Citation `Kuby1987' on page 5 undefined on input line 6
+93.
+
+
+Package natbib Warning: Citation `Marti2022' on page 5 undefined on input line 
+693.
+
+
+Overfull \hbox (13.1244pt too wide) detected at line 702
+ $\LS2/stixcal/m/n/10 T \LS1/stix/m/n/10 = [] \LS1/stix/m/it/10 t ” \LS2/stixca
+l/m/n/10 S  \LS1/stix/m/n/10 :  \LS2/stixex/m/n/10 \LS1/stix/m/it/10 t\LS2/sti
+xex/m/n/10  \LS1/stix/m/n/10 = 3\LS1/stix/m/it/10 ;  t[][] [];  \LS2/stixex/m/
+n/10 \LS2/stixcal/m/n/10 T\LS2/stixex/m/n/10  \LS1/stix/m/n/10 = 1[]944[]653\
+LS1/stix/m/it/10 :$  
+
+LaTeX Warning: Reference `sec:coding' on page 5 undefined on input line 768.
+
+
+Underfull \hbox (badness 1874) in paragraph at lines 777--780
+ []\T1/stix/m/it/11 What the bench-mark is, and is not.[] $\LS1/stix/b/n/10 F$ 
+\T1/stix/m/n/10 is a three-
+
+Underfull \hbox (badness 2073) in paragraph at lines 777--780
+\T1/stix/m/n/10 in-de-pen-dent ob-jec-tives: each com-po-nent is an ad-di-tive
+[5]
+
+Package natbib Warning: Citation `Liesio2007' on page 6 undefined on input line
+ 783.
+
+
+Package natbib Warning: Citation `Liesio2008' on page 6 undefined on input line
+ 783.
+
+
+Package natbib Warning: Citation `Yang2015SMAAPO' on page 6 undefined on input 
+line 783.
+
+
+Package natbib Warning: Citation `Berube2009' on page 6 undefined on input line
+ 784.
+
+
+Package natbib Warning: Citation `EiseltMarianov2014' on page 6 undefined on in
+put line 786.
+
+
+Overfull \hbox (31.15796pt too wide) detected at line 817
+ $[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 t\LS1/stix/m/n/10 / = []  []  [][] \LS1
+/stix/m/it/10 ;$  
+
+LaTeX Warning: Reference `sec:santiago' on page 6 undefined on input line 840.
+
+(figures/fig_workflow.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarypositioning.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibraryshapes.geometric.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/shapes\
+pgflibraryshapes.geometric.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryarrows.meta.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarycalc.code.tex)
+
+LaTeX Warning: Reference `sec:kappa' on page 6 undefined on input line 50.
+
+)
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 6 undefined on inpu
+t line 879.
+
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 6 undefined on inpu
+t line 884.
+
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 6 undefined on inpu
+t line 889.
+
+
+LaTeX Warning: Reference `sec:coding' on page 6 undefined on input line 901.
+
+
+Package natbib Warning: Citation `Andrade2015' on page 6 undefined on input lin
+e 903.
+
+
+Package natbib Warning: Citation `Andrade2015' on page 6 undefined on input lin
+e 908.
+
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 6 undefined on inpu
+t line 911.
+
+[6]
+
+Package natbib Warning: Citation `Andrade2015' on page 7 undefined on input lin
+e 953.
+
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 7 undefined on inpu
+t line 954.
+
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 7 undefined on inpu
+t line 955.
+
+
+Package natbib Warning: Citation `Saaty1990' on page 7 undefined on input line 
+960.
+
+
+Package natbib Warning: Citation `Saaty1990' on page 7 undefined on input line 
+961.
+
+
+Package natbib Warning: Citation `Saaty2008' on page 7 undefined on input line 
+961.
+
+
+Package natbib Warning: Citation `Jahan2015' on page 7 undefined on input line 
+969.
+
+
+Package natbib Warning: Citation `Aytekin2021' on page 7 undefined on input lin
+e 969.
+
+
+Overfull \hbox (20.05048pt too wide) detected at line 980
+[]
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 7 undefined on inpu
+t line 999.
+
+
+Package natbib Warning: Citation `Hwang1981' on page 7 undefined on input line 
+1001.
+
+
+Package natbib Warning: Citation `OpricovicTzeng2004' on page 7 undefined on in
+put line 1027.
+
+
+Package natbib Warning: Citation `GarciaCascales2012' on page 7 undefined on in
+put line 1028.
+
+
+Package natbib Warning: Citation `Kuo2017' on page 7 undefined on input line 10
+28.
+
+[7]
+
+Package natbib Warning: Citation `Hwang1981' on page 8 undefined on input line 
+1035.
+
+
+Package natbib Warning: Citation `OpricovicTzeng2004' on page 8 undefined on in
+put line 1035.
+
+
+Package natbib Warning: Citation `Brans1986' on page 8 undefined on input line 
+1037.
+
+
+Package natbib Warning: Citation `Mareschal2008' on page 8 undefined on input l
+ine 1037.
+
+
+Package natbib Warning: Citation `BransMareschal1992' on page 8 undefined on in
+put line 1055.
+
+
+Package natbib Warning: Citation `Mavrotas2006' on page 8 undefined on input li
+ne 1055.
+
+
+Package natbib Warning: Citation `VetscheraDeAlmeida2012' on page 8 undefined o
+n input line 1055.
+
+[8 <./figures/fig_F4_map.pdf>]
+Underfull \hbox (badness 1270) in paragraph at lines 1073--1075
+[]\T1/stix/m/n/10 A dom-i-nance test in-volves weights at three dis-tinct
+
+Underfull \hbox (badness 1297) in paragraph at lines 1080--1082
+[]$\LS1/stix/m/it/10 w[]$\T1/stix/m/n/10 : the weights used to build the ref-er
+-ence set,
+
+LaTeX Warning: Reference `tab:contrasts' on page 9 undefined on input line 1096
+.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 9 undefined on input line 1102.
+
+
+Underfull \hbox (badness 5189) in paragraph at lines 1140--1148
+\T1/stix/m/n/10 rather than fron-tier mem-ber-ship. With $\LS1/stix/m/it/10 V[]
+\LS1/stix/m/n/10 .\LS1/stix/m/it/10 t\LS1/stix/m/n/10 ; \LS1/stix/m/it/10 w\LS1
+/stix/m/n/10 / =
+
+Underfull \hbox (badness 1221) in paragraph at lines 1172--1176
+[]\T1/stix/b/n/10 Bootstrap pair-ing\T1/stix/m/n/10 : repli-cates are paired by
+ draw
+[9]
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 10 undefined on inp
+ut line 1188.
+
+
+Package natbib Warning: Citation `GarciaCascales2012' on page 10 undefined on i
+nput line 1196.
+
+
+Underfull \hbox (badness 1082) in paragraph at lines 1200--1217
+[]\T1/stix/m/n/10 The main ex-per-i-ment is a bal-anced $\LS1/stix/m/n/10 2[]$\
+T1/stix/m/n/10 : ag-gre-ga-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 1200--1217
+\LS1/stix/m/n/10 ^[]\LS1/stix/m/it/10 ; []\LS1/stix/m/n/10 `$ $ù$ \T1/stix/m/n/
+10 nor-mal-i-sa-tion $\LS1/stix/m/n/10 ^[]\LS1/stix/m/it/10 ; []\LS1/stix/m/n/1
+0 `$
+
+Underfull \hbox (badness 1888) in paragraph at lines 1200--1217
+\LS1/stix/m/n/10 ù$ \T1/stix/m/n/10 as-sem-bly $\LS1/stix/m/n/10 ^[]\LS1/stix/m
+/it/10 ; []\LS1/stix/m/n/10 `$\T1/stix/m/n/10 , eval-u-ated in $\LS1/stix/m/it/
+10 Q[]\LS1/stix/m/n/10 [\LS2/stixcal/m/n/10 A[]\LS1/stix/m/n/10 ]$\T1/stix/m/n/
+10 . A
+
+Underfull \hbox (badness 1377) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 wider de-sign adds VIKOR, PROMETHEE II and rank
+
+Underfull \hbox (badness 2020) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 re-dun-dant be-cause VIKOR is in-vari-ant to per-criterion
+
+Underfull \hbox (badness 10000) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 so VIKOR$\LS1/stix/m/n/10 ù$\T1/stix/m/n/10 vector du-pli-cates
+ VIKOR$\LS1/stix/m/n/10 ù$\T1/stix/m/n/10 min--max) and
+
+Underfull \hbox (badness 3323) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 Ef-fects are re-ported in per-cent-age points with $\LS1/stix/m
+/n/10 2[]000$\T1/stix/m/n/10 -
+
+Underfull \hbox (badness 3849) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 for mul-ti-plic-ity; con-trasts other than the pre-specified
+
+Package natbib Warning: Citation `KeeneyRaiffa1976' on page 10 undefined on inp
+ut line 1231.
+
+
+Package natbib Warning: Citation `BeltonStewart2002' on page 10 undefined on in
+put line 1231.
+
+
+Package natbib Warning: Citation `Choo1999' on page 10 undefined on input line 
+1231.
+
+
+Package natbib Warning: Citation `BeltonStewart2002' on page 10 undefined on in
+put line 1234.
+
+
+LaTeX Warning: Reference `sec:alignment' on page 10 undefined on input line 124
+6.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1271--1276
+\T1/stix/m/it/10 wise nor-mal-i-sa-tion ap-plied to cri-te-rion $\LS1/stix/m/it
+/10 j$\T1/stix/m/it/10 , and let
+
+Underfull \hbox (badness 3646) in paragraph at lines 1271--1276
+\LS1/stix/m/it/10 A[] \LS1/stix/m/n/10 = [][] \LS1/stix/m/it/10 n[]\LS1/stix/m/
+n/10 .\LS1/stix/m/it/10 x[]\LS1/stix/m/n/10 / * [][] \LS1/stix/m/it/10 n[]\LS1/
+stix/m/n/10 .\LS1/stix/m/it/10 x[]\LS1/stix/m/n/10 /$ \T1/stix/m/it/10 be the \
+T1/stix/m/n/10 am-pli-tude
+
+Underfull \hbox (badness 1342) in paragraph at lines 1271--1276
+\T1/stix/m/it/10 of the nor-malised col-umn. In any ad-di-tive ag-gre-ga-tion
+[10]
+
+LaTeX Warning: Reference `tab:tvorder' on page 11 undefined on input line 1319.
+
+
+
+Overfull \hbox (1.28632pt too wide) detected at line 1433
+[]
+
+Underfull \hbox (badness 3343) in paragraph at lines 1433--1443
+\T1/stix/m/n/10 so max-imis-ing $[][] \LS1/stix/m/it/10 s\LS1/stix/m/n/10 .\LS1
+/stix/m/it/10 a\LS1/stix/m/n/10 /$ \T1/stix/m/n/10 is equiv-a-lent to min-imis-
+ing
+
+Underfull \hbox (badness 2181) in paragraph at lines 1433--1443
+\T1/stix/m/n/10 of the three ob-jec-tives in their own senses (min-imise
+
+Underfull \hbox (badness 10000) in paragraph at lines 1433--1443
+\LS1/stix/m/it/10 F[]$ \T1/stix/m/n/10 and $\LS1/stix/m/it/10 F[]$\T1/stix/m/n/
+10 , max-imise $\LS1/stix/m/it/10 F[]$\T1/stix/m/n/10 ). Sup-pose $\LS1/stix/m/
+it/10 T[]$ \T1/stix/m/n/10 dom-i-nated
+
+Underfull \hbox (badness 3158) in paragraph at lines 1433--1443
+\LS1/stix/m/it/10 T[]$\T1/stix/m/n/10 , that is $\LS1/stix/m/it/10 F[]\LS1/stix
+/m/n/10 .\LS1/stix/m/it/10 T[]\LS1/stix/m/n/10 / \LS2/stixcal/m/n/10 f \LS1/sti
+x/m/it/10 F[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 T[]\LS1/stix/m/n/10 /$\T1/stix
+/m/n/10 , $\LS1/stix/m/it/10 F[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 T[]\LS1/sti
+x/m/n/10 / \LS2/stixcal/m/n/10 f \LS1/stix/m/it/10 F[]\LS1/stix/m/n/10 .\LS1/st
+ix/m/it/10 T[]\LS1/stix/m/n/10 /$\T1/stix/m/n/10 ,
+
+Underfull \hbox (badness 3635) in paragraph at lines 1433--1443
+\T1/stix/m/n/10 whence $[][] \LS1/stix/m/it/10 s\LS1/stix/m/n/10 .\LS1/stix/m/i
+t/10 a\LS1/stix/m/n/10 / \LS1/stix/m/it/10 > [][] s\LS1/stix/m/n/10 .\LS1/stix/
+m/it/10 a\LS1/stix/m/n/10 /$\T1/stix/m/n/10 , con-tra-dict-ing the
+[11]
+Underfull \hbox (badness 1194) in paragraph at lines 1498--1514
+[]\T1/stix/m/n/10 Equation [] is im-me-di-ate from []: $\LS2/stixex/m/n/10 Ò\LS
+1/stix/m/it/10 ^^N\LS2/stixex/m/n/10 Ò[] \LS1/stix/m/n/10 =
+
+Underfull \hbox (badness 4096) in paragraph at lines 1498--1514
+\T1/stix/m/n/10 let $\LS1/stix/m/it/10 P[] \LS1/stix/m/n/10 = [][] \LS1/stix/m/
+it/10 ^^N[]$\T1/stix/m/n/10 . Since $[][] \LS1/stix/m/it/10 ^^N[] \LS1/stix/m/n
+/10 = 0$ \T1/stix/m/n/10 we have
+
+Underfull \hbox (badness 1122) in paragraph at lines 1498--1514
+\T1/stix/m/n/10 part is con-cen-trated on a sin-gle com-po-nent). There-fore
+
+LaTeX Warning: Reference `sec:practice' on page 12 undefined on input line 1527
+.
+
+
+Package natbib Warning: Citation `Geoffrion1968' on page 12 undefined on input 
+line 1578.
+
+
+LaTeX Warning: Reference `sec:e1' on page 12 undefined on input line 1609.
+
+
+LaTeX Warning: Reference `sec:santiago' on page 12 undefined on input line 1610
+.
+
+[12]
+
+LaTeX Warning: Reference `sec:e1' on page 13 undefined on input line 1637.
+
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 1701.
+
+
+Underfull \hbox (badness 5985) in paragraph at lines 1719--1725
+[]\T1/stix/m/it/10 Derivation. \T1/stix/m/n/10 The range of $\LS1/stix/m/it/10 
+v[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 a\LS1/stix/m/n/10 /$ \T1/stix/m/n/10 ove
+r all sites is
+
+Underfull \hbox (badness 1052) in paragraph at lines 1719--1725
+\LS1/stix/m/n/10 .[][] [].\LS1/stix/m/it/10 a\LS1/stix/m/n/10 / * [][] [].\LS1/
+stix/m/it/10 a\LS1/stix/m/n/10 //_\LS2/stixex/m/n/10 Ò[]Ò[] \LS1/stix/m/n/10 = 
+\LS1/stix/m/it/10 ^^Z[]$\T1/stix/m/n/10 , so $\LS1/stix/m/it/10 A[] \LS1/stix/m
+/n/10 = \LS1/stix/m/it/10 ^^Z[]$
+[13]
+Underfull \hbox (badness 3396) in paragraph at lines 1852--1857
+\T1/stix/m/n/10 is the only nor-mal-i-sa-tion that pre-serves elicited
+
+Underfull \hbox (badness 10000) in paragraph at lines 1852--1857
+\T1/stix/m/n/10 weights in ad-di-tive ag-gre-ga-tions (Sec-tion [][]6.2[][]).
+
+Underfull \hbox (badness 3590) in paragraph at lines 1852--1857
+\T1/stix/m/n/10 Un-der SAW, where the Lemma ap-plies ex-actly,
+[14 <./figures/fig_F1_slope_weights.pdf>]
+
+LaTeX Warning: Reference `sec:assembly' on page 15 undefined on input line 1860
+.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 15 undefined on input line 1860.
+
+
+LaTeX Warning: Reference `sec:santiago' on page 15 undefined on input line 1863
+.
+
+
+Underfull \hbox (badness 1163) in paragraph at lines 1866--1871
+[]\T1/stix/m/it/10 Aggregation ef-fect (SAW vs. TOP-SIS vs. VIKOR):
+
+LaTeX Warning: Reference `sec:coding' on page 15 undefined on input line 1874.
+
+
+LaTeX Warning: Reference `tab:coding2x2' on page 15 undefined on input line 187
+4.
+
+
+LaTeX Warning: Reference `sec:base' on page 15 undefined on input line 1885.
+
+
+LaTeX Warning: Reference `sec:lemmaconf' on page 15 undefined on input line 188
+6.
+
+
+LaTeX Warning: Reference `sec:factorial' on page 15 undefined on input line 188
+7.
+
+
+LaTeX Warning: Reference `sec:alignment' on page 15 undefined on input line 188
+7.
+
+
+LaTeX Warning: Reference `sec:coding' on page 15 undefined on input line 1889.
+
+
+LaTeX Warning: Reference `sec:greedy' on page 15 undefined on input line 1890.
+
+
+LaTeX Warning: Reference `sec:e1' on page 15 undefined on input line 1890.
+
+
+LaTeX Warning: Reference `sec:e6' on page 15 undefined on input line 1890.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 15 undefined on input line 1893.
+
+
+LaTeX Warning: Reference `tab:canonical' on page 15 undefined on input line 190
+1.
+
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 15 undefined on inp
+ut line 1906.
+
+
+LaTeX Warning: Reference `fig:pareto' on page 15 undefined on input line 1915.
+
+
+LaTeX Warning: Reference `fig:pareto' on page 15 undefined on input line 1936.
+
+
+LaTeX Warning: Reference `sec:coding' on page 15 undefined on input line 1962.
+
+
+LaTeX Warning: Reference `tab:canonical' on page 15 undefined on input line 198
+0.
+
+
+LaTeX Warning: Reference `tab:canonical' on page 15 undefined on input line 198
+0.
+
+
+LaTeX Warning: Reference `tab:tvorder' on page 15 undefined on input line 1997.
+
+
+
+LaTeX Warning: Reference `tab:factorial' on page 15 undefined on input line 204
+2.
+
+
+LaTeX Warning: Reference `tab:contrasts' on page 15 undefined on input line 204
+3.
+
+
+LaTeX Warning: Reference `tab:factorial' on page 15 undefined on input line 205
+3.
+
+[15]
+
+LaTeX Warning: Reference `tab:factorial' on page 16 undefined on input line 206
+6.
+
+[16 <./figures/fig_F3_pareto.pdf>]
+
+LaTeX Warning: Reference `sec:kappa' on page 17 undefined on input line 2098.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 17 undefined on input line 2125.
+
+
+LaTeX Warning: Reference `sec:assembly' on page 17 undefined on input line 2125
+.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 17 undefined on input line 2148.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2144--2166
+[]\T1/stix/m/n/10 The ag-gre-ga-tion con-trast of $\LS1/stix/m/n/10 *0\LS1/stix
+/m/it/10 :\LS1/stix/m/n/10 4$ \T1/stix/m/n/10 pp ($\LS1/stix/m/n/10 95~$ \T1/st
+ix/m/n/10 CI
+
+Underfull \hbox (badness 1314) in paragraph at lines 2144--2166
+\LS1/stix/m/n/10 [*2\LS1/stix/m/it/10 :\LS1/stix/m/n/10 2\LS1/stix/m/it/10 ;  \
+LS1/stix/m/n/10 +1\LS1/stix/m/it/10 :\LS1/stix/m/n/10 3]$\T1/stix/m/n/10 ) has 
+a pooled mean equiv-a-lent to zero at
+
+Underfull \hbox (badness 1484) in paragraph at lines 2144--2166
+\T1/stix/m/n/10 At $\LS1/stix/m/it/10 ^^T \LS1/stix/m/n/10 = 50$ \T1/stix/m/n/1
+0 the same con-trast is $\LS1/stix/m/n/10 +20\LS1/stix/m/it/10 :\LS1/stix/m/n/1
+0 4$ \T1/stix/m/n/10 pp ($\LS1/stix/m/n/10 95~$ \T1/stix/m/n/10 CI
+
+Underfull \hbox (badness 1320) in paragraph at lines 2144--2166
+\LS1/stix/m/n/10 [+17\LS1/stix/m/it/10 :\LS1/stix/m/n/10 7\LS1/stix/m/it/10 ;  
+\LS1/stix/m/n/10 +23\LS1/stix/m/it/10 :\LS1/stix/m/n/10 2]$\T1/stix/m/n/10 ); S
+ec-tion [] shows that both val-ues lie
+
+Underfull \hbox (badness 1325) in paragraph at lines 2144--2166
+\T1/stix/m/n/10 ($\LS1/stix/m/n/10 95~$ \T1/stix/m/n/10 CI $\LS1/stix/m/n/10 [*
+11\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6\LS1/stix/m/it/10 ;  \LS1/stix/m/n/10 *5
+\LS1/stix/m/it/10 :\LS1/stix/m/n/10 2]$\T1/stix/m/n/10 ) un-der min--max$\LS1/s
+tix/m/n/10 ù$\T1/stix/m/n/10 greedy, where
+
+Underfull \hbox (badness 1142) in paragraph at lines 2144--2166
+\T1/stix/m/n/10 CI $\LS1/stix/m/n/10 [2\LS1/stix/m/it/10 :\LS1/stix/m/n/10 0\LS
+1/stix/m/it/10 ;  \LS1/stix/m/n/10 6\LS1/stix/m/it/10 :\LS1/stix/m/n/10 8]$\T1/
+stix/m/n/10 ) un-der vector$\LS1/stix/m/n/10 ù$\T1/stix/m/n/10 optimal, where S
+AW has a
+
+LaTeX Warning: Reference `tab:factorial' on page 17 undefined on input line 218
+9.
+
+
+LaTeX Warning: Reference `tab:contrasts' on page 17 undefined on input line 218
+9.
+
+[17]
+
+LaTeX Warning: Reference `sec:greedy' on page 18 undefined on input line 2199.
+
+
+LaTeX Warning: Reference `sec:e1' on page 18 undefined on input line 2219.
+
+
+LaTeX Warning: Reference `sec:santiago' on page 18 undefined on input line 2222
+.
+
+
+LaTeX Warning: Reference `tab:alignment' on page 18 undefined on input line 224
+1.
+
+
+Underfull \hbox (badness 1033) in paragraph at lines 2278--2287
+\LS1/stix/m/n/10 [38\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6\LS1/stix/m/it/10 ; \L
+S1/stix/m/n/10 47\LS1/stix/m/it/10 :\LS1/stix/m/n/10 8]$ \T1/stix/m/n/10 pp); t
+he sym-met-ric mis-align-ment (min--max
+
+Underfull \hbox (badness 3746) in paragraph at lines 2278--2287
+\T1/stix/m/n/10 score against $\LS2/stixcal/m/n/10 F[]$\T1/stix/m/n/10 ) costs 
+only $\LS1/stix/m/n/10 5\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6$ \T1/stix/m/n/10 
+pp ($\LS1/stix/m/n/10 [3\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6\LS1/stix/m/it/10 
+; \LS1/stix/m/n/10 7\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6]$ \T1/stix/m/n/10 pp)
+.
+
+Underfull \hbox (badness 2772) in paragraph at lines 2278--2287
+\T1/stix/m/n/10 Un-der op-ti-mal as-sem-bly, a wrong score nor-mal-i-sa-tion
+
+Overfull \hbox (5.7904pt too wide) in paragraph at lines 2326--2336
+ [][] 
+
+Package natbib Warning: Citation `Andrade2015' on page 18 undefined on input li
+ne 2355.
+
+
+LaTeX Warning: Reference `tab:coding2x2' on page 18 undefined on input line 236
+4.
+
+
+Underfull \hbox (badness 1348) in paragraph at lines 2340--2373
+[]\T1/stix/m/n/10 Scoring \T1/stix/m/it/10 as-pect \T1/stix/m/n/10 as a con-tin
+-u-ous ge-o-graphic az-imuth
+
+Underfull \hbox (badness 2980) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 while the ob-jec-tives use a bi-nary SE-facing in-di-ca-tor
+
+Underfull \hbox (badness 1342) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 lie in the lower-middle range of the scale and re-ceive
+
+Underfull \hbox (badness 3128) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 em-pir-i-cal find-ing; those az-imuths be-long to the class
+
+Underfull \hbox (badness 3333) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 the SE-facing in-di-ca-tor is a de-ter-min-is-tic func-tion of
+
+Underfull \hbox (badness 2875) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 cod-ing alone (Ta-ble []). With a con-sis-tent en-cod-ing,
+
+Underfull \hbox (badness 1112) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 value; this is there-fore a dis-tinct fail-ure mode, not the
+[18]
+
+LaTeX Warning: Reference `tab:factorial' on page 19 undefined on input line 238
+1.
+
+
+Package natbib Warning: Citation `Erkut1996' on page 19 undefined on input line
+ 2397.
+
+
+Package natbib Warning: Citation `MoonChaudhry1984' on page 19 undefined on inp
+ut line 2397.
+
+
+LaTeX Warning: Reference `tab:e1' on page 19 undefined on input line 2433.
+
+
+LaTeX Warning: Reference `tab:e1' on page 19 undefined on input line 2478.
+
+
+LaTeX Warning: Reference `tab:e1' on page 19 undefined on input line 2487.
+
+[19]
+
+LaTeX Warning: Reference `sec:e1' on page 20 undefined on input line 2541.
+
+[20]
+
+LaTeX Warning: Reference `rem:TVW' on page 21 undefined on input line 2616.
+
+
+Overfull \hbox (0.56549pt too wide) in paragraph at lines 2629--2638
+[]\T1/stix/m/n/10 This anal-y-sis was spec-i-fied (PRE-SPEC_E7_KAPPA.md,
+
+Underfull \hbox (badness 2005) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 amend-ments A1--A2, in the repli-ca-tion archive) be-fore
+
+Underfull \hbox (badness 3471) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 the E7 run but af-ter the main fac-to-rial re-sults were
+
+Underfull \hbox (badness 1728) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 known; we treat it as ex-ploratory through-out. Weights
+
+Underfull \hbox (badness 1484) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 are drawn as $\LS1/stix/b/n/10 w \LS1/stix/m/n/10 Ì [].\LS1/sti
+x/m/it/10 ^^T \LS1/stix/b/n/10 w[]\LS1/stix/m/n/10 /$ \T1/stix/m/n/10 with the 
+AHP weights
+
+Underfull \hbox (badness 10000) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 as $\LS1/stix/b/n/10 w[]$\T1/stix/m/n/10 ; smaller $\LS1/stix/m
+/it/10 ^^T$ \T1/stix/m/n/10 means more dis-persed weights
+
+LaTeX Warning: Reference `sec:factorial' on page 21 undefined on input line 264
+1.
+
+
+LaTeX Warning: Reference `fig:kappa' on page 21 undefined on input line 2649.
+
+
+LaTeX Warning: Reference `sec:santiago' on page 21 undefined on input line 2661
+.
+
+
+Underfull \hbox (badness 2913) in paragraph at lines 2639--2662
+\T1/stix/m/n/10 in-for-ma-tive cells; Sec-tion []) de-creases mono-ton-i-cally
+
+Underfull \hbox (badness 1242) in paragraph at lines 2639--2662
+\T1/stix/m/n/10 at the de-ter-min-is-tic limit ($\LS1/stix/m/it/10 ^^T \LS1/sti
+xsf/m/n/10 ô \LS1/stix/m/n/10 ÿ$\T1/stix/m/n/10 , nom-i-nal weights;
+
+LaTeX Warning: Reference `sec:assembly' on page 21 undefined on input line 2699
+.
+
+
+Underfull \hbox (badness 1412) in paragraph at lines 2694--2706
+[]\T1/stix/b/n/10 Assembly un-der vec-tor nor-mal-i-sa-tion. \T1/stix/m/n/10 Re
+l-a-tive to
+
+Underfull \hbox (badness 10000) in paragraph at lines 2716--2719
+[]\T1/stix/m/n/10 All 36 in-ter-vals ($\LS1/stix/m/n/10 6$ \T1/stix/m/n/10 con-
+trasts $\LS1/stix/m/n/10 ù$ $6$ \T1/stix/m/n/10 val-ues of
+
+Underfull \hbox (badness 10000) in paragraph at lines 2716--2719
+\LS1/stix/m/it/10 ^^T$\T1/stix/m/n/10 ) are un-ad-justed and de-scrip-tive, as 
+spec-i-fied in
+(santiago.tex
+
+Package natbib Warning: Citation `Cabral2012' on page 21 undefined on input lin
+e 13.
+
+
+LaTeX Warning: Reference `fig:kappa' on page 21 undefined on input line 20.
+
+[21]
+
+Package natbib Warning: Citation `Cabral2012' on page 22 undefined on input lin
+e 35.
+
+
+Package natbib Warning: Citation `Cabral2012' on page 22 undefined on input lin
+e 39.
+
+
+Package natbib Warning: Citation `Cabral2012' on page 22 undefined on input lin
+e 52.
+
+
+LaTeX Warning: Reference `sec:santiago-instances' on page 22 undefined on input
+ line 83.
+
+
+Underfull \hbox (badness 1635) in paragraph at lines 55--88
+\T1/stix/m/n/10 pre-registration, with its date and whether the af-fected
+
+Underfull \hbox (badness 1484) in paragraph at lines 55--88
+\T1/stix/m/n/10 quan-tity had been seen. Be-fore the Monte Carlo runs,
+
+Underfull \hbox (badness 1253) in paragraph at lines 55--88
+\T1/stix/m/n/10 its WFS layer re-turned HTTP500 on down-load (DEV-
+
+Underfull \hbox (badness 4266) in paragraph at lines 55--88
+\T1/stix/m/n/10 SANT-ZDTI-001); cri-te-rion A4 fell back to a sin-gle
+
+Underfull \hbox (badness 2846) in paragraph at lines 55--88
+\T1/stix/m/n/10 her-itage point when the UN-ESCO bound-ary shape-file
+
+Underfull \hbox (badness 1642) in paragraph at lines 55--88
+\T1/stix/m/n/10 eval-u-a-tion code with def-i-ni-tions al-ready used on Fogo
+
+Underfull \hbox (badness 1325) in paragraph at lines 55--88
+\T1/stix/m/n/10 quan-ti-ties had been seen: the E1 cells, which re-turned
+
+Underfull \hbox (badness 1112) in paragraph at lines 55--88
+\T1/stix/m/n/10 the eval-u-a-tion; it changes one re-ported $\LS1/stix/m/it/10 
+p$\T1/stix/m/n/10 -value and no
+
+LaTeX Warning: Reference `tab:santiago-descriptors' on page 22 undefined on inp
+ut line 104.
+
+
+LaTeX Warning: Reference `sec:santiago-k' on page 22 undefined on input line 15
+9.
+
+
+LaTeX Warning: Reference `tab:santiago-descriptors' on page 22 undefined on inp
+ut line 193.
+
+
+LaTeX Warning: Reference `sec:base' on page 22 undefined on input line 209.
+
+
+LaTeX Warning: Reference `sec:factorial' on page 22 undefined on input line 220
+.
+
+
+LaTeX Warning: Reference `sec:assembly' on page 22 undefined on input line 227.
+
+
+
+LaTeX Warning: Reference `sec:e1' on page 22 undefined on input line 236.
+
+
+LaTeX Warning: Reference `sec:factorial' on page 22 undefined on input line 253
+.
+
+
+LaTeX Warning: Reference `sec:factorial' on page 22 undefined on input line 268
+.
+
+
+LaTeX Warning: Reference `tab:santiago-predictions-sv' on page 22 undefined on 
+input line 302.
+
+
+LaTeX Warning: Reference `sec:base' on page 22 undefined on input line 318.
+
+
+LaTeX Warning: Reference `sec:e1' on page 22 undefined on input line 326.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 22 undefined on input line 334.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 22 undefined on input line 340.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 22 undefined on input line 349.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 22 undefined on input line 365.
+
+[22]
+
+LaTeX Warning: Reference `sec:factorial' on page 23 undefined on input line 410
+.
+
+
+LaTeX Warning: Reference `sec:e1' on page 23 undefined on input line 429.
+
+
+LaTeX Warning: Reference `fig:kappa' on page 23 undefined on input line 459.
+
+
+LaTeX Warning: Reference `fig:kappa' on page 23 undefined on input line 465.
+
+
+LaTeX Warning: No positions in optional float specifier.
+               Default added (so using `') on input line 474.
+
+
+LaTeX Warning: Reference `sec:factorial' on page 23 undefined on input line 493
+.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 23 undefined on input line 493.
+
+
+LaTeX Warning: Reference `sec:factorial' on page 23 undefined on input line 493
+.
+
+
+LaTeX Warning: Reference `sec:factorial' on page 23 undefined on input line 493
+.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 23 undefined on input line 493.
+
+
+LaTeX Warning: Reference `sec:factorial' on page 23 undefined on input line 493
+.
+
+
+Underfull \hbox (badness 6396) in paragraph at lines 493--493
+[][]\T1/cmss/bx/n/9 Figure 5:[] []\T1/cmss/m/n/9 Pooled SAW$\LS1/stix/m/n/9 *$\
+T1/cmss/m/n/9 TOPSIS ag-gre-ga-tion con-trast
+[23] [24]) [25] [26 <./figures/fig_kappa_santiago.pdf>]
+
+LaTeX Warning: Reference `tab:tvorder' on page 27 undefined on input line 2753.
+
+
+
+LaTeX Warning: Reference `tab:tvorder' on page 27 undefined on input line 2755.
+
+
+
+LaTeX Warning: Reference `sec:e1' on page 27 undefined on input line 2755.
+
+
+Underfull \hbox (badness 4291) in paragraph at lines 2747--2765
+[]\T1/stix/m/n/10 The first is \T1/stix/m/it/10 im-plicit re-weighting\T1/stix/
+m/n/10 , char-ac-terised in
+
+Underfull \hbox (badness 2126) in paragraph at lines 2747--2765
+\T1/stix/m/n/10 (Ta-ble []). Within Fogo the or-der-ing is mono-tone in
+
+LaTeX Warning: Reference `tab:coding2x2' on page 27 undefined on input line 277
+5.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2792--2798
+[]\T1/stix/m/n/10 The prac-ti-cal con-se-quences dif-fer. Dis-tri-bu-tional
+
+Underfull \hbox (badness 2547) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 re-weighting is a prop-erty of the data un-der a given
+
+Underfull \hbox (badness 5592) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 nor-mal-i-sa-tion; it can be quan-ti-fied and, if ac-cepted,
+
+Underfull \hbox (badness 5771) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 doc-u-mented. Cri-te-rion cod-ing mis-match is avoid-able:
+
+Underfull \hbox (badness 1024) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 same en-cod-ing for each cri-te-rion be-fore ap-ply-ing ex-act
+
+Package natbib Warning: Citation `BransMareschal1992' on page 27 undefined on i
+nput line 2803.
+
+
+Package natbib Warning: Citation `Mavrotas2006' on page 27 undefined on input l
+ine 2804.
+
+
+Package natbib Warning: Citation `VetscheraDeAlmeida2012' on page 27 undefined 
+on input line 2805.
+
+
+Package natbib Warning: Citation `DeAlmeidaVetschera2012' on page 27 undefined 
+on input line 2807.
+
+
+Underfull \hbox (badness 1466) in paragraph at lines 2801--2809
+[]\T1/stix/m/n/10 The clos-est an-tecedents study port-fo-lio con-struc-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 2801--2809
+\T1/stix/m/n/10 from multi-criteria scores. \T1/stix/b/n/10 ? \T1/stix/m/n/10 i
+n-tro-duced con-strained
+
+Underfull \hbox (badness 1320) in paragraph at lines 2801--2809
+\T1/stix/m/n/10 se-lec-tion over PROMETHEE flows; \T1/stix/b/n/10 ? \T1/stix/m/
+n/10 com-bined multi-
+
+Underfull \hbox (badness 1874) in paragraph at lines 2801--2809
+\T1/stix/m/n/10 criteria scores with bi-nary pro-gram-ming; \T1/stix/b/n/10 ? \
+T1/stix/m/n/10 for-mu-lated
+
+Package natbib Warning: Citation `DeAlmeidaVetschera2012' on page 27 undefined 
+on input line 2812.
+
+
+Package natbib Warning: Citation `Liesio2007' on page 27 undefined on input lin
+e 2818.
+
+
+Package natbib Warning: Citation `Liesio2008' on page 27 undefined on input lin
+e 2818.
+
+
+Package natbib Warning: Citation `Yang2015SMAAPO' on page 27 undefined on input
+ line 2819.
+
+
+Package natbib Warning: Citation `MoonChaudhry1984' on page 27 undefined on inp
+ut line 2826.
+
+
+Package natbib Warning: Citation `Erkut1996' on page 27 undefined on input line
+ 2826.
+
+
+LaTeX Warning: Reference `sec:greedy' on page 27 undefined on input line 2829.
+
+
+Package natbib Warning: Citation `Choo1999' on page 27 undefined on input line 
+2836.
+
+
+Package natbib Warning: Citation `Milani2005' on page 27 undefined on input lin
+e 2838.
+
+
+Package natbib Warning: Citation `Weber1988' on page 27 undefined on input line
+ 2843.
+
+
+Package natbib Warning: Citation `Poyhonen2001' on page 27 undefined on input l
+ine 2843.
+
+
+Package natbib Warning: Citation `GarciaCascales2012' on page 27 undefined on i
+nput line 2848.
+
+
+Package natbib Warning: Citation `Kuo2017' on page 27 undefined on input line 2
+849.
+
+
+Package natbib Warning: Citation `OpricovicTzeng2004' on page 27 undefined on i
+nput line 2850.
+
+
+Package natbib Warning: Citation `OpricovicTzeng2004' on page 27 undefined on i
+nput line 2865.
+
+
+LaTeX Warning: Reference `sec:coding' on page 27 undefined on input line 2878.
+
+[27]
+
+Package natbib Warning: Citation `Jahan2015' on page 28 undefined on input line
+ 2883.
+
+
+Package natbib Warning: Citation `Aytekin2021' on page 28 undefined on input li
+ne 2883.
+
+
+Package natbib Warning: Citation `Vafaei2018' on page 28 undefined on input lin
+e 2883.
+
+
+Package natbib Warning: Citation `Vafaei2022' on page 28 undefined on input lin
+e 2883.
+
+
+Package natbib Warning: Citation `Salabun2020Sym' on page 28 undefined on input
+ line 2883.
+
+
+Package natbib Warning: Citation `Milani2005' on page 28 undefined on input lin
+e 2891.
+
+
+Package natbib Warning: Citation `Choo1999' on page 28 undefined on input line 
+2902.
+
+
+Package natbib Warning: Citation `Bouyssou1992' on page 28 undefined on input l
+ine 2908.
+
+
+Package natbib Warning: Citation `Marchant1996' on page 28 undefined on input l
+ine 2910.
+
+
+LaTeX Warning: Reference `tab:e1' on page 28 undefined on input line 2946.
+
+
+LaTeX Warning: Reference `sec:kappa' on page 28 undefined on input line 2951.
+
+
+LaTeX Warning: Reference `sec:e1' on page 28 undefined on input line 2959.
+
+
+LaTeX Warning: Reference `sec:normliterature' on page 28 undefined on input lin
+e 2968.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2953--2969
+[]\T1/stix/m/n/10 Third, re-port ef-fec-tive weights along-side elicited
+
+Underfull \hbox (badness 1527) in paragraph at lines 2953--2969
+\T1/stix/m/n/10 alone. Where elicited weights carry nor-ma-tive con-tent,
+
+LaTeX Warning: Reference `sec:kappa' on page 28 undefined on input line 2987.
+
+[28]
+
+LaTeX Warning: Reference `sec:alignment' on page 29 undefined on input line 301
+8.
+
+
+LaTeX Warning: Reference `tab:tvorder' on page 29 undefined on input line 3041.
+
+
+
+LaTeX Warning: Reference `sec:e6' on page 29 undefined on input line 3083.
+
+
+Underfull \hbox (badness 1874) in paragraph at lines 3087--3092
+\T1/stix/m/n/10 ex-tract-ing a com-pa-ra-ble de-ci-sion ma-trix would re-quire
+
+Package natbib Warning: Citation `vonNitzsch1993' on page 29 undefined on input
+ line 3095.
+
+
+Package natbib Warning: Citation `Fischer1995' on page 29 undefined on input li
+ne 3095.
+
+
+Package natbib Warning: Citation `Lahdelma2002' on page 29 undefined on input l
+ine 3105.
+
+
+Package natbib Warning: Citation `Engau2020' on page 29 undefined on input line
+ 3108.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 3101--3113
+[]\T1/stix/m/it/10 Weight per-tur-ba-tion model. \T1/stix/m/n/10 Dirich-let per
+-tur-ba-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 3101--3113
+\T1/stix/m/n/10 around $\LS1/stix/m/it/10 w[]$ \T1/stix/m/n/10 rep-re-sents sym
+-met-ric un-cer-tainty in
+
+Underfull \hbox (badness 10000) in paragraph at lines 3101--3113
+\T1/stix/m/n/10 rel-a-tive weights. For struc-tured dis-agree-ment among
+
+Underfull \hbox (badness 4995) in paragraph at lines 3101--3113
+\T1/stix/m/n/10 re-la-tions de-rived from dis-tri-bu-tional as-sump-tions; our
+[29]
+
+LaTeX Warning: Reference `tab:factorial' on page 30 undefined on input line 313
+0.
+
+
+LaTeX Warning: Reference `tab:coding2x2' on page 30 undefined on input line 313
+5.
+
+
+Underfull \hbox (badness 1067) in paragraph at lines 3150--3163
+[]\T1/stix/m/n/10 The an-a-lyt-i-cal re-sults do not de-pend on the weight
+
+LaTeX Warning: Reference `tab:factorial' on page 30 undefined on input line 317
+7.
+
+
+Underfull \hbox (badness 2903) in paragraph at lines 3164--3178
+\LS1/stix/m/n/10 29\LS1/stix/m/it/10 :\LS1/stix/m/n/10 2$ \T1/stix/m/n/10 pp wh
+er-ever the ef-fect was dis-tin-guish-able from
+
+LaTeX Warning: Reference `sec:e6' on page 30 undefined on input line 3181.
+
+
+LaTeX Warning: Reference `sec:coding' on page 30 undefined on input line 3193.
+
+
+LaTeX Warning: Reference `sec:normliterature' on page 30 undefined on input lin
+e 3202.
+
+
+LaTeX Warning: Reference `sec:e1' on page 30 undefined on input line 3206.
+
+[30]
+
+LaTeX Warning: Reference `sec:coding' on page 31 undefined on input line 3240.
+
+
+Package natbib Warning: Citation `AzancortNeto2026' on page 31 undefined on inp
+ut line 3256.
+
+(main.bbl
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+[]\T1/stix/m/n/8 Azancort Neto, J.L., Gomes, E.H.C., Fre-itas, G.C.d.M., Silva,
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+\T1/stix/m/n/8 R.d.C., Ara˙jo, J.P.L.d., FrancÍs, C.R.L., 2026.  Land-fill
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+\T1/stix/m/n/8 site al-lo-ca-tion multi-objective op-ti-miza-tion with NSGA-II:
+ A
+
+Underfull \hbox (badness 5787) in paragraph at lines 45--58
+\T1/stix/m/n/8 case study on Fogo Is-land, Cape Verde.  IEEE Ac-cess 14,
+
+Underfull \hbox (badness 6332) in paragraph at lines 45--58
+\T1/stix/m/n/8 83991--84015.  doi:[][]$\T1/zi4/m/n/8 10 . 1109 / ACCESS . 2026 
+. 3697915$[][]\T1/stix/m/n/8 . GitHub: [][]$\T1/zi4/m/n/8 https :
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+\T1/zi4/m/n/8 / / github . com / Jazancort / NSGA2-[]GIS-[]Landfill-[]Optimizat
+ion-[]Cape-[]Verde$[][]\T1/stix/m/n/8 ;
+
+Underfull \hbox (badness 2409) in paragraph at lines 204--214
+[]\T1/stix/m/n/8 Costa, D.C.L., de Oliveira Costa, H.A., Cas-tro, A.P.S., Cruz,
+ E.C.,
+[31] [32])
+
+Package natbib Warning: There were undefined citations.
+
+[33] (main.aux
+
+Package natbib Warning: Citation(s) may have changed.
+(natbib)                Rerun to get citations correct.
+
+)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ )
+(see the transcript file for additional information) <C:\Users\julio\AppData\Lo
+cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss0800.pk> <C:\Users\julio\AppD
+ata\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi450\ecss0800.pk> <C:\Users\juli
+o\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecsi0900.pk> <C:\User
+s\julio\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecsx0900.pk> <C
+:\Users\julio\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss0900.
+pk><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/inconsolata
+/Inconsolata-zi4r.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1
+/public/stix/STIXGeneral-Bold.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/stix/STIXGeneral-Italic.pfb><C:/Users/julio/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/stix/STIXGeneral-Regular.pfb><C:/Users/julio/
+AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/stix-mathbb.pfb><C:/Users
+/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/stix-mathcal.pfb><
+C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/stix-mathe
+x.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/sti
+x-mathit.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/s
+tix/stix-mathrm-bold.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/stix/stix-mathrm.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/f
+onts/type1/public/stix/stix-mathscr.pfb><C:/Users/julio/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/stix/stix-mathsf.pfb>
+Output written on main.pdf (34 pages, 1529156 bytes).
+Transcript written on main.log.
+This is BibTeX, Version 0.99e (MiKTeX 26.5)
+The top-level auxiliary file: main.aux
+The style file: cas-model2-names.bst
+Database file #1: refs.bib
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(suppl_wrapper.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-06-18>
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty))
+ (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
+tex.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
+))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\xr.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
+ty) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty))) (macros_structural.tex) (macros_amplitudes.tex) (macros.tex
+(results/e1/e1_macros.tex) (macros_structural.tex)) (macros_raw_sens.tex)
+(macros_e6.tex) (macros_f8.tex) (macros_e7.tex) (macros_kappa_inf.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def) (suppl_wrapper.aux)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(suppl_wrapper.out) (suppl_wrapper.out)
+
+LaTeX Warning: No \author given.
+
+(suppl_wrapper.toc
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg))
+[1{C:/Users/julio/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
+(supplementary.tex [2]
+Overfull \hbox (16.39847pt too wide) in paragraph at lines 224--228
+[]\OT1/cmr/m/n/12 Table []2[] shows the P3 and P4 counts by fam-ily and pooled 
+for both runs. P1 ($48[]000\OML/cmm/m/it/12 =\OT1/cmr/m/n/12 48[]000$
+[3]
+Overfull \hbox (255.53941pt too wide) in paragraph at lines 241--290
+ [][] 
+[4] [5]
+Overfull \hbox (14.17932pt too wide) in paragraph at lines 424--424
+[][]\OT1/cmr/bx/n/17.28 Pre-registered De-sign and De-vi-a-tions for Ex-per-i-m
+ent E4 
+
+Overfull \hbox (21.26218pt too wide) in paragraph at lines 453--455
+[]$\OML/cmm/m/it/12 Q[] < Q[] \OT1/cmr/m/n/12 =
+[6]
+Overfull \hbox (33.71893pt too wide) in paragraph at lines 471--475
+\OT1/cmr/m/n/12 rial, not the de-clared 1000); weight ma-trix loaded from \OT1/
+cmtt/m/n/12 results/e1/e1[]weights[]k200.npy\OT1/cmr/m/n/12 ,
+
+Overfull \hbox (17.33691pt too wide) in paragraph at lines 513--514
+[]\OT1/cmr/m/it/12 Corrections to DEV-E4-002 and DEV-E4-006; in-val-i-da-tion o
+f \OT1/cmtt/m/it/12 b1[]spaceA.csv
+[7] [8]
+Overfull \hbox (127.0678pt too wide) in paragraph at lines 613--615
+[]\OT1/cmr/m/n/12 Not ap-pli-ca-ble: tab:canonical de-clared un-con-tam-i-nated
+ in \OT1/cmtt/m/n/12 docs/contamination-note.md\OT1/cmr/m/n/12 . 
+
+Overfull \hbox (16.70216pt too wide) in paragraph at lines 619--632
+[]\OT1/cmr/m/n/12 R-asp $\OMS/cmsy/m/n/12 ^^@$ \OT1/cmr/m/n/12 R-V, where
+
+Overfull \hbox (30.81158pt too wide) in paragraph at lines 664--668
+[]\OT1/cmr/m/n/12 First com-plete draft: full 2$\OMS/cmsy/m/n/12 ^^B$\OT1/cmr/m
+/n/12 2$\OMS/cmsy/m/n/12 ^^B$\OT1/cmr/m/n/12 2 fac-to-rial, tab:canonical,
+
+Overfull \hbox (2.47601pt too wide) in paragraph at lines 674--683
+[]\OT1/cmr/m/n/12 Mathematical cor-rec-tions (M1--M4): gap def-
+[9]
+Overfull \hbox (4.517pt too wide) in paragraph at lines 693--699
+[]\OT1/cmr/m/n/12 Internal re-view: ab-stract trimmed to $[]240$
+
+Overfull \hbox (27.81667pt too wide) in paragraph at lines 724--740
+\OT1/cmr/m/n/12 normalised score ma-trix \OT1/cmtt/m/n/12 X[]adj[]vec \OT1/cmr/
+m/n/12 into a copy of \OT1/cmtt/m/n/12 df[]via\OT1/cmr/m/n/12 , then passed it 
+to \OT1/cmtt/m/n/12 build[]pareto[]utils\OT1/cmr/m/n/12 .
+[10]
+Overfull \hbox (8.98083pt too wide) in paragraph at lines 793--797
+\OT1/cmr/bx/n/12 Classification: \OT1/cmr/m/n/12 Post hoc ex-ploratory. Pre-spe
+cified be-fore re-sults: \OT1/cmtt/m/n/12 corpus/PRESPEC[]E5.md\OT1/cmr/m/n/12 
+,
+
+Overfull \hbox (1.17987pt too wide) in paragraph at lines 798--803
+\OT1/cmr/bx/n/12 Research ques-tion: \OT1/cmr/m/n/12 Is the re-la-tion-ship be-
+tween within-group am-pli-tude vari-a-tion ($[][]$)
+
+Overfull \hbox (11.57712pt too wide) in paragraph at lines 844--852
+[]\OT1/cmr/m/it/12 Instance size. \OT1/cmr/m/n/12 De-clared $\OML/cmm/m/it/12 N
+ \OMS/cmsy/m/n/12 2 f\OT1/cmr/m/n/12 50\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 100\O
+ML/cmm/m/it/12 ; \OT1/cmr/m/n/12 200\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 389\OMS/
+cmsy/m/n/12 g$\OT1/cmr/m/n/12 ; ex-e-cuted $\OML/cmm/m/it/12 N \OMS/cmsy/m/n/12
+ 2 f\OT1/cmr/m/n/12 50\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 100\OML/cmm/m/it/12 ; 
+\OT1/cmr/m/n/12 200\OMS/cmsy/m/n/12 g$\OT1/cmr/m/n/12 .
+[11] [12]
+Underfull \hbox (badness 10000) in paragraph at lines 994--994
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 994--994
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 995--995
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 995--995
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 996--996
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 996--996
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 997--997
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 997--997
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 998--998
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 999--999
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 1001--1001
+[]|\OT1/cmr/m/n/12 Normalisation greedy
+
+Overfull \hbox (1.62366pt too wide) in paragraph at lines 1001--1001
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py
+
+Underfull \hbox (badness 10000) in paragraph at lines 1002--1002
+[]|\OT1/cmr/m/n/12 SAW$\OMS/cmsy/m/n/12 ^^@$\OT1/cmr/m/n/12 TOPSIS pooled
+
+Overfull \hbox (28.36142pt too wide) in paragraph at lines 1002--1002
+[]|\OT1/cmtt/m/n/12 aggregation[]strata.py| 
+
+Underfull \hbox (badness 3019) in paragraph at lines 1003--1003
+[]|\OT1/cmr/m/n/12 Optimal$\OMS/cmsy/m/n/12 ^^@$\OT1/cmr/m/n/12 greedy within
+
+Overfull \hbox (1.62366pt too wide) in paragraph at lines 1003--1003
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py
+
+Underfull \hbox (badness 3019) in paragraph at lines 1004--1004
+[]|\OT1/cmr/m/n/12 Optimal$\OMS/cmsy/m/n/12 ^^@$\OT1/cmr/m/n/12 greedy within
+
+Overfull \hbox (1.62366pt too wide) in paragraph at lines 1004--1004
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py
+
+Underfull \hbox (badness 3930) in paragraph at lines 1006--1006
+[]|\OT1/cmr/m/n/12 E1-W op-ti-mal $\OML/cmm/m/it/12 Q[] \OT1/cmr/m/n/12 =
+
+Underfull \hbox (badness 5696) in paragraph at lines 1007--1007
+[]|\OT1/cmr/m/n/12 E1-V op-ti-mal $\OML/cmm/m/it/12 Q[] \OT1/cmr/m/n/12 =
+
+Underfull \hbox (badness 10000) in paragraph at lines 1011--1011
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[][]\OML/cmm/m/it/12 ; A[]; []\OT1/cmr
+/m/n/12 ] =
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1011--1011
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 1012--1012
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[][]\OML/cmm/m/it/12 ; A[]; []\OT1/cmr
+/m/n/12 ] =
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1012--1012
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 1013--1013
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]\OML/cmm/m/it/12 ; A[]; []\OT1/cmr/m
+/n/12 ] =
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1013--1013
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1014--1014
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 1015--1015
+[]|\OT1/cmr/m/n/12 Greedy gain R1-
+
+Underfull \hbox (badness 10000) in paragraph at lines 1015--1015
+\OT1/cmr/m/n/12 2 $+11\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 8 []$ (CI
+
+Underfull \hbox (badness 10000) in paragraph at lines 1017--1017
+[]|$\OML/cmm/m/it/12 N[]=A[]$ \OT1/cmr/m/n/12 greedy (orig.
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1017--1017
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Underfull \hbox (badness 2644) in paragraph at lines 1018--1018
+[]|$\OML/cmm/m/it/12 N[]=A[]$ \OT1/cmr/m/n/12 op-ti-mal (orig.
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1018--1018
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Overfull \hbox (20.14867pt too wide) in paragraph at lines 1020--1020
+[]|\OT1/cmtt/m/n/12 compute[]b1[]spaceA.py
+
+Underfull \hbox (badness 10000) in paragraph at lines 1021--1021
+[]|$\OML/cmm/m/it/12 N[]=A$ \OT1/cmr/m/n/12 op-ti-mal
+
+Underfull \hbox (badness 10000) in paragraph at lines 1021--1021
+\OT1/cmr/m/n/12 = 100\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 0%$ (Prop.1
+
+Overfull \hbox (20.14867pt too wide) in paragraph at lines 1021--1021
+[]|\OT1/cmtt/m/n/12 compute[]b1[]spaceA.py
+
+Overfull \hbox (20.14867pt too wide) in paragraph at lines 1022--1022
+[]|\OT1/cmtt/m/n/12 compute[]b1[]spaceA.py
+
+Overfull \hbox (20.14867pt too wide) in paragraph at lines 1023--1023
+[]|\OT1/cmtt/m/n/12 compute[]b1[]spaceA.py
+
+Overfull \hbox (9.46182pt too wide) in paragraph at lines 1026--1026
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (51.02368pt too wide) in paragraph at lines 1026--1026
+[]|\OT1/cmtt/m/n/12 compute[]f8[]circularity.py
+
+Overfull \hbox (12.72568pt too wide) in paragraph at lines 1027--1027
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (51.02368pt too wide) in paragraph at lines 1027--1027
+[]|\OT1/cmtt/m/n/12 compute[]f8[]circularity.py
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 1030--1030
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Overfull \hbox (49.72826pt too wide) in paragraph at lines 989--1035
+ [][] 
+
+LaTeX Warning: Float too large for page by 289.20042pt on input line 1035.
+
+(results/e7/tab_kappa_supp.tex
+Overfull \hbox (6.63272pt too wide) in alignment at lines 17--31
+[] [] [] [] [] [] [] [] 
+)
+Overfull \hbox (17.2814pt too wide) in paragraph at lines 1183--1183
+\OT1/cmr/m/n/12 (Q2$=$100% 
+
+Overfull \hbox (7.33057pt too wide) in paragraph at lines 1197--1197
+\OT1/cmr/m/n/12 (Stage 4)|  
+
+Overfull \hbox (9.09488pt too wide) in alignment at lines 1140--1205
+[] [] [] [] [] [] 
+
+LaTeX Warning: Float too large for page by 603.69006pt on input line 1206.
+
+[13]) [14 <./figures/fig_F5_binary_amplitude.pdf>] [15] [16] [17]
+(suppl_wrapper.aux) )
+(see the transcript file for additional information) <C:\Users\julio\AppData\Lo
+cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/julio/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/ju
+lio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:
+/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmitt
+10.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfont
+s/cm/cmmi10.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/publi
+c/amsfonts/cm/cmmi12.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/amsfonts/cm/cmmi8.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/
+fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/julio/AppData/Local/Programs
+/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/julio/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/julio/AppDat
+a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/julio
+/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/User
+s/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb
+><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
+msy6.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
+nts/cm/cmsy8.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmti10.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/public/amsfonts/cm/cmti12.pfb><C:/Users/julio/AppData/Local/Programs/MiKTe
+X/fonts/type1/public/amsfonts/cm/cmti8.pfb><C:/Users/julio/AppData/Local/Progra
+ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/julio/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on suppl_wrapper.pdf (17 pages, 362762 bytes).
+Transcript written on suppl_wrapper.log.
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(suppl_wrapper.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-06-18>
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty))
+ (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
+tex.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
+))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\xr.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
+ty) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty))) (macros_structural.tex) (macros_amplitudes.tex) (macros.tex
+(results/e1/e1_macros.tex) (macros_structural.tex)) (macros_raw_sens.tex)
+(macros_e6.tex) (macros_f8.tex) (macros_e7.tex) (macros_kappa_inf.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def) (suppl_wrapper.aux)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(suppl_wrapper.out) (suppl_wrapper.out)
+
+LaTeX Warning: No \author given.
+
+(suppl_wrapper.toc
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg))
+[1{C:/Users/julio/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
+(supplementary.tex [2]
+Overfull \hbox (16.39847pt too wide) in paragraph at lines 224--228
+[]\OT1/cmr/m/n/12 Table []2[] shows the P3 and P4 counts by fam-ily and pooled 
+for both runs. P1 ($48[]000\OML/cmm/m/it/12 =\OT1/cmr/m/n/12 48[]000$
+[3]
+Overfull \hbox (255.53941pt too wide) in paragraph at lines 241--290
+ [][] 
+[4] [5]
+Overfull \hbox (14.17932pt too wide) in paragraph at lines 424--424
+[][]\OT1/cmr/bx/n/17.28 Pre-registered De-sign and De-vi-a-tions for Ex-per-i-m
+ent E4 
+
+Overfull \hbox (21.26218pt too wide) in paragraph at lines 453--455
+[]$\OML/cmm/m/it/12 Q[] < Q[] \OT1/cmr/m/n/12 =
+[6]
+Overfull \hbox (33.71893pt too wide) in paragraph at lines 471--475
+\OT1/cmr/m/n/12 rial, not the de-clared 1000); weight ma-trix loaded from \OT1/
+cmtt/m/n/12 results/e1/e1[]weights[]k200.npy\OT1/cmr/m/n/12 ,
+
+Overfull \hbox (17.33691pt too wide) in paragraph at lines 513--514
+[]\OT1/cmr/m/it/12 Corrections to DEV-E4-002 and DEV-E4-006; in-val-i-da-tion o
+f \OT1/cmtt/m/it/12 b1[]spaceA.csv
+[7] [8]
+Overfull \hbox (127.0678pt too wide) in paragraph at lines 613--615
+[]\OT1/cmr/m/n/12 Not ap-pli-ca-ble: tab:canonical de-clared un-con-tam-i-nated
+ in \OT1/cmtt/m/n/12 docs/contamination-note.md\OT1/cmr/m/n/12 . 
+
+Overfull \hbox (16.70216pt too wide) in paragraph at lines 619--632
+[]\OT1/cmr/m/n/12 R-asp $\OMS/cmsy/m/n/12 ^^@$ \OT1/cmr/m/n/12 R-V, where
+
+Overfull \hbox (30.81158pt too wide) in paragraph at lines 664--668
+[]\OT1/cmr/m/n/12 First com-plete draft: full 2$\OMS/cmsy/m/n/12 ^^B$\OT1/cmr/m
+/n/12 2$\OMS/cmsy/m/n/12 ^^B$\OT1/cmr/m/n/12 2 fac-to-rial, tab:canonical,
+
+Overfull \hbox (2.47601pt too wide) in paragraph at lines 674--683
+[]\OT1/cmr/m/n/12 Mathematical cor-rec-tions (M1--M4): gap def-
+[9]
+Overfull \hbox (4.517pt too wide) in paragraph at lines 693--699
+[]\OT1/cmr/m/n/12 Internal re-view: ab-stract trimmed to $[]240$
+
+Overfull \hbox (27.81667pt too wide) in paragraph at lines 724--740
+\OT1/cmr/m/n/12 normalised score ma-trix \OT1/cmtt/m/n/12 X[]adj[]vec \OT1/cmr/
+m/n/12 into a copy of \OT1/cmtt/m/n/12 df[]via\OT1/cmr/m/n/12 , then passed it 
+to \OT1/cmtt/m/n/12 build[]pareto[]utils\OT1/cmr/m/n/12 .
+[10]
+Overfull \hbox (8.98083pt too wide) in paragraph at lines 793--797
+\OT1/cmr/bx/n/12 Classification: \OT1/cmr/m/n/12 Post hoc ex-ploratory. Pre-spe
+cified be-fore re-sults: \OT1/cmtt/m/n/12 corpus/PRESPEC[]E5.md\OT1/cmr/m/n/12 
+,
+
+Overfull \hbox (1.17987pt too wide) in paragraph at lines 798--803
+\OT1/cmr/bx/n/12 Research ques-tion: \OT1/cmr/m/n/12 Is the re-la-tion-ship be-
+tween within-group am-pli-tude vari-a-tion ($[][]$)
+
+Overfull \hbox (11.57712pt too wide) in paragraph at lines 844--852
+[]\OT1/cmr/m/it/12 Instance size. \OT1/cmr/m/n/12 De-clared $\OML/cmm/m/it/12 N
+ \OMS/cmsy/m/n/12 2 f\OT1/cmr/m/n/12 50\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 100\O
+ML/cmm/m/it/12 ; \OT1/cmr/m/n/12 200\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 389\OMS/
+cmsy/m/n/12 g$\OT1/cmr/m/n/12 ; ex-e-cuted $\OML/cmm/m/it/12 N \OMS/cmsy/m/n/12
+ 2 f\OT1/cmr/m/n/12 50\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 100\OML/cmm/m/it/12 ; 
+\OT1/cmr/m/n/12 200\OMS/cmsy/m/n/12 g$\OT1/cmr/m/n/12 .
+[11] [12]
+Underfull \hbox (badness 10000) in paragraph at lines 994--994
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 994--994
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 995--995
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 995--995
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 996--996
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 996--996
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 997--997
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 997--997
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 998--998
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 999--999
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 1001--1001
+[]|\OT1/cmr/m/n/12 Normalisation greedy
+
+Overfull \hbox (1.62366pt too wide) in paragraph at lines 1001--1001
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py
+
+Underfull \hbox (badness 10000) in paragraph at lines 1002--1002
+[]|\OT1/cmr/m/n/12 SAW$\OMS/cmsy/m/n/12 ^^@$\OT1/cmr/m/n/12 TOPSIS pooled
+
+Overfull \hbox (28.36142pt too wide) in paragraph at lines 1002--1002
+[]|\OT1/cmtt/m/n/12 aggregation[]strata.py| 
+
+Underfull \hbox (badness 3019) in paragraph at lines 1003--1003
+[]|\OT1/cmr/m/n/12 Optimal$\OMS/cmsy/m/n/12 ^^@$\OT1/cmr/m/n/12 greedy within
+
+Overfull \hbox (1.62366pt too wide) in paragraph at lines 1003--1003
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py
+
+Underfull \hbox (badness 3019) in paragraph at lines 1004--1004
+[]|\OT1/cmr/m/n/12 Optimal$\OMS/cmsy/m/n/12 ^^@$\OT1/cmr/m/n/12 greedy within
+
+Overfull \hbox (1.62366pt too wide) in paragraph at lines 1004--1004
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py
+
+Underfull \hbox (badness 3930) in paragraph at lines 1006--1006
+[]|\OT1/cmr/m/n/12 E1-W op-ti-mal $\OML/cmm/m/it/12 Q[] \OT1/cmr/m/n/12 =
+
+Underfull \hbox (badness 5696) in paragraph at lines 1007--1007
+[]|\OT1/cmr/m/n/12 E1-V op-ti-mal $\OML/cmm/m/it/12 Q[] \OT1/cmr/m/n/12 =
+
+Underfull \hbox (badness 10000) in paragraph at lines 1011--1011
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[][]\OML/cmm/m/it/12 ; A[]; []\OT1/cmr
+/m/n/12 ] =
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1011--1011
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 1012--1012
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[][]\OML/cmm/m/it/12 ; A[]; []\OT1/cmr
+/m/n/12 ] =
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1012--1012
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 1013--1013
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]\OML/cmm/m/it/12 ; A[]; []\OT1/cmr/m
+/n/12 ] =
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1013--1013
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1014--1014
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 1015--1015
+[]|\OT1/cmr/m/n/12 Greedy gain R1-
+
+Underfull \hbox (badness 10000) in paragraph at lines 1015--1015
+\OT1/cmr/m/n/12 2 $+11\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 8 []$ (CI
+
+Underfull \hbox (badness 10000) in paragraph at lines 1017--1017
+[]|$\OML/cmm/m/it/12 N[]=A[]$ \OT1/cmr/m/n/12 greedy (orig.
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1017--1017
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Underfull \hbox (badness 2644) in paragraph at lines 1018--1018
+[]|$\OML/cmm/m/it/12 N[]=A[]$ \OT1/cmr/m/n/12 op-ti-mal (orig.
+
+Overfull \hbox (69.85744pt too wide) in paragraph at lines 1018--1018
+[]|\OT1/cmtt/m/n/12 run[]fourthcell[]consistent.py| 
+
+Overfull \hbox (20.14867pt too wide) in paragraph at lines 1020--1020
+[]|\OT1/cmtt/m/n/12 compute[]b1[]spaceA.py
+
+Underfull \hbox (badness 10000) in paragraph at lines 1021--1021
+[]|$\OML/cmm/m/it/12 N[]=A$ \OT1/cmr/m/n/12 op-ti-mal
+
+Underfull \hbox (badness 10000) in paragraph at lines 1021--1021
+\OT1/cmr/m/n/12 = 100\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 0%$ (Prop.1
+
+Overfull \hbox (20.14867pt too wide) in paragraph at lines 1021--1021
+[]|\OT1/cmtt/m/n/12 compute[]b1[]spaceA.py
+
+Overfull \hbox (20.14867pt too wide) in paragraph at lines 1022--1022
+[]|\OT1/cmtt/m/n/12 compute[]b1[]spaceA.py
+
+Overfull \hbox (20.14867pt too wide) in paragraph at lines 1023--1023
+[]|\OT1/cmtt/m/n/12 compute[]b1[]spaceA.py
+
+Overfull \hbox (9.46182pt too wide) in paragraph at lines 1026--1026
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (51.02368pt too wide) in paragraph at lines 1026--1026
+[]|\OT1/cmtt/m/n/12 compute[]f8[]circularity.py
+
+Overfull \hbox (12.72568pt too wide) in paragraph at lines 1027--1027
+[]|$\OML/cmm/m/it/12 Q[]\OT1/cmr/m/n/12 [[]] =
+
+Overfull \hbox (51.02368pt too wide) in paragraph at lines 1027--1027
+[]|\OT1/cmtt/m/n/12 compute[]f8[]circularity.py
+
+Overfull \hbox (1.9324pt too wide) in paragraph at lines 1030--1030
+[]|\OT1/cmtt/m/n/12 mc[]2cube[]fixed.py| 
+
+Overfull \hbox (49.72826pt too wide) in paragraph at lines 989--1035
+ [][] 
+
+LaTeX Warning: Float too large for page by 289.20042pt on input line 1035.
+
+(results/e7/tab_kappa_supp.tex
+Overfull \hbox (6.63272pt too wide) in alignment at lines 17--31
+[] [] [] [] [] [] [] [] 
+)
+Overfull \hbox (17.2814pt too wide) in paragraph at lines 1183--1183
+\OT1/cmr/m/n/12 (Q2$=$100% 
+
+Overfull \hbox (7.33057pt too wide) in paragraph at lines 1197--1197
+\OT1/cmr/m/n/12 (Stage 4)|  
+
+Overfull \hbox (9.09488pt too wide) in alignment at lines 1140--1205
+[] [] [] [] [] [] 
+
+LaTeX Warning: Float too large for page by 603.69006pt on input line 1206.
+
+[13]) [14 <./figures/fig_F5_binary_amplitude.pdf>] [15] [16] [17]
+(suppl_wrapper.aux) )
+(see the transcript file for additional information) <C:\Users\julio\AppData\Lo
+cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/julio/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/ju
+lio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:
+/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmitt
+10.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfont
+s/cm/cmmi10.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/publi
+c/amsfonts/cm/cmmi12.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/amsfonts/cm/cmmi8.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/
+fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/julio/AppData/Local/Programs
+/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/julio/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/julio/AppDat
+a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/julio
+/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/User
+s/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb
+><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
+msy6.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
+nts/cm/cmsy8.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmti10.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/public/amsfonts/cm/cmti12.pfb><C:/Users/julio/AppData/Local/Programs/MiKTe
+X/fonts/type1/public/amsfonts/cm/cmti8.pfb><C:/Users/julio/AppData/Local/Progra
+ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/julio/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on suppl_wrapper.pdf (17 pages, 362762 bytes).
+Transcript written on suppl_wrapper.log.
+Initial Win CP for (console input, console output, system): (CP850, CP65001, CP1252)
+I changed them all to CP1252
+Rc files read (in order):
+  NONE
+Latexmk: This is Latexmk, John Collins, 9 March 2026. Version 4.88.
+Latexmk: applying rule 'bibtex main'...
+Rule 'bibtex main':  Reasons for rerun
+Changed files or newly in use/created:
+  main.aux
+
+------------
+Run number 1 of rule 'bibtex main'
+------------
+------------
+Running 'bibtex  "main.aux"'
+------------
+This is BibTeX, Version 0.99e (MiKTeX 26.5)
+The top-level auxiliary file: main.aux
+The style file: cas-model2-names.bst
+Database file #1: refs.bib
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Changed files or newly in use/created:
+  macros.tex
+  macros_amplitudes.tex
+  macros_e6.tex
+  macros_f8.tex
+  macros_structural.tex
+  main.aux
+Category 'changed_user':
+  macros.tex
+  macros_amplitudes.tex
+  macros_e6.tex
+  macros_f8.tex
+  macros_structural.tex
+
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  -halt-on-error -interaction=nonstopmode -recorder  "main.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(main.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-06-18>
+(cas-dc.cls
+Document Class: cas-dc 2024/05/04, 2.4: Formatting class for CAS double column 
+articles
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\fleqn.clo)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
+e.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/preprint\balance.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/makecell\makecell.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\color.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+)
+new hooks used!!
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\dcolumn.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/sttools\stfloats.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\xspace.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xstring\xstring.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/xstring\xstring.tex))
+ (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/footmisc\footmisc.sty)
+ (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\svgnam.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\dvipsnam.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
+ty) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty))) (cas-common.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/moreverb\moreverb.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\verbatim.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/wrapfig\wrapfig.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\stix.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/inconsolata\inconsolata
+.sty `inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xkeyval\xkeyval.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkeyval.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkvutils.tex)
+)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbib.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/placeins\placeins.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/morefloats\morefloats.s
+ty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
+sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.st
+y
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-common.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-latex.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.
+code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.
+sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.
+sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+libraryfiltered.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.c
+fg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-pdftex.def
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-common-pdf.def)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+ssoftpath.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+sprotocol.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+e.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.
+code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparse
+r.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.basic.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.trigonometric.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.random.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.comparison.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.base.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.round.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.misc.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.integerarithmetics.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.
+code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat
+.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.
+tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epoints.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathconstruct.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathusage.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+escopes.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+egraphicstate.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransformations.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+equick.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eobjects.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathprocessing.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+earrows.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eshade.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eimage.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eexternal.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+elayers.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransparency.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epatterns.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+erdf.code.tex)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+shapes.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+plot.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-0-65.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-1-18.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.st
+y
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.s
+ty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.
+code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z\tikz.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryplothandlers.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+matrix.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarytopaths.code.tex)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\xr.sty)
+(macros_structural.tex) (macros_amplitudes.tex) (macros.tex
+(results/e1/e1_macros.tex) (macros_structural.tex)) (macros_raw_sens.tex)
+(macros_e6.tex) (macros_f8.tex) (macros_e7.tex) (macros_kappa_inf.tex)
+(results/regret/regret_macros.tex) (results/santiago/macros_santiago.tex)
+(results/santiago/macros_descriptive.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\t1stix.fd)
+(main.aux)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stix.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stix.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg)) (main.out) (main.out)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/upquote\upquote.sty)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ts1stix.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixscr.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stixex.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixfrak.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixbb.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stixcal.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixsf.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stixtt.fd)
+[0{C:/Users/julio/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ju
+lio/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/stix/stix-t1.enc}{C:/Users/ju
+lio/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/stix/stix-ts1.enc}]
+Overfull \hbox (123.62721pt too wide) detected at line 162
+[]
+(main.abs)
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/inconsolata\t1zi4.fd)
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+
+Underfull \hbox (badness 1436) in paragraph at lines 179--195
+\T1/stix/m/n/10 stan-dard work-flow scores can-di-date sites with a multi-
+
+Underfull \hbox (badness 1199) in paragraph at lines 179--195
+\T1/stix/m/n/10 criteria method, reads the rank-ing top-down, and skips
+
+Underfull \hbox (badness 1454) in paragraph at lines 179--195
+\T1/stix/m/n/10 any site too close to one al-ready cho-sen. In a re-view
+
+Underfull \hbox (badness 1320) in paragraph at lines 179--195
+\T1/stix/m/n/10 of 114 land-fill sit-ing stud-ies, [][]Reza-eis-abze-var, Bazar
+gan
+
+Underfull \hbox (badness 1917) in paragraph at lines 179--195
+\T1/stix/m/n/10 and Zo-hourian[][] ([][]2020[][]) found TOP-SIS, SAW and AHP
+
+Underfull \hbox (badness 1033) in paragraph at lines 179--195
+\T1/stix/m/n/10 to be the dom-i-nant tools, and nor-mal-i-sa-tion choices to
+
+Underfull \hbox (badness 3713) in paragraph at lines 179--195
+\T1/stix/m/n/10 statis-tics es-tab-lish that meth-ods dis-agree; they can-not
+[1{C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/inconsolata/i4-
+t1-0.enc} <./thumbnails/cas-email.jpeg>]
+Underfull \hbox (badness 1681) in paragraph at lines 295--305
+\T1/stix/m/n/10 for-mal-is-ing a re-la-tion es-tab-lished qual-i-ta-tively by
+
+Underfull \hbox (badness 3713) in paragraph at lines 295--305
+\T1/stix/m/n/10 on range sen-si-tiv-ity in [][]von Nitzsch and We-ber[][]
+
+Underfull \hbox (badness 10000) in paragraph at lines 295--305
+\T1/stix/m/n/10 re-ported sep-a-rately, namely vector-normalisation
+
+Underfull \hbox (badness 1874) in paragraph at lines 305--312
+\T1/stix/m/n/10 an ex-haus-tively enu-mer-ated fron-tier of $\LS1/stix/m/n/10 1
+[]944[]653$
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 351--367
+[]\T1/stix/m/n/10 The dom-i-nant paradigm for multi-facility sit-ing
+
+Underfull \hbox (badness 2042) in paragraph at lines 351--367
+\T1/stix/m/n/10 com-bines an MCDM score with a com-bi-na-to-rial rule.
+
+Underfull \hbox (badness 1286) in paragraph at lines 351--367
+\T1/stix/m/n/10 et al.[][] ([][]2006[][]) and [][]Mavro-tas, Di-ak-oulaki and K
+ourentzis[][]
+
+Underfull \hbox (badness 1448) in paragraph at lines 351--367
+\T1/stix/m/n/10 and de Almeida[][] ([][]2012[][]) for-malised $\LS1/stix/m/it/1
+0 c$\T1/stix/m/n/10 -optimal port-fo-lios
+
+Underfull \hbox (badness 2142) in paragraph at lines 351--367
+\T1/stix/m/n/10 score is sen-si-tive to the score scale. [][]de Almeida and
+
+Underfull \hbox (badness 3039) in paragraph at lines 368--399
+[]\T1/stix/m/n/10 Parallel work in port-fo-lio de-ci-sion anal-y-sis (PDA)
+
+Underfull \hbox (badness 10000) in paragraph at lines 368--399
+\T1/stix/m/n/10 pro-posed Ro-bust Port-fo-lio Mod-elling (RPM), which
+
+Underfull \hbox (badness 1242) in paragraph at lines 368--399
+\T1/stix/m/n/10 com-putes port-fo-lios that are non-dominated in a scalar
+
+Underfull \hbox (badness 1824) in paragraph at lines 368--399
+\T1/stix/m/n/10 value space over a re-gion of un-cer-tain weights, us-ing
+
+Underfull \hbox (badness 1127) in paragraph at lines 368--399
+\T1/stix/m/n/10 an in-ter-ac-tive lin-ear pro-gramme. [][]Mild and Salo[][] ([]
+[]2015[][])
+
+Underfull \hbox (badness 1199) in paragraph at lines 368--399
+\T1/stix/m/n/10 com-bined a mul-ti-at-tribute value func-tion with port-fo-lio
+
+Underfull \hbox (badness 1400) in paragraph at lines 368--399
+\T1/stix/m/n/10 un-der hard spatial-separation re-quire-ments, the defin-ing
+
+Underfull \hbox (badness 7238) in paragraph at lines 368--399
+\T1/stix/m/n/10 Kadz-i´ski and S™ow-i´ski[][] ([][]2018[][]) op-ti-mised port-f
+o-lios
+
+Underfull \hbox (badness 1533) in paragraph at lines 368--399
+\T1/stix/m/n/10 un-der mul-ti-ple sat-is-fac-tion lev-els de-fined jointly acro
+ss
+
+Underfull \hbox (badness 1917) in paragraph at lines 368--399
+\T1/stix/m/n/10 with ILP pre-pro-cess-ing to ap-prox-i-mate the full Pareto
+
+Underfull \hbox (badness 1067) in paragraph at lines 368--399
+\T1/stix/m/n/10 Pareto fron-tier un-der a hard pair-wise spa-tial sep-a-ra-tion
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 368--399
+\T1/stix/m/n/10 Pareto fron-tier each method--normalisation--assembly
+[3]
+Underfull \hbox (badness 3668) in paragraph at lines 483--497
+\T1/stix/m/n/10 ([][]1996[][]) ex-tended the equiv-a-lence to val-ued pref-er-e
+nce
+
+Underfull \hbox (badness 7397) in paragraph at lines 483--497
+\T1/stix/m/n/10 re-la-tions, which is the set-ting of PROMETHEE II.
+
+Underfull \hbox (badness 4899) in paragraph at lines 516--527
+[]\T1/stix/m/n/10 Systematic bench-mark-ing of MCDM meth-ods has
+
+Underfull \hbox (badness 10000) in paragraph at lines 516--527
+\T1/stix/m/n/10 ex-panded sub-stan-tially. [][]Cinelli, Kadz-i´ski, Gon-za-lez
+
+Underfull \hbox (badness 1888) in paragraph at lines 516--527
+\T1/stix/m/n/10 among meth-ods and ar-gued for ex-plicit doc-u-men-ta-tion
+
+Underfull \hbox (badness 1810) in paragraph at lines 516--527
+\T1/stix/m/n/10 of the as-sump-tions em-bed-ded in each choice. [][]Sa™abun
+
+Underfull \hbox (badness 5924) in paragraph at lines 516--527
+\T1/stix/m/n/10 et al.[][] ([][]2020[][]) com-pared TOP-SIS, VIKOR, CO-PRAS,
+
+Underfull \hbox (badness 2213) in paragraph at lines 516--527
+\T1/stix/m/n/10 and PROMETHEE II us-ing stochas-tic sim-u-la-tions and
+
+Underfull \hbox (badness 6157) in paragraph at lines 516--527
+\T1/stix/m/n/10 Spear-man cor-re-la-tion, con-firm-ing that meth-ods agree
+
+Underfull \hbox (badness 4913) in paragraph at lines 516--527
+\T1/stix/m/n/10 mod-er-ately un-der stan-dard set-tings but di-verge when
+
+Underfull \hbox (badness 7851) in paragraph at lines 516--527
+\T1/stix/m/n/10 nor-mal-i-sa-tion or weight-ing changes. [][]Pinto da Costa
+
+Underfull \hbox (badness 2229) in paragraph at lines 516--527
+\T1/stix/m/n/10 and Soares[][] ([][]2005[][]) pro-posed weighted rank cor-re-la
+-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 516--527
+\T1/stix/m/n/10 Jankowski, Ziemba, Kar-cz-mar-czyk and Zio™o[][] ([][]2019[][])
+
+
+Underfull \hbox (badness 2591) in paragraph at lines 529--551
+\T1/stix/m/n/10 cri-te-rion of com-par-i-son. [][]Mulliner, Malys and Maliene[]
+[]
+
+Underfull \hbox (badness 10000) in paragraph at lines 529--551
+\T1/stix/m/n/10 ([][]2016[][]) com-pared SAW, TOP-SIS, and CO-PRAS for
+
+Underfull \hbox (badness 1107) in paragraph at lines 529--551
+\T1/stix/m/n/10 of dif-fer-ent MCDM meth-ods into a con-sen-sus rank-ing,
+
+Underfull \hbox (badness 6396) in paragraph at lines 529--551
+\T1/stix/m/n/10 op-ti-mal-ity thresh-olds to bench-mark project port-fo-lios
+
+Underfull \hbox (badness 4254) in paragraph at lines 529--551
+\T1/stix/m/n/10 with-out full enu-mer-a-tion; the present pa-per uses the
+
+Underfull \hbox (badness 3482) in paragraph at lines 529--551
+\T1/stix/m/n/10 sep-a-ra-bil-ity of the lo-ca-tion prob-lem to enu-mer-ate all
+
+Underfull \hbox (badness 4673) in paragraph at lines 529--551
+\T1/stix/m/n/10 Man-quinho and Figueira[][] ([][]2023[][]) de-vel-oped ex-act a
+nd
+
+Underfull \hbox (badness 3302) in paragraph at lines 529--551
+\T1/stix/m/n/10 the full trivari-ate fron-tier with-out ap-prox-i-ma-tion. The
+[4]
+Underfull \hbox (badness 7667) in paragraph at lines 672--675
+[]\T1/stix/m/n/10 This sec-tion de-fines the sit-ing prob-lem for-mally
+
+Underfull \hbox (badness 7168) in paragraph at lines 672--675
+\T1/stix/m/n/10 normalisation--assembly com-bi-na-tions are sub-se-quently
+[5]
+Overfull \hbox (13.1244pt too wide) detected at line 702
+ $\LS2/stixcal/m/n/10 T \LS1/stix/m/n/10 = [] \LS1/stix/m/it/10 t ” \LS2/stixca
+l/m/n/10 S  \LS1/stix/m/n/10 :  \LS2/stixex/m/n/10 \LS1/stix/m/it/10 t\LS2/sti
+xex/m/n/10  \LS1/stix/m/n/10 = 3\LS1/stix/m/it/10 ;  t[][] [];  \LS2/stixex/m/
+n/10 \LS2/stixcal/m/n/10 T\LS2/stixex/m/n/10  \LS1/stix/m/n/10 = 1[]944[]653\
+LS1/stix/m/it/10 :$  
+
+Underfull \hbox (badness 1874) in paragraph at lines 777--780
+ []\T1/stix/m/it/11 What the bench-mark is, and is not.[] $\LS1/stix/b/n/10 F$ 
+\T1/stix/m/n/10 is a three-
+
+Underfull \hbox (badness 2073) in paragraph at lines 777--780
+\T1/stix/m/n/10 in-de-pen-dent ob-jec-tives: each com-po-nent is an ad-di-tive
+
+Overfull \hbox (31.15796pt too wide) detected at line 817
+ $[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 t\LS1/stix/m/n/10 / = []  []  [][] \LS1
+/stix/m/it/10 ;$  
+[6] (figures/fig_workflow.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarypositioning.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibraryshapes.geometric.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/shapes\
+pgflibraryshapes.geometric.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryarrows.meta.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarycalc.code.tex))
+Underfull \hbox (badness 3439) in paragraph at lines 888--913
+[]\T1/stix/m/n/10 The \T1/zi4/m/n/10 slope_aspect \T1/stix/m/n/10 col-umn of th
+e pub-lished dataset
+
+Underfull \hbox (badness 3281) in paragraph at lines 888--913
+\T1/stix/m/n/10 ([][]Azan-cort Neto et al.[][], [][]2026[][]) is stored in a re
+-flected
+
+Underfull \hbox (badness 3525) in paragraph at lines 888--913
+\T1/stix/m/n/10 con-ven-tion, $\LS1/stix/m/it/10 ^^R[] \LS1/stix/m/n/10 = .270[
+] * \LS1/stix/m/it/10 ^^R\LS1/stix/m/n/10 /  []  360[]$\T1/stix/m/n/10 , where 
+$\LS1/stix/m/it/10 ^^R$
+
+Underfull \hbox (badness 2970) in paragraph at lines 888--913
+\T1/stix/m/n/10 is the ge-o-graphic de-scent az-imuth (0\TS1/stix/m/n/10 ∞\T1/s
+tix/m/n/10 =N, clock-wise),
+
+Underfull \hbox (badness 1406) in paragraph at lines 888--913
+\T1/stix/m/n/10 com-puted via the Horn al-go-rithm (\T1/zi4/m/n/10 gdaldem aspe
+ct\T1/stix/m/n/10 ) on
+[7]
+Underfull \hbox (badness 2653) in paragraph at lines 952--964
+[]\T1/stix/m/n/10 Stage 2 of Fig-ure [][]1[][]. Weights are taken from the
+
+Overfull \hbox (20.05048pt too wide) detected at line 980
+[]
+[8 <./figures/fig_F4_map.pdf>]
+Underfull \hbox (badness 1270) in paragraph at lines 1073--1075
+[]\T1/stix/m/n/10 A dom-i-nance test in-volves weights at three dis-tinct
+
+Underfull \hbox (badness 1297) in paragraph at lines 1080--1082
+[]$\LS1/stix/m/it/10 w[]$\T1/stix/m/n/10 : the weights used to build the ref-er
+-ence set,
+[9]
+Underfull \hbox (badness 5189) in paragraph at lines 1140--1148
+\T1/stix/m/n/10 rather than fron-tier mem-ber-ship. With $\LS1/stix/m/it/10 V[]
+\LS1/stix/m/n/10 .\LS1/stix/m/it/10 t\LS1/stix/m/n/10 ; \LS1/stix/m/it/10 w\LS1
+/stix/m/n/10 / =
+
+Underfull \hbox (badness 1221) in paragraph at lines 1172--1176
+[]\T1/stix/b/n/10 Bootstrap pair-ing\T1/stix/m/n/10 : repli-cates are paired by
+ draw
+
+Underfull \hbox (badness 1082) in paragraph at lines 1200--1217
+[]\T1/stix/m/n/10 The main ex-per-i-ment is a bal-anced $\LS1/stix/m/n/10 2[]$\
+T1/stix/m/n/10 : ag-gre-ga-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 1200--1217
+\LS1/stix/m/n/10 ^[]\LS1/stix/m/it/10 ; []\LS1/stix/m/n/10 `$ $ù$ \T1/stix/m/n/
+10 nor-mal-i-sa-tion $\LS1/stix/m/n/10 ^[]\LS1/stix/m/it/10 ; []\LS1/stix/m/n/1
+0 `$
+
+Underfull \hbox (badness 1888) in paragraph at lines 1200--1217
+\LS1/stix/m/n/10 ù$ \T1/stix/m/n/10 as-sem-bly $\LS1/stix/m/n/10 ^[]\LS1/stix/m
+/it/10 ; []\LS1/stix/m/n/10 `$\T1/stix/m/n/10 , eval-u-ated in $\LS1/stix/m/it/
+10 Q[]\LS1/stix/m/n/10 [\LS2/stixcal/m/n/10 A[]\LS1/stix/m/n/10 ]$\T1/stix/m/n/
+10 . A
+
+Underfull \hbox (badness 1377) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 wider de-sign adds VIKOR, PROMETHEE II and rank
+
+Underfull \hbox (badness 2020) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 re-dun-dant be-cause VIKOR is in-vari-ant to per-criterion
+
+Underfull \hbox (badness 10000) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 so VIKOR$\LS1/stix/m/n/10 ù$\T1/stix/m/n/10 vector du-pli-cates
+ VIKOR$\LS1/stix/m/n/10 ù$\T1/stix/m/n/10 min--max) and
+
+Underfull \hbox (badness 3323) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 Ef-fects are re-ported in per-cent-age points with $\LS1/stix/m
+/n/10 2[]000$\T1/stix/m/n/10 -
+
+Underfull \hbox (badness 3849) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 for mul-ti-plic-ity; con-trasts other than the pre-specified
+[10]
+Underfull \hbox (badness 10000) in paragraph at lines 1271--1276
+\T1/stix/m/it/10 wise nor-mal-i-sa-tion ap-plied to cri-te-rion $\LS1/stix/m/it
+/10 j$\T1/stix/m/it/10 , and let
+
+Underfull \hbox (badness 3646) in paragraph at lines 1271--1276
+\LS1/stix/m/it/10 A[] \LS1/stix/m/n/10 = [][] \LS1/stix/m/it/10 n[]\LS1/stix/m/
+n/10 .\LS1/stix/m/it/10 x[]\LS1/stix/m/n/10 / * [][] \LS1/stix/m/it/10 n[]\LS1/
+stix/m/n/10 .\LS1/stix/m/it/10 x[]\LS1/stix/m/n/10 /$ \T1/stix/m/it/10 be the \
+T1/stix/m/n/10 am-pli-tude
+
+Underfull \hbox (badness 1342) in paragraph at lines 1271--1276
+\T1/stix/m/it/10 of the nor-malised col-umn. In any ad-di-tive ag-gre-ga-tion
+[11]
+Overfull \hbox (1.28632pt too wide) detected at line 1433
+[]
+
+Underfull \hbox (badness 3343) in paragraph at lines 1433--1443
+\T1/stix/m/n/10 so max-imis-ing $[][] \LS1/stix/m/it/10 s\LS1/stix/m/n/10 .\LS1
+/stix/m/it/10 a\LS1/stix/m/n/10 /$ \T1/stix/m/n/10 is equiv-a-lent to min-imis-
+ing
+
+Underfull \hbox (badness 2181) in paragraph at lines 1433--1443
+\T1/stix/m/n/10 of the three ob-jec-tives in their own senses (min-imise
+
+Underfull \hbox (badness 10000) in paragraph at lines 1433--1443
+\LS1/stix/m/it/10 F[]$ \T1/stix/m/n/10 and $\LS1/stix/m/it/10 F[]$\T1/stix/m/n/
+10 , max-imise $\LS1/stix/m/it/10 F[]$\T1/stix/m/n/10 ). Sup-pose $\LS1/stix/m/
+it/10 T[]$ \T1/stix/m/n/10 dom-i-nated
+
+Underfull \hbox (badness 3158) in paragraph at lines 1433--1443
+\LS1/stix/m/it/10 T[]$\T1/stix/m/n/10 , that is $\LS1/stix/m/it/10 F[]\LS1/stix
+/m/n/10 .\LS1/stix/m/it/10 T[]\LS1/stix/m/n/10 / \LS2/stixcal/m/n/10 f \LS1/sti
+x/m/it/10 F[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 T[]\LS1/stix/m/n/10 /$\T1/stix
+/m/n/10 , $\LS1/stix/m/it/10 F[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 T[]\LS1/sti
+x/m/n/10 / \LS2/stixcal/m/n/10 f \LS1/stix/m/it/10 F[]\LS1/stix/m/n/10 .\LS1/st
+ix/m/it/10 T[]\LS1/stix/m/n/10 /$\T1/stix/m/n/10 ,
+
+Underfull \hbox (badness 3635) in paragraph at lines 1433--1443
+\T1/stix/m/n/10 whence $[][] \LS1/stix/m/it/10 s\LS1/stix/m/n/10 .\LS1/stix/m/i
+t/10 a\LS1/stix/m/n/10 / \LS1/stix/m/it/10 > [][] s\LS1/stix/m/n/10 .\LS1/stix/
+m/it/10 a\LS1/stix/m/n/10 /$\T1/stix/m/n/10 , con-tra-dict-ing the
+
+Underfull \hbox (badness 1194) in paragraph at lines 1498--1514
+[]\T1/stix/m/n/10 Equation [] is im-me-di-ate from []: $\LS2/stixex/m/n/10 Ò\LS
+1/stix/m/it/10 ^^N\LS2/stixex/m/n/10 Ò[] \LS1/stix/m/n/10 =
+
+Underfull \hbox (badness 4096) in paragraph at lines 1498--1514
+\T1/stix/m/n/10 let $\LS1/stix/m/it/10 P[] \LS1/stix/m/n/10 = [][] \LS1/stix/m/
+it/10 ^^N[]$\T1/stix/m/n/10 . Since $[][] \LS1/stix/m/it/10 ^^N[] \LS1/stix/m/n
+/10 = 0$ \T1/stix/m/n/10 we have
+
+Underfull \hbox (badness 1122) in paragraph at lines 1498--1514
+\T1/stix/m/n/10 part is con-cen-trated on a sin-gle com-po-nent). There-fore
+[12] [13]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 1701.
+
+
+Underfull \hbox (badness 5985) in paragraph at lines 1719--1725
+[]\T1/stix/m/it/10 Derivation. \T1/stix/m/n/10 The range of $\LS1/stix/m/it/10 
+v[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 a\LS1/stix/m/n/10 /$ \T1/stix/m/n/10 ove
+r all sites is
+
+Underfull \hbox (badness 1052) in paragraph at lines 1719--1725
+\LS1/stix/m/n/10 .[][] [].\LS1/stix/m/it/10 a\LS1/stix/m/n/10 / * [][] [].\LS1/
+stix/m/it/10 a\LS1/stix/m/n/10 //_\LS2/stixex/m/n/10 Ò[]Ò[] \LS1/stix/m/n/10 = 
+\LS1/stix/m/it/10 ^^Z[]$\T1/stix/m/n/10 , so $\LS1/stix/m/it/10 A[] \LS1/stix/m
+/n/10 = \LS1/stix/m/it/10 ^^Z[]$
+
+Underfull \hbox (badness 3396) in paragraph at lines 1852--1857
+\T1/stix/m/n/10 is the only nor-mal-i-sa-tion that pre-serves elicited
+
+Underfull \hbox (badness 10000) in paragraph at lines 1852--1857
+\T1/stix/m/n/10 weights in ad-di-tive ag-gre-ga-tions (Sec-tion [][]6.2[][]).
+
+Underfull \hbox (badness 3590) in paragraph at lines 1852--1857
+\T1/stix/m/n/10 Un-der SAW, where the Lemma ap-plies ex-actly,
+
+Underfull \hbox (badness 1163) in paragraph at lines 1866--1871
+[]\T1/stix/m/it/10 Aggregation ef-fect (SAW vs. TOP-SIS vs. VIKOR):
+[14] [15 <./figures/fig_F1_slope_weights.pdf>] [16 <./figures/fig_F3_pareto.pdf
+>]
+Underfull \hbox (badness 10000) in paragraph at lines 2144--2166
+[]\T1/stix/m/n/10 The ag-gre-ga-tion con-trast of $\LS1/stix/m/n/10 *0\LS1/stix
+/m/it/10 :\LS1/stix/m/n/10 4$ \T1/stix/m/n/10 pp ($\LS1/stix/m/n/10 95~$ \T1/st
+ix/m/n/10 CI
+
+Underfull \hbox (badness 1314) in paragraph at lines 2144--2166
+\LS1/stix/m/n/10 [*2\LS1/stix/m/it/10 :\LS1/stix/m/n/10 2\LS1/stix/m/it/10 ;  \
+LS1/stix/m/n/10 +1\LS1/stix/m/it/10 :\LS1/stix/m/n/10 3]$\T1/stix/m/n/10 ) has 
+a pooled mean equiv-a-lent to zero at
+
+Underfull \hbox (badness 1097) in paragraph at lines 2144--2166
+\LS1/stix/m/it/10 ^^T \LS1/stix/m/n/10 = 200$ \T1/stix/m/n/10 (TOST $\LS1/stix/
+m/it/10 p \LS1/stix/m/n/10 = 0\LS1/stix/m/it/10 :\LS1/stix/m/n/10 010$\T1/stix/
+m/n/10 , $\LS1/stix/m/n/10 ^^A$ \T1/stix/m/n/10 pp, $\LS1/stix/m/n/10 90~$ \T1/
+stix/m/n/10 CI within
+[17]
+Underfull \hbox (badness 1033) in paragraph at lines 2278--2287
+\LS1/stix/m/n/10 [38\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6\LS1/stix/m/it/10 ; \L
+S1/stix/m/n/10 47\LS1/stix/m/it/10 :\LS1/stix/m/n/10 8]$ \T1/stix/m/n/10 pp); t
+he sym-met-ric mis-align-ment (min--max
+
+Underfull \hbox (badness 3746) in paragraph at lines 2278--2287
+\T1/stix/m/n/10 score against $\LS2/stixcal/m/n/10 F[]$\T1/stix/m/n/10 ) costs 
+only $\LS1/stix/m/n/10 5\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6$ \T1/stix/m/n/10 
+pp ($\LS1/stix/m/n/10 [3\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6\LS1/stix/m/it/10 
+; \LS1/stix/m/n/10 7\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6]$ \T1/stix/m/n/10 pp)
+.
+
+Underfull \hbox (badness 2772) in paragraph at lines 2278--2287
+\T1/stix/m/n/10 Un-der op-ti-mal as-sem-bly, a wrong score nor-mal-i-sa-tion
+[18]
+Overfull \hbox (5.7904pt too wide) in paragraph at lines 2326--2336
+ [][] 
+
+Underfull \hbox (badness 1348) in paragraph at lines 2340--2373
+[]\T1/stix/m/n/10 Scoring \T1/stix/m/it/10 as-pect \T1/stix/m/n/10 as a con-tin
+-u-ous ge-o-graphic az-imuth
+
+Underfull \hbox (badness 2980) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 while the ob-jec-tives use a bi-nary SE-facing in-di-ca-tor
+
+Underfull \hbox (badness 1342) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 lie in the lower-middle range of the scale and re-ceive
+
+Underfull \hbox (badness 1112) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 value; this is there-fore a dis-tinct fail-ure mode, not the
+[19] [20]
+Overfull \hbox (0.56549pt too wide) in paragraph at lines 2629--2638
+[]\T1/stix/m/n/10 This anal-y-sis was spec-i-fied (PRE-SPEC_E7_KAPPA.md,
+
+Underfull \hbox (badness 2005) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 amend-ments A1--A2, in the repli-ca-tion archive) be-fore
+
+Underfull \hbox (badness 3471) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 the E7 run but af-ter the main fac-to-rial re-sults were
+
+Underfull \hbox (badness 1728) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 known; we treat it as ex-ploratory through-out. Weights
+
+Underfull \hbox (badness 1484) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 are drawn as $\LS1/stix/b/n/10 w \LS1/stix/m/n/10 Ì [].\LS1/sti
+x/m/it/10 ^^T \LS1/stix/b/n/10 w[]\LS1/stix/m/n/10 /$ \T1/stix/m/n/10 with the 
+AHP weights
+
+Underfull \hbox (badness 10000) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 as $\LS1/stix/b/n/10 w[]$\T1/stix/m/n/10 ; smaller $\LS1/stix/m
+/it/10 ^^T$ \T1/stix/m/n/10 means more dis-persed weights
+
+Underfull \hbox (badness 1917) in paragraph at lines 2639--2662
+\T1/stix/m/n/10 in-for-ma-tive cells; Sec-tion [][]7.3[][]) de-creases mono-ton
+-i-cally
+
+Underfull \hbox (badness 1242) in paragraph at lines 2639--2662
+\T1/stix/m/n/10 at the de-ter-min-is-tic limit ($\LS1/stix/m/it/10 ^^T \LS1/sti
+xsf/m/n/10 ô \LS1/stix/m/n/10 ÿ$\T1/stix/m/n/10 , nom-i-nal weights;
+[21]
+Underfull \hbox (badness 1412) in paragraph at lines 2694--2706
+[]\T1/stix/b/n/10 Assembly un-der vec-tor nor-mal-i-sa-tion. \T1/stix/m/n/10 Re
+l-a-tive to
+
+Underfull \hbox (badness 10000) in paragraph at lines 2716--2719
+[]\T1/stix/m/n/10 All 36 in-ter-vals ($\LS1/stix/m/n/10 6$ \T1/stix/m/n/10 con-
+trasts $\LS1/stix/m/n/10 ù$ $6$ \T1/stix/m/n/10 val-ues of
+
+Underfull \hbox (badness 10000) in paragraph at lines 2716--2719
+\LS1/stix/m/it/10 ^^T$\T1/stix/m/n/10 ) are un-ad-justed and de-scrip-tive, as 
+spec-i-fied in
+(santiago.tex
+Underfull \hbox (badness 1635) in paragraph at lines 55--88
+\T1/stix/m/n/10 pre-registration, with its date and whether the af-fected
+
+Underfull \hbox (badness 1484) in paragraph at lines 55--88
+\T1/stix/m/n/10 quan-tity had been seen. Be-fore the Monte Carlo runs,
+
+Underfull \hbox (badness 1253) in paragraph at lines 55--88
+\T1/stix/m/n/10 its WFS layer re-turned HTTP500 on down-load (DEV-
+
+Underfull \hbox (badness 4266) in paragraph at lines 55--88
+\T1/stix/m/n/10 SANT-ZDTI-001); cri-te-rion A4 fell back to a sin-gle
+
+Underfull \hbox (badness 2846) in paragraph at lines 55--88
+\T1/stix/m/n/10 her-itage point when the UN-ESCO bound-ary shape-file
+
+Underfull \hbox (badness 1642) in paragraph at lines 55--88
+\T1/stix/m/n/10 eval-u-a-tion code with def-i-ni-tions al-ready used on Fogo
+
+Underfull \hbox (badness 1325) in paragraph at lines 55--88
+\T1/stix/m/n/10 quan-ti-ties had been seen: the E1 cells, which re-turned
+
+Underfull \hbox (badness 1112) in paragraph at lines 55--88
+\T1/stix/m/n/10 the eval-u-a-tion; it changes one re-ported $\LS1/stix/m/it/10 
+p$\T1/stix/m/n/10 -value and no
+[22] [23] [24]
+
+LaTeX Warning: No positions in optional float specifier.
+               Default added (so using `') on input line 474.
+
+
+Underfull \hbox (badness 6396) in paragraph at lines 493--493
+[][]\T1/cmss/bx/n/9 Figure 5:[] []\T1/cmss/m/n/9 Pooled SAW$\LS1/stix/m/n/9 *$\
+T1/cmss/m/n/9 TOPSIS ag-gre-ga-tion con-trast
+) [25] [26 <./figures/fig_kappa_santiago.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 2792--2798
+[]\T1/stix/m/n/10 The prac-ti-cal con-se-quences dif-fer. Dis-tri-bu-tional
+
+Underfull \hbox (badness 2547) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 re-weighting is a prop-erty of the data un-der a given
+
+Underfull \hbox (badness 5592) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 nor-mal-i-sa-tion; it can be quan-ti-fied and, if ac-cepted,
+
+Underfull \hbox (badness 5771) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 doc-u-mented. Cri-te-rion cod-ing mis-match is avoid-able:
+
+Underfull \hbox (badness 1024) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 same en-cod-ing for each cri-te-rion be-fore ap-ply-ing ex-act
+
+Underfull \hbox (badness 1466) in paragraph at lines 2801--2809
+[]\T1/stix/m/n/10 The clos-est an-tecedents study port-fo-lio con-struc-tion
+
+Underfull \hbox (badness 1237) in paragraph at lines 2801--2809
+\T1/stix/m/n/10 from multi-criteria scores. [][]Brans and Mareschal[][] ([][]19
+92[][])
+
+Underfull \hbox (badness 1014) in paragraph at lines 2801--2809
+\T1/stix/m/n/10 bi-nary pro-gram-ming; [][]Vetschera and de Almeida[][] ([][]20
+12[][])
+
+Underfull \hbox (badness 4108) in paragraph at lines 2801--2809
+\T1/stix/m/n/10 for-mu-lated $\LS1/stix/m/it/10 c$\T1/stix/m/n/10 -optimal port
+-fo-lios, of which the present
+[27]
+Underfull \hbox (badness 10000) in paragraph at lines 2953--2969
+[]\T1/stix/m/n/10 Third, re-port ef-fec-tive weights along-side elicited
+
+Underfull \hbox (badness 1527) in paragraph at lines 2953--2969
+\T1/stix/m/n/10 alone. Where elicited weights carry nor-ma-tive con-tent,
+[28]
+Underfull \hbox (badness 5908) in paragraph at lines 2985--3009
+[]\T1/stix/m/n/10 Fifth, char-ac-terise the un-cer-tainty of the weights
+
+Underfull \hbox (badness 1728) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 be-fore choos-ing an ag-gre-ga-tion op-er-a-tor. On Fogo the
+
+Underfull \hbox (badness 1515) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 SAW--TOPSIS con-trast re-verses sign across the $\LS1/stix/m/it
+/10 ^^T$ \T1/stix/m/n/10 grid
+
+Underfull \hbox (badness 3826) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 (Sec-tion [][]7.10[][]): SAW reaches the fron-tier more of-ten
+
+Underfull \hbox (badness 2088) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 they are con-cen-trated but still un-cer-tain ($\LS1/stix/m/it/
+10 ^^T \LS1/stix/m/n/10 = 400$\T1/stix/m/n/10 --
+
+Underfull \hbox (badness 1221) in paragraph at lines 2985--3009
+\LS1/stix/m/n/10 1000$\T1/stix/m/n/10 ); at the nom-i-nal weights alone the two
+ op-er-a-tors
+
+Underfull \hbox (badness 5637) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 sig-nals poor Dirich-let fit); with-out such in-for-ma-tion,
+
+Underfull \hbox (badness 2753) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 op-er-a-tors. The rec-om-men-da-tions above ap-ply to SAW
+
+Underfull \hbox (badness 1348) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 is in-vari-ant to per-criterion affine trans-for-ma-tion by its
+
+
+Underfull \hbox (badness 1874) in paragraph at lines 3087--3092
+\T1/stix/m/n/10 ex-tract-ing a com-pa-ra-ble de-ci-sion ma-trix would re-quire
+[29]
+Underfull \hbox (badness 10000) in paragraph at lines 3101--3113
+[]\T1/stix/m/it/10 Weight per-tur-ba-tion model. \T1/stix/m/n/10 Dirich-let per
+-tur-ba-tion
+
+Underfull \hbox (badness 4048) in paragraph at lines 3101--3113
+\T1/stix/m/n/10 char-ac-terise non-dominated so-lu-tions un-der dom-i-nance
+
+Underfull \hbox (badness 4995) in paragraph at lines 3101--3113
+\T1/stix/m/n/10 re-la-tions de-rived from dis-tri-bu-tional as-sump-tions; our
+
+Underfull \hbox (badness 1067) in paragraph at lines 3150--3163
+[]\T1/stix/m/n/10 The an-a-lyt-i-cal re-sults do not de-pend on the weight
+
+Underfull \hbox (badness 2903) in paragraph at lines 3164--3178
+\LS1/stix/m/n/10 29\LS1/stix/m/it/10 :\LS1/stix/m/n/10 2$ \T1/stix/m/n/10 pp wh
+er-ever the ef-fect was dis-tin-guish-able from
+[30] (main.bbl
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+[]\T1/stix/m/n/8 Azancort Neto, J.L., Gomes, E.H.C., Fre-itas, G.C.d.M., Silva,
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+\T1/stix/m/n/8 R.d.C., Ara˙jo, J.P.L.d., FrancÍs, C.R.L., 2026.  Land-fill
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+\T1/stix/m/n/8 site al-lo-ca-tion multi-objective op-ti-miza-tion with NSGA-II:
+ A
+
+Underfull \hbox (badness 5787) in paragraph at lines 45--58
+\T1/stix/m/n/8 case study on Fogo Is-land, Cape Verde.  IEEE Ac-cess 14,
+
+Underfull \hbox (badness 6332) in paragraph at lines 45--58
+\T1/stix/m/n/8 83991--84015.  doi:[][]$\T1/zi4/m/n/8 10 . 1109 / ACCESS . 2026 
+. 3697915$[][]\T1/stix/m/n/8 . GitHub: [][]$\T1/zi4/m/n/8 https :
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+\T1/zi4/m/n/8 / / github . com / Jazancort / NSGA2-[]GIS-[]Landfill-[]Optimizat
+ion-[]Cape-[]Verde$[][]\T1/stix/m/n/8 ;
+[31]
+Underfull \hbox (badness 2409) in paragraph at lines 204--214
+[]\T1/stix/m/n/8 Costa, D.C.L., de Oliveira Costa, H.A., Cas-tro, A.P.S., Cruz,
+ E.C.,
+[32]) [33] (main.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ )
+(see the transcript file for additional information) <C:\Users\julio\AppData\Lo
+cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss0800.pk> <C:\Users\julio\AppD
+ata\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi450\ecss0800.pk> <C:\Users\juli
+o\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecsi0900.pk> <C:\User
+s\julio\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecsx0900.pk> <C
+:\Users\julio\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss0900.
+pk><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/inconsolata
+/Inconsolata-zi4r.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1
+/public/stix/STIXGeneral-Bold.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/stix/STIXGeneral-Italic.pfb><C:/Users/julio/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/stix/STIXGeneral-Regular.pfb><C:/Users/julio/
+AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/stix-mathbb.pfb><C:/Users
+/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/stix-mathcal.pfb><
+C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/stix-mathe
+x.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/sti
+x-mathit.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/s
+tix/stix-mathrm-bold.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/stix/stix-mathrm.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/f
+onts/type1/public/stix/stix-mathscr.pfb><C:/Users/julio/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/stix/stix-mathsf.pfb>
+Output written on main.pdf (34 pages, 1626816 bytes).
+Transcript written on main.log.
+Latexmk: Getting log file 'main.log'
+Latexmk: Examining 'main.fls'
+Latexmk: Examining 'main.log'
+Latexmk: Found input bbl file 'main.bbl'
+Latexmk: References changed.
+Latexmk: Log file says output to 'main.pdf'
+Latexmk: Using bibtex to make bibliography file(s).
+  ===Source file 'main.bbl' for 'pdflatex'
+Latexmk: Found bibliography file(s):
+  ./refs.bib
+Latexmk: applying rule 'bibtex main'...
+Rule 'bibtex main':  Reasons for rerun
+Changed files or newly in use/created:
+  main.aux
+
+------------
+Run number 2 of rule 'bibtex main'
+------------
+------------
+Running 'bibtex  "main.aux"'
+------------
+This is BibTeX, Version 0.99e (MiKTeX 26.5)
+The top-level auxiliary file: main.aux
+The style file: cas-model2-names.bst
+Database file #1: refs.bib
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Changed files or newly in use/created:
+  main.aux
+
+------------
+Run number 2 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  -halt-on-error -interaction=nonstopmode -recorder  "main.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(main.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-06-18>
+(cas-dc.cls
+Document Class: cas-dc 2024/05/04, 2.4: Formatting class for CAS double column 
+articles
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\fleqn.clo)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
+e.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/preprint\balance.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/makecell\makecell.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\color.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+)
+new hooks used!!
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\dcolumn.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/sttools\stfloats.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\xspace.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xstring\xstring.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/xstring\xstring.tex))
+ (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/footmisc\footmisc.sty)
+ (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\svgnam.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/graphics\dvipsnam.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
+ty) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty))) (cas-common.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/moreverb\moreverb.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\verbatim.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/wrapfig\wrapfig.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\stix.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/inconsolata\inconsolata
+.sty `inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/xkeyval\xkeyval.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkeyval.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkvutils.tex)
+)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+) (C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbib.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/placeins\placeins.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/morefloats\morefloats.s
+ty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
+sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.st
+y
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-common.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-latex.def)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.
+code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.
+sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.
+sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+libraryfiltered.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.c
+fg)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-pdftex.def
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-common-pdf.def)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+ssoftpath.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+sprotocol.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+e.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.
+code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparse
+r.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.basic.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.trigonometric.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.random.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.comparison.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.base.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.round.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.misc.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.integerarithmetics.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.
+code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat
+.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.
+tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epoints.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathconstruct.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathusage.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+escopes.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+egraphicstate.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransformations.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+equick.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eobjects.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathprocessing.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+earrows.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eshade.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eimage.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eexternal.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+elayers.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransparency.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epatterns.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+erdf.code.tex)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+shapes.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+plot.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-0-65.sty)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-1-18.sty))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.st
+y
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.s
+ty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.
+code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z\tikz.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryplothandlers.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+matrix.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarytopaths.code.tex)))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/tools\xr.sty)
+(macros_structural.tex) (macros_amplitudes.tex) (macros.tex
+(results/e1/e1_macros.tex) (macros_structural.tex)) (macros_raw_sens.tex)
+(macros_e6.tex) (macros_f8.tex) (macros_e7.tex) (macros_kappa_inf.tex)
+(results/regret/regret_macros.tex) (results/santiago/macros_santiago.tex)
+(results/santiago/macros_descriptive.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\t1stix.fd)
+(main.aux)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stix.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stix.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg)) (main.out) (main.out)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/upquote\upquote.sty)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ts1stix.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixscr.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stixex.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixfrak.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixbb.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stixcal.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls1stixsf.fd)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/stix\ls2stixtt.fd)
+[0{C:/Users/julio/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ju
+lio/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/stix/stix-t1.enc}{C:/Users/ju
+lio/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/stix/stix-ts1.enc}]
+Overfull \hbox (123.62721pt too wide) detected at line 162
+[]
+(main.abs)
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/latex/inconsolata\t1zi4.fd)
+
+Package hyperref Warning: Ignoring empty anchor on input line 162.
+
+
+Underfull \hbox (badness 1436) in paragraph at lines 179--195
+\T1/stix/m/n/10 stan-dard work-flow scores can-di-date sites with a multi-
+
+Underfull \hbox (badness 1199) in paragraph at lines 179--195
+\T1/stix/m/n/10 criteria method, reads the rank-ing top-down, and skips
+
+Underfull \hbox (badness 1454) in paragraph at lines 179--195
+\T1/stix/m/n/10 any site too close to one al-ready cho-sen. In a re-view
+
+Underfull \hbox (badness 1320) in paragraph at lines 179--195
+\T1/stix/m/n/10 of 114 land-fill sit-ing stud-ies, [][]Reza-eis-abze-var, Bazar
+gan
+
+Underfull \hbox (badness 1917) in paragraph at lines 179--195
+\T1/stix/m/n/10 and Zo-hourian[][] ([][]2020[][]) found TOP-SIS, SAW and AHP
+
+Underfull \hbox (badness 1033) in paragraph at lines 179--195
+\T1/stix/m/n/10 to be the dom-i-nant tools, and nor-mal-i-sa-tion choices to
+
+Underfull \hbox (badness 3713) in paragraph at lines 179--195
+\T1/stix/m/n/10 statis-tics es-tab-lish that meth-ods dis-agree; they can-not
+[1{C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/inconsolata/i4-
+t1-0.enc} <./thumbnails/cas-email.jpeg>]
+Underfull \hbox (badness 1681) in paragraph at lines 295--305
+\T1/stix/m/n/10 for-mal-is-ing a re-la-tion es-tab-lished qual-i-ta-tively by
+
+Underfull \hbox (badness 3713) in paragraph at lines 295--305
+\T1/stix/m/n/10 on range sen-si-tiv-ity in [][]von Nitzsch and We-ber[][]
+
+Underfull \hbox (badness 10000) in paragraph at lines 295--305
+\T1/stix/m/n/10 re-ported sep-a-rately, namely vector-normalisation
+
+Underfull \hbox (badness 1874) in paragraph at lines 305--312
+\T1/stix/m/n/10 an ex-haus-tively enu-mer-ated fron-tier of $\LS1/stix/m/n/10 1
+[]944[]653$
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 351--367
+[]\T1/stix/m/n/10 The dom-i-nant paradigm for multi-facility sit-ing
+
+Underfull \hbox (badness 2042) in paragraph at lines 351--367
+\T1/stix/m/n/10 com-bines an MCDM score with a com-bi-na-to-rial rule.
+
+Underfull \hbox (badness 1286) in paragraph at lines 351--367
+\T1/stix/m/n/10 et al.[][] ([][]2006[][]) and [][]Mavro-tas, Di-ak-oulaki and K
+ourentzis[][]
+
+Underfull \hbox (badness 1448) in paragraph at lines 351--367
+\T1/stix/m/n/10 and de Almeida[][] ([][]2012[][]) for-malised $\LS1/stix/m/it/1
+0 c$\T1/stix/m/n/10 -optimal port-fo-lios
+
+Underfull \hbox (badness 2142) in paragraph at lines 351--367
+\T1/stix/m/n/10 score is sen-si-tive to the score scale. [][]de Almeida and
+
+Underfull \hbox (badness 3039) in paragraph at lines 368--399
+[]\T1/stix/m/n/10 Parallel work in port-fo-lio de-ci-sion anal-y-sis (PDA)
+
+Underfull \hbox (badness 10000) in paragraph at lines 368--399
+\T1/stix/m/n/10 pro-posed Ro-bust Port-fo-lio Mod-elling (RPM), which
+
+Underfull \hbox (badness 1242) in paragraph at lines 368--399
+\T1/stix/m/n/10 com-putes port-fo-lios that are non-dominated in a scalar
+
+Underfull \hbox (badness 1824) in paragraph at lines 368--399
+\T1/stix/m/n/10 value space over a re-gion of un-cer-tain weights, us-ing
+
+Underfull \hbox (badness 1127) in paragraph at lines 368--399
+\T1/stix/m/n/10 an in-ter-ac-tive lin-ear pro-gramme. [][]Mild and Salo[][] ([]
+[]2015[][])
+
+Underfull \hbox (badness 1199) in paragraph at lines 368--399
+\T1/stix/m/n/10 com-bined a mul-ti-at-tribute value func-tion with port-fo-lio
+
+Underfull \hbox (badness 1400) in paragraph at lines 368--399
+\T1/stix/m/n/10 un-der hard spatial-separation re-quire-ments, the defin-ing
+
+Underfull \hbox (badness 7238) in paragraph at lines 368--399
+\T1/stix/m/n/10 Kadz-i´ski and S™ow-i´ski[][] ([][]2018[][]) op-ti-mised port-f
+o-lios
+
+Underfull \hbox (badness 1533) in paragraph at lines 368--399
+\T1/stix/m/n/10 un-der mul-ti-ple sat-is-fac-tion lev-els de-fined jointly acro
+ss
+
+Underfull \hbox (badness 1917) in paragraph at lines 368--399
+\T1/stix/m/n/10 with ILP pre-pro-cess-ing to ap-prox-i-mate the full Pareto
+
+Underfull \hbox (badness 1067) in paragraph at lines 368--399
+\T1/stix/m/n/10 Pareto fron-tier un-der a hard pair-wise spa-tial sep-a-ra-tion
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 368--399
+\T1/stix/m/n/10 Pareto fron-tier each method--normalisation--assembly
+[3]
+Underfull \hbox (badness 3668) in paragraph at lines 483--497
+\T1/stix/m/n/10 ([][]1996[][]) ex-tended the equiv-a-lence to val-ued pref-er-e
+nce
+
+Underfull \hbox (badness 7397) in paragraph at lines 483--497
+\T1/stix/m/n/10 re-la-tions, which is the set-ting of PROMETHEE II.
+
+Underfull \hbox (badness 4899) in paragraph at lines 516--527
+[]\T1/stix/m/n/10 Systematic bench-mark-ing of MCDM meth-ods has
+
+Underfull \hbox (badness 10000) in paragraph at lines 516--527
+\T1/stix/m/n/10 ex-panded sub-stan-tially. [][]Cinelli, Kadz-i´ski, Gon-za-lez
+
+Underfull \hbox (badness 1888) in paragraph at lines 516--527
+\T1/stix/m/n/10 among meth-ods and ar-gued for ex-plicit doc-u-men-ta-tion
+
+Underfull \hbox (badness 1810) in paragraph at lines 516--527
+\T1/stix/m/n/10 of the as-sump-tions em-bed-ded in each choice. [][]Sa™abun
+
+Underfull \hbox (badness 5924) in paragraph at lines 516--527
+\T1/stix/m/n/10 et al.[][] ([][]2020[][]) com-pared TOP-SIS, VIKOR, CO-PRAS,
+
+Underfull \hbox (badness 2213) in paragraph at lines 516--527
+\T1/stix/m/n/10 and PROMETHEE II us-ing stochas-tic sim-u-la-tions and
+
+Underfull \hbox (badness 6157) in paragraph at lines 516--527
+\T1/stix/m/n/10 Spear-man cor-re-la-tion, con-firm-ing that meth-ods agree
+
+Underfull \hbox (badness 4913) in paragraph at lines 516--527
+\T1/stix/m/n/10 mod-er-ately un-der stan-dard set-tings but di-verge when
+
+Underfull \hbox (badness 7851) in paragraph at lines 516--527
+\T1/stix/m/n/10 nor-mal-i-sa-tion or weight-ing changes. [][]Pinto da Costa
+
+Underfull \hbox (badness 2229) in paragraph at lines 516--527
+\T1/stix/m/n/10 and Soares[][] ([][]2005[][]) pro-posed weighted rank cor-re-la
+-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 516--527
+\T1/stix/m/n/10 Jankowski, Ziemba, Kar-cz-mar-czyk and Zio™o[][] ([][]2019[][])
+
+
+Underfull \hbox (badness 2591) in paragraph at lines 529--551
+\T1/stix/m/n/10 cri-te-rion of com-par-i-son. [][]Mulliner, Malys and Maliene[]
+[]
+
+Underfull \hbox (badness 10000) in paragraph at lines 529--551
+\T1/stix/m/n/10 ([][]2016[][]) com-pared SAW, TOP-SIS, and CO-PRAS for
+
+Underfull \hbox (badness 1107) in paragraph at lines 529--551
+\T1/stix/m/n/10 of dif-fer-ent MCDM meth-ods into a con-sen-sus rank-ing,
+
+Underfull \hbox (badness 6396) in paragraph at lines 529--551
+\T1/stix/m/n/10 op-ti-mal-ity thresh-olds to bench-mark project port-fo-lios
+
+Underfull \hbox (badness 4254) in paragraph at lines 529--551
+\T1/stix/m/n/10 with-out full enu-mer-a-tion; the present pa-per uses the
+
+Underfull \hbox (badness 3482) in paragraph at lines 529--551
+\T1/stix/m/n/10 sep-a-ra-bil-ity of the lo-ca-tion prob-lem to enu-mer-ate all
+
+Underfull \hbox (badness 4673) in paragraph at lines 529--551
+\T1/stix/m/n/10 Man-quinho and Figueira[][] ([][]2023[][]) de-vel-oped ex-act a
+nd
+
+Underfull \hbox (badness 3302) in paragraph at lines 529--551
+\T1/stix/m/n/10 the full trivari-ate fron-tier with-out ap-prox-i-ma-tion. The
+[4]
+Underfull \hbox (badness 7667) in paragraph at lines 672--675
+[]\T1/stix/m/n/10 This sec-tion de-fines the sit-ing prob-lem for-mally
+
+Underfull \hbox (badness 7168) in paragraph at lines 672--675
+\T1/stix/m/n/10 normalisation--assembly com-bi-na-tions are sub-se-quently
+[5]
+Overfull \hbox (13.1244pt too wide) detected at line 702
+ $\LS2/stixcal/m/n/10 T \LS1/stix/m/n/10 = [] \LS1/stix/m/it/10 t ” \LS2/stixca
+l/m/n/10 S  \LS1/stix/m/n/10 :  \LS2/stixex/m/n/10 \LS1/stix/m/it/10 t\LS2/sti
+xex/m/n/10  \LS1/stix/m/n/10 = 3\LS1/stix/m/it/10 ;  t[][] [];  \LS2/stixex/m/
+n/10 \LS2/stixcal/m/n/10 T\LS2/stixex/m/n/10  \LS1/stix/m/n/10 = 1[]944[]653\
+LS1/stix/m/it/10 :$  
+
+Underfull \hbox (badness 1874) in paragraph at lines 777--780
+ []\T1/stix/m/it/11 What the bench-mark is, and is not.[] $\LS1/stix/b/n/10 F$ 
+\T1/stix/m/n/10 is a three-
+
+Underfull \hbox (badness 2073) in paragraph at lines 777--780
+\T1/stix/m/n/10 in-de-pen-dent ob-jec-tives: each com-po-nent is an ad-di-tive
+
+Overfull \hbox (31.15796pt too wide) detected at line 817
+ $[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 t\LS1/stix/m/n/10 / = []  []  [][] \LS1
+/stix/m/it/10 ;$  
+[6] (figures/fig_workflow.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarypositioning.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibraryshapes.geometric.code.tex
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/shapes\
+pgflibraryshapes.geometric.code.tex))
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryarrows.meta.code.tex)
+(C:\Users\julio\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarycalc.code.tex))
+Underfull \hbox (badness 3439) in paragraph at lines 888--913
+[]\T1/stix/m/n/10 The \T1/zi4/m/n/10 slope_aspect \T1/stix/m/n/10 col-umn of th
+e pub-lished dataset
+
+Underfull \hbox (badness 3281) in paragraph at lines 888--913
+\T1/stix/m/n/10 ([][]Azan-cort Neto et al.[][], [][]2026[][]) is stored in a re
+-flected
+
+Underfull \hbox (badness 3525) in paragraph at lines 888--913
+\T1/stix/m/n/10 con-ven-tion, $\LS1/stix/m/it/10 ^^R[] \LS1/stix/m/n/10 = .270[
+] * \LS1/stix/m/it/10 ^^R\LS1/stix/m/n/10 /  []  360[]$\T1/stix/m/n/10 , where 
+$\LS1/stix/m/it/10 ^^R$
+
+Underfull \hbox (badness 2970) in paragraph at lines 888--913
+\T1/stix/m/n/10 is the ge-o-graphic de-scent az-imuth (0\TS1/stix/m/n/10 ∞\T1/s
+tix/m/n/10 =N, clock-wise),
+
+Underfull \hbox (badness 1406) in paragraph at lines 888--913
+\T1/stix/m/n/10 com-puted via the Horn al-go-rithm (\T1/zi4/m/n/10 gdaldem aspe
+ct\T1/stix/m/n/10 ) on
+[7]
+Underfull \hbox (badness 2653) in paragraph at lines 952--964
+[]\T1/stix/m/n/10 Stage 2 of Fig-ure [][]1[][]. Weights are taken from the
+
+Overfull \hbox (20.05048pt too wide) detected at line 980
+[]
+[8 <./figures/fig_F4_map.pdf>]
+Underfull \hbox (badness 1270) in paragraph at lines 1073--1075
+[]\T1/stix/m/n/10 A dom-i-nance test in-volves weights at three dis-tinct
+
+Underfull \hbox (badness 1297) in paragraph at lines 1080--1082
+[]$\LS1/stix/m/it/10 w[]$\T1/stix/m/n/10 : the weights used to build the ref-er
+-ence set,
+[9]
+Underfull \hbox (badness 5189) in paragraph at lines 1140--1148
+\T1/stix/m/n/10 rather than fron-tier mem-ber-ship. With $\LS1/stix/m/it/10 V[]
+\LS1/stix/m/n/10 .\LS1/stix/m/it/10 t\LS1/stix/m/n/10 ; \LS1/stix/m/it/10 w\LS1
+/stix/m/n/10 / =
+
+Underfull \hbox (badness 1221) in paragraph at lines 1172--1176
+[]\T1/stix/b/n/10 Bootstrap pair-ing\T1/stix/m/n/10 : repli-cates are paired by
+ draw
+
+Underfull \hbox (badness 1082) in paragraph at lines 1200--1217
+[]\T1/stix/m/n/10 The main ex-per-i-ment is a bal-anced $\LS1/stix/m/n/10 2[]$\
+T1/stix/m/n/10 : ag-gre-ga-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 1200--1217
+\LS1/stix/m/n/10 ^[]\LS1/stix/m/it/10 ; []\LS1/stix/m/n/10 `$ $ù$ \T1/stix/m/n/
+10 nor-mal-i-sa-tion $\LS1/stix/m/n/10 ^[]\LS1/stix/m/it/10 ; []\LS1/stix/m/n/1
+0 `$
+
+Underfull \hbox (badness 1888) in paragraph at lines 1200--1217
+\LS1/stix/m/n/10 ù$ \T1/stix/m/n/10 as-sem-bly $\LS1/stix/m/n/10 ^[]\LS1/stix/m
+/it/10 ; []\LS1/stix/m/n/10 `$\T1/stix/m/n/10 , eval-u-ated in $\LS1/stix/m/it/
+10 Q[]\LS1/stix/m/n/10 [\LS2/stixcal/m/n/10 A[]\LS1/stix/m/n/10 ]$\T1/stix/m/n/
+10 . A
+
+Underfull \hbox (badness 1377) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 wider de-sign adds VIKOR, PROMETHEE II and rank
+
+Underfull \hbox (badness 2020) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 re-dun-dant be-cause VIKOR is in-vari-ant to per-criterion
+
+Underfull \hbox (badness 10000) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 so VIKOR$\LS1/stix/m/n/10 ù$\T1/stix/m/n/10 vector du-pli-cates
+ VIKOR$\LS1/stix/m/n/10 ù$\T1/stix/m/n/10 min--max) and
+
+Underfull \hbox (badness 3323) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 Ef-fects are re-ported in per-cent-age points with $\LS1/stix/m
+/n/10 2[]000$\T1/stix/m/n/10 -
+
+Underfull \hbox (badness 3849) in paragraph at lines 1200--1217
+\T1/stix/m/n/10 for mul-ti-plic-ity; con-trasts other than the pre-specified
+[10]
+Underfull \hbox (badness 10000) in paragraph at lines 1271--1276
+\T1/stix/m/it/10 wise nor-mal-i-sa-tion ap-plied to cri-te-rion $\LS1/stix/m/it
+/10 j$\T1/stix/m/it/10 , and let
+
+Underfull \hbox (badness 3646) in paragraph at lines 1271--1276
+\LS1/stix/m/it/10 A[] \LS1/stix/m/n/10 = [][] \LS1/stix/m/it/10 n[]\LS1/stix/m/
+n/10 .\LS1/stix/m/it/10 x[]\LS1/stix/m/n/10 / * [][] \LS1/stix/m/it/10 n[]\LS1/
+stix/m/n/10 .\LS1/stix/m/it/10 x[]\LS1/stix/m/n/10 /$ \T1/stix/m/it/10 be the \
+T1/stix/m/n/10 am-pli-tude
+
+Underfull \hbox (badness 1342) in paragraph at lines 1271--1276
+\T1/stix/m/it/10 of the nor-malised col-umn. In any ad-di-tive ag-gre-ga-tion
+[11]
+Overfull \hbox (1.28632pt too wide) detected at line 1433
+[]
+
+Underfull \hbox (badness 3343) in paragraph at lines 1433--1443
+\T1/stix/m/n/10 so max-imis-ing $[][] \LS1/stix/m/it/10 s\LS1/stix/m/n/10 .\LS1
+/stix/m/it/10 a\LS1/stix/m/n/10 /$ \T1/stix/m/n/10 is equiv-a-lent to min-imis-
+ing
+
+Underfull \hbox (badness 2181) in paragraph at lines 1433--1443
+\T1/stix/m/n/10 of the three ob-jec-tives in their own senses (min-imise
+
+Underfull \hbox (badness 10000) in paragraph at lines 1433--1443
+\LS1/stix/m/it/10 F[]$ \T1/stix/m/n/10 and $\LS1/stix/m/it/10 F[]$\T1/stix/m/n/
+10 , max-imise $\LS1/stix/m/it/10 F[]$\T1/stix/m/n/10 ). Sup-pose $\LS1/stix/m/
+it/10 T[]$ \T1/stix/m/n/10 dom-i-nated
+
+Underfull \hbox (badness 3158) in paragraph at lines 1433--1443
+\LS1/stix/m/it/10 T[]$\T1/stix/m/n/10 , that is $\LS1/stix/m/it/10 F[]\LS1/stix
+/m/n/10 .\LS1/stix/m/it/10 T[]\LS1/stix/m/n/10 / \LS2/stixcal/m/n/10 f \LS1/sti
+x/m/it/10 F[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 T[]\LS1/stix/m/n/10 /$\T1/stix
+/m/n/10 , $\LS1/stix/m/it/10 F[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 T[]\LS1/sti
+x/m/n/10 / \LS2/stixcal/m/n/10 f \LS1/stix/m/it/10 F[]\LS1/stix/m/n/10 .\LS1/st
+ix/m/it/10 T[]\LS1/stix/m/n/10 /$\T1/stix/m/n/10 ,
+
+Underfull \hbox (badness 3635) in paragraph at lines 1433--1443
+\T1/stix/m/n/10 whence $[][] \LS1/stix/m/it/10 s\LS1/stix/m/n/10 .\LS1/stix/m/i
+t/10 a\LS1/stix/m/n/10 / \LS1/stix/m/it/10 > [][] s\LS1/stix/m/n/10 .\LS1/stix/
+m/it/10 a\LS1/stix/m/n/10 /$\T1/stix/m/n/10 , con-tra-dict-ing the
+
+Underfull \hbox (badness 1194) in paragraph at lines 1498--1514
+[]\T1/stix/m/n/10 Equation [] is im-me-di-ate from []: $\LS2/stixex/m/n/10 Ò\LS
+1/stix/m/it/10 ^^N\LS2/stixex/m/n/10 Ò[] \LS1/stix/m/n/10 =
+
+Underfull \hbox (badness 4096) in paragraph at lines 1498--1514
+\T1/stix/m/n/10 let $\LS1/stix/m/it/10 P[] \LS1/stix/m/n/10 = [][] \LS1/stix/m/
+it/10 ^^N[]$\T1/stix/m/n/10 . Since $[][] \LS1/stix/m/it/10 ^^N[] \LS1/stix/m/n
+/10 = 0$ \T1/stix/m/n/10 we have
+
+Underfull \hbox (badness 1122) in paragraph at lines 1498--1514
+\T1/stix/m/n/10 part is con-cen-trated on a sin-gle com-po-nent). There-fore
+[12] [13]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 1701.
+
+
+Underfull \hbox (badness 5985) in paragraph at lines 1719--1725
+[]\T1/stix/m/it/10 Derivation. \T1/stix/m/n/10 The range of $\LS1/stix/m/it/10 
+v[]\LS1/stix/m/n/10 .\LS1/stix/m/it/10 a\LS1/stix/m/n/10 /$ \T1/stix/m/n/10 ove
+r all sites is
+
+Underfull \hbox (badness 1052) in paragraph at lines 1719--1725
+\LS1/stix/m/n/10 .[][] [].\LS1/stix/m/it/10 a\LS1/stix/m/n/10 / * [][] [].\LS1/
+stix/m/it/10 a\LS1/stix/m/n/10 //_\LS2/stixex/m/n/10 Ò[]Ò[] \LS1/stix/m/n/10 = 
+\LS1/stix/m/it/10 ^^Z[]$\T1/stix/m/n/10 , so $\LS1/stix/m/it/10 A[] \LS1/stix/m
+/n/10 = \LS1/stix/m/it/10 ^^Z[]$
+
+Underfull \hbox (badness 3396) in paragraph at lines 1852--1857
+\T1/stix/m/n/10 is the only nor-mal-i-sa-tion that pre-serves elicited
+
+Underfull \hbox (badness 10000) in paragraph at lines 1852--1857
+\T1/stix/m/n/10 weights in ad-di-tive ag-gre-ga-tions (Sec-tion [][]6.2[][]).
+
+Underfull \hbox (badness 3590) in paragraph at lines 1852--1857
+\T1/stix/m/n/10 Un-der SAW, where the Lemma ap-plies ex-actly,
+
+Underfull \hbox (badness 1163) in paragraph at lines 1866--1871
+[]\T1/stix/m/it/10 Aggregation ef-fect (SAW vs. TOP-SIS vs. VIKOR):
+[14] [15 <./figures/fig_F1_slope_weights.pdf>] [16 <./figures/fig_F3_pareto.pdf
+>]
+Underfull \hbox (badness 10000) in paragraph at lines 2144--2166
+[]\T1/stix/m/n/10 The ag-gre-ga-tion con-trast of $\LS1/stix/m/n/10 *0\LS1/stix
+/m/it/10 :\LS1/stix/m/n/10 4$ \T1/stix/m/n/10 pp ($\LS1/stix/m/n/10 95~$ \T1/st
+ix/m/n/10 CI
+
+Underfull \hbox (badness 1314) in paragraph at lines 2144--2166
+\LS1/stix/m/n/10 [*2\LS1/stix/m/it/10 :\LS1/stix/m/n/10 2\LS1/stix/m/it/10 ;  \
+LS1/stix/m/n/10 +1\LS1/stix/m/it/10 :\LS1/stix/m/n/10 3]$\T1/stix/m/n/10 ) has 
+a pooled mean equiv-a-lent to zero at
+
+Underfull \hbox (badness 1097) in paragraph at lines 2144--2166
+\LS1/stix/m/it/10 ^^T \LS1/stix/m/n/10 = 200$ \T1/stix/m/n/10 (TOST $\LS1/stix/
+m/it/10 p \LS1/stix/m/n/10 = 0\LS1/stix/m/it/10 :\LS1/stix/m/n/10 010$\T1/stix/
+m/n/10 , $\LS1/stix/m/n/10 ^^A$ \T1/stix/m/n/10 pp, $\LS1/stix/m/n/10 90~$ \T1/
+stix/m/n/10 CI within
+[17]
+Underfull \hbox (badness 1033) in paragraph at lines 2278--2287
+\LS1/stix/m/n/10 [38\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6\LS1/stix/m/it/10 ; \L
+S1/stix/m/n/10 47\LS1/stix/m/it/10 :\LS1/stix/m/n/10 8]$ \T1/stix/m/n/10 pp); t
+he sym-met-ric mis-align-ment (min--max
+
+Underfull \hbox (badness 3746) in paragraph at lines 2278--2287
+\T1/stix/m/n/10 score against $\LS2/stixcal/m/n/10 F[]$\T1/stix/m/n/10 ) costs 
+only $\LS1/stix/m/n/10 5\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6$ \T1/stix/m/n/10 
+pp ($\LS1/stix/m/n/10 [3\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6\LS1/stix/m/it/10 
+; \LS1/stix/m/n/10 7\LS1/stix/m/it/10 :\LS1/stix/m/n/10 6]$ \T1/stix/m/n/10 pp)
+.
+
+Underfull \hbox (badness 2772) in paragraph at lines 2278--2287
+\T1/stix/m/n/10 Un-der op-ti-mal as-sem-bly, a wrong score nor-mal-i-sa-tion
+[18]
+Overfull \hbox (5.7904pt too wide) in paragraph at lines 2326--2336
+ [][] 
+
+Underfull \hbox (badness 1348) in paragraph at lines 2340--2373
+[]\T1/stix/m/n/10 Scoring \T1/stix/m/it/10 as-pect \T1/stix/m/n/10 as a con-tin
+-u-ous ge-o-graphic az-imuth
+
+Underfull \hbox (badness 2980) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 while the ob-jec-tives use a bi-nary SE-facing in-di-ca-tor
+
+Underfull \hbox (badness 1342) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 lie in the lower-middle range of the scale and re-ceive
+
+Underfull \hbox (badness 1112) in paragraph at lines 2340--2373
+\T1/stix/m/n/10 value; this is there-fore a dis-tinct fail-ure mode, not the
+[19] [20]
+Overfull \hbox (0.56549pt too wide) in paragraph at lines 2629--2638
+[]\T1/stix/m/n/10 This anal-y-sis was spec-i-fied (PRE-SPEC_E7_KAPPA.md,
+
+Underfull \hbox (badness 2005) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 amend-ments A1--A2, in the repli-ca-tion archive) be-fore
+
+Underfull \hbox (badness 3471) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 the E7 run but af-ter the main fac-to-rial re-sults were
+
+Underfull \hbox (badness 1728) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 known; we treat it as ex-ploratory through-out. Weights
+
+Underfull \hbox (badness 1484) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 are drawn as $\LS1/stix/b/n/10 w \LS1/stix/m/n/10 Ì [].\LS1/sti
+x/m/it/10 ^^T \LS1/stix/b/n/10 w[]\LS1/stix/m/n/10 /$ \T1/stix/m/n/10 with the 
+AHP weights
+
+Underfull \hbox (badness 10000) in paragraph at lines 2629--2638
+\T1/stix/m/n/10 as $\LS1/stix/b/n/10 w[]$\T1/stix/m/n/10 ; smaller $\LS1/stix/m
+/it/10 ^^T$ \T1/stix/m/n/10 means more dis-persed weights
+
+Underfull \hbox (badness 1917) in paragraph at lines 2639--2662
+\T1/stix/m/n/10 in-for-ma-tive cells; Sec-tion [][]7.3[][]) de-creases mono-ton
+-i-cally
+
+Underfull \hbox (badness 1242) in paragraph at lines 2639--2662
+\T1/stix/m/n/10 at the de-ter-min-is-tic limit ($\LS1/stix/m/it/10 ^^T \LS1/sti
+xsf/m/n/10 ô \LS1/stix/m/n/10 ÿ$\T1/stix/m/n/10 , nom-i-nal weights;
+[21]
+Underfull \hbox (badness 1412) in paragraph at lines 2694--2706
+[]\T1/stix/b/n/10 Assembly un-der vec-tor nor-mal-i-sa-tion. \T1/stix/m/n/10 Re
+l-a-tive to
+
+Underfull \hbox (badness 10000) in paragraph at lines 2716--2719
+[]\T1/stix/m/n/10 All 36 in-ter-vals ($\LS1/stix/m/n/10 6$ \T1/stix/m/n/10 con-
+trasts $\LS1/stix/m/n/10 ù$ $6$ \T1/stix/m/n/10 val-ues of
+
+Underfull \hbox (badness 10000) in paragraph at lines 2716--2719
+\LS1/stix/m/it/10 ^^T$\T1/stix/m/n/10 ) are un-ad-justed and de-scrip-tive, as 
+spec-i-fied in
+(santiago.tex
+Underfull \hbox (badness 1635) in paragraph at lines 55--88
+\T1/stix/m/n/10 pre-registration, with its date and whether the af-fected
+
+Underfull \hbox (badness 1484) in paragraph at lines 55--88
+\T1/stix/m/n/10 quan-tity had been seen. Be-fore the Monte Carlo runs,
+
+Underfull \hbox (badness 1253) in paragraph at lines 55--88
+\T1/stix/m/n/10 its WFS layer re-turned HTTP500 on down-load (DEV-
+
+Underfull \hbox (badness 4266) in paragraph at lines 55--88
+\T1/stix/m/n/10 SANT-ZDTI-001); cri-te-rion A4 fell back to a sin-gle
+
+Underfull \hbox (badness 2846) in paragraph at lines 55--88
+\T1/stix/m/n/10 her-itage point when the UN-ESCO bound-ary shape-file
+
+Underfull \hbox (badness 1642) in paragraph at lines 55--88
+\T1/stix/m/n/10 eval-u-a-tion code with def-i-ni-tions al-ready used on Fogo
+
+Underfull \hbox (badness 1325) in paragraph at lines 55--88
+\T1/stix/m/n/10 quan-ti-ties had been seen: the E1 cells, which re-turned
+
+Underfull \hbox (badness 1112) in paragraph at lines 55--88
+\T1/stix/m/n/10 the eval-u-a-tion; it changes one re-ported $\LS1/stix/m/it/10 
+p$\T1/stix/m/n/10 -value and no
+[22] [23] [24]
+
+LaTeX Warning: No positions in optional float specifier.
+               Default added (so using `') on input line 474.
+
+
+Underfull \hbox (badness 6396) in paragraph at lines 493--493
+[][]\T1/cmss/bx/n/9 Figure 5:[] []\T1/cmss/m/n/9 Pooled SAW$\LS1/stix/m/n/9 *$\
+T1/cmss/m/n/9 TOPSIS ag-gre-ga-tion con-trast
+) [25] [26 <./figures/fig_kappa_santiago.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 2792--2798
+[]\T1/stix/m/n/10 The prac-ti-cal con-se-quences dif-fer. Dis-tri-bu-tional
+
+Underfull \hbox (badness 2547) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 re-weighting is a prop-erty of the data un-der a given
+
+Underfull \hbox (badness 5592) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 nor-mal-i-sa-tion; it can be quan-ti-fied and, if ac-cepted,
+
+Underfull \hbox (badness 5771) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 doc-u-mented. Cri-te-rion cod-ing mis-match is avoid-able:
+
+Underfull \hbox (badness 1024) in paragraph at lines 2792--2798
+\T1/stix/m/n/10 same en-cod-ing for each cri-te-rion be-fore ap-ply-ing ex-act
+
+Underfull \hbox (badness 1466) in paragraph at lines 2801--2809
+[]\T1/stix/m/n/10 The clos-est an-tecedents study port-fo-lio con-struc-tion
+
+Underfull \hbox (badness 1237) in paragraph at lines 2801--2809
+\T1/stix/m/n/10 from multi-criteria scores. [][]Brans and Mareschal[][] ([][]19
+92[][])
+
+Underfull \hbox (badness 1014) in paragraph at lines 2801--2809
+\T1/stix/m/n/10 bi-nary pro-gram-ming; [][]Vetschera and de Almeida[][] ([][]20
+12[][])
+
+Underfull \hbox (badness 4108) in paragraph at lines 2801--2809
+\T1/stix/m/n/10 for-mu-lated $\LS1/stix/m/it/10 c$\T1/stix/m/n/10 -optimal port
+-fo-lios, of which the present
+[27]
+Underfull \hbox (badness 10000) in paragraph at lines 2953--2969
+[]\T1/stix/m/n/10 Third, re-port ef-fec-tive weights along-side elicited
+
+Underfull \hbox (badness 1527) in paragraph at lines 2953--2969
+\T1/stix/m/n/10 alone. Where elicited weights carry nor-ma-tive con-tent,
+[28]
+Underfull \hbox (badness 5908) in paragraph at lines 2985--3009
+[]\T1/stix/m/n/10 Fifth, char-ac-terise the un-cer-tainty of the weights
+
+Underfull \hbox (badness 1728) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 be-fore choos-ing an ag-gre-ga-tion op-er-a-tor. On Fogo the
+
+Underfull \hbox (badness 1515) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 SAW--TOPSIS con-trast re-verses sign across the $\LS1/stix/m/it
+/10 ^^T$ \T1/stix/m/n/10 grid
+
+Underfull \hbox (badness 3826) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 (Sec-tion [][]7.10[][]): SAW reaches the fron-tier more of-ten
+
+Underfull \hbox (badness 2088) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 they are con-cen-trated but still un-cer-tain ($\LS1/stix/m/it/
+10 ^^T \LS1/stix/m/n/10 = 400$\T1/stix/m/n/10 --
+
+Underfull \hbox (badness 1221) in paragraph at lines 2985--3009
+\LS1/stix/m/n/10 1000$\T1/stix/m/n/10 ); at the nom-i-nal weights alone the two
+ op-er-a-tors
+
+Underfull \hbox (badness 5637) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 sig-nals poor Dirich-let fit); with-out such in-for-ma-tion,
+
+Underfull \hbox (badness 2753) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 op-er-a-tors. The rec-om-men-da-tions above ap-ply to SAW
+
+Underfull \hbox (badness 1348) in paragraph at lines 2985--3009
+\T1/stix/m/n/10 is in-vari-ant to per-criterion affine trans-for-ma-tion by its
+
+
+Underfull \hbox (badness 1874) in paragraph at lines 3087--3092
+\T1/stix/m/n/10 ex-tract-ing a com-pa-ra-ble de-ci-sion ma-trix would re-quire
+[29]
+Underfull \hbox (badness 10000) in paragraph at lines 3101--3113
+[]\T1/stix/m/it/10 Weight per-tur-ba-tion model. \T1/stix/m/n/10 Dirich-let per
+-tur-ba-tion
+
+Underfull \hbox (badness 4048) in paragraph at lines 3101--3113
+\T1/stix/m/n/10 char-ac-terise non-dominated so-lu-tions un-der dom-i-nance
+
+Underfull \hbox (badness 4995) in paragraph at lines 3101--3113
+\T1/stix/m/n/10 re-la-tions de-rived from dis-tri-bu-tional as-sump-tions; our
+
+Underfull \hbox (badness 1067) in paragraph at lines 3150--3163
+[]\T1/stix/m/n/10 The an-a-lyt-i-cal re-sults do not de-pend on the weight
+
+Underfull \hbox (badness 2903) in paragraph at lines 3164--3178
+\LS1/stix/m/n/10 29\LS1/stix/m/it/10 :\LS1/stix/m/n/10 2$ \T1/stix/m/n/10 pp wh
+er-ever the ef-fect was dis-tin-guish-able from
+[30] (main.bbl
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+[]\T1/stix/m/n/8 Azancort Neto, J.L., Gomes, E.H.C., Fre-itas, G.C.d.M., Silva,
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+\T1/stix/m/n/8 R.d.C., Ara˙jo, J.P.L.d., FrancÍs, C.R.L., 2026.  Land-fill
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+\T1/stix/m/n/8 site al-lo-ca-tion multi-objective op-ti-miza-tion with NSGA-II:
+ A
+
+Underfull \hbox (badness 5787) in paragraph at lines 45--58
+\T1/stix/m/n/8 case study on Fogo Is-land, Cape Verde.  IEEE Ac-cess 14,
+
+Underfull \hbox (badness 6332) in paragraph at lines 45--58
+\T1/stix/m/n/8 83991--84015.  doi:[][]$\T1/zi4/m/n/8 10 . 1109 / ACCESS . 2026 
+. 3697915$[][]\T1/stix/m/n/8 . GitHub: [][]$\T1/zi4/m/n/8 https :
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--58
+\T1/zi4/m/n/8 / / github . com / Jazancort / NSGA2-[]GIS-[]Landfill-[]Optimizat
+ion-[]Cape-[]Verde$[][]\T1/stix/m/n/8 ;
+[31]
+Underfull \hbox (badness 2409) in paragraph at lines 204--214
+[]\T1/stix/m/n/8 Costa, D.C.L., de Oliveira Costa, H.A., Cas-tro, A.P.S., Cruz,
+ E.C.,
+[32]) [33] (main.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+(see the transcript file for additional information) <C:\Users\julio\AppData\Lo
+cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss0800.pk> <C:\Users\julio\AppD
+ata\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi450\ecss0800.pk> <C:\Users\juli
+o\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecsi0900.pk> <C:\User
+s\julio\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecsx0900.pk> <C
+:\Users\julio\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss0900.
+pk><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/inconsolata
+/Inconsolata-zi4r.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1
+/public/stix/STIXGeneral-Bold.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/stix/STIXGeneral-Italic.pfb><C:/Users/julio/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/stix/STIXGeneral-Regular.pfb><C:/Users/julio/
+AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/stix-mathbb.pfb><C:/Users
+/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/stix-mathcal.pfb><
+C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/stix-mathe
+x.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/stix/sti
+x-mathit.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/type1/public/s
+tix/stix-mathrm-bold.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/stix/stix-mathrm.pfb><C:/Users/julio/AppData/Local/Programs/MiKTeX/f
+onts/type1/public/stix/stix-mathscr.pfb><C:/Users/julio/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/stix/stix-mathsf.pfb>
+Output written on main.pdf (34 pages, 1626816 bytes).
+Transcript written on main.log.
+Latexmk: Getting log file 'main.log'
+Latexmk: Examining 'main.fls'
+Latexmk: Examining 'main.log'
+Latexmk: Found input bbl file 'main.bbl'
+Latexmk: Log file says output to 'main.pdf'
+Latexmk: Using bibtex to make bibliography file(s).
+  ===Source file 'main.bbl' for 'pdflatex'
+Latexmk: Found bibliography file(s):
+  ./refs.bib
+Latexmk: All targets (main.pdf) are up-to-date
+
+Reverting Windows console CPs to (in,out) = (850,65001)
+Build dir : G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\build\paper
+Source dir: G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\paper\manuscript
+
+[1/4] pdflatex main.tex (pass 1 ‚Äî create main.aux) ‚Ä¶
+[2/4] bibtex main ‚Ä¶
+[3/4] compiling suppl_wrapper.tex (reads main.aux) ‚Ä¶
+[4/4] latexmk main.tex (full run, reads suppl_wrapper.aux) ‚Ä¶
+
+Done.  PDF -> G:\Faculdade\Estudo\Mestrado\2022.1\Trabalhos\Multicriterio\03-latex\paper - Comparison between MCDM Methods for Landfill Site Selection\paper\manuscript\main.pdf

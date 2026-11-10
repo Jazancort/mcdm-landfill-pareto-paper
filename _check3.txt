@@ -1,0 +1,21 @@
+%   macros_amplitudes.tex  <- generate_macros_amplitudes.py  (TV*, rho*, slopeOpt, PermInflation)
+% TVBvec, TVWvec, slopeOpt also moved to macros_amplitudes.tex.
+\newcommand{\slopeFive}{93.0}
+\newcommand{\SEfive}{6.8}
+\newcommand{\slopeDropSum}{30.9}
+\newcommand{\QthreeSAWmmOpt}{0.000}       % Q3 SAW/mm/opt (=0, Q2=100%)
+\newcommand{\QthreeSAWmmGrd}{0.0018}      % Q3 SAW/mm/grdy  (unchanged)
+\newcommand{\QthreeSAWvecGrd}{0.0086}     % Q3 SAW/vec/grdy  (was 0.0216, bug fixed)
+\newcommand{\QthreeSAWvecOpt}{0.0087}     % Q3 SAW/vec/opt   (was 0.0212, bug fixed)
+\newcommand{\QthreeTOPSISmmGrd}{0.0009}   % Q3 TOPSIS/mm/grdy  (0.000879, unchanged at 4dp)
+\newcommand{\QthreeTOPSISmmOpt}{0.0005}   % Q3 TOPSIS/mm/opt   (0.000478, unchanged at 4dp)
+\newcommand{\QthreeTOPSISvecGrd}{0.0114}  % Q3 TOPSIS/vec/grdy (was 0.447, bug fixed)
+\newcommand{\QthreeTOPSISvecOpt}{0.0111}  % Q3 TOPSIS/vec/opt  (was 0.447, bug fixed)
+\newcommand{\QthreeSAWmmGrdPct}{0.18}
+\newcommand{\QthreeSAWmmOptPct}{0.00}
+\newcommand{\QthreeSAWvecGrdPct}{0.86}
+\newcommand{\QthreeSAWvecOptPct}{0.87}
+\newcommand{\QthreeTOPSISmmGrdPct}{0.09}
+\newcommand{\QthreeTOPSISmmOptPct}{0.05}
+\newcommand{\QthreeTOPSISvecGrdPct}{1.14}
+\newcommand{\QthreeTOPSISvecOptPct}{1.11}

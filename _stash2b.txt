@@ -1,0 +1,1 @@
+ERROR: pdflatex -halt-on-error -interaction=nonstopmode main.tex returned 1

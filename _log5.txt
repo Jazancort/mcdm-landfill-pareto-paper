@@ -1,0 +1,1 @@
+[' (macros_amplitudes.tex) (macros.tex', '', "! LaTeX Error: File `../results/e1/e1_macros.tex' not found.", '', 'Type X to quit or <RETURN> to proceed,', 'or enter new name. (Default extension: tex)', '', 'Enter file name: ', '! Emergency stop.', '<read *> ']

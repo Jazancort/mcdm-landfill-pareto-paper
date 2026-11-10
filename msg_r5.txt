@@ -1,0 +1,13 @@
+check(R5): verify Santiago prediction verdicts match JSON
+
+scripts/check_santiago_verdicts.py: new checker.
+  - SHA-verifies santiago_predictions_v2.json
+  - Reads verdict macros from results/santiago/macros_santiago.tex
+  - Checks 18 Result macros (S0-S7b, both branches) against JSON
+  - [FAIL] MISMATCH on any divergence; EXIT=1
+  - Negative test confirmed: EXIT=1 when macro corrupted
+
+scripts/run_checks.py: add check_santiago_verdicts (12 checkers total)
+
+make check EXIT=0 (12 checkers, 0 failures)
+make paper EXIT=0 (34 pages)

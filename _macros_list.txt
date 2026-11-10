@@ -1,0 +1,8 @@
+macros.tex : 294
+macros_amplitudes.tex : 49
+macros_e6.tex : 239
+macros_e7.tex : 95
+macros_f8.tex : 62
+macros_kappa_inf.tex : 10
+macros_raw_sens.tex : 13
+macros_structural.tex : 19

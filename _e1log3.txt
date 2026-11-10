@@ -1,0 +1,12 @@
+2406 chars
+======================================================================
+E1 v3: Amplitude decomposition (min diff from wp3_mc.py)
+Pre-spec: corpus/PRESPEC_E1.md (f6042f8)  eps=1e-9  float64
+======================================================================
+Viable trios: 1,944,653 (1.4s)
+Aj_bar_g: G1=0.3744  G2=0.1473  G3=0.1161
+E1-W rescale: 0.2034 (published 0.2024)
+[TV_B] E1-W group amplitude means = 0.203406 (constant): PASS
+
+--- E1-M: A_j=1 (min-max, regression test) ---
+  [100/500]  grd=8

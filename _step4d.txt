@@ -1,0 +1,8 @@
+macros.tex macros.tex
+macros_amplitudes.tex other
+macros_e6.tex other
+macros_e7.tex other
+macros_f8.tex other
+macros_kappa_inf.tex other
+macros_raw_sens.tex other
+macros_structural.tex other

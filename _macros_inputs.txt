@@ -1,0 +1,3 @@
+L75: \input{results/e1/e1_macros}
+L276: % One definition per name; providecommand is idempotent so \input is safe twice.
+L277: \input{macros_structural}

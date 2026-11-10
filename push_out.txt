@@ -1,0 +1,2 @@
+To https://github.com/Jazancort/mcdm-landfill-pareto-paper.git
+   dcdf1d2..e3d2d7e  writing-santiago -> writing-santiago

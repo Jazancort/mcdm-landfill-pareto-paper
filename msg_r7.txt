@@ -1,0 +1,13 @@
+check(R7): figures, tables and typography — zero overfull >1pt in main.tex
+
+7-1: Overfull threshold lowered from >5pt to >1pt in check_consistency.py.
+     main.tex: corrected 5 overfull (L702 eq:T, L817 eq:gap, L980 eq:vec,
+     L2326 tab:coding2x2, L2629 PRESPEC_E7_KAPPA paragraph).
+     L1433 eq:scalarisation (1.3pt) whitelisted in checks/exceptions.txt
+     and check_consistency.py — subscript G_1\cup G_2 not fixable without
+     losing mathematical notation.
+     supplementary.tex: tab:provenance uses \small + p{4.0cm} for script
+     column; tab:provenance and tab:sant-dev use [p] float specifier to
+     resolve Float too large warnings.
+     make check: EXIT=0 (0 failures, 1 warning: SENS-ZDTI-DISTRIB Athena)
+     make paper: EXIT=0 (34 pages)

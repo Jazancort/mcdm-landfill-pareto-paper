@@ -1,0 +1,12 @@
+L19:     """Copy file; create parent if needed."""
+L21:     shutil.copy2(str(src), str(dst))
+L25:     """Copy directory tree, handling read-only files on Windows."""
+L33:     shutil.copytree(str(src), str(dst))
+L59:     # Copy all manuscript files (tex, cls, sty, bst, bib, thumbnails, …)
+L67:     # Copy figures directory
+L70:     # Copy specific results files required by \input{results/…}
+L71:     # Copy all .tex files from results/ recursively (handles supplementary \input refs)
+L79:     # Copy macros not in manuscript/ (auto-generated per κ sweep)
+L80:     for f in ["macros_e7.tex", "macros_kappa_inf.tex"]:
+L81:         _cp(ROOT / "macros" / f, BUILD / f)
+L100:     # ── 3. Copy outputs back into source tree ────────────────────────────────

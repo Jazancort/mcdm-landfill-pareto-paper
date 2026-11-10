@@ -1,0 +1,7 @@
+L47: def _cp_macros_tex(src: Path, dst: Path) -> None:
+L48:     """Copy macros.tex adjusting \\input paths for build/paper/ context.
+L50:     macros.tex uses:
+L110:     # macros.tex needs path adjustment; others are copied with ASCII sanitisation.
+L111:     for f in (ROOT / "macros").glob("macros*.tex"):
+L112:         if f.name == "macros.tex":
+L113:             _cp_macros_tex(f, BUILD / f.name)

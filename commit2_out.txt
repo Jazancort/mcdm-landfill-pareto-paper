@@ -1,0 +1,4 @@
+[writing-santiago bdf533e] docs: document Ronda 2b completion in WORK_PLAN.md
+ 1 file changed, 26 insertions(+), 1 deletion(-)
+To https://github.com/Jazancort/mcdm-landfill-pareto-paper.git
+   e3d2d7e..bdf533e  writing-santiago -> writing-santiago

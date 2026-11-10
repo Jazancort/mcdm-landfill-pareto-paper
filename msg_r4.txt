@@ -1,0 +1,10 @@
+repro(R4): reproducibility — inputs SHA, seeds, make reproduce, uv.lock
+
+4-1: Makefile: add `reproduce` target (check_inputs + macros + check + paper)
+4-2: scripts/check_inputs.py: SHA-256 verify 3 non-versioned GIS input files
+4-3: README.md: add Replication section with step timings and seed table
+4-4: scripts/check_seeds.py: verify SEED/B_BOOT in 5 canonical scripts
+4-5: pyproject.toml + uv.lock: pin Python environment; CITATION.cff + .zenodo.json -> v1.9
+
+run_checks.py: add check_inputs and check_seeds (11 checkers total)
+make check: EXIT=0 (0 failures, 11 checkers)

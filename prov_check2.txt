@@ -1,0 +1,38 @@
+========================================================================
+check_macros_provenance.py
+========================================================================
+
+  Loaded 774 macro definitions from provenance CSV
+  Found 364 distinct macro uses in manuscript
+
+[FAIL] 3 macros used but not in provenance CSV:
+  \S2
+  \S3
+  \S4
+
+[WARN] 413 macros defined but not found in manuscript scan:
+  \AggContrastPooled  (macros/macros.tex)
+  \AggContrastPooledHi  (macros/macros.tex)
+  \AggContrastPooledLo  (macros/macros.tex)
+  \AggKfourhundredHi  (macros/macros_e7.tex)
+  \AggKfourhundredLo  (macros/macros_e7.tex)
+  \AggKonehundredHi  (macros/macros_e7.tex)
+  \AggKonehundredLo  (macros/macros_e7.tex)
+  \AggKthousandHi  (macros/macros_e7.tex)
+  \AggKthousandLo  (macros/macros_e7.tex)
+  \AggKtwentyfiveHi  (macros/macros_e7.tex)
+  \AggKtwentyfiveLo  (macros/macros_e7.tex)
+  \AggMMgrdCIhi  (macros/macros.tex)
+  \AggMMgrdCIlo  (macros/macros.tex)
+  \AggMMoptCIhi  (macros/macros.tex)
+  \AggMMoptCIlo  (macros/macros.tex)
+  \AggStratumMMgrdAbs  (macros/macros.tex)
+  \AggStratumMMopt  (macros/macros.tex)
+  \AggStratumVecgrd  (macros/macros.tex)
+  \AggVecgrdCIhi  (macros/macros.tex)
+  \AggVecgrdCIlo  (macros/macros.tex)
+  ... and 393 more
+
+========================================================================
+FAILED: 1 check(s):
+  x 3 macros without provenance

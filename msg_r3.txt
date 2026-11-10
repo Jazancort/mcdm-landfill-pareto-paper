@@ -1,0 +1,50 @@
+audit(R3): zero hand-written numbers, macro provenance, tolerances
+
+3-1: scripts/audit_numbers.py — scans main.tex and santiago.tex for
+     numeric literals outside \newcommand; classifies as (b) design
+     constant or (c) result written by hand; exits 1 if any (c) found.
+     checks/design_constants.txt — 200+ accepted structural constants
+     with justifications (AHP weights, dataset properties, table data).
+     Result: 0 class-(c) literals in main.tex + santiago.tex.
+
+3-2: scripts/generate_macros_provenance.py — generates
+     results/macros_provenance.csv (774 macros, source .tex, generator
+     script, SHA-256 of source).
+     scripts/check_macros_provenance.py — verifies every macro used in
+     the manuscript has a provenance entry; exits 1 if any missing.
+
+3-3: Orphan macros (413 defined but not found in scan) reported as
+     WARN only — many are used in supplementary or conditionally.
+     No macros removed (requires user confirmation per WORK_PLAN).
+
+3-4: checks/tolerances.txt — 4 tolerances documented with precision
+     and justification. scripts/check_tolerances.py — verifies each
+     tolerance <= 0.5 * 10^(-dp); dp=0 exempts pipeline-internal
+     tolerances.
+
+New macros added to macros/macros.tex:
+  \QthreeVecMin{0.86}, \QthreeVecMax{1.14} — Q3 range in vector cells
+  \EoneBGrdOptCoincide{62.8} — E1-B greedy==optimal fraction
+  \EoneBGrdFonePercentile{0.8} — E1-B greedy F1 percentile (renamed
+    from EoneBGrdF1Percentile: LaTeX macro names cannot contain digits)
+  \EfiveSlope{-1.3}, \EfiveSlopeCIlo{-5.1}, \EfiveSlopeCIhi{2.4}
+
+Substitutions in main.tex:
+  0.091 -> \TVrnk (3 occurrences)
+  0.583 -> \RhoPerm (2 occurrences)
+  0.103 -> \RhoAspect (1 occurrence)
+  0.058/0.103 -> \RhoAspectFlipped/\RhoAspect (1 occurrence)
+  0.86%/1.14% -> \QthreeVecMin/\QthreeVecMax
+  62.8% -> \EoneBGrdOptCoincide
+  0.8th -> \EoneBGrdFonePercentile
+  -1.3pp/[-5.1,+2.4] -> \EfiveSlope/\EfiveSlopeCIlo/\EfiveSlopeCIhi
+
+scripts/build_paper.py: copy all macros/*.tex to build/paper/;
+  _cp_macros_tex adjusts \input paths and strips non-ASCII bytes
+  (pdflatex cannot process UTF-8 in preamble without inputenc).
+  _cp_tex_ascii strips non-ASCII from results/*.tex for same reason.
+
+scripts/run_checks.py: added audit_numbers, check_macros_provenance,
+  check_tolerances to the check suite (9 checkers total).
+
+make paper EXIT=0 (34 pages); make check EXIT=0 (0 failures).

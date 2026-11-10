@@ -1,0 +1,20 @@
+ M paper/manuscript/suppl_wrapper.pdf
+ M results/santiago/macros_santiago.tex
+ M scripts/check_consistency.py
+ M scripts/compute_descriptive.py
+ M scripts/make_santiago_macros.py
+ M scripts/mc_unified.py
+?? _prespec_sant.txt
+?? commit2_out.txt
+?? commit_out.txt
+?? make_check_out.txt
+?? make_paper_out.txt
+?? msg.txt
+?? out_status.txt
+?? push_out.txt
+?? r4_1.txt
+?? r4_2.txt
+?? r4_3.txt
+?? r4_status.txt
+?? results/archive/dcdf1d2-dirty/
+?? scripts/append_summary.py

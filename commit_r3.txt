@@ -1,0 +1,9 @@
+[writing-santiago ae80353] audit(R3): zero hand-written numbers, macro provenance, tolerances
+ 11 files changed, 2091 insertions(+), 28 deletions(-)
+ create mode 100644 checks/design_constants.txt
+ create mode 100644 checks/tolerances.txt
+ create mode 100644 results/macros_provenance.csv
+ create mode 100644 scripts/audit_numbers.py
+ create mode 100644 scripts/check_macros_provenance.py
+ create mode 100644 scripts/check_tolerances.py
+ create mode 100644 scripts/generate_macros_provenance.py

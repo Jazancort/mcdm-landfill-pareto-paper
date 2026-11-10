@@ -1,0 +1,6 @@
+L27:     dst.write_bytes(ascii_bytes)
+L47:             _os.chmod(path, _stat.S_IWRITE)
+L99:     # Adjust relative \input paths in macros.tex for the build directory context.
+L101:         if f.name == "macros.tex":
+L102:             # macros.tex uses \input{../results/e1/e1_macros} and
+L109:             (BUILD / f.name).write_bytes(ascii_bytes)

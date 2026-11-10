@@ -1,0 +1,10 @@
+FAinter MISSING
+FAsize MISSING
+Fmmsize MISSING
+Ncand MISSING
+Nexcl MISSING
+Ntrios MISSING
+Nvia MISSING
+EoneBGrdF1Percentile MISSING
+EsixPfourP MISSING
+EsixPthreeP MISSING

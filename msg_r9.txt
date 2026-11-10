@@ -1,0 +1,34 @@
+check(R9): literature verification — check_refs.py + Crossref audit
+
+9-1: scripts/check_refs.py created
+  - Parses src/refs.bib (122 entries: 101 with DOI, 21 without)
+  - --offline mode: lists entries without DOI, exits 0 (used by make check)
+  - Online mode: resolves each DOI via Crossref API, compares title/year/author
+  - Writes results/refs_check.csv with per-entry status
+
+9-2: retraction check integrated in check_refs.py
+  - Checks Crossref update-to type=retraction for each resolved DOI
+  - Result: 0 retractions found
+
+9-1 online results (101 DOIs checked):
+  OK: 72 | WARN: 13 (title truncated in bib) | MISMATCH: 10 | NOT_FOUND: 6
+  RETRACTED: 0
+
+MISMATCH/NOT_FOUND requiring action (reported, not corrected without approval):
+  - Azancort2021: DOI resolves to different paper (title mismatch)
+  - Salabun2020 + Salabun2020Sym: same DOI, title truncated (sim=0.14)
+  - Sener2010: DOI resolves to unrelated paper (wrong DOI)
+  - VetscheraDeAlmeida2012: title truncated in bib (sim=0.25)
+  - BransMareschal1992: case difference (sim=0.29)
+  - Yang2015SMAAPO: year mismatch bib=2015 cr=2014
+  - Dejaegere2022: DOI resolves to different paper (wrong DOI)
+  - Eppe2014: title truncated (sim=0.25)
+  - Korucu2012: DOI resolves to "Letter to the Editor" (wrong DOI)
+  - Liu2014, Priya2019, Srdjevic2004, Aytekin2021, Mild2015, Erkut1989: NOT_FOUND
+
+run_checks.py: check_refs added (--offline, 15 checkers total)
+run_checks.py: fix args with leading '-' not treated as paths
+verify_macros_permanent.py: geopandas/rasterio absent → WARN not FAIL
+
+make check: EXIT=0 (15 checkers, 0 failures, 3 WARNs)
+make paper: EXIT=0 (34 pages) [not rerun; no manuscript changes]

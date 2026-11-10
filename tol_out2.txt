@@ -1,0 +1,13 @@
+========================================================================
+check_tolerances.py — tolerance audit
+========================================================================
+
+  Loaded 4 tolerance entries
+
+  [OK  ] half_up_1dp: tol=0.05, dp=1, max=0.050000  half-up rounding to 1 decimal place — max error = 0.05 pp
+  [OK  ] TV_B_TV_W: tol=0.0001, dp=3, max=0.000500  TV_B/TV_W match tolerance — printed to 3 dp; 0.0001 < 0.0005
+  [OK  ] weight_sum: tol=0.001, dp=2, max=0.005000  weight sum tolerance — sanity check only; 0.001 = half of 2dp unit
+  [OK  ] E1_log_SE: tol=6.7, dp=0 (no precision constraint)  E1 regression test tolerance = 3*SE (3*2.22=6.7 pp) — internal pipeline only
+
+========================================================================
+ALL CHECKS PASSED

@@ -1,0 +1,5 @@
+L79: b'\\newcommand{\\EonePtwoDiff}{7.4}       % W exceeds V by this many pp (point estimate)'
+L80: b'\\newcommand{\\EonePtwoBootCILo}{4.0}   % 95% paired bootstrap CI lower bound'
+L81: b'\\newcommand{\\EonePtwoBootCIHi}{11.0}  % 95% paired bootstrap CI upper bound'
+L82: b''
+L83: b'% ------ TV(alpha=2) --- manuscript formula w_j^eff(2) = w_j^2 * A_j^2 / sum w_k^2*A_k^2 ------'

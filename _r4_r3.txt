@@ -1,0 +1,3 @@
+r4_1_r3.txt : 148339 chars
+r4_2_r3.txt : 0 chars
+r4_3_r3.txt : 79605 chars

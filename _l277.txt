@@ -1,0 +1,6 @@
+L275: b'% ------ Structural macros (shared with main.tex preamble via macros_structural.tex) ---'
+L276: b'% One definition per name; providecommand is idempotent so \\input is safe twice.'
+L277: b'\\input{macros_structural}'
+L278: b''
+L279: b'% ------ F1 per-cell aggregation contrasts (SAW-TOPSIS, aggregation_strata.csv) ---------'
+L280: b'\\newcommand{\\AggMMgrdCIlo}{-11.6}'

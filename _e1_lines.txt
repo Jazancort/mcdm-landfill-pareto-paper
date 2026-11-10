@@ -1,0 +1,6 @@
+L16: b'\\newcommand{\\QtwoEoneBGrd}{100.0}    % E1-B greedy Q2'
+L17: b'\\newcommand{\\QtwoEoneBOpt}{100.0}   % E1-B optimal Q2'
+L18: b'% Cell W (within only): loss = \\EoneWloss'
+L19: b'\\newcommand{\\QtwoEoneWGrd}{64.0}    % E1-W greedy Q2'
+L20: b'\\newcommand{\\QtwoEoneWOpt}{64.2}   % E1-W optimal Q2'
+L21: b'% Cell V (vector): also \\QtwovecGreedy / \\QtwovecOptimal in macros.tex; loss = \\EoneVloss'

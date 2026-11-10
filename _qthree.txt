@@ -1,0 +1,16 @@
+L227: \newcommand{\QthreeSAWmmOpt}{0.000}       % Q3 SAW/mm/opt (=0, Q2=100%)
+L228: \newcommand{\QthreeSAWmmGrd}{0.0018}      % Q3 SAW/mm/grdy  (unchanged)
+L229: \newcommand{\QthreeSAWvecGrd}{0.0086}     % Q3 SAW/vec/grdy  (was 0.0216, bug fixed)
+L230: \newcommand{\QthreeSAWvecOpt}{0.0087}     % Q3 SAW/vec/opt   (was 0.0212, bug fixed)
+L231: \newcommand{\QthreeTOPSISmmGrd}{0.0009}   % Q3 TOPSIS/mm/grdy  (0.000879, unchanged at 4dp)
+L232: \newcommand{\QthreeTOPSISmmOpt}{0.0005}   % Q3 TOPSIS/mm/opt   (0.000478, unchanged at 4dp)
+L233: \newcommand{\QthreeTOPSISvecGrd}{0.0114}  % Q3 TOPSIS/vec/grdy (was 0.447, bug fixed)
+L234: \newcommand{\QthreeTOPSISvecOpt}{0.0111}  % Q3 TOPSIS/vec/opt  (was 0.447, bug fixed)
+L241: \newcommand{\QthreeSAWmmGrdPct}{0.18}
+L242: \newcommand{\QthreeSAWmmOptPct}{0.00}
+L243: \newcommand{\QthreeSAWvecGrdPct}{0.86}
+L244: \newcommand{\QthreeSAWvecOptPct}{0.87}
+L245: \newcommand{\QthreeTOPSISmmGrdPct}{0.09}
+L246: \newcommand{\QthreeTOPSISmmOptPct}{0.05}
+L247: \newcommand{\QthreeTOPSISvecGrdPct}{1.14}
+L248: \newcommand{\QthreeTOPSISvecOptPct}{1.11}

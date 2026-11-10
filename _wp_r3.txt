@@ -1,0 +1,1 @@
+'Ronda 3 — Auditoria "zero números à mão" e proveniência\n\n> **Estado: ⬜ PENDENTE**\n\n- **3-1** — `scripts/audit_numbers.py` lista cada literal numérico em `main.tex`, `santiago.tex` e `supplementary.tex'

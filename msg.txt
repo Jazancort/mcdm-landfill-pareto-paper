@@ -1,0 +1,30 @@
+refactor(2b): remove AsmFourcell* and *AreaKmSq orphan macros
+
+2b-1: remove AsmFourcell/Lo/Hi from mc_unified.py macro output
+  - these 3 macros were generated to results/unified/ but never
+    defined in macros/ nor used in paper/manuscript/
+  - AsmMain (-1.1) already covers the C2 all4 contrast in the text
+
+2b-4: remove *AreaKmSq from make_santiago_macros.py and macros_santiago.tex
+  - SantSTAreaKmSq, SantSNAreaKmSq, FogoAreaKmSq not used in manuscript
+  - superseded by GIS-derived FogoAreaGIS/SantSTAreaGIS/SantSNAreaGIS
+    in results/santiago/macros_descriptive.tex (compute_descriptive.py)
+  - fix km2 in print statements of compute_descriptive.py (Windows encoding)
+
+2b-2: AsmMMSAWContrast check already present in verify_macros_permanent.py
+  - computed=14.0, macro=14.0, tol=half-up 1dp; no change needed
+
+2b-3: SantKtwoInfN already implemented in make_santiago_macros.py
+  - value=1 (single deterministic draw at kappa=inf, E1-B/opt Q2=1)
+  - sourced from mc_ST_e1_fix2.csv / mc_SN_e1_fix2.csv (SHA-verified)
+
+2b-5: "fewer than 20 OSM features" not in manuscript
+  - santiago.tex:33 already says "fewer than the required number"
+  - no change needed
+
+2b-6: scale_EW=0.2034 (computed); "published 0.2024" is historical note
+  - formula: dot(w,rho_j) / dot(w, rho_j/Aj_bar)
+  - not cited in manuscript; no macro needed
+
+make paper EXIT=0 (34 pages)
+make check EXIT=0 (0 failures)
