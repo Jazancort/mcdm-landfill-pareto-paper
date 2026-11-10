@@ -34,6 +34,7 @@ CHECKS = [
     ("check_santiago_verdicts", ["scripts/check_santiago_verdicts.py"]),
     ("check_inference_table",   ["scripts/check_inference_table.py"]),
     ("check_terminology",        ["scripts/check_terminology.py"]),
+    ("check_refs",               ["scripts/check_refs.py", "--offline"]),
 ]
 
 SEP = "=" * 72
@@ -49,7 +50,10 @@ print("run_checks.py — running all checkers")
 print(SEP)
 
 for label, args in CHECKS:
-    cmd = [sys.executable, "-X", "utf8"] + [str(ROOT / a) for a in args]
+    cmd = [sys.executable, "-X", "utf8"] + [
+        str(ROOT / a) if not a.startswith("-") else a
+        for a in args
+    ]
     proc = subprocess.run(cmd, capture_output=False, text=True, cwd=str(ROOT))
     rc = proc.returncode
     # Re-run capturing output only for counting markers (already printed above)
