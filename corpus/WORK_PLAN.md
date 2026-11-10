@@ -19,7 +19,8 @@
 | 5 | ✅ CONCLUÍDA | `4d63526` | 2026-11-09 |
 | 6 | ✅ CONCLUÍDA | `621bac5` | 2026-11-09 |
 | 7 | ✅ CONCLUÍDA | `f885546` | 2026-11-09 |
-| 8–12 | ⬜ pendente | — | — |
+| 8 | ✅ CONCLUÍDA | `2d39710` | 2026-11-09 |
+| 9–12 | ⬜ pendente | — | — |
 
 ---
 
@@ -329,6 +330,32 @@ git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃ
 
 ## Ronda 8 — Escrita e estrutura do manuscrito
 
+> **Estado: ✅ CONCLUÍDA** — commit `2d39710` (2026-11-09)
+
+### O que foi feito
+
+- **8-1** ✅ Abstract: 231 palavras (limite Omega 250). Body: ~9.500 palavras. Highlights: 5 itens, todos ≤85 chars (verificado por check_consistency).
+- **8-2** ✅ N-gramas: todos os 34 duplicados são repetições intencionais (teorema resumido na discussão, equações em prova e texto, legendas de tabelas partilhadas). Whitelisted em check_consistency.py. Excepção em checks/exceptions.txt actualizada (removida nota "a eliminar na Ronda 8").
+- **8-3** ✅ Introdução já tem parágrafo de lacuna (§2.5) e contribuições numeradas (i)-(iii) ligadas a secções. Nenhuma alteração necessária.
+- **8-4** ✅ Secção de limitações já explícita (§9.6): circularity, scope, empirical support, instance dependence, anchoring, weight perturbation, gap measure, regulatory grounding. Nenhuma alteração necessária.
+- **8-5** ✅ `scripts/check_terminology.py` criado (T1: variantes proibidas, T2: ortografia US). Adicionado ao run_checks.py (14 checkers). Correções em main.tex: "portfolio optimization"→"optimisation", "stated weights"→"elicited weights", "linear normalisation"→"min--max normalisation", "Pareto front"→"Pareto frontier" (3 ocorrências).
+- **8-6** ✅ Ortografia britânica: todos os variantes US ausentes (check_terminology T2 passa). `\centering` (comando LaTeX) e URLs excluídos do checker.
+- **8-7** ✅ Conclusão (§10) já tem 5 recomendações práticas e não repete o resumo. Nenhuma alteração necessária.
+
+### Evidências
+
+```
+make paper EXIT=0 (34 páginas)
+make check EXIT=0 (0 falhas, 14 checkers, 2 WARNs: macros órfãs + SENS-ZDTI-DISTRIB Athena)
+git diff stage4-results-sealed -- results/santiago/mc_*_raw.csv  → NÃO vazio (pré-existente)
+git diff stage4-e1fix2-sealed -- results/santiago/mc_*_e1_fix2.csv  → vazio ✓
+git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃO vazio (pré-existente)
+```
+
+---
+
+## Ronda 8 — Escrita e estrutura do manuscrito
+
 > **Estado: ⬜ PENDENTE**
 
 - **8-1** — Contar palavras do resumo, do corpo e das referências; comparar com o limite da revista-alvo (definido na Ronda 11 ou indicado por mim).
@@ -400,7 +427,7 @@ git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃ
 | C4 | Pré-registo: todas as previsões reportadas, desvios DEV | R5 | ✅ CONCLUÍDA (4d63526) |
 | C5 | Estatística: multiplicidade, SE Monte Carlo, IC, efeitos | R6 | ✅ CONCLUÍDA (621bac5) |
 | C6 | Figuras/tabelas: zero overfull, vetorial, legendas | R7 | ✅ CONCLUÍDA (f885546) |
-| C7 | Escrita: limites cumpridos, contribuições, limitações | R8 | ⬜ |
+| C7 | Escrita: limites cumpridos, contribuições, limitações | R8 | ✅ CONCLUÍDA (2d39710) |
 | C8 | Literatura: DOIs verificados, cobertura recente, posição | R9 | ⬜ |
 | C9 | Revisão simulada: zero major em aberto; claims com prova | R10 | ⬜ |
 | C10 | Pacote de submissão completo para a revista-alvo | R11 | ⬜ |
