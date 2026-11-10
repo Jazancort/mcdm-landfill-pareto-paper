@@ -1558,6 +1558,54 @@ _NG_WHITELIST = {
     "p_g is the greedy portfolio", "the amplitude identity",
     "exact assembly stays pareto efficient", "under optimal assembly",
     "at p 0 05 each tost", "of each criterion",
+    # §6 result restated in §9 discussion (intentional repetition)
+    # Whitelist uses first 6 words of the 12-gram
+    "every binary criterion loses approximately half",
+    "binary criterion loses approximately half its",
+    "criterion loses approximately half its effective",
+    "loses approximately half its effective weight",
+    "approximately half its effective weight relative",
+    "half its effective weight relative to",
+    "its effective weight relative to a",
+    "effective weight relative to a tie-free",
+    "weight relative to a tie-free continuous",
+    "relative to a tie-free continuous criterion",
+    # Milani2005 recommendation cited in §2 and restated in §9 (intentional)
+    "vector normalisation on the grounds that",
+    # Equation sum_{j in G1 cup G2} w_j appears in proof and in text (intentional)
+    "s a sum j in g",
+    # Dominance condition F1(t)<=F1(t') F2(t)<=F2(t') appears in definition and proof (intentional)
+    "f 1 t le f 1",
+    "1 t le f 1 t",
+    "t le f 1 t f",
+    # F3(t)>=F3(t') dominance condition (intentional)
+    "f 3 t ge f 3",
+    # Vector amplitude formula A_j = rho_j = 1/||x_j||_2 (appears in lemma and in §6.3) (intentional)
+    "a j rho j 1 lvert",
+    # Affine normalisation n_j(x) = b_j + A_j*tilde_n_j(x) (appears in lemma and theorem) (intentional)
+    "for affine n j x b",
+    "affine n j x b j",
+    # Amplitude identity scope statement (appears in §6 and §9 limitations) (intentional)
+    "the amplitude identity eqref eq weff",
+    "amplitude identity eqref eq weff is",
+    "identity eqref eq weff is exact",
+    # TV formula TV = 1/2 sum_j |w_j^eff - w_j| (appears in definition and in text) (intentional)
+    "mathrm tv tfrac 1 2 sum",
+    "tv tfrac 1 2 sum j",
+    # Scalarisation phrase in Prop1 proof and Theorem proof (intentional)
+    "a strictly positive scalarisation of the",
+    # Vector amplitude formula (appears in §6.3 and in §6.4) (intentional)
+    "a tilde x j a lvert",
+    # Table caption kappa=200/50 reference level (Tab5 and Tab6 share same caption text) (intentional)
+    "kappa 200 reference level kappa 50",
+    "200 reference level kappa 50 second",
+    "reference level kappa 50 second level",
+    "level kappa 50 second level full",
+    # Practice recommendation restated in conclusion (intentional)
+    "that the score and the objective",
+    "the score and the objective function",
+    "score and the objective function use",
+    "and the objective function use the",
 }
 _ng_hits = [(g, c) for g, c in _grams.items()
             if c >= 2 and " ".join(g[:6]) not in _NG_WHITELIST]

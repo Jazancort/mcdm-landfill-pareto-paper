@@ -371,7 +371,7 @@ from a different direction.
 Modelling (RPM), which computes portfolios that are non-dominated in a
 scalar value space over a region of uncertain weights, using an
 interactive linear programme.
-\citet{Mild2015} combined a multiattribute value function with portfolio optimization
+\citet{Mild2015} combined a multiattribute value function with portfolio optimisation
 for infrastructure maintenance; \citet{Yang2015SMAAPO}
 combined SMAA with portfolio optimisation (SMAA-PO), producing
 acceptability indices for portfolios under full weight uncertainty.
@@ -385,7 +385,7 @@ developed a multi-objective binary programme for project portfolio
 selection under resource and dependency constraints, demonstrating that
 combinatorial multi-objective portfolio problems are tractable in
 practice; \citet{Doerner2006} further combined ant-colony optimisation
-with ILP preprocessing to approximate the full Pareto front of project
+with ILP preprocessing to approximate the full Pareto frontier of project
 portfolios directly, bypassing the ranking step entirely.
 The present paper occupies a position the PDA tradition does not fill:
 the three objectives $F_1, F_2, F_3$ are kept as separate partial value
@@ -410,7 +410,7 @@ normalisation, and argued that the effective weight is the operationally
 relevant quantity.
 Behavioural antecedents of this observation exist in preference
 elicitation research: \citet{vonNitzsch1993} showed in a controlled
-study that subjects adjust their stated weights insufficiently when
+study that subjects adjust their elicited weights insufficiently when
 attribute ranges change, systematically under-weighting range differences
 relative to what the MAVT framework requires,
 and \citet{Fischer1995} documented range sensitivity as a persistent
@@ -542,7 +542,7 @@ enumerate all $\Ntrios$ feasible portfolios exactly, enabling a comparison
 against a provably complete Pareto frontier rather than a threshold
 approximation.
 In the combinatorial optimisation literature, \citet{Guerreiro2023}
-developed exact and approximate methods for Pareto front determination
+developed exact and approximate methods for Pareto frontier determination
 using Minimal Correction Subsets; their approach targets boolean
 satisfaction problems, whereas the present paper computes the full trivariate
 frontier without approximation.
@@ -1023,7 +1023,7 @@ First, none of the three is invariant to the inclusion or exclusion of
 alternatives: min--max depends on the sample extrema, vector normalisation
 on the sample norm, and ranks on the sample composition.
 Second, the choice interacts with the aggregation: VIKOR is defined on a
-linear normalisation whereas TOPSIS is classically defined on the vector
+min--max normalisation whereas TOPSIS is classically defined on the vector
 form, a contrast noted by \citet{OpricovicTzeng2004} and implicated in
 TOPSIS rank reversal \citep{GarciaCascales2012,Kuo2017}.
 The reference set over which the normalisation constants are computed is
@@ -1904,7 +1904,7 @@ normalisation constants computed over all $\Ncand$ candidates (space~$\Aspace$).
 
 The reproduction is exact: SAW under optimal assembly returns
 $\{184,430,460\}$, the portfolio that \citet{AzancortNeto2026}
-selected from their NSGA-II Pareto front using a group-weighted
+selected from their NSGA-II Pareto frontier using a group-weighted
 scalarisation ($S=0.295f_1+0.356f_2+0.349(1-f_3)$, their Table~10,
 scenario~S1); the two selection rules coincide on this instance,
 with objective values agreeing to $10^{-16}$.

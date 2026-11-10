@@ -33,6 +33,7 @@ CHECKS = [
     ("check_seeds",             ["scripts/check_seeds.py"]),
     ("check_santiago_verdicts", ["scripts/check_santiago_verdicts.py"]),
     ("check_inference_table",   ["scripts/check_inference_table.py"]),
+    ("check_terminology",        ["scripts/check_terminology.py"]),
 ]
 
 SEP = "=" * 72
