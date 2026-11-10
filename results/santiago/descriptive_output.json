@@ -37,5 +37,15 @@
     "SN_K5b_inf_pp": -33.3,
     "deviation": "stage3b_descriptors.json does not contain K5 kappa=inf contrasts; they were first computed in Stage 4 MC. K5 is descriptive; no verdict is affected. Registered as DEV-SANT-K5B-001 if not present.",
     "sha_desc": "710718247783f1eeccbebfe894e953e21f56c963076bbf99e912a5b57f6fcbcc"
+  },
+  "frontier_st": {
+    "n_adm": 601,
+    "n_trios": 16699705,
+    "front_size": 325,
+    "fraction_pct": 0.0019,
+    "sha_csv": "1851ea673752c94e46407a5bed963170ed0fb1fea36e9294f4af1ab1f9546822",
+    "input_shas": {
+      "df_santiago_st.csv": "1851ea673752c94e46407a5bed963170ed0fb1fea36e9294f4af1ab1f9546822"
+    }
   }
 }
