@@ -18,7 +18,8 @@
 | 4 | ✅ CONCLUÍDA | `127cdf7` | 2026-11-09 |
 | 5 | ✅ CONCLUÍDA | `4d63526` | 2026-11-09 |
 | 6 | ✅ CONCLUÍDA | `621bac5` | 2026-11-09 |
-| 7–12 | ⬜ pendente | — | — |
+| 7 | ✅ CONCLUÍDA | `f885546` | 2026-11-09 |
+| 8–12 | ⬜ pendente | — | — |
 
 ---
 
@@ -394,11 +395,11 @@ git diff prespec-santiago-f0-amend-final -- corpus/PRESPEC_SANTIAGO*.md  → NÃ
 | Código | Critério | Rondas | Estado |
 |--------|----------|--------|--------|
 | C1 | Verificação: `make check` fiável, negativos A2/B falham | R1F, 2a | ✅ CONCLUÍDA (1F + 2a) |
-| C2 | Zero números à mão; proveniência de todas as macros | R3 | ⬜ |
-| C3 | Reprodução em clone limpo, bit-exact nas macros | R4 | ⬜ |
-| C4 | Pré-registo: todas as previsões reportadas, desvios DEV | R5 | ⬜ |
-| C5 | Estatística: multiplicidade, SE Monte Carlo, IC, efeitos | R6 | ⬜ |
-| C6 | Figuras/tabelas: zero overfull, vetorial, legendas | R7 | ⬜ |
+| C2 | Zero números à mão; proveniência de todas as macros | R3 | ✅ CONCLUÍDA (ae80353) |
+| C3 | Reprodução em clone limpo, bit-exact nas macros | R4 | ✅ CONCLUÍDA (127cdf7) |
+| C4 | Pré-registo: todas as previsões reportadas, desvios DEV | R5 | ✅ CONCLUÍDA (4d63526) |
+| C5 | Estatística: multiplicidade, SE Monte Carlo, IC, efeitos | R6 | ✅ CONCLUÍDA (621bac5) |
+| C6 | Figuras/tabelas: zero overfull, vetorial, legendas | R7 | ✅ CONCLUÍDA (f885546) |
 | C7 | Escrita: limites cumpridos, contribuições, limitações | R8 | ⬜ |
 | C8 | Literatura: DOIs verificados, cobertura recente, posição | R9 | ⬜ |
 | C9 | Revisão simulada: zero major em aberto; claims com prova | R10 | ⬜ |
