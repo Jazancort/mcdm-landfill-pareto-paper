@@ -1112,6 +1112,166 @@ Criterion & Group & $\rho_j^A$ & $\rho_j^B$ & Notes \\
 \end{figure}
 
 % =======================================================================
+% Santiago replication: data extraction and weights
+% =======================================================================
+\section*{Santiago replication: data extraction and criterion weights}
+\label{sec:sant-extraction}
+
+\subsection*{Elevation data and aspect extraction}
+
+Elevation data for both Santiago branches were extracted from ASTER GDEM~v3
+(NASA/METI/AIST/Japan Spacesystems and U.S./Japan ASTER Science Team, 2019;
+DOI~\url{10.5067/ASTER/ASTGTM.003}), downloaded via the \texttt{earthaccess}
+Python library (v0.19.0) using the same UTM~Zone~26N projection as the Fogo
+dataset.
+Slope (degrees) was computed with \texttt{gdaldem slope} on the ASTER tile;
+aspect (geographic descent azimuth, $0^\circ$=N, clockwise) was computed with
+\texttt{gdaldem aspect} using the Horn algorithm, consistent with the Fogo
+pipeline (Section~\ref{sec:methods}).
+The binary SE-facing indicator ($90^\circ\le\theta\le180^\circ$, closed) was
+applied after extraction.
+For S-T, the \textit{aspect} criterion uses the same binary encoding as Fogo;
+for S-N, criterion~A7 (aspect) uses the same encoding.
+The \texttt{slope\_aspect} reflection convention documented in
+Section~\ref{sec:methods} applies to both Santiago branches.
+
+\subsection*{S-N criterion weights (Cabral 2012, Annex~C)}
+
+The S-N value model follows Cabral (2012), who elicited AHP weights for
+landfill site selection in southern Santiago (Praia, S\~ao Domingos, and
+Ribeira Grande de Santiago concelhos).
+Table~\ref{tab:sn-weights} reproduces the weight vector from Annex~C of that
+work, after dropping criterion~A2 (ZDTI; DEV-SANT-ZDTI-001) and
+renormalising the remaining 13 weights proportionally.
+The four objective groups follow Cabral (2012): Group~A (siting cost,
+criteria A1--A7), Group~B (environmental impact, B1--B3), Group~C (social
+safety, C1--C2), and Group~D (infrastructure, D1--D2).
+
+\begin{table}[!ht]
+\centering
+\caption{S-N criterion weights after dropping A2 and renormalising.
+  Source: Cabral (2012), Annex~C.
+  $w_j^{\mathrm{eff}}/w_j$: effective-weight ratio under vector normalisation
+  (from \texttt{stage3b\_descriptors.json}, SHA-verified).}
+\label{tab:sn-weights}
+\small
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Crit. & Description & Group & $w_j$ & $A_j^{\mathrm{vec}}$ & $w^{\mathrm{eff}}/w$ \\
+\midrule
+A1 & Geology (permeability)    & $G_A$ & 0.0397 & 0.153 & 0.92 \\
+A3 & Slope                     & $G_A$ & 0.0270 & 0.144 & 0.87 \\
+A4 & Cultural heritage         & $G_A$ & 0.0397 & 0.136 & 0.82 \\
+A5 & Hydrological risk         & $G_A$ & 0.0163 & 0.218 & 1.31 \\
+A6 & Distance to water bodies  & $G_A$ & 0.0324 & 0.136 & 0.82 \\
+A7 & Aspect (SE-facing)        & $G_A$ & 0.0270 & 0.152 & 0.92 \\
+B1 & Distance to urban areas   & $G_B$ & 0.2096 & 0.177 & 1.06 \\
+B2 & Distance to roads         & $G_B$ & 0.1048 & 0.145 & 0.87 \\
+B3 & Distance to coast         & $G_B$ & 0.1048 & 0.257 & 1.55 \\
+C1 & Distance to protected areas & $G_C$ & 0.0759 & 0.152 & 0.91 \\
+C2 & Distance to airports      & $G_C$ & 0.0253 & 0.105 & 0.63 \\
+D1 & Distance to landfill      & $G_D$ & 0.0981 & 0.159 & 0.95 \\
+D2 & Land use                  & $G_D$ & 0.1993 & 0.150 & 0.90 \\
+\midrule
+$\mathrm{TV}$ & & & & & 0.076 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =======================================================================
+% Santiago replication: S4 per-cell Q2 table
+% =======================================================================
+\section*{S4: SAW--TOPSIS contrast per cell (Santiago replication)}
+\label{sec:sant-s4}
+
+Prediction~S4 is descriptive (no directional prediction).
+Table~\ref{tab:sant-s4} reports $Q_2[\mathcal{A}']$ for all eight cells
+at $\kappa=200$ for both Santiago branches.
+The SAW$-$TOPSIS contrast per informative cell (K6) is reported in
+Table~\ref{tab:sant-kappa}.
+
+\begin{table}[!ht]
+\centering
+\caption{$Q_2[\mathcal{A}']$ (\%) for all eight cells at $\kappa=200$,
+  S-T and S-N.
+  SAW/min--max/optimal is fixed at $100\%$ by
+  Proposition~\ref{prop:p1:stmt} (S0/K1 regression check).
+  S-T: greedy and optimal coincide in every cell because the feasible
+  set is large and the score is nearly lexicographic in \textit{perm};
+  S-N: exact assembly substantially outperforms greedy under vector
+  normalisation (S2 opposite sign).}
+\label{tab:sant-s4}
+\begin{tabular}{@{}llrr@{}}
+\toprule
+Agg. & Norm., assembly & S-T & S-N \\
+\midrule
+SAW    & mm, greedy   & 100.0 & 59.4 \\
+       & mm, optimal  & 100.0 & 100.0 \\
+       & vec, greedy  &  84.2 &  34.2 \\
+       & vec, optimal &  84.2 &  98.6 \\
+\midrule
+TOPSIS & mm, greedy   &  96.6 &  76.0 \\
+       & mm, optimal  &  96.6 &  98.8 \\
+       & vec, greedy  &  46.6 &  53.8 \\
+       & vec, optimal &  46.6 &  98.2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =======================================================================
+% Santiago replication: Q2 by kappa and cell
+% =======================================================================
+\section*{$Q_2$ by $\kappa$ and cell (Santiago replication)}
+\label{sec:sant-kappa-grid}
+
+Table~\ref{tab:sant-kappa} reports $Q_2[\mathcal{A}']$ for all eight cells
+across six $\kappa$ values and the deterministic limit ($\kappa\to\infty$)
+for both Santiago branches.
+The SAW$-$TOPSIS pooled contrast (K6) is the mean of the three informative
+cells (SAW/mm/grd, SAW/vec/grd, SAW/vec/opt), matching the Fogo E7 design.
+
+\begin{table*}[!ht]
+\centering
+\caption{$Q_2[\mathcal{A}']$ (\%) by $\kappa$ and cell for S-T (top) and
+  S-N (bottom).
+  SAW/mm/opt is fixed at $100\%$ by Proposition~\ref{prop:p1:stmt}.
+  K6 = pooled SAW$-$TOPSIS contrast over three informative cells
+  (SAW/mm/grd, SAW/vec/grd, SAW/vec/opt).
+  $\kappa\to\infty$: single deterministic draw at nominal weights.}
+\label{tab:sant-kappa}
+\small
+\begin{tabular}{@{}lrrrrrrrr@{}}
+\toprule
+Cell & $\kappa=25$ & $\kappa=50$ & $\kappa=100$ & $\kappa=200$ & $\kappa=400$ & $\kappa=1000$ & $\kappa\to\infty$ \\
+\midrule
+\multicolumn{8}{l}{\textit{S-T (Santiago whole island; Fogo model)}} \\
+SAW/mm/grd   & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 \\
+SAW/mm/opt   & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 \\
+SAW/vec/grd  &  84.8 &  82.8 &  77.0 &  84.2 &  87.2 &  94.4 & 100.0 \\
+SAW/vec/opt  &  85.0 &  83.4 &  77.0 &  84.2 &  87.2 &  94.4 & 100.0 \\
+TOPSIS/mm/grd &  88.4 &  86.8 &  93.2 &  96.6 &  97.6 &  98.6 & 100.0 \\
+TOPSIS/mm/opt &  88.4 &  87.4 &  93.2 &  96.6 &  97.6 &  98.6 & 100.0 \\
+TOPSIS/vec/grd &  57.6 &  50.0 &  44.6 &  46.6 &  52.6 &  58.8 & 100.0 \\
+TOPSIS/vec/opt &  57.6 &  50.2 &  44.4 &  46.6 &  52.8 &  59.0 & 100.0 \\
+\midrule
+K6 (SAW$-$TOPSIS) & $+22.1$ & $+26.4$ & $+23.9$ & $+26.2$ & $+23.8$ & $+24.1$ & $0.0$ \\
+\midrule
+\multicolumn{8}{l}{\textit{S-N (southern Santiago; Cabral model)}} \\
+SAW/mm/grd   &  90.2 &  85.8 &  72.8 &  59.4 &  36.0 &   9.0 &   0.0 \\
+SAW/mm/opt   & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 \\
+SAW/vec/grd  &  85.6 &  73.4 &  51.0 &  34.2 &  14.8 &   3.2 &   0.0 \\
+SAW/vec/opt  &  99.8 &  99.6 &  99.6 &  98.6 &  99.8 & 100.0 & 100.0 \\
+TOPSIS/mm/grd &  88.0 &  78.8 &  74.0 &  76.0 &  80.6 &  93.4 & 100.0 \\
+TOPSIS/mm/opt &  98.8 &  99.6 &  99.0 &  98.8 &  99.8 & 100.0 & 100.0 \\
+TOPSIS/vec/grd &  75.6 &  69.6 &  60.0 &  53.8 &  37.8 &  28.2 &   0.0 \\
+TOPSIS/vec/opt &  89.6 &  96.2 &  97.2 &  98.2 &  99.8 & 100.0 & 100.0 \\
+\midrule
+K6 (SAW$-$TOPSIS) & $+7.5$ & $+4.7$ & $-2.6$ & $-11.9$ & $-22.5$ & $-36.5$ & $-33.3$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+% =======================================================================
 % Santiago replication: implementation deviations (tab:sant-dev)
 % =======================================================================
 \section*{Departures from the pre-registration (Santiago replication)}
